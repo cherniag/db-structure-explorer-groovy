@@ -1,0 +1,60 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+				<div class="container" id="messagesTable">
+				<h1 class="head" th:text="#{messages.pages.message.headline}">Messages</h1>
+					<div class="newsListWide">
+					<ul  class="table">
+						<li class="title">
+								<div class="number" th:text="#{messages.page.messagesTable.head.position}">#</div>
+								<div class="body" th:text="#{messages.page.messagesTable.head.body}">Body</div>
+								<div class="filters" th:text="#{messages.page.messagesTable.head.filters}">Filters</div>
+								<div class="online" th:text="#{messages.page.messagesTable.head.activated}">Online?</div>
+	<!--							<div class="date" th:text="#{messages.page.messagesTable.head.publishTime}">Publish Date</div>-->
+						</li>
+					</ul>
+					<ul class="table table_up" id="sortable">
+						
+						<li th:each="messageDto, it: ${MESSAGE_DTO_LIST}">
+							<div class="number" th:text="${it.index+1}">1</div>
+							<div class="body">
+								<span th:text="${messageDto.body}">Editorial 1 Cheryl Cole gets fired from the X Factor</span><br/><br />
+								<a th:href="@{/messages/__${messageDto.id}__}" th:text="#{messages.page.messagesTable.message.edit.submit}">Edit</a> |
+								<form id="deleteMessageForm" name="deleteMessageForm" action="#" th:action="@{/messages/__${messageDto.id}__}" method="post">
+									<input type="hidden" id="_method" name="_method" value="DELETE" />
+									<button type="submit" class="btn btn-danger">Delete</button>
+								</form>
+							</div>
+							
+							<div class="filters">
+								<span th:each="filterDto: ${messageDto.filterDtos}">
+									<span class="label"  th:class="#{${'label label_'+filterDto.name}}" th:text="#{${'messages.pages.filter.'+filterDto.name}}">Filter list</span>
+								</span>
+							</div>
+							
+							<div class="online" th:text="${messageDto.activated}?#{messages.page.messagesTable.message.activated}:#{messages.page.messagesTable.message.notActivated}">No</div>
+							
+	<!--						<div class="date" th:text="${#dates.format(messageDto.publishTime, '__#{messages.page.messagesTable.message.publishDate.format}__')}">12/06/2012 12:00:00</div>-->
+							
+						</li>
+					</ul>
+				</div>
+				<div class="navButtons">
+					<div class="updateButton">
+					<ul class="nav nav-pills table_margin">
+					  <li class="active">
+					    <a href="messages/add" th:href="@{/messages/}" th:text="#{messages.page.messagesTable.message.add.addNew}">Add New</a>
+					  </li>
+					</ul>
+					</div>
+				</div>
+			</div>
+			
+		</body>
+</html>
+
+

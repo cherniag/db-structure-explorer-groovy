@@ -1,0 +1,14 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+		<div class="container">
+			<section>
+				<p th:text="(${#httpServletRequest.pathInfo} == '/home.html')or(${#httpServletRequest.pathInfo} == '/')? 'active'"></p>
+			</section>		
+			<footer th:include="tpl::footer"></footer>
+		</div>
+	</body>
+</html>

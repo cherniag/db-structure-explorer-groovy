@@ -1,0 +1,109 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
+			<div th:substituteby="tpl::navbar"></div>
+						<!-- Modal -->
+						<div id="windowTitleDialog" class="modal fade">
+							<div class="modal-body"></div>
+							<div class="modal-footer">
+								<a href="#" class="btn primary" onclick="okClicked ();">OK</a>
+								<a href="#" class="btn secondary" onclick="closeDialog ();">Cancel</a>
+							</div>
+						</div>
+			<div class="container" id="chartItemsTable">
+			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items</h1>
+			<div><a th:text="#{chartItems.page.back}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}" class="btn btn-primary">Back</a></div><br/><br/>
+			<div class="newsListWide">
+				<ul class="table">
+					<li class="title">
+						<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
+						<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
+						<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
+						<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
+						<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
+						<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
+						<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+						<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
+					</li>
+				</ul>
+				<ul class="table table_up" id="sortable">
+					
+					<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
+						<input type="hidden" id="ID" name="ID" th:value="${chartItemDto.id}" />
+						<input type="hidden" id="position" name="position" th:value="${chartItemDto.position}" />
+						<div class="position_chartItem" th:text="${it.index+1}">1</div>
+						<div class="prev_position_chartItem" th:text="${chartItemDto.prevPosition}">1</div>
+						<div class="change_position_chartItem" th:text="${chartItemDto.chgPosition}">UP</div>
+							<div class="image_chartItem">
+								<img alt="Chart item media picture" src=""
+									th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}"
+									th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}"
+									width="50" height="50" />
+							</div>
+							<div class="channel_chartItem" th:text="${chartItemDto.channel}">HEATSEEKER</div>
+						<div class="ArtistTitle_chartItem">
+							<span th:text="${chartItemDto.mediaDto.artistDto.name} + ' - ' + ${chartItemDto.mediaDto.title}">Брати Гадюкіни - Звьоздочка Моя</span><br/><br />
+							<form id="deleteNewsForm" name="deleteNewsForm" action="#" th:action="@{/charts/__${chartId}__/__${urlDate}__/__${chartItemDto.id}__}" method="post">
+								<input type="hidden" id="_method" name="_method" value="DELETE" />
+								
+								<a class="btn danger editButton" onmouseover="sandwich='pastrami';" th:href="@{/charts/__${chartId}__/__${urlDate}__/__${chartItemDto.id}__}" th:text="#{chartItems.page.chartItemsTable.chartItems.edit.submit}">Edit</a>
+								<button type="submit" class="btn btn-danger" th:text="#{chartItems.page.chartItemsTable.chartItems.delete.submit}">Delete</button>
+							
+							</form>
+						</div>
+						<!-- Button to trigger modal -->
+						
+						
+						<div class="info_chartItem" th:text="${chartItemDto.info}">
+							Пісня Братів Гадюкіних з альбому Всьо Чьотко!
+						</div>
+						
+						<div class="publishDate_chartItem" th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</div>
+						
+					</li>
+				</ul>
+			</div>
+			<div class="navButtons">
+				<div class="updateButton">
+				<form id="addNew"> 
+				<ul class="nav nav-pills table_margin">
+				  <li class="active">
+				    <a href="/charts/1/12/06/2012 12:00:00/add" th:href="@{/charts/__${chartId}__/__${urlDate}__/new}" th:text="#{chartItems.page.chartItemsTable.chartItems.add.addNew}">Add New</a>
+				  </li>
+				</ul>
+				</form>
+				</div>
+				<div class="updateButton">
+			    <form id="cloneChartItemsForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__/list}" method="post" th:if="${#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+			    <ul class="nav nav-pills table_margin">
+			 		<li class="active">
+						<a href="#" onCLick="$('form#cloneChartItemsForm').submit();" th:text="#{chartItems.page.cloneChartItemsForm.submit.text}">Clone</a>
+					</li>
+				</ul>
+				</form>
+				</div>
+				<div class="updateButton">
+				<form id="updatePositionsForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__}" method="post">
+			    <ul class="nav nav-pills table_margin">
+			 		<li class="active">
+						<a id="updatePositionsButton" href="#" th:text="#{chartItems.page.updateChartItemsForm.submit.text}">Update chart items positions</a>
+					</li>
+				</ul>
+				</form>
+				<form id="deleteChartItemsSetForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+					<input type="hidden" id="_method" name="_method" value="DELETE" />
+				    <ul class="nav nav-pills table_margin">
+				 		<li class="active">
+							<a href="#" class="btn-danger"  onCLick="$('form#deleteChartItemsSetForm').submit();" th:text="#{chartItems.page.deleteChartItemsSetForm.submit.text}">Delete update</a>
+						</li>
+					</ul>
+				</form>
+				</div>
+			</div>
+		</div>
+		
+		</body>
+</html>

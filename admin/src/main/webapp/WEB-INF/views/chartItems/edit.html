@@ -1,0 +1,102 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+				<h1 class="head" th:text="#{chartItems.edit.page.title}">
+					Edit Chart Items
+				</h1>
+				<form id="saveOrUpdateChartItemsForm"
+					name="saveOrUpdateChartItemsForm"
+					th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}"
+					action="#"
+					th:action="@{/charts/__${chartId}__/__${urlDate}__/__${CHART_ITEM_DTO.id}__}"
+					th:object="${CHART_ITEM_DTO}" method="post" accept-charset="UTF-8"
+					class="well">
+
+					<input type="hidden" th:field="*{publishTime}" />
+					<input type="hidden" th:field="*{id}" />
+					<input type="hidden" th:field="*{chartId}" />
+					<input type="hidden" th:field="*{position}" />
+					<input type="hidden" th:field="*{chgPosition}" />
+
+					<div class="row">
+						<div class="span3">
+							<div class="controls">
+								<label class="checkbox">
+									<span
+										th:text="#{chartItems.edit.page.saveOrUpdateChartItemsForm.prevPosition.label}">Previous
+										Position:</span>
+									<input type="number" th:field="*{prevPosition}" class="quantity"  maxlength="255" />&nbsp;<span class="errmsg"></span>
+								</label>
+								<p class="red bold" th:if="${#fields.hasErrors('prevPosition')}"
+										th:errors="*{prevPosition}">
+										Previous position cann't be less than zero
+									</p>
+							</div>
+
+							<div class="control-group filtersSelect">
+								<label>
+									<strong
+										th:text="#{chartItems.edit.page.saveOrUpdateChartItemsForm.channels.label}">Channels:</strong>
+								</label>
+								<div class="controls">
+									<select th:field="*{channel}">
+										<option value=""></option>
+										<option th:each="channel: ${allChannels}"
+											th:value="${channel}" th:text="${channel}">
+											MY_CHANNEL
+										</option>
+									</select>
+									<p th:if="${#fields.hasErrors('channel')}"
+										th:errors="*{channel}">
+										Channel can be null but not empty string
+									</p>
+								</div>
+							</div>
+							<div class="form-actions">
+								<button
+									th:text="#{chartItems.edit.page.saveOrUpdateChartItemsForm.submit}"
+									class="btn btn-primary" type="submit">
+									Save changes
+								</button>
+								<button
+									th:text="#{chartItems.edit.page.saveOrUpdateChartItemsForm.cancel}"
+									class="btn btn-primary" th:title="@{/charts/__${chartId}__/__${urlDate}__}"
+									onClick="location.href=this.title">
+									Cancel
+								</button>
+							</div>
+						</div>
+						<div class="span8">
+
+							<div class="filtersSelect">
+								<div class="controls">
+									<label>
+										<strong
+											th:text="#{chartItems.edit.page.saveOrUpdateChartItemsForm.info.label}">Chart
+											Item Info:</strong>
+									</label>
+									<textarea th:field="*{info}"
+										th:class="${#fields.hasErrors('info')}? 'fieldError'"
+										rows="30" id="editableTextArea"
+										placeholder="Full chart item info is here"
+										class="input-xlarge"
+										style="width: 785px; height: 400px; font-size: 11px;"></textarea>
+										<p th:if="${#fields.hasErrors('info')}"
+											th:errors="*{info}">
+											Wrong text format
+										</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</body>
+</html>

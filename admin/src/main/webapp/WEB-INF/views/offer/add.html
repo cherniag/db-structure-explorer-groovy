@@ -1,0 +1,130 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head  th:include="tpl::head" >
+<title th:text="#{offer.edit.page.title}">offer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+</head>
+<body>
+<div th:substituteby="tpl::navbar"></div>
+				<div class="container" >
+				<h1 class="head" th:text="#{offers.add.head.headline}">Edit Web Store Item</h1>
+	<script type="text/javascript" th:src="@{/assets/js/transfer_list.js}"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		var filterUrl = /*[[@{'/offers/allItems'}]]*/ '/offers/allItems';
+	/*]]>*/
+	</script>
+
+	<form id="saveOrUpdateOfferForm" name="saveOrUpdateOfferForm"
+		action="#" th:action="@{/offers/new}" th:object="${OFFER_DTO}"
+		method="post" enctype="multipart/form-data" accept-charset="UTF-8" class="well">
+
+		<div class="row">
+			<div class="span8">
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{offer.add.page.addOfferForm.title}+#{offer.add.page.addOfferForm.fieldSeparator}">Title:</strong></label> 
+					<input th:field="*{title}"
+						th:class="${#fields.hasErrors('title')}? 'fieldError'" type="text"
+						th:attr="placeholder=#{offer.add.page.addOfferForm.title.placeholder}"
+						placeholder="Title is here" class="span3" style="width: 785px;" />
+					<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+						Wrong title format</p>
+				</div>
+				
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{messages.page.messagesTable.head.body}+#{offer.add.page.addOfferForm.fieldSeparator}">Body:</strong></label>
+					<textarea th:field="*{description}"
+						th:class="${#fields.hasErrors('description')}? 'fieldError'"
+						th:attr="placeholder=#{offer.add.page.addOfferForm.description.placeholder}"
+						placeholder="Description is here" class="input-xlarge" style="width: 785px; height: 400px;" />
+					<p th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+						Wrong text format
+					</p>
+				</div>
+				
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{offer.add.page.addOfferForm.items}+#{offer.add.page.addOfferForm.fieldSeparator}">Items: </strong></label>
+					<div class="controls">
+						<input id="filterItem" placeholder="Item filter is here"
+							class="span3" style="width: 428px;" /> <a href="#"
+							id="filterButton">filter</a>
+					</div>
+	
+					<div class="controls" style="float: left">
+						<select id="sourceList" multiple="multiple"
+							style="width: 200px; height: 200px"></select><a href="#" id="addButton">&lt;&lt; add</a>
+					</div>
+					
+					<div class="controls">
+						&#160;&#160;&#160;<a href="#"
+							id="removeButton">remove &gt;&gt;</a><select id="resultList" name="itemDtos" multiple="multiple"
+							style="width: 200px; height: 200px"></select>
+					</div>
+				</div>
+				
+				
+				<div class="form-actions filtersSelect">
+					<button id="saveButton"
+						th:text="#{offer.add.page.addOfferForm.submit}"
+						class="btn btn-primary" type="submit">Save changes</button>
+					<a th:href="@{/offers/}" th:text="#{offer.add.page.addOfferForm.cancel}" class="btn">Cancel</a>
+				</div>
+			</div>
+			<div class="span3">
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{offer.add.page.addOfferForm.file.chooser}+#{offer.add.page.addOfferForm.fieldSeparator}">Add image for offer:</strong></label>
+					<input id="file" name="file" type="file" accept="image"
+						th:field="*{file}"
+						th:title="#{offer.add.page.addOfferForm.file.chooser}" />
+					<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
+						No file has been selected or file has no content
+					</p>
+				</div>
+			
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{offer.add.page.addOfferForm.price}+#{offer.add.page.addOfferForm.fieldSeparator}">Price: </strong></label>
+					<input th:field="*{price}"
+						th:class="${#fields.hasErrors('price')}? 'fieldError'" type="text"
+						th:attr="placeholder=#{offer.add.page.addOfferForm.price.placeholder}"
+						placeholder="Price is here" class="span3" style="width: 200px;" />
+					<p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+						Wrong price format</p>
+				</div>
+	
+				<div class="control-group filtersSelect">
+					<label><strong th:text="#{offer.add.page.addOfferForm.currency}+#{offer.add.page.addOfferForm.fieldSeparator}">Currency:  </strong></label>
+					<select th:field="*{currency}">
+						<option th:each="currencyCode :${allCurrencyCodes}"
+							th:value="${currencyCode}"
+							th:text="#{${'offers.pages.offer.currency.'+currencyCode}}">
+							Pound</option>
+					</select>
+				</div>
+	
+				
+				<div class="control-group filtersSelect">
+					<div class="controls">
+			            <label><strong th:text="#{offer.add.page.addOfferForm.filters}+#{offer.add.page.addOfferForm.fieldSeparator}">Filters: </strong></label>
+			            <div class="controls">
+			              <label class="checkbox" th:class="#{${'checkbox textColor_'+filterDto.name}}" th:each="filterDto:${allOfferFilterDtos}">
+			                <input type="checkbox" th:value="${filterDto.name}" name="filterDtos" th:text="#{${'offers.page.offersTable.offer.filter.'+filterDto.name}}"  th:checked="${#sets.contains(OFFER_DTO.filterDtos,filterDto)}" />
+			              </label>
+			            </div>
+			        </div>
+				</div>
+			
+				<input type="hidden" th:field="*{id}" />
+				
+				<ul th:if="${#fields.hasErrors('*')}">
+					<li th:each="err : ${#fields.errors('*')}" th:text="${err}" style="color:red">
+						Input is incorrect</li>
+				</ul>
+				</div>
+		</div>
+	</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+			
+			<div class="container" id="newsTable" th:with="urlDate=${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}">
+			<h1 class="head" th:text="#{news.pages.news.headline}">News</h1>
+			<div class="newsListWide">
+				<ul  class="table">
+					<li class="title">
+							<div class="number_news" th:text="#{news.page.newsTable.head.position}">#</div>
+							<div class="image_news" th:text="#{news.page.newsTable.head.image}">Image</div>
+							<div class="body_news" th:text="#{news.page.newsTable.head.headline}">Headline</div>
+							<div class="filters_news" th:text="#{news.page.newsTable.head.filters}">Filters</div>
+							<div class="online" th:text="#{news.page.newsTable.head.activated}">Online</div>
+							<div class="date_news" th:text="#{news.page.newsTable.head.publishTime}">Publish Date</div>
+					</li>
+				</ul>
+				<ul class="table table_up" id="sortable">
+					
+					<li th:each="newsItemDto, it: ${NEWS_ITEM_DTO_LIST}">
+						<input type="hidden" id="ID" name="ID" th:value="${newsItemDto.id}" />
+						<input type="hidden" id="position" name="position" th:value="${newsItemDto.position}" />
+						<div class="number_news" th:text="${it.index+1}">1</div>
+						<div class="image_news"><img alt="News picture" width="50" height="50" src="" th:attr="src=@{__${filesURL +newsItemDto.imageFileName}__}" th:alt="#{news.page.newsTable.message.img.alt}"/></div>
+						<div class="body_news">
+							<span th:text="${newsItemDto.headline}">Editorial 1 Cheryl Cole gets fired from the X Factor</span><br/><br />
+							<form id="deleteNewsForm" name="deleteNewsForm" action="#" th:action="@{/news/__${urlDate}__/__${newsItemDto.id}__}" method="post">
+								<input type="hidden" id="_method" name="_method" value="DELETE" />
+								<a th:href="@{/news/__${urlDate}__/__${newsItemDto.id}__}" th:text="#{news.page.newsTable.message.edit.submit}">Edit</a> |
+								<button type="submit" class="btn btn-danger">Delete</button>
+							</form>
+						</div>
+						
+						<div class="filters_news">
+							<span th:each="filterDto: ${newsItemDto.filterDtos}">
+								<span class="label"  th:class="#{${'label label_'+filterDto.name}}" th:text="#{${'messages.pages.filter.'+filterDto.name}}">Filter list</span>
+							</span>
+						</div>
+						
+						<div class="online" th:text="${newsItemDto.activated}?#{news.page.newsTable.message.activated}:#{news.page.newsTable.message.notActivated}">No</div>
+						
+						<div class="date_news" th:text="${#dates.format(newsItemDto.publishTime, '__#{news.page.newsTable.message.publishDate.format}__')}">12/06/2012 12:00:00</div>
+						
+					</li>
+				</ul>
+			</div>
+			<div class="navButtons">
+				<div class="updateButton">
+				<form id="addNew"> 
+				<ul class="nav nav-pills table_margin">
+				  <li class="active">
+				    <a href="news/add" th:href="@{/news/__${urlDate}__/new}" th:text="#{messages.page.messagesTable.message.add.addNew}">Add New</a>
+				  </li>
+				</ul>
+				</form>
+				</div>
+				<div class="updateButton">
+			    <form id="cloneNewsForm" th:action="@{/news/__${urlDate}__/list}" method="post" th:if="${#lists.isEmpty(NEWS_ITEM_DTO_LIST)}">
+			    <ul class="nav nav-pills table_margin">
+			 		<li class="active">
+						<a href="#" onCLick="$('form#cloneNewsForm').submit();" th:text="#{news.page.cloneNewsForm.submit.text}">Clone</a>
+					</li>
+				</ul>
+				</form>
+				</div>
+				<div class="updateButton">
+				<form id="updatePositionsForm" th:action="@{/news/__${urlDate}__}" method="post">
+			    <ul class="nav nav-pills table_margin">
+			 		<li class="active">
+						<a id="updatePositionsButton" href="#" th:text="#{news.page.updateNewsPositionsForm.submit.text}">Update news positions</a>
+					</li>
+				</ul>
+				</form>
+				</div>
+			</div>
+			</div>
+		</body>
+</html>

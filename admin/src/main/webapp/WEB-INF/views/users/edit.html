@@ -1,0 +1,124 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+				<h1 class="head" th:text="#{users.management.edit.page.title}">
+					Edit User Attributes
+				</h1>
+				<form id="updateUserForm" name="updateUserForm" action="#"
+					th:action="@{/users/__${userId}__}" th:object="${USER_DTO}"
+					method="post" accept-charset="UTF-8" class="well">
+
+					<input type="hidden" id="_method" name="_method" value="PUT" />
+					<input type="hidden" th:field="*{id}" />
+
+					<div class="row">
+						<div class="span3">
+
+							<div class="controls">
+								<label class="checkbox">
+									<span
+										th:text="#{users.management.edit.page.updateUserForm.displayName.label}">
+										Display name:</span>
+									<input type="text" th:field="*{displayName}"
+										maxlength="255" />
+									&nbsp;
+									<p th:if="${#fields.hasErrors('displayName')}"
+										th:errors="*{displayName}">
+										The user display name cannot be null
+									</p>
+								</label>
+								<label class="checkbox">
+									<span
+										th:text="#{users.management.edit.page.updateUserForm.subBalance.label}">
+										SubBalance:</span>
+									<input type="number" th:field="*{subBalance}" class="quantity"
+										maxlength="3" />
+									&nbsp;
+									<span class="errmsg"></span>
+								</label>
+								<p th:if="${#fields.hasErrors('subBalance')}"
+									th:errors="*{subBalance}">
+									The user subBalance must be more than zero and less than 128.
+									But it's -666
+								</p>
+							</div>
+
+							<div class="control-group filtersSelect">
+								<label>
+									<strong
+										th:text="#{users.management.edit.page.updateUserForm.status.label}">Status:</strong>
+								</label>
+								<div class="controls">
+									<select th:field="*{userStatus}">
+										<option th:each="userStatus: ${userStatuses}"
+											th:value="${userStatus}" th:text="${userStatus}">
+											SUBSCRIBED
+										</option>
+									</select>
+									<p th:if="${#fields.hasErrors('userStatus')}" th:errors="*{userStatus}">
+										Locked user status is deprecated
+									</p>
+								</div>
+							</div>
+							
+							<div class="control-group filtersSelect">
+								<label>
+									<strong
+										th:text="#{users.management.edit.page.updateUserForm.userType.label}">User Type:</strong>
+								</label>
+								<div class="controls">
+									<select th:field="*{userType}">
+										<option th:each="userType: ${userTypes}"
+											th:value="${userType}" th:text="${userType}">
+											NORMAL
+										</option>
+									</select>
+									<p th:if="${#fields.hasErrors('userType')}" th:errors="*{userType}">
+										Invalid value
+									</p>
+								</div>
+							</div>
+							
+
+							<div class="control-group filtersSelect">
+								<label>
+									<strong
+										th:text="#{users.management.edit.page.updateUserForm.nextSubPayment.label}">Next
+										Sub Payment:</strong>
+								</label>
+								<div class="controls">
+									<!--									<input type="datetime" th:field="*{nextSubPayment}" th:text="${userDto.nextSubPayment!=null ? #dates.format(USER_DTO.nextSubPayment, '__#{users.management.page.usersTable.user.nextSubPayment.format}__') : ''}" class="quantity" />-->
+									<input type="datetime" th:field="*{nextSubPayment}"
+										class="quantity" />
+									<p th:if="${#fields.hasErrors('nextSubPayment')}"
+										th:errors="*{nextSubPayment}">
+										The user nextSubPayment cannot be null
+									</p>
+								</div>
+							</div>
+
+							<div class="form-actions">
+								<button
+									th:text="#{users.management.edit.page.updateUserForm.submit}"
+									class="btn btn-primary" type="submit">
+									Save changes
+								</button>
+								<button
+									th:text="#{users.management.edit.page.updateUserForm.cancel}"
+									class="btn btn-primary" th:title="@{/users}"
+									onClick="location.href=this.title">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</body>
+</html>

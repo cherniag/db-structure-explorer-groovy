@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init" 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd 
+http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- Application properties     -->
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+	
+	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
+		<property name="manifest" value="/META-INF/MANIFEST.MF" />
+	</bean>
+	
+	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
+		<property name="entityDao" ref="persistence.EntityDao" />
+	</bean>
+
+	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
+		<property name="entityService" ref="service.EntityService" />
+		<property name="deviceTypeService" ref="service.DeviceTypeService" />
+		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
+		<property name="userDao" ref="persistence.UserDao" />
+		<property name="countryService" ref="service.CountryService" />
+		<property name="sagePayService" ref="service.SagePayService" />
+		<property name="paymentService" ref="service.PaymentService" />
+		<property name="promotionService" ref="service.PromotionService" />
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+		<property name="migPaymentService" ref="service.migPaymentService" />
+		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="countryByIpService" ref="service.CountryByIpService" />
+		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />
+		<property name="communityService" ref="service.communityService" />
+		<property name="mailService" ref="service.MailService" />
+		<property name="facebookService" ref = "service.FacebookService" />
+		<property name="deviceService" ref="service.DeviceService" />
+		<property name="offerService" ref="service.OfferService" />
+		<property name="drmService" ref="service.DrmService" />
+		<property name="accountLogService" ref="service.AccountLogService" />
+		<property name="userRepository" ref="userRepository" />
+	</bean>
+	
+	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
+		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
+		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
+		<property name="migPaymentService" ref="service.migPaymentService" />
+		<property name="promotionService" ref="service.PromotionService" />
+		
+		<property name="messageSource" ref="serviceMessageSource" />
+		
+		<property name="communityService" ref="service.communityService" />
+		<property name="offerService" ref="service.OfferService" />
+		<property name="userService" ref="service.UserService" />
+	</bean>
+
+	<bean id="service.DeviceService" class="mobi.nowtechnologies.server.service.DeviceService">
+		<property name="notPromotedDeviceRepository" ref="notPromotedDeviceRepository" />
+		<property name="promotedDeviceRepository" ref="promotedDeviceRepository" />
+		<property name="messageSource" ref="serviceMessageSource" />
+	</bean>
+
+	<bean id="service.DeviceTypeService" class="mobi.nowtechnologies.server.service.DeviceTypeService">
+	</bean>
+
+	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
+		<property name="drmDao" ref="persistence.DrmDao" />
+		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
+		<property name="entityService" ref="service.EntityService" />
+		<property name="mediaService" ref="service.MediaService" />
+		<property name="accountLogService" ref="service.AccountLogService" />
+		<property name="userService" ref="service.UserService" />
+		<property name="chartDetailService" ref="service.ChartDetailService" />
+	</bean>
+	
+	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService">
+		<property name="accountLogDao" ref="persistence.AccountLogDao" />
+		<property name="accountLogRepository" ref="accountLogRepository" />
+	</bean>
+	
+	<bean id="service.NewsDetailService" class="mobi.nowtechnologies.server.service.NewsDetailService">
+		<property name="userService" ref="service.UserService" />
+		<property name="newsDetailDao" ref="persistence.NewsDetailDao" />
+	</bean>
+	
+	<bean id="service.MediaLogService" class="mobi.nowtechnologies.server.service.MediaLogService">
+		<property name="mediaLogDao" ref="persistence.MediaLogDao" />
+	</bean>
+
+	<bean id="service.MediaLogTypeService" class="mobi.nowtechnologies.server.service.MediaLogTypeService">
+		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
+	</bean>
+	
+	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService">
+		<property name="entityService" ref="service.EntityService" />
+		<property name="promotionDao" ref="persistence.PromotionDao" />
+	</bean>
+	
+	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
+		<property name="mailSender" ref="service.MailSender"/>
+	</bean>
+	
+	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
+		<property name="chartDetailService" ref="service.ChartDetailService" />
+		<property name="userService" ref="service.UserService" />
+		<property name="mediaService" ref="service.MediaService" />
+		<property name="chartRepository" ref="chartRepository" />
+	</bean>
+	
+	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
+		<property name="entityService" ref="service.EntityService" />
+		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
+		<property name="drmService" ref="service.DrmService" />
+		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
+		<property name="chartDetailRepository" ref="chartDetailRepository" />
+		<property name="mediaService" ref="service.MediaService" />
+	</bean>
+	
+	<bean id="service.MailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth" >${mail.auth}</prop>
+				<prop key="mail.debug">${mail.debug}</prop>
+				<prop key="mail.transport.protocol">${mail.protocol}</prop>
+				<prop key="mail.smtp.from">${mail.from}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="service.MediaService" class="mobi.nowtechnologies.server.service.MediaService">
+		<property name="entityService" ref="service.EntityService" />
+		<property name="mediaDao" ref="persistence.MediaDao" />
+		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
+		<property name="mediaLogService" ref="service.MediaLogService" />
+		<property name="mediaRepository" ref="mediaRepository" />
+	</bean>
+
+	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
+		<property name="userService" ref="service.UserService" />
+		<property name="mediaService" ref="service.MediaService" />
+		<property name="storePath" value="${store.path}"/>
+	</bean>
+
+	<bean id="service.CountryAppVersionService"
+		class="mobi.nowtechnologies.server.service.CountryAppVersionService">
+		<property name="countryAppVersionDao" ref="persistence.CountryAppVersionDao" />
+	</bean>
+
+	<bean id="service.CountryService" class="mobi.nowtechnologies.server.service.CountryService">
+		<property name="entityDao" ref="persistence.EntityDao" />
+	</bean>
+	
+	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
+		<property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao" />
+	</bean>
+
+	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
+		<property name="paymentDao" ref="persistence.PaymentDao" />
+		<property name="entityService" ref="service.EntityService" />
+	</bean>
+
+	<bean id="service.SagePayService" class="mobi.nowtechnologies.server.service.SagePayService">
+		<property name="userService" ref="service.UserService" />
+		<property name="urlDeferred" value="${sagepay.deferUrl}" />
+		<property name="urlRelease" value="${sagepay.releaseUrl}" />
+		<property name="urlRepeat" value="${sagepay.repeatUrl}" />
+	</bean>
+	
+	<bean id="service.MigService" class="mobi.nowtechnologies.server.service.MigService">
+		<property name="postService" ref="shared.PostService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="migOtaUrl" value="${mig.otaUrl}" />
+		<property name="urlFreeSms" value="${mig.freeSMSURL}" />
+		<property name="urlPremiumSms" value="${mig.premiumSMSURL}" />
+		<property name="timeToLive" value="${mig.timeToLiveMin}" />
+	</bean>
+	
+	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.FacebookService">
+		<property name="postService" ref="shared.PostService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		
+		<property name="fbAppId" value="${facebook.connect.fbAppId}" />
+		<property name="fbAppSecret" value="${facebook.connect.fbAppSecret}" />		
+	</bean>
+	
+	<bean id="service.WeeklyUpdateService"
+		class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
+		<property name="userDao" ref="persistence.UserDao" />
+		<property name="entityDao" ref="persistence.EntityDao" />
+		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="stopped" value="${jobs.stopWeeklyUpdate}" />
+	</bean>
+	
+	<bean id="service.UserDeviceDetailsService"
+		class="mobi.nowtechnologies.server.service.UserDeviceDetailsService">
+		<property name="entityService" ref="service.EntityService" />
+		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />		
+		<property name="userAndroidDetailsService" ref="service.UserAndroidDetailsService" />
+	</bean>
+	
+	<bean id="service.UserIPhoneDetailsService"
+		class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService">
+		<property name="userIPhoneDetailsDao" ref="persistence.UserIPhoneDetailsDao" />		
+	</bean>
+	
+	
+	<bean id="service.UserAndroidDetailsService"
+		class="mobi.nowtechnologies.server.service.UserAndroidDetailsService">
+		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />		
+	</bean>
+	
+	<bean id="service.CountryByIpService" class="mobi.nowtechnologies.server.service.CountryByIpService">
+		<property name="storePath" value="${store.path}"/>
+	</bean>
+	
+	<!-- Application properties     -->
+	<bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+		<property name="basenames">
+			<list>
+				<value>file:#{systemProperties['catalina.base']}/conf/services</value>
+				<value>classpath:services</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="fileEncodings" value="utf-8" />
+		<property name="cacheSeconds" value="180" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+	
+	<!-- AOP Services -->
+	<aop:aspectj-autoproxy />
+	
+	<bean id="mailNotificationAspect" class="mobi.nowtechnologies.server.service.aop.MailNotification">
+		<property name="mailService" ref="service.MailService" />
+		<property name="userService" ref="service.UserService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+	</bean>
+	
+	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
+		<property name="communityRepository" ref="communityRepository" />
+	</bean>
+	
+	<bean id="service.operatorService" class="mobi.nowtechnologies.server.service.impl.OperatorServiceImpl" />
+	
+	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
+	
+	<bean id="service.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
+		<property name="userName" value="${cloudFile.userName}" />
+		<property name="password" value="${cloudFile.password}" />
+		<property name="account" value="${cloudFile.account}" />
+		<property name="connectionTimeOutMilliseconds" value="${cloudFile.connectionTimeOutMilliseconds}" />
+		<property name="authenticationURL" value="${cloudFile.authenticationURL}" />
+		<property name="useETag" value="${cloudFile.useETag}" />
+		<property name="userAgent" value="${cloudFile.userAgent}" />
+		<property name="containerName" value="${cloudFile.containerName}" />
+		<property name="filesURL" value="${cloudFile.filesURL}" />
+	</bean>
+	
+	<bean id="service.MessageService" class="mobi.nowtechnologies.server.service.MessageService">
+		<property name="userService" ref="service.UserService" />
+		<property name="filterService" ref="service.FilterService" />
+		<property name="communityService" ref="service.communityService" />
+		<property name="messageRepository" ref="messageRepository" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
+	</bean>
+	
+	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
+		<property name="filterService" ref="service.FilterService" />
+		<property name="offerRepository" ref="offerRepository" />
+		<property name="itemRepository" ref="itemRepository" />
+		<property name="userService" ref="service.UserService" />
+		<property name="accountLogService" ref="service.AccountLogService" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
+	</bean>
+	
+	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryHttpClientImpl">
+		<property name="trackRepoUrl"  value="${trackRepo.baseURL}" />
+	</bean>
+	
+	<bean id="service.TrackRepoService" class="mobi.nowtechnologies.server.service.impl.TrackRepoServiceImpl">
+		<property name="mediaRepository" ref="mediaRepository" />
+		<property name="mediaFileRepository" ref="mediaFileRepository" />
+		<property name="genreRepository" ref="genreRepository" />
+		<property name="artistRepository" ref="artistRepository" />
+		<property name="client" ref="trackRepoClient" />
+	</bean>
+	
+	<bean id="service.FilterService" class="mobi.nowtechnologies.server.service.FilterService">
+		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
+	</bean>
+	
+	<bean id="service.IPaymentService" class="mobi.nowtechnologies.server.service.impl.PaymentServiceImpl">
+		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
+	</bean>
+	
+	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
+		<property name="userService" ref="service.UserService" />
+	</bean>
+	
+	<task:annotation-driven/>
+	
+	<import resource="payment.xml" />
+
+</beans>

@@ -1,0 +1,51 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap-responsive.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/styles.css}" />
+<style type="text/css">
+section {
+	padding-top: 60px;
+}
+</style>
+</head>
+<body>
+	<div th:fragment="navbar" class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<div class="nav-collapse collapse">
+					<a class="brand" href="#"> Chartsnow Admin Console </a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<section>
+			<div class="row show-grid">
+				<div align="center">
+					<h2>Such page not found</h2>
+				</div>
+			</div>
+		</section>
+	</div>
+	<footer th:fragment="footer">
+		<div class="container">
+			<div class="row-fluid show-grid">
+				<div align="left">
+					<div class="span12">
+						Copyright &copy; 2012 <a href="https://chartsnow.mobi">www.chartsnow.mobi</a>
+						ltd. all rights reserved
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>

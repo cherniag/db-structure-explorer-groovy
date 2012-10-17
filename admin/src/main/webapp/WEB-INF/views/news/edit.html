@@ -1,0 +1,102 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+	
+	<body>
+		<script type="text/javascript">
+			tinyMCE.init({
+				mode : "textareas",
+				theme : "advanced",
+				plugins :"lists, searchreplace, wordcount",
+				// Theme options
+				theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect",
+				theme_advanced_buttons2 : "cut,copy,paste,pastetext,|,search,replace,|,bullist,numlist,|,blockquote,|,undo,redo,|,image,cleanup,help,code,|,forecolor,backcolor"
+			});
+		</script>
+		
+		<div th:substituteby="tpl::navbar"></div>
+		<div class="container">
+		<h1 class="head" th:text="#{news.edit.page.title}">Edit News</h1>
+		<form id="saveOrUpdateMessageForm" name="saveOrUpdateMessageForm"
+			action="#" th:action="@{/news/__${#dates.format(NEWS_ITEM_DTO.publishTime, 'yyyy-MM-dd')+'/'+NEWS_ITEM_DTO.id}__}"
+			th:object="${NEWS_ITEM_DTO}" method="post"
+			enctype="multipart/form-data" accept-charset="UTF-8" class="well">
+
+			
+				<input type="hidden" th:field="*{messageType}" value="NEWS" />
+				<input type="hidden" th:field="*{publishTime}" />
+				<input type="hidden" th:field="*{id}" />
+				<input type="hidden" th:field="*{position}" />
+				
+				<div class="row">
+					<div class="span3">
+						<div class="filtersSelect">
+							<label><strong>Select Image:</strong></label>
+							<img class="addedImage" th:src="@{__${filesURL}__/__*{imageFileName}__}" width="270" height="180"/>
+							<br/><br/>
+							<input id="file" name="file" type="file" accept="image"
+								th:field="*{file}"
+								th:title="#{message.add.page.addMessageForm.file.chooser}" />
+							<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
+								No file has been selected or file has no content
+							</p>
+						</div>
+						
+						<div class="controls">
+							<label class="checkbox">
+								<input type="checkbox" th:field="*{activated}" />
+								<span th:text="#{message.add.page.addMessageForm.activated}">Online</span>
+							</label>
+						</div>
+						
+						<div class="control-group filtersSelect">
+				            <label><strong>Filters:</strong></label>
+				            <div class="controls">
+				              <label class="checkbox" th:class="#{${'checkbox textColor_'+filterDto.name}}" th:each="filterDto:${allMessageFilterDtos}">
+				                <input type="checkbox" th:value="${filterDto.name}" name="filterDtos" th:text="#{${'messages.pages.filter.'+filterDto.name}}" th:checked="${#sets.contains(NEWS_ITEM_DTO.filterDtos,filterDto)}" />
+				              </label>
+				            </div>
+				        </div>
+				        <div class="form-actions">
+							<button th:text="#{message.add.page.addMessageForm.submit}"	class="btn btn-primary" type="submit">Save changes</button>
+							<a th:text="#{message.add.page.addMessageForm.cancel}" class="btn btn-primary" th:href="@{/news/__${#dates.format(NEWS_ITEM_DTO.publishTime, 'yyyy-MM-dd')}__/}">Cancel</a>
+						</div>  
+					</div>
+					<div class="span8">
+		
+						<div class="filtersSelect">
+							<label><strong>News Headline:</strong></label>
+							<div class="control-group">
+								<input th:field="*{headline}"
+									th:class="${#fields.hasErrors('headline')}? 'fieldError'"
+									type="text" 
+									th:attr="placeholder=#{message.add.page.addMessageForm.headline.placeholder}"
+									placeholder="Headline is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('headline')}" th:errors="*{headline}">
+									Wrong text format
+								</p>
+							</div>
+							<div class="controls">
+								<label><strong>News Body:</strong></label>
+								<textarea th:field="*{body}"
+									th:class="${#fields.hasErrors('headline')}? 'fieldError'"
+									rows="30" id="editableTextArea"
+									th:attr="placeholder=#{message.add.page.addMessageForm.body.placeholder}"
+									placeholder="Full new is here" class="input-xlarge"
+									style="width: 785px; height: 400px; font-size: 11px;"></textarea>
+								<p th:if="${#fields.hasErrors('body')}" th:errors="*{body}">
+									Wrong text format
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</form>
+		</div>
+		
+		<script type="text/javascript">
+		</script>
+	</body>
+</html>

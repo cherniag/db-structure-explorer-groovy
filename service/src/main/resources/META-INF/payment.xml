@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="service.PendingPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PendingPaymentServiceImpl">
+		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
+		<property name="paymentDao" ref="persistence.PaymentDao" />
+		<property name="userService" ref="service.UserService" />
+		<property name="paymentSystems" ref="service.map.paymentSystems" />
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+	</bean>
+	
+	<bean id="service.SubmitedPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SubmitedPaymentServiceImpl">
+		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
+	</bean>
+	
+	<!-- SagePay Service -->
+	<bean id="service.sagePayPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl">
+		<property name="httpService">
+			<bean class="mobi.nowtechnologies.server.service.payment.http.SagePayHttpService">
+				<property name="deferUrl" value="${sagepay.deferUrl}" />
+				<property name="releaseUrl" value="${sagepay.releaseUrl}" />
+				<property name="repeatUrl" value="${sagepay.repeatUrl}" />
+				<property name="postService" ref="shared.PostService" />
+				<property name="request">
+					<bean class="mobi.nowtechnologies.server.service.payment.request.SagePayRequest" />
+				</property>
+			</bean>
+		</property>
+		<property name="entityService" ref="service.EntityService" />
+		<property name="retriesOnError" value="${sagepay.retriesOnError}" />
+		<property name="expireMillis" value="${sagepay.pendingExpireMillis}" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+	</bean>
+	
+	<!-- PayPal Service -->
+	<bean id="request.payPalRequest" class="mobi.nowtechnologies.server.service.payment.request.PayPalRequest">
+		<property name="user" value="${paypal.user}" />
+		<property name="password" value="${paypal.password}" />
+		<property name="signature" value="${paypal.signature}" />
+		<property name="apiVersion" value="${paypal.apiVersion}" />
+		<property name="amountFormat" value="${paypal.amountFormat}" />
+		<property name="btnSource" value="${paypal.btnSource}" />
+		<property name="returnURL" value="${paypal.returnURL}" />
+		<property name="cancelURL" value="${paypal.cancelURL}" />
+	</bean>
+	
+	<bean id="service.payPalPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl">
+		<property name="redirectURL" value="${paypal.redirectURL}" />
+		<property name="retriesOnError" value="${paypal.retriesOnError}" />
+		<property name="expireMillis" value="${paypal.pendingExpireMillis}" />
+		<property name="entityService"  ref="service.EntityService" />
+		<property name="httpService">
+			<bean class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
+				<property name="apiUrl" value="${paypal.apiUrl}" />
+				<property name="postService" ref="shared.PostService" />
+				<property name="request" ref="request.payPalRequest" />
+			</bean>
+		</property>
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+	</bean>
+	
+	<!-- Mig Service -->
+	<bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
+		<property name="freeSMSURL" value="${mig.freeSMSURL}" />
+		<property name="premiumSMSURL" value="${mig.premiumSMSURL}" />
+		<property name="otaUrl" value="${mig.otaUrl}" />
+		<property name="postService" ref="shared.PostService" />
+		<property name="request">
+			<bean class="mobi.nowtechnologies.server.service.payment.request.MigRequest" />
+		</property>
+		<property name="timeToLiveMin" value="${mig.timeToLiveMin}" />
+	</bean>
+	<bean id="service.migPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl">
+		<property name="retriesOnError" value="${mig.retriesOnError}" />
+		<property name="expireMillis" value="${mig.pendingExpireMillis}" />
+		<property name="entityService" ref="service.EntityService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="httpService" ref="service.migHttpService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+	</bean>
+	
+	
+	<util:map id="service.map.paymentSystems" key-type="java.lang.String" value-type="mobi.nowtechnologies.server.service.payment.PaymentSystemService">
+		<entry key="sagePayCreditCard" value-ref="service.sagePayPaymentService" />
+		<entry key="payPal" value-ref="service.payPalPaymentService" />
+		<entry key="migSms" value-ref="service.migPaymentService" />	
+	</util:map>
+	
+	<!-- Listeners -->
+	
+	<bean id="subBalancePaymentListener" class="mobi.nowtechnologies.server.service.listener.SubBalancePaymentListener">
+		<property name="userService" ref="service.UserService" />
+		<property name="promotionService" ref="service.PromotionService" />
+		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="userNotificationService" ref="service.UserNotificationService" />
+	</bean>
+	
+	<bean id="offerPaymentListener" class="mobi.nowtechnologies.server.service.listener.OfferPaymentListener">
+		<property name="offerService" ref="service.OfferService" />
+		<property name="drmService" ref="service.DrmService" />
+		<property name="accountLogService" ref="service.AccountLogService" />
+	</bean>
+</beans>

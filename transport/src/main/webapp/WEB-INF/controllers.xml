@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="transport.CommonController" abstract="true">
+		<property name="view" ref="transport.JaxbMarshallingView" />
+		<property name="userService" ref="service.UserService" />
+		<property name="jaxb2Marshaller" ref="transport.JaxbMarshaller" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="communityService" ref="service.communityService" />
+		<property name="nowTechTokenBasedRememberMeServices" ref="nowTechBasedRememberMeServices" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.FileController" parent="transport.CommonController">
+		<property name="fileService" ref="service.FileService" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController" init-method="init">
+		<property name="deviceService" ref="service.DeviceService" />
+		<property name="drmService" ref="service.DrmService" />
+		<property name="mediaService" ref="service.MediaService" />
+		<property name="weeklyUpdateService" ref="service.WeeklyUpdateService" />
+		<property name="promoService" ref="service.PromotionService" />
+		<property name="facebookService" ref="service.FacebookService" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" />
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" parent="transport.CommonController">
+		<property name="communityService" ref="service.communityService" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" parent="transport.CommonController">
+		<property name="chartService" ref="service.ChartService" />
+	</bean>
+	
+	<bean class="mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController" parent="transport.CommonController">
+		<property name="drmService" ref="service.DrmService" />
+	</bean>
+	
+	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" parent="transport.CommonController">
+		<property name="userService" ref="service.UserService" />
+		<property name="messageService" ref="service.MessageService" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.transport.controller.MigController">
+		<property name="userService" ref="service.UserService" />
+		<property name="migPaymentService" ref="service.migPaymentService" />
+	</bean>
+
+	<bean class="mobi.nowtechnologies.server.controller.VersionController">
+		<property name="versionService" ref="service.VersionService" />
+	</bean>
+
+</beans>

@@ -1,0 +1,146 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
+				
+				<div class="newsList">
+					<ul  class="table">
+						<li class="title">
+								<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
+								<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
+								<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
+								<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
+								<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
+								<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
+								<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+								<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
+						</li>
+					</ul>
+					<ul class="table table_up" id="sortable">
+						
+						<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
+							<div class="position_chartItem" th:text="${it.index+1}">1</div>
+							<div class="prev_position_chartItem" th:text="${chartItemDto.prevPosition}">1</div>
+							<div class="change_position_chartItem" th:text="${chartItemDto.chgPosition}">UP</div>
+							<div class="image_chartItem">
+								<img alt="Chart item media picture" src=""
+									th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}"
+									th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}"
+									width="50" height="50" />
+							</div>
+							<div class="channel_chartItem" th:text="${chartItemDto.channel}">HEATSEEKER</div>
+							<div class="ArtistTitle_chartItem">
+								<span th:text="${chartItemDto.mediaDto.artistDto.name} + ' - ' + ${chartItemDto.mediaDto.title}">Led Zeppelin - Kashmir</span><br/><br />
+							</div>
+
+							<div class="info_chartItem" th:text="${chartItemDto.info}">
+								"Kashmir" is a song by the English rock band Led Zeppelin from
+								their sixth album Physical Graffiti, released in 1975. It was
+								written by Jimmy Page and Robert Plant (with contributions from
+								John Bonham) over a period of three years, with the lyrics
+								dating back to 1973.
+							</div>
+
+							<div class="publishDate_chartItem" th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</div>
+							
+						</li>
+					</ul>
+				</div>
+				
+				<div class="newsCalendar">
+					<h2 th:text="#{chartItems.page.chartItemsTable.calendar.headline}">Select Date1</h2>
+					<div id="datepicker" class="datepicker"></div><br/><br/>
+				</div><br/><br/>
+				
+				<div class="newsCalendar">
+					<h2 th:text="#{chartItems.page.chartItemsTable.existingCharts.headline}">Updates list</h2>
+					<div th:each="updateTime : ${allPublishTimeMillis}" th:if="${#dates.format(new java.util.Date(updateTime), 'dd/MMM/yyyy').startsWith(#dates.format(selectedDateTime,'dd/MMM/yyyy'))}" class="updateButton">
+						<form class="edit_btn" th:action="@{/chartsNEW/__${chartId}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__/}" method="get">
+							<button class="btn btn-primary updatesList" type="submit" th:text="${#dates.format(new java.util.Date(updateTime), 'HH:mm')}">Edit for this time</button>
+						</form>
+						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chartId}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+							<input type="hidden" id="_method" name="_method" value="DELETE" />
+								<a href="#" onCLick="$('form#deleteChartItemsSetForm').submit();"><img th:src="@{/assets/img/icon_delete.png}"
+									th:alt="#{chartItems.page.deleteChartItemsSetForm.submit.text}"
+									width="32" height="32" /></a>
+						</form>
+					</div>
+				</div><br/><br/>
+				
+				<form class="newsCalendar paddingTop" id="createChartUpdateForm" method="get">
+					<h2 th:text="#{chartItems.page.chartItemsTable.timepicker.headline}">Add Update</h2>
+				    <p>Set a new update for: </p>
+					<input type="checkbox" name="changePosition" checked="checked"/>
+					<span th:text="#{chartItems.page.addUpdateChart.changePosition}">Change Positions</span>
+					<br/>
+				    <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
+					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
+				</form>
+								
+			</div>
+			<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+			$(function() {
+				var url = /*[[@{'/charts/'+${chartId}+'.json'}]]*/ '';
+				$.ajax({
+					url:url,
+					contentType:'application/json',
+					success: function(data) {
+						var dates = [];
+						for (d in data.allPublishTimeMillis) {
+							dates.push(new Date(data.allPublishTimeMillis[d]));
+		            	}
+						
+						$( "#datepicker" ).datepicker({
+							dateFormat : 'yy-mm-dd',
+							beforeShowDay: function (date) {
+								for (var i = 0; i < dates.length; i++) {
+								    if (
+								    (dates[i].getDate() == date.getDate()) &&
+								    (dates[i].getMonth() == date.getMonth()) &&
+								    (dates[i].getFullYear() == date.getFullYear())
+								    ) {
+								        return [true,'highlight', ''];
+								    }
+								}
+								return [true, '',''];
+							},
+	    
+							onSelect: function(dateText) {
+								if ((new Date()).setHours(0,0,0,0) == (new Date(dateText)).setHours(0,0,0,0)) {
+									location.href = /*[[@{'/charts/'+${chartId}}]]*/ '';
+								} else {
+								  	var href= /*[[@{'/charts/'+${chartId}(selectedPublishDateTime=${dateText})}]]*/ '';
+								    location.href = href+dateText+"_00:00:00";
+								}
+							}
+						});
+						
+						var selectedDate=jAdmin.getURLParameter("selectedPublishDateTime").substring(0, 10);
+						if (null!=selectedDate)
+							$('.datepicker').datepicker("setDate" , selectedDate);
+					}
+				});
+				
+				
+				$('#timepicker_customrange').timepicker({
+				    minutes: { interval: 15 },
+				    showCloseButton: true,
+				    rows: 3,
+				    showPeriodLabels: true,
+				    minuteText: 'Min',
+				    onSelect: function(newTime, inst) {
+				    	var href= /*[[@{'/chartsNEW/'+${chartId} + '/' + ${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
+				    	$('#createChartUpdateForm').attr('action', href+newTime+':00');
+				    }
+				});
+				
+				
+			  });
+			/*]]>*/</script>
+		</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+				<h1 class="head" th:text="#{users.management.page.title}">
+					User Management
+				</h1>
+				<form id="searchUsersForm" name="searchUsersForm" action="#"
+					th:action="@{/users}" method="get" accept-charset="UTF-8"
+					class="well">
+
+					<input type="text" id="q" name="q" class="q"
+						style="margin-bottom: 0 !important;" />
+					<button th:text="#{users.management.page.users.search}"
+						class="btn btn-primary s_btn" type="submit">
+						Search
+					</button>
+
+					<a th:text="#{users.management.page.cancel}" th:href="@{/users}"
+						class="btn btn-primary">Cancel</a>
+				</form>
+				<div th:if="${#lists.isEmpty(USER_DTO_LIST)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">
+							No Search Results
+						
+				</div>
+				<div class="chartListWide">
+					<ul class="table" th:if="${!#lists.isEmpty(USER_DTO_LIST)}">
+						<li class="title">
+							<div class="id_user"
+								th:text="#{users.management.page.usersTable.head.id}">
+								id
+							</div>
+							<div class="dname_user"
+								th:text="#{users.management.page.usersTable.head.displayName}">
+								Display Name
+							</div>
+							
+							<div class="utype_user"
+								th:text="#{users.management.page.usersTable.head.useType}">
+								User Type
+							</div>
+							<div class="subbalance_user"
+								th:text="#{users.management.page.usersTable.head.subBalance}">
+								SubBalance
+							</div>
+							<div class="ustatus_user"
+								th:text="#{users.management.page.usersTable.head.userStatus}">
+								User Status
+							</div>
+							
+							<div class="subpayment_user"
+								th:text="#{users.management.page.usersTable.head.nextSubPayment}">
+								Next SubPayment
+							</div>
+							
+							<div class="payment_enabled"
+								th:text="#{users.management.page.usersTable.head.paymentEnabled}">
+								Payment Enabled
+							</div>
+						</li>
+					</ul>
+					<ul class="table">
+						<li th:each="userDto, it: ${USER_DTO_LIST}">
+							<form action="#" th:action="@{/users/__${userDto.id}__}" method="POST" accept-charset="UTF-8">
+							<input type="hidden" id="_method" name="_method" value="PUT" />
+							<input type="hidden" id="id" name="id" th:value="${userDto.id}" />
+							
+								<div class="id_user" th:text="${userDto.id}">
+									9
+								</div>
+								<div class="dname_user">
+									<input th:placeholder="${userDto.displayName}" th:value="${userDto.displayName}" name="displayName" type="text"/>
+								</div>
+								
+								<div class="utype_user">
+									<select name="userType">
+										<option th:each="userType: ${userTypes}"
+											th:selected="${userDto.userType==userType}" th:value="${userType}" th:text="${userType}">
+											NORMAL
+										</option>
+									</select>
+								</div> 
+								
+								<div class="subbalance_user">
+									<input class="quantity" th:placeholder="${userDto.subBalance}" th:value="${userDto.subBalance}" name="subBalance" type="text" style="width: 80px;" />
+								</div>
+								
+								<div class="ustatus_user">
+									<select name="userStatus">
+										<option th:each="userStatus: ${userStatuses}"
+											th:selected="${userDto.userStatus==userStatus}" th:value="${userStatus}" th:text="${userStatus}">
+											SUBSCRIBED
+										</option>
+									</select>
+<!-- 									<p th:if="${#fields.hasErrors('userStatus')}" th:errors="*{userStatus}"> -->
+<!-- 										Locked user status is deprecated -->
+<!-- 									</p> -->
+								</div>	
+								
+								<div class="subpayment_user">
+									<input id="datepicker" th:value="${userDto.nextSubPayment!=null ? #dates.format(userDto.nextSubPayment, '__#{users.management.page.usersTable.user.nextSubPayment.format}__') : ''}" name="nextSubPayment" th:placeholder="${userDto.nextSubPayment!=null ? #dates.format(userDto.nextSubPayment, '__#{users.management.page.usersTable.user.nextSubPayment.format}__') : ''}" type="text"/>
+								</div>
+								
+								<div class="payment_enabled">
+									<span class="true"><input th:if="${userDto.paymentEnabled==true}" type="radio" name="paymentEnabled" th:checked="${userDto.paymentEnabled==true}" value="true" th:text="#{users.management.edit.page.updateUserForm.paymentEnabled.true.label}"/></span>
+									<input type="radio"  name="paymentEnabled" th:checked="${userDto.paymentEnabled==false}" value="false" th:text="#{users.management.edit.page.updateUserForm.paymentEnabled.false.label}"/>
+								</div>
+								
+								<div class="column1">
+									<span class="uname_user"
+										th:text="#{users.management.page.usersTable.head.userName}">
+										User Name
+									</span>
+									<b><span class="uname_user" th:text="${userDto.userName}">
+										john@doe.com
+									</span></b><br/>
+									<span class="dtype_user"
+										th:text="#{users.management.page.usersTable.head.deviceType}">
+										Device Type
+									</span>
+									<b><span class="dtype_user" th:text="${userDto.deviceType}">
+									ANDROID
+									</span></b><br/>
+									<span class="ugroup_user"
+										th:text="#{users.management.page.usersTable.head.userGroup}">
+										User Group
+									</span>
+									<b><span class="ugroup_user" th:text="${userDto.userGroup}">
+										1
+									</span></b><br/>
+									<span class="dlogin_user"
+										th:text="#{users.management.page.usersTable.head.lastDeviceLogin}">
+										Last Device Login
+									</span>
+									
+									<b><span class="dlogin_user"
+										th:text="${userDto.lastDeviceLogin!=null ? #dates.format(userDto.lastDeviceLogin, '__#{users.management.page.usersTable.user.lastDeviceLogin.format}__'): ''}">
+										12/06/2012 12:00:00
+									</span></b><br/>
+									<span class="wlogin_user"
+										th:text="#{users.management.page.usersTable.head.lastWebLogin}">
+										Last Web Login
+									</span>
+									<b><span class="wlogin_user"
+										th:text="${userDto.lastWebLogin!=null ? #dates.format(userDto.lastWebLogin, '__#{users.management.page.usersTable.user.lastWebLogin.format}__') : ''}">
+										12/06/2012 12:00:00
+									</span></b><br/>
+									<span>
+									<a href="accountLogs/#" th:href="@{/accountLogs/__${userDto.id}__}" th:text="#{users.management.page.usersTable.user.showHistory}">Show History</a>
+									</span>
+								</div>
+								<div class="column2">
+									<span class="ip_user"
+										th:text="#{users.management.page.usersTable.head.ipAddress}">
+										IP
+									</span>
+									<b><span class="ip_user"
+									th:text="${userDto.ipAddress}">
+									10.15.195.501
+									</span></b><br/>
+									<span class="contact_user"
+										th:text="#{users.management.page.usersTable.head.canContact}">
+										Can Contact
+									</span>
+									<b><span class="contact_user"
+										th:text="${userDto.canContact}">
+										true
+									</span></b><br/>
+									<span class="publish_date_addnew_chart"
+										th:text="#{users.management.page.usersTable.head.pin}">
+										Pin
+									</span>
+									<b><span class="publish_date_addnew_chart" th:text="${userDto.pin}">
+										1245
+									</span></b><br/>
+									<span class="fbid_user"
+										th:text="#{users.management.page.usersTable.head.facebookId}">
+										Facebook Id
+									</span>
+									<b><span class="fbid_user"
+										th:text="${userDto.facebookId}">
+										1245
+									</span></b><br/>
+								
+									<span class="spaymenttime_user"
+										th:text="#{users.management.page.usersTable.head.lastSuccessfulPaymentTime}">
+										Last Successful Payment Time
+									</span>
+									<b><span class="spaymenttime_user"
+										th:text="${userDto.lastSuccessfulPaymentTime!=null ? #dates.format(userDto.lastSuccessfulPaymentTime, '__#{users.management.page.usersTable.user.lastSuccessfulPaymentTime.format}__') : ''}">
+										12/06/2012 12:00:00
+									</span></b><br/>
+								</div>
+								<div class="column3">
+									<span class="dmodel_user"
+										th:text="#{users.management.page.usersTable.head.deviceUID}">
+										Device UID
+									</span>
+									<b><span class="dmodel_user"
+										th:text="${userDto.deviceUID}">
+										imei_358150042807520
+									</span></b><br/>
+									<span class="dmodel_user"
+										th:text="#{users.management.page.usersTable.head.deviceModel}">
+										Device Model
+									</span>
+									<b><span class="dmodel_user"
+										th:text="${userDto.deviceModel}">
+										134
+									</span></b><br/>
+									<span class="fdevice_user"
+										th:text="#{users.management.page.usersTable.head.firstDeviceLogin}">
+										First Device Login
+									</span>
+									<b><span class="fuser_user"
+										th:text="${userDto.firstDeviceLogin!=null ? #dates.format(userDto.firstDeviceLogin, '__#{users.management.page.usersTable.user.firstDeviceLogin.format}__') : ''}">
+										12/06/2012 12:00:00
+									</span></b><br/>
+									<span class="fuser_user"
+										th:text="#{users.management.page.usersTable.head.firstUserLogin}">
+										First User Login
+									</span>
+									<b><span class="fuser_user"
+										th:text="${userDto.firstUserLogin!=null ? #dates.format(userDto.firstUserLogin, '__#{users.management.page.usersTable.user.firstUserLogin.format}__') : ''}">
+										12/06/2012 12:00:00
+									</span></b><br/>
+									<span class="free_trial_user"
+										th:text="#{users.management.page.usersTable.head.isFreeTrial}">
+										Is Free Trial
+									</span>
+									<b><span class="free_trial_user"
+										th:text="${userDto.isFreeTrial}">
+										true
+									</span></b>
+								</div>
+								<div>
+									<button
+										th:text="#{users.management.page.usersTable.user.changePassword}"
+										class="btn btn-primary button-change-password" type="button">
+										Change Password
+									</button>
+									<br/><br/>
+									<button
+										th:text="#{users.management.page.usersTable.user.save}"
+										class="btn btn-primary button-user-submit" type="button">
+										Save
+									</button>
+								</div>
+							</form>
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+			<div id="change-password-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="myModalLabel">Change Password</h3>
+				</div>
+				<div class="modal-body" style="width:530px">
+					<form id="change-password-form">
+						<p style="color:red;">
+						</p>
+						<div class="control-group">
+							<input type="hidden" name="_method" value="PUT" />
+							<input type="hidden" name="id"/>
+							<label><strong th:text="#{users.management.page.changePassword.dialog.password}">Password:</strong></label> 
+							<input type="password" name="password" maxlength="255" style="width:98%;"/>
+							<label><strong th:text="#{users.management.page.changePassword.dialog.confirmPassword}">Confirm Password:</strong></label> 
+							<input type="password" name="confirmPassword" maxlength="255" style="width:98%;"/>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="onChangePassword();">Save</button>
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+				</div>
+			</div>
+			
+<script th:inline="javascript">/*<![CDATA[*/
+	var userDetailsSuccessfullyUpdated = /*[[#{users.management.page.validation.detailsSuccessfullyUpdated}]]*/ "User Details were successfully updated";
+	var checkFieldsCorrectly = /*[[#{users.management.page.validation.errors}]]*/ "Please fill all fields correctly";    
+	var successMsg = /*[[#{users.management.page.validation.passwordSuccessfullyUpdated}]]*/ "User password was successfully updated";
+	var cantUpdateUserPasword = /*[[#{users.management.page.validation.passwordNotUpdated}]]*/ "Countn't update user password!";
+	
+	$("button.button-user-submit").click(function(){
+		var formToSubmit = $(this).parents("form")[0];
+		
+		
+		$.ajax({
+		   type: $(formToSubmit).attr('method'),
+		   url: $(formToSubmit).attr('action'),
+		   data: $(formToSubmit).serialize(),
+		   success: function(){
+		      alert(userDetailsSuccessfullyUpdated);
+		      if ($("input[name='paymentEnabled']:checked").val() == 'false') {
+		    	  $(".payment_enabled span.true").css("display","none");
+		      }
+		   },
+		   error: function(jqXHR, textStatus, errorThrown) {
+			   alert(checkFieldsCorrectly);
+		   }
+		});
+	});
+	$("button.button-change-password").click(function(){
+		var formToSubmit = $(this).parents("form");
+		var userId = formToSubmit.find("input[name='id']").val();
+		
+		showChangePasswordDialog(userId);
+	});
+
+	function showChangePasswordDialog(userId) {
+		var chgPasswordForm = $("form#change-password-form");
+		chgPasswordForm.find("input[name='id']").val(userId);
+		chgPasswordForm.find("input[name='password']").val("");
+		chgPasswordForm.find("input[name='confirmPassword']").val("");
+		chgPasswordForm.find("p").text("");
+		
+		$("#change-password-dialog").modal("show");
+	};
+	
+	function onChangePassword() {
+		var baseUrl = /*[[@{/users/}]]*/ '/jadmin/users/';
+		var chgPasswordForm = $("form#change-password-form");
+		if(!validateChangePasswordForm(chgPasswordForm)){
+			return;
+		}
+		
+		$("#change-password-dialog").modal("hide");
+		var userId = chgPasswordForm.find("input[name='id']").val();
+		
+		$.ajax({
+			url : baseUrl+userId+"/changePassword",
+			type : "post",
+			data : chgPasswordForm.serialize(),
+			success : function(data) {
+				alert(successMsg);
+			},
+		}).fail(function(data, x, e) {
+			alert(cantUpdateUserPasword);
+		});
+	};
+	
+	function validateChangePasswordForm(chgPasswordForm){
+		var errorLine = chgPasswordForm.find("p");
+		
+		var password = chgPasswordForm.find("input[name='password']").val();
+		var confirmPassword = chgPasswordForm.find("input[name='confirmPassword']").val();
+		
+		var confirmationPasswordFieldError = /*[[#{users.management.page.changePassword.dialog.password}]]*/ "Confirmation field should equals to password field";
+		
+		if(password != confirmPassword)
+		{
+			errorLine.text(confirmationPasswordFieldError);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	$(function() {
+		$('#datepicker').datepicker({
+		    constrainInput: false,
+		    dateFormat: "yy-mm-dd 00:00:00",
+		    minDate: 0
+		});
+	});
+/*]]>*/</script>
+</body>
+</html>

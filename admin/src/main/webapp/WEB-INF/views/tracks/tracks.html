@@ -1,0 +1,317 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="tpl::head" />
+
+<body>
+	<div th:substituteby="tpl::navbar"></div>
+	<div class="container">
+		<h1 class="head" th:text="#{tracks.pages.title}">Track Repository</h1>
+		<form id="searchTrackDto" name="searchTrackDto" action="#" th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="well">
+		<div class="rel">
+			<div class="input-prepend">
+				<span class="add-on">Artist</span><input type="text" id="artist" name="artist" th:value="${param.artist!=null ? param.artist[0] : ''}" />
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">Title</span><input type="text" id="title" name="title" th:value="${param.title!=null ? param.title[0] : ''}" />
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">iSRC</span><input type="text" id="isrc" name="isrc" th:value="${param.isrc!=null ? param.isrc[0] : ''}" />
+			</div>
+		</div>
+		<div class="rel">
+			<div class="input-prepend">
+				<span class="add-on">Ingest From</span><input type="text" id="ingestFromDatepicker" name="ingestFrom" th:value="${param.ingestFrom!=null ? param.ingestFrom[0] : ''}" />
+				<p th:if="${#fields.hasErrors('ingestFrom')}" th:errors="*{ingestFrom}">Wrong date format</p>
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">Ingest To</span><input type="text" id="ingestToDatepicker" name="ingestTo" th:value="${param.ingestTo!=null ? param.ingestTo[0] : ''}" />
+				<p th:if="${#fields.hasErrors('ingestTo')}" th:errors="*{ingestTo}">Wrong date format</p>
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">Release From</span><input type="text" id="releaseFromDatepicker" name="releaseFrom" th:value="${param.releaseFrom!=null ? param.releaseFrom[0] : ''}" />
+				<p th:if="${#fields.hasErrors('releaseFrom')}" th:errors="*{releaseFrom}">Wrong date format</p>
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">Release To</span><input type="text" id="releaseToDatepicker" name="releaseTo" th:value="${param.releaseTo!=null ? param.releaseTo[0] : ''}" />
+				<p th:if="${#fields.hasErrors('releaseTo')}" th:errors="*{releaseTo}">Wrong date format</p>
+			</div>
+		</div>
+		<div class="rel">
+			<div class="input-prepend">
+				<span class="add-on">Label</span><input type="text" id="label" name="label" th:value="${param.label!=null ? param.label[0] : ''}" />
+			</div>
+			<div class="input-prepend">
+				<span class="add-on">Ingestor</span><input type="text" id="ingestor" name="ingestor" th:value="${param.ingestor!=null ? param.ingestor[0] : ''}" />
+			</div>
+		</div>
+		<div class="clear"></div>
+			<div class="form-actions">
+				<button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco" type="button">Search</button>
+			</div>
+		</form>
+		<div th:if="${#lists.isEmpty(PAGE_LIST_DTO.list)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">
+			No Search Results
+		</div>
+		<div class="newsListWide" style="width: 100%">
+			<ul class="table" id="tracksTable" th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}">
+				<li class="title">
+					<div class="product_id_repo_columns" th:text="#{tracks.page.trackList.head.productId}">Product ID</div>
+					<div class="image_repo_columns" th:text="#{tracks.page.trackList.head.image}">Image</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.isrc}">ISRC</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.subtitle}">SubTitle</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.artist}">Artist</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.ingestionDate}">Ingestion Date</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
+					<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>
+				</li>
+				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}">
+					<div th:id="${'idDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.id}">ID</div>
+					<div th:id="${'iTunesUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.itunesUrl}">iTunesUrl</div>
+					<div th:id="${'licensedDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.licensed}">Licensed</div>
+					<div th:id="${'infoDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.info}">Info</div>
+					<div th:id="${'publishTitleDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishTitle}">Publish Title</div>
+					<div th:id="${'publishArtistDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishArtist}">Publish Artist</div>
+					<div th:id="${'resolutionDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.resolution}">Resolution</div>
+					
+					<div class="product_id_repo_columns" th:text="${trackDto.productId}">Product ID</div>
+					<div class="image_repo_columns">
+						<img alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
+					</div>
+					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
+					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
+					<div class="repo_columns" th:text="${trackDto.subTitle}">SubTitle</div>
+					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
+					<div class="repo_columns" th:text="${trackDto.ingestionDate != null ? #dates.format(trackDto.ingestionDate, '__#{tracks.date.format}__') : ''}">Ingestion Date</div>
+					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
+						Date</div>
+					<div class="repo_columns" th:text="${trackDto.territories}">Territories</div>
+					<div class="buttons_repo_columns">
+						<form class="in-line" th:id="${'encodetrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#">
+							<button th:attr="style=${trackDto.status.name() != 'ENCODING' and trackDto.status.name() != 'PUBLISHING' ? 'display:block' : 'display:none'}" th:id="${'encodetrackButton_'+trackDto.id}"
+								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showEncodeDialog(this.name);" th:text="${trackDto.status.name() != 'NONE' ? 'Re-Encode' : 'Encode'}">Encode</button>
+						</form>
+						|
+						<form class="in-line" th:id="${'pulltrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#">
+							<button th:attr="style=${trackDto.status.name() == 'ENCODED' or trackDto.status.name() == 'PUBLISHED' ? 'display:block' : 'display:none'}" th:id="${'pulltrackButton_'+trackDto.id}"
+								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showPullDialog(this.name);">Pull</button>
+						</form>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div th:substituteby="tpl::paginationBar"></div>
+
+	<div id="pull-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Pull Track</h3>
+		</div>
+		<div class="modal-body" style="width:530px">
+			<form id="pull-form">
+				<div class="control-group">
+					<input type="hidden" name="id"/> 
+					<input type="hidden" name="isrc"/>
+					<label><strong th:text="#{tracks.page.pull.dialog.item.title}">Title:</strong></label> 
+					<input type="text" name="title" style="width:98%;"/>
+					<label><strong th:text="#{tracks.page.pull.dialog.item.artist}">Artist:</strong></label> 
+					<input type="text" name="artist" style="width:98%;"/>
+					<label><strong th:text="#{tracks.page.pull.dialog.item.info}">Artist Info:</strong></label> 
+					<input type="text" name="info" style="width:98%;"/>
+					<label><strong th:utext="#{tracks.page.pull.dialog.item.iTunesUrl}">iTunes Link:</strong></label>
+					<a target="_blank" name="itunesLink"></a> 
+					<input type="text" name="itunesUrl" style="width:98%;"/>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="onPull();">Pull</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		</div>
+	</div>
+	
+	<div class="busy">
+	  <div class="center">
+		  <p class="image">&#160;</p>
+		  <p class="message" th:utext="#{tracks.page.pull.dialog.item.loading}">Please wait...<br/>It may take a while1</p>
+	  </div>
+	</div>
+	
+	
+	<div id="encode-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Encode Track</h3>
+		</div>
+		<div class="modal-body" style="width:530px">
+			<form id="encode-form">
+				<input type="hidden" name="id"/> 
+				<input type="hidden" name="isrc"/>
+				<input type="hidden" name="resolution"/>
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox" name="isHighRate" />
+						<span th:text="#{tracks.page.encode.dialog.item.isHighRate}">96 kbs</span>
+					</label>
+					<label class="checkbox">
+						<input type="checkbox" name="licensed" />
+						<span th:text="#{tracks.page.encode.dialog.item.licensed}">Licensed</span>
+					</label>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="onEncode();">Encode</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		</div>
+	</div>
+
+	<script type="text/javascript">/*<![CDATA[*/	
+	                                          
+		function showEncodeDialog(trackId) {
+			var id = $("#idDiv_" + trackId).text();
+			var isrc = $("#isrcDiv_" + trackId).text();
+			var licensed = $("#licensedDiv_" + trackId).text();
+			var resolution = $("#resolutionDiv_" + trackId).text();
+			var isHighRate = resolution == "RATE_96" ? true : false;
+			
+			var encodeForm = $("form#encode-form");
+			encodeForm.find("input[name='id']").val(id);
+			encodeForm.find("input[name='isrc']").val(isrc);
+			encodeForm.find("input[name='licensed']").attr('checked', licensed);
+			encodeForm.find("input[name='isHighRate']").attr('checked', isHighRate);
+			
+			$("#encode-dialog").modal("show");
+		};
+		
+		function showPullDialog(trackId) {
+			var id = $("#idDiv_" + trackId).text();
+			var isrc = $("#isrcDiv_" + trackId).text();
+			var title = $("#publishTitleDiv_" + trackId).text();
+			title = title.length > 50 ? title.substring(0, 49).replace('&', ' ') : title.replace('&', ' ');
+			var artist = $("#publishArtistDiv_" + trackId).text();
+			artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
+			var info = $("#infoDiv_" + trackId).text();
+			var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
+			
+			var pullForm = $("form#pull-form");
+			pullForm.find("input[name='id']").val(id);
+			pullForm.find("input[name='isrc']").val(isrc);
+			pullForm.find("input[name='title']").val(title);
+			pullForm.find("input[name='artist']").val(artist);
+			pullForm.find("input[name='info']").val(info);
+			pullForm.find("input[name='itunesUrl']").val(iTunesUrl);
+			var itunesLink = pullForm.find("a[name='itunesLink']");
+			itunesLink.text(iTunesUrl);
+			itunesLink.attr('href', iTunesUrl);
+			
+			$("#pull-dialog").modal("show");
+		};
+	
+		function onEncode() {
+			var encodeForm = $("form#encode-form");
+			var resolution = encodeForm.find("input[name='isHighRate']").attr('checked') ? "RATE_96" : "RATE_48";
+			var trackId = encodeForm.find("input[name='id']").val();
+			encodeForm.find("input[name='resolution']").val(resolution);
+			
+			var pulltrackButtonId = "#pulltrackButton_" + trackId;
+			var encodetrackButtonId = "#encodetrackButton_" + trackId;
+			var publishTitleDivId = "#publishTitleDiv_" + trackId;
+			var publishArtistDivId = "#publishArtistDiv_" + trackId;
+			var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+			var infoDivId = "#infoDiv_" + trackId;
+			
+			$(encodetrackButtonId).hide();
+			$(pulltrackButtonId).hide();
+			$('.busy').show();
+			$.ajax({
+				url : "/jadmin/tracks/encode.json",
+				type : "post",
+				data : encodeForm.serialize(),
+				success : function(data) {
+					$(encodetrackButtonId).text('Re-Encode');
+					$(encodetrackButtonId).show();
+					$(pulltrackButtonId).show();
+					
+					$(publishTitleDivId).text(data.TRACK_DTO.title);
+					$(publishArtistDivId).text(data.TRACK_DTO.artist);
+					$(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
+					$(infoDivId).text(data.TRACK_DTO.publishDate);
+				},
+				complete: function() {
+			        $('.busy').hide();
+			    }
+
+			}).fail(function(data, x, e) {
+				try {
+					var error = $.parseJSON(data.responseText);
+					if (error.external_error)
+						alert(error.external_error);
+					else if (error.internal_error)
+						alert(error.internal_error);
+				} catch (ex) {
+					if(e != null && e != '')
+						alert(e);
+				}
+				$(encodetrackButtonId).text('Encode');
+				$(encodetrackButtonId).show();
+				$('.busy').hide();
+			});
+		};
+
+		function onPull() {
+			var pullForm = $("form#pull-form");
+			var trackId = pullForm.find("input[name='id']").val();
+			
+			var pulltrackButtonId = "#pulltrackButton_" + trackId;
+			var encodetrackButtonId = "#encodetrackButton_" + trackId;
+			var publishDateDivId = "#publishDateDiv_" + trackId;
+			var publishTitleDivId = "#publishTitleDiv_" + trackId;
+			var publishArtistDivId = "#publishArtistDiv_" + trackId;
+			var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+			var infoDivId = "#infoDiv_" + trackId;
+			
+			$(encodetrackButtonId).hide();
+			$(pulltrackButtonId).hide();
+			$('.busy').show();
+			$.ajax({
+				url : "/jadmin/tracks/pull.json",
+				type : "post",
+				data : pullForm.serialize(),
+				success : function(data) {
+						$(encodetrackButtonId).show();
+						$(pulltrackButtonId).show();
+
+						var publishDate = new Date(data.TRACK_DTO.publishDate);
+						var $dateformat = /*[[#{tracks.datetime.format}]]*/'dd/MM/yyyy hh:mm:ss';
+						$(publishDateDivId).text(dateFormat(publishDate, $dateformat));
+						$(publishTitleDivId).text(data.TRACK_DTO.title);
+						$(publishArtistDivId).text(data.TRACK_DTO.artist);
+						$(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
+						$(infoDivId).text(data.TRACK_DTO.info);
+				},
+				complete: function() {
+			        $('.busy').hide();
+			    }
+			}).fail(function(data, x, e) {
+						try {
+							var error = $.parseJSON(data.responseText);
+							if (error.external_error)
+								alert(error.external_error);
+							else if (error.internal_error)
+								alert(error.internal_error);
+						} catch (ex) {
+							if(e != null && e != '')
+								alert(e);
+						}
+						$(encodetrackButtonId).show();
+						$(pulltrackButtonId).show();
+						$('.busy').hide();
+			});
+		};	
+	/*]]>*/</script>
+</body>
+</html>

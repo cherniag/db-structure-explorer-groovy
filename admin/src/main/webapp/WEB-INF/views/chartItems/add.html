@@ -1,0 +1,137 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+				<h1 class="head" th:text="#{chartItems.add.page.title}">
+					Add New
+				</h1>
+				<form id="addNewChartItemsForm" name="addNewChartItemsForm"
+					th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}"
+					action="#" th:action="@{/charts/__${chartId}__/__${urlDate}__/new}"
+					th:object="${CHART_ITEM_DTO}" method="get" accept-charset="UTF-8"
+					class="well">
+
+					<input type="text" id="q" name="q" class="q" style="margin-bottom: 0!important;"/>
+					<button th:text="#{chartItems.add.page.media.search}"
+						class="btn btn-primary s_btn" type="submit">
+						Search
+					</button>
+					
+					<a th:text="#{chartItems.page.cancel}" th:href="@{/charts/__${chartId}__/__${urlDate}__/}" class="btn btn-primary">Cancel</a>
+					<p th:if="${!#strings.isEmpty(errorCode)}" th:text="#{__${errorCode}__}">Couldn't save chart item via constraint violation. Maybe chart item with the same media already exists in the current chart item set</p>
+				</form>
+
+				<div class="chartListWide">
+					<ul class="table">
+						<li class="title">
+							<div class="cover_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.smallImage}">
+								Cover
+							</div>
+							<div class="isrc_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.isrc}">
+								isrc
+							</div>
+							<div class="title_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.title}">
+								Title
+							</div>
+							<div class="artist_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.artist}">
+								Artist
+							</div>
+							<div class="price_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.price}">
+								Price
+							</div>
+							<div class="currency_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.currency}">
+								Currency
+							</div>
+							<div class="itunes_url_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.iTunesUrl}">
+								iTunes Url
+							</div>
+							<div class="info_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.info}">
+								Info
+							</div>
+<!--							<div class="body_news"-->
+<!--								th:text="#{chartItems.add.page.mediasTable.head.genre}">-->
+<!--								Genre-->
+<!--							</div>-->
+							<div class="label_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.label}">
+								Label
+							</div>
+							<div class="publish_date_addnew_chart"
+								th:text="#{chartItems.add.page.mediasTable.head.publishDate}">
+								Publish Date
+							</div>
+						</li>
+					</ul>
+					<ul class="table" id="sortable">
+						<li th:each="mediaDto, it: ${MEDIA_DTO_LIST}">
+							<form id="addNewChartItemsForm" name="addNewChartItemsForm"
+								th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}"
+								action="#"
+								th:action="@{/charts/__${chartId}__/__${urlDate}__/new}"
+								th:object="${CHART_ITEM_DTO}" method="post"
+								accept-charset="UTF-8">
+								<input type="hidden" id="mediaDto.id" name="mediaDto.id"
+									th:value="${mediaDto.id}" />
+								<input type="hidden" th:field="*{info}" value=""/>
+								<div class="cover_addnew_chart">
+									<button
+										th:text="#{chartItems.add.page.mediasTable.media.submit}"
+										class="btn btn-primary" type="submit">
+										Attach
+									</button>
+								</div>
+								<div class="isrc_addnew_chart">
+									<img alt="Media picture" src=""
+										th:attr="src=@{__${filesURL+mediaDto.imageFileSmallDto.filename}__}"
+										th:alt="#{chartItems.add.page.mediasTable.media.img.alt}"
+										width="50" height="50" />
+										<p th:text="${mediaDto.isrc}">US-UM7-11-00061</p>
+								</div>
+								
+								<div class="title_addnew_chart" th:text="${mediaDto.title}">
+									Место для шага вперед
+								</div>
+								<div class="artist_addnew_chart" th:text="${mediaDto.artistDto.name}">
+									КИНО
+								</div>
+								<div class="price_addnew_chart" th:text="${mediaDto.price}">
+									5
+								</div>
+								<div class="currency_addnew_chart" th:text="${mediaDto.priceCurrency}">
+									WEEK
+								</div>
+								<div class="itunes_url_addnew_chart">
+									<a class="element" th:href="${mediaDto.ITunesUrl}" rel="tooltip" th:text="${mediaDto.ITunesUrl}" target="_blank"></a>
+								</div>
+								<div class="info_addnew_chart" th:text="${mediaDto.info}">
+									Из альбома "Звезда по имени Солнце"
+								</div>
+<!--								<div class="body_news" th:text="${mediaDto.genre}">-->
+<!--									Rock-->
+<!--								</div>-->
+								<div class="label_addnew_chart" th:text="${mediaDto.label}">
+									Moroz Records
+								</div>
+								<div class="publish_date_addnew_chart"
+									th:text="${#dates.format(mediaDto.publishDate, '__#{media.publishDate.format}__')}">
+									12/06/2012 12:00:00
+								</div>
+							</form>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+		</body>
+</html>

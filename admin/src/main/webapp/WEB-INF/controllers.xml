@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<bean name="admin.VersionController"
+		class="mobi.nowtechnologies.server.controller.VersionController">
+		<property name="versionService" ref="service.VersionService" />
+	</bean>
+
+	<bean name="admin.HomeController"
+		class="mobi.nowtechnologies.server.admin.controller.HomeController">
+		<property name="adminUserService" ref="adminUserService" />
+	</bean>
+
+	<bean name="admin.SignInController"
+		class="mobi.nowtechnologies.server.admin.controller.SignInController" />
+
+	<bean name="admin.MessageController"
+		class="mobi.nowtechnologies.server.admin.controller.MessageController">
+		<property name="messageService" ref="service.MessageService" />
+		<property name="filterService" ref="service.FilterService" />
+	</bean>
+
+	<bean name="admin.NewsController"
+		class="mobi.nowtechnologies.server.admin.controller.NewsController">
+		<property name="messageService" ref="service.MessageService" />
+		<property name="filterService" ref="service.FilterService" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
+	</bean>
+
+	<bean
+		class="mobi.nowtechnologies.server.admin.controller.ErrorController" />
+	<bean name="admin.OfferController" class="mobi.nowtechnologies.server.admin.controller.OfferController">
+		<property name="offerService" ref="service.OfferService" />
+		<property name="filterService" ref="service.FilterService" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
+	</bean>
+	
+	<bean name="admin.ChartController"
+		class="mobi.nowtechnologies.server.admin.controller.ChartController">
+		<property name="chartService" ref="service.ChartService" />
+		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+	</bean>
+	
+	<bean name="admin.ChartItemController"
+		class="mobi.nowtechnologies.server.admin.controller.ChartItemController">
+		<property name="chartDetailService" ref="service.ChartDetailService" />
+		<property name="mediaService" ref="service.MediaService" />
+		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+	</bean>
+	
+	<bean name="admin.UserController"
+		class="mobi.nowtechnologies.server.admin.controller.UserController">
+		<property name="userService" ref="service.UserService" />
+	</bean>
+	
+	<bean name="admin.TrackRepoController"
+		class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
+		<property name="trackRepoService" ref="service.TrackRepoService" />
+		<property name="trackRepoFilesURL" value="${trackRepo.filesURL}" />
+	</bean>
+	
+	<bean name="admin.AccountLogController"
+		class="mobi.nowtechnologies.server.admin.controller.AccountLogController">
+		<property name="accountLogService" ref="service.AccountLogService" />
+		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
+		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
+		<property name="userService" ref="service.UserService" />
+	</bean>
+</beans>

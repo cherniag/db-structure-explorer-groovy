@@ -1,0 +1,1142 @@
+@font-face {
+    font-family: 'DroidSansRegular';
+    src: url('../fonts/droidsans-webfont.eot');
+    src: url('../fonts/droidsans-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/droidsans-webfont.woff') format('woff'),
+         url('../fonts/droidsans-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	-webkit-text-size-adjust: none;
+	color: #4b4b4b;
+	background: #eeeeee url(../imgs/bgs/body_left.png) no-repeat left top;	
+	font-size: 1em;		
+}
+a {
+	color: #2e2e92;
+}
+.rel {
+	position: relative;
+}
+.abs {
+	position: absolute;
+}
+.bold {
+	 font-weight: bold;
+}
+hr {
+	border-top: solid 1px #787777; 
+	height: 1px; 
+	margin: 0 8px 10px 8px;
+}
+hr.addBothSpaces {
+	margin: 15px 8px 22px 8px;
+	display: block;
+}
+h1 {
+	font-size: 1.4em;		
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #2e2e92;
+}
+h2 {
+	font-size: 1.2em;		
+	margin-bottom: 0px;
+	margin-top: 4px;
+	font-weight: normal;
+}
+.terms h2 {
+	margin-left: 21px;
+}
+
+h3 {
+	font-size: 1em;		
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #2e2e92;
+}
+h2  a {
+	text-decoration: none;
+}
+select {
+	width: 100%;
+	font-size: 0.8em;
+	height: 2em;
+	line-height: 1.6em;
+	padding-left: 2px;
+}
+p  {
+	font-size: 1.1em;		
+	margin: 7px 14px 7px 17px;	 
+}
+.content p {
+	margin: 7px 14px 7px 21px;
+	font-size: 1em;		
+	line-height: 1.4em;
+}
+.getAppContent p {margin-left: 42px !important;}
+.content .oneQuestion  p  {margin-left: 0px;}
+.content p.firstPar  {
+	margin-top: 1.5em;
+}
+.text p {
+	font-size: 0.8em;		
+	line-height: 1.3empx;
+}
+.oneQuestion p
+{
+	color: #838383;	
+}
+td, li {
+	font-size: 1.1em;		
+}
+form {
+	margin-bottom: 10px;
+	display: block;
+}
+/*service tools*/
+.floatRight {
+	float: right !important; 
+}
+.floatLeft {
+	float: left; 
+}
+.clr {
+	clear: both;
+}
+/*layout*/
+/*header*/
+.header {
+	background: #dddbda url(../imgs/bgs/header.png) repeat-x;	
+	height: 55px;	
+	box-shadow:  0px 3px 2px #777777; 
+	-moz-box-shadow: 0px 3px 2px #777777; 
+	-webkit-box-shadow:  0px 3px 2px #777777; 
+	margin-bottom: 2px;
+}		
+.logo {
+	display: block;
+	top: 8px;
+	left: 17px;	
+	position: absolute;	
+}
+.logo img {
+	height: 41px;
+}
+.container {
+	background: transparent  url(../imgs/bgs/body_right.png) no-repeat right bottom;		
+	padding-bottom: 15px;	
+	padding-top: 12px;	
+}
+.content {
+	border: solid 1px #757575;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	margin: 0 12px 0px 12px;
+	background-color: #ffffff;
+ 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); 
+ 	opacity: 0.9; 
+ 	-moz-opacity: 0.9; 
+ 	-khtml-opacity: 0.9;
+ 	box-shadow:  0px 5px 10px #777777; 
+	-moz-box-shadow: 0px 5px 10px #777777; 
+	-webkit-box-shadow:  0px 5px 10px #777777; 
+}
+.getAppContent {
+	border: none;
+	
+	
+	
+ 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100); 
+ 	opacity: 1.0; 
+ 	-moz-opacity: 1.0; 
+ 	-khtml-opacity: 1.0;
+	background: transparent  url(../imgs/bgs/blue_bg.png) repeat-x right top;	
+	/*height: 654px;*/
+	overflow: hidden;
+	position: relative;
+	color: #fff;
+}
+.getAppContent .oneField {
+	margin-left: 27px;
+	margin-right: 27px;
+}
+.getAppContent h1 {
+	color: #fff;
+	margin-left: 41px;
+	margin-bottom: 10px;
+}
+.getAppContent .formButton,.getAppContent .formButton input  {
+	background: transparent url(../imgs/bgs/button_pink.png) repeat-x 0px 0px !important;	
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow:  none;
+}
+.orBox {
+	text-align: center;
+	height: 53px;
+	background: transparent url(../imgs/bgs/or_bg.png) repeat-x center center ;
+	/*position: absolute;
+	top: 330px;
+	left: 48%;*/
+}
+.getAppBottom {
+	/*margin-top: 80px;*/
+}
+.getAppContent .formButton {
+	margin-left: 27px; 
+	margin-right: 27px;
+}
+
+.linksToStores {
+	/*height: 202px;
+	/*position: absolute; 
+	top: 456px;
+	left: 20px;*/
+	width: 75%;
+	margin: 0 auto;
+}
+.linksToStores a {
+	display: block;
+	float: left;
+	width: 25%;
+	margin: 0 3%;
+}
+/*
+.appStore {
+	background: transparent url(../imgs/apple.png) no-repeat left bottom;	
+}
+.androidMarket {
+	background: transparent url(../imgs/android.png) no-repeat left bottom;	
+}
+.bbMarket {
+	background: transparent url(../imgs/blackberry.png) no-repeat left bottom;	
+}
+*/
+.getAppBottom img {
+	width: 100%;
+	display: block;
+}
+/*text content*/
+.text {
+	padding-bottom: 12px;
+}
+a.button, input.button, button {
+	background: #336699 url(../imgs/bgs/button.png) repeat-x 0 center;	
+	height: 29px;	
+	border-radius: 7px; 	
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px ; 
+	font-weight: bold;
+	color: #ffffff;
+	line-height: 29px;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 20px;
+	box-shadow:  3px 1px 2px #53535c; 
+	-moz-box-shadow: 3px 1px 2px #53535c; 
+	-webkit-box-shadow:  3px 1px 2px #53535c; 
+	display: inline-block;	
+	text-shadow:  0px -1px 1px #000000; 	
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+}
+
+input.accounts{
+	padding-left: 25px;
+	line-height: 25px;
+}
+
+.buttonBox  {
+	float: right;
+	margin: 13px 17px 13px 0;
+	position: relative; 
+}
+.buttonBox .button {
+	font-size: 1em;		
+}
+.buttonTop {
+
+}
+.footer .buttonBox a {
+	font-size: 1.3em;
+	margin-right: 0;
+}
+.footer .buttonBox {
+	margin-right: 0;
+}
+.arrow {
+	display: inline-block;
+	width: 16px;
+	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
+	height: 20px;
+	position: absolute;
+	left: 3px;
+	top: 3px;
+}
+
+
+
+/*marketing*/
+.marketingMaterials {	
+	text-align: center;
+	position: relative;
+	width: 50%;
+	margin: 0 auto;
+}
+.marketingMaterials img {
+	margin-top: 31px;
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+.rules
+{
+	background-color: #efefef;
+	font-size: 0.8em;		 
+	line-height: 1em;
+	color: #525252;
+	padding: 11px 28px 14px 28px;
+}
+.content p.bigSizeText {
+	font-size: 1.6em;			
+	margin-top: 28px;
+	padding: 0;
+}
+.firstPar {
+	margin-top: 23px;	
+}
+.footer {
+	background: #e8e8e8 url(../imgs/bgs/bottom.png) repeat-x;			
+	box-shadow:  0px -3px 2px #777777; 
+	-moz-box-shadow: 0px -3px 2px #777777; 
+	-webkit-box-shadow: 0px -3px 2px #777777; 
+	font-size: 0.8em;		
+	padding: 0px 15px 10px 0;
+}
+.footer  a {	
+	text-decoration: none;	
+	font-size: 1.1em;	
+	display: inline-block;
+	margin-right: 20px;
+	font-weight: bold;
+}
+.bottomLinks  {
+	text-align: center;
+	padding: 10px 0 0 0;
+}
+
+.bottomLinks span {
+	display: inline-block;
+	padding: 0 8px;
+	font-size: 0.8em;		
+	line-height: 0.8em;
+}
+.faqLink {
+	display: inline-block; 
+	margin-left: 25%;
+}
+.copyright {
+	text-align: center;
+	line-height: 1em;
+	font-size: 0.8em;
+	padding-top: 10px;
+
+}
+.addSpace {	
+	display: inline;
+	vertical-align: bottom;
+}
+.addSpace2 {
+	margin-top: 55px;
+	margin-bottom: 35px;
+}
+.addSmallSpace {
+	margin-top: 20px;
+}
+/*buttons*/
+.contentButton {
+	margin: 17px;	
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+}
+.shortButton  {
+	width: 48%; 
+	float: left;
+	background: transparent url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	height: 81px;
+	border: none none none none;	
+	margin: 0;	
+}
+.oneQuestion {margin-left: 20px;}
+.contentButton a, .contentButton input, .contentButton button {
+	color: #ffffff;
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+	display: block;
+	font-size: 1.2em;		
+	text-decoration: none;
+	font-weight: bold;
+	margin: 0px;
+	border-radius: 5px 5px 5px 5px;
+}
+.facebookLoginButton {
+	background: #4266ad url(../imgs/bgs/fb_button.png) repeat-x;	
+	height: 39px;	
+	border-top: solid 1px #6c87b9;
+	border-right: solid 1px #26457e;
+	border-bottom: solid 1px #233f73;
+	border-left: solid 1px #26457e;
+	margin: 8px 17px 17px 17px;	
+}
+.facebookLoginButton  a {
+	background: transparent url(../imgs/bgs/fb.png) no-repeat -10px 0px;	
+	height: 40px;	
+	line-height: 40px;	
+	padding-left: 45px;	
+ 	white-space: nowrap;		
+ 	overflow: hidden;
+}
+.formButton, .formButton input {
+	background: #00aeef url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
+	height: 41px !important;
+	border: none none none none;		
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	text-shadow:  0px -1px 1px #000000; 
+}
+.formDetails .formButton .button {font-size: 1.2em;}
+ .formButton input.button, .formButton input.button  {
+	box-shadow: none; 
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	width: 100%;
+
+ }
+.formButton input, .formButton button {
+	border: none;
+	
+	cursor: pointer;
+}
+.setOfButtons  {
+	margin-bottom: 17px;
+}
+.setOfButtons .formButton{
+	margin-top: 10px;	
+	margin-bottom: 10px;	
+}
+form .formButton  {
+	margin-top: 15px;
+}
+.rightButtonArrow {
+
+	width: 19px;
+	height: 24px;
+	display: block;
+	position: absolute;
+	top: 8px;
+	right: 15px;
+	background: transparent  url(../imgs/bgs/arrow_button.png) repeat-x 0px 0px;	
+}
+.leftButtonArrow {
+
+	width: 19px;
+	height: 24px;
+	display: block;
+	position: absolute;
+	top: 8px;
+	left: 15px;
+	background: transparent  url(../imgs/bgs/arrow_button_left.png) repeat-x 0px 0px;	
+}
+.formButton  a, .shortButton a {
+	text-align: center;
+	height: 41px;
+	line-height: 41px;
+	background: #279cc9 url(../imgs/bgs/button_form.png) repeat-x 0px center;	
+	white-space: nowrap;
+	overflow: hidden;
+  	width: 100%;
+  	display: block;
+}
+
+.buttonsSet {
+	margin: 26px 17px;
+	height: 40px;
+}
+.firstButton  {
+	margin-right: 2%;
+}
+.redButton  {
+	background: transparent url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
+}
+.redButton  a {
+	background: #ff3333 url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
+}
+/*form*/
+.oneField {
+	margin-left: 17px;	
+	margin-top: 8px;	
+	margin-right: 17px;	
+	padding-right: 21px;
+}
+.oneField label {
+	display: block;
+	margin-left: 5px;	
+	font-size: 1em;
+	line-height: 1.5em;
+	margin-bottom: 5px;
+	color: #5d5d5d;
+}
+div.inputBox, div.inputAreaBox {
+	height: 25px; 
+	border: solid 1px #777777; 
+	padding: 0 10px; 
+	background-color: #ffffff; 
+	border-radius: 7px; 
+	-moz-border-radius: 7px; 
+	-webkit-border-radius: 7px; 	
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;		
+}
+div.inputAreaBox  {
+	height: 180px;
+	background-position: left bottom;
+}
+.inputBox input, .inputBox textarea {
+	display: block;
+	width: 95%;
+	border: none; 
+	height: 25px; 
+	line-height: 25px;  
+	font-size: 0.8em;
+	margin: 0; 
+	padding: 0; 
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;	
+	font-family: Helvetica, Arial, sans-serif;	
+}
+ .inputBox textarea 
+{
+	height: 180px;	
+	background-position: left bottom;
+	width: 100%;
+	line-height: 1.2em;  
+}
+.shortField .inputBox {
+	width: 140px;
+}
+.mediumField .inputBox {
+	width: 198px;
+}
+.attention{
+	color: #e80505;
+	font-weight: bold;
+}
+
+/*account details*/
+.accounDetails {
+	margin-top: 18px;
+}
+.accountOneField  {
+	height: 28px; 
+	border: solid 2px #a8aca9; 
+	padding: 12px; 
+	background: #f3f3f3 url(../imgs/bgs/account_field.png) repeat-x 0px 0px;	
+	border-radius: 10px; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	font-size: 1.4em;
+	font-weight: bold;
+	line-height: 28px;
+	margin: 10px 16px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.sign {
+	background: #ffffff url(../imgs/bgs/account_arrow.png) no-repeat center center;	
+	height: 54px;
+	width: 54px;
+	border-radius: 10px; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border: solid 2px #a8aca9; 
+	display: inline-block;
+	margin-right: 6px;
+	text-decoration: none;
+	box-shadow: 0px 0px 8px #ffffff; 
+	-webkit-box-shadow: 0px 0px 8px #ffffff; 
+	-moz-box-shadow: 0px 0px 8px #ffffff; 
+}
+.accountOneFieldCurrent {
+	background: transparent url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	border: none;
+	padding: 13px; 
+	height: 55px;
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	color: #ffffff;
+	margin-bottom: 24px;
+}
+.accountOneFieldCurrent  .sign {
+	height: 54px;
+	width: 54px;
+	border: none;
+	background: #ffffff url(../imgs/bgs/account_arrow_current.png) no-repeat center center;		
+}
+.currentFieldValue{
+	display: block;
+}
+.orangeField {
+	background: #ff6600 url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	border: none;
+	height: 56px;
+	margin: 11px 16px;
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	color: #ffffff;
+	position: relative;
+	padding-left: 31px;
+}
+.orangeField  .sign {
+	background: transparent url(../imgs/bgs/account_arrow_right.png) repeat-x 0px 0px;	
+	width: 19px;
+	height: 29px;
+	border: none;
+	box-shadow: none; 
+	-webkit-box-shadow: none; 
+	-moz-box-shadow: none; 
+	position: absolute;
+	right: 15px;
+	top: 28px;
+}
+ /*Corners*/
+.rad10 {
+	border-radius: 10px; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+}
+.rad5 {
+	border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px; 
+}
+/*notification*/
+.note {
+	width: 100%; 
+	font-size: 0.75em; 
+	color: #ec008c;
+}
+.attention {
+	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
+	height: 50px;
+	margin-top: -60px;
+}
+.successNote {
+	background: #000 url(../imgs/bgs/success_sign.png) no-repeat 15px 0px;	
+}
+
+
+.note   a {
+	display: inline-block; 
+	margin: 7px 9px; 
+	vertical-align: middle; 	
+	position: fixed;
+	right: 0;
+	bottom: -3px;
+	display: none;
+
+}
+/*table dats*/
+.tableList {
+	font-size: 1.2em;
+	width: 440x;
+	margin-left: 28px;
+	margin-top: 13px;
+}
+.oneItem {
+	height: 46px;
+	clear: both;
+}
+.nameCol {
+	width: 180px; 
+	display: block; 
+	float: left;
+}
+.valueCol {
+	width: 200px; 
+	display: block; 
+	float: left; 
+	text-align: left;
+}
+.dateSelect select {
+	width: 140px;
+}
+.devider {
+	display: inline-block; 
+	width: 24px; 
+	text-align: center;
+}
+/*normal table*/
+.table {
+	border-radius: 7px; 	
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px; 
+	border: solid 1px #b3b3b3;
+	margin: -3px 22px 35px 22px;
+
+}
+.table table {
+	width: 100%;
+}
+.table td {
+	height: 57px;
+	border-right: solid 1px #b3b3b3;
+	padding: 0 19px;
+}
+.table td.secondCol 
+{
+	border-left: solid 1px #ffffff;
+	border-right: none;
+}
+
+.total {
+	font-weight: bold;
+}
+.even {
+	background-color: #ebe8e8;
+}
+
+/*account*/
+.oneLine, .oneInputLine {
+	margin-left: 21px; 
+	font-size: 1em; 
+	line-height: 1.3em;
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+.nameCell {display:-moz-inline-box; display:inline-block; vertical-align:top; width:30%; zoom:1; //display:inline}
+
+ .formDetails .nameCell, .payDetails  .nameCell{
+ 	padding-top: 7px;
+ }
+
+.valueCell {display:-moz-inline-box; display:inline-block; vertical-align:bottom; width:60%; zoom:1; //display:inline}
+.helper {display:-moz-inline-box; display:inline-block; height:100%; width:0px; vertical-align:bottom; zoom:1; //display:inline}
+
+ .valueCell .inputBox input {
+	min-width: 323px;
+ }
+ .disabled input 
+ {
+ 	color: #5d5d5d;
+ }
+ .pink {
+ 	color: #ec008c;
+}
+.valueCell a {
+	display: inline-block;	
+	font-weight: normal;
+	margin-left: 10px;
+}
+/*sms*/
+.oneField label.shortLabel {
+	width: 80px; 
+	float: left; 
+	line-height: 2em; 
+	margin-top: 7px;
+}
+.shortInput {
+	width: 270px; 
+}
+
+/*credit card*/
+.payDetails {
+	margin-bottom: 36px;
+}
+.payDetails input, .formDetails input, .oneField  input, .oneField  textarea  {
+	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
+    border: 1px solid #777777;
+    border-radius: 3px 3px 3px 3px;
+    height: 2em;
+    padding: 0 10px;
+    margin-top: 5px; 
+    font-size: 0.8em;
+    width: 93%;
+}
+.oneField  textarea , textarea {font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif; padding-top: 5px;  padding-bottom: 5px; height: 15em; background-position: left bottom;}
+
+.payDetails .shortInput {
+	width: 220px;
+}
+
+.payDetails .shortInput input, .shortInput input {
+	width: 80px;
+	float: right;
+
+}
+
+.payDetails .shortInput input {
+	float: none;
+}
+
+.payDetails select {
+	margin-top: 7px;
+}
+
+.payDetails select.month, .payDetails select.year {
+	display: inline-block;
+	width: auto;
+	height: auto;
+}
+
+
+ .doubleLines span {
+ 	font-size: 0.7em;
+ 	display: block;
+ }
+ 
+ .cardDetails .oneLine {
+	margin-left: 21px; 
+	font-size: 1em; 
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+ .cardDetails .valueCell {
+ 	color: #ec008c;
+ }
+ 
+ .margin {
+ 	margin: 10px;
+ }
+ 
+  .fieldWidth {
+ 	width: 100%!important;
+ }
+ 
+ #cookeiAlertMessage {
+	position:absolute;
+	width:100%;
+	font-size:0.8em;
+	text-align:center;
+	height:1.8em;
+	line-height:1.8em;
+	background:#acd2df;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50); opacity: 0.5; -moz-opacity: 0.5; -khtml-opacity: 0.5;
+	z-index:10000;
+}
+#cookeiAlertMessageCloseBtn {
+	cursor: pointer;
+}
+
+/*Offers*/
+.whiteWrapper {
+	background-color: #FFFFFF!important;
+}
+
+.packBlock {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	min-width: 480px;
+	height: 97px;
+	margin: 2px;
+	border: 1px solid #d2d2d2;
+	background: url(../imgs/bg.png) repeat-x #CCCCCC;
+}
+.albumIcon {
+	position: absolute;
+	left: 0;
+	width: 97px;
+	height: 97px;
+	border-right: 1px solid #d2d2d2;
+}
+
+.albmTitle {
+	position: absolute;
+	top: 20px;
+	left: 110px;
+	width: 70%;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	color: #d32287;
+}
+
+.albmBody {
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 12px;
+	color: #1428a0;
+}
+
+p.albmBody {
+	margin: 0;
+} 
+
+.albmPrice {
+	position: absolute;
+	top: 30px;
+	right: 40px;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	padding: 10px;
+
+}
+
+.albmPrice a{
+	text-decoration: none;
+	font-family: "DroidSans"
+	font-weight: bold;
+	color: #d32287;
+}
+
+.albmPrice span {
+	vertical-align: middle;
+}
+		
+/*Offer*/
+.packBlockDetails {
+	position: relative;
+	min-width: 480px;
+	height: 192px;
+	margin: 2px;
+	border: 1px solid #d2d2d2;
+	background: url("../imgs/bg_big.png") repeat-x #CCCCCC;
+}
+
+.albumShadow {
+	position: absolute;
+	width: 100%;
+	height: 7px;
+	left: 0;
+	top: 193px;
+	background: url("../imgs/shadow.png") repeat-x #CCCCCC;
+}
+
+.albumIconDetails {
+	position: absolute;
+	left: 0;
+	width: 192px;
+	height: 192px;
+	border-right: 1px solid #d2d2d2;
+}
+
+.albumIconDetails img {
+	width: 192px;
+	height: 192px;
+}
+
+.albmTitleDetails {
+	position: absolute;
+	top: 20px;
+	left: 210px;
+	width: 60%;
+	font-family: 'DroidSansBold';
+	font-size: 18px;
+	color: #d32287;
+}
+.albmBodyDetails {
+	width: 60%;
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 14px;
+	color: #1428a0;
+}
+
+p.albmBodyDetails {
+	margin: 0;
+} 
+
+.albumButton {
+	position: absolute;
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	bottom: 30px;
+	left: 210px;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	padding: 10px;
+}
+
+.albumButton a{
+	color: #ffffff;
+	text-decoration: none;
+	font-family: "DroidSansRegular";
+	font-weight: bold;
+}
+
+div.itemsDetails {
+	height: 64px;
+	background-color: #ffffff;
+	border-bottom: 1px solid #d2d2d2;
+}
+
+
+.itemsDetails {
+	vertical-align: top;
+	font-family: 'DroidSansRegular';
+	font-size: 22px;
+	font-weight: bold;
+	color: #d32287;
+	padding-left: 10px;
+}
+
+
+.itemsDetails {
+	position: relative;
+}
+
+.itemsCount {
+	position: absolute;
+	left: 90px;
+	top: 10px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #d32287;
+}
+
+.itemsArtistName {
+	position: absolute;
+	left: 150px;
+	top: 5px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #d32287;
+}
+
+.itemsTrackName {
+	font-family: 'DroidSansRegular';
+	font-weight: normal;
+	font-size: 12px;
+	color: #1428a0;
+}
+
+p.itemsTrackName {
+	margin: 7px 0;
+}
+
+.backButton {
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	font-size: 16px;
+	padding: 10px;
+	
+}
+
+.backButton a {
+	color: #ffffff;
+	text-decoration: none;
+	font-family: "DroidSansRegular";
+	font-weight: bold;
+}
+
+.buttonBoxSquare  {
+	float: right;
+	margin: 7px 7px 7px 0;
+	position: relative; 
+}
+
+/*Web Store*/
+		
+.logoWebStore {
+	display: block;
+	top: 0;
+	left: 0;	
+	position: absolute;	
+}
+
+.validationNotes {
+	display: block;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.clear {
+	clear: both;
+}
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 98%;
+	z-index: 1000;
+}
+	
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.center {
+	overflow:hidden;
+	border: 1px solid #dad8cd;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.center span {
+	font-size: 0.7em;
+}
+
+.offers_container {
+	background: url(../imgs/bgs/body_left.jpg) repeat-x left top;
+}
+
+.offer_block {
+	margin: 2px;
+}
+
+.offers_wrapper {
+	margin: 0;
+	padding: 0;
+}
+
+.gradient_border {
+	background: #b94398;
+    background: -moz-linear-gradient(0deg, #299ad6, #b94398);
+    background: -webkit-gradient(0deg, left top, left bottom, 
+                color-stop(0%,#299ad6), color-stop(100%,#b94398));
+    background: -webkit-linear-gradient(0deg, #299ad6, #b94398);
+    background: -o-linear-gradient(0deg, #299ad6, #b94398);
+    background: -ms-linear-gradient(0deg, #299ad6, #b94398);
+    background: linear-gradient(0deg, #299ad6, #b94398);
+	position: absolute;
+	width: 100%;
+	height: 2px;
+	top: 51px;
+	box-shadow: 0 0 1px 0 #98979d;
+	-webkit-box-shadow: 0 0 2px 0 #98979d;
+	-moz-box-shadow: 0 0 2px 0 #98979d;
+}
+
+.validationNotes {
+	display: block;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.albumPriceDetails {
+	margin-right: 0!important;
+}

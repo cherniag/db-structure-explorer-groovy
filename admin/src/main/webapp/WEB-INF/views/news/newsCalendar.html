@@ -1,0 +1,84 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+
+		<body>
+			<div th:substituteby="tpl::navbar"></div>
+			<div class="container">
+			<h1 class="head" th:text="#{news.page.calendar.chooseDay.head.headline}">News Calendar</h1>
+				
+				<div class="newsList">
+					<ul  class="table">
+						<li class="title">
+								<div class="number_news" th:text="#{news.page.newsTable.head.position}">#</div>
+								<div class="image_news" th:text="#{news.page.newsTable.head.image}">Image</div>
+								<div class="body_news" th:text="#{news.page.newsTable.head.headline}">Headline</div>
+								<div class="filters_news" th:text="#{news.page.newsTable.head.filters}">Filters</div>
+								<div class="online" th:text="#{news.page.newsTable.head.activated}">Online</div>
+								<div class="date_news" th:text="#{news.page.newsTable.head.publishTime}">Publish Date</div>
+						</li>
+					</ul>
+					<ul class="table table_up" id="sortable">
+						
+						<li th:each="newsItemDto, it: ${NEWS_ITEM_DTO_LIST}">
+							<div class="number_news" th:text="${it.index+1}">1</div>
+							<div class="image_news"><img alt="News picture" src="" th:attr="src=@{__${filesURL +newsItemDto.imageFileName}__}" th:alt="#{news.page.newsTable.message.img.alt}" width="50" height="50"/></div>
+							<div class="body_news">
+								<span th:text="${newsItemDto.headline}">Editorial 1 Cheryl Cole gets fired from the X Factor</span><br/><br />
+							</div>
+							
+							<div class="filters_news">
+								<span th:each="filterDto: ${newsItemDto.filterDtos}">
+									<span class="label"  th:class="#{${'label label_'+filterDto.name}}" th:text="#{${'messages.pages.filter.'+filterDto.name}}">Filter list</span>
+								</span>
+							</div>
+							
+							
+							<div class="online" th:text="${newsItemDto.activated}?#{news.page.newsTable.message.activated}:#{news.page.newsTable.message.notActivated}">No</div>
+							
+							<div class="date_news" th:text="${#dates.format(newsItemDto.publishTime, '__#{news.page.newsTable.message.publishDate.format}__')}">12/06/2012 12:00:00</div>
+							
+						</li>
+					</ul>
+				</div>
+				<div class="newsCalendar">
+					
+					<div id="datepicker" class="datepicker"></div>
+					
+					<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+					                                                                 
+						var markedDates = /*[[${allPublishTimeMillis}]]*/ [];
+						
+						$('.datepicker').datepicker({
+							beforeShow: function(date, inst) {
+								if (markedDates.indexOf(date.getTime()) != -1)
+									alert(date);
+							},
+							dateFormat:"yy-mm-dd",
+							onSelect: function(dateText, inst) {
+								var r= /*[[@{/news(selectedPublishDate=${dateText})}]]*/ '';
+								location.href=r+dateText;
+							}
+						});
+						
+						var selectedDate=jAdmin.getURLParameter("selectedPublishDate");
+						if (null!=selectedDate)
+							$('.datepicker').datepicker("setDate" , selectedDate);
+						
+					/*]]>*/</script>
+					
+					<div class="updateButton" th:with="today=${#dates.createNow()}">
+						<form id="cloneNewsForm" th:with="selectedPublishDate=(${param.selectedPublishDate}? ${param.selectedPublishDate[0]} : ${#dates.format(today, 'yyyy-MM-dd')} )" th:action="@{/news/__${selectedPublishDate}__/list}" method="post">
+					    <ul class="nav nav-pills table_margin">
+					 		<li class="active">
+								<a href="#" onclick="$('form#cloneNewsForm').submit();" th:text="#{news.page.cloneNewsForm.submit.text}">Edit news for selected date</a>
+							</li>
+						</ul>
+						</form>
+					</div>
+				</div>
+				
+			</div>
+		</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd ">
+
+	<named-query name="User.findUserTree">
+		<query><![CDATA[select user from User user 
+		join FETCH user.deviceType deviceType
+		join FETCH user.userGroup userGroup
+		join FETCH userGroup.chart chart
+		join FETCH userGroup.news news
+		join FETCH userGroup.drmPolicy drmPolicy
+		join FETCH drmPolicy.drmType drmType
+		join FETCH userGroup.community community
+		join FETCH community.appVersion appVersion
+		join FETCH user.status status
+		where user.id=?]]></query>
+	</named-query>
+
+</entity-mappings>

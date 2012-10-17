@@ -1,0 +1,33 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+		<div class="container">
+			<section>
+				<div class="row show-grid">
+					<div class="span6">
+						<h3>Features</h3>
+						<ol>
+							<li>Managing news and messaging</li>
+							<li>Hot tracks management</li>
+						</ol>
+					</div>
+					<div class="span6">
+						<h3>Sign in</h3>
+						<div class="alert alert-error" th:if="${param.error!=null}">
+							<strong>Oh snap!</strong> Error on sign in. Please check your login and password
+						</div>
+						<form class="well form-inline" action="#" th:action="@{/login}" method="post">
+							<input name="email" id="email" type="text" th:placeholder="#{signin.form.email}" />
+							<input name="token" id="token" type="password" th:placeholder="#{signin.form.password}" />
+							<button type="submit" class="btn btn-primary" th:text="#{signin.form.btn.login}">Save changes</button>
+						</form>
+					</div>
+				</div>
+			</section>		
+			<footer th:include="tpl::footer"></footer>
+		</div>
+	</body>
+</html>

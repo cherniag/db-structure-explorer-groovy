@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<bean id="persistence.UserDao" class="mobi.nowtechnologies.server.persistence.dao.UserDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.MediaDao" class="mobi.nowtechnologies.server.persistence.dao.MediaDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+		<property name="entityDao" ref="persistence.EntityDao" />
+	</bean>
+
+	<bean id="persistence.MediaLogDao" class="mobi.nowtechnologies.server.persistence.dao.MediaLogDao">
+		<property name="entityDao" ref="persistence.EntityDao" />
+		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.MediaLogTypeDao"
+		class="mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao">
+		<property name="entityDao" ref="persistence.EntityDao" />
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.PromotionDao"
+		class="mobi.nowtechnologies.server.persistence.dao.PromotionDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.PaymentDao" class="mobi.nowtechnologies.server.persistence.dao.PaymentDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.EntityDao" class="mobi.nowtechnologies.server.persistence.dao.EntityDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.NewsDetailDao"
+		class="mobi.nowtechnologies.server.persistence.dao.NewsDetailDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.ChartDetailDao"
+		class="mobi.nowtechnologies.server.persistence.dao.ChartDetailDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.AccountLogDao"
+		class="mobi.nowtechnologies.server.persistence.dao.AccountLogDao">
+		<property name="entityDao" ref="persistence.EntityDao" />
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.DrmDao" class="mobi.nowtechnologies.server.persistence.dao.DrmDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.PaymentPolicyDao"
+		class="mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.PaymentDetailsDao"
+		class="mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+		<property name="entityDao" ref="persistence.EntityDao" />
+	</bean>
+
+	<bean id="persistence.CountryAppVersionDao"
+		class="mobi.nowtechnologies.server.persistence.dao.CountryAppVersionDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.UserIPhoneDetailsDao"
+		class="mobi.nowtechnologies.server.persistence.dao.UserIPhoneDetailsDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.UserAndroidDetailsDao"
+		class="mobi.nowtechnologies.server.persistence.dao.UserAndroidDetailsDao">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+	</bean>
+
+	<bean id="persistence.EntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="persistence.DataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.show_sql">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="persistence.DataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<property name="validationQuery" value="${jdbc.validationQuery}" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+		<property name="maxIdle" value="${jdbc.maxIdle}" />
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+	</bean>
+
+	<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
+		<property name="dataSource" ref="persistence.DataSource" />
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.CommunityDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.UserStatusDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.OperatorDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.UserGroupDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="mobi.nowtechnologies.server.persistence.dao.DrmTypeDao.setEntityDao" />
+		<property name="arguments">
+			<list>
+				<ref bean="persistence.EntityDao" />
+			</list>
+		</property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
+	<jpa:repositories base-package="mobi.nowtechnologies.server.persistence.repository"
+		entity-manager-factory-ref="persistence.EntityManagerFactory"
+		transaction-manager-ref="persistence.TransactionManager">
+	</jpa:repositories>
+	
+</beans>

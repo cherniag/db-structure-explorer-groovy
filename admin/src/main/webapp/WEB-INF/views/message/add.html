@@ -1,0 +1,104 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+		<div class="container" id="messagesTable">
+		<h1 class="head" th:text="#{message.add.page.title}">Add Message</h1>
+		<form id="addMessageForm" name="addMessageForm" action="#"
+			th:action="@{/messages/}" th:object="${MESSAGE_DTO}"
+			method="post" enctype="multipart/form-data" accept-charset="UTF-8" class="well">
+
+			<div class="row">
+					<div class="span3">
+						<!-- Message Type -->
+						<div class="filtersSelect">
+						  <label><strong th:text="#{message.add.page.addMessageForm.messageType}">Message type:</strong></label>
+							<select th:field="*{messageType}">
+								<option th:each="messageDtoType :${allMessageDtoTypes}"  th:value="${messageDtoType}" th:text="#{${'messages.pages.message.type.'+messageDtoType}}">
+								POPUP
+								</option>
+							</select>
+						</div>
+						<!-- is Oline -->
+						<div class="controls">
+							<label class="checkbox">
+								<input type="checkbox" th:field="*{activated}" />
+								<span th:text="#{message.add.page.addMessageForm.activated}">Online</span>
+							</label>
+						</div>
+						<!-- Filters -->
+				        <div class="filtersSelect">
+							<label><strong th:text="#{message.add.page.addMessageForm.filters}">Filters:</strong></label>
+							<div class="controls">
+				              <label class="checkbox" th:class="#{${'checkbox textColor_'+filterDto.name}}" th:each="filterDto:${allMessageFilterDtos}">
+				                <input type="checkbox" th:value="${filterDto.name}" name="filterDtos" th:text="#{${'messages.pages.filter.'+filterDto.name}}" />
+				              </label>
+				            </div>
+						  </div>
+						  <div class="controls">&#160;</div>
+						  <!-- Frequency -->
+						  <div class="filtersSelect">
+							<label><strong th:text="#{message.add.page.addMessageForm.frequency}">Frequency:</strong></label>
+							<div th:each="frequency: ${allFrequencies}" class="controls">
+							 
+							<input type="radio" th:field="*{frequence}"
+							th:value="${frequency}" />
+							<span
+								th:text="#{${'messages.pages.message.frequency.'+frequency}}"
+								class="radio">
+								Once
+							</span>
+							</div>
+						  </div>
+						  
+						  <div class="form-actions">
+							<button th:text="#{message.add.page.addMessageForm.submit}"	class="btn btn-primary" type="submit">
+								Save changes
+							</button>
+							<button th:text="#{message.add.page.addMessageForm.cancel}" class="btn btn-primary"  onClick="parent.history.back(); return false;">
+								Cancel
+							</button>
+						</div>  
+					</div>
+					<div class="span8">
+					<input type="hidden" name="publishTime" required = "required" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" />
+						<div class="filtersSelect">
+							<label><strong>Message Headline:</strong></label>
+							<div class="control-group">
+								<input th:field="*{headline}"
+								th:class="${#fields.hasErrors('headline')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.headline.placeholder}"
+								placeholder="Headline is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('headline')}" th:errors="*{headline}">
+									Wrong text format
+								</p>
+							</div>
+							<div class="controls">
+								<label><strong>Message Body:</strong></label>
+								<textarea th:field="*{body}"
+									th:class="${#fields.hasErrors('headline')}? 'fieldError'"
+									rows="30" id="textarea"
+									th:attr="placeholder=#{message.add.page.addMessageForm.body.placeholder}"
+									placeholder="Full new is here" class="input-xlarge"
+									style="width: 755px; height: 400px; font-size: 11px;"></textarea>
+								<p th:if="${#fields.hasErrors('body')}" th:errors="*{body}">
+									Wrong text format
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul th:if="${#fields.hasErrors('*')}">
+					<li th:each="err : ${#fields.errors('*')}" th:text="${err}">
+						Input is incorrect
+					</li>
+				</ul>
+						
+			</form>	
+		</div>
+	</body>
+</html>

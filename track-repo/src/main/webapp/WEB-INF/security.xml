@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		">
+
+	<sec:http pattern="/file**" security="none" />
+
+	<sec:http create-session="stateless" use-expressions="true">
+		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="afterRememberMeFilter" />
+		
+		<sec:intercept-url pattern="/**" access="authenticated" />
+
+		<sec:http-basic />
+
+		<sec:logout logout-url="/signout" delete-cookies="AuthToken"  />
+
+		<sec:remember-me key="track-repo" services-ref="nowTechBasedRememberMeServices" use-secure-cookie="true" />
+	</sec:http>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider user-service-ref="userDetailsServiceInMemory">
+			<sec:password-encoder hash="md5">
+				<sec:salt-source user-property="username" />
+			</sec:password-encoder>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+	
+	<sec:user-service id="userDetailsServiceInMemory">
+      <sec:user name="admin" password="ceb4f32325eda6142bd65215f4c0f371" authorities="ROLE_USER, ROLE_ADMIN" />
+    </sec:user-service>
+
+	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
+		<constructor-arg>
+			<value>track-repo</value>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="userDetailsServiceInMemory" />
+		</constructor-arg>
+		<property name="cookieName" value="AuthToken"/>
+		<property name="alwaysRemember" value="true"/>
+	</bean>
+
+	<bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
+		<property name="nowTechTokenBasedRememberMeServices" ref="nowTechBasedRememberMeServices" />
+	</bean>
+</beans>
