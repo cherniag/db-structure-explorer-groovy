@@ -127,18 +127,6 @@ public class ChartDetailService {
 		return chartDetails;
 	}
 
-	public boolean isBounusTrack(byte communityId, String isrc) {
-		if (isrc == null)
-			throw new ServiceException("The parameter isrc is null");
-		Object[] argArray = new Object[] { communityId, isrc };
-		LOGGER.debug("input parameters communityId, isrc: [{}], [{}]", argArray);
-
-		boolean isBounusTrack = chartDetailDao.isBounusTrack(communityId, isrc);
-
-		LOGGER.debug("Output parameter isBounusTrack=[{}]", isBounusTrack);
-		return isBounusTrack;
-	}
-
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc) {
 		if (isrc == null)
 			throw new ServiceException("The parameter isrc is null");
