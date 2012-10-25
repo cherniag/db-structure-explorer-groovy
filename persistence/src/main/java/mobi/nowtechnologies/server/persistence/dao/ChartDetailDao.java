@@ -37,18 +37,6 @@ public class ChartDetailDao extends JpaDaoSupport {
 		return chartDetails;
 	}
 	
-	public boolean isBounusTrack(byte communityId, String isrc){
-		if (isrc == null)
-			throw new PersistenceException("The parameter isrc is null");
-		Object[] argArray = new Object[] { communityId, isrc};
-		LOGGER.debug("input parameters communityId, isrc: [{}], [{}]", argArray);
-		
-		boolean isBounusTrack=(1==(Long) getJpaTemplate().findByNamedQuery(ChartDetail.NQ_IS_BOUNUS_TRACK, argArray).get(0));
-		
-		LOGGER.debug("Output parameter isBounusTrack=[{}]", isBounusTrack);
-		return isBounusTrack;
-	}
-	
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc){
 		if (isrc == null)
 			throw new PersistenceException("The parameter isrc is null");

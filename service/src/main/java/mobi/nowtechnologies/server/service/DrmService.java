@@ -69,16 +69,16 @@ public class DrmService {
 	public void setAccountLogService(AccountLogService accountLogService) {
 		this.accountLogService = accountLogService;
 	}
-	
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	public void setChartDetailService(ChartDetailService chartDetailService) {
 		this.chartDetailService = chartDetailService;
 	}
 
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Object[] processSetDrmCommand(String mediaIsrc, byte newDrmValue, int userId, String communityName) {
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
@@ -127,66 +127,66 @@ public class DrmService {
 		LOGGER.debug("Output parameter drms=[{}]", drms);
 		return drms;
 	}
-	
-	public List<Drm> findDrmAndDrmTypeTree(int userId){
+
+	public List<Drm> findDrmAndDrmTypeTree(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
 		List<Drm> drms = drmDao.findDrmAndDrmTypeTree(userId);
 		LOGGER.debug("Output parameter drms=[{}]", drms);
 		return drms;
 	}
-	
-	public void moveDrms(User fromUser, User toUser){
+
+	public void moveDrms(User fromUser, User toUser) {
 		List<Drm> drms = findDrmAndDrmTypeTree(fromUser.getId());
-		
-		for(Drm drm : drms){
+
+		for (Drm drm : drms) {
 			drm.setUser(toUser);
 			entityService.updateEntity(drm);
 		}
 	}
-	
-	@Transactional(propagation=Propagation.REQUIRED)
+
+	@Transactional(propagation = Propagation.REQUIRED)
 	public List<Drm> processBuyTrackCommand(User user, List<Media> mediaList) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (mediaList == null)
 			throw new ServiceException("The parameter media is null");
-		
-		Object[] argArray = new Object[] { user, mediaList};
+
+		Object[] argArray = new Object[] { user, mediaList };
 		LOGGER.debug("input parameters userId, media, communityName: [{}], [{}], [{}]", argArray);
-		
+
 		UserGroup userGroup = user.getUserGroup();
 		if (userGroup == null)
 			throw new ServiceException("The parameter userGroup is null");
-	
+
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-		
+
 		if (drmPolicy == null)
 			throw new ServiceException("The parameter drmPolicy is null");
-		
+
 		int userId = user.getId();
-		DrmType drmType = DrmTypeDao.getPURCHASED_DRM_TYPE();	
+		DrmType drmType = DrmTypeDao.getPURCHASED_DRM_TYPE();
 		byte drmValue = drmPolicy.getDrmValue();
-	
-		List<Drm> purchasedDrms = new LinkedList<Drm>(); 
+
+		List<Drm> purchasedDrms = new LinkedList<Drm>();
 		for (Media media : mediaList) {
 			Drm drmForCurrentUser = new Drm();
-			
+
 			drmForCurrentUser.setMedia(media);
 			drmForCurrentUser.setUser(user);
 			drmForCurrentUser.setDrmType(drmType);
 			drmForCurrentUser.setDrmValue(drmValue);
-			
+
 			mediaService.logMediaEvent(userId, media, MediaLogTypeDao.PURCHASE);
 
 			entityService.saveEntity(drmForCurrentUser);
-			
+
 			purchasedDrms.add(drmForCurrentUser);
 		}
-		
+
 		return purchasedDrms;
 	}
 
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Object[] processBuyTrackCommand(User user, String isrc, String communityName) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
@@ -194,30 +194,26 @@ public class DrmService {
 			throw new ServiceException("The parameter isrc is null");
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
-		
+
 		Object[] argArray = new Object[] { user, isrc, communityName };
 		LOGGER.debug("input parameters userId, mediaUID, communityName: [{}], [{}], [{}]", argArray);
-		
-		byte communityId = CommunityDao.getCommunityId(communityName);
-		
-		boolean isBounusTrack = chartDetailService.isBounusTrack(communityId, isrc);
-		if(isBounusTrack) {
-			boolean isTrackCanBeBoughtAccordingToLicense = chartDetailService.isTrackCanBeBoughtAccordingToLicense(isrc);
-			if (!isTrackCanBeBoughtAccordingToLicense) throw ServiceException.getInstance("buyTrack.command.error.attemptToBuyBonusTrack");
-		}
-		
+
+		boolean isTrackCanBeBoughtAccordingToLicense = chartDetailService.isTrackCanBeBoughtAccordingToLicense(isrc);
+		if (!isTrackCanBeBoughtAccordingToLicense)
+			throw ServiceException.getInstance("buyTrack.command.error.attemptToBuyBonusTrack");
+
 		int userId = user.getId();
-		
+
 		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
-		
+
 		final BuyTrackDto buyTrackDto = new BuyTrackDto();
 		buyTrackDto.setStatus(BuyTrackDto.Status.FAIL);
-		
-		if ( user.getSubBalance() > 0 ) {
+
+		if (user.getSubBalance() > 0) {
 			List<Drm> drms = drmDao.findDrmTree(userId, isrc);
-			if (drms.size() > 0) {				
+			if (drms.size() > 0) {
 				Drm drm = drms.get(0);
-				
+
 				DrmType drmType = drm.getDrmType();
 				if (isrc.startsWith(CHARTSNOW)) {
 					buyTrackDto.setStatus(BuyTrackDto.Status.NOTDOWNLOAD);
@@ -226,46 +222,46 @@ public class DrmService {
 				} else {
 					drm.setDrmType(DrmTypeDao.getPURCHASED_DRM_TYPE());
 					entityService.updateEntity(drm);
-	
+
 					byte intNewBalance = (byte) (user.getSubBalance() - 1);
-	
+
 					userService.updateUserBalance(user, intNewBalance);
-	
+
 					byte balanceAfter = (byte) (intNewBalance);
 					Media relatedMedia = drm.getMedia();
 					accountLogService.logAccountEvent(userId, balanceAfter, relatedMedia.getI(), null, TransactionType.TRACK_PURCHASE);
-	
+
 					mediaService.logMediaEvent(userId, relatedMedia, MediaLogTypeDao.PURCHASE);
-	
+
 					buyTrackDto.setStatus(BuyTrackDto.Status.OK);
 				}
 			}
 		} else {
 			buyTrackDto.setStatus(BuyTrackDto.Status.BALANCETOOLOW);
 		}
-		
-		Object[] objects = new Object[] { accountCheck, buyTrackDto};
+
+		Object[] objects = new Object[] { accountCheck, buyTrackDto };
 		LOGGER.debug("Output parameter objects=[{}], [{}]", objects);
 		return objects;
 	}
-	
-	@Transactional(readOnly=true)
+
+	@Transactional(readOnly = true)
 	public Object[] getPurchasedContentInfo(User user, String communityName) {
-		LOGGER.debug("input parameters user, communityName: [{}], [{}], [{}]", new Object[]{user, communityName});
+		LOGGER.debug("input parameters user, communityName: [{}], [{}], [{}]", new Object[] { user, communityName });
 		int userId = user.getId();
 
 		user = userService.findUserTree(userId);
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null); 
-		
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null);
+
 		List<Drm> drms = drmDao.findByUserAndDrmType(user.getId(), DrmTypeDao.getPURCHASED_DRM_TYPE());
 
 		List<PurchasedChartDetailDto> purchasedChartDetailDtos = ChartDetailsAsm.toPurchasedChartDetailDtoList(drms);
-		
-		//---TODO hack for 3.4.1 client
-		if(!purchasedChartDetailDtos.isEmpty())
+
+		// ---TODO hack for 3.4.1 client
+		if (!purchasedChartDetailDtos.isEmpty())
 		{
 			Map<String, PurchasedChartDetailDto> map = new HashMap<String, PurchasedChartDetailDto>();
-			for(PurchasedChartDetailDto dto:purchasedChartDetailDtos)
+			for (PurchasedChartDetailDto dto : purchasedChartDetailDtos)
 				map.put(dto.getMedia(), dto);
 			List<ChartDetail> chartDetails = chartDetailDao.findContentInfoByIsrc(user, map.keySet());
 			for (ChartDetail chartDetail : chartDetails) {
@@ -274,11 +270,11 @@ public class DrmService {
 				dto.setPreviousPosition(chartDetail.getPrevPosition());
 			}
 		}
-		//--------------------------------------
+		// --------------------------------------
 
 		PurchasedChartDto purchasedChartDto = new PurchasedChartDto();
 		purchasedChartDto.setPurchasedChartDetailDtos(purchasedChartDetailDtos.toArray(new PurchasedChartDetailDto[0]));
-		Object[] objects = new Object[]{accountCheck, purchasedChartDto};
+		Object[] objects = new Object[] { accountCheck, purchasedChartDto };
 
 		LOGGER.debug("Output parameter objects=[{}]", objects);
 		return objects;
