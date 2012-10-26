@@ -1,0 +1,497 @@
+body {background: #fff; overflow-y: scroll;}
+
+.alignJustify {text-align: justify;}
+.bold {font-weight: bold;}
+.floatLeft {float: left;}
+.floatRight {float: right;}
+.rel {position: relative;}
+.abs {position: absolute;}
+.clr {clear: both;}
+
+a img {border: none;}
+p {margin: 8px 0 9px 0; text-align: justify; }
+h1 {font-size: 42px; line-height: 42px; color: #736E68; }
+h2 {color: #000000; font-size: 18px; font-weight: bold; line-height: 20px;}
+ul {list-style: disc;}
+li {margin-left: 30px;}
+label {display: block; margin-bottom: 4px;}
+input {height: 27px; width: 312px; line-height: 23px; border: solid 1px #e2dfdf; padding: 0 5px; margin-bottom: 10px; background: #fff url(../imgs/bgs/input.gif) no-repeat right bottom; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; box-shadow: inset 0 0 3px #e2dfdf; -moz-box-shadow: inset 0 0 3px #e2dfdf; -webkit-box-shadow: inset 0 0 3px #e2dfdf;}
+textarea  {height: 177px; width: 550px; margin-bottom: 17px;}
+
+.checkbox   {clear: both; line-height: 13px; margin-top: 3px; vertical-align: top;}
+.checkbox  input {width: auto; height: 13px; display: block; margin: 0 4px 10px 2px; vertical-align: top; float: left; border: solid 1px red !important;}
+.leftColumn a {text-decoration: underline;}
+
+.pink {color: #000000;}
+.pink a {color: #206ab6!important;}
+ 
+.rad7 {border-radius: 7px; -webkit-border-radius: 7px; -moz-border-radius: 7px;}
+.rad4 {border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;}
+.rad3 {border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;}
+.rad1 {border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;}
+
+.buttonShadow {width: 273px; height: 31px; padding: 0; background: #fff; border: solid 1px #ebebea; box-shadow: 1px 2px 2px #cccccb; -moz-box-shadow: 1px 2px 2px #cccccb; -webkit-box-shadow: 1px 2px 2px #cccccb;}
+.buttonBox {color: #ffffff; font-weight: bold; width: inherit; border: solid 1px #e57e41; padding: 0px; margin-top: -1px; float: left; white-space: nowrap; background: #e77918 url(../imgs/bgs/button.png) repeat-x left center; }
+.buttonBox:hover  {border: solid 1px #d4d4d4; border-top: solid 1px #d4d4d4; background: #eaeaea url(../imgs/bgs/button_hover.png) repeat-x left center; }
+
+.buttonContent {position: relative; padding: 0; height: inherit; text-align: center; cursor: pointer;}
+.buttonContent:hover  {background: #e4e4e4 url(../imgs/bgs/button_hover.png) repeat-x left center; color: #000000!important; font-weight: bold; }
+a:link.button, .button {font-size: 17px; color: #f8f6f7!important; display: block; padding: 7px 0px 7px 0px; font-weight: bold; text-decoration: none; font-family: Arial; }
+a:hover.button, .button:hover   {color: #000000!important;  text-decoration: none; }
+.openClosePanel a:link.button {padding: 7px 40px 7px 40px; }
+input.button {height: inherit; line-height: 20px; cursor: pointer; margin-bottom: 0px; padding: 0 0px; width: inherit; background-image: none !important; background-color: transparent !important; font-weight: bold !important; border: none; border-shadow: none;border-radius: 0px; -moz-border-radius: 0px;-webkit-border-radius: 0px; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; text-align: center;}
+.payDetails input.button, .pinInfo input.button  {line-height: 24px; height: inherit; display: block; width: 100%;}
+.signInForm input.button, UNUSED.forgotPass input.button {width: 100%;} 
+.formButton {width: 200px; margin-top:15px;}
+.formButton .buttonBox {width: inherit; height: inherit;}
+
+.facebookLogin .formButton {margin: 11px 0 10px 0; width: 252px;}
+.facebookLogin .buttonContent a {background: transparent url('../imgs/icons/fb_button.png') no-repeat 10px 3px; padding-left: 25px;}
+
+.facebookLogin .fbBg {background: #3152a7 url(../imgs/bgs/fb_button_bg.png) repeat-x left center!important;  }
+.facebookLogin .fbBg:hover  {background: #eaeaea url(../imgs/bgs/fb_button_hover.png) repeat-x left center!important;}
+
+.bigButton .buttonBox:hover  {width: 100%; float: none; margin-top: 0; background: #eaeaea url(../imgs/bgs/big_button_hover.png) repeat-x left center;}  
+.bigButton .buttonContent:hover {background: #eaeaea url(../imgs/bgs/big_button_hover.png) repeat-x left center;}
+.bigButton a:link.button {font-size: 30px; line-height: 57px; padding: 0; display: block;}
+
+.page {background: #000 url(../imgs/body.png) no-repeat left 129px; width: 100%; -webkit-background-size: cover;
+-moz-background-size: cover;
+       -o-background-size: cover;
+       background-size: cover;}
+       
+.contentContainer {min-height: 610px;}
+.fixWidth {max-width: 985px; min-width: 985px; margin: 0 auto;} 
+.panel {background: #000 url(../imgs/header_bg.png) repeat-x; width: 980px; margin: 0 auto; border}
+.header {height: 129px;}
+.logo {display: block; margin-top: 42px; margin-left: 10px; width: 309px; float: left;}
+.logo img {display: block;}
+.signIn {margin-bottom: 5px; margin-left: 1px;}
+.innerPage {margin-top: 65px;}
+.content {background-color: #ffffff;}
+.twoColumns  {margin-top: 60px; height: 650px!important; width: 985px!important; border: 1px solid #8d8d8d;}
+.verticalSpace {height: 20px;}
+
+
+.leftColumnShadow {float: left;}
+.leftColumn {width: 436px; min-height: 408px; border: solid 1px #fff; background-color: #fff; margin: 46px 0 0 30px; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); opacity: 0.9; -moz-opacity: 0.9; -khtml-opacity: 0.9;}
+.leftColumn h1 {color: #000000; font-size: 20px; font-weight: bold; line-height: 25px; background: transparent url(../imgs/bgs/header.gif) repeat-x left bottom; padding: 9px 0 6px 16px;}
+.formContainer {margin: 4px 16px 18px; padding-bottom: 33px;}
+.signInForm {margin-top: 9px;}
+.leftColumn h2 {padding: 6px 0 6px 16px; font-size: 16px;}
+.formContainer a.formLink {display: block; font-size: 12px; text-decoration: underline; margin: -4px 0 7px 0; color: #206ab6}
+
+.borderBottomBox {background: transparent url('../imgs/bgs/header.gif') repeat-x left bottom; padding: 0 0 6px 16px; }
+
+
+.errorMessage {display: block; background-color: #f01c1c; color: #fff; line-height: 20px; padding: 3px 3px 6px 6px; margin-bottom: 12px; }
+.errorBoxContainer {border: solid 1px #fff; min-height: 65px; }
+.errorBox {margin-top: 14px; margin-bottom: 4px; border: solid 1px #dc2c2c; font-size: 11px; line-height: 14px; color: #dc2c2c; background: #fff  url(../imgs/icons/attention.png) no-repeat 12px 9px; padding: 4px 5px 5px 50px;  -moz-box-shadow:  0 3px 3px #dfdbdc; -webkit-box-shadow: 0 3px 3px #dfdbdc; box-shadow: 0 3px 3px #dfdbdc; min-height: 28px;}
+.errorBox span {display: inline-block; margin-bottom: 5px; margin-top: 3px;}
+.errorSign {background: transparent url('../imgs/icons/attention.png') no-repeat left center; display: inline-block;  width: 23px; height: 34px; vertical-align: top; margin-left: 3px;  text-indent: -2000px;}
+.errorSign span {text-indent: -2000px;}
+.errorSign span br {float: left;}
+.appBoxes .errorSign {top: 60px; left: 187px; position: absolute;}
+.forgotPass .errorBoxContainer {width: 322px; height: 65px; margin-top: -7px; margin-bottom: 9px;}
+.welcomeBox .errorSign {height: 30px;}
+.forgotPass {background-position: 260px bottom;}
+.rightColumn, .rightColumnHome {width: 420px; min-height: 350px; float: left; margin: 4px 0 0 24px;} /*changed*/
+
+.appPhonesSignIn  img {top: -45px; left: 10px;}
+.borderBottomBox p { margin: 14px 30px 8px 0;}
+
+
+input:focus.dinInput, input:focus.lighterText  {color: #000; }
+.forgottenPasswordText  p {margin-bottom: 14px;}
+input:focus.disabled  {color: #9c9c9c;}
+
+.marketingBox {margin: 41px 31px 16px 0; border: solid 1px transparent; background: url(../imgs/pics/signin.jpg) no-repeat 12px top; height: 462px; color: #fff;}
+.marketingBoxContent {width: 260px; margin: 8px 55px;}
+.marketingBoxContent  h2 {color: #fff; font-weight: normal;}
+.marketingBoxContent  p {font-size: 11px; line-height: 14px; margin-top: 5px;}
+.additionalInfo {margin: 18px 20px 20px 5px;}
+
+
+.footerContainer, .footer {height: 205px; background-color: #000;}
+.footer {background: transparent url(../imgs/icons/bottom_logo.png) no-repeat right 24px; position: relative;}
+.socialPagesSet {width: 128px; margin: 0 0 0 78px; }
+.appStoresSet {background: url(../imgs/bgs/bottom_phones_left.png) no-repeat left 39px; padding-left: 23px;}
+.socialPagesSet span, .appStoresSet  span{display: block; margin: 20px 0 2px 2px; font-size: 10px;}
+.appStoresSet  img, .appStoresSet  a {width: 25px; height: 30px; display: inline-block;}
+a:link.androidIcon {background: url(../imgs/icons/android.gif) no-repeat center bottom;}
+a:hover.androidIcon {background: url(../imgs/icons/android_hover.gif) no-repeat center bottom;}
+a:hover.iPhoneIcon {background: url(../imgs/icons/apple_hover.gif) no-repeat center bottom;}
+a:hover.blackberryIcon {background: url(../imgs/icons/blackberry_hover.gif) no-repeat center bottom;}
+
+.socialPagesSet img {display: inline-block; margin-right: 1px;}
+
+.copyrightBox { margin: 0 73px 0 0; width: auto; position: absolute; top: -170px; left: 560px}
+.bottomNote {color: #818181; font-size: 11px;}
+.ownerInfo {margin-top: 18px; text-align: center; font-size: 11px; padding-top: 10px;background: url(../imgs/bgs/bottom_line.png) no-repeat center top;}
+
+
+.oneBox {width: 293px; height: 198px; float: left; margin-left: 23px; border: solid 1px #737270; background: #016fbb url(../imgs/bgs/box.png) repeat-x left bottom; -moz-box-shadow:  0 3px 3px #989896; -webkit-box-shadow: 0 3px 3px #989896; box-shadow: 0 3px 3px #989896; color: #fff; }
+.oneBoxContent {position: relative; padding: 11px 16px; background: #bebcbd url(../imgs/bgs/box.png) repeat-x left bottom;}
+.oneBoxContent  p {color: #f8f6f7; text-align: left; padding-right: 0px; margin: 8px 0 7px 0;}
+.box2 {right: 0; top: -80px;}
+.box2 img {position: absolute; right: 293px; top: 17px;}
+.box5 {top: 14px; width: 390px;}
+.box5 img {left: -21px; position: absolute; top: 25px;}
+
+.pager1 {text-align: right; }
+.pager1 a {color: #1e6db8; }
+
+.fotterLinks  {padding-right: 150px; background: url(../imgs/musicqubedLogo.png) no-repeat right top;}/*added*/
+.fotterLinks a {padding-left: 10px;}
+
+
+.openClosePanel {width: 925px;}
+.openClosePanel .buttonShadow {-moz-box-shadow:  0 3px 3px #989896; -webkit-box-shadow: 0 3px 3px #989896; box-shadow: 0 3px 3px #989896;}
+.openClosePanel .buttonBox {border: solid 1px #5c5b59;background: url('../imgs/bgs/grey_panel.png') repeat-x scroll left center #9c9c9c;}
+.popupOverflow {display: none;  width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: transparent; z-index: 3000;}
+.popupWindow  {width: 830px; height: 518px; background-color: #000; opacity: 0.9; margin: 30px auto 0 auto; -moz-border-radius: 15px 15px 15px 15px; -webkit-border-radius: 15px 15px 15px 15px; border-radius: 15px 15px 15px 15px;}
+.popupContent  {width: 745px; height: 423px; padding: 35px 60px 45px 45px; overflow: auto;}
+.closeButton  {right: -10px; top: -10px; width: 45px; height: 45px;}
+.popupContent h1 {color: #00adee; font-size: 24px; margin-bottom: 12px; font-weight: normal;}
+.popupContent p {color:#fff; font-size: 14px; line-height: 19px; margin-bottom: 18px;}
+
+
+a:hover.previousPage  {background: #1d4196 url(../imgs/icons/previous_hover.png) no-repeat left top;}
+a:hover.nextPage  {background: #1d4196 url(../imgs/icons/next_hover.png) no-repeat left top;}
+.pager  img {width: 18px; height: 18px;}
+
+.table tr:nth-child(even) {background-color: #f2f2f2;}
+.table tr:nth-child(odd) {background: #fff;}
+
+.popupOverflow {display: none;  width: 100%; height: 100%; background-color: transparent;}
+.popupWindow  {width: 830px; height: 518px; background-color: #000; opacity: 0.9; margin: 30px auto 0 auto; -moz-border-radius: 15px 15px 15px 15px; -webkit-border-radius: 15px 15px 15px 15px; border-radius: 15px 15px 15px 15px;}
+.popupContent  {width: 745px; height: 423px; padding: 35px 60px 45px 45px; overflow: auto;}
+
+.pageWindow  {width: 456px; min-height: 418px; background-color: #fff; margin: 35px auto 0 auto; border: solid 1px #918d8a; -webkit-box-shadow: 5px 5px 15px #bdb8bc; box-shadow: 5px 5px 15px  #bdb8bc; -moz-box-shadow: 5px 5px 15px #bdb8bc; }
+.pageWindowContent  {width: 455px; min-height: 223px; padding: 35px 30px 45px 45px; overflow: auto; font-size: 12px; color: #616465;}
+.pageWindow  form {margin-top: 20px;}
+.closeButton  {right: -10px; top: -10px; width: 45px; height: 45px; text-decoration: none;}
+a.closeButton:hover {text-decoration: none;}
+.popupContent h1 {color: #00adee; font-size: 24px; margin-bottom: 12px; font-weight: normal;}
+.popupContent h2 {color: #00adee; font-size: 18px;  margin-bottom: 17px; font-weight: normal;}
+.popupContent p {color:#fff; font-size: 14px; line-height: 19px; margin-bottom: 18px;}
+.pageWindowContent .popupBut .buttonShadow,UNUSED.pageWindowContent .popupBut .buttonBox {width: 240px !important; }
+.simplePopup {height: 240px !important; min-height: 240px;  }
+.simpleTextPopup {width: 405px;  padding: 35px 20px 45px 35px; }
+.innerBox {height: 180px; overflow: auto; padding-right: 20px;}
+.popupButton {width: auto; border: none; padding: 10px 20px; display: block; white-space: nowrap; background: #ffffff url(../imgs/bgs/button.png) repeat-x left center; -moz-box-shadow: inset 0 0 3px #fff; -webkit-box-shadow: inset 0 0 3px #fff; box-shadow: inset 0 0 3px #fff; color: #fff !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0; cursor: pointer;}
+a:hover.popupButton {text-decoration: none;}
+
+.rel {
+    position: relative;
+}
+
+.details h2 {
+	color: #000000!important;
+    font-size: 18px!important;
+    text-decoration: none!important;
+    line-height: 25px!important;
+}
+
+#cookeiAlertMessageCloseBtn {
+	cursor:pointer;
+}
+
+.facebookLogin .formButton .buttonBox {
+	border: 1px solid #3f3f98;
+}
+
+span.cookies_style_close {
+	float: right;
+}
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 98%;
+	z-index: 1000;
+}
+	
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.center {
+	overflow:hidden;
+	border: 1px solid #dad8cd;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.center span {
+	font-size: 0.7em;
+}
+
+/* Generated by CSS Usage.
+   File: http://cherry.dev.now-technologies.mobi/web/assets/www/mobo/css/account.css.
+   Look for the UNUSED items and see if you can remove them. */
+
+.content {color: #616465; font-size: 12px;}
+.wholePart input[type="text"], .wholePart input[type="password"] {width: 250px; height: 29px; border: solid 1px #d0d0d0; background-image: none;}
+input[type="image"] { background: none; border: none; box-shadow: none; width: auto;}
+input[type="checkbox"] {border: none !important;}
+
+.oneWideColumn  h2 {font-size: 18px; padding: 0 0 0 3px; margin-top: 29px;}
+.oneWideColumn  h1 {color: #000000;  font-weight: bold; line-height: 25px; background: transparent url(../imgs/bgs/header.gif) repeat-x left bottom; padding: 11px 0 9px 3px;font-size: 21px; margin-bottom: 8px; margin-left: 67px; margin-right: 40px;}
+.oneWideColumn  p {margin-left: 0px; margin-top: 7px; margin-bottom: 14px;}
+.oneWideColumn  p.note {margin-left: 0px; margin-top: 0px; margin-bottom: 16px;} 
+.verticalSpace {height: 50px;}
+.verticalSpaceMiddle {height: 39px;}
+.verticalSpace2 {height: 22px;}
+.wholePart {position: relative;}
+
+
+.authorization .menu {font-size: 13px; width: auto; text-align: right; margin-top: 56px;}
+.authorization {font-size: 12px; width: 283px; float: right; margin-top: 45px; margin-right: 13px; font-weight: bold;}
+.signOut a:hover {color: #4d4b4c; } 
+.menu {width: auto; margin: 95px 10px 0 0; }
+.menu a:link {margin: 0 10px;}
+
+
+.contentContainer { min-height: 356px;}
+.oneWideColumn {width: 985px; margin: 0 auto; background-color: #fff; background-image: none; padding-top: 7px; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=95); opacity:0.95; -moz-opacity: 0.95; -khtml-opacity: 0.95;  }
+.appBoxes  {filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100); opacity:1.0; -moz-opacity: 1.0; -khtml-opacity: 1.0;  }
+.appBoxes{background: #fff url(../imgs/bgs/bluebox.png) repeat-x left top; }
+
+
+.getAppLink  a:link  {height: 36px; display: block; color:#7b7b7b; font-size: 14px; line-height: 36px; font-weight: normal; text-decoration: none; padding-left: 40px; text-transform: capitalize; }
+
+
+.oneLine {float:left; margin-bottom: 7px; margin-left: 1px;}
+.nameCell {width: 140px; float: left; text-transform: capitalize;}
+.valueCell {min-width: 100px; float: left; font-weight: bold;}
+.oneLine a {color: #000000; text-decoration: underline;}
+
+
+.leftPart {width: 560px; margin-top: 8px;  padding-bottom: 30px;}
+.boxWithBorder .leftPart h2, .boxWithBorder .rightPart h2, .boxWithBorder .wholePart  h2 {margin-bottom: 5px; margin-left: -3px;}
+.details {margin: 28px 38px 50px 38px; min-height: 200px;}
+.phoneRightBg {background: transparent  url('../imgs/pics/phones_on_the_right.jpg') no-repeat 460px 30px;}
+.noBg {background-image: none !important;}
+.InfoSpecialOffer {top: 15px; left: 497px;}
+
+.rightPart { width: 290px; margin-top: 8px;  background: transparent  url('../imgs/bgs/left_devider.png') no-repeat left bottom; padding-bottom: 0px; margin-left: 39px;}
+.rightPart .details {background-image: none;}
+.rightPart .buttonBox {width: 273px;}
+
+
+.oneInputsGroup {padding: 13px 0 21px 0; margin-bottom: 16px;background: url("../imgs/bgs/form_devider.png") no-repeat scroll center bottom transparent; }
+.additionalInfo {width: 318px; left: 435px; top: -24px; height: 62px;}
+.additionalInfo img {left: -21px; top: 25px;}
+.additionalInfo p {line-height: 20px; margin: 0;}
+
+.buttonNext .buttonShadow, .buttonNext .buttonBox {width: 188px; height: 31px;}
+.mainAccContent  h2 {margin-left: 67px;}
+.pinInfo  .buttonShadow {margin-left: 215px; margin-top: 14px;}
+
+.widerContainer {}
+.boxWithBorder { border: solid 1px #8d8d8b; border-top: solid 1px #6b6b6d; margin-top: -9px;  box-shadow: 1px 3px 2px #b7b3b0; -webkit-box-shadow: 1px 3px 2px #b7b3b0; -moz-box-shadow:  1px 3px 2px #b7b3b0; padding-bottom: 50px; }
+.boxWithBorder h2 { margin: 20px 0 17px 37px; }
+.lessBottomPad { padding-bottom: 31px; }
+
+
+.tabs  { height: 59px; width: 80%; overflow: hidden; margin: 0 auto; }
+.tabs ul { position: relative; width: 100%; }
+.tabs ul li { background: transparent url("../imgs/bgs/tab.png") repeat-x left top; border-radius: 5px 5px 0 0; -webkit-border-radius: 5px 5px 0 0; -moz-border-radius: 5px 5px 0 0; box-shadow: 0 8px 6px -10px #E2DFDF inset; display: block; float: left; width:33%; height: 59px; line-height: 49px; margin: 0 2px 0 0; padding: 0; text-align: center; border-top: 1px solid grey;}
+.tabs ul li.current, .tabs ul li:hover {background: transparent url(../imgs/bgs/tab_active.png) repeat-x left top; box-shadow: inset 0 8px 6px -10px  #4d4d93; }
+
+
+.tabs ul li.secondItem {}
+.tabs ul li.thirdItem {}
+.tabs ul li.forthItem {}
+.tabs ul li.lastItem {}
+.tabs ul li a {margin: 0 auto; width:1%;}
+
+.tabs a {color: #000000; text-decoration: none; display: inline-block; height: 57px; font-size: 14px; display: table-cell; font-weight: bold;}
+.tabs ul li.lastItem  a {}
+.tabs a:hover  {color: #ffffff; text-decoration: none; font-weight: bold;}
+.tabs li.current a{background:  transparent  url("../imgs/bgs/tab_link_current.png") no-repeat center bottom; color: #ffffff; font-weight: bold;}
+
+
+.methodsBox  {padding-left: 3px; height: 205px;}
+.methodsBox a, .methodsBox .greyInnerText, .methodsBox .greenInnerText, .methodsBox .blueInnerText{float:left; margin-right; 63px; display: inline-block; text-decoration: none;}
+.methodsBox div  span {text-decoration: none; }
+.infoSign {position: absolute; top: 0px; left: 210px;}
+.methodsBox .oneMethodBox {float:left; width:290px; height:213px;}
+
+.methodsBox .greyInnerText span {color: #747373;}
+.methodsBox .greenInnerText span {color: #66a72e;}
+.methodsBox .blueInnerText span {color: #033c7a;}
+
+.price {width: 60px; font-size: 40px; text-align: center; top: 98px; left: 6px; line-height: 13px;}
+.price  span {font-size: 11px;}
+.payBy  {width: 150px; font-size: 16px; text-align: left; top: 88px; left: 83px; line-height: 22px;}
+.payBy  span {font-size: 17px;}
+.newMethodsBox .paypal  input {width: 90px;}
+
+
+.footerContainer {height: 280px; opacity: 1.0;}
+.footer {width: 980px; height: 280px; color: #d1137d;}
+.signUpForNewsBox  input {width: 244px; border-top: solid 1px #c3c1c1; border-left: solid 1px #c3c1c1; float: left; background-color: #eeeceb;-moz-box-shadow: inset 0px 1px 1px #e0dedd; -webkit-box-shadow: inset 0px 1px 1px #e0dedd; box-shadow: inset 0px 1px 1px #e0dedd; height: 28px;-moz-border-radius: 7px 0 0 7px; -webkit-border-radius: 7px 0 0 7px; border-radius: 7px 0 0 7px; }
+.signUpForNewsBox  a.submitLink {text-decoration: none; height: 30px; width: 69px; float: right; background: #a6a5a5 url('../imgs/bgs/signup.png') no-repeat right bottom; color: #fff; line-height: 30px; font-size: 14px; text-align: center; font-weight: bold;}
+.linksBox  a.termsLink {font-size: 14px; color: #d1137d; margin-top: 0px; display: inline-block; border: none; }
+
+.socialPagesSet {margin: 0 0 0 5px;}
+
+
+.oneQuestion  h2 {padding-left: 0; margin: 9px 0 0 0;}
+.navFaqBox  h3  {color: #d1137d; font-size: 14px; margin: 9px 0 16px 10px; }
+.quickLinks  li {margin-bottom: 6px; font-size: 11px;}
+.quickLinks  li a {color: #4d4b4c; text-decoration: none;}
+
+
+.oneWideColumn   h2.zeroTop {margin-top: 0px;}
+.payDetails  input, .payDetails   select {margin-bottom: 7px; height: 25px; background-image: none;}
+.payDetails  select { display: inline-block;}
+.payDetails  select {height: auto; width: auto;}
+.holderDetails {margin-top: 25px;}
+.buttonNext {padding-top: 13px;}
+.payCardStep2  p {margin-top: 0px;}
+.oneWideColumn  .payCardStep2  h2 {padding-left: 0; padding-bottom: 5px; }
+.payDetails .shortInput input {width: 47px !important;}
+.buttons {height: 49px; margin-top: -8px;}
+.buttons input.button, UNUSEDbutton {height: 31px; line-height: 20px; width: inherit; color: #ffffff;}
+.buttons .buttonShadow {left: 85px; top: 20px; left: 139px; width: 260px;}
+.buttons .shortBut {left: 0; width: 90px !important; }
+.buttons .buttonBox {width: 260px}
+.buttons  .buttonContent {width: inherit;}
+.buttons .shortBut .buttonBox {width: 100%;}
+.buttons .button190, .button190 {width: 190px;}
+.buttons .button190 .button190, .button190 .button190   {width: 190px;}
+.buttons .button190 .buttonContent {}
+.summary  h3  {margin-top: 16px; margin-bottom: 3px;}
+
+.oneWideColumn  h1.azHeader {font-size: 24px; color: #000000; background-image: none; margin: 8px 0px 20px 30px; padding-top: 2px; padding-bottom: 0;}
+.oneWideColumn  h1.azHeader  span {font-size: 14px; color: #616465; display: block; margin-top: 4px; font-weight: bold;}
+.appBoxes {height: 269px; overflow: hidden; width: 880px; margin-left: 38px;  -webkit-box-shadow: 0 2px 2px #bdb8bc; box-shadow: 0 2px 2px #bdb8bc; -moz-box-shadow: 0 2px 2px #bdb8bc;}
+.appBoxesContainer {width: 200px; padding: 0 20px 0 20px; background: #f47b34 url(../imgs/bgs/bluebox.png) repeat-x left top;  height: 269px;}
+.appBoxes h2 {font-weight: bold; font-size: 16px; color: #fff; margin-top: 16px; margin-left: 0px;}
+.phonesBox h2 {margin-left: 20px;}
+.appBoxes p{color: #fff; margin-top: 8px; margin-bottom: 10px; font-size: 12px;}
+input.textInputTel {width: 186px; height: 24px; margin-bottom: 5px; margin-top: 11px; font-size: 12px; box-shadow:  1px 2px 2px #333;; -webkit-box-shadow:  1px 2px 2px #333;; -moz-box-shadow:  1px 2px 2px #333; }
+.phonesBox {padding-left: 13px;}
+
+
+.phonesBox {background: url(../imgs/bgs/or.png) no-repeat left top ; padding-left: 25px;}
+.phonesBox a { margin: 10px 0 0 21px; width: 130px; height: 100px; display: inline-block; padding-top: 106px; padding-left: 40px; vertical-align: top; font-size: 13px; line-height: 15px; color: #fff; float: left; }
+.phonesBox a:hover {text-decoration: none;} 
+.phonesBox a:hover  span {text-decoration: underline;} 
+.phonesBox a span {display: block; font-size: 16px; font-weight: bold;}
+.iphoneImgLink {background: url(../imgs/icons/phone_iphone.png) no-repeat right -5px; }
+.phonesBox a.androidImgLink {background: url(../imgs/icons/phone_android.png) no-repeat right top; padding-left: 35px; width: 135px; }
+.phonesBox a.androidImgLink  span, .phonesBox a.blackberryLink  span {font-size: 15px;}
+.blackberryLink {background: url(../imgs/icons/phone_blackberry.png) no-repeat right top;}
+
+
+.appBoxes .buttonShadow {width: 200px; height: 34px; border: none; box-shadow:  none; -webkit-box-shadow:  none; -moz-box-shadow:  none;}
+.appBoxes .buttonBox {border: none; width: 100%; float: none; margin-top: 0; background: #3ac7fc url(../imgs/bgs/button_app_hover.gif) repeat-x left center;}  
+.appBoxes .buttonBox:hover  {width: 100%; float: none; margin-top: 0; background: #e57e41 url(../imgs/bgs/button_app.png) repeat-x left center; border: none; }  
+.appBoxes  .buttonContent {border: 1px solid #e57e41; padding: 0px 0px 0px 0px; background: transparent url(../imgs/bgs/button_app_hover.png) repeat-x left center; text-align: center;}
+.appBoxes  .buttonContent:hover {border: 1px solid #e57e41; background: #e57e41 url(../imgs/bgs/button_app_hover.png) repeat-x left center; }
+.appBoxes   .button {display: block; height: 34px; width: 200px; line-height: 34px; font-size: 16px; font-weight: bold !important;}
+.appBoxes .button:hover {background: #e57e41 url(../imgs/bgs/button_app.png) repeat-x left center!important; }
+.appBoxes .rad1 {border-radius: 0px!important; }
+
+* html .tabs a:hover {background: #324fa6;}
+
+
+.oneBoxContent {
+    background: url("../imgs/bgs/box_inner.png") repeat-x scroll right bottom #B9B9B9;
+}
+
+.smsBox .buttonShadow, .pinInfo .buttonShadow {
+    margin-left: 140px;
+    width: 188px;
+}
+
+
+.smsBox .buttonShadow .buttonBox, .pinInfo .buttonShadow .buttonBox {
+    height: inherit;
+    width: 188px;
+}
+
+/*table*/
+.table {width: 910px; font-size: 11px; margin-top: 3px;}
+.addSpace {margin-top: 25px;}
+.table thead th, .table tfoot td  {background: #dcdcdc;  height: 32px; color: #4f4f4f; line-height: 32px; padding-left: 10px; border-right: solid 1px #fff; }
+.table td  {height: 32px; padding-left: 10px; padding-right: 5px; font-size: 11px; line-height: 32px; color: #a7a7a7; border-right: solid 1px #fff;}
+.table .current td{color:#000000; font-weight: bold;}
+.table tr:nth-child(even) {background-color: #f2f2f2;}
+.table tr:nth-child(odd) {background: #fff;}
+p.tableNote {color: #515151; font-size: 11px;}
+p.tableNote a {text-decoration: underline;}
+.width120 {width: 120px;}
+.width150 {width: 150px;}
+.downloadButton {border: none; box-shadow: none; display: block; height: 22px; width: 105px; margin-bottom: 0; margin-top: 5px; padding: 0; }
+
+.summary  h3  {margin-top: 16px; margin-bottom: 3px;}
+.summary .oneLine {width: 800px; margin-bottom: 1px;}
+.summary .buttons .shortBut .buttonContent {}
+.summary {margin-top: 5px;}
+.summary .nameCell {width: 160px;}
+.summary .errorSign {height: 28px; margin-top: -3px; margin-left: 10px;}
+.summary .errorBox {width: 255px; margin-top: 30px;}
+
+/*pin box*/
+.pinInfo {position: absolute; top: 0px; left: 530px; height: 260px; background: transparent url(../imgs/pics/pin.jpg) no-repeat 20px 50px; }
+.pinInfo p {font-size: 11px; margin: 100px 0 0 140px; width: 270px;}
+.pinInfo .errorSign {float: left; margin-right: 15px;}
+
+.submitEmailButton {width: 223px; margin-top: 7px;}
+
+/*thanks you box*/
+.thankYouBox {width: 340px; height: 170px; border: solid 1px #8d8d8d; padding: 45px 25px 20px 25px; background-color: #fff; font-size: 12px; color: #8d8d8d; -webkit-box-shadow: 5px 5px 15px #8d8d8d; box-shadow: 5px 5px 15px  #bdb8bc; -moz-box-shadow: 5px 5px 15px #bdb8bc; }
+.thankYouBox .buttonBox {width: 273px;}	
+.thankYouBox p {margin-bottom: 30px;}
+
+.welcomeBox ol, .welcomeBox ul {
+	 list-style-type: decimal!important;
+}
+
+.welcomeBox ol li {
+	 margin-bottom: 10px;
+}
+
+
+.oneColumn {width: 436px; margin: 0 auto; }
+.oneColumn .leftColumn {min-height: 198px;}
+.oneColumn  .leftColumnShadow {margin-left: -111px;}
+
+.signInForm input.button, .forgotPass input.button {width: 100%;}
+
+/* faq*/
+.faqBox {width: 760px; margin-right: 30px;}
+.oneQuestion {margin-bottom: 16px;}
+.oneQuestion  h2 {padding-left: 0; margin: 9px 0 0 0;}
+.oneQuestion p {font-size: 12px; color: #616161;}
+.oneQuestion h2 a, .oneQuestion h2  {color: #1428a0; font-size: 16px; text-decoration: none; cursor: pointer;}
+.navFaqBox {width: 245px; }
+.navFaqBox  h3  {color: #d1137d; font-size: 14px; margin: 9px 0 16px 10px; }
+.quickLinks {line-height: 16px;}
+.quickLinks  li {margin-bottom: 6px; font-size: 11px;}
+.quickLinks  li a {color: #4d4b4c; text-decoration: none;}
+
+.deactivateBox {width: 400px;}
+.deactivateBox textarea {height: 255px; width: 390px; margin-bottom: 0px;}/*changed*/
+.deactivateBox .buttonContent {}
+.width273  {width: 273px;}

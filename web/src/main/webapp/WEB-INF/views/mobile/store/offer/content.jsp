@@ -31,7 +31,7 @@
 			</div>
 			<div class="albumPriceDetails">
 				<s:message code="transaction_history.historyTable.amount.formater" var="amount_formater"/> 
-				<fmt:formatNumber type="currency"  currencySymbol="&pound;" pattern="${amount_formater}" value="${contentOfferDto.price}"></fmt:formatNumber>
+				 &pound;<fmt:formatNumber type="currency"  currencySymbol="" pattern="${amount_formater}" value="${contentOfferDto.price}"></fmt:formatNumber>
 			</div>
 		</div>
 	</div>

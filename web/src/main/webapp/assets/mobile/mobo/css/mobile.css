@@ -1,0 +1,1106 @@
+@font-face {
+	font-family: 'DroidSansRegular';
+	src: url('../fonts/droidsans-webfont.eot');
+	src: url('../fonts/droidsans-webfont.eot?#iefix')
+		format('embedded-opentype'), url('../fonts/droidsans-webfont.woff')
+		format('woff'), url('../fonts/droidsans-webfont.ttf')
+		format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DroidSansBold';
+	src: url('../fonts/droidsans-bold-webfont.eot');
+	src: url('../fonts/droidsans-bold-webfont.eot?#iefix')
+		format('embedded-opentype'),
+		url('../fonts/droidsans-bold-webfont.woff') format('woff'),
+		url('../fonts/droidsans-bold-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	-webkit-text-size-adjust: none;
+	color: #4b4b4b;
+	font-size: 1em;
+	background-color: #000000;
+}
+
+a {
+	color: #000000;
+}
+
+.content a {
+	color: #000000;
+}
+
+.content .small {
+	font-size: 0.8em;
+}
+
+hr {
+	border-top: solid 1px #787777;
+	height: 1px;
+	margin: 0 8px 10px 8px;
+}
+
+hr.addBothSpaces {
+	margin: 15px 8px 22px 8px;
+	display: block;
+}
+
+h1 {
+	font-size: 1.4em;
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #000000;
+}
+
+h2 {
+	font-size: 1.2em;
+	margin-bottom: 0px;
+	margin-top: 4px;
+	font-weight: normal;
+}
+
+.terms h2 {
+	margin-left: 21px;
+}
+
+h3 {
+	font-size: 1em;
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #000000;
+}
+
+h2  a {
+	text-decoration: none;
+}
+
+select {
+	width: 100%;
+	font-size: 0.8em;
+	height: 2em;
+	line-height: 1.6em;
+	padding-left: 2px;
+}
+
+p {
+	font-size: 1.1em;
+	margin: 7px 14px 7px 17px;
+}
+
+.content p {
+	margin: 7px 14px 7px 21px;
+	font-size: 1em;
+	line-height: 1.4em;
+}
+
+.content .oneQuestion  p {
+	margin-left: 0px;
+}
+
+.content p.firstPar {
+	margin-top: 1.5em;
+}
+
+.text p {
+	font-size: 0.8em;
+	line-height: 1.3empx;
+}
+
+.oneQuestion p {
+	color: #838383;
+}
+
+td,li {
+	font-size: 1.1em;
+}
+
+form {
+	margin-bottom: 10px;
+	display: block;
+}
+
+/*service tools*/
+.floatRight {
+	float: right !important;
+}
+
+.floatLeft {
+	float: left;
+}
+
+.clr {
+	clear: both;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+.rel {
+	position: relative;
+}
+
+.abs {
+	position: absolute;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.addSpace {
+	display: inline;
+	vertical-align: bottom;
+}
+
+.addSpace2 {
+	margin-top: 55px;
+	margin-bottom: 35px;
+}
+
+.addSmallSpace {
+	margin-top: 20px;
+}
+/*layout*/
+/*header*/
+.header {
+	background: #dddbda url(../imgs/bgs/header.png) repeat-x; /*changes*/
+	height: 55px;
+	box-shadow: 0px 3px 2px #777777;
+	-moz-box-shadow: 0px 3px 2px #777777;
+	-webkit-box-shadow: 0px 3px 2px #777777;
+	margin-bottom: 5px;
+}
+
+.logo {
+	display: block;
+	top: 18px;
+	left: 17px;
+	position: absolute;
+}
+
+.logo img {
+	height: 1.4em; /*changes*/
+}
+
+.container {
+	background: #000000 url(../imgs/bgs/body_left.png) repeat left top;
+	padding-bottom: 15px;
+	padding-top: 9px;
+}
+
+.offers_container {
+	background: #000000 url(../imgs/bgs/body_left.png) repeat left top;
+}
+
+.content {
+	border: solid 1px #ffffff;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	margin: 0 12px 0px 12px;
+	background-color: #ffffff;
+}
+
+/*text content*/
+.text {
+	padding-bottom: 12px;
+}
+
+a.button,input.button,button {
+	background: #fab351 url(../imgs/bgs/button.png) repeat-x 0 center;
+	/*changes*/
+	height: 29px;
+	font-weight: bold;
+	color: #000000;
+	line-height: 29px;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 20px;
+	box-shadow: 0px 2px 2px #d0d0d0;
+	-moz-box-shadow: 0px 1px 2px #a9a9a9;
+	-webkit-box-shadow: 0px 2px 2px #d0d0d0;
+	text-shadow: 0px 1px 1px #ffffff;
+	display: inline-block;
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
+	border: solid 1px #fab351;
+}
+
+input.accounts {
+	padding-left: 25px;
+	line-height: 25px;
+}
+
+.buttonBox {
+	float: right;
+	margin: -5px 17px 13px 0;
+	position: relative;
+}
+
+.buttonBox .button {
+	font-size: 1em;
+}
+
+.buttonBox .buttonSmall {
+	font-size: 0.9em;
+}
+
+.footer .buttonBox a {
+	font-size: 1.3em;
+	margin-right: 0;
+}
+
+.footer .buttonBox {
+	margin-right: 0;
+	margin-bottom: 0;
+}
+
+.arrow {
+	display: inline-block;
+	width: 16px;
+	background: transparent url(../imgs/bgs/arrow_button_left.png) no-repeat
+		0px 0px;
+	height: 24px;
+	position: absolute;
+	left: 3px;
+	top: 1px;
+}
+
+.content p.bigSizeText {
+	font-size: 1.6em;
+	margin-top: 28px;
+	padding: 0;
+}
+
+.firstPar {
+	margin-top: 23px;
+}
+/*(ooter*/
+.footer {
+	font-size: 0.8em;
+
+	/*min-height: 58px; /*added*/
+}
+
+.footer  a {
+	text-decoration: none;
+	font-size: 1.1em;
+	display: inline-block;
+	margin-right: 20px;
+	font-weight: bold;
+}
+
+.bottomLinks {
+	text-align: center;
+	padding: 0 0 10px 0; /*changed*/
+}
+
+.footer .bottomLinks  a {
+	margin-top: 10px;
+}
+
+.footer .bottomLinks  a.button {
+	margin-top: 0px;
+}
+
+.bottomLinks span {
+	display: inline-block;
+	padding: 0 8px;
+	font-size: 0.8em;
+	line-height: 0.8em;
+}
+
+.copyright {
+	text-align: center;
+	line-height: 1em;
+	font-size: 0.8em;
+	padding-top: 10px;
+	clear: both;
+}
+
+/*buttons*/
+.contentButton {
+	margin: 17px;
+}
+
+.oneQuestion {
+	margin-left: 20px;
+}
+
+.contentButton a, .contentButton input, .contentButton button {
+	color: #000000;
+	display: block;
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
+	font-size: 1em;
+	text-decoration: none;
+	font-weight: bold;
+	margin: 0px;
+}
+
+.facebookLoginButton {
+	background: #4266ad url(../imgs/bgs/fb_button.png) repeat-x;
+	height: 39px;
+	border-top: solid 1px #6c87b9;
+	border-right: solid 1px #26457e;
+	border-bottom: solid 1px #233f73;
+	border-left: solid 1px #26457e;
+	margin: 8px 17px 17px 17px;
+}
+
+.facebookLoginButton  a {
+	color: #ffffff;
+	background: transparent url(../imgs/bgs/fb.png) no-repeat -10px 0px;
+	height: 40px;
+	line-height: 40px;
+	padding-left: 45px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.formButton {
+	
+}
+
+.formButton,.formButton input {
+	height: 41px !important;
+	border: none none none none;
+	box-shadow: 1px 2px 1px #bdbdbd;
+	-moz-box-shadow: 1px 2px 1px #bdbdbd;
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	text-shadow: 0px 1px 1px #ffffff;
+}
+
+.formButton input {
+	background: #fab351 url(../imgs/bgs/button_form.png) repeat-x 0px center
+		!important;
+	display: block;
+}
+
+.formDetails .formButton .button {
+	font-size: 1.2em;
+}
+
+.formButton input.button, .formButton input.button {
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	width: 100%;
+}
+
+.formButton input, .formButton button {
+	border: none;
+	cursor: pointer;
+}
+
+.setOfButtons {
+	margin-bottom: 27px;
+	margin-top: 27px;
+}
+
+.setOfButtons .formButton {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+form .formButton {
+	margin-top: 15px;
+}
+
+.rightButtonArrow {
+	width: 19px;
+	height: 24px;
+	display: block;
+	position: absolute;
+	top: 8px;
+	right: 12px;
+	background: transparent url(../imgs/bgs/arrow_button.png) no-repeat 0px
+		0px;
+}
+
+.leftButtonArrow {
+	width: 19px;
+	height: 24px;
+	display: block;
+	position: absolute;
+	top: 8px;
+	left: 15px;
+	background: transparent url(../imgs/bgs/arrow_button_left.png) no-repeat
+		0px 0px;
+}
+
+.formButton  a, .shortButton a {
+	text-align: center;
+	height: 41px;
+	line-height: 41px;
+	background: #279cc9 url(../imgs/bgs/button_form.png) repeat-x 0px -22px;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 93%;
+	padding-right: 7%;
+	display: block;
+}
+
+.buttonsSet {
+	margin: 26px 17px;
+	height: 40px;
+}
+
+.firstButton {
+	margin-right: 2%;
+}
+
+/*form*/
+.oneField {
+	margin-left: 17px;
+	margin-top: 8px;
+	margin-right: 17px;
+	padding-right: 21px;
+}
+
+.oneField label {
+	display: block;
+	margin-left: 5px;
+	font-size: 1em;
+	line-height: 1.5em;
+	margin-bottom: 5px;
+	color: #5d5d5d;
+}
+
+div.inputBox,div.inputAreaBox {
+	height: 25px;
+	border: solid 1px #777777;
+	padding: 0 10px;
+	background-color: #ffffff;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;
+}
+
+div.inputAreaBox {
+	height: 180px;
+	background-position: left bottom;
+}
+
+.inputBox input,.inputBox textarea {
+	display: block;
+	width: 95%;
+	border: none;
+	height: 25px;
+	line-height: 25px;
+	font-size: 0.8em;
+	margin: 0;
+	padding: 0;
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+.inputBox textarea {
+	height: 180px;
+	background-position: left bottom;
+	width: 100%;
+	line-height: 1.2em;
+}
+
+.shortField .inputBox {
+	width: 140px;
+}
+
+.mediumField .inputBox {
+	width: 198px;
+}
+
+.attention {
+	color: #e80505;
+	font-weight: bold;
+}
+
+/*notification*/
+.note {
+	width: 90%;
+	font-size: 0.75em;
+	color: #f47b34;
+}
+
+.note span {
+	margin-left: 10px;
+}
+
+.attention {
+	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 50%
+		13px;
+	height: 50px;
+	margin-top: -60px;
+}
+
+.note   a {
+	display: inline-block;
+	margin: 7px 9px;
+	vertical-align: middle;
+	position: fixed;
+	right: 0;
+	bottom: -3px;
+	display: none;
+}
+/*table dats*/
+.tableList {
+	font-size: 1.2em;
+	width: 440x;
+	margin-left: 28px;
+	margin-top: 13px;
+}
+
+.oneItem {
+	height: 46px;
+	clear: both;
+}
+
+.nameCol {
+	width: 180px;
+	display: block;
+	float: left;
+}
+
+.valueCol {
+	width: 200px;
+	display: block;
+	float: left;
+	text-align: left;
+}
+
+.dateSelect select {
+	width: 140px;
+}
+
+.devider {
+	display: inline-block;
+	width: 24px;
+	text-align: center;
+}
+/*normal table*/
+.table {
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border: solid 1px #b3b3b3;
+	margin: -3px 22px 35px 22px;
+}
+
+.table table {
+	width: 100%;
+}
+
+.table td {
+	height: 57px;
+	border-right: solid 1px #b3b3b3;
+	padding: 0 19px;
+}
+
+.table td.secondCol {
+	border-left: solid 1px #ffffff;
+	border-right: none;
+}
+
+.total {
+	font-weight: bold;
+}
+
+.even {
+	background-color: #ebe8e8;
+}
+
+/*account*/
+.oneLine,.oneInputLine {
+	margin-left: 21px;
+	font-size: 1em;
+	line-height: 1.3em;
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+.oneLine .nameCell {
+	line-height: 20px;
+}
+
+.nameCell {
+	display: -moz-inline-box;
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	zoom: 1; //
+	display: inline
+}
+
+.formDetails .nameCell,.payDetails .nameCell {
+	padding-top: 5px;
+}
+
+.valueCell {
+	display: -moz-inline-box;
+	display: inline-block;
+	vertical-align: bottom;
+	width: 60%;
+	zoom: 1; //
+	display: inline
+}
+
+.helper {
+	display: -moz-inline-box;
+	display: inline-block;
+	height: 100%;
+	width: 0px;
+	vertical-align: bottom;
+	zoom: 1; //
+	display: inline
+}
+
+.valueCell .inputBox input {
+	min-width: 323px;
+}
+
+.disabled input {
+	color: #5d5d5d;
+}
+
+.valueCell a {
+	display: inline-block;
+	font-weight: normal;
+	margin-left: 10px;
+}
+
+/*sms*/
+.oneField label.shortLabel {
+	width: 80px;
+	float: left;
+	line-height: 2em;
+	margin-top: 7px;
+}
+
+/*credit card*/
+.payDetails {
+	margin-bottom: 36px;
+}
+
+.payDetails input,.formDetails input,.oneField  input,.oneField  textarea
+	{
+	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
+	border-radius: 0px;
+	height: 2em;
+	padding: 0 10px;
+	margin-top: 5px;
+	font-size: 0.8em;
+	width: 93%;
+}
+
+.oneField  textarea,textarea {
+	font-size: 0.8em;
+	font-family: Helvetica, Arial, sans-serif;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	height: 15em;
+	background-position: left bottom;
+}
+
+.payDetails select {
+	margin-top: 7px;
+}
+
+.payDetails select.month,.payDetails select.year {
+	display: inline-block;
+	width: auto;
+	height: auto;
+}
+
+.doubleLines span {
+	font-size: 0.7em;
+	display: block;
+}
+
+.cardDetails .oneLine {
+	margin-left: 21px;
+	font-size: 1em;
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+.cardDetails .valueCell {
+	color: #f47b34;
+}
+
+.margin {
+	margin: 10px;
+}
+
+.fieldWidth {
+	width: 100% !important;
+}
+
+.cookies_style {
+	position: absolute;
+	border: 1px solid #dad8cd;
+	width: 80%;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	z-index: 10000;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.cookies_style span {
+	font-size: 0.7em;
+}
+
+span.cookies_style_close {
+	float: right;
+}
+
+.cookies_style2 {
+	font-size: 0.8em;
+	width: 100%;
+	text-align: center;
+	height: 1.8em;
+	line-height: 1.8em;
+	padding-bottom: 5px;
+}
+
+#cookeiAlertMessageCloseBtn {
+	cursor: pointer;
+}
+
+/*Offers*/
+.whiteWrapper {
+	background-color: #FFFFFF !important;
+}
+
+.packBlock {
+	border: 1px solid #d2d2d2;
+	background: url(../imgs/bg_big.png) repeat #CCCCCC;
+	min-height: 80px;
+	margin: 4px;
+}
+
+.albumIcon {
+	width: 80px;
+	float: left;
+}
+
+.albumIcon img {
+	border-right: 1px solid #d2d2d2;
+	border-bottom: 1px solid #d2d2d2;
+}
+
+.albmTitle {
+	overflow:hidden;
+	top: 5px;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	color: #d32287;
+}
+
+.albmTitle span {
+	display: block;
+	padding-left: 10px;
+    padding-top: 10px;
+}
+
+.albmTitle span.albmBody {
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 12px;
+	color: #1428a0;
+	padding-bottom: 10px;
+}
+
+.albmPrice {
+	float: right;
+	margin-right: 10px;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	width: 100px; 
+	text-align : right;
+	min-height: 80px;
+}
+
+.albmPrice a {
+	padding-bottom: 20px;
+	text-decoration: none;
+	font-family: "DroidSans" font-weight :   bold;
+	color: #d32287;
+}
+
+.albmPrice span.align {
+	display: block;
+	text-align: right;
+	padding-top: 20px;
+}
+
+.albmPrice span {
+	vertical-align: middle;
+}
+
+/*Offer*/
+.packBlockDetails {
+	position: relative;
+	min-height: 130px;
+	border: 1px solid #d2d2d2;
+	background: url("../imgs/bg_big.png") repeat-x #CCCCCC;
+}
+
+.albumShadow {
+	position: absolute;
+	width: 100%;
+	height: 7px;
+	left: 0;
+	top: 170px;
+	background: url("../imgs/shadow.png") repeat-x #CCCCCC;
+}
+
+.albumIconDetails {
+	float: left;
+	width: 130px;
+	height: 130px;
+}
+
+.albumIconDetails img {
+	width: 130px;
+	height: 130px;
+	border-right: 1px solid #d2d2d2;
+	border-bottom: 1px solid #d2d2d2;
+}
+
+.albmTitleDetails {
+	font-family: 'DroidSansBold';
+	font-size: 18px;
+	color: #d32287;
+	padding: 10px;
+	overflow: hidden;
+}
+
+.albmBodyDetails {
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 14px;
+	color: #1428a0;
+	padding-top: 5px;
+}
+
+.albumPriceDetails {
+	position: relative;
+	float: left;
+	margin: 7px 0;
+	margin-: 1em;
+	padding: 10px!important;
+}
+
+.albumButton {
+	position: relative;
+	float: left;
+	margin: 15px 0;
+	margin-left: 0;
+	
+}
+
+.albumButton a {
+	padding: 10px;
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	color: #ffffff;
+	text-decoration: none;
+	font-weight: bold;
+	font-family: 'DroidSansRegular';
+	font-size: 16px;
+}
+
+p.albmBodyDetails {
+	margin: 0;
+}
+
+.itemsDetails {
+	position: relative;
+	background-color: #ffffff;
+	border-bottom: 1px solid #d2d2d2;
+	vertical-align: top;
+	height: 70px;
+}
+
+.itemsArtistName {
+	position: relative;
+	margin-left: 100px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #d32287;
+	padding-top: 10px;
+}
+
+.itemsTrackName {
+	font-family: 'DroidSansRegular';
+	font-weight: normal;
+	width: 100%;
+	font-size: 12px;
+	color: #1428a0;
+}
+
+p.itemsTrackName {
+	margin: 7px 0;
+}
+
+.itemsImage {
+	width: 54px;
+	float: left;
+	padding-top: 7px;
+	padding-left: 7px;
+}
+
+.itemCount {
+	position: absolute;
+	top: 18px;
+	left: 74px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #d32287;
+}
+
+
+.backButton a {
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: "DroidSansRegular";
+	font-weight: bold;
+	padding: 10px;
+}
+
+.buttonBoxSquare {
+	float: right;
+	margin: 16px 7px 7px 0;
+	position: relative;
+}
+
+/*Web Store*/
+/*Web Store*/
+.logoWebStore {
+	display: block;
+	top: 0;
+	left: 0;
+	position: absolute;
+	text-decoration: none!important;
+}
+
+.logoWebStore span {
+	margin-left: 10px;
+	position: absolute;
+	top: 18px;
+	width: 100px;
+}
+
+
+.clear {
+	clear: both;
+}
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 100%;
+	z-index: 1000;
+}
+	
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.center {
+	border: 1px solid #dad8cd;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.center span {
+	font-size: 0.7em;
+}
+
+.offer_block {
+	margin: 2px;
+}
+
+.offers_wrapper {
+	margin: 0;
+	padding: 0;
+}
+
+
+.validationNotes {
+	display: block;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.albumPriceDetails {
+	margin-right: 0!important;
+}
+
+.backButtonddd {
+	
+	font-size: 16px;
+	padding: 10px;
+}
+
+.shortInput {
+	width: 30%!important;
+}
+
+.marketingMaterials {
+	display: none;
+}
+
+.bottomLinks a {
+	color: #ffffff;
+}
+
+input {
+	border: 1px solid #cccccc;
+}
+
+.orBox, .linksToStores {
+	text-align: center;
+}
+
+.appStore img, .androidMarket img, .bbMarket img {
+	width: 100px;
+}
+
+.getAppBottom h1 {
+	margin-bottom: 10px;
+}

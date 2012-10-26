@@ -1793,16 +1793,16 @@ public class UserService {
 		
 		if(userDto.getNextSubPayment().after(originalNextSubPayment)){
 			if (user.isOnFreeTrial()) {
-				accountLogService.logAccountEvent(userId, originalSubBalance, 0, null, TransactionType.TRIAL_TOPUP);
+				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
 			}
 			else{ 
-				accountLogService.logAccountEvent(userId, originalSubBalance, 0, null, TransactionType.SUBSCRIPTION_CHARGE);
+				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
 			}
 		}
 
 		final int balanceAfter = userDto.getSubBalance();
 		if (originalSubBalance != balanceAfter){
-			accountLogService.logAccountEvent(userId, balanceAfter, 0, null, TransactionType.SUPPORT_TOPUP);
+			accountLogService.logAccountEvent(userId, balanceAfter, null, null, TransactionType.SUPPORT_TOPUP, null);
 		}
 
 		user = UserAsm.fromUserDto(userDto, user);

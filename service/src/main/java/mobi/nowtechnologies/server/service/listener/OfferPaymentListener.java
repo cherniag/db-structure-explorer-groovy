@@ -50,7 +50,7 @@ public class OfferPaymentListener implements ApplicationListener<PaymentEvent> {
 			
 			drmService.processBuyTrackCommand(user, mediaList);
 			
-			accountLogService.logAccountEvent(user.getId(), balanceAfter, offerId, payment, TransactionType.OFFER_PURCHASE);
+			accountLogService.logAccountEvent(user.getId(), balanceAfter, null, payment, TransactionType.OFFER_PURCHASE, offer);
 		}
 	}
 

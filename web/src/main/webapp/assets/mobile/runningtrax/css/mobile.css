@@ -27,16 +27,16 @@ body {
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
 	color: #4b4b4b;
-	background: #000000; /*changed*/
+	background: #d6d6d6; /*changed*/
 	font-size: 1em;
 }
 
 a {
-	color: #000000;
+	color: #1428a0;
 }
 
 .content a {
-	color: #000000;
+	color: #0d58e0;
 }
 
 .content .small {
@@ -59,7 +59,7 @@ h1 {
 	margin-left: 21px;
 	margin-bottom: 0px;
 	margin-top: 12px;
-	color: #000000;
+	color: #1428a0;
 }
 
 h2 {
@@ -78,7 +78,7 @@ h3 {
 	margin-left: 21px;
 	margin-bottom: 0px;
 	margin-top: 12px;
-	color: #000000;
+	color: #1428a0;
 }
 
 h2  a {
@@ -175,31 +175,23 @@ form {
 /*layout*/
 /*header*/
 .header {
-	background: #000000 url(../imgs/bgs/header.png) repeat-x; /*changes*/
-	height: 71px;
+	background: #dddbda url(../imgs/bgs/header.png) repeat-x; /*changes*/
+	height: 55px;
+	box-shadow: 0px 3px 2px #777777;
+	-moz-box-shadow: 0px 3px 2px #777777;
+	-webkit-box-shadow: 0px 3px 2px #777777;
+	margin-bottom: 5px;
 }
 
 .logo {
 	display: block;
 	top: 8px;
-	left: 0px;
+	left: 17px;
 	position: absolute;
 }
 
 .logo img {
-	height: 55px; /*changes*/
-}
-
-.logoWebStore {
-	display: block;
-	top: 8px;
-	left: 0px;
-	position: absolute;
-}
-
-.logoWebStore img {
-	width: 183px!important;
-	height: 55px; /*changes*/
+	height: 40px; /*changes*/
 }
 
 .container {
@@ -214,8 +206,11 @@ form {
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
 	margin: 0 12px 0px 12px;
-	background-color: #f1f1f1;
+	background-color: #ffffff;
 	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=90 );
+	opacity: 0.9;
+	-moz-opacity: 0.9;
+	-khtml-opacity: 0.9;
 	box-shadow: 0px 5px 10px #777777;
 	-moz-box-shadow: 0px 5px 10px #777777;
 	-webkit-box-shadow: 0px 5px 10px #777777;
@@ -227,21 +222,28 @@ form {
 }
 
 a.button,input.button,button {
-	background: #f451b2 url(../imgs/button_pink_bg.jpg) repeat-x 0 center;
+	background: #f451b2 url(../imgs/bgs/button.png) repeat-x 0 center;
 	/*changes*/
-	height: 35px;
+	height: 29px;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
 	font-weight: bold;
 	color: #ffffff;
+	line-height: 29px;
 	text-decoration: none;
 	padding-right: 10px;
 	padding-left: 20px;
+	box-shadow: 0px 2px 2px #d0d0d0;
+	-moz-box-shadow: 0px 1px 2px #a9a9a9;
+	-webkit-box-shadow: 0px 2px 2px #d0d0d0;
 	display: inline-block;
+	text-shadow: 0px -1px 1px #000000;
 	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
-	border-top: solid 1px #efa2ce;
-	border-right: solid 1px #e14fa0;
-	border-left: solid 1px #e14fa0;
-	border-bottom: solid 1px #efa2ce;
-	line-height: 35px;
+	border-top: solid 1px #ef299e;
+	border-left: solid 1px #f666bc;
+	border-right: solid 1px #f666bc;
+	border-bottom: solid 1px #ffa0d9;
 }
 
 input.accounts {
@@ -251,7 +253,7 @@ input.accounts {
 
 .buttonBox {
 	float: right;
-	margin: 0px 7px 3px 0;
+	margin: 13px 17px 13px 0;
 	position: relative;
 }
 
@@ -281,7 +283,7 @@ input.accounts {
 	height: 20px;
 	position: absolute;
 	left: 3px;
-	top: 7px;
+	top: 3px;
 }
 
 .content p.bigSizeText {
@@ -297,6 +299,7 @@ input.accounts {
 .footer {
 	background: #e8e8e8 url(../imgs/bgs/bottom.png) repeat-x left bottom;
 	/*changed*/
+	box-shadow: 0px -3px 2px #777777;
 	-moz-box-shadow: 0px -3px 2px #777777;
 	-webkit-box-shadow: 0px -3px 2px #777777;
 	font-size: 0.8em;
@@ -337,9 +340,7 @@ input.accounts {
 	line-height: 1em;
 	font-size: 0.8em;
 	padding-top: 10px;
-	padding-bottom: 10px;
 	clear: both;
-	color: #ffffff;
 }
 
 /*buttons*/
@@ -362,16 +363,7 @@ input.accounts {
 	text-decoration: none;
 	font-weight: bold;
 	margin: 0px;
-}
-
-.contentButtonGrey a,.contentButtonGrey input,.contentButtonGrey button {
-	color: #000000!important;
-	display: block;
-	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
-	font-size: 1.2em;
-	text-decoration: none;
-	font-weight: bold;
-	margin: 0px;
+	border-radius: 5px 5px 5px 5px;
 }
 
 .facebookLoginButton {
@@ -398,7 +390,7 @@ input.accounts {
 }
 
 .formButton,.formButton input {
-	height: 60px !important;
+	height: 41px !important;
 	border: none none none none;
 	box-shadow: 1px 2px 1px #bdbdbd;
 	-moz-box-shadow: 1px 2px 1px #bdbdbd;
@@ -407,7 +399,8 @@ input.accounts {
 }
 
 .formButton input {
-	background: #eb1590url(../imgs/bgs/button_form.png) repeat-x 0px center!important;
+	background: #00aeef url(../imgs/bgs/button_form.png) repeat-x 0px center
+		!important;
 	display: block;
 }
 
@@ -446,20 +439,9 @@ form .formButton {
 	height: 24px;
 	display: block;
 	position: absolute;
-	top: 18px;
+	top: 8px;
 	right: 12px;
 	background: transparent url(../imgs/bgs/arrow_button.png) no-repeat 0px
-		0px;
-}
-
-.rightButtonArrowBlack {
-	width: 19px;
-	height: 24px;
-	display: block;
-	position: absolute;
-	top: 18px;
-	right: 12px;
-	background: transparent url(../imgs/bgs/arrow_button_black.png) no-repeat 0px
 		0px;
 }
 
@@ -468,7 +450,7 @@ form .formButton {
 	height: 24px;
 	display: block;
 	position: absolute;
-	top: 18px;
+	top: 8px;
 	left: 15px;
 	background: transparent url(../imgs/bgs/arrow_button_left.png) no-repeat
 		0px 0px;
@@ -499,6 +481,7 @@ form .formButton {
 .oneField {
 	margin-left: 17px;
 	margin-top: 8px;
+	margin-right: 17px;
 	padding-right: 21px;
 }
 
@@ -562,10 +545,15 @@ div.inputAreaBox {
 
 /*Corners*/
 .rad10 {
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 .rad5 {
-
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 /*notification*/
 .note {
@@ -745,8 +733,7 @@ div.inputAreaBox {
 	padding: 0 10px;
 	margin-top: 5px;
 	font-size: 0.8em;
-	width: 100%;
-    padding: 0!important;
+	width: 93%;
 }
 
 .oneField  textarea,textarea {
@@ -871,7 +858,7 @@ span.cookies_style_close {
 	line-height: 20px;
 	font-family: 'DroidSansRegular';
 	font-size: 12px;
-	color: #000000;
+	color: #1428a0;
 	padding-bottom: 10px;
 }
 
@@ -944,7 +931,7 @@ span.cookies_style_close {
 	line-height: 20px;
 	font-family: 'DroidSansRegular';
 	font-size: 14px;
-	color: #000000;
+	color: #1428a0;
 	padding-top: 5px;
 }
 
@@ -1000,7 +987,7 @@ p.albmBodyDetails {
 	font-weight: normal;
 	width: 100%;
 	font-size: 12px;
-	color: #000000;
+	color: #1428a0;
 }
 
 p.itemsTrackName {
@@ -1035,12 +1022,19 @@ p.itemsTrackName {
 
 .buttonBoxSquare {
 	float: right;
-	margin: 1px 7px 7px 0;
+	margin: 16px 7px 7px 0;
 	position: relative;
 }
 
 /*Web Store*/
 /*Web Store*/
+.logoWebStore {
+	display: block;
+	top: 0;
+	left: 0;
+	position: absolute;
+	text-decoration: none!important;
+}
 
 .logoWebStore span {
 	margin-left: 10px;
@@ -1092,13 +1086,10 @@ p.itemsTrackName {
 
 .offers_container {
 	background: url(../imgs/bgs/body_left.jpg) repeat-x left top;
-	min-height: 165px;
-	padding-bottom: 20px;
 }
 
 .offer_block {
 	margin: 2px;
-	padding-bottom: 20px;
 }
 
 .offers_wrapper {
@@ -1106,6 +1097,23 @@ p.itemsTrackName {
 	padding: 0;
 }
 
+.gradient_border {
+	background: #b94398;
+    background: -moz-linear-gradient(0deg, #299ad6, #b94398);
+    background: -webkit-gradient(0deg, left top, left bottom, 
+                color-stop(0%,#299ad6), color-stop(100%,#b94398));
+    background: -webkit-linear-gradient(0deg, #299ad6, #b94398);
+    background: -o-linear-gradient(0deg, #299ad6, #b94398);
+    background: -ms-linear-gradient(0deg, #299ad6, #b94398);
+    background: linear-gradient(0deg, #299ad6, #b94398);
+	position: absolute;
+	width: 100%;
+	height: 2px;
+	top: 51px;
+	box-shadow: 0 0 1px 0 #98979d;
+	-webkit-box-shadow: 0 0 2px 0 #98979d;
+	-moz-box-shadow: 0 0 2px 0 #98979d;
+}
 
 .validationNotes {
 	display: block;
@@ -1123,29 +1131,6 @@ p.itemsTrackName {
 	
 	font-size: 16px;
 	padding: 10px;
-}
-
-.formButton input {
-	background: #eb1590 url(../imgs/bgs/button_form.png) repeat-x 0px center!important;
-	display: block;
-}
-
-.formButtonGrey input {
-	background: #d8d9d8 url(../imgs/bgs/button_form_grey.png) repeat-x 0px center!important;
-	display: block;
-}
-
-.formButtonGrey,.formButtonGrey input {
-	height: 60px !important;
-	border: none none none none;
-	box-shadow: 1px 2px 1px #bdbdbd;
-	-moz-box-shadow: 1px 2px 1px #bdbdbd;
-	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
-	text-shadow: 0px -1px 1px #d8d9d8;
-}
-
-.gradient_border {
-	background-color: #000000;
 }
 
 .shortInput {
