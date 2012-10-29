@@ -495,3 +495,12 @@ p.tableNote a {text-decoration: underline;}
 .deactivateBox textarea {height: 255px; width: 390px; margin-bottom: 0px;}/*changed*/
 .deactivateBox .buttonContent {}
 .width273  {width: 273px;}
+
+.smsBox .errorBoxContainer .errorBox {
+	width: 400px;
+}
+
+.pinInfo .errorSign {
+	float: left;
+	padding: 1px;
+}
