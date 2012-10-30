@@ -1,79 +1,40 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@page import="mobi.nowtechnologies.server.shared.util.EmailValidator"%>
+<%@page import="mobi.nowtechnologies.server.shared.dto.web.AccountDto.Subscription"%>
 
 <div class="contentContainer">
-	<!-- start of two columns content -->
-	<div class="content rel fixWidth twoColumns">
-		<div class="leftColumnShadow">
-			<div class="leftColumn">
-				<h1><s:message code="signin.page.h1" /></h1>
-				<div class="formContainer signInForm">
-					<form action="signin" method="post">
-					
-						<label><s:message code="signin.form.email" /></label>
-						<input name="email" id="email" type="text" />
-						<c:if test="${param.error != null}"><span class="errorSign">&nbsp;</span></c:if>
-						
-						<label><s:message code="signin.form.password" /></label>
-						<input name="token" id="token" type="password" />
-						<c:if test="${param.error != null}"><span class="errorSign">&nbsp;</span></c:if>
-						<a href="restore_password.html" class="formLink"><s:message code="signin.form.link.restore.password" /></a>
-						
-						<c:if test="${param.error != null}">
-							<!--error-->
-								<div class="errorBoxContainer">
-									<div class="errorBox rad7">
-										<span><s:message code="signin.error.on.sign.in" /></span>
-									</div>
-								</div>
-						</c:if>
-						
-						<c:if test="${param.facebook_error != null}">
-							<!--error-->
-								<div class="errorBoxContainer">
-									<div class="errorBox rad7">
-										<span><s:message code="signin.error.on.facebook_sign.in" /></span>
-									</div>
-								</div>
-						</c:if>
-						
-						<!--sign into account button-->
-						<div class="buttonShadow formButton signInButton rad1">
-							<div class="buttonBox rad1">
-								<div class="buttonContent">
-									<input class="button" type="submit" value="<s:message code='signin.form.submit' />" />
-								</div>
-							</div>
+	<div class="verticalSpace"></div>
+	<div class="content rel oneWideColumn">
+		<!-- top part of content -->
+		<h1 class="azHeader"><s:message code="page.account.header.h1" /><span><s:message code="page.account.header.description" /></span></h1>
+		<!-- tabs  -->
+		<%@ include file="/WEB-INF/views/www/menu.jsp"%>
+		<div class="widerContainer boxWithBorder lessBottomPad oneClickSubs">
+			<h1><s:message code='one.click.subscription.dialog.successful.title' /></h1>
+				<c:set var="paymentType">
+					<s:message code="${paymentDetailsByPaymentDto.paymentType}"/>
+				</c:set>
+				<c:set var="currencyISO">
+					<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
+				</c:set>
+				<p><s:message code='one.click.subscription.dialog.successful.body' arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}' /></p>
+				<div class="clr"></div>				
+				<div class="addSmallSpace"></div>		
+				<!--button-->
+				<div class="buttonShadow formButton rad4">
+					<div class="buttonBox rad7">
+						<div class="buttonContent rad7">
+							<a href="account.html" class="button"><s:message code="one.click.subscription.dialog.successful.button" /></a>
 						</div>
-						<!--end of sign into account button-->
-						
-						<p class="shortParagrapf"><s:message code="signin.form.or.text" /></p>
-					
-						<!--facebook login button-->
-						<div class="facebookLogin">
-							<div class="buttonShadow formButton rad1">
-								<div class="buttonBox rad1">
-									<div class="buttonContent fbBg">
-										<a href="facebook_signin" class="button"><s:message code="signin.form.link.facebook.signin" /></a>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!--end facebook login-->
-					</form>
+					</div>
 				</div>
-			</div>
-		</div>
-		<div class="rightColumnHome">						
-			<div class="marketingBox">
-				<div class="marketingBoxContent">
-					<h2><s:message code="signin.page.rcolumn.h2" /></h2>
-					<p><s:message code="signin.page.rcolumn.content" /></p>
-				</div>
-			</div>
+			<div class="clr"></div>
 		</div>
 	</div>
+
+	<!--end of main account content area-->
 	<!-- end  of two columns content -->
-	<div class="clr verticalSpace"></div>
-</div>
+	<div class="clr verticalSpaceMiddle"></div>

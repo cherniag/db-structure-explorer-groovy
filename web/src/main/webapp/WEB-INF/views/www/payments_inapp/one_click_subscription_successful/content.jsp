@@ -25,22 +25,16 @@
 				<div class="addSmallSpace"></div>		
 				<!--button-->
 				<div class="buttonShadow formButton rad4">
-					<div class="buttonBox rad4">
-						<div class="buttonContent">
-							<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button'/>" />
+					<div class="buttonBox rad7">
+						<div class="buttonContent rad7">
+							<a href="account.html" class="button"><s:message code="one.click.subscription.dialog.successful.button" /></a>
 						</div>
 					</div>
-				</div>
-				<div class="contentButton formButton rad5 rel" >
-					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='page.main.menu.my.account' />" />
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
 				</div>
 			<div class="clr"></div>
 		</div>
 	</div>
-
+</div>
 	<!--end of main account content area-->
 	<!-- end  of two columns content -->
 	<div class="clr verticalSpaceMiddle"></div>
