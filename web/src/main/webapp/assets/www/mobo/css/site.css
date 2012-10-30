@@ -510,3 +510,31 @@ p.tableNote a {text-decoration: underline;}
 	height: 32px;
 	line-height: none;
 }
+
+.oneClickSubs p {
+    margin-bottom: 14px;
+    margin-left: 30px;
+    margin-top: 7px;
+    width: 300px;
+}
+
+.oneWideColumn h1 {
+	margin-top: 20px;
+	margin-left: 27px;
+	background: none;
+}
+
+.oneClickSubs .formButton {
+    margin-left: 30px;
+    margin-top: 15px;
+    text-align: center;
+    width: 200px;
+}
+
+.oneClickSubs input.button {
+	width: 200px;
+}
+
+.addSmallSpace {
+	margin-bottom: 50px;
+}
