@@ -2,6 +2,4 @@
 .settings/
 .classpath
 .project
-bin/
-gen/
 target/
