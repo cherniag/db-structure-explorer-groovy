@@ -23,7 +23,6 @@
 				<p><s:message code='one.click.subscription.dialog.successful.body' arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}' /></p>
 				<div class="clr"></div>				
 				<div class="addSmallSpace"></div>		
-				<!--button-->
 				<div class="buttonShadow formButton rad4">
 					<div class="buttonBox rad7">
 						<div class="buttonContent rad7">
@@ -35,6 +34,7 @@
 		</div>
 	</div>
 </div>
+
 	<!--end of main account content area-->
 	<!-- end  of two columns content -->
 	<div class="clr verticalSpaceMiddle"></div>
