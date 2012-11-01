@@ -16,7 +16,7 @@
 		<property name="fileService" ref="service.FileService" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController" init-method="init">
+	<bean id="transport.EntityController" class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController" init-method="init">
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="drmService" ref="service.DrmService" />
 		<property name="mediaService" ref="service.MediaService" />
