@@ -538,3 +538,45 @@ p.tableNote a {text-decoration: underline;}
 .addSmallSpace {
 	margin-bottom: 50px;
 }
+
+/*privacy policy for not autorizes*/
+.oneWideColumnNotAuth {
+    background-color: #FFFFFF;
+    background-image: none;
+    margin: 0 auto;
+    opacity: 0.95;
+    padding-top: 7px;
+    width: 940px;
+}
+
+.contentNotAuth {
+    color: #000000;
+    font-size: 12px;
+}
+
+.detailsNotAuth {
+    margin: 28px 38px 50px 38px;
+    min-height: 200px;
+}
+
+.details h2, .detailsNotAuth h2 {
+	color: #000000!important;
+    font-size: 18px!important;
+    text-decoration: none!important;
+    line-height: 25px!important;
+}
+.details h1, .detailsNotAuth h1 {
+    background: url("../imgs/bgs/header.gif") repeat-x scroll left bottom transparent;
+    color: #000000;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 25px;
+    margin-bottom: 8px;
+    margin-left: 0px!important;
+    margin-right: 40px;
+    padding: 11px 0 9px 3px;
+}
+
+.detailsNotAuth ul {
+    padding: 10px;
+}
