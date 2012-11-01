@@ -136,8 +136,7 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	}
 
 	private String getRedirectUri(HttpServletRequest request) {
-		if (redirectUrl == null)
-			redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
+		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
 		
 		String registrationValue=request.getParameter(REGISTRATION);
 		
