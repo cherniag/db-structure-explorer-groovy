@@ -42,15 +42,5 @@ http://www.springframework.org/schema/task http://www.springframework.org/schema
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="stopped" value="true" />
 	</bean>
-	
-	<bean id="service.PaymentRetryService"
-		class="mobi.nowtechnologies.server.service.PaymentRetryService">
-		<property name="userDao" ref="persistence.UserDao" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="migService" ref="service.MigService" />
-		<property name="userService" ref="service.UserService" />
-		<property name="paymentService" ref="service.PaymentService" />
-		<property name="stopped" value="true" />
-	</bean>
 
 </beans>
