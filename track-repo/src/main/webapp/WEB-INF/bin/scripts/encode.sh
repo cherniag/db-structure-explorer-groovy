@@ -216,6 +216,11 @@ echo "***** Generating Mobile Preview Audio *****"
 		curl -X PUT -T files/purchased/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/`basename $i`
 	done
 	
+	for i in *.m4a; 
+	do
+		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/`basename $i`
+	done
+	
 	mv files/image/* ${PUBLISH_DIR}/image|| { echo "command failed"; exit 1; } 
 	mv files/header/* ${PUBLISH_DIR}/header|| { echo "command failed"; exit 1; } 
 	mv files/audio/* ${PUBLISH_DIR}/audio|| { echo "command failed"; exit 1; } 
