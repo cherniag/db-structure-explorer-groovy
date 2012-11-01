@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.DrmService;
 import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
+import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -43,6 +44,7 @@ import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -86,6 +88,7 @@ public class EntityController extends CommonController {
 	private Thread paymentRetryServiceThread;
 	private Thread weeklyUpdateServiceThread;
 	private PromotionService promoService;
+	private DeviceUserDataService deviceUserDataService;
 
 	public void setFacebookService(FacebookService facebookService) {
 		this.facebookService = facebookService;
@@ -110,6 +113,10 @@ public class EntityController extends CommonController {
 	@InitBinder(UserFacebookDetailsDto.NAME)
 	public void initUserFacebookDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
 		binder.setValidator(new UserFacebookDetailsDtoValidator());
+	}
+	
+	public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
+		this.deviceUserDataService = deviceUserDataService;
 	}
 
 	public void setWeeklyUpdateService(WeeklyUpdateService weeklyUpdateService) {
@@ -167,9 +174,9 @@ public class EntityController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
-	public ModelAndView accountCheck(
+	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -180,7 +187,29 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken) {
+			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken){
+	
+		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken);
+		if(xtifyToken != null){
+			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+		}
+		
+		return mav;
+	}
+
+	public ModelAndView accountCheck(
+			HttpServletRequest httpServletRequest,
+			String appVersion,
+			String communityName,
+			String apiVersion,
+			String userName,
+			String userToken,
+			String timestamp,
+			String deviceType,
+			String deviceUID,
+			String pushNotificationToken,
+			String iphoneToken) {
 		LOGGER.info("command processing started");
 		try {
 			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);

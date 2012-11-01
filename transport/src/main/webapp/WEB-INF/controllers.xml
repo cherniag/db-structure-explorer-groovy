@@ -23,6 +23,7 @@
 		<property name="weeklyUpdateService" ref="service.WeeklyUpdateService" />
 		<property name="promoService" ref="service.PromotionService" />
 		<property name="facebookService" ref="service.FacebookService" />
+		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" />

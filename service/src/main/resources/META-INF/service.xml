@@ -20,6 +20,12 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
 	
+	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
+		<property name="deviceUserDataRepository" ref="deviceUserDataRepository"/>
+		<property name="userService" ref="service.UserService"/>
+		<property name="communityService" ref="service.communityService" />		
+	</bean>
+	
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
 		<property name="manifest" value="classpath:/META-INF/MANIFEST.MF" />
 	</bean>
