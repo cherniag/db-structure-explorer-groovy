@@ -224,10 +224,20 @@
 			<artifactId>concurrent</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
-
+	
 		<dependencies>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>3.0</version>
+				<scope>test</scope>
+			</dependency>
 			<dependency>
 				<groupId>bouncycastle</groupId>
 				<artifactId>bcprov-jdk15</artifactId>
