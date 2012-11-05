@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.StringUtils.hasText;
+
 import java.io.StringReader;
 import java.lang.Thread.State;
 import java.util.Enumeration;
@@ -21,10 +24,10 @@ import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.DrmService;
 import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
-import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -44,9 +47,7 @@ import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
@@ -191,7 +192,7 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken){
 	
 		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken);
-		if(xtifyToken != null){
+		if(isNotBlank(xtifyToken)){
 			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
 		}
 		
@@ -218,7 +219,7 @@ public class EntityController extends CommonController {
 				pushNotificationToken = iphoneToken;
 			
 			User user = null;
-			if (StringUtils.hasText(deviceUID))
+			if (org.springframework.util.StringUtils.hasText(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
@@ -663,7 +664,7 @@ public class EntityController extends CommonController {
 			UserCredentions credentions = facebookService.getUserCredentions(communityName, facebookToken);
 			final String creadentionsId = credentions.getId();
 			final String credentionsEmail = credentions.getEmail();
-			String userName = StringUtils.hasText(credentionsEmail) ? credentionsEmail : creadentionsId;
+			String userName = hasText(credentionsEmail) ? credentionsEmail : creadentionsId;
 
 			User user = userService.findByNameAndCommunity(userName, communityName);
 
