@@ -75,3 +75,13 @@ alter table tb_filter_params add column FreeTrialPeriodFilter_id TINYINT UNSIGNE
 -- alter table tb_filter_params add index tb_filter_params_PK_FreeTrialPeriodFilter_id (FreeTrialPeriodFilter_id), add constraint tb_filter_params_U_FreeTrialPeriodFilter_id foreign key (FreeTrialPeriodFilter_id) references tb_filter(id);
 
 alter table tb_promotionPaymentPolicy_tb_paymentPolicy drop index paymentPolicies_i;
+
+CREATE TABLE device_user_data (
+  `id` int unsigned NOT NULL auto_increment,
+  `community_url` varchar(255) NOT NULL,
+  `user_id` int NOT NULL,
+  `xtify_token` char(255) NOT NULL,  
+  `device_uid` char(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  FOREIGN KEY (user_id) REFERENCES tb_users(i)
+) DEFAULT CHARSET=latin1 AUTO_INCREMENT=1; 
