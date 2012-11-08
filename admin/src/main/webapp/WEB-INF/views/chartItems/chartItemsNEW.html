@@ -796,7 +796,7 @@
 			data: data,
 			dataType: "json",
 			success: function(data) {
-				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00";
+				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00';
 			}
 		}).fail(function(data, x, e) {
 			alert("Can't save chart item list");
@@ -847,61 +847,61 @@
 		}).draggable($draggableProperties);
 		
 		$('<div>').attr({
-			class:"id_chartItem",
-			style:"display:none;"
+			"class":"id_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<div>').attr({
-			class:"mediaId_chartItem",
-			style:"display:none;"
+			"class":"mediaId_chartItem",
+			"style":"display:none;"
 		}).text(chartItem.mediaDto.id).appendTo(li);
 		$('<div>').attr({
-			class:"position_chartItem",
-			style:"display:none;"
+			"class":"position_chartItem",
+			"style":"display:none;"
 		}).text(chartItem.position).appendTo(li);
 		
 		var prevPositionDiv = $('<div>').attr({
-			class:"prev_position_chartItem",
-			style:"display:none;"
+			"class":"prev_position_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<span>').text(chartItem.prevPosition).appendTo(prevPositionDiv);
 		
 		$('<div>').attr({
-			class:"change_position_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"change_position_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).text(chartItem.chgPosition).appendTo(li);
 		
 		var channelDiv = $('<div>').attr({
-			class:"channel_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"channel_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').text(chartItem.channel).appendTo(channelDiv);
 		
 		$('<div>').attr({
-			class:"ArtistTitle_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"ArtistTitle_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).text(chartItem.mediaDto.artistDto.name+" - "+chartItem.mediaDto.title).appendTo(li);
 		
 		var infoDiv = $('<div>').attr({
-			class:"info_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"info_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').css("word-wrap","break-word").text(chartItem.info).appendTo(infoDiv);
 		
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
 		var publishDateDiv = $('<div>').attr({
-			class:"publishDate_chartItem",
-			style:"display:none;"
+			"class":"publishDate_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<span>').text(dateFormat(chartItem.publishTime, $dateformat)).appendTo(publishDateDiv);
 		$('<button>').attr({
-			type:"button",
-			onclick:"onToBasketClick(this, false)",
-			class:"btn btn-danger"
+			"type":"button",
+			"onclick":"onToBasketClick(this, false)",
+			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(publishDateDiv);
 		
 		var coverMediaDiv = $('<div>').attr({
-			class:"cover_media",
-			style: "margin: 0 2px"
+			"class":"cover_media",
+			"style": "margin: 0 2px"
 		}).appendTo(li);
 		$('<img>').attr({
 			alt:$mediaImgAlt,
@@ -911,23 +911,23 @@
 		}).appendTo(coverMediaDiv);
 		
 		$('<div>').attr({
-			class:"isrc_media",
+			"class":"isrc_media",
 		}).text(chartItem.mediaDto.isrc).appendTo(li);
 		$('<div>').attr({
-			class:"title_media",
+			"class":"title_media",
 		}).text(chartItem.mediaDto.title).appendTo(li);
 		
 		var artistMediaDiv = $('<div>').attr({
-			class:"artist_media"
+			"class":"artist_media"
 		}).text(chartItem.mediaDto.artistDto.name).appendTo(li);
 		
 		var artistMediaDiv = $('<div>').attr({
-			class:"basket_button"
+			"class":"basket_button"
 		}).appendTo(li);
 		$('<button>').attr({
-			type:"button",
-			onclick:"onToBasketClick(this, true)",
-			class:"btn btn-danger"
+			"type":"button",
+			"onclick":"onToBasketClick(this, true)",
+			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(artistMediaDiv);
 		
 		return li;
