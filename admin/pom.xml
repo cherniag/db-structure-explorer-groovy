@@ -18,6 +18,22 @@
 
 	<dependencies>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test-mvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>persistence</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>service</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
