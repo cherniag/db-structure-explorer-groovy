@@ -789,32 +789,3 @@ table.hor-minimalist-a td {
     font-weight: normal;
     padding: 10px 8px;
 }
-
-
-.hor-minimalist-a {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-collapse: collapse;
-    font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
-    font-size: 12px;
-    text-align: left;
-    border: 1px dashed #cccccc;
-    
-}
-table { 
-    width: 100%;
-}
-
-table.hor-minimalist-a td {
-   border-top: 1px dashed #cccccc;
-   padding: 10px;
-}
-
-.hor-minimalist-a th {
-    background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
-	border: 8px solid transparent;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
-    color: #333333;
-    font-size: 14px;
-    font-weight: normal;
-    padding: 10px 8px;
-}
