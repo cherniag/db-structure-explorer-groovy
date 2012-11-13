@@ -5,15 +5,15 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 	
-    <bean name="trackRepo.SignInController" class="mobi.nowtechnologies.server.track_repo.controller.SignInController"/>
+    <bean name="trackRepo.SignInController" class="mobi.nowtechnologies.server.trackrepo.controller.SignInController"/>
     
      <bean name="trackRepo.FileController"
-		class="mobi.nowtechnologies.server.track_repo.controller.FileController">
+		class="mobi.nowtechnologies.server.trackrepo.controller.FileController">
 		<property name="fileService" ref="trackRepo.FileService" />
 	</bean>
     
     <bean name="trackRepo.TrackController"
-		class="mobi.nowtechnologies.server.track_repo.controller.TrackController">
+		class="mobi.nowtechnologies.server.trackrepo.controller.TrackController">
 		<property name="trackService" ref="trackRepo.TrackService" />
 	</bean>
 </beans>
