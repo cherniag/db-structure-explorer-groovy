@@ -54,7 +54,7 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<div class="nav-collapse collapse">
-						<a class="brand" href="#">Chartsnow Admin Console</a>
+						<a th:href="@{/}" class="brand">Chartsnow Admin Console</a>
 						<ul class="nav" th:object="${#httpServletRequest}">
 							<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
 							<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
