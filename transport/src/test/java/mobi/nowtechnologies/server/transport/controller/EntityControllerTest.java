@@ -1,17 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
@@ -21,16 +9,10 @@ import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
-
-import org.aspectj.apache.bcel.classfile.Method;
-import org.easymock.EasyMock;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.Rollback;
@@ -40,15 +22,20 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/transport-servlet.xml", "classpath:META-INF/service-test.xml",
-		"classpath:META-INF/dao-test.xml", "/META-INF/shared.xml" })
+@ContextConfiguration(locations = {"classpath:META-INF/service-test.xml",
+		"classpath:META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:transport-servlet-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class EntityControllerTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntityControllerTest.class.getName());
 
 	@Resource(name = "transport.EntityController")
 	EntityController entityController;
@@ -59,53 +46,53 @@ public class EntityControllerTest {
 	@Autowired
 	DeviceUserDataService deviceUserDataService;
 
-	@Test
-	public void verifyThatXtifyTokenCanBeSavedThroughRestApi() throws NoSuchMethodException {
+    @Test
+    public void verifyThatXtifyTokenCanBeSavedThroughRestApi() throws NoSuchMethodException {
 
-		EntityController controller = createMock(EntityController.class,
-				EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class,
-						String.class));
-		controller.setDeviceUserDataService(deviceUserDataService);
-		expect(controller.accountCheck((HttpServletRequest) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject(),
-				(String) anyObject()
-				)).andReturn(null);
-		replay(controller);
-		controller.accountCheckWithXtifyToken(null,
-				null,
-				"Now Music",
-				null,
-				"test@test.com",
-				null,
-				null,
-				null,
-				"deviceUID",
-				null,
-				null,
-				"1234");
+        EntityController controller = createMock(EntityController.class,
+                EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class));
+        controller.setDeviceUserDataService(deviceUserDataService);
+        expect(controller.accountCheck((HttpServletRequest) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject()
+        )).andReturn(null);
+        replay(controller);
+        controller.accountCheckWithXtifyToken(null,
+                null,
+                "Now Music",
+                null,
+                "test@test.com",
+                null,
+                null,
+                null,
+                "deviceUID",
+                null,
+                null,
+                "1234");
 
-		verify(controller);
-		DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
-		assertNotNull(data);
-		assertEquals("deviceUID", data.getDeviceUID());
-	}
+        verify(controller);
+        DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
+        assertNotNull(data);
+        assertEquals("deviceUID", data.getDeviceUID());
+    }
 
 	@Test
 	@Ignore
@@ -222,14 +209,6 @@ public class EntityControllerTest {
 				|| receivedPaymentStatus.equals(PaymentStatusDao.getOK().getName()));
 	}
 
-	/**
-	 * Run the void registerUser(String,HttpServletResponse,HttpServletRequest)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 20.07.11 15:17
-	 */
 	@Test
 	public void testRegisterUser_ValidParamsCardIssueNumberTagIsEmpty() {
 		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<userRegInfo>" + "<address>33333</address>"
