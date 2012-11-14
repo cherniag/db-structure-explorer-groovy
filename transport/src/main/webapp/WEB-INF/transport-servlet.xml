@@ -173,7 +173,7 @@
 		</property>
 	</bean>
 	
-		<!--	Notification job-->
+		<!--	Notification job
 	<bean id="transport.notificationJob" class="mobi.nowtechnologies.server.job.NotificationJob">
 		<property name="numberOfThreads" value="${notificationJob.numberOfThreads}" />
 		<property name="keystore" value="${notificationJob.keystore}" />
@@ -182,6 +182,7 @@
 		<property name="communityName" value="Now Music" />
 		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
 	</bean>
+		-->
 
 	<bean id="transport.notificationQuartzJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
