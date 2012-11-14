@@ -46,6 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 		"classpath:META-INF/dao-test.xml", "/META-INF/shared.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class EntityControllerTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntityControllerTest.class.getName());
 
