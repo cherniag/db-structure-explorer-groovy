@@ -118,6 +118,7 @@ public class EntityControllerTest {
 
 	@Test
 	@Rollback(value = false)
+    @Ignore
 	public void testRegisterUserCheckPinAccountCheckSuccess() {
 		String timestamp = "1";
 		String userToken = "1a4d0298535c54cbab054eccaca4c793";
