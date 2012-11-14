@@ -1,25 +1,29 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
+import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.*;
-import mobi.nowtechnologies.server.shared.dto.FileType;
 import mobi.nowtechnologies.server.shared.dto.admin.SearchTrackDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -72,6 +76,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
+    //TODO - need refactoring. too much long method
 	public TrackDto pull(TrackDto config) {
 		LOGGER.debug("input pull(track): [{}]", config);
 

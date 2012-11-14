@@ -109,7 +109,7 @@
 		</bean>
 	</mvc:interceptors>
 
-    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+    <bean id="JacksonView" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="1"/>
         <property name="mediaTypes">
             <map>

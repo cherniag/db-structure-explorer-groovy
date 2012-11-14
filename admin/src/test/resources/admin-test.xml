@@ -5,11 +5,12 @@
 
     <import resource="classpath:WEB-INF/admin-servlet.xml"/>
     <bean id="admin.VersionController" class="java.lang.Object"/>
+    <bean id="JacksonView" class="java.lang.Object"/>
 
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:application.properties</value>
+                <value>classpath:application-test.properties</value>
             </list>
         </property>
         <property name="ignoreUnresolvablePlaceholders" value="true" />

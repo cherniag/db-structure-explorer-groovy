@@ -8,6 +8,10 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="service.VersionService" class="java.lang.Object"/>
 
+    <bean id="trackRepoClient" class="mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryClientAdapter">
+        <property name="trackService" ref="trackRepo.TrackService"/>
+    </bean>
+
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
 		<property name="mailSession" ref="service.MailSession" />
 	</bean>
@@ -43,5 +47,15 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="stopped" value="true" />
 	</bean>
+
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application-test.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="ignoreResourceNotFound" value="false" />
+    </bean>
 
 </beans>

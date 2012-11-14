@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.track_repo.service.impl;
 
-import java.io.*;
-import java.util.*;
-
 import mobi.nowtechnologies.java.server.uits.MP3Manager;
 import mobi.nowtechnologies.java.server.uits.MP4Manager;
 import mobi.nowtechnologies.server.shared.dto.*;
@@ -14,13 +11,19 @@ import mobi.nowtechnologies.server.track_repo.domain.Track;
 import mobi.nowtechnologies.server.track_repo.repository.TrackRepository;
 import mobi.nowtechnologies.server.track_repo.service.TrackService;
 import mobi.nowtechnologies.server.track_repo.utils.ExternalCommandThread;
-
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * 
@@ -41,8 +44,9 @@ public class TrackServiceImpl implements TrackService {
 	private TrackRepository trackRepository;
 
 	public void init() throws Exception {
-		if (encodeScript == null || !encodeScript.exists())
-			throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.script");
+        Validate.notNull(encodeScript, "There is no resource under the following context property trackRepo.encode.script");
+        Validate.isTrue(encodeScript.exists(), "There is no resource under the following context property trackRepo.encode.script");
+
 		if (itunesScript == null || !itunesScript.exists())
 			throw new IllegalArgumentException("There is no resource under the following context property trackRepo.itunes.script");
 		if (privateKey == null || !privateKey.exists())
@@ -103,15 +107,15 @@ public class TrackServiceImpl implements TrackService {
 			track.setStatus(TrackStatus.ENCODED);
 			track.setResolution(isHighRate != null && isHighRate ? AudioResolution.RATE_96 : AudioResolution.RATE_48);
 			track.setLicensed(licensed);
-			trackRepository.save(track);
 		} catch (Exception e) {
 			track.setStatus(TrackStatus.NONE);
 			track.setResolution(AudioResolution.RATE_ORIGINAL);
-			trackRepository.save(track);
 
 			LOGGER.error("Cannot encode track files or create zip package.", e);
 			throw new RuntimeException(e.getMessage(), e);
-		}
+		} finally {
+            trackRepository.save(track);
+        }
 
 		TrackDto trackDto = TrackAsm.toTrackDto(track);
 		LOGGER.info("output encode(trackId, isHighRate): [{}]", new Object[] { trackDto });

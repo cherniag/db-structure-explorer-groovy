@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 	
@@ -22,15 +22,16 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 <bean id="persistence.DataSource"
 	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-	<property name="url" value="jdbc:mysql://localhost:3306/chartsnow" />
+	<property name="url" value="jdbc:mysql://localhost:3306/cn_service" />
 	<property name="username" value="root" />
-	<property name="password" value="1" />
+	<property name="password" value="" />
 </bean>
 
 
 <bean id="persistence.EntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="persistence.DataSource" />
+        <property name="persistenceUnitName" value="mobi.nowtechnologies.persistence" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />
@@ -40,13 +41,11 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 		</property>
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.import_files">/META-INF/init-test.sql</prop>
 			</props>
 		</property>
 	</bean>
-
-<!--	<jdbc:embedded-database id="persistence.DataSource" type="H2" />-->
 
 </beans>

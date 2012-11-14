@@ -223,6 +223,19 @@
 
 		<dependencies>
             <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>track-repo</artifactId>
+                <scope>test</scope>
+                <version>${chartsnow-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>track-repo</artifactId>
+                <version>${chartsnow-version}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test-mvc</artifactId>
                 <version>1.0.0.BUILD-SNAPSHOT</version>
