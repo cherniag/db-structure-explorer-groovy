@@ -27,7 +27,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	</bean>
 	
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
-		<property name="manifest" value="classpath:/META-INF/MANIFEST.MF" />
+		<property name="manifest" value="/META-INF/MANIFEST.MF" />
 	</bean>
 	
 	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
