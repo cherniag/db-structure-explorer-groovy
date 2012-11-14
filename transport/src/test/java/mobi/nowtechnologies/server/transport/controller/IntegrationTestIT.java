@@ -24,6 +24,8 @@ import javax.servlet.ServletException;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
+import mobi.nowtechnologies.server.mock.MockWebApplication;
+import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
@@ -49,8 +51,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.transport.mock.MockWebApplication;
-import mobi.nowtechnologies.server.transport.mock.MockWebApplicationContextLoader;
 
 import org.apache.http.NameValuePair;
 import org.junit.Ignore;

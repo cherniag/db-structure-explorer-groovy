@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.mock;
+package mobi.nowtechnologies.server.mock;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
