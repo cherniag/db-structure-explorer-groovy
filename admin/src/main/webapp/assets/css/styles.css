@@ -197,52 +197,52 @@ ul.table li div.filtersStore {
 /*CHarts*/
 
 ul.table li div.position_chartItem {
-	width: 5%;
+	width: 20px;
 	font-size: 9px;
 	font-weight: bold;
 	padding-left: 4px;
 }
 
 ul.table li div.prev_position_chartItem {
-	width: 5%;
+	width: 20px;
 	height:60px!important;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.change_position_chartItem {
-	width: 9%;
+	width: 100px;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.image_chartItem {
-	width: 9%;
+	width: 60px;
 	font-size: 10px;
 }
 
 ul.table li div.channel_chartItem {
-	width: 15%;
+	width: 100px;
 	height:60px!important;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.ArtistTitle_chartItem {
-	width: 18%;
+	width: 150px;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.info_chartItem {
-	width: 27%;
+	width: 100px;
 	height:60px!important;
 	overflow:hidden;
 	font-size: 10px;
 }
 
 ul.table li div.publishDate_chartItem {
-	width: 5%;
+	width: 100px;
 	font-size: 10px;
 }
 

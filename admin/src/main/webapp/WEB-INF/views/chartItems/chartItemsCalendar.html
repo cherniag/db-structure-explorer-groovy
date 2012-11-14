@@ -7,7 +7,7 @@
 			<div th:substituteby="tpl::navbar"></div>
 			<div class="container">
 			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
-				
+				<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker1" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
 				<div class="newsList">
 					<ul  class="table">
 						<li class="title">
@@ -120,14 +120,18 @@
 							}
 						});
 						
+						$(function() {
+							$( "#datepicker1" ).datepicker();
+						});
+						
 						var selectedDate=jAdmin.getURLParameter("selectedPublishDateTime").substring(0, 10);
 						if (null!=selectedDate)
-							$('.datepicker').datepicker("setDate" , selectedDate);
+							$('.datepicker, .datepicker1').datepicker("setDate" , selectedDate);
 					}
 				});
 				
 				
-				$('#timepicker_customrange').timepicker({
+				$('#timepicker_customrange, #timepicker_timeChange').timepicker({
 				    minutes: { interval: 15 },
 				    showCloseButton: true,
 				    rows: 3,
