@@ -84,4 +84,4 @@ CREATE TABLE device_user_data (
   `device_uid` char(255) NOT NULL,
   PRIMARY KEY  (`id`),
   FOREIGN KEY (user_id) REFERENCES tb_users(i)
-) DEFAULT CHARSET=latin1 AUTO_INCREMENT=1; 
+) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1; 
