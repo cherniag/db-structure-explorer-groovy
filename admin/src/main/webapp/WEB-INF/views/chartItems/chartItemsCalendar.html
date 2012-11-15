@@ -8,6 +8,22 @@
 			<div class="container">
 			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
 				<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker1" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
+				<a href="#" id="popuppaypal">Notification Error</a>
+				<script type="text/javascript">
+						$("#popuppaypal").click(function(e){
+							showAsDialog("#popupNotificationError");
+							e.preventDefault();
+						});
+					</script>
+				<div class="pageWindow simplePopup" id="popupNotificationError">
+					<div class="pageWindowContent simpleTextPopup">
+						<div class="innerBox">
+							<h2 th:text="#{chartItems.page.chartItemsTable.simpleDialog.header}">Header</h2>
+							<span th:text="#{chartItems.page.chartItemsTable.simpleDialog.body}">You are trying to save the charts for existing date. Please choose other</span><br /><br />
+							<button class="btn btn-primary simplemodal-close" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button>
+						</div>
+					</div>
+				</div>
 				<div class="newsList">
 					<ul  class="table">
 						<li class="title">
