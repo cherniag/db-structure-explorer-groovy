@@ -1,23 +1,21 @@
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
 import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.ServletContextResource;
+
+import javax.servlet.ServletContext;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>ResourceFileDtoBuilderTest</code> contains tests for the class <code>{@link ResourceFileDtoBuilder}</code>.

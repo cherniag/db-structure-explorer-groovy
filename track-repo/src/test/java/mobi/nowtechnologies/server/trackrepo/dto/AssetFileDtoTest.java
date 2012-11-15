@@ -1,11 +1,16 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import java.util.LinkedList;
-import java.util.List;
-import org.junit.*;
-import static org.junit.Assert.*;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>AssetFileDtoTest</code> contains tests for the class <code>{@link AssetFileDto}</code>.

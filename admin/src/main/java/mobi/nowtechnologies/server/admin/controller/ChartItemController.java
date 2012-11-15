@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.lang.reflect.Type;
-import java.util.*;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,9 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Controller
 public class ChartItemController extends AbstractCommonController{
@@ -94,7 +92,7 @@ public class ChartItemController extends AbstractCommonController{
 	/**
 	 * Updating or creating chart item list for selected date
 	 *
-	 * @param chartItemsListJSON - chart item list in JSON data format
+	 * param chartItemsListJSON - chart item list in JSON data format
 	 * @param selectedPublishDateTime - selected date and time represented in URI
 	 * @param chartId - chart identifier of selected chart
 	 * 

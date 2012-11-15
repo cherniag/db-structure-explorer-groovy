@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
-
 import org.springframework.data.domain.Page;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 

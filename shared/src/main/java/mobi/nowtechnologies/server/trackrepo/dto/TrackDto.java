@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import java.util.Date;
-import java.util.List;
-
 import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -51,6 +51,8 @@ public class TrackDto {
 	public TrackDto() {
 
 	}
+
+
 
 	public TrackDto(TrackDto track) {
 		this.id = track.id;

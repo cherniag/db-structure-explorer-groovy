@@ -1,14 +1,8 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import java.io.File;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.dto.AssetFileDto;
 import mobi.nowtechnologies.server.trackrepo.service.FileService;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -16,6 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.OutputStream;
 
 /**
  * 

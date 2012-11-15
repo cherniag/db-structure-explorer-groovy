@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -17,6 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Date;
 
 @Controller
 public class TrackRepoController extends AbstractCommonController{
@@ -38,26 +37,24 @@ public class TrackRepoController extends AbstractCommonController{
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
-	
-	/**
-	 * @param searchTrackDto
-	 * @return
-	 */
+
 	@RequestMapping(value = "/tracks/list", method = RequestMethod.GET)
-	public ModelAndView findTracks(@RequestParam(value = "query", required = false) String query, @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto, BindingResult bindingResult
-			, @PageableDefaults(pageNumber = 0, value = 10) Pageable pageable) {
+	public ModelAndView findTracks(@RequestParam(value = "query", required = false) String query,
+                                   @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
+                                   BindingResult bindingResult,
+                                   @PageableDefaults(pageNumber = 0, value = 10) Pageable pageable) {
 		LOGGER.debug("input findTracks(query, searchTrackDto): [{}]", new Object[] { searchTrackDto });
 		
 		ModelAndView modelAndView = new ModelAndView("tracks/tracks");
 		if (bindingResult.hasErrors()) {
-			modelAndView.getModelMap().put(SearchTrackDto.SEARCH_TRACK_DTO, searchTrackDto);
-		} else {
+            modelAndView.getModelMap().put(SearchTrackDto.SEARCH_TRACK_DTO, searchTrackDto);
+        } else {
 			PageListDto<TrackDto> tracks =  query != null ? trackRepoService.find(query, pageable) : trackRepoService.find(searchTrackDto, pageable);
-			
+
 			modelAndView.addObject(PageListDto.PAGE_LIST_DTO, tracks);
 			modelAndView.addObject(TRACK_REPO_FILES_URL, trackRepoFilesURL);
 		}
-			
+
 		LOGGER.info("output findTracks(query, searchTrackDto): [{}]", new Object[] { modelAndView });
 		return modelAndView ;
 	}

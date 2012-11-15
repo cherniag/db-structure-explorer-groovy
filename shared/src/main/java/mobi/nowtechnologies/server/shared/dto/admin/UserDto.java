@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.UserType;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
-import mobi.nowtechnologies.server.shared.enums.UserType;
 
 /**
  * @author Titov Mykhaylo (titov)

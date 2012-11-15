@@ -1,9 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import mobi.nowtechnologies.java.server.uits.MP3Manager;
 import mobi.nowtechnologies.java.server.uits.MP4Manager;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
@@ -12,10 +8,16 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourceFileDtoBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);

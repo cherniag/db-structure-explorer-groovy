@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.service;
 
-import java.rmi.ServerException;
-
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.rmi.ServerException;
 
 
 /**
@@ -49,15 +48,7 @@ public interface TrackService {
 	
 	/**
 	 * This method finds matched tracks by given track fields and returns a list of tracks.
-	 * 
-	 * @param   artist  pattern artist value in track.
-	 * @param   title  pattern title value in track.
-	 * @param   isrc  pattern isrc value in track.
-	 * @param   label  pattern label or destributor of some track territory.
-	 * @param   ingestor  pattern ingestor value in track.
-	 * @param   ingestFrom date from track was ingested.
-	 * @param   ingestTo  date to track was ingested.
-	 * 
+	 *
 	 * @return  short data about track including only basic properties.
 	 */
 	Page<Track> find(SearchTrackCriteria searchTrackCreatria, Pageable page);

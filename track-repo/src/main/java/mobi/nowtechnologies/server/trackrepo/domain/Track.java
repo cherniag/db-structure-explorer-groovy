@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
-
-import javax.persistence.*;
-
-import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
-import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 
 /**
  * 

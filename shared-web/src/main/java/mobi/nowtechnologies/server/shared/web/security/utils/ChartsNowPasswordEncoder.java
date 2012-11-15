@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.shared.web.security.utils;
 
 import mobi.nowtechnologies.server.shared.Utils;
-
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 
 /**

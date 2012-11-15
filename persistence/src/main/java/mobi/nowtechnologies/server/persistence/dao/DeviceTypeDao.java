@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.User;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Titov Mykhaylo (titov)

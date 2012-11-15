@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.web.provider;
 
-import java.util.Collection;
-
 import mobi.nowtechnologies.server.web.security.facebook.FacebookAuthenticationToken;
 import mobi.nowtechnologies.server.web.service.impl.FacebookUserDetailsServiceImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,6 +13,8 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.social.facebook.api.FacebookProfile;
+
+import java.util.Collection;
 
 /**
  * @author Titov Mykhaylo (titov)

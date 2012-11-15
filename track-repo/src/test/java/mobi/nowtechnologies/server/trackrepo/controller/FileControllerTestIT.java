@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import java.text.SimpleDateFormat;
-
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.shared.Utils;
-
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -13,6 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
 
 /**
  * The class <code>FileControllerTest</code> contains tests for the class <code>{@link FileController}</code>.

@@ -1,9 +1,13 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The class <code>CountryAppVersionDaoTest</code> contains tests for the class <code>{@link CountryAppVersionDao}</code>.

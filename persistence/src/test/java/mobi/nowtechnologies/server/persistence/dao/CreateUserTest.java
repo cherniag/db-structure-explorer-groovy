@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * CreateUserTest

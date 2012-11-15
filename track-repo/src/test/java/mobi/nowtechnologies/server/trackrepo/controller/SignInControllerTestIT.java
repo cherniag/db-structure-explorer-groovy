@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import java.text.SimpleDateFormat;
-
 import junit.framework.TestCase;
-
 import org.junit.Ignore;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.text.SimpleDateFormat;
 
 /**
  * The class <code>SignInControllerTest</code> contains tests for the class <code>{@link SignInController}</code>.

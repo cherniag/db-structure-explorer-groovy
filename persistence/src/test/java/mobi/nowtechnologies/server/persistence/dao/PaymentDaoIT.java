@@ -1,28 +1,9 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
-import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_PENDING;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.CreditCardPayment;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPayment;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,6 +12,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
+import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_PENDING;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The class <code>PaymentDaoTest</code> contains tests for the class <code>{@link PaymentDao}</code>.

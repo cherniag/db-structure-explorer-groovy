@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.NewsDetail;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
+
+import java.util.List;
 
 public class NewsDetailDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewsDetailDao.class);

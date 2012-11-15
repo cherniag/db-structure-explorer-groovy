@@ -3,13 +3,13 @@
  */
 package mobi.nowtechnologies.server.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mayboroda Dmytro

@@ -1,12 +1,8 @@
-package mobi.nowtechnologies.server.transport.mock;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package mobi.nowtechnologies.server.transport.controller.mock;
 
 import org.springframework.web.context.WebApplicationContext;
+
+import java.lang.annotation.*;
 
 /**
  * @author Titov Mykhaylo (titov)

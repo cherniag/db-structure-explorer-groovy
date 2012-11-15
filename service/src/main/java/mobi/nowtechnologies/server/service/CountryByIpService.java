@@ -1,20 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.GEO_IP_FILE_NAME;
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
+import com.maxmind.geoip.Country;
+import com.maxmind.geoip.LookupService;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.maxmind.geoip.Country;
-import com.maxmind.geoip.LookupService;
+import static mobi.nowtechnologies.server.shared.AppConstants.GEO_IP_FILE_NAME;
+import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 
 /**
  * CountryByIpService
@@ -36,17 +34,14 @@ public class CountryByIpService {
 	}
 
 	public void setStorePath(String storePath) {
-		LOGGER.info("Store path for GEOIP database is [{}]", storePath);
-		
-		if(storePath == null)
-			return;
-		
+
+        File file = new File(storePath + SEPARATOR + GEO_IP_FILE_NAME);
 		try {
-			LOOKUP_SERVICE = new LookupService(new File(storePath + SEPARATOR + GEO_IP_FILE_NAME), LookupService.GEOIP_MEMORY_CACHE
+            LOOKUP_SERVICE = new LookupService(file, LookupService.GEOIP_MEMORY_CACHE
 					| LookupService.GEOIP_CHECK_CACHE);
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ServiceException("failded to initialise LOOKUP_SERVICE");
+			throw new ServiceException("failed to initialise LOOKUP_SERVICE " +
+                    "geoIpFileName = " + file.getAbsolutePath(), e);
 		}
 	}
 

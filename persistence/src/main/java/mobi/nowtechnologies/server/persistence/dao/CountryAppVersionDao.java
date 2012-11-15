@@ -6,7 +6,6 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.server.persistence.domain.AppVersion;
 import mobi.nowtechnologies.server.persistence.domain.AppVersionCountry;
 import mobi.nowtechnologies.server.persistence.domain.Country;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;

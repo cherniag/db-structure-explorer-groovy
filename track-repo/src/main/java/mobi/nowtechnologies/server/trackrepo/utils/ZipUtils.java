@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.apache.commons.io.FileUtils;
 
 public class ZipUtils {
 	public final void copyInputStream(InputStream in, OutputStream out) throws IOException

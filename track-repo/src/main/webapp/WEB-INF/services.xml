@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init="true" default-init-method="init" 
-    xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+<beans default-lazy-init="true" default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-    <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.track_repo.service.impl.TrackServiceImpl">
+    <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">
         <property name="encodeScript" value="${trackRepo.encode.script}" />
         <property name="itunesScript" value="${trackRepo.itunes.script}" />
 		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
@@ -17,7 +15,7 @@
 		<property name="trackRepository" ref="trackRepository" />
 	</bean>
 	
-	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.track_repo.service.impl.FileServiceImpl">
+	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.trackrepo.service.impl.FileServiceImpl">
 		<property name="fileRepository" ref="fileRepository" />
 	</bean>		
 </beans>

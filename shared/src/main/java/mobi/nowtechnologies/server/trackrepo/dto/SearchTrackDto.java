@@ -3,12 +3,11 @@
  */
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import java.util.Date;
 
 /**
  *

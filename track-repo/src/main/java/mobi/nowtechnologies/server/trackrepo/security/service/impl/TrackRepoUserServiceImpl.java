@@ -1,12 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.security.service.impl;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.trackrepo.security.service.TrackRepoUserService;
 import mobi.nowtechnologies.server.trackrepo.security.userdetails.TrackRepoUserDetails;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -16,6 +11,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.SubmitedPaymentRepository;
 import mobi.nowtechnologies.server.service.payment.SubmitedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

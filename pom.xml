@@ -36,6 +36,15 @@
 	<build>
 		<finalName>server</finalName>
 		<plugins>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <configuration>
+                    <scanIntervalSeconds>3</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -195,23 +204,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -228,6 +222,25 @@
 	<dependencyManagement>
 
 		<dependencies>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>track-repo</artifactId>
+                <scope>test</scope>
+                <version>${chartsnow-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>track-repo</artifactId>
+                <version>${chartsnow-version}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test-mvc</artifactId>
+                <version>1.0.0.BUILD-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
 			<dependency>
 				<groupId>bouncycastle</groupId>
 				<artifactId>bcprov-jdk15</artifactId>
@@ -761,28 +774,6 @@
 				<artifactId>gson</artifactId>
 				<version>2.0</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>xml-apis</groupId> -->
-			<!-- <artifactId>xml-apis</artifactId> -->
-			<!-- <version>2.0.2</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>xml-resolver</groupId> -->
-			<!-- <artifactId>xml-resolver</artifactId> -->
-			<!-- <version>1.2</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.maven.doxia</groupId> -->
-			<!-- <artifactId>doxia-converter</artifactId> -->
-			<!-- <version>1.0</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>batik</groupId> -->
-			<!-- <artifactId>batik-ext</artifactId> -->
-			<!-- <version>1.6-1</version> -->
-			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 
@@ -833,6 +824,11 @@
 			<name>Panda Spring Maven MILESTONE Repository</name>
 			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/spring-milestone/</url>
 		</repository>
+
+        <repository>
+            <id>libs-snapshot</id>
+            <url>http://repo.springsource.org/libs-snapshot</url>
+        </repository>
 
 	</repositories>
 </project>

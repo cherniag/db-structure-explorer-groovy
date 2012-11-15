@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class AssetFileDto {
 	private FileType type;

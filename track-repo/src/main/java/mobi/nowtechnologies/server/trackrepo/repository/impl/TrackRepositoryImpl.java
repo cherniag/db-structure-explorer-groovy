@@ -1,17 +1,15 @@
 package mobi.nowtechnologies.server.trackrepo.repository.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.Query;
-
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import javax.persistence.Query;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 

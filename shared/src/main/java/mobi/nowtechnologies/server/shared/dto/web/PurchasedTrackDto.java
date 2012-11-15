@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)

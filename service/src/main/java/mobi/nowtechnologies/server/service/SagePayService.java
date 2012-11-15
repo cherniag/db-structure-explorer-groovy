@@ -1,18 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
-import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_OK;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao.TxType;
@@ -27,12 +14,23 @@ import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
+import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_OK;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
  * SagePayService

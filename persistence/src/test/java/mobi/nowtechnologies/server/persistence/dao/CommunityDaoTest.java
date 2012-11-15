@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Map;
-
 import mobi.nowtechnologies.server.persistence.domain.Community;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>CommunityDaoTest</code> contains tests for the class <code>{@link CommunityDao}</code>.
