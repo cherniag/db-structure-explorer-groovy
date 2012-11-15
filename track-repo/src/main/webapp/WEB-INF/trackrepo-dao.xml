@@ -45,12 +45,12 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 	</bean>
     
     <tx:annotation-driven transaction-manager="trackRepo.TransactionManager" proxy-target-class="true" />
-	<jpa:repositories base-package="mobi.nowtechnologies.server.track_repo.repository"
+	<jpa:repositories base-package="mobi.nowtechnologies.server.trackrepo.repository"
 		entity-manager-factory-ref="trackRepo.EntityManagerFactory"
 		transaction-manager-ref="trackRepo.TransactionManager">
 	</jpa:repositories>
 	
-	<bean id="trackRepositoryImpl" class="mobi.nowtechnologies.server.track_repo.repository.impl.TrackRepositoryImpl">
+	<bean id="trackRepositoryImpl" class="mobi.nowtechnologies.server.trackrepo.repository.impl.TrackRepositoryImpl">
 		<property name="entityManagerFactory" ref="trackRepo.EntityManagerFactory" />
 	</bean>
 </beans>

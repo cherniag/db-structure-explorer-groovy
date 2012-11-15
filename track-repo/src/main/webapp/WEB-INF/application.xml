@@ -17,13 +17,13 @@
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
 	
-	<bean id="applicationProperties" class="mobi.nowtechnologies.server.track_repo.ApplicationProperties">
+	<bean id="applicationProperties" class="mobi.nowtechnologies.server.trackrepo.ApplicationProperties">
 		<property name="binZip" value="${trackRepo.binZip}" />
 	</bean>
 	
 	<import resource="classpath:META-INF/shared.xml" />
 	
-	<import resource="dao.xml" />
+	<import resource="trackrepo-dao.xml" />
 	
 	<import resource="services.xml" />
 	

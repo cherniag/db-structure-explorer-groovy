@@ -93,7 +93,7 @@
 		<level value="INFO"></level>
 		<appender-ref ref="persistence-track-repo-RollingFileAppender" />
 	</logger>
-	<logger name="mobi.nowtechnologies.server.track-repo">
+	<logger name="mobi.nowtechnologies.server.trackrepo">
 		<level value="INFO"></level>
 		<appender-ref ref="track-repo-RollingFileAppender" />
 	</logger>

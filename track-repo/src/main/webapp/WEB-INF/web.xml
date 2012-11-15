@@ -8,7 +8,7 @@
 	<display-name>Now Technologies Server Track Repo</display-name>
 
 	<listener>
-		<listener-class>mobi.nowtechnologies.server.track_repo.ContextLoaderListener</listener-class>
+		<listener-class>mobi.nowtechnologies.server.trackrepo.ContextLoaderListener</listener-class>
 	</listener>
 
 	<context-param>

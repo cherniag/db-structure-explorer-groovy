@@ -16,6 +16,14 @@
 	
 	<build>
 		<finalName>jadmin-${project.version}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/main/webapp</directory>
+            </testResource>
+        </testResources>
 	</build>
 
 	<dependencies>
