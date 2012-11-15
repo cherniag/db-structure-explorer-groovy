@@ -235,7 +235,7 @@ ul.table li div.ArtistTitle_chartItem {
 }
 
 ul.table li div.info_chartItem {
-	width: 200px;
+	width: 100px;
 	height:60px!important;
 	overflow:hidden;
 	font-size: 10px;
