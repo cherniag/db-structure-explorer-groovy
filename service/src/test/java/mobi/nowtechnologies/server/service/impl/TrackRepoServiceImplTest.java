@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,14 +9,18 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.*;
 
-import mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryHttpClientImpl;
 import mobi.nowtechnologies.server.factory.TrackDtoFactory;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.*;
-import mobi.nowtechnologies.server.shared.dto.FileType;
-import mobi.nowtechnologies.server.shared.dto.admin.SearchTrackDto;
+import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.Resolution;
+import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.*;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl;
 import mobi.nowtechnologies.shared.testcases.TestCase;
 import mobi.nowtechnologies.shared.testcases.TestCases;
 

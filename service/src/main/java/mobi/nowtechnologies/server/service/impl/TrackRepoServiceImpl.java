@@ -4,15 +4,18 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.*;
-import mobi.nowtechnologies.server.shared.dto.FileType;
-import mobi.nowtechnologies.server.shared.dto.admin.SearchTrackDto;
+import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.*;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +130,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			artist.setRealName(track.getArtist());
 			artist.setInfo(config.getInfo());
 			artistRepository.save(artist);
-			
+
 			media.setArtist(artist);
 			media.setInfo(artist.getInfo());
 
@@ -241,7 +244,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 		LOGGER.info("output find(criteria): [{}]", tracks);
 		return tracks;
 	}
-	
+
 	@Transactional(readOnly = true)
 	protected String getArtistInfo(String artistName) {
 		Pageable one = new PageRequest(0, 1);
@@ -261,12 +264,12 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			if (track.getStatus() == TrackStatus.ENCODED) {
 				if (pullingTrackSet.contains(track.getId()))
 					track.setStatus(TrackStatus.PUBLISHING);
-				else {		
+				else {
 					track.setInfo(getArtistInfo(track.getArtist()));
 					track.setPublishArtist(track.getArtist());
 					track.setPublishTitle(track.getTitle());
 					map.put(track.getIsrc(), track);
-				}	
+				}
 			}
 		}
 
