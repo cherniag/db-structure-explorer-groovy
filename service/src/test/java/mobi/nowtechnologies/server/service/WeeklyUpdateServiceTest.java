@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,6 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * WeeklyUpdateServiceTest

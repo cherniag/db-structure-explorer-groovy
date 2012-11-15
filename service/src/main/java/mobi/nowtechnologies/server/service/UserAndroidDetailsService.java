@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import mobi.nowtechnologies.server.persistence.dao.UserAndroidDetailsDao;
 import mobi.nowtechnologies.server.persistence.domain.UserDeviceDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Titov Mykhaylo (titov)

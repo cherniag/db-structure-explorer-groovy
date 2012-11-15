@@ -1,19 +1,18 @@
 package mobi.nowtechnologies.server.assembler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.AccountLogDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 import mobi.nowtechnologies.server.shared.enums.Label;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)

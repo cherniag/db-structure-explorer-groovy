@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.shared.dto.TrackDto;
-import mobi.nowtechnologies.server.shared.dto.TrackStatus;
-import mobi.nowtechnologies.server.track_repo.domain.Track;
-import mobi.nowtechnologies.server.track_repo.repository.TrackRepository;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,27 +1,21 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
-import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_PENDING;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-
-import java.text.MessageFormat;
-import java.util.List;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.CreditCardPayment;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPayment;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.MessageFormat;
+import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
+import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_PENDING;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
  * @author Titov Mykhaylo (titov)

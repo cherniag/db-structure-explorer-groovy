@@ -1,17 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.service.UserService;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -23,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Map;
 
 /**
  * FileController

@@ -1,26 +1,21 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.EmailDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.admin.controller;
 
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.shared.dto.TrackDto;
-import mobi.nowtechnologies.server.shared.dto.admin.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;

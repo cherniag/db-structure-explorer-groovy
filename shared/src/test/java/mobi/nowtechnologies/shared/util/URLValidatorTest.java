@@ -1,11 +1,6 @@
 package mobi.nowtechnologies.shared.util;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +9,12 @@ import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * The class <code>URLValidatorTest</code> contains tests for the class
- * <code>{@link URLValidator}</code>.
+ * <code> URLValidator</code>.
  * 
  * @author Anton
  * @version $Revision: 1.3 $

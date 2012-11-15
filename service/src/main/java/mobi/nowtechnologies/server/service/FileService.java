@@ -1,19 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
-
-import java.io.*;
-
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.*;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 
 /**
  * FileService

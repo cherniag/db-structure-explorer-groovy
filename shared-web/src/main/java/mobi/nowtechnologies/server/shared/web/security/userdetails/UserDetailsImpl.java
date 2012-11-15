@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.shared.web.security.userdetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class UserDetailsImpl implements UserDetails, SecurityContextDetails {
 		

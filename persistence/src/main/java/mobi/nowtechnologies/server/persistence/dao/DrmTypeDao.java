@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.DrmType;
+
+import java.util.List;
 
 public class DrmTypeDao {
 	public static final String PLAYS="PLAYS"; 

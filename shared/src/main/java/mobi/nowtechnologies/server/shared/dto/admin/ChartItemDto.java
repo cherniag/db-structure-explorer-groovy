@@ -1,13 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)

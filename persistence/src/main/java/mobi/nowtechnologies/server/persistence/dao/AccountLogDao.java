@@ -1,21 +1,19 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

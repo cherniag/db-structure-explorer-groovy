@@ -1,15 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.net.URL;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +9,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>CountryServiceTest</code> contains tests for the class <code>{@link CountryService}</code>.

@@ -1,17 +1,17 @@
 package mobi.nowtechnologies.server.client.trackrepo.impl;
 
-import mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.shared.dto.TrackDto;
-import mobi.nowtechnologies.server.shared.dto.admin.SearchTrackDto;
-import mobi.nowtechnologies.server.track_repo.service.TrackService;
+import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.controller.TrackController;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.springframework.data.domain.Pageable;
 
 public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
-    private TrackService trackService;
+    private TrackController trackController;
 
-    public void setTrackService(TrackService trackService) {
-        this.trackService = trackService;
+    public void setTrackController(TrackController trackController) {
+        this.trackController = trackController;
     }
 
     @Override
@@ -21,21 +21,21 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
 
     @Override
     public PageListDto<TrackDto> search(String criteria, Pageable page) {
-        return trackService.find(criteria, page);
+        return (PageListDto<TrackDto>)trackController.find(criteria, null,  page);
     }
 
     @Override
     public TrackDto pullTrack(Long id) throws Exception {
-        return trackService.pull(id);
+        return trackController.pull(id);
     }
 
     @Override
     public TrackDto encodeTrack(Long id, Boolean isHighRate, Boolean licensed) throws Exception {
-        return trackService.encode(id, isHighRate, licensed);
+        return new TrackDto(trackController.encode(id, isHighRate, licensed));
     }
 
     @Override
     public PageListDto<TrackDto> search(SearchTrackDto criteria, Pageable page) {
-        return trackService.find(criteria, page);
+        return (PageListDto<TrackDto>)trackController.find(null, criteria, page);
     }
 }

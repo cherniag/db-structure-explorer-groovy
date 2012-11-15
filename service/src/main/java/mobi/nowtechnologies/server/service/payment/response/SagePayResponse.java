@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Properties;
-
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
 
 public class SagePayResponse extends PaymentSystemResponse {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SagePayResponse.class);

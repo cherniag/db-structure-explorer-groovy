@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.dto.admin.PromotionDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.admin.PromotionDto;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Titov Mykhaylo (titov)

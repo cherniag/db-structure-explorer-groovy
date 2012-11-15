@@ -1,14 +1,13 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

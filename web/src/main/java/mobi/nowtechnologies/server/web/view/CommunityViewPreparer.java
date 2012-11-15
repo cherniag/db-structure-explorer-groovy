@@ -1,19 +1,17 @@
 package mobi.nowtechnologies.server.web.view;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)

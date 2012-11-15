@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.Pattern;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 /**
  * @author Titov Mykhaylo (titov)

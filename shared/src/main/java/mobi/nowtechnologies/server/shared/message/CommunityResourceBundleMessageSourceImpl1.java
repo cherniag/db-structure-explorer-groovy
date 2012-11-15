@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.shared.message;
 
-import java.util.Locale;
-
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
+import java.util.Locale;
 
 public class CommunityResourceBundleMessageSourceImpl1 extends ReloadableResourceBundleMessageSource {
 	public static final String DEFAULT_COMMUNITY_DELIM = ".";

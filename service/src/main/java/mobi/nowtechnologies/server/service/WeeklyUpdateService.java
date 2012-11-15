@@ -1,33 +1,23 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.List;
-import java.util.Locale;
-
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * WeeklyUpdateService

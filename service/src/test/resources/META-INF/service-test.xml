@@ -9,7 +9,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.VersionService" class="java.lang.Object"/>
 
     <bean id="trackRepoClient" class="mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryClientAdapter">
-        <property name="trackService" ref="trackRepo.TrackService"/>
+        <property name="trackController" ref="trackRepo.TrackController"/>
     </bean>
 
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">

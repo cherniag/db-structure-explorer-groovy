@@ -1,22 +1,25 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import java.io.*;
-import java.util.List;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.MediaLogService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.web.PurchasedTrackDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

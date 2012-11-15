@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaFileDto;
-import mobi.nowtechnologies.server.shared.enums.FileType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

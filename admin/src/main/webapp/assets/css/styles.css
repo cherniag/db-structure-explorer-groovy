@@ -139,29 +139,33 @@ ul.table li div.date {
 	border: none;
 }
 
+ul.table li div {
+	padding: 5px;
+	overflow: hidden;
+}
 
 ul.table li div.number_news {
-	width: 5%;
+	width: 25px;
 }
 
 ul.table li div.image_news {
-	width: 5%;
+	width: 60px;
 }
 
 ul.table li div.body_news {
-	width: 35%;
+	width: 300px;
 }
 
 ul.table li div.filters_news {
-	width: 25%;
+	width: 180px;
 }
 
 ul.table li div.online_news {
-	width: 5%;
+	width: 40px;
 }
 
 ul.table li div.date_news {
-	width: 10%;
+	width: 100px;
 	border: none;
 }
 
@@ -188,7 +192,6 @@ ul.table li div.currencyStore {
 ul.table li div.filtersStore {
 	width: 15%;
 }
-
 
 /*CHarts*/
 
@@ -756,4 +759,32 @@ ul#tracksTable li:hover {
 .ft_error {
 	width: 17%;
 	border: none;
+}
+
+.hor-minimalist-a {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-collapse: collapse;
+    font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+    font-size: 12px;
+    text-align: left;
+    border: 1px dashed #cccccc;
+    
+}
+table { 
+    width: 100%;
+}
+
+table.hor-minimalist-a td {
+   border-top: 1px dashed #cccccc;
+   padding: 10px;
+}
+
+.hor-minimalist-a th {
+    background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+	border: 8px solid transparent;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    color: #333333;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 10px 8px;
 }
