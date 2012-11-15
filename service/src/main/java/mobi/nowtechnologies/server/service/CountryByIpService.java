@@ -1,60 +1,52 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.GEO_IP_FILE_NAME;
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
+import com.maxmind.geoip.Country;
+import com.maxmind.geoip.LookupService;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.maxmind.geoip.Country;
-import com.maxmind.geoip.LookupService;
+import static mobi.nowtechnologies.server.shared.AppConstants.GEO_IP_FILE_NAME;
 
 /**
- * CountryByIpService
- * 
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
  * 
  */
 public class CountryByIpService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CountryByIpService.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(CountryByIpService.class);
 
 	private LookupService LOOKUP_SERVICE = null;
 
 	private static final String AN_OBJECT = "--";
 
 	public void init() throws Exception {
-		if (LOOKUP_SERVICE == null)
-			throw new Exception("LOOKUP_SERVICE not initialised");
+		Validate.notNull(LOOKUP_SERVICE, "LOOKUP_SERVICE not initialised");
 	}
 
-	public void setStorePath(String storePath) {
-		LOGGER.info("Store path for GEOIP database is [{}]", storePath);
-		
-		if(storePath == null)
-			return;
-		
+	public void setStorePath(Resource storePath) {
 		try {
-			LOOKUP_SERVICE = new LookupService(new File(storePath + SEPARATOR + GEO_IP_FILE_NAME), LookupService.GEOIP_MEMORY_CACHE
+            File file = new File(storePath.getFile(), GEO_IP_FILE_NAME);
+            Validate.isTrue(storePath.exists(), "File does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
+            LOOKUP_SERVICE = new LookupService(file, LookupService.GEOIP_MEMORY_CACHE
 					| LookupService.GEOIP_CHECK_CACHE);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new ServiceException("failded to initialise LOOKUP_SERVICE");
+			throw new ServiceException("failded to initialise LOOKUP_SERVICE", e);
 		}
 	}
 
 	private Pattern ipPattern = Pattern.compile("\\d{1,3}.\\d{1,3}.\\d{1,3}.1[6-9]\\d");
 
 	public String findCountryCodeByIp(String ip) {
-		if (ip == null)
-			throw new ServiceException("The parameter ip is null");
+		Validate.notNull(ip, "The parameter ip is null");
 		Matcher matcher = ipPattern.matcher(ip);
 		if (ip.startsWith("10.20.") && !matcher.matches()) {
 			return "GB";
