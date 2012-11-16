@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
-
 /**
  * FileService
  *
@@ -58,11 +56,15 @@ public class FileService{
         Validate.notNull(storePath, "The parameter storePath is null");
     }
 
-    public void setStorePath(Resource storePath) throws IOException {
-        LOGGER.info("Store path for media files is [{}]", storePath);
-        File file = storePath.getFile();
-        Validate.isTrue(storePath.exists(), "Path does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
-        this.storePath = storePath;
+    public void setStorePath(Resource storePath) {
+        try {
+            File file = storePath.getFile();
+            Validate.isTrue(storePath.exists(), "Path does not exist: " + file.getAbsolutePath() + ". Amend store.path property");
+            this.storePath = storePath;
+        } catch (IOException e) {
+            LOGGER.error("Error to set up propertie 'store.path' in FileSirvice. store.path=" + storePath);
+            throw new RuntimeException(e);
+        }
     }
 
     public void setMediaService(MediaService mediaService) {
@@ -92,8 +94,7 @@ public class FileService{
             throw new ServiceException("error finding filename in db");
         }
 
-        String folderPath = storePath.getFilename() + SEPARATOR + fileType.getFolderName()
-                + SEPARATOR;
+        String folderPath = getFolder(fileType.getFolderName());
 
         String fileName;
         if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
@@ -112,7 +113,7 @@ public class FileService{
         File file = new File(fileName);
         if (!file.exists())
             throw new ServiceException("Could not find file type [" + fileType
-                    + "] for media isrc [" + mediaIsrc + "]");
+                    + "] for media isrc [" + mediaIsrc + "], path="+file.getAbsolutePath());
 
         if (fileType.equals(FileType.PURCHASED))
             mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
@@ -128,6 +129,16 @@ public class FileService{
             mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
         }
         return file;
+    }
+
+    public String getFolder(String folderName) {
+        try {
+            File file = storePath.getFile();
+            return new File(file, folderName).getAbsolutePath();
+        } catch (IOException e) {
+            LOGGER.error(e.getStackTrace().toString());
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
