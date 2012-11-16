@@ -19,12 +19,15 @@ public class DeviceUserDataService {
 		User user = userService.findByNameAndCommunity(userName, communityName);
 		Community community = communityService.getCommunityByName(communityName);
 		
-		DeviceUserData data = new DeviceUserData();
-		data.setDeviceUID(deviceUID);
-		data.setUserId(user.getId());
-		data.setXtifyToken(xtifyToken);
-		data.setCommunityUrl(community.getRewriteUrlParameter());
-		deviceUserDataRepository.save(data);
+		DeviceUserData data = getByXtifyToken(xtifyToken);
+		if (null == data) {
+			data = new DeviceUserData();
+			data.setDeviceUID(deviceUID);
+			data.setUserId(user.getId());
+			data.setCommunityUrl(community.getRewriteUrlParameter());
+			data.setXtifyToken(xtifyToken);
+			deviceUserDataRepository.save(data);
+		}
 	}
 	
 	public void setDeviceUserDataRepository(DeviceUserDataRepository deviceUserDataRepository) {
