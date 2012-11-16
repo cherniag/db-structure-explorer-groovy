@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.util.Assert;
-
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The class <code>FilterWithCriteriaRepositoryTest</code> contains tests for the class <code>{@link FilterWithCriteriaRepository}</code>.

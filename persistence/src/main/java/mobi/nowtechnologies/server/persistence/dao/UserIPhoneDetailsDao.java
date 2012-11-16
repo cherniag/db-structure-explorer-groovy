@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.UserDeviceDetails;
-import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.orm.jpa.support.JpaDaoSupport;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
-import java.util.List;
+
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.UserDeviceDetails;
+import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,8 +1,15 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -10,10 +17,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.io.File;
-
-import static org.junit.Assert.*;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * The class <code>FileServiceTest</code> contains tests for the class <code>{@link FileService}</code>.

@@ -1,18 +1,21 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
+
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class FacebookService {
 	

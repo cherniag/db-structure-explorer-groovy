@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 /**
  * AccountCheck

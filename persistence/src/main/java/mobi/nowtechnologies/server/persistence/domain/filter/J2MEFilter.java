@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @generated

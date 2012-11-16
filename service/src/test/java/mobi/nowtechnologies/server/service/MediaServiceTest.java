@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>MediaServiceTest</code> contains tests for the class <code>{@link MediaService}</code>.

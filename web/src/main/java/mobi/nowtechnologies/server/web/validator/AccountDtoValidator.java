@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;

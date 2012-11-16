@@ -1,18 +1,19 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Random;
 
 /**
  * CommandsTest

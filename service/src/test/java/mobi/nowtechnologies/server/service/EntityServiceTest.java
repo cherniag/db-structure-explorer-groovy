@@ -1,21 +1,22 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.Country;
-import mobi.nowtechnologies.server.persistence.domain.Genre;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import mobi.nowtechnologies.server.persistence.domain.Country;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * The class <code>EntityServiceTest</code> contains tests for the class

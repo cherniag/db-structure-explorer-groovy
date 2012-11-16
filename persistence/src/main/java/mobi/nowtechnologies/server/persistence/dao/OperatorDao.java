@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.Operator;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mobi.nowtechnologies.server.persistence.domain.Operator;
 
 /**
  * OperatorDao

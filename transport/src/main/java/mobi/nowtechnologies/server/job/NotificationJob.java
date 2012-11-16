@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.job;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import javapns.Push;
 import javapns.devices.Device;
 import javapns.notification.PayloadPerDevice;
@@ -10,11 +16,10 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
 import mobi.nowtechnologies.server.service.UserIPhoneDetailsService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
-import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)

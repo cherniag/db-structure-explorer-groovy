@@ -7,6 +7,7 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
+
 import org.springframework.validation.Errors;
 
 

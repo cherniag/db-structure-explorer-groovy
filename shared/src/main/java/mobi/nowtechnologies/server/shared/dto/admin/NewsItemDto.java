@@ -1,15 +1,17 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import java.util.Date;
+import java.util.Set;
+
+import javax.validation.constraints.Pattern;
+
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.Pattern;
-import java.util.Date;
-import java.util.Set;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.enums.ItemType;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import javax.persistence.*;
+
+import mobi.nowtechnologies.server.shared.enums.ItemType;
 
 /**
  * @author Titov Mykhaylo (titov)

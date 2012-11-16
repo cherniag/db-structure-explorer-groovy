@@ -1,8 +1,26 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
+import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_OK;
+import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_REGISTERED;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PayPalPayment;
+import mobi.nowtechnologies.server.persistence.domain.Payment;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.shared.AppConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -10,14 +28,6 @@ import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.text.MessageFormat;
-import java.util.List;
-
-import static mobi.nowtechnologies.server.shared.AppConstants.*;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
  * UserDao

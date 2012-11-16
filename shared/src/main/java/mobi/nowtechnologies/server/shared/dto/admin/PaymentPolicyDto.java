@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
-import org.springframework.expression.spel.ast.Operator;
-
 import java.math.BigDecimal;
+
+import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
+
+import org.springframework.expression.spel.ast.Operator;
 
 /**
  * @author Titov Mykhaylo (titov)

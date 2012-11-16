@@ -3,14 +3,15 @@
  */
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.MediaLog;
-import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
-import org.springframework.orm.jpa.support.JpaDaoSupport;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mobi.nowtechnologies.server.persistence.domain.MediaLog;
+import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
+
+import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 /**
  * @author Titov Mykhaylo (titov)

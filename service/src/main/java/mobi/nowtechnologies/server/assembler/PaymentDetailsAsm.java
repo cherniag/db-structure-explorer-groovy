@@ -1,11 +1,16 @@
 package mobi.nowtechnologies.server.assembler;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.shared.dto.admin.PaymentDetailsDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import mobi.nowtechnologies.server.dto.VersionDto;
 import mobi.nowtechnologies.server.service.VersionService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 
@@ -26,8 +27,8 @@ public class VersionController {
 		return versionService.getVersion();
 	}
 
-	public void setVersionService(VersionService versionService) {
-		this.versionService = versionService;
+	public void setVersionService(Object versionService) {
+		this.versionService = (VersionService)versionService;
 	}
 	
 }

@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import com.rackspacecloud.client.cloudfiles.FilesClient;
+import java.io.IOException;
+import java.util.Collections;
+
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
+
 import org.apache.http.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Collections;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
 
 /**
  * @author Titov Mykhaylo (titov)

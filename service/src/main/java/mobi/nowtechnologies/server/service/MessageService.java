@@ -1,5 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
@@ -18,15 +29,12 @@ import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsPositionsDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class MessageService {
 

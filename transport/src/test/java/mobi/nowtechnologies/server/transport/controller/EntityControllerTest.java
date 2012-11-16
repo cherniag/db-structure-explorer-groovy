@@ -1,5 +1,14 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Response;
@@ -7,6 +16,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,12 +30,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * The class <code>EntityControllerTest</code> contains tests for the class

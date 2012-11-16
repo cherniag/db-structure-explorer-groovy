@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.security;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -10,11 +16,6 @@ import org.springframework.security.web.authentication.rememberme.InvalidCookieE
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 
@@ -64,7 +65,7 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 	
 	/**
 	 * Decodes username from cookie tokens to get it back in normal view.
-	 * Encoding was done in method makeTokenSignature
+	 * Encoding was done in method {@link makeTokenSignature}
 	 */
 	@Override
 	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) {

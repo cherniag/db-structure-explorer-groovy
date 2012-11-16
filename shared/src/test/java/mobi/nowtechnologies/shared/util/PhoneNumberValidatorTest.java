@@ -1,6 +1,10 @@
 package mobi.nowtechnologies.shared.util;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,9 +12,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * The class <code>PhoneNumberValidatorTest</code> contains tests for the class

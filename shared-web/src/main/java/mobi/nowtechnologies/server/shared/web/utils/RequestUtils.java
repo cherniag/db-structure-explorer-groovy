@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.shared.web.utils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.WebUtils;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * @author Titov Mykhaylo (titov)

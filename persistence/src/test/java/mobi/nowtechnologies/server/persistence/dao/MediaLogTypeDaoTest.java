@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import java.util.List;
+import org.junit.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.List;
-
+import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
 import static org.junit.Assert.*;
 
 /**

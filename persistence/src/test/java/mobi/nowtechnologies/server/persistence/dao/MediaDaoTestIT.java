@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * The class <code>MediaDaoTest</code> contains tests for the class <code>{@link MediaDao}</code>.

@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.shared.web.filter;
 
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -11,9 +12,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.GenericFilterBean;
 
 /**
  * This filter applies only once per request and assign specific community according to

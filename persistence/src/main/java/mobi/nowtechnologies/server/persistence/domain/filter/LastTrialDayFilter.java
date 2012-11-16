@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.shared.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
