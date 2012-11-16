@@ -55,7 +55,9 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		}
 
 		StringBuilder criteria = new StringBuilder();
-		if (searchTrackCreateria.getArtist() != null)
+        if (searchTrackCreateria.getAlbum() != null)
+            addCriteria(criteria, " lower(t.album) like :album");
+        if (searchTrackCreateria.getArtist() != null)
 			addCriteria(criteria, " lower(t.artist) like :artist");
 		if (searchTrackCreateria.getTitle() != null)
 			addCriteria(criteria, " lower(t.title) like :title");
@@ -70,7 +72,9 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
 		if (criteria.length() != 0 || join.length() != 0) {
 			Query query = getEntityManager().createQuery(baseQuery+join.toString()+buildWhereCause(" WHERE ", criteria));
-			if (searchTrackCreateria.getArtist() != null)
+            if (searchTrackCreateria.getAlbum() != null)
+                query.setParameter("album", "%" + searchTrackCreateria.getAlbum().toLowerCase() + "%");
+            if (searchTrackCreateria.getArtist() != null)
 				query.setParameter("artist", "%" + searchTrackCreateria.getArtist().toLowerCase() + "%");
 			if (searchTrackCreateria.getTitle() != null)
 				query.setParameter("title", "%" + searchTrackCreateria.getTitle().toLowerCase() + "%");

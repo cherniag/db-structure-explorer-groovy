@@ -29,7 +29,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,8 +38,11 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -98,7 +100,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	public PageListDto<TrackDto> search(String criteria, Pageable page) {
 		PageListDto<TrackDto> tracks = new PageListDto<TrackDto>(Collections.<TrackDto>emptyList(), 0, page.getPageNumber()+1, page.getPageSize());
 		try {
-			if (StringUtils.hasText(criteria)) {
+			if (hasText(criteria)) {
 				List<NameValuePair> queryParams = buildPageParams(page);
 				queryParams.add(new BasicNameValuePair("query", criteria));
 				
@@ -221,24 +223,16 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		try {
 			if (criteria != null) {
 				List<NameValuePair> queryParams = buildPageParams(page);
-				if (StringUtils.hasText(criteria.getArtist()))
-					queryParams.add(new BasicNameValuePair("artist", criteria.getArtist()));
-				if (StringUtils.hasText(criteria.getTitle()))
-					queryParams.add(new BasicNameValuePair("title", criteria.getTitle()));
-				if (StringUtils.hasText(criteria.getIsrc()))
-					queryParams.add(new BasicNameValuePair("isrc", criteria.getIsrc()));
-				if (criteria.getIngestTo() != null)
-					queryParams.add(new BasicNameValuePair("ingestTo", dateFormat.format(criteria.getIngestTo())));
-				if (criteria.getIngestFrom() != null)
-					queryParams.add(new BasicNameValuePair("ingestFrom", dateFormat.format(criteria.getIngestFrom())));
-				if (criteria.getReleaseTo() != null)
-					queryParams.add(new BasicNameValuePair("releaseTo", dateFormat.format(criteria.getReleaseTo())));
-				if (criteria.getReleaseFrom() != null)
-					queryParams.add(new BasicNameValuePair("releaseFrom", dateFormat.format(criteria.getReleaseFrom())));
-				if (StringUtils.hasText(criteria.getLabel()))
-					queryParams.add(new BasicNameValuePair("label", criteria.getLabel()));
-				if (StringUtils.hasText(criteria.getIngestor()))
-					queryParams.add(new BasicNameValuePair("ingestor", criteria.getIngestor()));
+                addQParam(criteria.getArtist(), "artist", queryParams);
+                addQParam(criteria.getTitle(), "title", queryParams);
+				addQParam(criteria.getIsrc(), "isrc", queryParams);
+                addDateQParam(criteria.getIngestTo(), "ingestTo", queryParams);
+                addDateQParam(criteria.getIngestFrom(), "ingestFrom", queryParams);
+                addDateQParam(criteria.getReleaseTo(), "releaseTo", queryParams);
+                addDateQParam(criteria.getReleaseFrom(), "releaseFrom", queryParams);
+				addQParam(criteria.getLabel(), "label", queryParams);
+                addQParam(criteria.getIngestor(), "ingestor", queryParams);
+                addQParam(criteria.getAlbum(), "album", queryParams);
 
 				String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
 				HttpGet signin = new HttpGet(url);
@@ -258,8 +252,18 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		} 
 		return tracks;
 	}
-	
-	protected List<NameValuePair> buildPageParams(Pageable page){
+
+    private void addDateQParam(Date param, String key, List<NameValuePair> queryParams) {
+        if (param != null)
+            queryParams.add(new BasicNameValuePair(key, dateFormat.format(param)));
+    }
+
+    private void addQParam(String param, String key, List<NameValuePair> queryParams) {
+        if (hasText(param))
+            queryParams.add(new BasicNameValuePair(key, param));
+    }
+
+    protected List<NameValuePair> buildPageParams(Pageable page){
 		List<NameValuePair> params = new LinkedList<NameValuePair>();
 		
 		params.add(new BasicNameValuePair("page.size", String.valueOf(page.getPageSize())));

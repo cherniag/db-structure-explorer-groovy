@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 
+import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
+
 /**
  * FileService
  *
@@ -96,7 +98,7 @@ public class FileService{
 
         String folderPath = getFolder(fileType.getFolderName());
 
-        String fileName;
+        File fileName;
         if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
             if (resolution == null)
                 throw new ServiceException(
@@ -106,22 +108,19 @@ public class FileService{
             StringBuilder builder = new StringBuilder(mediaFileName);
             builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
                     + resolution);
-            builder.insert(0, folderPath);
-            fileName = builder.toString();
-        } else
-            fileName = folderPath + mediaFileName;
-        File file = new File(fileName);
+            builder.insert(0, folderPath + SEPARATOR);
+            fileName = new File(builder.toString());
+        } else{
+            fileName = new File(folderPath, mediaFileName);
+        }
+        File file = fileName;
         if (!file.exists())
             throw new ServiceException("Could not find file type [" + fileType
                     + "] for media isrc [" + mediaIsrc + "], path="+file.getAbsolutePath());
 
         if (fileType.equals(FileType.PURCHASED))
             mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
-        /*
-          else
-              mediaService.logMediaEvent(userId, media.getI(),
-                      MediaLogTypeDao.DOWNLOAD);
-           */
+
         if (fileType.equals(FileType.HEADER)) {
             LOGGER.info(
                     "conditionalUpdateByUserAndMedia user [{}], media [{}]",

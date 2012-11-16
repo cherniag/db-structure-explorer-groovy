@@ -17,6 +17,9 @@
 			<div class="input-prepend">
 				<span class="add-on">iSRC</span><input type="text" id="isrc" name="isrc" th:value="${param.isrc!=null ? param.isrc[0] : ''}" />
 			</div>
+            <div class="input-prepend">
+                <span class="add-on">Album</span><input type="text" id="album" name="album" th:value="${param.album!=null ? param.album[0] : ''}" />
+            </div>
 		</div>
 		<div class="rel">
 			<div class="input-prepend">
@@ -43,6 +46,9 @@
 			<div class="input-prepend">
 				<span class="add-on">Ingestor</span><input type="text" id="ingestor" name="ingestor" th:value="${param.ingestor!=null ? param.ingestor[0] : ''}" />
 			</div>
+            <div class="input-prepend">
+                <span class="add-on">Genre</span><input type="text" id="genre" name="genre" th:value="${param.genre!=null ? param.genre[0] : ''}" />
+            </div>
 		</div>
 		<div class="clear"></div>
 			<div class="form-actions">

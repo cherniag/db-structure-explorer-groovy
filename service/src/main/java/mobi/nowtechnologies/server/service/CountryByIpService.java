@@ -32,6 +32,7 @@ public class CountryByIpService {
     }
 
     public void setStorePath(Resource storePath) {
+        LOGGER.info("store.path = " + storePath);
         try {
             File file = new File(storePath.getFile(), GEO_IP_FILE_NAME);
             Validate.isTrue(storePath.exists(), "File does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
