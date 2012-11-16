@@ -1,38 +1,31 @@
 package mobi.nowtechnologies.server.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.mock.web.MockServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * The class <code>FileServiceTest</code> contains tests for the class <code>{@link FileService}</code>.
- *
- * @generatedBy CodePro at 12.07.11 15:44
- * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
- */
-@Ignore
+import java.io.File;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/META-INF/dao-test.xml",
+        "/META-INF/service-test.xml", "/META-INF/shared.xml" })
 public class FileServiceTest {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(FileServiceTest.class.getName());
-	/**
-	 * 
-	 */
+
+    @Autowired
+    FileService service;
+
 	private static FileService fileService;
 	
 	private static final User user = new User();
@@ -42,14 +35,15 @@ public class FileServiceTest {
 		//user.setDeviceType((byte) 0);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
+    @Test
+    public void test(){
+        File file = new File(service.getFolder("audio"));
+        assertTrue(file.exists());
+    }
+
+
 	@Test(expected = ServiceException.class)
+    @Ignore
 	public void testGetFile_WhenImageExists()
 		throws Exception {
 		String mediaId = "47";
@@ -70,6 +64,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = ServiceException.class)
+    @Ignore
 	public void testGetFile_WhenImageDoesNotExist()
 		throws Exception {
 		String mediaId = "47";
@@ -89,6 +84,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test
+    @Ignore
 	public void testGetFile_WhenMediaFileExists()
 		throws Exception {
 		String mediaId = "47";
@@ -110,6 +106,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = ServiceException.class)
+    @Ignore
 	public void testGetFile_WhenMediaFileDoesNotExists()
 		throws Exception {
 		String mediaId = "49";
@@ -129,6 +126,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = ServiceException.class)
+    @Ignore
 	public void testGetFile_WhenMediaIdIsNull()
 		throws Exception {
 		String mediaId = null;
@@ -147,6 +145,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = ServiceException.class)
+    @Ignore
 	public void testGetFile_WhenFileTypeIsNull()
 		throws Exception {
 		String mediaId = "";
@@ -165,6 +164,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = java.lang.NumberFormatException.class)
+    @Ignore
 	public void testGetFile_InvalidMediaId()
 		throws Exception {
 		String mediaId = "";
@@ -183,6 +183,7 @@ public class FileServiceTest {
 	 * @generatedBy CodePro at 12.07.11 15:44
 	 */
 	@Test(expected = PersistenceException.class)
+    @Ignore
 	public void testGetFile_WrongUserId()
 		throws Exception {
 		String mediaId = "47";
@@ -193,32 +194,4 @@ public class FileServiceTest {
 		File result = fileService.getFile(mediaId, fileType, fileResolution, user);
 	}
 
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
-	@BeforeClass
-	public static void setUp()
-		throws Exception {
-		new ClassPathXmlApplicationContext(
-				new String[] {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" });
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
-	@AfterClass
-	public static void tearDown()
-		throws Exception {
-		// Add additional tear down code here
-	}
 }
