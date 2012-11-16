@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -15,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 
 import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
+import static org.apache.commons.lang.StringUtils.containsAny;
+import static org.apache.commons.lang.Validate.isTrue;
+import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * FileService
@@ -55,13 +57,13 @@ public class FileService{
 	}
 	
 	public void init() {
-		Validate.notNull(storePath, "The parameter storePath is null");
+		notNull(storePath, "The parameter storePath is null");
 	}
 
     public void setStorePath(Resource storePath) {
         try {
             File file = storePath.getFile();
-            Validate.isTrue(storePath.exists(), "Path does not exist: " + file.getAbsolutePath() + ". Amend store.path property");
+            isTrue(storePath.exists(), "Path does not exist: " + file.getAbsolutePath() + ". Amend store.path property");
             this.storePath = storePath;
         } catch (IOException e) {
             LOGGER.error("Error to set up propertie 'store.path' in FileSirvice. store.path=" + storePath);
@@ -78,33 +80,25 @@ public class FileService{
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
-	public File getFile(String mediaIsrc, FileType fileType,
-			String resolution, User user) {
-		if (mediaIsrc == null)
-			throw new ServiceException("The parameter mediaIsrc is null");
-		if (fileType == null)
-			throw new ServiceException("The parameter fileType is null");
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-		int userId = user.getId();
+	public File getFile(String mediaIsrc, FileType fileType, String resolution, User user) {
+		notNull(mediaIsrc, "The parameter mediaIsrc is null");
+		notNull(fileType, "The parameter fileType is null");
+		notNull(user, "The parameter user is null");
+
+        int userId = user.getId();
 		Media media = mediaService.findByIsrc(mediaIsrc);
-		String mediaFileName = media == null ? null : getFilename(media, fileType, user.getDeviceTypeId());
-		if (mediaFileName == null) {
-			LOGGER.error("error finding filename in db, " +
-					"mediaId [{}], fileType [{}], resolution [{}], userId [{}]",
-					new Object[]{mediaIsrc, fileType, resolution, userId});
-			throw new ServiceException("error finding filename in db");
-		}
+
+        notNull(media, "error finding filename in db, mediaId=" + mediaIsrc + ", fileType=" + fileType +
+                ", resolution=" + resolution + ", userId=" + userId);
+		String mediaFileName = getFilename(media, fileType, user.getDeviceTypeId());
 
         String folderPath = getFolder(fileType.getFolderName());
 
 		File fileName;
 		if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
-			if (resolution == null)
-				throw new ServiceException(
-						"The parameter fileResolution is null");
-			if (resolution.contains("/")||resolution.contains("\\"))
-				throw new ServiceException("The parameter resolution couldn't contain \\ and / symbols");
+			notNull(resolution, "The parameter fileResolution is null");
+			isTrue(containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
+
 			StringBuilder builder = new StringBuilder(mediaFileName);
 			builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
 					+ resolution);
@@ -114,17 +108,14 @@ public class FileService{
 			fileName = new File(folderPath, mediaFileName);
         }
 		File file = fileName;
-		if (!file.exists())
-			throw new ServiceException("Could not find file type [" + fileType
-					+ "] for media isrc [" + mediaIsrc + "], path="+file.getAbsolutePath());
+		isTrue(!file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
+                "], path="+file.getAbsolutePath());
 		
 		if (fileType.equals(FileType.PURCHASED))
 			mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
 
 		if (fileType.equals(FileType.HEADER)) {
-			LOGGER.info(
-					"conditionalUpdateByUserAndMedia user [{}], media [{}]", 
-					userId, media.getI());
+			LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", userId, media.getI());
 			mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
 		}
 		return file;
@@ -142,10 +133,8 @@ public class FileService{
 
     @Transactional(propagation=Propagation.REQUIRED)
 	public File getFile(String mediaIsrc, FileType fileType, String resolution, int userId) throws IOException {
-		if (mediaIsrc == null)
-			throw new ServiceException("The parameter mediaIsrc is null");
-		if (fileType == null)
-			throw new ServiceException("The parameter fileType is null");
+		notNull(mediaIsrc, "The parameter mediaIsrc is null");
+		notNull(fileType, "The parameter fileType is null");
 
 		LOGGER.debug("input parameters mediaIsrc, fileType, resolution, userId, outputStream: [{}], [{}]", new Object[] { mediaIsrc, fileType, resolution, userId});
 		User user = userService.findById(userId);
@@ -203,7 +192,7 @@ public class FileService{
 		try {
 			file = getFile(isrc, FileService.FileType.PURCHASED, null, userId);
 		} catch (IOException e) {
-			LOGGER.error("Can't find purchased file {}", isrc);
+			LOGGER.error("Can't find purchased file. path="+file.getAbsolutePath()+", isrc="+ isrc);
 			throw new ServiceException("error.download.file", "Can't download puchased file");
 		} catch (ServiceException e) {
 			throw e;
