@@ -1,8 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Arrays;
 
 /**
  * @author Titov Mykhaylo (titov)

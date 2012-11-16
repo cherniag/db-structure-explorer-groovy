@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.Date;
 
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)

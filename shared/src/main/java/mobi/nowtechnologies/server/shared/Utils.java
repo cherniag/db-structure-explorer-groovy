@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.shared;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Random;
 
-import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utils

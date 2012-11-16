@@ -230,11 +230,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4-rule-agent</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.dspace.xmlui.concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>test</scope>
