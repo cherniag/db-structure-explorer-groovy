@@ -1,19 +1,20 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
-
-import java.io.*;
-
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.*;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 
 /**
  * FileService
@@ -31,7 +32,7 @@ public class FileService{
 	private static final String POINT = ".";
 	private static final String UNDERSCORE = "_";
 
-	private String storePath;
+	private Resource storePath;
 	private MediaService mediaService;
 
 	public static enum FileType {
@@ -54,14 +55,14 @@ public class FileService{
 	}
 	
 	public void init() {
-		if (storePath == null)
-			throw new ServiceException("The parameter storePath is null");
+		Validate.notNull(storePath, "The parameter storePath is null");
 	}
 
-	public void setStorePath(String storePath) {
+	public void setStorePath(Resource storePath) throws IOException {
 		LOGGER.info("Store path for media files is [{}]", storePath);
-		
-		this.storePath = storePath;
+        File file = storePath.getFile();
+        Validate.isTrue(storePath.exists(), "Path does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
+        this.storePath = storePath;
 	}
 
 	public void setMediaService(MediaService mediaService) {
@@ -90,7 +91,8 @@ public class FileService{
 					new Object[]{mediaIsrc, fileType, resolution, userId});
 			throw new ServiceException("error finding filename in db");
 		}
-		String folderPath = storePath + SEPARATOR + fileType.getFolderName()
+
+        String folderPath = storePath.getFilename() + SEPARATOR + fileType.getFolderName()
 				+ SEPARATOR;
 
 		String fileName;
