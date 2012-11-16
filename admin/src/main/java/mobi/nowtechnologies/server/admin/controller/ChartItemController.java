@@ -38,7 +38,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-
 @Controller
 public class ChartItemController extends AbstractCommonController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
@@ -111,11 +110,7 @@ public class ChartItemController extends AbstractCommonController{
 	/**
 	 * Updating or creating chart item list for selected date
 	 *
-<<<<<<< HEAD
-	 * param chartItemsListJSON - chart item list in JSON data format
-=======
 	 * @param chartItemsListJSON - chart item list in JSON data format
->>>>>>> exp-CL-7893-chartItem-publishTime-changing
 	 * @param selectedPublishDateTime - selected date and time represented in URI
 	 * @param chartId - chart identifier of selected chart
 	 * 

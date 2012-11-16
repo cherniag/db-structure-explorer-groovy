@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -257,10 +256,7 @@ public class ChartController extends AbstractCommonController {
 	 * 
 	 * @param request
 	 * @param chartItemDto
-<<<<<<< HEAD
-=======
 	 * @param bindingResult
->>>>>>> exp-CL-7893-chartItem-publishTime-changing
 	 * @param selectedPublishDateTime
 	 * @return
 	 */

@@ -20,10 +20,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Set;
-
 /**
  * @author Titov Mykhaylo (titov)
  * 

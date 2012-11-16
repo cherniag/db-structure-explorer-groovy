@@ -27,8 +27,8 @@ public class VersionController {
 		return versionService.getVersion();
 	}
 
-	public void setVersionService(Object versionService) {
-		this.versionService = (VersionService)versionService;
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
 	}
 	
 }
