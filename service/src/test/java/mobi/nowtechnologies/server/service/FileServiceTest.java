@@ -36,7 +36,7 @@ public class FileServiceTest {
 	}
 
     @Test
-    public void test(){
+    public void verifyThatGetFolderReturbOnlyExistingFiles(){
         File file = new File(service.getFolder("audio"));
         assertTrue(file.exists());
     }
