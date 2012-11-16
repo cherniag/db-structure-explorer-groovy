@@ -52,5 +52,5 @@
 	   -->
 	</bean>
 	
-	<import resource="tr-controllers.xml" />
+	<import resource="trackrepo-controllers.xml" />
 </beans>

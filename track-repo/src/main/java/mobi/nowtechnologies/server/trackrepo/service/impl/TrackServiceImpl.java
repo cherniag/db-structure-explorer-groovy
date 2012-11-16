@@ -1,5 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -8,6 +13,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -16,11 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
 
 /**
  * 
@@ -125,7 +126,7 @@ public class TrackServiceImpl implements TrackService {
 		Track track = trackRepository.findOne(trackId);
 
 		if (track == null || track.getStatus() != TrackStatus.ENCODED)
-			return null;
+			return track;
 
 		try {
 			track.setPublishDate(new Date());
@@ -166,7 +167,7 @@ public class TrackServiceImpl implements TrackService {
 		Page<Track> pagelist = new PageImpl<Track>(Collections.<Track> emptyList(), page, 0L);
 		try {
 			if (searchTrackCriteria != null) {
-				pagelist = trackRepository.find(searchTrackCriteria, page);
+				pagelist = trackRepository.find(searchTrackCriteria, page, true, true);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot find tracks.", e);

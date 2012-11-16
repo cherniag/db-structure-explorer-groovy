@@ -20,14 +20,14 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable page) {		
-		Query listQuery = buildQuery("SELECT distinct t FROM Track t ", searchTrackCreateria);
+	public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable page, boolean withTerritories, boolean withFiles) {		
+		Query listQuery = buildQuery("SELECT distinct t FROM Track t ", searchTrackCreateria, withTerritories, withFiles);
 		
 		if (listQuery != null) {
 			listQuery.setFirstResult(page.getOffset());
 			listQuery.setMaxResults(page.getPageSize());
 			
-			Query countQuery = buildQuery("SELECT count(distinct t) FROM Track t ", searchTrackCreateria);
+			Query countQuery = buildQuery("SELECT count(distinct t) FROM Track t ", searchTrackCreateria, false, false);
 			
 			List result = listQuery.getResultList();
 			Long count = (Long)countQuery.getSingleResult();
@@ -38,10 +38,10 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		return new PageImpl<Track>(Collections.<Track>emptyList(), page, 0L);
 	}
 	
-	private Query buildQuery(String baseQuery, SearchTrackCriteria searchTrackCreateria){
+	private Query buildQuery(String baseQuery, SearchTrackCriteria searchTrackCreateria, boolean withTerritories, boolean withFiles){
 		StringBuilder join = new StringBuilder();
 		if (searchTrackCreateria.getLabel() != null || searchTrackCreateria.getReleaseFrom() != null || searchTrackCreateria.getReleaseTo() != null) {
-			join.append("join t.territories as ter");
+			join.append(" left join " +(withTerritories?"fetch":"")+ " t.territories as ter");
 			
 			StringBuilder criteria = new StringBuilder();
 			if(searchTrackCreateria.getLabel() != null)
@@ -52,6 +52,12 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 				addCriteria(criteria, " ter.startDate <= :releaseTo");
 			
 			join.append(buildWhereCause(" WITH ", criteria));
+		}else{
+			join.append(" left join t.territories as ter");
+		}
+		
+		if(withFiles){
+			join.append(" left join t.files as file");
 		}
 
 		StringBuilder criteria = new StringBuilder();

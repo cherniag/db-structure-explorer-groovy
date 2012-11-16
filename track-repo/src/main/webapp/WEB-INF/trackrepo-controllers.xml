@@ -3,7 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+	    
+    <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
+		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
+		<property name="workDir" value="${trackRepo.encode.workdir}" />
+    </bean>    
+
     <bean name="trackRepo.SignInController" class="mobi.nowtechnologies.server.trackrepo.controller.SignInController"/>
     
      <bean name="trackRepo.FileController"
@@ -14,5 +19,6 @@
     <bean name="trackRepo.TrackController"
 		class="mobi.nowtechnologies.server.trackrepo.controller.TrackController">
 		<property name="trackService" ref="trackRepo.TrackService" />
+		<property name="resourceFileDtoBuilder" ref="trackRepo.ResourceFileDtoBuilder" />
 	</bean>
 </beans>
