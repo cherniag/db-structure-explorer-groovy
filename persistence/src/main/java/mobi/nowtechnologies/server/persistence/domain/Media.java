@@ -367,10 +367,11 @@ public class Media extends Item implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Media [artistId=" + artistId + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", drms=" + drms + ", genreId=" + genreId + ", headerFileId="
-				+ headerFileId + ", headerPreviewFileId=" + headerPreviewFileId + ", iTunesUrl=" + iTunesUrl + ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId
-				+ ", imgFileResolutionId=" + imgFileResolutionId + ", isrc=" + isrc + ", label=" + label + ", mediaLogs=" + mediaLogs + ", price_currency=" + price_currency + ", publishDate="
-				+ publishDate + ", purchasedFileId=" + purchasedFileId + ", info=" + info + super.toString() + "]";
+		return "Media [" + super.toString() + ", isrc=" + isrc + ", info=" + info + ", publishDate=" + publishDate + ", price_currency=" + price_currency + ", artistId=" + artistId + ", iTunesUrl="
+				+ iTunesUrl + ", label="
+				+ label + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", headerFileId=" + headerFileId + ", headerPreviewFileId=" + headerPreviewFileId
+				+ ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId + ", imgFileResolutionId=" + imgFileResolutionId + ", purchasedFileId=" + purchasedFileId
+				+ ", genreId=" + genreId + "]";
 	}
 
 }

@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 
 /**
  * @author Titov Mykhaylo (titov)

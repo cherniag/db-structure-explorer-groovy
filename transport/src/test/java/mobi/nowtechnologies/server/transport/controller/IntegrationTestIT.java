@@ -1,7 +1,21 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
+import mobi.nowtechnologies.server.mock.MockWebApplication;
+import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.*;
@@ -12,8 +26,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.transport.controller.mock.MockWebApplication;
-import mobi.nowtechnologies.server.transport.controller.mock.MockWebApplicationContextLoader;
+
 import org.apache.http.NameValuePair;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,17 +44,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * The class <code>EntityControllerTest</code> contains tests for the class

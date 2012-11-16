@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
@@ -7,11 +13,6 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.NewsDetail;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserHandset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("UserHandsetFilter")

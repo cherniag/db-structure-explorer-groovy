@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+
+import java.math.BigDecimal;
+
 import junit.framework.TestCase;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Payment;
 import mobi.nowtechnologies.server.persistence.domain.User;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.math.BigDecimal;
-
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 
 /**
  * SagePayServiceTest

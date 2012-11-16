@@ -1,5 +1,13 @@
 package mobi.nowtechnologies.server.shared.web.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParseException;
@@ -9,13 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.AbstractFlashMapManager;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 public class CookieFlashMapManager extends AbstractFlashMapManager{
 	

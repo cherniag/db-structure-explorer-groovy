@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
 import java.util.Date;
+
+import mobi.nowtechnologies.server.shared.enums.TransactionType;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -20,6 +20,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -280,7 +281,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 				}
 			}
 		}
-
+		
 		if (map.size() > 0)
 		{
 			List<Media> medias = mediaRepository.findByIsrcs(map.keySet());

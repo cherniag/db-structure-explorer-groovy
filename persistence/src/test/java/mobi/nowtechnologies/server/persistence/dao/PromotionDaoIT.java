@@ -1,12 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import javax.annotation.Resource;
+
+import mobi.nowtechnologies.server.persistence.domain.User;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 /**
  * The class <code>PromotionDaoTest</code> contains tests for the class <code>{@link PromotionDao}</code>.

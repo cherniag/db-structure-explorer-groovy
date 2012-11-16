@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.shared.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

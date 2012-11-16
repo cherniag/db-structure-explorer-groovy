@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.dao.NewsDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.NewsDetail;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -7,10 +9,9 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @Deprecated
 public class NewsDetailService {

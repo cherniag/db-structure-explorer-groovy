@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.assembler;
 
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 
 /**
  * @author Titov Mykhaylo (titov)

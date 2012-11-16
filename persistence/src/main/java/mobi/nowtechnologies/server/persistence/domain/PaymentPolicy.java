@@ -1,15 +1,27 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
 
 @Entity
 @Table(name = "tb_paymentPolicy")

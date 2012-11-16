@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
-import mobi.nowtechnologies.server.shared.enums.UserType;
-
 import java.util.Collections;
 import java.util.Date;
+
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.UserType;
 
 /**
  * The class <code>UserDtoFactory</code> implements static methods that return

@@ -4,8 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath:WEB-INF/admin-servlet.xml"/>
-    <bean id="admin.VersionController" class="java.lang.Object"/>
-    <bean id="JacksonView" class="java.lang.Object"/>
 
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">

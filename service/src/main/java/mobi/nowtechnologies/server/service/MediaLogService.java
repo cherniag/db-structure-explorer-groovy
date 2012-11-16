@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.dao.MediaLogDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLog;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.web.PurchasedTrackDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

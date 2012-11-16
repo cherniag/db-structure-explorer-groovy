@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.admin.validator;
 
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
+
 import org.springframework.validation.Errors;
 
 /**

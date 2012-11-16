@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.Map;
+
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
-import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)

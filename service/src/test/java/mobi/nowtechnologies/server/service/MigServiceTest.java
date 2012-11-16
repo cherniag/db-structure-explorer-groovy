@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 import junit.framework.TestCase;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 
 /**
  * MigServiceTest

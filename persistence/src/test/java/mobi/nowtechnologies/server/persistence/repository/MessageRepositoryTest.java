@@ -1,18 +1,19 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import javax.annotation.Resource;
 
 
 /**

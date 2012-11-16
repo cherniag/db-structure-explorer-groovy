@@ -1,16 +1,19 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLog;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * The class <code>MediaLogDaoTest</code> contains tests for the class <code>{@link MediaLogDao}</code>.

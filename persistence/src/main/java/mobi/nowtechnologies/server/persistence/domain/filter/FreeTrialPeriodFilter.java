@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import java.util.List;
+
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.Utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Titov Mykhaylo (titov)

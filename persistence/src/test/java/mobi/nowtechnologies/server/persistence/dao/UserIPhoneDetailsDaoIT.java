@@ -1,7 +1,14 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -9,11 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>UserIPhoneDetailsDaoTest</code> contains tests for the class <code>{@link UserIPhoneDetailsDao}</code>.

@@ -3,9 +3,9 @@
  */
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import mobi.nowtechnologies.common.dto.UserRegInfo;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

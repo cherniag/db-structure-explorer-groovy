@@ -1,15 +1,22 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.*;
+
+import java.util.*;
+
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
-import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
+import mobi.nowtechnologies.server.shared.dto.admin.*;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +26,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Mockito.*;
 
 /**
  * The class <code>ChartDetailServiceTest</code> contains tests for the class
@@ -1503,6 +1504,68 @@ public class ChartDetailServiceTest {
 		Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).getActualChartDetails(chartId, selectedPublishDateTime);
 						
 		fixtureChartDetailService.deleteChartItems(chartId, selectedPublishDateTime);
+	}
+	
+	@Test
+	public void testUpdateChartItems_Success() throws ServiceCheckedException{
+		
+		Byte chartId = 1;
+		long selectedPublishDateTime=0;
+		long newPublishDateTime=0;
+		
+		int expectedUpdatedRowCount=5;
+		
+		Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(0L);
+		Mockito.when(mockChartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId)).thenReturn(expectedUpdatedRowCount);
+	
+		int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
+		
+		assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
+		
+		Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+		Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
+		
+	}
+	
+	@Test(expected=ServiceCheckedException.class)
+	public void testUpdateChartItems_newPublishTimeAlreadyScheduled_Failure() throws ServiceCheckedException {
+		
+		Byte chartId = 1;
+		long selectedPublishDateTime=0;
+		long newPublishDateTime=0;
+		
+		int expectedUpdatedRowCount=5;
+		
+		Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(1L);
+	
+		int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
+		
+		assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
+		
+		Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+		Mockito.verify(mockChartDetailRepository, times(0)).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
+		
+	}
+	
+	@Test(expected=ServiceCheckedException.class)
+	public void testUpdateChartItems_UpdatedRowCountIs0_Failure() throws ServiceCheckedException {
+		
+		Byte chartId = 1;
+		long selectedPublishDateTime=0;
+		long newPublishDateTime=0;
+		
+		int expectedUpdatedRowCount=0;
+		
+		Mockito.when(mockChartDetailRepository.getCount(chartId, selectedPublishDateTime)).thenReturn(0L);
+		Mockito.when(mockChartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId)).thenReturn(expectedUpdatedRowCount);
+	
+		int actualUpdatedRowCount = fixtureChartDetailService.updateChartItems(chartId, selectedPublishDateTime, newPublishDateTime);
+		
+		assertEquals(expectedUpdatedRowCount, actualUpdatedRowCount);
+		
+		Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
+		Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
+		
 	}
 
 	/**

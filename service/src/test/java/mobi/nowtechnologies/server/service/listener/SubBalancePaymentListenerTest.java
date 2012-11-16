@@ -1,22 +1,37 @@
 package mobi.nowtechnologies.server.service.listener;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import java.math.BigDecimal;
+import java.util.concurrent.Future;
+
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.service.payment.response.MigResponse;
+import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.scheduling.annotation.AsyncResult;
-
-import java.math.BigDecimal;
-import java.util.concurrent.Future;
 
 /**
  * The class <code>SubBalancePaymentListenerTest</code> contains tests for the

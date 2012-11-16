@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import java.util.concurrent.Future;
+
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-
-import java.util.concurrent.Future;
 
 /**
  * @author Titov Mykhaylo (titov)

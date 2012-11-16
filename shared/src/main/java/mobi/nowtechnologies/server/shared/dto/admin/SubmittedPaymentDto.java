@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
-
 import java.math.BigDecimal;
 import java.util.Date;
+import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
 
 /**
  * @author Titov Mykhaylo (titov)

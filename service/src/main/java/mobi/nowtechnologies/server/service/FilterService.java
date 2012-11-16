@@ -1,17 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.assembler.FilterAsm;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.repository.FilterWithCriteriaRepository;
-import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import mobi.nowtechnologies.server.assembler.FilterAsm;
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
+import mobi.nowtechnologies.server.persistence.repository.FilterWithCriteriaRepository;
+import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)

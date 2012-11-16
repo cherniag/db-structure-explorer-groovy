@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.assertNotNull;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>DrmServiceTest</code> contains tests for the class <code>{@link DrmService}</code>.
