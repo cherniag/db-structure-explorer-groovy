@@ -1,18 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.enums.ItemType;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import mobi.nowtechnologies.server.shared.enums.ItemType;
 
 /**
  * The persistent class for the tb_media database table.
@@ -367,10 +359,11 @@ public class Media extends Item implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Media [artistId=" + artistId + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", drms=" + drms + ", genreId=" + genreId + ", headerFileId="
-				+ headerFileId + ", headerPreviewFileId=" + headerPreviewFileId + ", iTunesUrl=" + iTunesUrl + ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId
-				+ ", imgFileResolutionId=" + imgFileResolutionId + ", isrc=" + isrc + ", label=" + label + ", mediaLogs=" + mediaLogs + ", price_currency=" + price_currency + ", publishDate="
-				+ publishDate + ", purchasedFileId=" + purchasedFileId + ", info=" + info + super.toString() + "]";
+		return "Media [" + super.toString() + ", isrc=" + isrc + ", info=" + info + ", publishDate=" + publishDate + ", price_currency=" + price_currency + ", artistId=" + artistId + ", iTunesUrl="
+				+ iTunesUrl + ", label="
+				+ label + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", headerFileId=" + headerFileId + ", headerPreviewFileId=" + headerPreviewFileId
+				+ ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId + ", imgFileResolutionId=" + imgFileResolutionId + ", purchasedFileId=" + purchasedFileId
+				+ ", genreId=" + genreId + "]";
 	}
 
 }

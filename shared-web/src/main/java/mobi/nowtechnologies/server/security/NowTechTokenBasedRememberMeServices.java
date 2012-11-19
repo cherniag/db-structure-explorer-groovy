@@ -64,7 +64,7 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 	
 	/**
 	 * Decodes username from cookie tokens to get it back in normal view.
-	 * Encoding was done in method makeTokenSignature
+	 * Encoding was done in method { makeTokenSignature}
 	 */
 	@Override
 	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) {

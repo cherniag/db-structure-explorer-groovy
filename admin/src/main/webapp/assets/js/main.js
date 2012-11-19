@@ -253,3 +253,21 @@ dateFormat.i18n = {
 Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
+
+//Shop Popup
+
+var simpleDialogOptions={opacity:100, overlayClose:true};
+var modalDialogOptions={opacity:100, escClose:false, close:false};
+
+function showAsDialog(elem, onShow) {
+	if(null != onShow)
+		simpleDialogOptions.onShow = onShow;
+	$(elem).modal(simpleDialogOptions);
+}
+
+function showModalDialog(obj) {
+	if ($(obj).length==0)
+		$.modal(content, modalDialogOptions);
+	else
+		$(obj).modal(modalDialogOptions);
+}

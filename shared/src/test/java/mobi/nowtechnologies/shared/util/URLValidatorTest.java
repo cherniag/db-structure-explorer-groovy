@@ -12,13 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * The class <code>URLValidatorTest</code> contains tests for the class
- * <code> URLValidator</code>.
- * 
- * @author Anton
- * @version $Revision: 1.3 $
- */
 @RunWith(value = Parameterized.class)
 public class URLValidatorTest {
 	private static final Logger LOGGER = LoggerFactory

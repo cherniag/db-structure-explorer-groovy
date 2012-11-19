@@ -50,7 +50,5 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 		transaction-manager-ref="trackRepo.TransactionManager">
 	</jpa:repositories>
 	
-	<bean id="trackRepositoryImpl" class="mobi.nowtechnologies.server.trackrepo.repository.impl.TrackRepositoryImpl">
-		<property name="entityManagerFactory" ref="trackRepo.EntityManagerFactory" />
-	</bean>
+	<bean id="trackRepositoryImpl" class="mobi.nowtechnologies.server.trackrepo.repository.impl.TrackRepositoryImpl"/>
 </beans>

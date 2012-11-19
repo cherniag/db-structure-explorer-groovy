@@ -36,17 +36,21 @@ public class TrackController extends AbstractCommonController{
 		this.trackService = trackService;
 	}
 	
+	public void setResourceFileDtoBuilder(ResourceFileDtoBuilder resourceFileDtoBuilder) {
+		this.resourceFileDtoBuilder = resourceFileDtoBuilder;
+	}
+
 	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO})
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
 	@RequestMapping(value = "/tracks/{trackId}/encode", method = RequestMethod.POST)
-	public @ResponseBody TrackDto encode(@PathVariable("trackId")Long trackId,
+	public @ResponseBody TrackDto encode(@PathVariable("trackId")Long trackId, 
 			@RequestParam(value="isHighRate", required = false) Boolean isHighRate, @RequestParam(value="licensed", required = false) Boolean licensed) {
 
 		Track track = trackService.encode(trackId, isHighRate, licensed);
-
+		
 		return new TrackDtoExt(track);
 	}
 	

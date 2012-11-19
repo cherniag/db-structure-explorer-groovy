@@ -68,6 +68,19 @@
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
 		</dependency>
+		
+			<dependency>
+			<groupId>mobi.nowtechnologies.java.server</groupId>
+			<artifactId>shared-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>mobi.nowtechnologies.java.server</groupId>
+			<artifactId>shared-web</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared</artifactId>

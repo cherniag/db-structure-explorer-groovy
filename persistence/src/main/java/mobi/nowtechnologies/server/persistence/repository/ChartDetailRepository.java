@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -51,4 +52,13 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
 	List<ChartDetail> findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
+	
+	@Modifying
+	@Query(value="update ChartDetail chartDetail " +
+			"set " +
+			"chartDetail.publishTimeMillis=:newPublishTimeMillis " +
+			"where " +
+			"chartDetail.publishTimeMillis=:oldPublishTimeMillis " +
+			"and chartDetail.chart.i=:chartId")
+	int updateChartItems(@Param("newPublishTimeMillis") long newPublishTimeMillis, @Param("oldPublishTimeMillis") long oldPublishTimeMillis, @Param("chartId") byte chartId);
 }

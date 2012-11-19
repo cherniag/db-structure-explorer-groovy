@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller.mock;
+package mobi.nowtechnologies.server.mock;
 
 import org.springframework.web.context.WebApplicationContext;
 

@@ -125,7 +125,7 @@ public class TrackServiceImpl implements TrackService {
 		Track track = trackRepository.findOne(trackId);
 
 		if (track == null || track.getStatus() != TrackStatus.ENCODED)
-			return null;
+			return track;
 
 		try {
 			track.setPublishDate(new Date());
@@ -166,7 +166,7 @@ public class TrackServiceImpl implements TrackService {
 		Page<Track> pagelist = new PageImpl<Track>(Collections.<Track> emptyList(), page, 0L);
 		try {
 			if (searchTrackCriteria != null) {
-				pagelist = trackRepository.find(searchTrackCriteria, page);
+				pagelist = trackRepository.find(searchTrackCriteria, page, true, true);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot find tracks.", e);

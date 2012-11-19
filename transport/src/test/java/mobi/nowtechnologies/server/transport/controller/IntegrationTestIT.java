@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
+import mobi.nowtechnologies.server.mock.MockWebApplication;
+import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.*;
@@ -12,8 +14,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.transport.controller.mock.MockWebApplication;
-import mobi.nowtechnologies.server.transport.controller.mock.MockWebApplicationContextLoader;
 import org.apache.http.NameValuePair;
 import org.junit.Ignore;
 import org.junit.Test;
