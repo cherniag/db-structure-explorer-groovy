@@ -32,11 +32,20 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	private String label;
 	private String ingestor;
     private String album;
+    private String genre;
 	
 	public SearchTrackDto() {
 	}
-	
-	public String getArtist() {
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getArtist() {
 		return artist;
 	}
 	public void setArtist(String artist) {

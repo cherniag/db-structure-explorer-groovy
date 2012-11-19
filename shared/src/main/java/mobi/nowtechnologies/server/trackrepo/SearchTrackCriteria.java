@@ -22,4 +22,6 @@ public interface SearchTrackCriteria {
 	Date getReleaseFrom();
 
     String getAlbum();
+
+    String getGenre();
 }

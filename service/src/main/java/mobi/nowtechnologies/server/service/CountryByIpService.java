@@ -35,12 +35,12 @@ public class CountryByIpService {
         LOGGER.info("store.path = " + storePath);
         try {
             File file = new File(storePath.getFile(), GEO_IP_FILE_NAME);
-            Validate.isTrue(storePath.exists(), "File does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
+            Validate.isTrue(file.exists(), "File does not exist: "+ file.getAbsolutePath() + ". Amend store.path property");
             LOOKUP_SERVICE = new LookupService(file, LookupService.GEOIP_MEMORY_CACHE
                     | LookupService.GEOIP_CHECK_CACHE);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ServiceException("failded to initialise LOOKUP_SERVICE", e);
+            throw new ServiceException("failded to initialise LOOKUP_SERVICE. store.path=" + storePath.getFilename(), e);
         }
     }
 

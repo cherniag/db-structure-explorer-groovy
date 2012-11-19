@@ -38,7 +38,7 @@ public class TrackRepoControllerIT {
     public void setUp() {
 
         mockMvc = xmlConfigSetup("classpath:META-INF/dao-test.xml",
-                "classpath:META-INF/service-test.xml",
+                "classpath:META-INF/service-tr-test.xml",
                 "classpath:META-INF/shared.xml",
                 "classpath:admin-test.xml",
                 "classpath:WEB-INF/security.xml",
@@ -47,19 +47,37 @@ public class TrackRepoControllerIT {
     }
 
     @Test
-    public void verifyThatTrackCanBeFetchedByAlbomName() throws Exception {
+    public void verifyThatTrackCanBeFetchedByGenre() throws Exception {
         trackRepository.save(createTrack());
 
+        String genre_1 = "genre_1";
         ResultActions resultActions = mockMvc.perform(
                 get("/tracks/list")
-                        .param("album", "album_1")
+                        .param("genre", genre_1)
                         .param("page.page", "1")
-        )
-                .andExpect(status().isOk());
-        PageListDto<TrackDto> tracks = getTrackDtoList(resultActions);
-        assertNotNull(tracks);
-        List<TrackDto> list = tracks.getList();
+        ).andExpect(status().isOk());
+
+        List<TrackDto> list = getTrackDtoList(resultActions);
         assertEquals(1, list.size());
+        TrackDto first = list.get(0);
+        assertEquals(genre_1, first.getGenre());
+    }
+
+    @Test
+    public void verifyThatTrackCanBeFetchedByAlbumName() throws Exception {
+        trackRepository.save(createTrack());
+
+        String album_1 = "album_1";
+        ResultActions resultActions = mockMvc.perform(
+                get("/tracks/list")
+                        .param("album", album_1)
+                        .param("page.page", "1")
+        ).andExpect(status().isOk());
+
+        List<TrackDto> list = getTrackDtoList(resultActions);
+        assertEquals(1, list.size());
+        TrackDto first = list.get(0);
+        assertEquals(album_1, first.getAlbum());
     }
 
     @Test
@@ -73,17 +91,18 @@ public class TrackRepoControllerIT {
         )
                 .andExpect(status().isOk())
                 .andExpect(view().name("tracks/tracks"));
-        PageListDto<TrackDto> tracks = getTrackDtoList(resultActions);
-        assertNotNull(tracks);
-        List<TrackDto> list = tracks.getList();
+        List<TrackDto> list = getTrackDtoList(resultActions);
+
         assertEquals(1, list.size());
         TrackDto first = list.get(0);
         assertEquals("ingestor_1", first.getIngestor());
     }
 
-    private PageListDto<TrackDto> getTrackDtoList(ResultActions resultActions) {
+    private List<TrackDto> getTrackDtoList(ResultActions resultActions) {
         ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
-        return (PageListDto<TrackDto>) modelMap.get(PageListDto.PAGE_LIST_DTO);
+        PageListDto<TrackDto> tracks =(PageListDto<TrackDto>) modelMap.get(PageListDto.PAGE_LIST_DTO);
+        assertNotNull(tracks);
+        return tracks.getList();
     }
 
     private Track createTrack() {
@@ -96,7 +115,7 @@ public class TrackRepoControllerIT {
         track.setStatus(TrackStatus.ENCODED);
 
         track.setAlbum("album_1");
-        track.setGenre("Rock");
+        track.setGenre("genre_1");
         return track;
     }
 
