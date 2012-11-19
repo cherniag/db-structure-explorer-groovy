@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
-	    
-    <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
-		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
-		<property name="workDir" value="${trackRepo.encode.workdir}" />
-    </bean>    
+       http://www.springframework.org/schema/beans/spring-beans.xsd">   
 
     <bean name="trackRepo.SignInController" class="mobi.nowtechnologies.server.trackrepo.controller.SignInController"/>
     
