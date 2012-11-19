@@ -33,8 +33,9 @@ public class ChartItemDto {
 	private ChgPosition chgPosition;
 	
 	private String channel;
+    private String isrc;
 
-	@DateTimeFormat(iso=ISO.DATE_TIME)
+    @DateTimeFormat(iso=ISO.DATE_TIME)
 	private Date publishTime;
 
 	public Integer getId() {
@@ -45,7 +46,15 @@ public class ChartItemDto {
 		this.id = id;
 	}
 
-	public Date getPublishTime() {
+    public String getIsrc() {
+        return isrc;
+    }
+
+    public void setIsrc(String isrc) {
+        this.isrc = isrc;
+    }
+
+    public Date getPublishTime() {
 		return publishTime;
 	}
 
