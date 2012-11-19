@@ -187,7 +187,10 @@
 	
 	<div class="container" id="chartItemsTable" style="width: 1500px;">
 		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
+		<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker1" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
+		
 		<div class="newsListWide">
+		
 			<ul class="table">
 				<li class="title">
 					<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
@@ -352,6 +355,9 @@
 			revert: "invalid",
 			appendTo: "#chartItemsTable"
 	};
+	
+	
+	
 	
 	$(function() {
 		var spycontainer = $(".container.chartControl");
@@ -932,6 +938,7 @@
 		
 		return li;
 	}
+	
 	/*]]>*/</script>
 </body>
 </html>
