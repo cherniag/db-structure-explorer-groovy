@@ -1,11 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="device_user_data")
@@ -21,13 +16,23 @@ public class DeviceUserData {
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
 	
-	@Column(name="xtify_token", nullable=false)
+	@Column(name="xtify_token", nullable=false, unique = true)
 	private String xtifyToken;
 	
 	@Column(name="device_uid", nullable=false)
-	private String deviceUID;
-	
-	public Integer getId() {
+	private String deviceUid;
+
+    public DeviceUserData() {
+    }
+
+    public DeviceUserData(String communityUrl, Integer userId, String xtifyToken, String deviceUID) {
+        this.communityUrl = communityUrl;
+        this.userId = userId;
+        this.xtifyToken = xtifyToken;
+        this.deviceUid = deviceUID;
+    }
+
+    public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
@@ -53,11 +58,23 @@ public class DeviceUserData {
 	public void setXtifyToken(String xtifyToken) {
 		this.xtifyToken = xtifyToken;
 	}
-	public String getDeviceUID() {
-		return deviceUID;
-	}
-	public void setDeviceUID(String deviceUID) {
-		this.deviceUID = deviceUID;
-	}
-			
+
+    public String getDeviceUid() {
+        return deviceUid;
+    }
+
+    public void setDeviceUid(String deviceUid) {
+        this.deviceUid = deviceUid;
+    }
+
+    @Override
+    public String toString() {
+        return "DeviceUserData{" +
+                "id=" + id +
+                ", communityUrl='" + communityUrl + '\'' +
+                ", userId=" + userId +
+                ", xtifyToken='" + xtifyToken + '\'' +
+                ", deviceUID='" + deviceUid + '\'' +
+                '}';
+    }
 }

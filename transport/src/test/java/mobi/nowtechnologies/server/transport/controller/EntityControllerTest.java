@@ -47,110 +47,48 @@ public class EntityControllerTest {
 	DeviceUserDataService deviceUserDataService;
 
     @Test
+    public void verifyThatTwoDifferentXtifyTokensWhenReceivedWithTheSameUserAndCommunityAndDeviceWillUpdated()throws NoSuchMethodException{
+        EntityController controller = prepareMockController();
+        controller.accountCheckWithXtifyToken(
+                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
+        controller.accountCheckWithXtifyToken(
+                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "5678");
+
+        verify(controller);
+        DeviceUserData data = deviceUserDataService.getByXtifyToken("5678");
+        assertNotNull(data);
+        assertEquals("deviceUID", data.getDeviceUid());
+
+        data = deviceUserDataService.getByXtifyToken("1234");
+        assertNull(data);
+    }
+
+    @Test
+    @Transactional
     public void verifyThatXtifyTokenWillNotDuplicateWithTheSameUserAndCommunityUrl() throws NoSuchMethodException  {
-        EntityController controller = createMock(EntityController.class,
-                EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class));
-        controller.setDeviceUserDataService(deviceUserDataService);
-        expect(controller.accountCheck((HttpServletRequest) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject()
-        )).andReturn(null).anyTimes();
-        replay(controller);
+        EntityController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
-                null,
-                "Now Music",
-                null,
-                "test@test.com",
-                null,
-                null,
-                null,
-                "deviceUID",
-                null,
-                null,
-                "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
         controller.accountCheckWithXtifyToken(null,
-                null,
-                "Now Music",
-                null,
-                "test@test.com",
-                null,
-                null,
-                null,
-                "deviceUID",
-                null,
-                null,
-                "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
         assertNotNull(data);
-        assertEquals("deviceUID", data.getDeviceUID());
+        assertEquals("deviceUID", data.getDeviceUid());
     }
 
     @Test
     public void verifyThatXtifyTokenCanBeSavedThroughRestApi() throws NoSuchMethodException {
 
-        EntityController controller = createMock(EntityController.class,
-                EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        String.class));
-        controller.setDeviceUserDataService(deviceUserDataService);
-        expect(controller.accountCheck((HttpServletRequest) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject(),
-                (String) anyObject()
-        )).andReturn(null);
-        replay(controller);
+        EntityController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
-                null,
-                "Now Music",
-                null,
-                "test@test.com",
-                null,
-                null,
-                null,
-                "deviceUID",
-                null,
-                null,
-                "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
         assertNotNull(data);
-        assertEquals("deviceUID", data.getDeviceUID());
+        assertEquals("deviceUID", data.getDeviceUid());
     }
 
 	@Test
@@ -290,5 +228,35 @@ public class EntityControllerTest {
 		assertEquals(aHttpServletResponse.getStatus(), 200);
 
 	}
+
+    private EntityController prepareMockController() throws NoSuchMethodException {
+        EntityController controller = createMock(EntityController.class,
+                EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        String.class));
+        controller.setDeviceUserDataService(deviceUserDataService);
+        expect(controller.accountCheck((HttpServletRequest) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject(),
+                (String) anyObject()
+        )).andReturn(null).anyTimes();
+        replay(controller);
+        return controller;
+    }
 
 }

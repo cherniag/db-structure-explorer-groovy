@@ -1,37 +1,10 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.util.StringUtils.hasText;
-
-import java.io.StringReader;
-import java.lang.Thread.State;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
-import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.DeviceUserDataService;
-import mobi.nowtechnologies.server.service.DrmService;
-import mobi.nowtechnologies.server.service.FacebookService;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
-import mobi.nowtechnologies.server.service.MediaService;
-import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDetailsDtoValidator;
@@ -44,21 +17,30 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
+import java.lang.Thread.State;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * EntityController
@@ -211,7 +193,6 @@ public class EntityController extends CommonController {
 			String deviceUID,
 			String pushNotificationToken,
 			String iphoneToken) {
-		LOGGER.info("command processing started");
 		try {
 			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);
 
