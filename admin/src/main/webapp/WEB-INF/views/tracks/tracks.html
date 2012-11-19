@@ -55,13 +55,13 @@
 		<div class="newsListWide" style="width: 100%">
 			<ul class="table" id="tracksTable" th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}">
 				<li class="title">
-					<div class="product_id_repo_columns" th:text="#{tracks.page.trackList.head.productId}">Product ID</div>
+					<div class="product_id_repo_columns" th:text="#{tracks.page.trackList.head.ingestorAndLabel}">Ingestor/Label</div>
 					<div class="image_repo_columns" th:text="#{tracks.page.trackList.head.image}">Image</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.isrc}">ISRC</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.subtitle}">SubTitle</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.artist}">Artist</div>
-					<div class="repo_columns" th:text="#{tracks.page.trackList.head.ingestionDate}">Ingestion Date</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
 					<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>
@@ -75,7 +75,7 @@
 					<div th:id="${'publishArtistDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishArtist}">Publish Artist</div>
 					<div th:id="${'resolutionDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.resolution}">Resolution</div>
 					
-					<div class="product_id_repo_columns" th:text="${trackDto.productId}">Product ID</div>
+					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
 						<img alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
 					</div>
@@ -83,7 +83,7 @@
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
 					<div class="repo_columns" th:text="${trackDto.subTitle}">SubTitle</div>
 					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
-					<div class="repo_columns" th:text="${trackDto.ingestionDate != null ? #dates.format(trackDto.ingestionDate, '__#{tracks.date.format}__') : ''}">Ingestion Date</div>
+					<div class="repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
 						Date</div>
 					<div class="repo_columns" th:text="${trackDto.territories}">Territories</div>
