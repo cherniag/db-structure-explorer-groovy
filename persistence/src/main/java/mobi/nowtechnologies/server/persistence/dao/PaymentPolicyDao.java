@@ -1,16 +1,14 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

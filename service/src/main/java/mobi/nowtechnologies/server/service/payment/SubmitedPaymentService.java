@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -3,12 +3,12 @@
  */
 package mobi.nowtechnologies.server.trackrepo.factory;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

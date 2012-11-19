@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -11,7 +9,6 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDtoExt;
 import mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -20,6 +17,8 @@ import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * 

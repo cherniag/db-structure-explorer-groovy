@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
@@ -9,9 +7,10 @@ import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

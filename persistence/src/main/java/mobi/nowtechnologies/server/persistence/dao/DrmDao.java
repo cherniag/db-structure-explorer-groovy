@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.DrmType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
+
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

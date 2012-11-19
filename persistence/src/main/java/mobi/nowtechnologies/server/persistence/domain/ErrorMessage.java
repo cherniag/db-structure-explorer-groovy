@@ -3,9 +3,8 @@
  */
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)

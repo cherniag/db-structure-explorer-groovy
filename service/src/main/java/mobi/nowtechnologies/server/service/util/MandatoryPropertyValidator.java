@@ -5,7 +5,6 @@ package mobi.nowtechnologies.server.service.util;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.util.CreditCardNumberValidator;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;

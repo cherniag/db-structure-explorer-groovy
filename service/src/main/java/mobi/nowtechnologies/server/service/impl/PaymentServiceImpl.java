@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.repository.SubmitedPaymentRepository;
 import mobi.nowtechnologies.server.service.IPaymentService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

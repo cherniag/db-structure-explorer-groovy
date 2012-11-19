@@ -1,5 +1,29 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
+import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.support.ServletContextResource;
+
+import javax.servlet.ServletContext;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -8,30 +32,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
-import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
-import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
-import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
-import mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl;
-import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.data.domain.*;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.support.ServletContextResource;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(TrackServiceImpl.class)

@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.service.validator;
 
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

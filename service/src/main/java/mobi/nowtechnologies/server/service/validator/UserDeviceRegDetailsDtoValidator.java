@@ -1,17 +1,16 @@
 package mobi.nowtechnologies.server.service.validator;
 
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.web.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -9,12 +7,13 @@ import mobi.nowtechnologies.server.shared.web.security.service.impl.UserDetailsS
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import mobi.nowtechnologies.server.web.security.facebook.FacebookAuthenticationFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.social.facebook.api.FacebookProfile;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Titov Mykhaylo (titov)

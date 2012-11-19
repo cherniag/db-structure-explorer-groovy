@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.persistence.dao.EntityDao;
+import mobi.nowtechnologies.server.persistence.domain.Country;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.domain.Country;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import java.math.BigDecimal;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import java.math.BigDecimal;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

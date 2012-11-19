@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+
+import java.util.Date;
 
 
 /**

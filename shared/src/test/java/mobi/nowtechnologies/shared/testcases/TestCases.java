@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.shared.testcases;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
 
 public class TestCases<IN, OUT> {
 	private Map<TestCase<IN, OUT>, OUT[]> map = new HashMap<TestCase<IN, OUT>, OUT[]>();

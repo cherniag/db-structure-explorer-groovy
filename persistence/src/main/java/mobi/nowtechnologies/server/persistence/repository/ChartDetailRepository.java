@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import java.util.List;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Titov Mykhaylo (titov)

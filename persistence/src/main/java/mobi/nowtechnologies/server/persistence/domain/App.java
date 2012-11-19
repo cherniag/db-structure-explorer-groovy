@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
