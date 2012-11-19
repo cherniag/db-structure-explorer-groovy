@@ -29,7 +29,7 @@ public class App implements Serializable {
 	@Column(name="model",columnDefinition="char(40)")
 	private String model;
 	
-	private byte communityID;
+	private int communityID;
 
     public App() {
     }
