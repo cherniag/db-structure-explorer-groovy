@@ -5,7 +5,7 @@
 <div class="gradient_border">&#160;</div>
 	<form:form modelAttribute="creditCardDto" method="post">
 	<div class="header">
-		<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>	
+		<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 		<div class="buttonBox">
 			<input class="button accounts" type="submit" value="<s:message code="m.page.main.menu.back" />" />
 			<span class="arrow">&nbsp;</span>
