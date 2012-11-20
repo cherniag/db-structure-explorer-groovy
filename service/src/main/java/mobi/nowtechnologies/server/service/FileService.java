@@ -108,7 +108,7 @@ public class FileService{
 			fileName = new File(folderPath, mediaFileName);
         }
 		File file = fileName;
-		isTrue(!file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
+		isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
                 "], path="+file.getAbsolutePath());
 		
 		if (fileType.equals(FileType.PURCHASED))
