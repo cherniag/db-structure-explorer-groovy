@@ -5,9 +5,9 @@
 <div class="offers_container">
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logoWebStore"><img
+	<span class="logoWebStore"><img
 			src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_left.png"
-			alt="" width="55" height="53" /><span><s:message code="offers.page.title" /></span></a> 
+			alt="" width="55" height="53" /><span><s:message code="offers.page.title" /></span></span> 
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
 		<input class="button accounts" class="buttonTop" title="javascript: history.go(-1)" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />
