@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.repository.impl;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class BaseJpaRepository {
 	@PersistenceContext

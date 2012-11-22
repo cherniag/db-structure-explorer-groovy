@@ -1,25 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -3,12 +3,12 @@
  */
 package mobi.nowtechnologies.server.trackrepo.factory;
 
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

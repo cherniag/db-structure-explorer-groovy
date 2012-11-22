@@ -31,11 +31,21 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	private Date releaseFrom;
 	private String label;
 	private String ingestor;
+    private String album;
+    private String genre;
 	
 	public SearchTrackDto() {
 	}
-	
-	public String getArtist() {
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getArtist() {
 		return artist;
 	}
 	public void setArtist(String artist) {
@@ -93,23 +103,34 @@ public class SearchTrackDto implements SearchTrackCriteria{
 		this.releaseFrom = releaseFrom;
 	}
 
-	@Override
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    @Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((artist == null) ? 0 : artist.hashCode());
-		result = prime * result + ((ingestFrom == null) ? 0 : ingestFrom.hashCode());
-		result = prime * result + ((ingestTo == null) ? 0 : ingestTo.hashCode());
-		result = prime * result + ((ingestor == null) ? 0 : ingestor.hashCode());
-		result = prime * result + ((isrc == null) ? 0 : isrc.hashCode());
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		result = prime * result + ((releaseFrom == null) ? 0 : releaseFrom.hashCode());
-		result = prime * result + ((releaseTo == null) ? 0 : releaseTo.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
+        return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title);
 	}
 
-	@Override
+    private <T> int hash(T... params){
+        int result = 1;
+        for (T t : params){
+            result = hashWithParam(t, result);
+        }
+        return result;
+    }
+
+    private <T> int hashWithParam(T t, int result) {
+        final int prime = 31;
+        result = prime * result + ((t == null) ? 0 : t.hashCode());
+        return result;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -168,7 +189,7 @@ public class SearchTrackDto implements SearchTrackCriteria{
 
 	@Override
 	public String toString() {
-		return "SearchTrackDto [artist=" + artist + ", title=" + title + ", isrc=" + isrc + ", ingestFrom=" + ingestFrom + ", ingestTo=" + ingestTo + ", releaseTo=" + releaseTo + ", releaseFrom="
+		return "SearchTrackDto [album="+album+", artist=" + artist + ", title=" + title + ", isrc=" + isrc + ", ingestFrom=" + ingestFrom + ", ingestTo=" + ingestTo + ", releaseTo=" + releaseTo + ", releaseFrom="
 				+ releaseFrom + ", label=" + label + ", ingestor=" + ingestor + "]";
 	}
 }

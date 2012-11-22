@@ -20,4 +20,8 @@ public interface SearchTrackCriteria {
 	Date getReleaseTo();
 
 	Date getReleaseFrom();
+
+    String getAlbum();
+
+    String getGenre();
 }

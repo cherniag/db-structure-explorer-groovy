@@ -1,15 +1,8 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.Cookie;
-
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-
 import org.h2.jdbc.JdbcConnection;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,6 +20,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {

@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.common.dto;
 
-import java.util.Hashtable;
-
-import javax.validation.constraints.Pattern;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.Pattern;
+import java.util.Hashtable;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,23 +1,22 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.OADC_FREE;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.OADC_FREE;
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 
 /**
  * MigService

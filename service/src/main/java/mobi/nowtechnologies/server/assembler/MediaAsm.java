@@ -1,18 +1,14 @@
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
-import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
 
 /**
  * @author Titov Mykhaylo (titov)

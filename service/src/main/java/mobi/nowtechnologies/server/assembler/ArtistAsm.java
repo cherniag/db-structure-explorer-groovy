@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.Artist;
 import mobi.nowtechnologies.server.shared.dto.admin.ArtistDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

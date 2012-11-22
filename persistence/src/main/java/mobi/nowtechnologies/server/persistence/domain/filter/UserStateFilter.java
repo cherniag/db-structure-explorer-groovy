@@ -1,21 +1,16 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilter;
-import mobi.nowtechnologies.server.persistence.domain.NewsDetail;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserState;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("UserStateFilter")

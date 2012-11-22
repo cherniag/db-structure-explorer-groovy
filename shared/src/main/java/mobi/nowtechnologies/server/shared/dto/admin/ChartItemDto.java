@@ -1,13 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -35,8 +33,9 @@ public class ChartItemDto {
 	private ChgPosition chgPosition;
 	
 	private String channel;
+    private String isrc;
 
-	@DateTimeFormat(iso=ISO.DATE_TIME)
+    @DateTimeFormat(iso=ISO.DATE_TIME)
 	private Date publishTime;
 
 	public Integer getId() {
@@ -47,7 +46,15 @@ public class ChartItemDto {
 		this.id = id;
 	}
 
-	public Date getPublishTime() {
+    public String getIsrc() {
+        return isrc;
+    }
+
+    public void setIsrc(String isrc) {
+        this.isrc = isrc;
+    }
+
+    public Date getPublishTime() {
 		return publishTime;
 	}
 

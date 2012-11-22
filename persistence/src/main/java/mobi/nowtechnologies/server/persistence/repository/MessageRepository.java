@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

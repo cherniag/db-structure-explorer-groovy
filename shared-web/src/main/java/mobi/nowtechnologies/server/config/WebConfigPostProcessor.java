@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -10,27 +7,13 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.web.bind.support.WebArgumentResolver;
-import org.springframework.web.method.annotation.ErrorsMethodArgumentResolver;
-import org.springframework.web.method.annotation.ExpressionValueMethodArgumentResolver;
-import org.springframework.web.method.annotation.MapMethodProcessor;
-import org.springframework.web.method.annotation.ModelMethodProcessor;
-import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver;
-import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver;
-import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver;
-import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
-import org.springframework.web.method.annotation.SessionStatusMethodArgumentResolver;
+import org.springframework.web.method.annotation.*;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
-import org.springframework.web.servlet.mvc.method.annotation.PathVariableMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RedirectAttributesMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttributeMethodProcessor;
-import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ServletResponseMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
+import org.springframework.web.servlet.mvc.method.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * EntityController

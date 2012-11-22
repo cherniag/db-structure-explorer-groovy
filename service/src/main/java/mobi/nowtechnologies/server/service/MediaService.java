@@ -1,18 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.List;
-import java.util.Map;
-
 import mobi.nowtechnologies.server.persistence.dao.MediaDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

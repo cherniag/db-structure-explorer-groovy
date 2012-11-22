@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.mock;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
@@ -24,6 +21,9 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.shared.service;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,6 +12,11 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)

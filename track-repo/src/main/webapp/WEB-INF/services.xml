@@ -15,6 +15,11 @@
 		<property name="trackRepository" ref="trackRepository" />
 	</bean>
 	
+    <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
+		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
+		<property name="workDir" value="${trackRepo.encode.workdir}" />
+    </bean> 
+	
 	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.trackrepo.service.impl.FileServiceImpl">
 		<property name="fileRepository" ref="fileRepository" />
 	</bean>		

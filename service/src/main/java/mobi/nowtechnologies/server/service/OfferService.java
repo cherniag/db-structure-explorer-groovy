@@ -1,19 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.assembler.ItemAsm;
 import mobi.nowtechnologies.server.assembler.OfferAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Item;
-import mobi.nowtechnologies.server.persistence.domain.Offer;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ItemRepository;
 import mobi.nowtechnologies.server.persistence.repository.OfferRepository;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
@@ -21,12 +11,13 @@ import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.OfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

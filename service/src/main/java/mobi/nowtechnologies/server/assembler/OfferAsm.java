@@ -1,9 +1,5 @@
 package mobi.nowtechnologies.server.assembler;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -11,9 +7,12 @@ import mobi.nowtechnologies.server.shared.dto.ItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.OfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Titov Mykhaylo (titov)

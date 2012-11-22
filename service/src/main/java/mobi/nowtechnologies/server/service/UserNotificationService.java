@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.concurrent.Future;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
+
+import java.util.concurrent.Future;
 
 /**
  * @author Titov Mykhaylo (titov)
