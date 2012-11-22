@@ -181,7 +181,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
 		<!-- Test dependencies -->
