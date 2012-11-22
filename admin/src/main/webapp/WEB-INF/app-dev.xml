@@ -13,9 +13,9 @@
     <bean id="persistence.DataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/cn_service" />
+        <property name="url" value="jdbc:mysql://cherry:3306/cn_service" />
         <property name="username" value="root" />
-        <property name="password" value="" />
+        <property name="password" value="Cha3t5N0w1" />
     </bean>
 
 
