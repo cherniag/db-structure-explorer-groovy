@@ -288,7 +288,7 @@ input:focus.textInputTel {color: #000;}
 .phonesBox {padding-left: 13px;}
 
 /*thanks you box*/
-.thankYouBox {width: 340px; height: 170px; border: solid 1px #8d8d8d; padding: 45px 25px 20px 25px; background-color: #fff; font-size: 12px; color: #8d8d8d; -webkit-box-shadow: 5px 5px 15px #8d8d8d; box-shadow: 5px 5px 15px  #bdb8bc; -moz-box-shadow: 5px 5px 15px #bdb8bc; }
+.thankYouBox {width: 340px; height: 170px; border: solid 1px #8d8d8d; padding: 25px 20px; background-color: #fff; font-size: 12px; color: #8d8d8d; -webkit-box-shadow: 5px 5px 15px #8d8d8d; box-shadow: 5px 5px 15px  #bdb8bc; -moz-box-shadow: 5px 5px 15px #bdb8bc; }
 .thankYouBox .buttonBox {width: 273px;}	
 .thankYouBox p {margin-bottom: 30px;}
 
@@ -323,3 +323,7 @@ input:focus.textInputTel {color: #000;}
 /*cols for button,  added */
 .leftButtonCol, .rightButtonCol {width: 275px; margin-right: 20px; float: left; background:  url(../imgs/icons/pointer.png) no-repeat center  50px; }
 .leftButtonCol p, .rightButtonCol p {margin-bottom: 35px;}
+
+#thankYouBox .buttonShadow {
+	margin-left: 30px;
+}

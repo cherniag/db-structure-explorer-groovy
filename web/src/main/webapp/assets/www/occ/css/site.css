@@ -143,7 +143,7 @@ input.button, .payDetails input.button, .pinInfo input.button, button {height: i
 .errorSign {background: transparent url('../imgs/icons/attention.png') no-repeat left center; cursor: pointer; display: inline-block;  width: 23px; height: 34px; vertical-align: top; margin-left: 3px;  text-indent: -2000px;}
 .errorSign span {text-indent: -2000px;}
 .errorSign span br {float: left;}
-.appBoxes .errorSign {top: 60px; left: 187px; position: absolute;}
+.appBoxes .errorSign {top: 60px; left: 205px; position: absolute;}
 .forgotPass .errorBoxContainer {width: 322px; height: 65px; margin-top: -7px; margin-bottom: 9px;}
 .welcomeBox .errorSign {height: 30px;}
 .forgotPass {background-position: 260px bottom;}
@@ -463,3 +463,6 @@ span.cookies_style_close {
 	color: #1428a0;
 }
 
+.wholePart .details h2 {
+	color: #ec008c!important;
+}
