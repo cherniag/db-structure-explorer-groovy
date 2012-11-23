@@ -25,13 +25,13 @@
 		${contentOfferDto.description}
 		</div>
 		<div class="rel">
-			<div class="albumButton">
-			<a href="offers/${contentOfferDto.id}/payments.html"><s:message
-					code='offers.page.link.buyTrack' /></a>
-			</div>
 			<div class="albumPriceDetails">
 				<s:message code="transaction_history.historyTable.amount.formater" var="amount_formater"/> 
 				<fmt:formatNumber type="currency"  currencySymbol="&pound;" pattern="${amount_formater}" value="${contentOfferDto.price}"></fmt:formatNumber>
+			</div>
+			<div class="albumButton">
+			<a href="offers/${contentOfferDto.id}/payments.html"><s:message
+					code='offers.page.link.buyTrack' /></a>
 			</div>
 		</div>
 	</div>
@@ -43,9 +43,11 @@
 		<div class="itemsImage">
 			<img src="${coverStorePath}/${contentOfferItemDto.coverFileName}" alt="" width="54" height="54"/>
 		</div>
-		<div class="itemCount">${rowCounter.count}</div>
-		<div class="itemsArtistName">${contentOfferItemDto.authorName}
-			<p class="itemsTrackName">${contentOfferItemDto.title}</p>
+		<div class="itemCount">${rowCounter.count}
+			<p class="itemsArtistName">
+				<span>${contentOfferItemDto.authorName}</span>
+				<span class="itemsTrackName">${contentOfferItemDto.title}</span>
+			</p>
 		</div>
 	</div>
 	<div class="clear"></div>

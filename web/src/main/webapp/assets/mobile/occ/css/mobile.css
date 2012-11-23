@@ -819,14 +819,6 @@ div.inputAreaBox  {
  
  /*for Web Store*/
  
-.packBlock {
-	position: relative;
-	margin: 0px 8px 2px 8px;
-	height: 97px;
-	border: 1px solid #d2d2d2;
-	border-bottom: 1px solid #d32287;
-	background: url("../imgs/bg.png") repeat-x #CCCCCC;
-}
 
 .albumIcon {
 	position: absolute;
@@ -843,27 +835,14 @@ div.inputAreaBox  {
 	width: 45%;
 	font-family: 'DroidSansBold';
 	font-size: 18px;
-	color: #d32287;
+	color: #ec008c;
 }
-.albmBody {
-	position: absolute;
-	top: 40px;
-	left: 110px;
-	width: 45%;
-	line-height: 20px;
-	font-family: 'DroidSansRegular';
-	font-size: 14px;
-	color: #1428a0;
+
+.albmTitle span {
+	display: block;
 }
-.albumButton {
-	position: absolute;
-	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
-	top: 25px;
-	right: 20px;
-	font-family: 'DroidSansBold';
-	font-size: 16px;
-	padding: 10px;
-}
+
+
 
 .albumButton a{
 	color: #ffffff;
@@ -958,7 +937,7 @@ div.inputAreaBox  {
 	height: 97px;
 	margin: 2px;
 	border: 1px solid #d2d2d2;
-	background: url(../imgs/bg.png) repeat-x #CCCCCC;
+	background-color: #FFFFFF;
 }
 .albumIcon {
 	position: absolute;
@@ -991,8 +970,8 @@ p.albmBody {
 
 .albmPrice {
 	position: absolute;
-	top: 30px;
-	right: 40px;
+	top: 20px;
+	right: 20px;
 	font-family: 'DroidSansBold';
 	font-size: 16px;
 	padding: 10px;
@@ -1003,7 +982,7 @@ p.albmBody {
 	text-decoration: none;
 	font-family: "DroidSans"
 	font-weight: bold;
-	color: #d32287;
+	color: #ec008c;
 }
 
 .albmPrice span {
@@ -1049,14 +1028,14 @@ p.albmBody {
 	width: 60%;
 	font-family: 'DroidSansBold';
 	font-size: 18px;
-	color: #d32287;
+	color: #FFFFFF;
 }
 .albmBodyDetails {
 	width: 60%;
 	line-height: 20px;
 	font-family: 'DroidSansRegular';
 	font-size: 14px;
-	color: #1428a0;
+	color: #FFFFFF;
 }
 
 p.albmBodyDetails {
@@ -1064,30 +1043,37 @@ p.albmBodyDetails {
 } 
 
 .albumButton {
-	position: absolute;
 	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
-	bottom: 30px;
-	left: 210px;
 	font-family: 'DroidSansBold';
 	font-size: 16px;
 	padding: 10px;
+	width: 70px;
 }
 
 .albumButton a{
-	color: #ffffff;
+	color: #ec008c;
 	text-decoration: none;
 	font-family: "DroidSansRegular";
 	font-weight: bold;
 }
 
+
+/**/
+
 div.itemsDetails {
-	height: 64px;
 	background-color: #ffffff;
 	border-bottom: 1px solid #d2d2d2;
+	width: 100%;
 }
 
+.itemsDetails img {
+	position: relative;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
 
 .itemsDetails {
+	line-height: 64px;
 	vertical-align: top;
 	font-family: 'DroidSansRegular';
 	font-size: 22px;
@@ -1096,10 +1082,30 @@ div.itemsDetails {
 	padding-left: 10px;
 }
 
-
 .itemsDetails {
 	position: relative;
+	float: left;
 }
+
+.itemsImage {
+	position: relative;
+	float: left;
+}
+
+.itemCount {
+	position: relative;
+	left: 20px;
+	top: 1px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #2e2e92;
+}
+
+.itemsArtistName span {
+	display: block;
+	line-height: 25px;
+}
+
 
 .itemsCount {
 	position: absolute;
@@ -1112,11 +1118,11 @@ div.itemsDetails {
 
 .itemsArtistName {
 	position: absolute;
-	left: 150px;
+	left: 90px;
 	top: 5px;
 	font-size: 16px;
 	font-weight: bold;
-	color: #d32287;
+	color: #ec008c;
 }
 
 .itemsTrackName {
@@ -1154,9 +1160,14 @@ p.itemsTrackName {
 		
 .logoWebStore {
 	display: block;
-	top: 0;
-	left: 0;	
+	top: 10px;
+	left: 10px;	
 	position: absolute;	
+}
+
+.logoWebStore img {
+	width: 133px!important;
+	height: 41px!important;
 }
 
 /*Cookie Conteiner*/
