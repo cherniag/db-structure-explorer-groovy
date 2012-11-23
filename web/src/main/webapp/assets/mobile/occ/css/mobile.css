@@ -96,6 +96,7 @@ p  {
 .content .oneQuestion  p  {margin-left: 0px;}
 .content p.firstPar  {
 	margin-top: 1.5em;
+	color: #2e2e92;
 }
 .text p {
 	font-size: 0.8em;		
@@ -628,7 +629,7 @@ div.inputAreaBox  {
 .note {
 	width: 100%; 
 	font-size: 0.75em; 
-	color: #ec008c;
+	color: #ec008c!important;
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
@@ -758,12 +759,19 @@ div.inputAreaBox  {
 .payDetails {
 	margin-bottom: 36px;
 }
-.payDetails input, .formDetails input, .oneField  input, .oneField  textarea  {
+.payDetails input, .formDetails input, .oneField  input {
 	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
     border: 1px solid #777777;
     border-radius: 3px 3px 3px 3px;
     height: 2em;
     padding: 0 10px;
+    margin-top: 5px; 
+    font-size: 0.8em;
+    width: 100%;
+}
+
+.oneField  textarea {
+	padding: 0 10px;
     margin-top: 5px; 
     font-size: 0.8em;
     width: 100%;
