@@ -930,9 +930,7 @@ div.inputAreaBox  {
 
 .packBlock {
 	position: relative;
-	width: 100%;
 	overflow: hidden;
-	min-width: 480px;
 	height: 97px;
 	margin: 2px;
 	border: 1px solid #d2d2d2;
@@ -991,7 +989,6 @@ p.albmBody {
 /*Offer*/
 .packBlockDetails {
 	position: relative;
-	min-width: 480px;
 	height: 192px;
 	margin: 2px;
 	border: 1px solid #d2d2d2;
@@ -1010,14 +1007,14 @@ p.albmBody {
 .albumIconDetails {
 	position: absolute;
 	left: 0;
-	width: 192px;
-	height: 192px;
+	width: 50%;
+	height: 50%;
 	border-right: 1px solid #d2d2d2;
 }
 
 .albumIconDetails img {
-	width: 192px;
-	height: 192px;
+	width: 50%;
+	height: 50%; 
 }
 
 .albmTitleDetails {

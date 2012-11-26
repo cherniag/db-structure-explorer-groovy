@@ -54,10 +54,10 @@ p.narrow {width: 400px; text-align:left; }
 /*.authorization .buttonShadow {width: 273px;}*/
 
 .buttonContent {position: relative; padding: 0; height: inherit; text-align: center; cursor: pointer;}
-.buttonContent:hover  {background: #d1137d url(../imgs/bgs/button_hover.png) repeat-x left center;}
+.buttonContent:hover  {background-color: #d1137d;}
 a:link.button, .button {font-size: 17px; color: #f8f6f7; display: block; padding: 7px 0px 7px 0px; font-weight: bold; text-decoration: none; font-family: Arial;}
 .buttonContent input.button {padding: 0 0 4px 0; width: 100%; }
-a:hover.button, .button:hover   {color: #f8f6f7;  text-decoration: none; }
+a:hover.button, .button:hover   {background-color: #d1137d; color: #f8f6f7; text-decoration: none; }
 .openClosePanel a:link.button {padding: 7px 40px 7px 40px; }
 input.button, .payDetails input.button, .pinInfo input.button, button {height: inherit; line-height: 20px; cursor: pointer; margin-bottom: 0px; padding: 0 0 4px 0; width: inherit; background-image: none !important; background-color: transparent !important; font-weight: bold !important; border: none; border-shadow: none;border-radius: 0px; -moz-border-radius: 0px;-webkit-border-radius: 0px; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; text-align: center;}
 .payDetails input.button, .pinInfo input.button  {line-height: 24px; height: inherit; display: block; width: 100%;}
@@ -93,7 +93,7 @@ input.button, .payDetails input.button, .pinInfo input.button, button {height: i
 
 /*layout*/
 
-.page {background: #FFFFFF url(../imgs/bgs/body.png) no-repeat left 129px; width: 100%;
+.page {background: #e3dedb url(../imgs/bgs/body.png) no-repeat left 129px; width: 100%;
 -webkit-background-size: cover;
        -moz-background-size: cover;
        -o-background-size: cover;
@@ -464,5 +464,15 @@ span.cookies_style_close {
 }
 
 .wholePart .details h2 {
-	color: #ec008c!important;
+	color: #ec008c;
 }
+
+.innerBox {
+	color: #616465;
+}
+
+.innerBox h2 {
+	color: #2e2e92;
+	padding-bottom: 10px;
+}
+

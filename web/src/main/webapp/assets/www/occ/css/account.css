@@ -294,7 +294,7 @@ input:focus.textInputTel {color: #000;}
 
 /*go to market links*/
 .phonesBox {background: url(../imgs/bgs/or.png) no-repeat left top ; padding-left: 25px;}
-.phonesBox a { margin: 10px 0 0 21px; width: 130px; height: 100px; display: inline-block; padding-top: 106px; padding-left: 40px; vertical-align: top; font-size: 13px; line-height: 15px; color: #fff; float: left; }
+.phonesBox a { margin: 10px 0 0 21px; width: 130px; height: 100px; display: inline-block; padding-top: 110px; padding-left: 40px; vertical-align: top; font-size: 13px; line-height: 15px; color: #fff; float: left; }
 .phonesBox a:hover {text-decoration: none;} 
 .phonesBox a:hover  span {text-decoration: underline;} 
 .phonesBox a span {display: block; font-size: 16px; font-weight: bold;}
