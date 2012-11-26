@@ -824,6 +824,23 @@ div.inputAreaBox  {
  	width: 100%!important;
  }
 
+span.cookies_style_close {
+	float: right;
+}
+
+.cookies_style2 {
+	font-size: 0.8em;
+	width: 100%;
+	text-align: center;
+	height: 1.8em;
+	line-height: 1.8em;
+	padding-bottom: 5px;
+}
+
+#cookeiAlertMessageCloseBtn {
+	cursor: pointer;
+}
+
 /*Offers*/
 .whiteWrapper {
 	background-color: #FFFFFF!important;
