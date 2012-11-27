@@ -137,8 +137,9 @@
 						
 						
 						var selectedDate=jAdmin.getURLParameter("selectedPublishDateTime").substring(0, 10);
+						alert(selectedDate);
 						if (null!=selectedDate)
-							$('.datepicker, .datepicker1').datepicker("setDate" , selectedDate);
+							$('.datepicker').datepicker("setDate" , selectedDate);
 					}
 				});
 				

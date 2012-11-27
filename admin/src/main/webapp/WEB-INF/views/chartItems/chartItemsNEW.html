@@ -187,8 +187,9 @@
 	
 	<div class="container" id="chartItemsTable" style="width: 1500px;">
 		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
-		<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker1" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
-		
+		<form id="changeChartDateTimeForm" method="get">
+			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
+		</form>
 		<div class="newsListWide">
 		
 			<ul class="table">
@@ -357,6 +358,26 @@
 	};
 	
 	
+	$(".datepicker_dateChange").datepicker("setDate" , $selectedPublishDateTime);
+	
+	$("#datepicker_dateChange").datepicker({
+		dateFormat : 'yy-mm-dd',
+		onSelect: function(dateText) {
+				location.href = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/}]]*/ '';
+			}
+	});
+	
+	$('#timepicker_timeChange').timepicker({
+	    minutes: { interval: 15 },
+	    showCloseButton: true,
+	    rows: 3,
+	    showPeriodLabels: true,
+	    minuteText: 'Min',
+	    onSelect: function(newTime, inst) {
+	    	//var href= /*[[@{${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
+	    	$('#changeChartDateTimeForm').attr('action', $dateformat+newTime+':00');
+	    }
+	});
 	
 	
 	$(function() {
