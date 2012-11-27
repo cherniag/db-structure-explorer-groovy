@@ -16,19 +16,6 @@
 	
 	<build>
 		<finalName>jadmin-${project.version}</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/webapp</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/main/webapp</directory>
-            </testResource>
-        </testResources>
 	</build>
 
 	<dependencies>

@@ -5,8 +5,10 @@ import mobi.nowtechnologies.server.shared.service.PostService;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class FacebookServiceIT {
 	
 	private FacebookService service;

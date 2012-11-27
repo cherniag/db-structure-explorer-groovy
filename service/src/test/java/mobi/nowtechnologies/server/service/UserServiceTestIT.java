@@ -59,16 +59,17 @@ public class UserServiceTestIT {
 	public void testCheckCredentialsAndStatus_Success()
 		throws Exception {
 		
-		String userName = "nr@rbt.com";
+		String userName = "test@test.com";
 		String password="";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String timestamp = sdf.format(Calendar.getInstance().getTime());
 		//String storredToken = userService.getStoredToken(userName, password);
-		String storedToken = "26b34b31237dfffb4caeb9518ad1ce02";
+		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
 
+		@SuppressWarnings("deprecation")
 		User result = userService.checkCredentials(
 				userName, Utils.createTimestampToken(storedToken, timestamp), 
-				timestamp, "RBT Development");
+				timestamp, "CN Commercial Beta");
 
 		assertEquals(1, result.getId());
 	}
@@ -166,7 +167,7 @@ public class UserServiceTestIT {
 	
 	@Test
 	public void testFindByIsrc_Success(){
-		User user=userService.findByName("nr@rbt.com");
+		User user=userService.findByName("test@test.com");
 		assertNotNull(user);
 	}
 	

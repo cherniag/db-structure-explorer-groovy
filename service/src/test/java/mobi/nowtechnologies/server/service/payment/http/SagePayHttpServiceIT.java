@@ -12,10 +12,12 @@ import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.*;
 
+@Ignore
 public class SagePayHttpServiceIT {
 	
 	private SagePayHttpService httpService;

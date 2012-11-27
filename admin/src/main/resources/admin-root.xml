@@ -30,7 +30,7 @@
 	<import resource="classpath:META-INF/shared.xml" />
 	<import resource="classpath:META-INF/dao.xml" />
 	<import resource="classpath:META-INF/service.xml" />
-	<import resource="classpath:WEB-INF/security.xml" />
+	<import resource="classpath:security.xml" />
 
 	<beans profile="dev">
 		<bean id="persistence.DataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

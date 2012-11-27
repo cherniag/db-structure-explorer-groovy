@@ -21,8 +21,8 @@
     </modules>
 
     <scm>
-        <developerConnection>scm:svn:http://svn.dev.now-technologies.mobi/now-technologies/branches/v3.5-Impetuous_Zebra</developerConnection>
-        <url>http://svn.dev.now-technologies.mobi/now-technologies/branches/v3.5-Impetuous_Zebra</url>
+        <developerConnection>scm:git:http://git.dev.now-technologies.mobi/server/tree/chart-management-improvments</developerConnection>
+        <url>http://git.dev.now-technologies.mobi/server/tree/chart-management-improvments</url>
     </scm>
 
     <properties>
@@ -137,6 +137,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <configuration>
+		          <includes>
+		            <include>**/*IT.java</include>
+		          </includes>
+		        </configuration>
+		      </plugin>
         </plugins>
 
         <extensions>

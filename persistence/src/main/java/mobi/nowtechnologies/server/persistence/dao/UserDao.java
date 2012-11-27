@@ -106,6 +106,7 @@ public class UserDao extends JpaDaoSupport {
 		return paymentPolicies;
 	}
 
+	@Deprecated
 	public PaymentPolicy getPaymentPolicyForUser(
 			String communityName, String paymentType, int operator) {
 		if (communityName == null)
