@@ -10,7 +10,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="manifest" value="/META-INF/MANIFEST.MF" />
 	</bean>
 	 -->
-
+	<bean id="service.VersionService" class="java.lang.Object" />
     <bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
         <property name="mailSession" ref="service.MailSession" />
     </bean>
