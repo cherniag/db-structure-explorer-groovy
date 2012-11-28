@@ -1,15 +1,19 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import java.util.Date;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.validator.constraints.FileSize;
+
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.Pattern;
-import java.util.Date;
-import java.util.Set;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -26,10 +30,11 @@ public class NewsItemDto {
 	private Integer id;
 	
 	@NotEmpty
-	@Pattern(regexp = ".{1,255}")
+	@Length(min=1,max=120)
 	private String headline;
 	
 	@NotEmpty
+	@Length(min=1,max=120)
 	private String body;
 	
 	private boolean activated;
@@ -43,6 +48,8 @@ public class NewsItemDto {
 	
 	private Set<FilterDto> filterDtos;
 	
+	@NotNull
+	@FileSize(min=1, max=30720)
 	private MultipartFile file;
 	
 	private String imageFileName;

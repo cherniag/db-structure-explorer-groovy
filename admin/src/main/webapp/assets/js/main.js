@@ -2,7 +2,7 @@
 $.fn.descendantOf = function(element) {
     element = element[0];
     var current = this;
-    var body    = document.body;
+   // var body    = document.body;
     while (current && current != element && current != document.body) {
         current = $(current).parent()[0];
     }
@@ -13,7 +13,7 @@ $.fn.descendantOf = function(element) {
     } else if (current == document.body) {
         return false;
     }
-}
+};
 //---------------------------------------------------//
 $(function() {
 	//-----------------Date picker-------------------//
