@@ -278,16 +278,14 @@
 					</div>
 				</div>
 				<div>
-					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">
-						Media List
-					</h1>
+					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">Media List</h1>
 					<form id="mediaSearchForm" class="wellWithoutBorder">
-						<input type="text" id="q" name="q" class="q" onkeypress="return onSearchMedia(event)" style="margin-bottom: 0!important;"/>
-						<button th:text="#{chartItems.page.media.search}" class="btn btn-primary s_btn" type="button" onclick="onSearchMedia()">
+						<input type="text" id="q" name="q" class="q" style="margin-bottom: 0!important;"/>
+						<button id="searchButton" th:text="#{chartItems.page.media.search}" class="btn btn-primary s_btn" type="button">
 							Search
 						</button>
 					</form>
-					<div>
+					<div id="searchResult">
 						<ul class="table headerFrame">
 							<li class="title">
 								<div class="cover_media"
@@ -336,6 +334,7 @@
 									</div>
 							</li> -->
 						</ul>
+						<div class="loading-container"><img th:attr="src=@{/assets/img/loading-thumb-small.gif}" /></div>
 					</div>
 				</div>
 			</div>
@@ -398,6 +397,37 @@
 				}
 			}
 		});
+		
+		// Search media
+		$("#searchButton").click(function(e) {
+			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
+			$('#searchResult .loading-container').show();
+			$('#mediaList').empty();
+			$.ajax({
+				url : url,
+				type : "get",
+				data : $('form#mediaSearchForm').serialize(),
+				complete: function() {
+					$('#searchResult .loading-container').hide();
+				},
+				success : function(data) {
+					for(var i = 0; i < data.CHART_ITEM_DTO_LIST.length; i++){
+						var li = chartItemToLi(data.CHART_ITEM_DTO_LIST[i]);
+						li.appendTo($('#mediaList'));
+					}
+				},
+				error : function() {
+					
+				}
+			});
+		});
+		$('#q').keypress(function() {
+			if ( event.which == 13 ) {
+			    event.preventDefault();
+				$("#searchButton").click();
+			}
+		});
+		
 	});
 	
 	function onToBasketClick(target, isCopy){
@@ -590,20 +620,6 @@
 		return "NONE";
 	}
 	
-	function onSearchMedia(){
-		alert("search()"+$mediaImgBaseUrl);
-		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
-		
-		$.ajax({
-			url : url,
-			type : "get",
-			data : $('form#mediaSearchForm').serialize(),
-			success : function(data) {
-				
-				onLoadedMedia(data.CHART_ITEM_DTO_LIST);
-			}
-		});
-	}
 	
 	function onClickInfo(event){
 		var infoDiv = $(event.delegateTarget);
@@ -760,34 +776,6 @@
 				    return;
 		} else {
 			 event.preventDefault();
-		}
-	}
-	
-	function onSearchMedia(e){
-		if (!e || e.keyCode == 13) {
-			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
-			
-			$.ajax({
-				url : url,
-				type : "get",
-				data : $('form#mediaSearchForm').serialize(),
-				success : function(data) {
-					
-					onLoadedMedia(data.CHART_ITEM_DTO_LIST);
-				}
-			});
-			
-	        return false;
-	    }
-	}
-
-	function onLoadedMedia(data){
-		var mediaList = $('#mediaList');
-		mediaList.empty();
-		
-		for(var i = 0; i < data.length; i++){
-			var li = chartItemToLi(data[i]);
-			li.appendTo(mediaList);
 		}
 	}
 	
