@@ -21,8 +21,8 @@
     </modules>
 
     <scm>
-        <developerConnection>scm:svn:http://svn.dev.now-technologies.mobi/now-technologies/branches/v3.5-Impetuous_Zebra</developerConnection>
-        <url>http://svn.dev.now-technologies.mobi/now-technologies/branches/v3.5-Impetuous_Zebra</url>
+        <developerConnection>scm:git:http://git.dev.now-technologies.mobi/server/tree/chart-management-improvments</developerConnection>
+        <url>http://git.dev.now-technologies.mobi/server/tree/chart-management-improvments</url>
     </scm>
 
     <properties>
@@ -32,6 +32,45 @@
         <chartsnow-version>3.5.5-SNAPSHOT</chartsnow-version>
     </properties>
 
+
+    <profiles>
+        <profile>
+            <id>no_integration_testing</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- mvn -Pit test -->
+        <profile>
+            <id>it</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                            <excludes>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <finalName>server</finalName>
@@ -181,7 +220,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
 		<!-- Test dependencies -->

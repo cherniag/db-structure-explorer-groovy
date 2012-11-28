@@ -123,12 +123,6 @@ public class UserDaoTestIT {
 //	}
 	
 	@Test
-	public void testGetPaymentPolicyForUser(){
-		PaymentPolicy paymentPolicy = userDao.getPaymentPolicyForUser("Now Music", "creditCard", 2);
-		assertNotNull(paymentPolicy);
-	}
-	
-	@Test
 	public void testGetCommunityNameByUserGroup(){
 		System.out.println(userDao.getCommunityNameByUserGroup((byte) 4));
 	}
@@ -159,12 +153,12 @@ public class UserDaoTestIT {
 		Promotion promotion = userDao.getActivePromotion(userGroup);
 		assertNotNull(promotion);
 
-		assertEquals(1312844400, promotion.getStartDate());
-		assertEquals(1326287900, promotion.getEndDate());
+		assertEquals(0, promotion.getStartDate());
+		assertEquals(1655270400, promotion.getEndDate());
 		assertTrue(promotion.getIsActive());
 		assertEquals(userGroup, promotion.getUserGroup());
 		assertTrue(promotion.getNumUsers() < promotion.getMaxUsers());
-		assertEquals(4, promotion.getFreeWeeks());
+		assertEquals(2, promotion.getFreeWeeks());
 		//assertEquals(18, promotion.getNumUsers());
 		//assertEquals(300, promotion.getMaxUsers());
 	}

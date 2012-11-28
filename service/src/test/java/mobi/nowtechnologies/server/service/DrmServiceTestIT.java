@@ -41,7 +41,7 @@ public class DrmServiceTestIT {
 	 */
 	@Test
 	public void testGetDrmSuccess() throws Exception {
-		int userId = 6;
+		int userId = 1;
 		String isrc = "USAT21001886";
 		byte drmValue=5;
 		String aCommunityName = "CN Commercial Beta";
@@ -61,33 +61,13 @@ public class DrmServiceTestIT {
 	@Test(expected=ServiceException.class)
 	public void testGetDrmWithCommunityNameIsNull()
 		throws Exception {
-		int userId = 6;
+		int userId = 1;
 		String isrc = "USAT21001886";
 		String aCommunityName = null;
 		byte drmValue=5;
 
 		Object[] result = drmService.processSetDrmCommand(isrc, drmValue, userId, aCommunityName);
 
-		assertNotNull(result);
-	}
-
-	/**
-	 * Run the Object[] getDrm(Integer[],int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
-	@Test(expected=ServiceException.class)
-	public void testGetDrmWithMediaIdsIsNull()
-		throws Exception {
-		int userId = 6;
-		String isrc = "USAT21001886";
-		String aCommunityName = "CN Commercial Beta";
-		byte drmValue=5;
-
-		Object[] result = drmService.processSetDrmCommand(isrc, drmValue, userId, aCommunityName);
-		
 		assertNotNull(result);
 	}
 	

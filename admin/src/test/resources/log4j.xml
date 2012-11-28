@@ -29,7 +29,7 @@
 			<param name="AcceptOnMatch" value="FALSE" />
 		</filter>
 	</appender>
-
+<!-- 
 	<logger name="org.springframework">
 		<level value="DEBUG"></level>
 		<appender-ref ref="stdout" />
@@ -70,5 +70,6 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
+ -->
 
 </log4j:configuration>

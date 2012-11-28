@@ -35,6 +35,6 @@ public class ChartDetailDaoTestIT {
 		byte chartId=3;
 		List<ChartDetail> chartDetails = chartDetailDao.findChartDetailTreeForDrmUpdate(userId, chartId);
 		Assert.assertNotNull(chartDetails);
-		Assert.assertEquals(34, chartDetails.size());
+		Assert.assertEquals(21, chartDetails.size());
 	}
 }

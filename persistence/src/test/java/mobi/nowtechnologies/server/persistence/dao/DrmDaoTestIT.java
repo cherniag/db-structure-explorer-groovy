@@ -46,7 +46,7 @@ public class DrmDaoTestIT {
 	
 	@Test
 	public void testFindDrmTree_success() throws Exception {
-		int userId = 6;
+		int userId = 1;
 		String isrc = "USAT21001886";
 
 		List<Drm> drms = drmDao.findDrmTree(userId, isrc);
