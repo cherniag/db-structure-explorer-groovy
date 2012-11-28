@@ -1143,3 +1143,7 @@ p.itemsTrackName {
 .albumPriceDetails {
 	margin-right: 0!important;
 }
+
+.footer img.brought {
+	display: none;
+}
