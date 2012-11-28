@@ -200,7 +200,7 @@
 					<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
-					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
+					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">ISRC</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -225,7 +225,7 @@
 						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
 					</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
-						<span th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</span>
+						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
 				</li>

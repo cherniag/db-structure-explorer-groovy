@@ -172,6 +172,7 @@ public class ChartDetailsAsm {
 		chartItemDto.setPosition(chartDetail.getPosition());
 		chartItemDto.setPrevPosition(chartDetail.getPrevPosition());
 		chartItemDto.setPublishTime(new Date(chartDetail.getPublishTimeMillis()));
+		chartItemDto.setIsrc(chartDetail.getMedia().getIsrc());
 
 		LOGGER.info("Output parameter chartItemDto=[{}]", chartItemDto);
 		return chartItemDto;
