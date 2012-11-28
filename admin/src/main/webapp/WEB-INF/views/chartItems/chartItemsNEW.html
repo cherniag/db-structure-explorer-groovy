@@ -157,12 +157,12 @@
 	    font-size: 10px;
 	    height: 60px !important;
 	    overflow: hidden;
-	    width: 27%;
+	    width: 15%;
 	}
 	
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
-	    width: 5%;
+	    width: 7%;
 	}
 	
 </style>
@@ -188,7 +188,7 @@
 	<div class="container" id="chartItemsTable" style="width: 1500px;">
 		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
 		<form id="changeChartDateTimeForm" method="get">
-			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" style="margin-bottom: 0px;" />  <button class="btn btn-primary" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button></p>
+			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
 		</form>
 		<div class="newsListWide">
 		
@@ -226,7 +226,6 @@
 						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
 					</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
-						<span th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
 				</li>
@@ -357,15 +356,21 @@
 			appendTo: "#chartItemsTable"
 	};
 	
-	
-	$(".datepicker_dateChange").datepicker("setDate" , $selectedPublishDateTime);
-	
 	$("#datepicker_dateChange").datepicker({
 		dateFormat : 'yy-mm-dd',
 		onSelect: function(dateText) {
-				location.href = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/}]]*/ '';
+			  	var href= /*[[@{'/chartsNEW/'+${chartId}+'/'}]]*/ '';
+			    location.href = href+dateText+"_00:00:00";
 			}
 	});
+	
+	$( ".datepicker_dateChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(0,10);
+	});
+	
+	$( ".timepicker_timeChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(11,15);
+	}); 
 	
 	$('#timepicker_timeChange').timepicker({
 	    minutes: { interval: 15 },
@@ -373,9 +378,9 @@
 	    rows: 3,
 	    showPeriodLabels: true,
 	    minuteText: 'Min',
-	    onSelect: function(newTime, inst) {
-	    	//var href= /*[[@{${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
-	    	$('#changeChartDateTimeForm').attr('action', $dateformat+newTime+':00');
+	    onSelect: function(newTime) {
+	    	var href= /*[[@{'/chartsNEW/'+${chartId}+'/'}]]*/ '';
+	    	location.href = href+$selectedPublishDateTime.substr(0,10)+'_'+newTime+':00';
 	    }
 	});
 	
