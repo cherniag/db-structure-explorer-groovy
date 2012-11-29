@@ -83,9 +83,7 @@
 				<form class="newsCalendar paddingTop" id="createChartUpdateForm" method="get">
 					<h2 th:text="#{chartItems.page.chartItemsTable.timepicker.headline}">Add Update</h2>
 				    <p>Set a new update for: </p>
-					<input type="checkbox" name="changePosition" checked="checked"/>
-					<span th:text="#{chartItems.page.addUpdateChart.changePosition}">Change Positions</span>
-					<br/>
+					<input type="hidden" name="changePosition" value="true" />
 				    <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
 					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
 				</form><br/><br/>
@@ -93,6 +91,7 @@
 				<form class="newsCalendar paddingTop" id="createChartMinorUpdateForm" method="get">
 					<h2 th:text="#{chartItems.page.minotUpdate.headline}">Add Minor Update</h2>
 				    <p>Set a new update for: </p>
+				    <input type="hidden" name="changePosition" value="false" />
 				    <input class="u" type="text" style="width: 70px" id="timepicker_minor_updates" />
 					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
 				</form>
