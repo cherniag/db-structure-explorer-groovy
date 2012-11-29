@@ -359,7 +359,7 @@
 	$("#datepicker_dateChange").datepicker({
 		dateFormat : 'yy-mm-dd',
 		onSelect: function(dateText) {
-				updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val());
+				updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
 			}
 	});
 	
@@ -370,19 +370,19 @@
 	$('#timepicker_timeChange').timepicker({
 	    minutes: { interval: 15 },
 	    showCloseButton: true,
-	    timeFormat: "HH:mm:ss",
+	    timeFormat: "HH:mm",
+	    pickerTimeFormat: "HH:mm",
 	    rows: 3,
 	    showPeriodLabels: true,
 	    minuteText: 'Min',
 	    showSecond: true,
 	    onSelect: function(newTime) {
-	    	alert(newTime)
-			//updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val());
+			updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
 	    }
 	});
 	
 	$( "#timepicker_timeChange" ).val( function( index, val ) {
-	    return val + $selectedPublishDateTime.substr(11,15);
+	    return val + $selectedPublishDateTime.substr(11,5);
 	});
 	
 	function updateChartDateTime(newDateTime) {
