@@ -88,6 +88,13 @@
 					<br/>
 				    <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
 					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
+				</form><br/><br/>
+				
+				<form class="newsCalendar paddingTop" id="createChartMinorUpdateForm" method="get">
+					<h2 th:text="#{chartItems.page.minotUpdate.headline}">Add Minor Update</h2>
+				    <p>Set a new update for: </p>
+				    <input class="u" type="text" style="width: 70px" id="timepicker_minor_updates" />
+					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
 				</form>
 								
 			</div>
@@ -131,12 +138,12 @@
 						
 						var selectedDate=jAdmin.getURLParameter("selectedPublishDateTime").substring(0, 10);
 						if (null!=selectedDate)
-							$('.datepicker, .datepicker1').datepicker("setDate" , selectedDate);
+							$('.datepicker').datepicker("setDate" , selectedDate);
 					}
 				});
 				
 				
-				$('#timepicker_customrange').timepicker({
+				$('#timepicker_customrange, #timepicker_minor_updates').timepicker({
 				    minutes: { interval: 15 },
 				    showCloseButton: true,
 				    rows: 3,
@@ -144,7 +151,7 @@
 				    minuteText: 'Min',
 				    onSelect: function(newTime, inst) {
 				    	var href= /*[[@{'/chartsNEW/'+${chartId} + '/' + ${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
-				    	$('#createChartUpdateForm').attr('action', href+newTime+':00');
+				    	$('#createChartUpdateForm, #createChartMinorUpdateForm').attr('action', href+newTime+':00');
 				    }
 				});
 				
