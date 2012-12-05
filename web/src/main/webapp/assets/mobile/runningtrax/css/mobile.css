@@ -1151,3 +1151,7 @@ p.itemsTrackName {
 .shortInput {
 	width: 30%!important;
 }
+
+.footer img.brought {
+	display: none;
+}

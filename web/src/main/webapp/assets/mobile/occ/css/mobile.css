@@ -25,8 +25,8 @@ body {
 	padding: 0;
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
-	color: #4b4b4b;
-	background: #eeeeee url(../imgs/bgs/body_left.png) no-repeat left top;	
+	color: #2e2e92;
+	background: #ffffff url(../imgs/bgs/body_left.png) no-repeat left top;	
 	font-size: 1em;		
 }
 a {
@@ -42,9 +42,10 @@ a {
 	 font-weight: bold;
 }
 hr {
-	border-top: solid 1px #787777; 
+	background-color: #787777; 
 	height: 1px; 
-	margin: 0 8px 10px 8px;
+	margin: 18px;
+	border: 0 none;
 }
 hr.addBothSpaces {
 	margin: 15px 8px 22px 8px;
@@ -79,6 +80,7 @@ select {
 	height: 2em;
 	line-height: 1.6em;
 	padding-left: 2px;
+	padding-right: 0;
 }
 p  {
 	font-size: 1.1em;		
@@ -88,11 +90,13 @@ p  {
 	margin: 7px 14px 7px 21px;
 	font-size: 1em;		
 	line-height: 1.4em;
+	color: #616465;
 }
-.getAppContent p {margin-left: 42px !important;}
+.getAppContent p {margin-left: 42px !important; color: #5f584e;}
 .content .oneQuestion  p  {margin-left: 0px;}
 .content p.firstPar  {
 	margin-top: 1.5em;
+	color: #2e2e92;
 }
 .text p {
 	font-size: 0.8em;		
@@ -106,7 +110,6 @@ td, li {
 	font-size: 1.1em;		
 }
 form {
-	margin-bottom: 10px;
 	display: block;
 }
 /*service tools*/
@@ -123,51 +126,40 @@ form {
 /*header*/
 .header {
 	background: #dddbda url(../imgs/bgs/header.png) repeat-x;	
-	height: 55px;	
-	box-shadow:  0px 3px 2px #777777; 
-	-moz-box-shadow: 0px 3px 2px #777777; 
-	-webkit-box-shadow:  0px 3px 2px #777777; 
+	height: 71px;	
+	box-shadow: 0px 13px 2px #939292;
+	-moz-box-shadow: 0px 13px 2px #939292;
+	-webkit-box-shadow: 0px 13px 2px #939292;
 	margin-bottom: 2px;
 }		
 .logo {
 	display: block;
-	top: 8px;
-	left: 17px;	
+	top: 15px;
+	left: 10px;	
 	position: absolute;	
 }
 .logo img {
 	height: 41px;
 }
+
 .container {
-	background: transparent  url(../imgs/bgs/body_right.png) no-repeat right bottom;		
+	background: #e2ddda url(../imgs/bgs/body_right.png) repeat-x left top;		
 	padding-bottom: 15px;	
 	padding-top: 12px;	
 }
+
 .content {
-	border: solid 1px #757575;
-	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
 	margin: 0 12px 0px 12px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 	background-color: #ffffff;
- 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); 
- 	opacity: 0.9; 
- 	-moz-opacity: 0.9; 
- 	-khtml-opacity: 0.9;
- 	box-shadow:  0px 5px 10px #777777; 
-	-moz-box-shadow: 0px 5px 10px #777777; 
-	-webkit-box-shadow:  0px 5px 10px #777777; 
 }
 .getAppContent {
 	border: none;
-	
-	
-	
- 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100); 
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100); 
  	opacity: 1.0; 
  	-moz-opacity: 1.0; 
  	-khtml-opacity: 1.0;
-	background: transparent  url(../imgs/bgs/blue_bg.png) repeat-x right top;	
 	/*height: 654px;*/
 	overflow: hidden;
 	position: relative;
@@ -178,8 +170,9 @@ form {
 	margin-right: 27px;
 }
 .getAppContent h1 {
-	color: #fff;
+	color: #2e2e92;
 	margin-left: 41px;
+	padding-bottom: 10px;
 }
 .getAppContent .formButton,.getAppContent .formButton input  {
 	background: transparent url(../imgs/bgs/button_pink.png) repeat-x 0px 0px !important;	
@@ -213,9 +206,9 @@ form {
 .linksToStores a {
 	display: block;
 	float: left;
-	width: 30%;
+	width: 29%;
 	margin: 0 7px;
-	height: 202px;
+	height: 173px;
 }
 .appStore {
 	background: transparent url(../imgs/apple.png) no-repeat left bottom;	
@@ -233,31 +226,31 @@ form {
 }
 a.button, input.button, button {
 	background: #336699 url(../imgs/bgs/button.png) repeat-x 0 center;	
-	height: 29px;	
-	border-radius: 7px; 	
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px ; 
+	height: 32px;	
 	font-weight: bold;
 	color: #ffffff;
 	line-height: 29px;
 	text-decoration: none;
 	padding-right: 10px;
 	padding-left: 20px;
-	box-shadow:  3px 1px 2px #53535c; 
-	-moz-box-shadow: 3px 1px 2px #53535c; 
-	-webkit-box-shadow:  3px 1px 2px #53535c; 
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border: 1px solid #666ad4;
 	display: inline-block;	
-	text-shadow:  0px -1px 1px #000000; 	
+	text-shadow:  0px -1px 1px #6A023F; 	
 	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
 }
 
 input.accounts{
 	padding-left: 25px;
 	line-height: 25px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	border: 1px solid #2e2e92;
 }
 .buttonBox  {
 	float: right;
-	margin: 13px 17px 13px 0;
+	margin: 0px 17px 13px 0;
 	position: relative; 
 }
 .buttonBox .button {
@@ -275,12 +268,12 @@ input.accounts{
 }
 .arrow {
 	display: inline-block;
-	width: 16px;
+	width: 15px;
 	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
-	height: 20px;
+	height: 19px;
 	position: absolute;
-	left: 3px;
-	top: 3px;
+	left: 5px;
+	top: 8px;
 }
 
 .buttonWrapper {
@@ -290,7 +283,7 @@ input.accounts{
 
 /*marketing*/
 .marketingMaterials {	
-	height: 350px;
+	height: 0px;
 	text-align: center;
 }
 .marketingMaterials img {
@@ -310,17 +303,17 @@ input.accounts{
 	font-size: 1.6em;			
 	margin-top: 28px;
 	padding: 0;
+	color: #2e2e92;
 }
 .firstPar {
-	margin-top: 23px;	
+	margin-top: 23px;
+	color: #2e2e92;	
 }
 .footer {
 	background: #e8e8e8 url(../imgs/bgs/bottom.png) repeat-x;			
-	box-shadow:  0px -3px 2px #777777; 
-	-moz-box-shadow: 0px -3px 2px #777777; 
-	-webkit-box-shadow: 0px -3px 2px #777777; 
 	font-size: 0.8em;		
 	padding: 0px 15px 10px 0;
+	height: 60px;
 }
 .footer  a {	
 	text-decoration: none;	
@@ -349,8 +342,12 @@ input.accounts{
 	line-height: 1em;
 	font-size: 0.8em;
 	padding-top: 10px;
-
 }
+
+.copyright img {
+	padding-top: 30px;	
+}
+
 .addSpace {	
 	display: inline;
 	vertical-align: bottom;
@@ -382,11 +379,10 @@ input.accounts{
 	color: #ffffff;
 	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
 	display: block;
-	font-size: 1.2em;		
+	font-size: 0.93em;		
 	text-decoration: none;
 	font-weight: bold;
 	margin: 0px;
-	border-radius: 5px 5px 5px 5px;
 }
 .facebookLoginButton {
 	background: #4266ad url(../imgs/bgs/fb_button.png) repeat-x;	
@@ -401,18 +397,19 @@ input.accounts{
 	background: transparent url(../imgs/bgs/fb.png) no-repeat 10px 0px;	
 	height: 40px;	
 	line-height: 40px;	
-	padding-left: 97px;	
+	padding-left: 47px;	
  	white-space: nowrap;		
  	overflow: hidden;
 }
+
 .formButton, .formButton input {
-	background: #00aeef url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
+	background: #ed0890 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
 	height: 41px !important;
 	border: none none none none;		
 	box-shadow: 1px 2px 1px #bdbdbd; 
 	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
 	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
-	text-shadow:  0px -1px 1px #000000; 	
+	text-shadow:  0px -1px 1px #6A023F; 	
 }
 .formDetails .formButton .button {font-size: 1.2em;}
  .formButton input.button, .formButton input.button  {
@@ -432,30 +429,30 @@ input.accounts{
 }
 .setOfButtons .formButton{
 	margin-top: 10px;	
-	margin-bottom: 10px;	
+	margin-bottom: 15px;	
 }
 form .formButton  {
 	margin-top: 15px;
 }
-.rightButtonArrow {
 
-	width: 19px;
-	height: 24px;
+.rightButtonArrow, .rightButtonArrowBlack {
+	width: 15px;
+	height: 19px;
 	display: block;
 	position: absolute;
-	top: 8px;
+	top: 10px;
 	right: 15px;
-	background: transparent  url(../imgs/bgs/arrow_button.png) repeat-x 0px 0px;	
+	background: transparent  url(../imgs/bgs/arrow_button.png) no-repeat 0px 0px;	
 }
-.leftButtonArrow {
 
-	width: 19px;
-	height: 24px;
+.leftButtonArrow {
+	width: 15px;
+	height: 19px;
 	display: block;
 	position: absolute;
-	top: 8px;
-	left: 15px;
-	background: transparent  url(../imgs/bgs/arrow_button_left.png) repeat-x 0px 0px;	
+	top: 10px;
+	left: 17px;
+	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
 }
 .formButton  a, .shortButton a {
 	text-align: center;
@@ -618,20 +615,20 @@ div.inputAreaBox  {
 }
  /*Corners*/
 .rad10 {
-	border-radius: 10px; 
-	-moz-border-radius: 10px; 
-	-webkit-border-radius: 10px; 
-}
-.rad5 {
 	border-radius: 5px; 
 	-moz-border-radius: 5px; 
 	-webkit-border-radius: 5px; 
+}
+.rad5 {
+	border-radius: 0px; 
+	-moz-border-radius: 0px; 
+	-webkit-border-radius: 0px; 
 }
 /*notification*/
 .note {
 	width: 100%; 
 	font-size: 0.75em; 
-	color: #ec008c;
+	color: #ec008c!important;
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
@@ -721,7 +718,7 @@ div.inputAreaBox  {
 	margin-top: 6px;
 }
 
-.nameCell {display:-moz-inline-box; display:inline-block; vertical-align:top; width:30%; zoom:1; //display:inline}
+.nameCell {display:-moz-inline-box; display:inline-block; vertical-align:top; width:30%; zoom:1; color: #616465;}
 
  .formDetails .nameCell, .payDetails  .nameCell{
  	padding-top: 7px;
@@ -738,7 +735,7 @@ div.inputAreaBox  {
  	color: #5d5d5d;
  }
  .pink {
- 	color: #ec008c;
+ 	color: #2e2e92;
 }
 .valueCell a {
 	display: inline-block;	
@@ -761,7 +758,7 @@ div.inputAreaBox  {
 .payDetails {
 	margin-bottom: 36px;
 }
-.payDetails input, .formDetails input, .oneField  input, .oneField  textarea  {
+.payDetails input, .formDetails input, .oneField  input {
 	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
     border: 1px solid #777777;
     border-radius: 3px 3px 3px 3px;
@@ -769,7 +766,14 @@ div.inputAreaBox  {
     padding: 0 10px;
     margin-top: 5px; 
     font-size: 0.8em;
-    width: 93%;
+    width: 100%;
+}
+
+.oneField  textarea {
+	padding: 0 10px;
+    margin-top: 5px; 
+    font-size: 0.8em;
+    width: 100%;
 }
 .oneField  textarea , textarea {font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif; padding-top: 5px;  padding-bottom: 5px; height: 15em; background-position: left bottom;}
 
@@ -814,18 +818,6 @@ div.inputAreaBox  {
  
  /*for Web Store*/
  
-.packBlock {
-	position: relative;
-	margin: 0px 8px 2px 8px;
-	height: 97px;
-	border: 1px solid #d2d2d2;
-	border-bottom: 1px solid #d32287;
-	background: url("../imgs/bg.png") repeat-x #CCCCCC;
-}
-
-.content {
-}
-
 
 .albumIcon {
 	position: absolute;
@@ -842,27 +834,14 @@ div.inputAreaBox  {
 	width: 45%;
 	font-family: 'DroidSansBold';
 	font-size: 18px;
-	color: #d32287;
+	color: #ec008c;
 }
-.albmBody {
-	position: absolute;
-	top: 40px;
-	left: 110px;
-	width: 45%;
-	line-height: 20px;
-	font-family: 'DroidSansRegular';
-	font-size: 14px;
-	color: #1428a0;
+
+.albmTitle span {
+	display: block;
 }
-.albumButton {
-	position: absolute;
-	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
-	top: 25px;
-	right: 20px;
-	font-family: 'DroidSansBold';
-	font-size: 16px;
-	padding: 10px;
-}
+
+
 
 .albumButton a{
 	color: #ffffff;
@@ -951,13 +930,11 @@ div.inputAreaBox  {
 
 .packBlock {
 	position: relative;
-	width: 100%;
 	overflow: hidden;
-	min-width: 480px;
 	height: 97px;
 	margin: 2px;
 	border: 1px solid #d2d2d2;
-	background: url(../imgs/bg.png) repeat-x #CCCCCC;
+	background-color: #FFFFFF;
 }
 .albumIcon {
 	position: absolute;
@@ -990,8 +967,8 @@ p.albmBody {
 
 .albmPrice {
 	position: absolute;
-	top: 30px;
-	right: 40px;
+	top: 20px;
+	right: 20px;
 	font-family: 'DroidSansBold';
 	font-size: 16px;
 	padding: 10px;
@@ -1002,7 +979,7 @@ p.albmBody {
 	text-decoration: none;
 	font-family: "DroidSans"
 	font-weight: bold;
-	color: #d32287;
+	color: #ec008c;
 }
 
 .albmPrice span {
@@ -1012,7 +989,6 @@ p.albmBody {
 /*Offer*/
 .packBlockDetails {
 	position: relative;
-	min-width: 480px;
 	height: 192px;
 	margin: 2px;
 	border: 1px solid #d2d2d2;
@@ -1031,14 +1007,14 @@ p.albmBody {
 .albumIconDetails {
 	position: absolute;
 	left: 0;
-	width: 192px;
-	height: 192px;
+	width: 50%;
+	height: 50%;
 	border-right: 1px solid #d2d2d2;
 }
 
 .albumIconDetails img {
-	width: 192px;
-	height: 192px;
+	width: 50%;
+	height: 50%; 
 }
 
 .albmTitleDetails {
@@ -1048,14 +1024,14 @@ p.albmBody {
 	width: 60%;
 	font-family: 'DroidSansBold';
 	font-size: 18px;
-	color: #d32287;
+	color: #FFFFFF;
 }
 .albmBodyDetails {
 	width: 60%;
 	line-height: 20px;
 	font-family: 'DroidSansRegular';
 	font-size: 14px;
-	color: #1428a0;
+	color: #FFFFFF;
 }
 
 p.albmBodyDetails {
@@ -1063,30 +1039,37 @@ p.albmBodyDetails {
 } 
 
 .albumButton {
-	position: absolute;
 	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
-	bottom: 30px;
-	left: 210px;
 	font-family: 'DroidSansBold';
 	font-size: 16px;
 	padding: 10px;
+	width: 70px;
 }
 
 .albumButton a{
-	color: #ffffff;
+	color: #ec008c;
 	text-decoration: none;
 	font-family: "DroidSansRegular";
 	font-weight: bold;
 }
 
+
+/**/
+
 div.itemsDetails {
-	height: 64px;
 	background-color: #ffffff;
 	border-bottom: 1px solid #d2d2d2;
+	width: 100%;
 }
 
+.itemsDetails img {
+	position: relative;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
 
 .itemsDetails {
+	line-height: 64px;
 	vertical-align: top;
 	font-family: 'DroidSansRegular';
 	font-size: 22px;
@@ -1095,10 +1078,30 @@ div.itemsDetails {
 	padding-left: 10px;
 }
 
-
 .itemsDetails {
 	position: relative;
+	float: left;
 }
+
+.itemsImage {
+	position: relative;
+	float: left;
+}
+
+.itemCount {
+	position: relative;
+	left: 20px;
+	top: 1px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #2e2e92;
+}
+
+.itemsArtistName span {
+	display: block;
+	line-height: 25px;
+}
+
 
 .itemsCount {
 	position: absolute;
@@ -1111,11 +1114,11 @@ div.itemsDetails {
 
 .itemsArtistName {
 	position: absolute;
-	left: 150px;
+	left: 90px;
 	top: 5px;
 	font-size: 16px;
 	font-weight: bold;
-	color: #d32287;
+	color: #ec008c;
 }
 
 .itemsTrackName {
@@ -1153,7 +1156,66 @@ p.itemsTrackName {
 		
 .logoWebStore {
 	display: block;
-	top: 0;
-	left: 0;	
+	top: 10px;
+	left: 10px;	
 	position: absolute;	
+}
+
+.logoWebStore img {
+	width: 133px!important;
+	height: 41px!important;
+}
+
+/*Cookie Conteiner*/
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 100%;
+	z-index: 1000;
+}
+	
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.center {
+	border: 1px solid #dad8cd;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.center span {
+	font-size: 0.7em;
+}
+
+.offers_container {
+	background: url(../imgs/bgs/body_left.jpg) repeat-x left top;
+	min-height: 165px;
+	padding-bottom: 20px;
+}
+
+.offer_block {
+	margin: 2px;
+	padding-bottom: 20px;
+}
+
+.offers_wrapper {
+	margin: 0;
+	padding: 0;
 }

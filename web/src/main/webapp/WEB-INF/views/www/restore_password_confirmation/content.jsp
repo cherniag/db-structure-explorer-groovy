@@ -4,7 +4,7 @@
 
 <div class="contentContainer">
 	<!-- start of one column content -->
-	<div class="content rel oneColumn">
+	<div class="content rel fixWidth twoColumns">
 		<div class="leftColumnShadow">
 			<div class="leftColumn">
 				<h1><s:message code="restorePasswordConfirmation.page.h1" /></h1>
@@ -21,6 +21,14 @@
 						</div>
 					</div>
 					<!--end one button-->
+				</div>
+			</div>
+		</div>
+		<div class="rightColumnHome">						
+			<div class="marketingBox">
+				<div class="marketingBoxContent">
+					<h2><s:message code="signup.page.rcolumn.header1" /></h2>
+					<p><s:message code="signup.page.rcolumn.content1" /></p>
 				</div>
 			</div>
 		</div>
