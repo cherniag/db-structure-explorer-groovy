@@ -48,7 +48,7 @@
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
 				<div class="contentButton formButton rad5 rel" >
-					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='page.main.menu.my.account' />" />
+					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>

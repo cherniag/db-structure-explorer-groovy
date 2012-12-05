@@ -20,7 +20,7 @@
 			<div class="addSmallSpace"></div>
 			<!--button -->
 			<div class="contentButton formButton rad5 rel">
-				<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.psms.verify.dialog.success.button' />" />
+				<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.psms.verify.dialog.success.button.inapp' />" />
 				<span class="rightButtonArrow">
 					&nbsp;
 				</span>
