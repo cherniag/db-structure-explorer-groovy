@@ -21,7 +21,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:META-INF/service.xml;classpath:META-INF/dao.xml;classpath:META-INF/shared.xml;classpath:security.xml;classpath:admin-servlet.xml</param-value>
+		<param-value>classpath:META-INF/service.xml;classpath:META-INF/dao.xml;classpath:META-INF/shared.xml;classpath:security.xml</param-value>
 	</context-param>
 
 	<listener>
@@ -64,6 +64,11 @@
 	<servlet>
 		<servlet-name>admin</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:admin-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<filter>
