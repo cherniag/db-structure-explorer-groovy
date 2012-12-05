@@ -162,7 +162,11 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
-		<dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test-mvc</artifactId>
+        </dependency>
+        <dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<scope>provided</scope>
@@ -216,6 +220,12 @@
 	<dependencyManagement>
 	
 		<dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test-mvc</artifactId>
+                <version>1.0.0.BUILD-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymock</artifactId>
@@ -755,28 +765,7 @@
 				<artifactId>gson</artifactId>
 				<version>2.0</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>xml-apis</groupId> -->
-			<!-- <artifactId>xml-apis</artifactId> -->
-			<!-- <version>2.0.2</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>xml-resolver</groupId> -->
-			<!-- <artifactId>xml-resolver</artifactId> -->
-			<!-- <version>1.2</version> -->
-			<!-- </dependency> -->
 
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.maven.doxia</groupId> -->
-			<!-- <artifactId>doxia-converter</artifactId> -->
-			<!-- <version>1.0</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>batik</groupId> -->
-			<!-- <artifactId>batik-ext</artifactId> -->
-			<!-- <version>1.6-1</version> -->
-			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 
@@ -827,6 +816,11 @@
 			<name>Panda Spring Maven MILESTONE Repository</name>
 			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/spring-milestone/</url>
 		</repository>
+
+        <repository>
+            <id>spring-libs-snapshot</id>
+            <url>http://repo.springsource.org/libs-snapshot</url>
+        </repository>
 
 	</repositories>
 </project>

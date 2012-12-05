@@ -39,7 +39,7 @@ public class CountryByIpService {
 					| LookupService.GEOIP_CHECK_CACHE);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new ServiceException("failded to initialise LOOKUP_SERVICE", e);
+			throw new ServiceException("failded to initialise LOOKUP_SERVICE store.path="+storePath, e);
 		}
 	}
 

@@ -1,17 +1,16 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import mobi.nowtechnologies.server.shared.dto.ItemDto;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.constraints.Pattern;
-
-import mobi.nowtechnologies.server.shared.dto.ItemDto;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -31,6 +30,7 @@ public class OfferDto {
 	@Pattern(regexp = ".{1,255}")
 	private String title;
 
+    @NotNull
 	private BigDecimal price;
 
 	private String currency;
