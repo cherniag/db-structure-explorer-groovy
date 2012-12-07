@@ -18,6 +18,8 @@
 		secondItemCurrentStyle += current;
 	else if (uri.contains("payments_inapp.html"))
 		thirdItemCurrentStyle += current;
+	else if (uri.contains("one_click_subscription_successful.html"))
+		thirdItemCurrentStyle += current;
 	else if (uri.contains("payment_history.html"))
 		forthItemCurrentStyle += current;
 	else if (uri.contains("purchased_tracks.html"))

@@ -100,6 +100,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 				media = new Media();
 				media.setIsrc(track.getIsrc());
 			}
+			
+			media.setTrackId(track.getId());
 
 			// Building title
 			media.setTitle(config.getTitle());

@@ -121,6 +121,19 @@
 <!--		</property>-->
 <!--	</bean>-->
 	
+	<bean id="transport.smsAccordingToLawMoboQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
+		<property name="startDelay"
+			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
+		<property name="repeatInterval"
+			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
+		<property name="jobDataAsMap">
+			<map merge="true">
+				<entry key="communityURL" value="mobo" />
+			</map>
+		</property>
+	</bean>
+
 	<bean id="transport.smsAccordingToLawMetalHammerQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
 		<property name="startDelay"
@@ -263,11 +276,15 @@
 				<ref bean="retryPaymentTrigger" />
 				<ref bean="expiredPaymentTrigger" />
 				<ref bean="transport.notificationQuartzTrigger" />
-<!--				<ref bean="transport.smsAccordingToLawNowTop40QuartzTrigger" />-->
+<!--			
+				<ref bean="transport.smsAccordingToLawNowTop40QuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawMetalHammerQuartzTrigger" />
+-->
+				
 				<ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
 			</list>
 		</property>
 	</bean>

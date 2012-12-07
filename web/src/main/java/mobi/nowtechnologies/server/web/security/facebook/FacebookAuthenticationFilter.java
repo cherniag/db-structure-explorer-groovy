@@ -136,14 +136,13 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	}
 
 	private String getRedirectUri(HttpServletRequest request) {
-		if (redirectUrl == null)
-			redirectUrl = request.getRequestURL().toString();
+		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
 		
 		String registrationValue=request.getParameter(REGISTRATION);
 		
 		String redirectUri = redirectUrl;
 		if(registrationValue!=null) {
-			redirectUri +="?"+REGISTRATION+"="+registrationValue;
+			redirectUri =messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);;
 		}
 		return redirectUri;
 	}
@@ -158,10 +157,6 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 
 	public void setPasswordRequestParameterName(String passwordRequestParameterName) {
 		this.passwordRequestParameterName = passwordRequestParameterName;
-	}
-
-	public void setRedirectUrl(String redirectUrl) {
-		this.redirectUrl = redirectUrl;
 	}
 	
 	public void setDefaultTargetUrlForNewUser(String defaultTargetUrlForNewUser) {

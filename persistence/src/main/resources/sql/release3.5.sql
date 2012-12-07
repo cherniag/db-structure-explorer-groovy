@@ -73,5 +73,11 @@ alter table tb_filter_params add column activeTillTrialEndTimestampMillis bigint
 alter table tb_filter_params add column FreeTrialPeriodFilter_id TINYINT UNSIGNED not null;
 
 -- alter table tb_filter_params add index tb_filter_params_PK_FreeTrialPeriodFilter_id (FreeTrialPeriodFilter_id), add constraint tb_filter_params_U_FreeTrialPeriodFilter_id foreign key (FreeTrialPeriodFilter_id) references tb_filter(id);
-
 alter table tb_promotionPaymentPolicy_tb_paymentPolicy drop index paymentPolicies_i;
+
+-- CL-7407 [Reporting] Add publish date for track repository and track id for tb_media
+alter table tb_media add column trackId bigint DEFAULT NULL;
+
+-- bug fix: tb_accountLog doesn't contain the relatedMediaUID
+alter table tb_accountLog add column offerId INT DEFAULT NULL;
+alter table tb_accountLog add index tb_accountLog_PK_offerId (offerId), add constraint tb_accountLog_U_offerId foreign key (offerId) references offers (id);>>>>>>> .r7039

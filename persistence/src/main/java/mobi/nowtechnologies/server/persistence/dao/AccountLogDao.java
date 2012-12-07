@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
@@ -31,18 +33,19 @@ public class AccountLogDao extends JpaDaoSupport {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
-	public AccountLog logAccountEvent(int userId, int balanceAfter, int relatedMediaUID, SubmittedPayment submittedPayment, TransactionType accountLogType) {
+	public AccountLog logAccountEvent(int userId, int balanceAfter, Media relatedMedia, SubmittedPayment submittedPayment, TransactionType accountLogType, Offer offer) {
 		if (accountLogType == null)
 			throw new PersistenceException("The parameter accountLogType is null");
-		LOGGER.debug("input parameters userId, balanceAfter, relatedMediaUID, submittedPayment, accountLogType: [{}], [{}], [{}], [{}], [{}]", new Object[] { userId,
-				balanceAfter, relatedMediaUID, submittedPayment, accountLogType });
+		LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, submittedPayment, accountLogType, offer: [{}], [{}], [{}], [{}], [{}], [{}]", new Object[] { userId,
+				balanceAfter, relatedMedia, submittedPayment, accountLogType, offer });
 		AccountLog accountLog = new AccountLog();
 		accountLog.setUserId(userId);
 		accountLog.setTransactionType(accountLogType);
 		accountLog.setBalanceAfter(balanceAfter);
-		accountLog.setRelatedMediaUID(relatedMediaUID);
+		accountLog.setMedia(relatedMedia);
 		accountLog.setSubmittedPayment(submittedPayment);
 		accountLog.setLogTimestamp(Utils.getEpochSeconds());
+		accountLog.setOffer(offer);
 
 		entityDao.saveEntity(accountLog);
 

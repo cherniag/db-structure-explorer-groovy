@@ -123,6 +123,8 @@ public class Media extends Item implements Serializable {
 	private String iTunesUrl;
 
 	private int publishDate;
+	
+	private Long trackId;
 
 	public Media() {
 	}
@@ -365,12 +367,20 @@ public class Media extends Item implements Serializable {
 		this.info = info;
 	}
 
+	public Long getTrackId() {
+		return trackId;
+	}
+
+	public void setTrackId(Long trackId) {
+		this.trackId = trackId;
+	}
+
 	@Override
 	public String toString() {
 		return "Media [artistId=" + artistId + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", drms=" + drms + ", genreId=" + genreId + ", headerFileId="
 				+ headerFileId + ", headerPreviewFileId=" + headerPreviewFileId + ", iTunesUrl=" + iTunesUrl + ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId
 				+ ", imgFileResolutionId=" + imgFileResolutionId + ", isrc=" + isrc + ", label=" + label + ", mediaLogs=" + mediaLogs + ", price_currency=" + price_currency + ", publishDate="
-				+ publishDate + ", purchasedFileId=" + purchasedFileId + ", info=" + info + super.toString() + "]";
+				+ publishDate + ", purchasedFileId=" + purchasedFileId + ", info=" + info + ", trackId=" + trackId + super.toString() + "]";
 	}
 
 }

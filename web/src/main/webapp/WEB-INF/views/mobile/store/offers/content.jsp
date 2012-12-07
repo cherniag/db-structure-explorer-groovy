@@ -21,7 +21,7 @@
 				<div class="albmPrice">
 					<span class="align"><a href="offers/${contentOfferDto.id}">
 					<s:message code="transaction_history.historyTable.amount.formater" var="amount_formater"/> 
-					<fmt:formatNumber type="currency"  currencySymbol="&pound;" pattern="${amount_formater}" value="${contentOfferDto.price}">
+					&pound;<fmt:formatNumber type="currency"  currencySymbol="" pattern="${amount_formater}" value="${contentOfferDto.price}">
 					</fmt:formatNumber>&#160;&#160;&#160;<span><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/arrow_pink.png" alt="" /></span></a></span></div>
 				<div class="albmTitle">
 					<span>${contentOfferDto.title}</span>
