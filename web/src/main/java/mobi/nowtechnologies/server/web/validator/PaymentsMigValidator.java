@@ -12,6 +12,13 @@ public class PaymentsMigValidator extends BaseValidator {
 		return PSmsDto.class.isAssignableFrom(clazz);
 	}
 
+	/**
+	 * 0044 234 234 234 != 0044234234234s
+	 * 004441234211324
+	 * 0044-324-2345-245
+	 * (0044)34523 23452 345
+	 * 
+	 */
 	@Override
 	public boolean customValidate(Object target, Errors errors) {
 		return errors.hasErrors();
