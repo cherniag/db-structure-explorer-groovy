@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <sec:http pattern="/version" security="none" />
+
+    <sec:http create-session="stateless" use-expressions="true">
+
+        <sec:intercept-url pattern="/assets/**" access="permitAll" method="GET" />
+
+        <sec:intercept-url pattern="/signup**" access="permitAll" />
+        <sec:intercept-url pattern="/signin**" access="permitAll" />
+        <sec:intercept-url pattern="/signout" access="permitAll" />
+        <sec:intercept-url pattern="/restore_password**" access="permitAll" />
+        <sec:intercept-url pattern="/faq**" access="permitAll" />
+        <sec:intercept-url pattern="/terms**" access="permitAll" />
+        <sec:intercept-url pattern="/privacy_policy**" access="permitAll" />
+
+        <sec:intercept-url pattern="/**" access="authenticated" />
+
+        <sec:http-basic />
+
+        <sec:custom-filter before="FIRST" ref="communityResolverFilter" />
+        <sec:custom-filter before="FORM_LOGIN_FILTER" ref="facebookAuthenticationFilter" />
+
+
+        <sec:form-login default-target-url="/account.html"
+                        authentication-failure-url="/signin.html?error" login-page="/signin.html"
+                        password-parameter="token" username-parameter="email"
+                        login-processing-url="/signin"
+                />
+
+        <sec:logout logout-success-url="/signin.html" logout-url="/signout" delete-cookies="JSESSIONID" />
+
+        <sec:remember-me key="web" services-ref="nowTechBasedRememberMeServices" use-secure-cookie="true" />
+
+        <sec:custom-filter after="REMEMBER_ME_FILTER" ref="afterRememberMeFilter" />
+    </sec:http>
+
+    <sec:authentication-manager alias="authenticationManager">
+        <sec:authentication-provider user-service-ref="security.nowTechUserDetailsService">
+            <sec:password-encoder ref="chartsNowPasswordEncoder">
+                <sec:salt-source user-property="username" />
+            </sec:password-encoder>
+        </sec:authentication-provider>
+
+        <sec:authentication-provider ref="facebookUserDetailsAuthenticationProvider">
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+    <bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
+        <constructor-arg>
+            <value>${rememberMe.key}</value>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="security.nowTechUserDetailsService" />
+        </constructor-arg>
+        <property name="cookieName" value="${rememberMe.cookieName}"/>
+        <property name="alwaysRemember" value="true"/>
+        <property name="successfulHander">
+            <bean class="mobi.nowtechnologies.server.security.authentication.NowTechBasedRememberMeSuccessfulHandler">
+                <property name="userService" ref="service.UserService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="facebookUserDetailsAuthenticationProvider" class="mobi.nowtechnologies.server.web.provider.FacebookUserDetailsAuthenticationProvider">
+        <property name="facebookUserDetailsServiceImpl" ref="facebookUserDetailsServiceImpl" />
+    </bean>
+
+    <bean id="chartsNowPasswordEncoder" class="mobi.nowtechnologies.server.shared.web.security.utils.ChartsNowPasswordEncoder" />
+
+    <bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.shared.web.security.service.impl.UserDetailsServiceImpl">
+        <property name="userService" ref="service.UserService" />
+    </bean>
+
+    <bean id="facebookUserDetailsServiceImpl"
+          class="mobi.nowtechnologies.server.web.service.impl.FacebookUserDetailsServiceImpl">
+        <property name="communityService" ref="service.communityService" />
+        <property name="userService" ref="service.UserService" />
+    </bean>
+
+    <bean id="facebookAuthenticationFilter"
+          class="mobi.nowtechnologies.server.web.security.facebook.FacebookAuthenticationFilter">
+        <constructor-arg name="defaultFilterProcessesUrl"
+                         value="/facebook_signin" />
+        <property name="rememberMeServices" ref="nowTechBasedRememberMeServices" />
+        <property name="redirectUrl" value="${facebook.connect.fbRedirectUrlOnWebPortal}" />
+        <property name="loginRequestParameterName" value="email" />
+        <property name="passwordRequestParameterName" value="token" />
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="defaultTargetUrlForOldUser" value="/account.html" />
+        <property name="defaultTargetUrlForNewUser" value="/getapp.html" />
+        <property name="authenticationSuccessHandler">
+            <bean
+                    class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+                <property name="defaultTargetUrl" value="/account.html" />
+                <property name="alwaysUseDefaultTargetUrl" value="true" />
+            </bean>
+        </property>
+        <property name="authenticationFailureHandler">
+            <bean
+                    class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <property name="defaultFailureUrl" value="/signin.html?facebook_error=true" />
+            </bean>
+        </property>
+        <property name="messageSource" ref="serviceMessageSource" />
+    </bean>
+
+    <bean id="communityResolverFilter" class="mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter" />
+
+    <!-- Overriding PayPal request -->
+    <bean id="request.payPalRequest" class="mobi.nowtechnologies.server.service.payment.request.PayPalRequest">
+        <property name="user" value="${paypal.user}" />
+        <property name="password" value="${paypal.password}" />
+        <property name="signature" value="${paypal.signature}" />
+        <property name="apiVersion" value="${paypal.apiVersion}" />
+        <property name="amountFormat" value="${paypal.amountFormat}" />
+        <property name="btnSource" value="${paypal.btnSource}" />
+        <property name="returnURL" value="${paypal.successfulRedirectURL}" />
+        <property name="cancelURL" value="${paypal.failRedirectURL}" />
+    </bean>
+
+    <bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
+        <property name="nowTechTokenBasedRememberMeServices"  ref="nowTechBasedRememberMeServices"/>
+    </bean>
+</beans>

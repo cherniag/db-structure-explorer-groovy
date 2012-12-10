@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+    <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController">
+        <property name="versionService" ref="service.VersionService"/>
+    </bean>
+
+    <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
+
+    <bean name="web.LoginController" class="mobi.nowtechnologies.server.web.controller.LoginLogoutController"/>
+
+    <bean name="web.SignUpController" class="mobi.nowtechnologies.server.web.controller.SignUpController">
+        <property name="userService" ref="service.UserService"/>
+        <property name="communityService" ref="service.communityService"/>
+        <property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+    <bean name="web.RestorePasswordController"
+          class="mobi.nowtechnologies.server.web.controller.RestorePasswordController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.GetAppController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean name="web.AccountController" class="mobi.nowtechnologies.server.web.controller.AccountController">
+        <property name="userService" ref="service.UserService"/>
+        <property name="messageSource" ref="messageSource"/>
+        <property name="specificCommunityResourcesFolderPath" value="${specificCommunityResourcesFolderPath}"/>
+    </bean>
+
+    <bean name="web.PaymentHistoryController"
+          class="mobi.nowtechnologies.server.web.controller.PaymentHistoryController">
+        <property name="paymentService" ref="service.PaymentService"/>
+        <property name="messageSource" ref="messageSource"/>
+    </bean>
+
+    <bean name="web.TracksController" class="mobi.nowtechnologies.server.web.controller.TracksController">
+        <property name="mediaLogService" ref="service.MediaLogService"/>
+        <property name="fileService" ref="service.FileService"/>
+        <property name="messageSource" ref="messageSource"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PaymentsController">
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
+        <property name="countryService" ref="service.CountryService"/>
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PaymentsPayPalController">
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PaymentsMigController">
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.UnsubscribeController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean name="web.FaqController" class="mobi.nowtechnologies.server.web.controller.FaqController"/>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.TermsController"/>
+
+    <bean name="web.ErrorController" class="mobi.nowtechnologies.server.web.controller.ErrorController"/>
+
+    <bean name="web.OffersController" class="mobi.nowtechnologies.server.web.controller.OffersController">
+        <property name="offerService" ref="service.OfferService"/>
+        <property name="filesURL" value="${cloudFile.filesURL}"/>
+        <property name="coverStorePath" value="${web.coverStorePath}"/>
+    </bean>
+
+    <bean name="web.OfferPaymentMethodsController"
+          class="mobi.nowtechnologies.server.web.controller.OfferPaymentMethodsController">
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
+    </bean>
+
+    <bean name="web.OfferPaymentsPayPalController"
+          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsPayPalController">
+        <property name="offerService" ref="service.OfferService"/>
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <bean name="web.OfferPaymentsCreditCardController"
+          class="mobi.nowtechnologies.server.web.controller.OfferPaymentsCreditCardController">
+        <property name="offerService" ref="service.OfferService"/>
+        <property name="countryService" ref="service.CountryService"/>
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+    <!-- Static Pages -->
+    <mvc:view-controller path="/privacy_policy.html" view-name="privacy_policy"/>
+
+</beans>
