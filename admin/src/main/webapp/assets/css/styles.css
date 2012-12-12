@@ -91,7 +91,7 @@ ul.table_up {
 
 ul.table li.title {
 	padding-bottom: 5px;
-	background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+	background: url("../img/calendar_bg.png") repeat;
 	border: 8px solid transparent;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
@@ -139,29 +139,33 @@ ul.table li div.date {
 	border: none;
 }
 
+ul.table li div {
+	padding: 5px;
+	overflow: hidden;
+}
 
 ul.table li div.number_news {
-	width: 5%;
+	width: 25px;
 }
 
 ul.table li div.image_news {
-	width: 5%;
+	width: 60px;
 }
 
 ul.table li div.body_news {
-	width: 35%;
+	width: 300px;
 }
 
 ul.table li div.filters_news {
-	width: 25%;
+	width: 180px;
 }
 
 ul.table li div.online_news {
-	width: 5%;
+	width: 40px;
 }
 
 ul.table li div.date_news {
-	width: 10%;
+	width: 100px;
 	border: none;
 }
 
@@ -193,52 +197,52 @@ ul.table li div.filtersStore {
 /*CHarts*/
 
 ul.table li div.position_chartItem {
-	width: 5%;
+	width: 20px;
 	font-size: 9px;
 	font-weight: bold;
 	padding-left: 4px;
 }
 
 ul.table li div.prev_position_chartItem {
-	width: 5%;
+	width: 20px;
 	height:60px!important;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.change_position_chartItem {
-	width: 9%;
+	width: 100px;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.image_chartItem {
-	width: 9%;
+	width: 60px;
 	font-size: 10px;
 }
 
 ul.table li div.channel_chartItem {
-	width: 15%;
+	width: 100px;
 	height:60px!important;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.ArtistTitle_chartItem {
-	width: 18%;
+	width: 150px;
 	font-size: 9px;
 	font-weight: bold;
 }
 
 ul.table li div.info_chartItem {
-	width: 27%;
+	width: 100px;
 	height:60px!important;
 	overflow:hidden;
 	font-size: 10px;
 }
 
 ul.table li div.publishDate_chartItem {
-	width: 5%;
+	width: 100px;
 	font-size: 10px;
 }
 
@@ -653,6 +657,11 @@ ul#tracksTable li:hover {
     display: none;
 }
 
+.loading-container {
+	text-align: center;
+	display: none;
+}
+
 .center {
 	 text-align: center;
     margin:20% auto;
@@ -757,3 +766,48 @@ ul#tracksTable li:hover {
 	width: 17%;
 	border: none;
 }
+
+.hor-minimalist-a {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-collapse: collapse;
+    font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+    font-size: 12px;
+    text-align: left;
+    border: 1px dashed #cccccc;
+    
+}
+table { 
+    width: 100%;
+}
+
+table.hor-minimalist-a td {
+   border-top: 1px dashed #cccccc;
+   padding: 10px;
+}
+
+.hor-minimalist-a th {
+    background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+	border: 8px solid transparent;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    color: #333333;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 10px 8px;
+}
+
+/*Simple Modal*/
+
+.pageWindow {
+  display: none;
+}
+
+#basic-modal-content {display:none;}
+
+/* Overlay */
+#simplemodal-overlay {background-color:#000; cursor:wait; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=70)!important; opacity: 0.7!important; -moz-opacity: 0.7!important; -khtml-opacity: 0.7!important;}
+
+/* Container */
+#simplemodal-container {height:360px; width:600px; color:#000; background-color:#FFF; border:4px solid #444; padding:12px;}
+#simplemodal-container h2 {font-size: 2em}
+#simplemodal-container span {font-size: 1em}
+#simplemodal-container a.modalCloseImg {background:url(../img/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}

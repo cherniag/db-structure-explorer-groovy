@@ -1,20 +1,11 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +15,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * The class <code>UserDaoTest</code> contains tests for the class <code>{@link UserDao}</code>.
@@ -127,12 +123,6 @@ public class UserDaoTestIT {
 //	}
 	
 	@Test
-	public void testGetPaymentPolicyForUser(){
-		PaymentPolicy paymentPolicy = userDao.getPaymentPolicyForUser("Now Music", "creditCard", 2);
-		assertNotNull(paymentPolicy);
-	}
-	
-	@Test
 	public void testGetCommunityNameByUserGroup(){
 		System.out.println(userDao.getCommunityNameByUserGroup((byte) 4));
 	}
@@ -163,12 +153,12 @@ public class UserDaoTestIT {
 		Promotion promotion = userDao.getActivePromotion(userGroup);
 		assertNotNull(promotion);
 
-		assertEquals(1312844400, promotion.getStartDate());
-		assertEquals(1326287900, promotion.getEndDate());
+		assertEquals(0, promotion.getStartDate());
+		assertEquals(1655270400, promotion.getEndDate());
 		assertTrue(promotion.getIsActive());
 		assertEquals(userGroup, promotion.getUserGroup());
 		assertTrue(promotion.getNumUsers() < promotion.getMaxUsers());
-		assertEquals(4, promotion.getFreeWeeks());
+		assertEquals(2, promotion.getFreeWeeks());
 		//assertEquals(18, promotion.getNumUsers());
 		//assertEquals(300, promotion.getMaxUsers());
 	}

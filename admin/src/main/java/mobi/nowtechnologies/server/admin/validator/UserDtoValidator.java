@@ -1,17 +1,13 @@
 package mobi.nowtechnologies.server.admin.validator;
 
-import java.util.Date;
-
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
+
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)

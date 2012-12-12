@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.assembler;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Item;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContentOfferItemDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

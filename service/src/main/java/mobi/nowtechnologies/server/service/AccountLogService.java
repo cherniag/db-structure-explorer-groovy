@@ -1,21 +1,19 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.dao.AccountLogDao;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

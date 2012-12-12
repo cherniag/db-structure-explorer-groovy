@@ -10,8 +10,6 @@ import mobi.nowtechnologies.server.persistence.repository.PromotedDeviceReposito
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.springframework.context.MessageSource;
-
 /**
  * 
  * @author Alexander Kolpakov (akolpakov)

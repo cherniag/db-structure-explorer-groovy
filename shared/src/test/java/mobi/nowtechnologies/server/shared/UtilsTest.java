@@ -1,14 +1,12 @@
 package mobi.nowtechnologies.server.shared;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * The class <code>UtilsTest</code> contains tests for the class

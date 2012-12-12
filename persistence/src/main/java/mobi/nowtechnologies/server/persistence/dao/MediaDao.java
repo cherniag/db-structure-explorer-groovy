@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Drm;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
+
+import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
  * @author Titov Mykhaylo (titov)

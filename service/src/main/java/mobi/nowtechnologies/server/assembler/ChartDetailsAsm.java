@@ -1,18 +1,23 @@
 package mobi.nowtechnologies.server.assembler;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.*;
-
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Drm;
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -167,6 +172,7 @@ public class ChartDetailsAsm {
 		chartItemDto.setPosition(chartDetail.getPosition());
 		chartItemDto.setPrevPosition(chartDetail.getPrevPosition());
 		chartItemDto.setPublishTime(new Date(chartDetail.getPublishTimeMillis()));
+		chartItemDto.setIsrc(chartDetail.getMedia().getIsrc());
 
 		LOGGER.info("Output parameter chartItemDto=[{}]", chartItemDto);
 		return chartItemDto;

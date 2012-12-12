@@ -1,25 +1,18 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPayment;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.AppConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

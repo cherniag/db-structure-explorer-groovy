@@ -1,26 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import mobi.nowtechnologies.server.shared.enums.ItemType;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)

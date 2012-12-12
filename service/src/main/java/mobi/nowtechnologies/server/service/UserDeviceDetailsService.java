@@ -1,19 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserAndroidDetails;
 import mobi.nowtechnologies.server.persistence.domain.UserDeviceDetails;
 import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

@@ -12,6 +12,7 @@
 		<link rel="stylesheet" th:href="@{/assets/css/styles.css}" />
 		<link rel="stylesheet" th:href="@{/assets/css/ui-lightness/jquery-ui-1.8.21.custom.css}" />
 		<link rel="stylesheet" th:href="@{/assets/css/jquery.ui.timepicker.css}" />
+		
 		<style type="text/css">
 			section {
 				padding-top:60px;
@@ -28,6 +29,7 @@
 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-tooltip.js}"></script>
 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-affix.js}"></script>
 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-combobox.js}"></script>
+		<script type="text/javascript" th:src="@{/assets/js/jquery.simplemodal.1.4.2.min.js}"></script>
 		<script th:inline="javascript">/*<![CDATA[*/
 			$(function() {
 				var url = /*[[@{'/charts/list.json'}]]*/ '/jadmin/charts/list.json';
@@ -54,7 +56,7 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<div class="nav-collapse collapse">
-						<a class="brand" href="#">Chartsnow Admin Console</a>
+						<a th:href="@{/}" class="brand">Chartsnow Admin Console</a>
 						<ul class="nav" th:object="${#httpServletRequest}">
 							<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
 							<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>

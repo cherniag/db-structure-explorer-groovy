@@ -1,56 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd 
-http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="service.xml" />
+    <import resource="service.xml" />
+	<!-- 
+    <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
+		<property name="manifest" value="/META-INF/MANIFEST.MF" />
+	</bean>
+	 -->
+	<bean id="service.VersionService" class="java.lang.Object" />
+    <bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
+        <property name="mailSession" ref="service.MailSession" />
+    </bean>
 
-	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
-		<property name="mailSession" ref="service.MailSession" />
-	</bean>
+    <bean id="service.MailSession"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>javax.mail.Session</value>
+        </property>
+        <property name="targetMethod">
+            <value>getDefaultInstance</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <props>
+                    <prop key="mail.debug">false</prop>
+                    <prop key="mail.transport.protocol">smtp</prop>
+                    <prop key="mail.smtp.auth">false</prop>
+                    <prop key="mail.smtp.user"></prop>
+                    <prop key="mail.smtp.password"></prop>
+                    <prop key="mail.smtp.host">panda</prop>
+                    <prop key="mail.smtp.port">25</prop>
+                    <prop key="mail.smtp.from">info@chartsnow.mobi</prop>
+                </props>
+            </list>
+        </property>
+    </bean>
 
-	<bean id="service.MailSession"
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass">
-			<value>javax.mail.Session</value>
-		</property>
-		<property name="targetMethod">
-			<value>getDefaultInstance</value>
-		</property>
-		<property name="arguments">
-			<list>
-				<props>
-					<prop key="mail.debug">false</prop>
-					<prop key="mail.transport.protocol">smtp</prop>
-					<prop key="mail.smtp.auth">false</prop>
-					<prop key="mail.smtp.user"></prop>
-					<prop key="mail.smtp.password"></prop>
-					<prop key="mail.smtp.host">panda</prop>
-					<prop key="mail.smtp.port">25</prop>
-					<prop key="mail.smtp.from">info@chartsnow.mobi</prop>
-				</props>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="service.WeeklyUpdateService"
-		class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
-		<property name="userDao" ref="persistence.UserDao" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="stopped" value="true" />
-	</bean>
-	
-	<bean id="service.PaymentRetryService"
-		class="mobi.nowtechnologies.server.service.PaymentRetryService">
-		<property name="userDao" ref="persistence.UserDao" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="migService" ref="service.MigService" />
-		<property name="userService" ref="service.UserService" />
-		<property name="paymentService" ref="service.PaymentService" />
-		<property name="stopped" value="true" />
-	</bean>
+    <bean id="service.WeeklyUpdateService"
+          class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
+        <property name="userDao" ref="persistence.UserDao" />
+        <property name="entityDao" ref="persistence.EntityDao" />
+        <property name="migHttpService" ref="service.migHttpService" />
+        <property name="stopped" value="true" />
+    </bean>
+
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="ignoreResourceNotFound" value="false" />
+    </bean>
 
 </beans>

@@ -2,7 +2,7 @@
 $.fn.descendantOf = function(element) {
     element = element[0];
     var current = this;
-    var body    = document.body;
+   // var body    = document.body;
     while (current && current != element && current != document.body) {
         current = $(current).parent()[0];
     }
@@ -13,7 +13,7 @@ $.fn.descendantOf = function(element) {
     } else if (current == document.body) {
         return false;
     }
-}
+};
 //---------------------------------------------------//
 $(function() {
 	//-----------------Date picker-------------------//
@@ -253,3 +253,21 @@ dateFormat.i18n = {
 Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
+
+//Shop Popup
+
+var simpleDialogOptions={opacity:100, overlayClose:true};
+var modalDialogOptions={opacity:100, escClose:false, close:false};
+
+function showAsDialog(elem, onShow) {
+	if(null != onShow)
+		simpleDialogOptions.onShow = onShow;
+	$(elem).modal(simpleDialogOptions);
+}
+
+function showModalDialog(obj) {
+	if ($(obj).length==0)
+		$.modal(content, modalDialogOptions);
+	else
+		$(obj).modal(modalDialogOptions);
+}

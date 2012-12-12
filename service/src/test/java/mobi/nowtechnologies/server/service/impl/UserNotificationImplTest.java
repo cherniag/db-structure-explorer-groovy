@@ -1,25 +1,19 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.times;
-
-import java.util.concurrent.Future;
-
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.scheduling.annotation.AsyncResult;
+
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.times;
 
 /**
  * The class <code>UserNotificationImplTest</code> contains tests for the class <code>{@link UserNotificationServiceImpl}</code>.

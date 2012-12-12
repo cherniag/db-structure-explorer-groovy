@@ -13,12 +13,13 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import static junit.framework.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public class PaymentDetailsRepositoryIT {
 	
 	@Resource(name = "paymentDetailsRepository")
@@ -61,6 +62,7 @@ public class PaymentDetailsRepositoryIT {
 	 * Adding new payment details to user should disable old one and add a new one with activated equals to true
 	 */
 	@Test
+	@Transactional
 	public void addingNewPaymentDetailsAndToserWithExistingPaymentDetails() {
 		User user = new User();
 		user.setUserName("hello@user.com");
@@ -71,6 +73,9 @@ public class PaymentDetailsRepositoryIT {
 			paymentDetails.setActivated(true);
 			paymentDetails.setOwner(user);
 			paymentDetailsRepository.save(paymentDetails);
+			
+		user.setCurrentPaymentDetails(paymentDetails);
+			entityDao.saveEntity(user);
 		
 		assertEquals(1, user.getPaymentDetailsList().size());
 			

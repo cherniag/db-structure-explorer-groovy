@@ -1,26 +1,28 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.lang.reflect.Type;
-import java.util.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Controller
 public class ChartItemController extends AbstractCommonController{
@@ -94,7 +96,6 @@ public class ChartItemController extends AbstractCommonController{
 	/**
 	 * Updating or creating chart item list for selected date
 	 *
-	 * @param chartItemsListJSON - chart item list in JSON data format
 	 * @param selectedPublishDateTime - selected date and time represented in URI
 	 * @param chartId - chart identifier of selected chart
 	 * 
@@ -140,6 +141,40 @@ public class ChartItemController extends AbstractCommonController{
 
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
+		return modelAndView;
+	}
+	
+	/**
+	 * Update the chart items publishTime
+	 *
+	 * @param selectedPublishDateTime
+	 *            - selected date and time of chart items publishTime
+	 * @param newPublishDateTime
+	 *            - new date and time of chart items publishTime
+	 * @param chartId
+	 *            - selected chart id
+	 * @return - returns the user to a list of the chart items for selected date
+	 */
+	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{newPublishDateTime}", method = RequestMethod.POST)
+	public ModelAndView updateChartItems(HttpServletResponse response,
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+			@PathVariable("newPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date newPublishDateTime,
+			@PathVariable("chartId") Byte chartId) {
+
+		LOGGER.debug("input parameters response, selectedPublishDateTime, newPublishDateTime, chartId: [{}], [{}]", new Object[] { response, selectedPublishDateTime, newPublishDateTime, chartId });
+
+		ModelAndView modelAndView;
+		try {
+			chartDetailService.updateChartItems(chartId, selectedPublishDateTime.getTime(), newPublishDateTime.getTime());
+			modelAndView = new ModelAndView("redirect:/charts/" + chartId + "/" + dateTimeFormat.format(newPublishDateTime));
+		} catch (ServiceCheckedException e) {
+			LOGGER.warn(e.getMessage(), e);
+			response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
+			modelAndView = new ModelAndView("errors");
+			modelAndView.addObject("errorCode", e.getErrorCodeForMessageLocalization());
+		}
+
+		LOGGER.debug("Output parameter modelAndView=[{}]", modelAndView);
 		return modelAndView;
 	}
 }

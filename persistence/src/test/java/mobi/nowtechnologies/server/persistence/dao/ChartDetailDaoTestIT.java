@@ -1,19 +1,16 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import junit.framework.Assert;
-
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * The class <code>ChartDetailDaoTest</code> contains tests for the class <code>{@link ChartDetailDao}</code>.
@@ -38,6 +35,6 @@ public class ChartDetailDaoTestIT {
 		byte chartId=3;
 		List<ChartDetail> chartDetails = chartDetailDao.findChartDetailTreeForDrmUpdate(userId, chartId);
 		Assert.assertNotNull(chartDetails);
-		Assert.assertEquals(34, chartDetails.size());
+		Assert.assertEquals(21, chartDetails.size());
 	}
 }

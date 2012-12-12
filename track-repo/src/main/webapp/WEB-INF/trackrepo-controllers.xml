@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">   
+
+    <bean name="trackRepo.SignInController" class="mobi.nowtechnologies.server.trackrepo.controller.SignInController"/>
+    
+     <bean name="trackRepo.FileController"
+		class="mobi.nowtechnologies.server.trackrepo.controller.FileController">
+		<property name="fileService" ref="trackRepo.FileService" />
+	</bean>
+    
+    <bean name="trackRepo.TrackController"
+		class="mobi.nowtechnologies.server.trackrepo.controller.TrackController">
+		<property name="trackService" ref="trackRepo.TrackService" />
+		<property name="resourceFileDtoBuilder" ref="trackRepo.ResourceFileDtoBuilder" />
+	</bean>
+</beans>

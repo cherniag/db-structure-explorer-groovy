@@ -29,7 +29,13 @@
 			<param name="AcceptOnMatch" value="FALSE" />
 		</filter>
 	</appender>
-
+	
+	<logger name="mobi.nowtechnologies">
+		<level value="INFO"></level>
+		<appender-ref ref="stdout" />
+		<appender-ref ref="stderr" />
+	</logger>
+	<!-- 
 	<logger name="org.springframework">
 		<level value="INFO"></level>
 		<appender-ref ref="stdout" />
@@ -50,11 +56,7 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	<logger name="mobi.nowtechnologies">
-		<level value="INFO"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
-	</logger>
+	
 	<logger name="javapns">
 		<level value="DEBUG"></level>
 		<appender-ref ref="stdout"/>
@@ -70,5 +72,6 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
+	 -->
 
 </log4j:configuration>

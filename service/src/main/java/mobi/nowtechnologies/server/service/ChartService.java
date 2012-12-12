@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.Date;
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -12,11 +9,13 @@ import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)

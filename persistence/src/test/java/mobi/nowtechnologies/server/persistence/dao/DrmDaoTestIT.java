@@ -1,11 +1,6 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.server.persistence.domain.Drm;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +8,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * The class <code>DrmDaoTest</code> contains tests for the class
@@ -48,7 +46,7 @@ public class DrmDaoTestIT {
 	
 	@Test
 	public void testFindDrmTree_success() throws Exception {
-		int userId = 6;
+		int userId = 1;
 		String isrc = "USAT21001886";
 
 		List<Drm> drms = drmDao.findDrmTree(userId, isrc);

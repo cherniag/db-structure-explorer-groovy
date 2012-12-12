@@ -7,7 +7,15 @@
 			<div th:substituteby="tpl::navbar"></div>
 			<div class="container">
 			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
-				
+				<div class="pageWindow simplePopup" id="popupNotificationError">
+					<div class="pageWindowContent simpleTextPopup">
+						<div class="innerBox">
+							<h2 th:text="#{chartItems.page.chartItemsTable.simpleDialog.header}">Header</h2>
+							<span th:text="#{chartItems.page.chartItemsTable.simpleDialog.body}">You are trying to save the charts for existing date. Please choose other</span><br /><br />
+							<button class="btn btn-primary simplemodal-close" type="button" th:text="#{chartItems.page.chartItemsTable.changeDateTime.submit}">Ok</button>
+						</div>
+					</div>
+				</div>
 				<div class="newsList">
 					<ul  class="table">
 						<li class="title">
@@ -75,10 +83,16 @@
 				<form class="newsCalendar paddingTop" id="createChartUpdateForm" method="get">
 					<h2 th:text="#{chartItems.page.chartItemsTable.timepicker.headline}">Add Update</h2>
 				    <p>Set a new update for: </p>
-					<input type="checkbox" name="changePosition" checked="checked"/>
-					<span th:text="#{chartItems.page.addUpdateChart.changePosition}">Change Positions</span>
-					<br/>
+					<input type="hidden" name="changePosition" value="true" />
 				    <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
+					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
+				</form><br/><br/>
+				
+				<form class="newsCalendar paddingTop" id="createChartMinorUpdateForm" method="get">
+					<h2 th:text="#{chartItems.page.minotUpdate.headline}">Add Minor Update</h2>
+				    <p>Set a new update for: </p>
+				    <input type="hidden" name="changePosition" value="false" />
+				    <input class="u" type="text" style="width: 70px" id="timepicker_minor_updates" />
 					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
 				</form>
 								
@@ -120,6 +134,7 @@
 							}
 						});
 						
+						
 						var selectedDate=jAdmin.getURLParameter("selectedPublishDateTime").substring(0, 10);
 						if (null!=selectedDate)
 							$('.datepicker').datepicker("setDate" , selectedDate);
@@ -127,7 +142,7 @@
 				});
 				
 				
-				$('#timepicker_customrange').timepicker({
+				$('#timepicker_customrange, #timepicker_minor_updates').timepicker({
 				    minutes: { interval: 15 },
 				    showCloseButton: true,
 				    rows: 3,
@@ -135,7 +150,7 @@
 				    minuteText: 'Min',
 				    onSelect: function(newTime, inst) {
 				    	var href= /*[[@{'/chartsNEW/'+${chartId} + '/' + ${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
-				    	$('#createChartUpdateForm').attr('action', href+newTime+':00');
+				    	$('#createChartUpdateForm, #createChartMinorUpdateForm').attr('action', href+newTime+':00');
 				    }
 				});
 				

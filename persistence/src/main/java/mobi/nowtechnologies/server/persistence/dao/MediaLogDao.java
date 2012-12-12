@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLog;
 import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author Alexander Kolpakov (akolpakov)

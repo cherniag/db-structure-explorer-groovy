@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
@@ -17,7 +12,6 @@ import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,6 +19,10 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 /**
  * EntityController
@@ -202,13 +200,9 @@ public abstract class CommonController {
 		response.setStatus(status.value());
 		return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
 	}
-	
-	// FIXME
-	// implement this according to java doc
+
 	/**
 	 * Returns an auth token that is generated for web portal SSO
-	 * @param username username field
-	 * @param token token of the user
 	 * @return rememberMe auth token
 	 */
 	public Object[] proccessRememberMeToken(Object[] objects) {
@@ -235,5 +229,5 @@ public abstract class CommonController {
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
 	}
-
+	
 }

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.*;
-
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -11,13 +9,14 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -198,7 +197,7 @@ public class ChartDetailService {
 					ChartDetail clonedChartDetail = ChartDetail.newInstance(chartDetail);
 
 					clonedChartDetail.setPublishTimeMillis(choosedPublishTimeMillis);
-					
+
 					if (changePosition) {
 						clonedChartDetail.setPrevPosition(chartDetail.getPosition());
 						clonedChartDetail.setChgPosition(ChgPosition.UNCHANGED);
@@ -370,15 +369,15 @@ public class ChartDetailService {
 		LOGGER.debug("input parameters saveChartItems(chartItemList): [{}]", chartItemList);
 
 		List<ChartDetail> newChartItems = new LinkedList<ChartDetail>();
-		
-		for(ChartItemDto chartItemDto : chartItemList){
-			if(chartItemDto.getPosition() > 0){
+
+		for (ChartItemDto chartItemDto : chartItemList) {
+			if (chartItemDto.getPosition() > 0) {
 				ChartDetail chartDetail = new ChartDetail();
 				Chart chart = new Chart();
 				chart.setI(chartItemDto.getChartId());
 				Media media = new Media();
 				media.setI(chartItemDto.getMediaDto().getId());
-				
+
 				chartDetail.setChannel(StringUtils.hasText(chartItemDto.getChannel()) ? chartItemDto.getChannel().replace("&apos;", "'") : null);
 				chartDetail.setChgPosition(chartItemDto.getChgPosition());
 				chartDetail.setInfo(chartItemDto.getInfo().replace("&apos;", "'"));
@@ -387,15 +386,15 @@ public class ChartDetailService {
 				chartDetail.setPublishTimeMillis(chartItemDto.getPublishTime().getTime());
 				chartDetail.setChart(chart);
 				chartDetail.setMedia(media);
-			
+
 				newChartItems.add(chartDetail);
 			}
-			
-			if(chartItemDto.getId() != null)
+
+			if (chartItemDto.getId() != null)
 				chartDetailRepository.delete(chartItemDto.getId());
 		}
-		
-		if(!newChartItems.isEmpty()){
+
+		if (!newChartItems.isEmpty()) {
 			chartDetailRepository.flush();
 			chartDetailRepository.save(newChartItems);
 		}
@@ -406,10 +405,10 @@ public class ChartDetailService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Byte chartId, int afterPosition, int chPosition) {
-		LOGGER.debug("input parameters selectedPublishDateTime, chartId, afterPosition, chPosition: [{}], [{}], [{}], [{}]", new Object[] {selectedPublishDateTime, chartId,
-				afterPosition, chPosition});
-		List<Integer> ids = chartDetailRepository.getIdsByDateAndPosition(chartId, selectedPublishDateTime.getTime(), (byte)afterPosition);
-		
+		LOGGER.debug("input parameters selectedPublishDateTime, chartId, afterPosition, chPosition: [{}], [{}], [{}], [{}]", new Object[] { selectedPublishDateTime, chartId,
+				afterPosition, chPosition });
+		List<Integer> ids = chartDetailRepository.getIdsByDateAndPosition(chartId, selectedPublishDateTime.getTime(), (byte) afterPosition);
+
 		ChartItemPositionDto positionDto = new ChartItemPositionDto();
 		Map<Integer, Byte> positionMap = positionDto.getPositionMap();
 		int position = afterPosition + 1;
@@ -501,5 +500,24 @@ public class ChartDetailService {
 
 		LOGGER.debug("Output parameter success=[{}]", success);
 		return success;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public int updateChartItems(byte chartId, long selectedPublishDateTime, long newPublishDateTime) throws ServiceCheckedException{
+		LOGGER.debug("input parameters chartId, selectedPublishDateTime, newPublishDateTime: [{}], [{}]", new Object[] { chartId, selectedPublishDateTime, newPublishDateTime });
+
+		final long count = chartDetailRepository.getCount(chartId, newPublishDateTime);
+		boolean isItemsForChoosedPublishDateAlreadyExist = (count > 0);
+		if (isItemsForChoosedPublishDateAlreadyExist)
+			throw new ServiceCheckedException("chartItems.changingPublishTimeOnAlreadyScheduledTime.error", "Coudn't change the chart items publishDateTime from [" + selectedPublishDateTime + "] to " + newPublishDateTime + " for chartId [" + chartId
+					+ "] because ones already exists");
+
+		int updatedRowCount = chartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
+		if (updatedRowCount <= 0)
+			throw new ServiceCheckedException("chartItems.notExisted.changingPublishTime.error","Unexpected updated records count [" + updatedRowCount + "] for selectedPublishDateTime [" + selectedPublishDateTime + "] and chartId [" + chartId + "]");
+
+		LOGGER.info("Output parameter updatedRowCount=[{}]", updatedRowCount);
+		return updatedRowCount;
+
 	}
 }

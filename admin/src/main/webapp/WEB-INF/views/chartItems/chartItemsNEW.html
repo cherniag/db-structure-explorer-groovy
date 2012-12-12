@@ -101,13 +101,14 @@
 	#chartItemsTable li div {
     	border: medium none;
     	display: inline-block;
+    	width: 100px;
     	height: 100%;
     	vertical-align: top;
 	}
 	
 	#chartItemsTable li {
     	background-color: #FFFFFF;
-    	border: 1px solid #DDDDDD;
+    	padding: 10px 0;
     	margin-top: -1px;
 	}
 	
@@ -157,12 +158,12 @@
 	    font-size: 10px;
 	    height: 60px !important;
 	    overflow: hidden;
-	    width: 27%;
+	    width: 15%;
 	}
 	
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
-	    width: 5%;
+	    width: 12%;
 	}
 	
 </style>
@@ -183,11 +184,15 @@
 				MY_CHANNEL
 			</option>
 	</select>
-	<textarea id="infoTextAreaTpl" rows="4" class="input-xlarge" maxlength="255" style="width: 95%; height: 80%; font-size: 11px; display:none;" ></textarea>
+	<textarea id="infoTextAreaTpl" rows="4" class="input-xlarge" maxlength="200" style="width: 95%; height: 80%; font-size: 11px; display:none;" ></textarea>
 	
 	<div class="container" id="chartItemsTable" style="width: 1500px;">
 		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
+		<form id="changeChartDateTimeForm" method="get">
+			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
+		</form>
 		<div class="newsListWide">
+		
 			<ul class="table">
 				<li class="title">
 					<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
@@ -197,7 +202,7 @@
 					<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
-					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
+					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">ISRC</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -222,7 +227,7 @@
 						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
 					</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
-						<span th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</span>
+						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
 				</li>
@@ -275,16 +280,14 @@
 					</div>
 				</div>
 				<div>
-					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">
-						Media List
-					</h1>
+					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">Media List</h1>
 					<form id="mediaSearchForm" class="wellWithoutBorder">
-						<input type="text" id="q" name="q" class="q" onkeypress="return onSearchMedia(event)" style="margin-bottom: 0!important;"/>
-						<button th:text="#{chartItems.page.media.search}" class="btn btn-primary s_btn" type="button" onclick="onSearchMedia()">
+						<input type="text" id="q" name="q" class="q" style="margin-bottom: 0!important;"/>
+						<button id="searchButton" th:text="#{chartItems.page.media.search}" class="btn btn-primary s_btn" type="button">
 							Search
 						</button>
 					</form>
-					<div>
+					<div id="searchResult">
 						<ul class="table headerFrame">
 							<li class="title">
 								<div class="cover_media"
@@ -333,6 +336,7 @@
 									</div>
 							</li> -->
 						</ul>
+						<div class="loading-container"><img th:attr="src=@{/assets/img/loading-thumb-small.gif}" /></div>
 					</div>
 				</div>
 			</div>
@@ -353,6 +357,60 @@
 			appendTo: "#chartItemsTable"
 	};
 	
+	$("#datepicker_dateChange").datepicker({
+		dateFormat : 'yy-mm-dd',
+		onSelect: function(dateText) {
+				updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
+			}
+	});
+	
+	$( ".datepicker_dateChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(0,10);
+	}); 
+	
+	$('#timepicker_timeChange').timepicker({
+	    minutes: { interval: 15 },
+	    showCloseButton: true,
+	    timeFormat: "HH:mm",
+	    pickerTimeFormat: "HH:mm",
+	    rows: 3,
+	    showPeriodLabels: true,
+	    minuteText: 'Min',
+	    showSecond: true,
+	    onSelect: function(newTime) {
+			updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
+	    }
+	});
+	
+	$( "#timepicker_timeChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(11,5);
+	});
+	
+	function updateChartDateTime(newDateTime) {
+		
+		
+		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/2012-09-25_02:45:00';
+		url+=newDateTime;
+		
+		$.ajax({
+			url : url,
+			type : "post",
+			complete: function() {
+				
+			},
+			success : function(data) {
+				var urlToRedirect = /*[[@{/chartsNEW/__${chartId}__/}]]*/ '2012-09-25_02:45:00';
+				location.href = urlToRedirect+newDateTime;
+			},
+			error : function() {
+				alert('Error during chart date/time update');
+			}
+		});
+	}
+	
+
+	
+
 	$(function() {
 		var spycontainer = $(".container.chartControl");
 		var topOffset = parseInt(spycontainer.css('top'));
@@ -392,6 +450,37 @@
 				}
 			}
 		});
+		
+		// Search media
+		$("#searchButton").click(function(e) {
+			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
+			$('#searchResult .loading-container').show();
+			$('#mediaList').empty();
+			$.ajax({
+				url : url,
+				type : "get",
+				data : $('form#mediaSearchForm').serialize(),
+				complete: function() {
+					$('#searchResult .loading-container').hide();
+				},
+				success : function(data) {
+					for(var i = 0; i < data.CHART_ITEM_DTO_LIST.length; i++){
+						var li = chartItemToLi(data.CHART_ITEM_DTO_LIST[i]);
+						li.appendTo($('#mediaList'));
+					}
+				},
+				error : function() {
+					
+				}
+			});
+		});
+		$('#q').keypress(function() {
+			if ( event.which == 13 ) {
+			    event.preventDefault();
+				$("#searchButton").click();
+			}
+		});
+		
 	});
 	
 	function onToBasketClick(target, isCopy){
@@ -584,20 +673,6 @@
 		return "NONE";
 	}
 	
-	function onSearchMedia(){
-		alert("search()"+$mediaImgBaseUrl);
-		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
-		
-		$.ajax({
-			url : url,
-			type : "get",
-			data : $('form#mediaSearchForm').serialize(),
-			success : function(data) {
-				
-				onLoadedMedia(data.CHART_ITEM_DTO_LIST);
-			}
-		});
-	}
 	
 	function onClickInfo(event){
 		var infoDiv = $(event.delegateTarget);
@@ -757,34 +832,6 @@
 		}
 	}
 	
-	function onSearchMedia(e){
-		if (!e || e.keyCode == 13) {
-			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
-			
-			$.ajax({
-				url : url,
-				type : "get",
-				data : $('form#mediaSearchForm').serialize(),
-				success : function(data) {
-					
-					onLoadedMedia(data.CHART_ITEM_DTO_LIST);
-				}
-			});
-			
-	        return false;
-	    }
-	}
-
-	function onLoadedMedia(data){
-		var mediaList = $('#mediaList');
-		mediaList.empty();
-		
-		for(var i = 0; i < data.length; i++){
-			var li = chartItemToLi(data[i]);
-			li.appendTo(mediaList);
-		}
-	}
-	
 	function onSaveChartItems(){
 		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
 		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
@@ -796,7 +843,7 @@
 			data: data,
 			dataType: "json",
 			success: function(data) {
-				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00";
+				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00';
 			}
 		}).fail(function(data, x, e) {
 			alert("Can't save chart item list");
@@ -847,61 +894,61 @@
 		}).draggable($draggableProperties);
 		
 		$('<div>').attr({
-			class:"id_chartItem",
-			style:"display:none;"
+			"class":"id_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<div>').attr({
-			class:"mediaId_chartItem",
-			style:"display:none;"
+			"class":"mediaId_chartItem",
+			"style":"display:none;"
 		}).text(chartItem.mediaDto.id).appendTo(li);
 		$('<div>').attr({
-			class:"position_chartItem",
-			style:"display:none;"
+			"class":"position_chartItem",
+			"style":"display:none;"
 		}).text(chartItem.position).appendTo(li);
 		
 		var prevPositionDiv = $('<div>').attr({
-			class:"prev_position_chartItem",
-			style:"display:none;"
+			"class":"prev_position_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<span>').text(chartItem.prevPosition).appendTo(prevPositionDiv);
 		
 		$('<div>').attr({
-			class:"change_position_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"change_position_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).text(chartItem.chgPosition).appendTo(li);
 		
 		var channelDiv = $('<div>').attr({
-			class:"channel_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"channel_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').text(chartItem.channel).appendTo(channelDiv);
 		
 		$('<div>').attr({
-			class:"ArtistTitle_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"ArtistTitle_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).text(chartItem.mediaDto.artistDto.name+" - "+chartItem.mediaDto.title).appendTo(li);
 		
 		var infoDiv = $('<div>').attr({
-			class:"info_chartItem",
-			style:"display:none; margin: 0 2px"
+			"class":"info_chartItem",
+			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').css("word-wrap","break-word").text(chartItem.info).appendTo(infoDiv);
 		
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
 		var publishDateDiv = $('<div>').attr({
-			class:"publishDate_chartItem",
-			style:"display:none;"
+			"class":"publishDate_chartItem",
+			"style":"display:none;"
 		}).appendTo(li);
 		$('<span>').text(dateFormat(chartItem.publishTime, $dateformat)).appendTo(publishDateDiv);
 		$('<button>').attr({
-			type:"button",
-			onclick:"onToBasketClick(this, false)",
-			class:"btn btn-danger"
+			"type":"button",
+			"onclick":"onToBasketClick(this, false)",
+			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(publishDateDiv);
 		
 		var coverMediaDiv = $('<div>').attr({
-			class:"cover_media",
-			style: "margin: 0 2px"
+			"class":"cover_media",
+			"style": "margin: 0 2px"
 		}).appendTo(li);
 		$('<img>').attr({
 			alt:$mediaImgAlt,
@@ -911,27 +958,28 @@
 		}).appendTo(coverMediaDiv);
 		
 		$('<div>').attr({
-			class:"isrc_media",
+			"class":"isrc_media",
 		}).text(chartItem.mediaDto.isrc).appendTo(li);
 		$('<div>').attr({
-			class:"title_media",
+			"class":"title_media",
 		}).text(chartItem.mediaDto.title).appendTo(li);
 		
 		var artistMediaDiv = $('<div>').attr({
-			class:"artist_media"
+			"class":"artist_media"
 		}).text(chartItem.mediaDto.artistDto.name).appendTo(li);
 		
 		var artistMediaDiv = $('<div>').attr({
-			class:"basket_button"
+			"class":"basket_button"
 		}).appendTo(li);
 		$('<button>').attr({
-			type:"button",
-			onclick:"onToBasketClick(this, true)",
-			class:"btn btn-danger"
+			"type":"button",
+			"onclick":"onToBasketClick(this, true)",
+			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(artistMediaDiv);
 		
 		return li;
 	}
+	
 	/*]]>*/</script>
 </body>
 </html>

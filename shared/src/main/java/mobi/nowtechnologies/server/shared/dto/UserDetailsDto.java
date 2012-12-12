@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import javax.validation.constraints.Pattern;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * @author Titov Mykhaylo (titov)

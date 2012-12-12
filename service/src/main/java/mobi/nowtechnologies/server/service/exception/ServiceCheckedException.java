@@ -6,8 +6,16 @@ package mobi.nowtechnologies.server.service.exception;
  */
 public class ServiceCheckedException extends Exception{
 	
+	private static final long serialVersionUID = 929513262767303130L;
+	
 	private String errorCodeForMessageLocalization;
 	private String defaultMessage;
+	
+	public ServiceCheckedException(String code, String defaultMessage) {
+		super(defaultMessage);
+		this.errorCodeForMessageLocalization = code;
+		this.defaultMessage = defaultMessage;
+	}
 	
 	public ServiceCheckedException(String code, String defaultMessage, Exception e) {
 		super(defaultMessage, e);

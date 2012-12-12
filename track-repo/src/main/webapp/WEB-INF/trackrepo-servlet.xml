@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!--
+		DispatcherServlet Context: defines this servlet's request-processing
+		infrastructure
+	-->
+
+	<!-- Configures the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven>
+	    <mvc:argument-resolvers>
+	        <bean class="org.springframework.data.web.PageableArgumentResolver" />
+	    </mvc:argument-resolvers>
+	</mvc:annotation-driven>
+		
+	<mvc:interceptors>		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+		        <property name="cacheSeconds" value="0"/>
+		        <property name="useExpiresHeader" value="true"/>
+		        <property name="useCacheControlHeader" value="true"/>
+		        <property name="useCacheControlNoStore" value="true"/>
+		    </bean>
+		</mvc:interceptor>
+		
+		<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" />
+	</mvc:interceptors>
+	
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	  <property name="order" value="1" />
+	  <property name="mediaTypes">
+		<map>
+		   <entry key="json" value="application/json" />
+		</map>
+	  </property>
+ 
+	  <property name="defaultViews">
+		<list>
+		  <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		  </bean>
+		 </list>
+	  </property>
+	  <!-- 
+	  <property name="ignoreAcceptHeader" value="true" />
+	   -->
+	</bean>
+	
+	<import resource="trackrepo-controllers.xml" />
+</beans>

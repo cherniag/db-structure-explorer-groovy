@@ -1,11 +1,4 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.persistence.dao;
-
-import mobi.nowtechnologies.server.persistence.domain.AppVersion;
-import mobi.nowtechnologies.server.persistence.domain.AppVersionCountry;
-import mobi.nowtechnologies.server.persistence.domain.Country;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +12,7 @@ public class CountryAppVersionDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CountryAppVersionDao.class.getName());
 
+	@SuppressWarnings("deprecation")
 	public boolean isAppVersionLinkedWithCountry(String appVersion,
 			String countryCode) {
 		if (appVersion == null)
@@ -27,16 +21,10 @@ public class CountryAppVersionDao extends JpaDaoSupport {
 			throw new PersistenceException(
 					"The parameter countryCode is null");
 		Long foundedRecordsCount = (Long) getJpaTemplate().find(
-						"select count(*) from "
-								+ AppVersionCountry.class.getSimpleName()
-								+ " appVersionCountry, "
-								+ Country.class.getSimpleName()
-								+ " country, "
-								+ AppVersion.class.getSimpleName()
+						"select count(*) from AppVersion"
 								+ " appVersion "
-								+ " where appVersionCountry.countryId=country.i "
-								+ "and appVersionCountry.appVersionId=appVersion.i"
-								+ " and country.name=?1 and appVersion.name = ?2",
+								+ " join appVersion.countries country "
+								+ " where country.name=?1 and appVersion.name = ?2",
 						countryCode, appVersion).get(0);
 		if (Long.valueOf(1L).equals(foundedRecordsCount))
 			return true;
@@ -45,8 +33,7 @@ public class CountryAppVersionDao extends JpaDaoSupport {
 			return false;
 		else {
 			String message = "There are " + foundedRecordsCount
-					+ " records in " + AppVersionCountry.class.getName()
-					+ " class table for appVersion = " + appVersion
+					+ " records found for appVersion = " + appVersion
 					+ ", countryFullName = " + countryCode;
 			LOGGER.error(message);
 			throw new PersistenceException(message);

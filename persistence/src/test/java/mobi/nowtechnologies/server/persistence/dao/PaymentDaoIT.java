@@ -1,36 +1,29 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
 import static mobi.nowtechnologies.server.shared.AppConstants.NOT_AVAILABLE;
 import static mobi.nowtechnologies.server.shared.AppConstants.STATUS_PENDING;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.CreditCardPayment;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPayment;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The class <code>PaymentDaoTest</code> contains tests for the class <code>{@link PaymentDao}</code>.
@@ -51,10 +44,15 @@ public class PaymentDaoIT {
 	
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
+	
 
 	@Test
 	public void getUsersForPendingPayment_Successful() {
+		Community community = CommunityDao.getCommunity("CN Commercial Beta");
+		
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
+			paymentPolicy.setAvailableInStore(true);
+			paymentPolicy.setCommunity(community);
 			paymentPolicy.setCurrencyISO("GBP");
 			paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 			paymentPolicy.setSubcost(BigDecimal.TEN);
@@ -65,10 +63,10 @@ public class PaymentDaoIT {
 		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL);
 		createUser(paymentPolicy, PaymentDetailsStatus.AWAITING);
 		createUser(paymentPolicy, PaymentDetailsStatus.ERROR);
-		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR);
 		createUser(paymentPolicy, PaymentDetailsStatus.NONE);
 		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL);
 		createUser(paymentPolicy, PaymentDetailsStatus.NONE);
+		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR);
 		
 		List<User> pendingPayments = paymentDao.getUsersForPendingPayment();
 		
@@ -77,17 +75,28 @@ public class PaymentDaoIT {
 	}
 	
 	private User createUser(PaymentPolicy paymentPolicy, PaymentDetailsStatus lastPaymentStatus) {
+		UserGroup userGroup = entityDao.findById(UserGroup.class, (byte) 3);
+		
 		User user = new User();
+			user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
 			user.setUserName(UUID.randomUUID().toString());
-			SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
-				currentPaymentDetails.setPaymentPolicy(paymentPolicy);
-				currentPaymentDetails.setLastPaymentStatus(lastPaymentStatus);
-				currentPaymentDetails.setReleased(false);
-				currentPaymentDetails.setActivated(true);
+			user.setUserGroup(userGroup);
+			user.setLastDeviceLogin(55);
+			user.setStatus(UserStatusDao.getLimitedUserStatus());
+			entityDao.saveEntity(user);
+
+		SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
+			currentPaymentDetails.setPaymentPolicy(paymentPolicy);
+			currentPaymentDetails.setLastPaymentStatus(lastPaymentStatus);
+			currentPaymentDetails.setReleased(false);
+			currentPaymentDetails.setActivated(true);
+			currentPaymentDetails.setOwner(user);
 			entityDao.saveEntity(currentPaymentDetails);
-			user.addPaymentDetails(currentPaymentDetails);
-			
-		return (User) entityDao.updateEntity(user);
+
+		user.setCurrentPaymentDetails(currentPaymentDetails);
+		user = entityDao.updateEntity(user);
+
+		return user;
 	}
 	
 	/**

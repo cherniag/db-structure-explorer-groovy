@@ -5,7 +5,6 @@ package mobi.nowtechnologies.server.service.util;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.util.CreditCardNumberValidator;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
@@ -105,11 +104,6 @@ public class MandatoryPropertyValidator {
 							aMotnth));
 	}
 
-	/**
-	 * @param creditCardInfoClass
-	 * @param string
-	 * @param expirationYear
-	 */
 	public static void validateYear(Class<?> aClass,
 			String aPropertyName, int aExpirationYear) {
 		if (aExpirationYear < 1)
@@ -118,11 +112,6 @@ public class MandatoryPropertyValidator {
 							aExpirationYear));
 	}
 
-	/**
-	 * @param creditCardInfoClass
-	 * @param string
-	 * @param aPostCode
-	 */
 	public static void validatePostCode(final Class<?> aClass,
 			final String aPropertyName, final String aPostCode) {
 		if (aClass == null)
@@ -133,11 +122,6 @@ public class MandatoryPropertyValidator {
 		validateStringPropertyOnEmpty(aClass, aPropertyName, aPostCode);
 	}
 
-	/**
-	 * @param userPremiumInfoClass
-	 * @param string
-	 * @param phoneNumber
-	 */
 	public static void validatePhoneNumber(Class<?> aClass,
 			String aPropertyName, String phoneNumber) {
 		if (aClass == null)

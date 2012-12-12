@@ -1,57 +1,19 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentStatus;
-import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.CountryByIpService;
-import mobi.nowtechnologies.server.service.EntityService;
-import mobi.nowtechnologies.server.service.FacebookService;
-import mobi.nowtechnologies.server.service.FileService;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.mock.MockWebApplication;
+import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import mobi.nowtechnologies.server.persistence.dao.*;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.UserService.AmountCurrencyWeeks;
-import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.transport.mock.MockWebApplication;
-import mobi.nowtechnologies.server.transport.mock.MockWebApplicationContextLoader;
-
 import org.apache.http.NameValuePair;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,6 +31,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * The class <code>EntityControllerTest</code> contains tests for the class

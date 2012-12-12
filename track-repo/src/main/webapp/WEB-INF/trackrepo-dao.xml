@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+		
+    <bean id="trackRepo.EntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="trackRepo.DataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.show_sql">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="trackRepo.DataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="removeAbandoned" value="${trackRepo.jdbc.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${trackRepo.jdbc.removeAbandonedTimeout}" />
+		<property name="testOnBorrow" value="${trackRepo.jdbc.testOnBorrow}" />
+		<property name="validationQuery" value="${trackRepo.jdbc.validationQuery}" />
+		<property name="maxActive" value="${trackRepo.jdbc.maxActive}" />
+		<property name="maxIdle" value="${trackRepo.jdbc.maxIdle}" />
+		<property name="maxWait" value="${trackRepo.jdbc.maxWait}" />
+		<property name="username" value="${trackRepo.jdbc.username}" />
+		<property name="password" value="${trackRepo.jdbc.password}" />
+		<property name="driverClassName" value="${trackRepo.jdbc.driverClassName}" />
+		<property name="url" value="${trackRepo.jdbc.url}" />
+	</bean>
+	
+	<bean id="trackRepo.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="trackRepo.EntityManagerFactory" />
+		<property name="dataSource" ref="trackRepo.DataSource" />
+	</bean>
+    
+    <tx:annotation-driven transaction-manager="trackRepo.TransactionManager" proxy-target-class="true" />
+	<jpa:repositories base-package="mobi.nowtechnologies.server.trackrepo.repository"
+		entity-manager-factory-ref="trackRepo.EntityManagerFactory"
+		transaction-manager-ref="trackRepo.TransactionManager">
+	</jpa:repositories>
+	
+	<bean id="trackRepositoryImpl" class="mobi.nowtechnologies.server.trackrepo.repository.impl.TrackRepositoryImpl"/>
+</beans>

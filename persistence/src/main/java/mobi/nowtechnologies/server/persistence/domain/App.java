@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
  * The persistent class for the tb_apps database table.
- * 
+ * @author Alexander Kolpakov (akolpakov)
  */
 @Entity
 @Table(name="tb_apps")
@@ -20,7 +20,7 @@ public class App implements Serializable {
 
 	private byte appType;
 
-	@Column(name="jad",columnDefinition="char(40)")
+	@Column(name="jad",columnDefinition="char(255)")
 	private String jad;
 
 	@Column(name="jar",columnDefinition="char(40)")
@@ -28,6 +28,8 @@ public class App implements Serializable {
 
 	@Column(name="model",columnDefinition="char(40)")
 	private String model;
+	
+	private int communityID;
 
     public App() {
     }
