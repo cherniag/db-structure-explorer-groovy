@@ -1104,3 +1104,7 @@ input {
 .getAppBottom h1 {
 	margin-bottom: 10px;
 }
+
+.footer img.brought {
+	display: none;
+}
