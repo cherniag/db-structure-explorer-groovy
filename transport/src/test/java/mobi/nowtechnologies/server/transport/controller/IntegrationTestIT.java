@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-		"file:src/main/webapp/WEB-INF/transport-servlet.xml",
+		"classpath:transport-servlet-test.xml",
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
@@ -3498,5 +3498,35 @@ public class IntegrationTestIT {
 		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
 
 		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+	}
+	
+	@Test
+	public void testSING_UP_DEVICE_O2() throws Exception {
+		String userName = "zzz@z.com";
+		String apiVersion = "V3.6";
+		String communityName = "Now Music";
+		String appVersion = "CNBETA";
+
+		String deviceType = UserRegInfo.DeviceType.ANDROID;
+
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.addHeader("Content-Type", "text/xml");
+		httpServletRequest.setRemoteAddr("2.24.0.1");
+		httpServletRequest.setPathInfo("/O2/3.6/SIGN_UP_DEVICE");
+
+		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
+		httpServletRequest.addParameter("DEVICE_UID", userName);
+		httpServletRequest.addParameter("API_VERSION", apiVersion);
+		httpServletRequest.addParameter("APP_VERSION", appVersion);
+		httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+		String contentAsString = mockHttpServletResponse.getContentAsString();
+
+		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
+		assertNotNull(storedToken);
 	}
 }

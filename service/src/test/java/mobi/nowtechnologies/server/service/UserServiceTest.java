@@ -1,40 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.Future;
-
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.dao.*;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -43,25 +10,39 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDtoFactory;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
+
 /**
- * The class <code>UserServiceTest</code> contains tests for the class
- * <code>{@link UserService}</code>.
+ * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
  * 
  * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
@@ -70,7 +51,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { UserStatusDao.class, Utils.class })
+@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class })
 public class UserServiceTest {
 
 	private static final String SMS_SUCCESFULL_PAYMENT_TEXT = "SMS_SUCCESFULL_PAYMENT_TEXT";
@@ -84,6 +65,8 @@ public class UserServiceTest {
 	private CommunityResourceBundleMessageSource mockCommunityResourceBundleMessageSource;
 	private MigHttpService mockMigHttpService;
 	private PaymentDetailsService mockPaymentDetailsService;
+	private CommunityService mockCommunityService;
+	private CountryService mockCountryService;
 
 	/**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -92,14 +75,14 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	
+
 	@Test
 	public void testChangePassword_Success() throws Exception {
 		String password = "newPa$$1";
-		
+
 		User user = UserFactory.createUser();
 		String storedToken = Utils.createStoredToken(user.getUserName(), password);
-		
+
 		Mockito.when(mockEntityService.findById(User.class, user.getId())).thenReturn(user);
 		PowerMockito.when(mockUserRepository.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenReturn(1);
 
@@ -107,10 +90,10 @@ public class UserServiceTest {
 
 		assertNotNull(result);
 		assertEquals(result, user);
-		
+
 		verify(mockUserRepository, times(1)).updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()));
 	}
-	
+
 	/**
 	 * Run the User changePassword(userId, password) method test with success result.
 	 * 
@@ -119,19 +102,19 @@ public class UserServiceTest {
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
 	@SuppressWarnings("unchecked")
-	@Test(expected=Exception.class)
+	@Test(expected = Exception.class)
 	public void testChangePassword_Error() throws Exception {
 		String password = "newPa$$1";
-		
+
 		User user = UserFactory.createUser();
 		String storedToken = Utils.createStoredToken(user.getUserName(), password);
-		
+
 		Mockito.when(mockEntityService.findById(User.class, user.getId())).thenReturn(user);
 		PowerMockito.when(mockUserRepository.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenThrow(new Exception());
 
 		userServiceSpy.changePassword(user.getId(), password);
 	}
-	
+
 	/**
 	 * Run the Collection<User> findUsers(String,String) method test.
 	 * 
@@ -218,13 +201,13 @@ public class UserServiceTest {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
 		final int originalSubBalance = 2;
-		int nextSubPayment = Utils.getEpochSeconds()+24*60*60;
+		int nextSubPayment = Utils.getEpochSeconds() + 24 * 60 * 60;
 
 		userDto.setId(5);
 		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
-		userDto.setNextSubPayment(new Date(nextSubPayment*1000L+200000L));
+		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L + 200000L));
 		userDto.setPaymentEnabled(false);
 
 		User mockedUser = UserFactory.createUser();
@@ -234,7 +217,7 @@ public class UserServiceTest {
 		mockedUser.setDisplayName("");
 		mockedUser.setSubBalance(originalSubBalance);
 		mockedUser.setNextSubPayment(nextSubPayment);
-		mockedUser.setFreeTrialExpiredMillis(new Long(nextSubPayment*1000L));
+		mockedUser.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 		mockedUser.setPaymentEnabled(true);
 		mockedUser.setLastSuccessfulPaymentTimeMillis(0L);
 
@@ -512,7 +495,7 @@ public class UserServiceTest {
 		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
-	
+
 	/**
 	 * Run the User updateUser(UserDto) method test.
 	 * 
@@ -542,7 +525,7 @@ public class UserServiceTest {
 		mockedUser.setSubBalance(originalSubBalance);
 		mockedUser.setNextSubPayment(nextSubPayment);
 		mockedUser.setPaymentEnabled(false);
-		
+
 		mockedUser.setCurrentPaymentDetails(null);
 
 		Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
@@ -572,7 +555,7 @@ public class UserServiceTest {
 		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
-	
+
 	/**
 	 * Run the User updateUser(UserDto) method test.
 	 * 
@@ -580,7 +563,7 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	@Test(expected=ServiceException.class)
+	@Test(expected = ServiceException.class)
 	public void testUpdateUser_NextSubPaymentIsMoreThanOriginal_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
@@ -621,7 +604,7 @@ public class UserServiceTest {
 		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
-	
+
 	/**
 	 * Run the User updateUser(UserDto) method test.
 	 * 
@@ -629,7 +612,7 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	@Test(expected=ServiceException.class)
+	@Test(expected = ServiceException.class)
 	public void testUpdateUser_UserIsNull_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
@@ -662,7 +645,7 @@ public class UserServiceTest {
 		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
-	
+
 	/**
 	 * Run the User updateUser(UserDto) method test.
 	 * 
@@ -670,7 +653,7 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	@Test(expected=ServiceException.class)
+	@Test(expected = ServiceException.class)
 	public void testUpdateUser_OriginalPaymentEnabledIsFalse_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
@@ -696,7 +679,6 @@ public class UserServiceTest {
 		mockedUser.setNextSubPayment(nextSubPayment);
 		mockedUser.setLastSuccessfulPaymentTimeMillis(System.currentTimeMillis());
 		mockedUser.setCurrentPaymentDetails(migPaymentDetails);
-		
 
 		Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
 		final UserStatus mockedUserStatus = new UserStatus();
@@ -804,7 +786,7 @@ public class UserServiceTest {
 
 		SagePayService mockSagePayService = PowerMockito.mock(SagePayService.class);
 		PaymentPolicyService mockPaymentPolicyService = PowerMockito.mock(PaymentPolicyService.class);
-		CountryService mockCountryService = PowerMockito.mock(CountryService.class);
+		mockCountryService = PowerMockito.mock(CountryService.class);
 		mockCommunityResourceBundleMessageSource = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
 		DeviceTypeService mockDeviceTypeService = PowerMockito.mock(DeviceTypeService.class);
 		mockUserRepository = PowerMockito.mock(UserRepository.class);
@@ -819,7 +801,7 @@ public class UserServiceTest {
 		MigPaymentService mockMigPaymentService = PowerMockito.mock(MigPaymentService.class);
 		DrmService mockDrmService = PowerMockito.mock(DrmService.class);
 		FacebookService mockFacebookService = PowerMockito.mock(FacebookService.class);
-		CommunityService mockCommunityService = PowerMockito.mock(CommunityService.class);
+		mockCommunityService = PowerMockito.mock(CommunityService.class);
 		DeviceService mockDeviceService = PowerMockito.mock(DeviceService.class);
 		mockMigHttpService = PowerMockito.mock(MigHttpService.class);
 		PaymentService mockPaymentService = PowerMockito.mock(PaymentService.class);
@@ -930,9 +912,9 @@ public class UserServiceTest {
 	@Test
 	public void testResetSmsAccordingToLawAttributes_Success() {
 		User user = UserFactory.createUser();
-		
+
 		long epochMillis = 25L;
-		
+
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
@@ -943,17 +925,17 @@ public class UserServiceTest {
 		assertEquals(user, actualUser);
 		assertEquals(BigDecimal.ZERO, actualUser.getAmountOfMoneyToUserNotification());
 		assertEquals(epochMillis, actualUser.getLastSuccesfullPaymentSmsSendingTimestampMillis());
-		
+
 		Mockito.verify(mockUserRepository).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	@Test(expected=ServiceException.class)
+	@Test(expected = ServiceException.class)
 	public void testResetSmsAccordingToLawAttributes_Failure() {
 		User user = UserFactory.createUser();
-		
+
 		long epochMillis = 25L;
-		
+
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
@@ -964,7 +946,7 @@ public class UserServiceTest {
 		assertEquals(user, actualUser);
 		assertEquals(BigDecimal.ZERO, actualUser.getAmountOfMoneyToUserNotification());
 		assertEquals(epochMillis, actualUser.getLastSuccesfullPaymentSmsSendingTimestampMillis());
-		
+
 		Mockito.verify(mockUserRepository).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
 	}
 
@@ -1042,8 +1024,8 @@ public class UserServiceTest {
 
 		PaymentDetails mockedCurrentPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
 
-		PowerMockito.mockStatic(Utils.class); 
-		
+		PowerMockito.mockStatic(Utils.class);
+
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
 		PowerMockito.when(mockEntityService.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
@@ -1078,19 +1060,19 @@ public class UserServiceTest {
 
 		PaymentDetails actualCurrentPaymentDetails = actualUser.getCurrentPaymentDetails();
 
-		//assertEquals(epochMillis, actualCurrentPaymentDetails.getDisableTimestampMillis());
+		// assertEquals(epochMillis, actualCurrentPaymentDetails.getDisableTimestampMillis());
 		assertFalse(actualCurrentPaymentDetails.isActivated());
-		//assertEquals(reason, actualCurrentPaymentDetails.getDescriptionError());
+		// assertEquals(reason, actualCurrentPaymentDetails.getDescriptionError());
 
 		Mockito.verify(mockEntityService).updateEntity(mockedUser);
-		//Mockito.verify(mockEntityService).updateEntity(mockedCurrentPaymentDetails);
+		// Mockito.verify(mockEntityService).updateEntity(mockedCurrentPaymentDetails);
 		Mockito.verify(mockPaymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason);
 
 	}
-	
+
 	@Test()
 	public void testMakeSuccesfullPaymentFreeSMSRequest_successfullMigResponse_Success() throws Exception {
-		
+
 		final long epochMillis = 123L;
 		PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
@@ -1104,7 +1086,6 @@ public class UserServiceTest {
 
 		final Object[] succesfullPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(),
 				paymentPolicy.getShortCode() };
-
 
 		MigResponse succesfullMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
@@ -1121,13 +1102,13 @@ public class UserServiceTest {
 
 		assertNotNull(futureMigResponse);
 		assertTrue(futureMigResponse.get());
-		
+
 		Mockito.verify(mockMigHttpService).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
 	}
-	
-	@Test(expected=ServiceCheckedException.class)
+
+	@Test(expected = ServiceCheckedException.class)
 	public void testMakeSuccesfullPaymentFreeSMSRequest_failureMigResponse_Failure() throws Exception {
-		
+
 		PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
 		MigPaymentDetails migPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
@@ -1141,7 +1122,6 @@ public class UserServiceTest {
 		final Object[] succesfullPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(),
 				paymentPolicy.getShortCode() };
 
-
 		MigResponse failureMigResponse = MigResponseFactory.createFailMigResponse();
 
 		final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
@@ -1153,7 +1133,174 @@ public class UserServiceTest {
 
 		Mockito.verify(mockMigHttpService).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
 	}
-	
+
+	private Object[] testRegisterUser(final String storedToken, String communityName, final String deviceUID
+			, final String deviceTypeName, final String ipAddress
+			, final boolean notExistUser, boolean notDeviceType) throws Exception {
+		final User user = UserFactory.createUser();
+
+		final Integer countryId = 1;
+		final Integer operatorId = 1;
+		final DeviceType deviceType = new DeviceType();
+		deviceType.setName(deviceTypeName);
+		user.setDeviceType(deviceType);
+		final DeviceType noneDeviceType = new DeviceType();
+		noneDeviceType.setName(DeviceTypeDao.NONE);
+		final UserStatus userStatus = new UserStatus();
+		userStatus.setName(UserStatusDao.LIMITED);
+		user.setStatus(userStatus);
+		final Community community = CommunityFactory.createCommunity();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
+		final Map<Byte, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
+		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
+		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
+		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
+		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
+		userDeviceRegDetailsDto.setDEVICE_UID(deviceUID);
+		userDeviceRegDetailsDto.setIpAddress(ipAddress);
+
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.mockStatic(DeviceTypeDao.class);
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.mockStatic(UserGroupDao.class);
+		PowerMockito.mockStatic(OperatorDao.class);
+
+		Mockito.doNothing().when(mockEntityService).saveEntity(any(User.class));
+		Mockito.when(Utils.createStoredToken(anyString(), anyString())).thenReturn(storedToken);
+		Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
+		Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
+		Mockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(userGroupMap);
+		Mockito.when(OperatorDao.getMapAsIds()).thenReturn(operatorMap);
+		Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
+		Mockito.when(mockCommunityService.getCommunityByName(anyString())).thenReturn(community);
+		Mockito.when(mockCountryService.findIdByFullName(anyString())).thenReturn(countryId);
+		doAnswer(new Answer<AccountCheckDTO>() {
+			@Override
+			public AccountCheckDTO answer(InvocationOnMock invocation) throws Throwable {
+				AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
+				
+				if(notExistUser){
+					assertNull(user.getPotentialPromoCodePromotion());
+					assertNotNull(user.getUserGroup());
+					assertEquals(user.getUserGroup().getName(), userGroup.getName());
+					assertEquals(user.getCountry(), countryId.intValue());
+					assertEquals(user.getIpAddress(), userDeviceRegDetailsDto.getIpAddress());
+
+					long curTime = System.currentTimeMillis();
+					assertEquals(user.getFirstDeviceLoginMillis() - user.getFirstDeviceLoginMillis() % 100000, curTime - curTime % 100000);
+				}
+
+				accountCheckDTO.setUserName(user.getUserName());
+				accountCheckDTO.setUserToken(user.getToken());
+				accountCheckDTO.setDeviceType(user.getDeviceType().getName());
+				accountCheckDTO.setOperator(user.getOperator());
+				accountCheckDTO.setStatus(user.getStatus().getName());
+				accountCheckDTO.setDeviceUID(user.getDeviceUID());
+
+				return accountCheckDTO;
+			}
+		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		PowerMockito.doReturn(notExistUser ? null : user).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(anyString(), anyString());
+		whenNew(User.class).withNoArguments().thenReturn(user);
+
+		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test()
+	public void testRegisterUser_WOPotentialPromo_Success() throws Exception {
+		final String storedToken = "50c86945713ac8c870eafbc19980706b";
+		final String communityName = "chartsnow";
+		final String deviceUID = "imei_357841034540704";
+		final String deviceTypeName = "android";
+		final String ipAddress = "10.10.0.2";
+
+		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, false);
+		final Map<Integer, Operator> operatorMap = (Map<Integer, Operator>) testData[0];
+		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
+
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+
+		assertNotNull(accountCheckDTO);
+		assertEquals(accountCheckDTO.getUserToken(), storedToken);
+		assertEquals(accountCheckDTO.getUserName(), deviceUID);
+		assertEquals(accountCheckDTO.getDeviceType(), deviceTypeName);
+		Entry<Integer, Operator> entry = operatorMap.entrySet().iterator().next();
+		assertEquals(accountCheckDTO.getOperator(), entry.getKey());
+		assertEquals(accountCheckDTO.getDeviceUID(), deviceUID);
+		assertEquals(accountCheckDTO.getStatus(), UserStatusDao.LIMITED);
+
+		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
+		verify(mockCountryService, times(1)).findIdByFullName(anyString());
+		verify(mockEntityService, times(1)).saveEntity(any(User.class));
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		verifyStatic(times(1));
+		Utils.createStoredToken(anyString(), anyString());
+		verifyStatic(times(1));
+		DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
+		verifyStatic(times(1));
+		UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
+		verifyStatic(times(1));
+		OperatorDao.getMapAsIds();
+		verifyStatic(times(1));
+		UserStatusDao.getLimitedUserStatus();
+	}
+
+	@Test()
+	public void testRegisterUser_WOPotentialPromo_NoneDeviceType_Success() throws Exception {
+		String storedToken = "50c86945713ac8c870eafbc19980706b";
+		final String communityName = "chartsnow";
+		final String deviceUID = "imei_357841034540704";
+		final String deviceTypeName = "";
+		final String ipAddress = "10.10.0.2";
+
+		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, true);
+		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
+
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+
+		assertNotNull(accountCheckDTO);
+		assertEquals(accountCheckDTO.getDeviceType(), DeviceTypeDao.NONE);
+		
+		verifyStatic(times(1));
+		DeviceTypeDao.getNoneDeviceType();
+	}
+
+	@Test()
+	public void testRegisterUser_WOPotentialPromo_ExistUser_Success() throws Exception {
+		final String storedToken = "50c86945713ac8c870eafbc19980706b";
+		final String communityName = "chartsnow";
+		final String deviceUID = "imei_357841034540704";
+		final String deviceTypeName = "android";
+		final String ipAddress = "10.10.0.2";
+
+		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, false, false);
+		final User user = (User) testData[2];
+		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
+
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+
+		assertNotNull(accountCheckDTO);
+		assertEquals(accountCheckDTO.getUserToken(), user.getToken());
+		assertEquals(accountCheckDTO.getUserName(), user.getUserName());
+
+		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
+		verify(mockCountryService, times(0)).findIdByFullName(anyString());
+		verify(mockEntityService, times(0)).saveEntity(any(User.class));
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		verifyStatic(times(0));
+		Utils.createStoredToken(anyString(), anyString());
+		verifyStatic(times(1));
+		DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
+		verifyStatic(times(0));
+		UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
+		verifyStatic(times(0));
+		OperatorDao.getMapAsIds();
+		verifyStatic(times(0));
+		UserStatusDao.getLimitedUserStatus();
+	}
+
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
 		final ArgumentMatcher<Object[]> matcher = new ArgumentMatcher<Object[]>() {
 			@Override
@@ -1168,12 +1315,11 @@ public class UserServiceTest {
 				return true;
 			}
 		};
-			
 
 		Mockito.when(
 				mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq(upperCaseCommunityURL), Mockito.eq(messageCode), Mockito
 						.argThat(matcher), Mockito.any(Locale.class))).thenReturn(message);
-			
+
 	}
 
 	private void mockMakeFreeSMSRequest(final MigPaymentDetails currentMigPaymentDetails, String message, MigResponse migResponse) {

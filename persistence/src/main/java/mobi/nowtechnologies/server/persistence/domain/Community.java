@@ -1,19 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 
 
 /**
@@ -55,7 +46,7 @@ public class Community implements Serializable {
 		return this.id;
 	}
 
-	protected void setId(byte id) {
+	void setId(byte id) {
 		this.id = id;
 	}
 

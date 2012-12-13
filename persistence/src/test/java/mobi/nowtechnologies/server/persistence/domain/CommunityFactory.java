@@ -27,6 +27,7 @@ public class CommunityFactory
 	 */
 	public static Community createCommunity() {
 		Community community = new Community();
+		community.setId((byte)1);
 		community.setName("name");
 		community.setDisplayName("displayName");
 		community.setRewriteUrlParameter("nowtop40");
