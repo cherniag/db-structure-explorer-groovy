@@ -1,31 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
-import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
-import javax.xml.bind.annotation.XmlTransient;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
@@ -35,13 +9,21 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The persistent class for the tb_users database table.
@@ -184,6 +166,10 @@ public class User implements Serializable {
 	private String pin;
 
 	private String paymentType;
+
+    @Column(name = "activation_status")
+    @Enumerated(EnumType.STRING)
+    private ActivationStatus activationStatus;
 
 	/*
 	 * @deprecated Unused column
@@ -735,8 +721,7 @@ public class User implements Serializable {
 		AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
 		accountCheckDTO.setChartTimestamp(chart.getTimestamp());
 		accountCheckDTO.setChartItems(chart.getNumTracks());
-		accountCheckDTO.setNewsTimestamp(news.getTimestamp());
-		accountCheckDTO.setNewsItems(news.getNumEntries());
+        setNewsItemsAndTimestamp(news, accountCheckDTO);
 
 		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
 		if (null != getCurrentPaymentDetails())
@@ -772,7 +757,13 @@ public class User implements Serializable {
 		return accountCheckDTO;
 	}
 
-	// TODO Review this code after client refactoring
+    private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
+        if(news == null) return;
+        accountCheckDTO.setNewsTimestamp(news.getTimestamp());
+        accountCheckDTO.setNewsItems(news.getNumEntries());
+    }
+
+    // TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
 		if (null == paymentDetails)
 			return PaymentType.UNKNOWN;
@@ -915,7 +906,15 @@ public class User implements Serializable {
 		this.freeTrialStartedTimestampMillis = freeTrialStartedTimestampMillis;
 	}
 
-	@Override
+    public ActivationStatus getActivationStatus() {
+        return activationStatus;
+    }
+
+    public void setActivationStatus(ActivationStatus activationStatus) {
+        this.activationStatus = activationStatus;
+    }
+
+    @Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
 				+ ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId

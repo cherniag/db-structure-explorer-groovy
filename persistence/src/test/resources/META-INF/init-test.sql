@@ -8,7 +8,7 @@ insert into tb_country (i, name, fullName) values(2, 'UA', 'Ukraine');
 
 INSERT INTO tb_apps (model, jad, jar, appType) VALUES ('a8181'	  ,'nowmusic_CN.apk'	,''		   ,1), ('Nexus S'	  ,'nowmusic_CN.apk' ,''		   ,1), ('Wildfire S'	  ,'nowmusic_CN.apk'	,''		   ,1), ('S510e'	  ,'nowmusic_CN.apk'	,''		   ,1), ('Desire HD'	  ,'nowmusic_CN.apk'	,''		   ,1), ('GT-I9100'	  ,'nowmusic_CN.apk'	,''		   ,1), ('BlackBerry 8520','CN_nowmusic.jad'	,'CN_nowmusic.cod',2), ('BlackBerry 9300','CN_nowmusic.jad'	,'CN_nowmusic.cod',2), ('BlackBerry 9700','CN_nowmusic.jad'	,'CN_nowmusic.cod',2), ('BlackBerry 9780','CN_nowmusic.jad'	,'CN_nowmusic.cod',2);
 
-insert into tb_appVersionCountry (id, appVersion_id, country_id) values(1, 1, 2), (2, 2, 1);
+insert into tb_appVersionCountry (appVersion_id, country_id) values(1, 2), (2, 1);
 
 INSERT INTO `tb_genres` (`i`, `name`) VALUES (1,'Default');
 
