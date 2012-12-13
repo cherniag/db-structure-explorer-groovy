@@ -30,6 +30,7 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDtoFactory;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -1234,6 +1235,7 @@ public class UserServiceTest {
 		assertEquals(accountCheckDTO.getOperator(), entry.getKey());
 		assertEquals(accountCheckDTO.getDeviceUID(), deviceUID);
 		assertEquals(accountCheckDTO.getStatus(), UserStatusDao.LIMITED);
+		assertEquals(accountCheckDTO.getActivation(), ActivationStatus.REGISTERED);
 
 		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
 		verify(mockCountryService, times(1)).findIdByFullName(anyString());
