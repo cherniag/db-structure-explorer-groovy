@@ -85,6 +85,13 @@ public class AccountLog implements Serializable {
 	private int userId;
 	
 	private String promoCode;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "offerId", nullable = true)
+	private Offer offer;
+	
+	@Column(insertable=false, updatable=false)
+	private Integer offerId;
 
     public AccountLog() {
     }
@@ -168,6 +175,8 @@ public class AccountLog implements Serializable {
 		this.media = media;
 		if(media!=null){
 			relatedMediaUID = media.getI();
+		}else{
+			relatedMediaUID = null;
 		}
 	}
 
@@ -179,6 +188,8 @@ public class AccountLog implements Serializable {
 		this.submittedPayment = submittedPayment;
 		if (submittedPayment!=null){
 			this.relatedPaymentUID = submittedPayment.getI();
+		}else{
+			relatedPaymentUID = null;
 		}
 	}
 
@@ -213,11 +224,28 @@ public class AccountLog implements Serializable {
 		return paymentHistoryItemDto;
 	}
 
+	public Offer getOffer() {
+		return offer;
+	}
+
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+		if(offer!=null){
+			offerId = offer.getId();
+		}else {
+			offerId=null;
+		}
+	}
+
+	public Integer getOfferId() {
+		return offerId;
+	}
+
 	@Override
 	public String toString() {
 		return "AccountLog [id=" + id + ", userId=" + userId + ", relatedPaymentUID=" + relatedPaymentUID + ", transactionType=" + transactionType
 				+ ", balanceAfter=" + balanceAfter + ", logTimestamp=" + logTimestamp + ", promoCode=" + promoCode + ", relatedMediaUID=" + relatedMediaUID
-				+ "]";
+				+ ", offerId=" + offerId + "]";
 	}
 
 }

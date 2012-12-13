@@ -68,7 +68,7 @@
 							<!-- <li th:class="*{pathInfo}=='/chartItems' or *{pathInfo}=='/chartItems/new' or *{pathInfo}=='/chartItems/__' ? 'active'" th:if="*{userPrincipal}">
 								<a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#"  th:text="#{navbar.chart}">Chart <b class="caret"></b></a>
 							</li> -->
-							<li class="dropdown">
+							<li class="dropdown" th:if="*{userPrincipal}>
 			                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Chart<b class="caret"></b></a>
 			                    <ul class="dropdown-menu" id="dropdownCharts">
 			                      

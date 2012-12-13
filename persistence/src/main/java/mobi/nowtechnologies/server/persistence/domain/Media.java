@@ -115,6 +115,8 @@ public class Media extends Item implements Serializable {
 	private String iTunesUrl;
 
 	private int publishDate;
+	
+	private Long trackId;
 
 	public Media() {
 	}

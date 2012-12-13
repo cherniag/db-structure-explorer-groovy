@@ -4,7 +4,6 @@
 
 <div class="container">
 	<div class="marketingMaterials">		
-		<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/home.png" alt="" />
 	</div>
 	<div class="content">
 		<p class="bigSizeText"><s:message code="signup.page.h1" /></p>

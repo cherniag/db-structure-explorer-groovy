@@ -40,7 +40,7 @@
 				</div>
 				
 				<!--button-->
-				<p><input type="image" style="with:145px; height:42px;" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></p>		
+				<p><input type="image" style="with:145px; height:42px; border: none!important;" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></p>		
 				<!--button-->
 				<c:choose>
 					<c:when test="${result=='fail'}">

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.shared.dto.ItemDto;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ public class OfferDto {
 	@Pattern(regexp = ".{1,255}")
 	private String title;
 
+    @NotNull
 	private BigDecimal price;
 
 	private String currency;

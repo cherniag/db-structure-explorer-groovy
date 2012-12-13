@@ -1,0 +1,14 @@
+.buttonBox {width: auto; border: solid 1px #2e2e92; padding: 0px; margin-top: -1px; float: left; white-space: nowrap; background: #3152a7 url(../imgs/bgs/button.png) repeat-x left center; -moz-box-shadow: inset 0 0 3px #5959c8; -webkit-box-shadow: inset 0 0 3px #5959c8; box-shadow: inset 0 0 3px #5959c8; filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=2,MakeShadow=true,ShadowOpacity=0.10); -ms-filter: 'progid:DXImageTransform.Microsoft.Blur(PixelRadius=2,MakeShadow=true,ShadowOpacity=0.10)'; zoom: 1; }
+
+.buttonBox:hover  {border: solid 1px #9d446e; border-top: solid 1px #ee31a2; background: #d1137d url(../imgs/bgs/button_hover.png) repeat-x left center; -moz-box-shadow: inset 0 0 3px #c71f82; -webkit-box-shadow: inset 0 0 3px #c71f82; box-shadow: inset 0 0 3px #c71f82; filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=2,MakeShadow=true,ShadowOpacity=0.10); -ms-filter: 'progid:DXImageTransform.Microsoft.Blur(PixelRadius=2,MakeShadow=true,ShadowOpacity=0.10)'; zoom: 1; }
+
+.leftColumn {width: 436px; min-height: 350px; border: solid 1px #fff; background-color: #fff; margin: 21px 0 0 111px; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); opacity: 0.9; -moz-opacity: 0.9; -khtml-opacity: 0.9; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+
+ filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); opacity: 0.9; 
+
+
+.oneBox {width: 293px; height: 198px; float: left; margin-left: 23px; border: solid 1px #2e2e92; background: #016fbb url(../imgs/bgs/box.png) repeat-x left bottom; -moz-box-shadow: inset 0 0 3px #5959c8; -webkit-box-shadow: inset 0 0 3px #5959c8; box-shadow: inset 0 0 3px #5959c8; filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=3,MakeShadow=true,ShadowOpacity=0.30); -ms-filter: 'progid:DXImageTransform.Microsoft.Blur(PixelRadius=3,MakeShadow=true,ShadowOpacity=0.30)'; zoom: 1; color: #fff; }
+
+
+
+

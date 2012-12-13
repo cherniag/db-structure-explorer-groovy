@@ -1,0 +1,15 @@
+.pageWindow {display:none}
+#simplemodal-container a.modalCloseImg {background:url(../imgs/icons/close_white.png) no-repeat; width:23px; height:22px; display:inline; z-index:3200; cursor:pointer; position:absolute; top:40px; right:4px; }
+
+.defaultInputText {}
+.defaultInputTextActive { color: #9c9c9c; font-style: italic; }
+
+.simplemodal-container {
+	width: 458px;
+	width: 463px \0/;
+	height: 400px!important;
+	min-width: 458px;
+	min-width: 463px \0/; 
+	min-height: 400px!important;
+	overflow: hidden!important;
+}

@@ -358,7 +358,7 @@ input.accounts {
 	color: #ffffff;
 	display: block;
 	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
-	font-size: 1.2em;
+	font-size: 0.93em;
 	text-decoration: none;
 	font-weight: bold;
 	margin: 0px;
@@ -1150,4 +1150,8 @@ p.itemsTrackName {
 
 .shortInput {
 	width: 30%!important;
+}
+
+.footer img.brought {
+	display: none;
 }

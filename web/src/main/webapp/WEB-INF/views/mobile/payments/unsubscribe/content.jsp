@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>	
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 	<c:if test="${result == null}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
@@ -48,7 +48,7 @@
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
 				<div class="contentButton formButton rad5 rel" >
-					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
 					<span class="rightButtonArrowBlack">
 						&nbsp;
 					</span>

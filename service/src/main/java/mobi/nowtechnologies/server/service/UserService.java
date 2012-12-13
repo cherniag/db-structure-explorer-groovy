@@ -1,5 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -22,15 +31,13 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.web.*;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
+
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -41,15 +48,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
-import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 
 /**
  * UserService
@@ -622,7 +620,7 @@ public class UserService {
 		BigDecimal amount = paymentPolicy.getSubcost();
 		try {
 			Payment pendingPayment = paymentService.createPendingPayment(userId, userRegInfo.getEmail(), userRegInfo.getCommunityName(), 0,
-					PaymentType.CREDIT_CARD);
+					UserRegInfoServer.PaymentType.CREDIT_CARD);
 			String vendorTxCode = "DFRD" + getBigRandomInt();
 			pendingPayment.setTxType(TxType.DEFERRED.getCode());
 			pendingPayment.setInternalTxCode(vendorTxCode);
@@ -1027,7 +1025,7 @@ public class UserService {
 	public PaymentDetails createPaymentDetails(UserRegInfo userRegInfo, User user, Community community) {
 		PaymentDetailsDto dto = UserRegInfo.getPaymentDetailsDto(userRegInfo);
 
-		if (userRegInfo.getPaymentType().equals(PaymentType.PREMIUM_USER)) {
+		if (userRegInfo.getPaymentType().equals(UserRegInfoServer.PaymentType.PREMIUM_USER)) {
 			String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(dto.getPhoneNumber());
 			dto.setPhoneNumber(getMigPhoneNumber(dto.getOperator(), migPhone));
 		}
@@ -1453,6 +1451,7 @@ public class UserService {
 	 * 
 	 * @param phone
 	 *            - the phone number entered on the page
+	 * @param communityUrl
 	 * @param userId
 	 *            - id of the current logged user
 	 * @return
@@ -1762,16 +1761,16 @@ public class UserService {
 		
 		if(userDto.getNextSubPayment().after(originalNextSubPayment)){
 			if (user.isOnFreeTrial()) {
-				accountLogService.logAccountEvent(userId, originalSubBalance, 0, null, TransactionType.TRIAL_TOPUP);
+				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
 			}
 			else{ 
-				accountLogService.logAccountEvent(userId, originalSubBalance, 0, null, TransactionType.SUBSCRIPTION_CHARGE);
+				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
 			}
 		}
 
 		final int balanceAfter = userDto.getSubBalance();
 		if (originalSubBalance != balanceAfter){
-			accountLogService.logAccountEvent(userId, balanceAfter, 0, null, TransactionType.SUPPORT_TOPUP);
+			accountLogService.logAccountEvent(userId, balanceAfter, null, null, TransactionType.SUPPORT_TOPUP, null);
 		}
 
 		user = UserAsm.fromUserDto(userDto, user);

@@ -1,21 +1,8 @@
 package mobi.nowtechnologies.server.web.security.facebook;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +19,15 @@ import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -136,14 +132,13 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	}
 
 	private String getRedirectUri(HttpServletRequest request) {
-		if (redirectUrl == null)
-			redirectUrl = request.getRequestURL().toString();
+		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
 		
 		String registrationValue=request.getParameter(REGISTRATION);
 		
 		String redirectUri = redirectUrl;
 		if(registrationValue!=null) {
-			redirectUri +="?"+REGISTRATION+"="+registrationValue;
+			redirectUri =messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);;
 		}
 		return redirectUri;
 	}
@@ -159,10 +154,6 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	public void setPasswordRequestParameterName(String passwordRequestParameterName) {
 		this.passwordRequestParameterName = passwordRequestParameterName;
 	}
-
-	public void setRedirectUrl(String redirectUrl) {
-		this.redirectUrl = redirectUrl;
-	}
 	
 	public void setDefaultTargetUrlForNewUser(String defaultTargetUrlForNewUser) {
 		this.defaultTargetUrlForNewUser = defaultTargetUrlForNewUser;
@@ -175,4 +166,8 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
 }

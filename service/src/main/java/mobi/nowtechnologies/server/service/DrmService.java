@@ -229,8 +229,8 @@ public class DrmService {
 
 					byte balanceAfter = (byte) (intNewBalance);
 					Media relatedMedia = drm.getMedia();
-					accountLogService.logAccountEvent(userId, balanceAfter, relatedMedia.getI(), null, TransactionType.TRACK_PURCHASE);
-
+					accountLogService.logAccountEvent(userId, balanceAfter, relatedMedia, null, TransactionType.TRACK_PURCHASE, null);
+	
 					mediaService.logMediaEvent(userId, relatedMedia, MediaLogTypeDao.PURCHASE);
 
 					buyTrackDto.setStatus(BuyTrackDto.Status.OK);

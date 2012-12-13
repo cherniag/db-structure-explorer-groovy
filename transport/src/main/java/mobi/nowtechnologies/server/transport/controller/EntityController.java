@@ -20,7 +20,6 @@ import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
@@ -39,6 +38,9 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * EntityController
@@ -69,6 +71,7 @@ public class EntityController extends CommonController {
 	private Thread paymentRetryServiceThread;
 	private Thread weeklyUpdateServiceThread;
 	private PromotionService promoService;
+	private DeviceUserDataService deviceUserDataService;
 
 	public void setFacebookService(FacebookService facebookService) {
 		this.facebookService = facebookService;
@@ -93,6 +96,10 @@ public class EntityController extends CommonController {
 	@InitBinder(UserFacebookDetailsDto.NAME)
 	public void initUserFacebookDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
 		binder.setValidator(new UserFacebookDetailsDtoValidator());
+	}
+	
+	public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
+		this.deviceUserDataService = deviceUserDataService;
 	}
 
 	public void setWeeklyUpdateService(WeeklyUpdateService weeklyUpdateService) {
@@ -150,9 +157,9 @@ public class EntityController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
-	public ModelAndView accountCheck(
+	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -163,8 +170,29 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken) {
-		LOGGER.info("command processing started");
+			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken){
+	
+		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken);
+		if(isNotBlank(xtifyToken)){
+			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+		}
+		
+		return mav;
+	}
+
+	public ModelAndView accountCheck(
+			HttpServletRequest httpServletRequest,
+			String appVersion,
+			String communityName,
+			String apiVersion,
+			String userName,
+			String userToken,
+			String timestamp,
+			String deviceType,
+			String deviceUID,
+			String pushNotificationToken,
+			String iphoneToken) {
 		try {
 			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);
 
@@ -172,7 +200,7 @@ public class EntityController extends CommonController {
 				pushNotificationToken = iphoneToken;
 			
 			User user = null;
-			if (StringUtils.hasText(deviceUID))
+			if (org.springframework.util.StringUtils.hasText(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
@@ -617,7 +645,7 @@ public class EntityController extends CommonController {
 			UserCredentions credentions = facebookService.getUserCredentions(communityName, facebookToken);
 			final String creadentionsId = credentions.getId();
 			final String credentionsEmail = credentions.getEmail();
-			String userName = StringUtils.hasText(credentionsEmail) ? credentionsEmail : creadentionsId;
+			String userName = hasText(credentionsEmail) ? credentionsEmail : creadentionsId;
 
 			User user = userService.findByNameAndCommunity(userName, communityName);
 

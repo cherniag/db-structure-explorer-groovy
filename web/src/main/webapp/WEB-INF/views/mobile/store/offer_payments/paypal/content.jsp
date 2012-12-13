@@ -3,9 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img
+	<span class="logo"><img
 		src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"
-		alt="" /></a>
+		alt="" /></span>
 	<c:if test="${result==null||result=='fail'}">
 		<div class="buttonBox">
 			<span class="arrow">&nbsp;</span> <input class="button accounts"

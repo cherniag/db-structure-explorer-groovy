@@ -16,13 +16,14 @@
 		<property name="fileService" ref="service.FileService" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController" init-method="init">
+	<bean id="transport.EntityController" class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController" init-method="init">
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="drmService" ref="service.DrmService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="weeklyUpdateService" ref="service.WeeklyUpdateService" />
 		<property name="promoService" ref="service.PromotionService" />
 		<property name="facebookService" ref="service.FacebookService" />
+		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" />
@@ -49,7 +50,7 @@
 		<property name="migPaymentService" ref="service.migPaymentService" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.controller.VersionController">
+	<bean id="controller.VersionController" class="mobi.nowtechnologies.server.controller.VersionController">
 		<property name="versionService" ref="service.VersionService" />
 	</bean>
 

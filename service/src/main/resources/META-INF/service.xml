@@ -8,8 +8,26 @@ http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
+	<!-- Application properties     -->
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+	
+	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
+		<property name="deviceUserDataRepository" ref="deviceUserDataRepository"/>
+		<property name="userService" ref="service.UserService"/>
+		<property name="communityService" ref="service.communityService" />		
+	</bean>
+	
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
-		<property name="manifest" value="/META-INF/MANIFEST.MF" />
+		<property name="manifest" value="META-INF/MANIFEST.MF" />
 	</bean>
 	
 	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
@@ -281,7 +299,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
 	
-	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl">
+	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryHttpClientImpl">
 		<property name="trackRepoUrl"  value="${trackRepo.baseURL}" />
 	</bean>
 	

@@ -823,18 +823,20 @@ div.inputAreaBox  {
   .fieldWidth {
  	width: 100%!important;
  }
- 
- #cookeiAlertMessage {
-	position:absolute;
-	width:100%;
-	font-size:0.8em;
-	text-align:center;
-	height:1.8em;
-	line-height:1.8em;
-	background:#acd2df;
-	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50); opacity: 0.5; -moz-opacity: 0.5; -khtml-opacity: 0.5;
-	z-index:10000;
+
+span.cookies_style_close {
+	float: right;
 }
+
+.cookies_style2 {
+	font-size: 0.8em;
+	width: 100%;
+	text-align: center;
+	height: 1.8em;
+	line-height: 1.8em;
+	padding-bottom: 5px;
+}
+
 #cookeiAlertMessageCloseBtn {
 	cursor: pointer;
 }
@@ -1063,10 +1065,12 @@ p.itemsTrackName {
 	clear: both;
 }
 
+/*Cookie Conteiner*/
+
 .cookie_conteiner {
 	position: absolute;
 	margin: 0;
-	width: 98%;
+	width: 100%;
 	z-index: 1000;
 }
 	
@@ -1081,7 +1085,6 @@ p.itemsTrackName {
 }
 
 .center {
-	overflow:hidden;
 	border: 1px solid #dad8cd;
 	line-height: 1.8em;
 	background: #fff8d0;
@@ -1139,4 +1142,8 @@ p.itemsTrackName {
 
 .albumPriceDetails {
 	margin-right: 0!important;
+}
+
+.footer img.brought {
+	display: none;
 }

@@ -18,7 +18,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:META-INF/service.xml;classpath:META-INF/dao.xml;classpath:META-INF/shared.xml;/WEB-INF/security.xml;</param-value>
+		<param-value>classpath:META-INF/service.xml;classpath:META-INF/dao.xml;classpath:META-INF/shared.xml;classpath:security.xml;</param-value>
 	</context-param>
 	<context-param>
 		<param-name>webAppRootKey</param-name>
@@ -72,6 +72,11 @@
 	<servlet>
 		<servlet-name>web</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:web-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
 	</servlet>
 	
 	<servlet-mapping>

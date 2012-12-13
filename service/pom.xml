@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.0</version>
+<!-- 			<version>2.0</version> -->
 		</dependency>
 		
 		<!-- Social -->	
@@ -100,5 +100,4 @@
 		
 	</dependencies>
 	
-
 </project>

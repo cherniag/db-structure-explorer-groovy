@@ -1,9 +1,10 @@
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 	<c:if test="${result==null||result=='fail'}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>	
@@ -40,7 +41,7 @@
 				</div>
 				
 				<!--button-->
-				<p><input type="image" style="with:145px; height:42px;" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></p>		
+				<p><input type="image" style="with:145px; height:42px; border: none!important;" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></p>		
 				<!--button-->
 				<c:choose>
 					<c:when test="${result=='fail'}">

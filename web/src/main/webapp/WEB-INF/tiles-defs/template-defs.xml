@@ -49,6 +49,7 @@
    	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/header.jsp"/>
 	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/content.jsp"/>
+	  <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/restore_password_confirmation/footer.jsp"/>
   </definition>
   <!-- END Unauthenticated pages -->
   
@@ -138,7 +139,7 @@
 		<definition name="payments_inapp/creditcard_details_fail" template="/WEB-INF/templates/ajaxTemplate.jsp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/creditcard_details_fail/content.jsp"/>
 		</definition>
-		<definition name="payments_inapp/one_click_subscription_successful" extends="payments"  preparer="web.CommunityViewPreparer">
+		<definition name="payments_inapp/one_click_subscription_successful" extends="payments_inapp"  preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/one_click_subscription_successful/content.jsp"/>
 		</definition>
 		<definition name="payments_inapp/paypal" extends="payments_inapp" preparer="web.CommunityViewPreparer">

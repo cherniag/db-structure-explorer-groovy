@@ -1,19 +1,23 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.dao.AccountLogDao;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
+import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.Offer;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -34,13 +38,13 @@ public class AccountLogService {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
-	public AccountLog logAccountEvent(int userId, int balanceAfter, int relatedMediaUID, SubmittedPayment relatedPayment, TransactionType accountLogType) {
+	public AccountLog logAccountEvent(int userId, int balanceAfter, Media relatedMedia, SubmittedPayment relatedPayment, TransactionType accountLogType, Offer offer) {
 		if (accountLogType == null)
 			throw new PersistenceException("The parameter accountLogType is null");
-		LOGGER.debug("input parameters userId, balanceAfter, relatedPayment, relatedPaymentUID, accountLogType: [{}], [{}], [{}], [{}], [{}]", new Object[] { userId,
-				balanceAfter, relatedMediaUID, relatedPayment, accountLogType });
+		LOGGER.debug("input parameters userId, balanceAfter, relatedMedia, relatedPaymentUID, accountLogType, offer: [{}], [{}], [{}], [{}], [{}], [{}]", new Object[] { userId,
+				balanceAfter, relatedMedia, relatedPayment, accountLogType, offer });
 
-		AccountLog accountLog = accountLogDao.logAccountEvent(userId, balanceAfter, relatedMediaUID, relatedPayment, accountLogType);
+		AccountLog accountLog = accountLogDao.logAccountEvent(userId, balanceAfter, relatedMedia, relatedPayment, accountLogType, offer);
 
 		LOGGER.debug("Output parameter accountLog=[{}]", accountLog);
 		return accountLog;
