@@ -1,16 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import javax.persistence.*;
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 
 /**
@@ -54,8 +45,8 @@ public class UserGroup implements Serializable {
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
 
-	@Column(name="news", insertable=false,updatable=false)
-	private byte newsId;
+	@Column(name="news", insertable=false,updatable=false, columnDefinition="tinyint(4)")
+	private Integer newsId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="news")
@@ -112,11 +103,11 @@ public class UserGroup implements Serializable {
 
 	public void setNews(News news) {
 		this.news = news;
-		newsId = news.getI();
+		newsId = new Integer(news.getI());
 	}
 
 	public byte getNewsId() {
-		return newsId;
+		return newsId.byteValue();
 	}
 
 	public DrmPolicy getDrmPolicy() {
