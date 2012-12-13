@@ -1,14 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
-
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -31,14 +22,16 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.*;
+import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
-
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -49,6 +42,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
+
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 
 /**
  * UserService

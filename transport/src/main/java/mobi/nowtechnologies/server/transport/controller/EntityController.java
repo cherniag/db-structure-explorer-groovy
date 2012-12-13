@@ -160,7 +160,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/ACC_CHECK_O2", "*/ACC_CHECK_O2"})
+    @RequestMapping(method = RequestMethod.POST, value = {"/O2/3.6/ACC_CHECK", "*/O2/3.6/ACC_CHECK"})
     public ModelAndView accountCheckForO2Client(
             HttpServletRequest httpServletRequest,
             @RequestParam("APP_VERSION") String appVersion,
@@ -193,7 +193,7 @@ public class EntityController extends CommonController {
         return (AccountCheckDTO) resp.getObject()[0];
     }
 
-    // @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
+    @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
 	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
