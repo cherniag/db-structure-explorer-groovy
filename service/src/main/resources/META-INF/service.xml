@@ -299,7 +299,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
 	
-	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.client.trackrepo.impl.TrackRepositoryHttpClientImpl">
+	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl">
 		<property name="trackRepoUrl"  value="${trackRepo.baseURL}" />
 	</bean>
 	
