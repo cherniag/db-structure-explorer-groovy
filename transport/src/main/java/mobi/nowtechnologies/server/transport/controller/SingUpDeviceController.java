@@ -55,7 +55,7 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto);
+			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
 			User user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
@@ -69,7 +69,8 @@ public class SingUpDeviceController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
+			"*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
 	public ModelAndView signUpDevice_V3GT(HttpServletRequest request,
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
 		LOGGER.info("command processing started");
@@ -85,7 +86,35 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto);
+			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
+
+			final Object[] objects = new Object[] { accountCheckDTO };
+			proccessRememberMeToken(objects);
+			
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+
+		} finally {
+			LOGGER.info("command processing finished");
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = {"/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
+	public ModelAndView signUpDevice_O2(HttpServletRequest request,
+			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+		LOGGER.info("command processing started");
+		try {
+			if (result.hasErrors()) {
+				List<ObjectError> objectErrors = result.getAllErrors();
+
+				for (ObjectError objectError : objectErrors) {
+					throw ValidationException.getInstance(objectError.getDefaultMessage());
+				}
+			}
+
+			String remoteAddr = Utils.getIpFromRequest(request);
+			userDeviceDetailsDto.setIpAddress(remoteAddr);
+
+			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);

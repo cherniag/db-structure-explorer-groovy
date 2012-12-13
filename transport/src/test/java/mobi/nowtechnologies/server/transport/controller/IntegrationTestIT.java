@@ -1,5 +1,17 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
@@ -14,6 +26,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
+
 import org.apache.http.NameValuePair;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,17 +45,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
-
 /**
  * The class <code>EntityControllerTest</code> contains tests for the class
  * <code>{@link EntityController}</code>.
@@ -53,7 +55,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-		"file:src/main/webapp/WEB-INF/transport-servlet.xml",
+		"classpath:transport-servlet-test.xml",
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
@@ -3498,5 +3500,35 @@ public class IntegrationTestIT {
 		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
 
 		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+	}
+	
+	@Test
+	public void testSING_UP_DEVICE_O2() throws Exception {
+		String userName = "zzz@z.com";
+		String apiVersion = "V3.6";
+		String communityName = "Now Music";
+		String appVersion = "CNBETA";
+
+		String deviceType = UserRegInfo.DeviceType.ANDROID;
+
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.addHeader("Content-Type", "text/xml");
+		httpServletRequest.setRemoteAddr("2.24.0.1");
+		httpServletRequest.setPathInfo("/O2/3.6/SIGN_UP_DEVICE");
+
+		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
+		httpServletRequest.addParameter("DEVICE_UID", userName);
+		httpServletRequest.addParameter("API_VERSION", apiVersion);
+		httpServletRequest.addParameter("APP_VERSION", appVersion);
+		httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+		String contentAsString = mockHttpServletResponse.getContentAsString();
+
+		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
+		assertNotNull(storedToken);
 	}
 }

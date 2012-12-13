@@ -37,7 +37,7 @@ public class GetChartController extends CommonController{
 		this.chartService = chartService;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART", "*/{apiVersion:3\\.4\\.0}/GET_CHART"})
 	public ModelAndView getChart(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -95,7 +95,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_CHART"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_CHART", "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_CHART"})
 	public ModelAndView getChart_WithChanelSplintered(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,

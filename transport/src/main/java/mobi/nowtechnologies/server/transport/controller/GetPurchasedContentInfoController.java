@@ -30,7 +30,8 @@ public class GetPurchasedContentInfoController extends CommonController {
 		this.drmService = drmService;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO", "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO", "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
+			"*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO", "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO"})
 	public ModelAndView getPurchasedContentInfo(
 				HttpServletRequest request,
 				@RequestParam("APP_VERSION") String appVersion,

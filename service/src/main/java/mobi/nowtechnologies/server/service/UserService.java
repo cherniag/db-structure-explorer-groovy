@@ -1614,7 +1614,7 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto) {
+	public AccountCheckDTO registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
 		LOGGER.debug("input parameters userDeviceRegDetailsDto: [{}]", userDeviceRegDetailsDto);
 
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
@@ -1646,7 +1646,7 @@ public class UserService {
 			entityService.saveEntity(user);
 		}
 
-		if (user.getNextSubPayment() == 0) {
+		if (createPotentialPromo && user.getNextSubPayment() == 0) {
 			String communityUri = community.getRewriteUrlParameter().toLowerCase();
 			String deviceModel = user.getDeviceModel();
 			final String promotionCode;

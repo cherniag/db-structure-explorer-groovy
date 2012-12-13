@@ -55,7 +55,7 @@ public class Community implements Serializable {
 		return this.id;
 	}
 
-	protected void setId(byte id) {
+	void setId(byte id) {
 		this.id = id;
 	}
 
