@@ -262,6 +262,16 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 	
+	<bean id="smsNotificationAspect" class="mobi.nowtechnologies.server.service.aop.SMSNotification">
+		<property name="migService" ref="service.MigService" />
+		<property name="userService" ref="service.UserService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="paymentsUrl" value="${payments.url}" />
+		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
+		<property name="tinyUrlService" value="${tinyurl.service}" />
+		<property name="availableCommunities" value="${sms.available.communities}" />
+	</bean>
+	
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>

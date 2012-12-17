@@ -1,12 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.enums.UserType;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.shared.enums.UserType;
 
 
 /**
@@ -54,6 +52,12 @@ public class UserFactory
 	 * @generatedBy CodePro at 21.08.12 10:58
 	 */
 	public static User createUser() {
+		UserStatus userStatus = new UserStatus();
+		userStatus.setName(UserStatusDao.SUBSCRIBED);
+
+		Community community = CommunityFactory.createCommunity();
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
 		
 		User user = new User();
 		
@@ -98,12 +102,12 @@ public class UserFactory
 		user.setPotentialPromoCodePromotion(null);
 		user.setPotentialPromotion(null);
 		user.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-		user.setStatus(null);
+		user.setStatus(userStatus);
 		user.setSubBalance((byte) 5);
 		user.setTempToken("NONE");
 		user.setTitle("Mr");
 		user.setToken("26b34b31237dfffb4caeb9518ad1ce02");
-		user.setUserGroup(null);
+		user.setUserGroup(userGroup);
 		user.setUserName("test_getListOfUsersForUpdate@rbt.com");
 		user.setUserType(UserType.NORMAL);
 		
