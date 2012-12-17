@@ -94,10 +94,10 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(*))")
 	protected void createdCreditCardPaymentDetails() {}
 	
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(*)")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(*))")
 	protected void createdPayPalPaymentDetails() {}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(*)")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(*))")
 	protected void createdMigPaymentDetails() {}
 	
 	/**
