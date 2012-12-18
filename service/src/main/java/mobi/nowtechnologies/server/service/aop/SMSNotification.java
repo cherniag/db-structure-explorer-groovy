@@ -91,13 +91,13 @@ public class SMSNotification {
 		return object;
 	}
 	
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(*))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
 	protected void createdCreditCardPaymentDetails() {}
 	
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(*))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(..))")
 	protected void createdPayPalPaymentDetails() {}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(*))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(..))")
 	protected void createdMigPaymentDetails() {}
 	
 	/**
@@ -105,10 +105,10 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("createdCreditCardPaymentDetails() || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
+	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
-		Integer userId = (Integer) joinPoint.getArgs()[2];
+		Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
 		try{
 			User user = userService.findById(userId);
 			sendUnsubscribePotentialSMS(user);
@@ -119,20 +119,20 @@ public class SMSNotification {
 	}
 	
 	protected void sendLimitedStatusSMS(User user) {
-		if(!user.getStatus().getName().equals(UserStatus.LIMITED.name()))
+		if(user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
 			return;
 			
 		sendSMSWithUrl(user, "sms.limited.status.text", paymentsUrl);
 	}
 	
 	protected void sendUnsubscribePotentialSMS(User user) {
-		if(user.getCurrentPaymentDetails() == null)
+		if(user == null || user.getCurrentPaymentDetails() == null)
 			return;
 				
 		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", unsubscribeUrl);
 	}
 	
-	private void sendSMSWithUrl(User user, String msgCode, String baseUrl){
+	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl){
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		if(!availableCommunities.contains(communityUrl))
