@@ -24,14 +24,19 @@ public class UITS {
 		
 		String privKeyFile = args[0];
 		String inputFile  = args[1];
-		String outputFile = args[2];
-		String dataFile = null;
+		String audioFile = args[2];
+		String headerFile = null;
+		String encodedFile = null;
+		
 		if (args.length >= 4)
-			dataFile = args[3];
+			headerFile = args[3];
+		
+		if (args.length >= 5)
+			encodedFile = args[4];
 		
 		boolean encrypt = true;
-		if (args.length >= 5) {
-			if ("no".equalsIgnoreCase(args[4])) {
+		if (args.length >= 6) {
+			if ("no".equalsIgnoreCase(args[5])) {
 				encrypt = false;
 			}
 		}
@@ -75,15 +80,16 @@ public class UITS {
 
 		try {
 			InputStream in = new FileInputStream(inputFile);
-			OutputStream out = new FileOutputStream(outputFile);
+			OutputStream out = new FileOutputStream(audioFile);
 			if (inputFile.endsWith(".mp3")  || inputFile.endsWith(".MP3")) {
 				MP3Manager mp3Manager = new MP3Manager();
 				String hash = mp3Manager.mp3GetMediaHash(inputFile);
 				mp3Manager.process(in, out, params, hash);
 			} else { // Assume AAC.....
-				OutputStream header = new FileOutputStream(dataFile);
+				OutputStream header = new FileOutputStream(headerFile);
+				OutputStream encoded = new FileOutputStream(encodedFile);
 				MP4Manager mp4manager = new MP4Manager();
-				mp4manager.process(in, out, header, params, null, encrypt);
+				mp4manager.process(in, out, header, encoded, params, null, encrypt);
 			}
 			in.close();
 			out.close();
