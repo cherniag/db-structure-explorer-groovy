@@ -77,7 +77,7 @@
 					$("#resendInfoBlock").hide();
 					$("#ajaxLoading").show();
 					$.ajax({
-						url:"payments/psms.html",
+						url:"payments/pin.html",
 						type:"post",
 						data: $("form#pSmsDto").serialize()
 					}).done(function(e) {
