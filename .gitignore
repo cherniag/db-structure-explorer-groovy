@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-.idea/
-*.iml
-=======
 *.iml
 .idea/
->>>>>>> refs/remotes/origin/Xtify
 .svn/
 .settings/
 .classpath
 .project
 target/
+.springBeans
