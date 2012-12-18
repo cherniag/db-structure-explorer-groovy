@@ -99,6 +99,9 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 		if (rememberMeCookie == null) {
 			rememberMeCookie = super.extractRememberMeCookie(httpServletRequest);
 		}
+        if(rememberMeCookie == null){
+            rememberMeCookie = httpServletRequest.getParameter(getCookieName());
+        }
 		return rememberMeCookie;
 	}
 
