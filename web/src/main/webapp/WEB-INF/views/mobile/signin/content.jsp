@@ -5,7 +5,7 @@
 <div class="container">		
 	<div class="content">
 		
-		<p class="firstPar"><s:message code="signin.form.link.facebook.signin" /></p>
+		<p class="firstPar"><s:message code="signin.form.header.facebook.signin" /></p>
 		<div class="contentButton facebookLoginButton rad10" >
 			<a href="facebook_signin"><s:message code="signin.form.link.facebook.signin" /></a>
 		</div>
