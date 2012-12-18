@@ -1,10 +1,6 @@
 package mobi.nowtechnologies.java.server.uits;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
@@ -33,7 +29,7 @@ public class MP4Manager {
 			new MP4_SUBTYPES("M4VP", "Apple iPhone (.M4V) File"), new MP4_SUBTYPES("mp42", "MP4 v2 [ISO 14496-14]") };
 
 	@SuppressWarnings("unused")
-	public int process(InputStream audioFile, OutputStream data, OutputStream header, UitsParameters params, String md5, boolean encrypt) {
+	public int process(InputStream audioFile, OutputStream data, OutputStream header, OutputStream encoded, UitsParameters params, String md5, boolean encrypt) {
 
 		try {
 			Atom ah = null;
@@ -78,13 +74,15 @@ public class MP4Manager {
 			long moovOffset = (atomSize + ftypAtom.size + moovAtom.size) - mdatAtom.pos;
 			fixMoovAtom(moovAtom, (int) moovOffset);
 
+			ByteArrayOutputStream headerData = new ByteArrayOutputStream();
+			
 			if (encrypt) {
 				// Some garbage
-				header.write('G');
-				header.write('G');
+				headerData.write('G');
+				headerData.write('G');
 			}
-			header.write(ftypAtom.buffer);
-			header.write(moovAtom.buffer);
+			headerData.write(ftypAtom.buffer);
+			headerData.write(moovAtom.buffer);
 			// System.out.println("UUID atom size " + atomSize);
 			byte[] b = new byte[4];
 			b[3] = (byte) (atomSize & 0xff);
@@ -95,20 +93,25 @@ public class MP4Manager {
 			atomSize >>= 8;
 			b[0] = (byte) (atomSize & 0xff);
 			atomSize >>= 8;
-			header.write(b);
-			header.write("uuid".getBytes("ISO-8859-1"));
+			headerData.write(b);
+			headerData.write("uuid".getBytes("ISO-8859-1"));
 
 			/* now write the UUID as hex */
 			UUID uuid = UUID.fromString(uitsUUIDString);
 
-			header.write(UitsAudioFileManager.toBytes(uuid));
+			headerData.write(UitsAudioFileManager.toBytes(uuid));
 
-			header.write(uitsPayloadXML.getBytes("ISO-8859-1"));
+			headerData.write(uitsPayloadXML.getBytes("ISO-8859-1"));
 
-			header.write(Arrays.copyOfRange(mdatAtom.buffer, 0, 2048));
+			headerData.write(Arrays.copyOfRange(mdatAtom.buffer, 0, 2048));
 
 			// Split the file
+			header.write(headerData.toByteArray());
+			
 			data.write(Arrays.copyOfRange(mdatAtom.buffer, 2048, (int) mdatAtom.size));
+			
+			encoded.write(headerData.toByteArray());
+			encoded.write(Arrays.copyOfRange(mdatAtom.buffer, 2048, (int) mdatAtom.size));
 			return 1;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

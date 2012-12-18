@@ -124,24 +124,6 @@ public class WeeklyUpdateService implements Runnable {
 
 			LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
 					new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
-
-//			PaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
-//
-//			if (currentActivePaymentDetails!=null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
-//				String communityName = userDao.getCommunityNameByUserGroup(user.getUserGroupId());
-//				PaymentPolicy paymentPolicy = userDao.getPaymentPolicyForUser(communityName, UserRegInfo.PaymentType.PREMIUM_USER, user.getOperator());
-//
-//				Locale locale = null;
-//				Community community = CommunityDao.getMapAsNames().get(communityName);
-//
-//				String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), AppConstants.SMS_WEEK_REMINDER_MSG, new Object[] { community.getDisplayName(),
-//						paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, locale);
-//
-//				migHttpService.makeFreeSMSRequest(((MigPaymentDetails) currentActivePaymentDetails).getMigPhoneNumber(), message);
-//
-//				LOGGER.info("The freeSms sent to user {} succesfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
-//						new Object[] { user, nextSubPayment, status, paymentStatus, subBalance });
-//			}
 		}
 	}
 }
