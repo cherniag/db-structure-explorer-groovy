@@ -16,10 +16,10 @@ public class DeviceUserData {
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
 	
-	@Column(name="xtify_token", nullable=false, unique = true)
+	@Column(name="xtify_token", nullable=false, unique = true, columnDefinition="char(255)")
 	private String xtifyToken;
 	
-	@Column(name="device_uid", nullable=false)
+	@Column(name="device_uid", nullable=false, columnDefinition="char(255)")
 	private String deviceUid;
 
     public DeviceUserData() {

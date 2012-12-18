@@ -99,7 +99,7 @@ public class Community implements Serializable {
 		return rewriteUrlParameter;
 	}
 
-	protected void setRewriteUrlParameter(String rewriteUrlParameter) {
+	public void setRewriteUrlParameter(String rewriteUrlParameter) {
 		this.rewriteUrlParameter = rewriteUrlParameter;
 	}
 	

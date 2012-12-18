@@ -167,7 +167,4 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 		this.messageSource = messageSource;
 	}
 
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
-    }
 }

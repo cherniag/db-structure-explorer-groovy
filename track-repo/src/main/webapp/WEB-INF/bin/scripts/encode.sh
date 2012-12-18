@@ -72,6 +72,7 @@ cd ${WORK_DIR}
 mkdir -p files/image
 mkdir -p files/header
 mkdir -p files/audio
+mkdir -p files/encoded
 mkdir -p files/purchased
 echo Processing ISRC ${ISRC}
 echo "***** Generating thumbnails *****"
@@ -152,19 +153,21 @@ echo "***** Generating Mobile Audio *****"
 
 	dmg --input-file "${INPUT}" --mp4-chunk-span 900 --overwrite --audio-only --repair-all --audio-encoder aac --audio-cbr-rate 48 --aac-mode he-aacv1 --output-file "${ISRC}_48.m4a" --input-speech false --clipmode prolimit|| { echo "command failed"; exit 1; } 
 	${NERO_DIR}/neroAacTag "${ISRC}_48.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" "-meta:isrc=${ISRC}" "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 		
-	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_48.m4a ${ISRC}_48.aud  ${ISRC}_48.hdr|| { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_48.m4a ${ISRC}_48.aud  ${ISRC}_48.hdr, ${ISRC}_48.enc || { echo "command failed"; exit 1; }
 
 	
 	dmg --input-file "${INPUT}" --mp4-chunk-span 900 --overwrite --audio-only --repair-all --audio-encoder aac --audio-cbr-rate 96 --aac-mode he-aacv1 --output-file "${ISRC}_96.m4a" --input-speech false --clipmode prolimit|| { echo "command failed"; exit 1; } 
 	${NERO_DIR}/neroAacTag "${ISRC}_96.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" "-meta:isrc=${ISRC}" "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 
 
-	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_96.m4a ${ISRC}_96.aud   ${ISRC}_96.hdr || { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_96.m4a ${ISRC}_96.aud   ${ISRC}_96.hdr, ${ISRC}_96.enc || { echo "command failed"; exit 1; }
 #	mv ${ISRC}_96.m4a.u ${ISRC}_96.m4a  || { echo "command failed"; exit 1; } 
 
 	mv "${ISRC}_48.hdr" files/header|| { echo "command failed"; exit 1; } 
 	mv "${ISRC}_48.aud" files/audio|| { echo "command failed"; exit 1; } 
+	mv "${ISRC}_48.enc" files/encoded|| { echo "command failed"; exit 1; }
 	mv "${ISRC}_96.hdr" files/header|| { echo "command failed"; exit 1; } 
 	mv "${ISRC}_96.aud" files/audio|| { echo "command failed"; exit 1; } 
+	mv "${ISRC}_96.enc" files/encoded|| { echo "command failed"; exit 1; } 
 
 echo "***** Generating Mobile Preview Audio *****"
 	if [ "$PREVIEW_FILE" = "" ]; then
@@ -177,10 +180,11 @@ echo "***** Generating Mobile Preview Audio *****"
 	fi
 	${NERO_DIR}/neroAacTag "${ISRC}P.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" -meta:isrc=${ISRC} "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 
 	
-	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} "${ISRC}P.m4a" ${ISRC}P.aud  ${ISRC}P.hdr || { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.5.5-SNAPSHOT.jar ${PRIVATE_KEY} "${ISRC}P.m4a" ${ISRC}P.aud ${ISRC}P.hdr ${ISRC}P.enc || { echo "command failed"; exit 1; }
 
 	mv "${ISRC}P.hdr" files/header/|| { echo "command failed"; exit 1; } 
-	mv "${ISRC}P.aud" files/audio/|| { echo "command failed"; exit 1; } 
+	mv "${ISRC}P.aud" files/audio/|| { echo "command failed"; exit 1; }
+	mv "${ISRC}P.enc" files/encoded|| { echo "command failed"; exit 1; }  
 
 # Cleaning: don't clean ! Files are reused to compute the MD5 hash
 	#rm -f ${ISRC}P.m4a
@@ -200,10 +204,16 @@ echo "***** Generating Mobile Preview Audio *****"
 	done
 	
 	curl -X PUT -T files/audio/${ISRC}${BIT_RATE}.aud  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/${ISRC}.aud
+	curl -X PUT -T files/encoded/${ISRC}${BIT_RATE}.enc  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/${ISRC}.enc
 
 	for i in `ls files/image`
 	do
 		curl -X PUT -T files/image/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
+	done
+	
+	for i in `ls files/encoded`
+	do
+		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
 	done
 	
 	for i in `ls files/header`
@@ -224,5 +234,6 @@ echo "***** Generating Mobile Preview Audio *****"
 	mv files/image/* ${PUBLISH_DIR}/image|| { echo "command failed"; exit 1; } 
 	mv files/header/* ${PUBLISH_DIR}/header|| { echo "command failed"; exit 1; } 
 	mv files/audio/* ${PUBLISH_DIR}/audio|| { echo "command failed"; exit 1; } 
+	mv files/encoded/* ${PUBLISH_DIR}/encoded|| { echo "command failed"; exit 1; } 
 	mv files/purchased/* ${PUBLISH_DIR}/purchased|| { echo "command failed"; exit 1; } 
 	

@@ -46,12 +46,19 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		</property>
 	</bean>
 	
-	<bean id="service.WeeklyUpdateService"
-		class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
-		<property name="userDao" ref="persistence.UserDao" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="stopped" value="true" />
-	</bean>
+	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject">
+     	    <bean class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
+				<property name="userDao" ref="persistence.UserDao" />
+				<property name="entityDao" ref="persistence.EntityDao" />
+				<property name="migHttpService" ref="service.migHttpService" />
+				<property name="stopped" value="true" />
+			</bean>
+     	</property>
+  	</bean>
+  	
+	<bean id="service.SpyPaymentDetailsService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.PaymentDetailsService"/>
+  	</bean>
 
 </beans>

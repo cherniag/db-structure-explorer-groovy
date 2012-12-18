@@ -88,7 +88,6 @@
         <constructor-arg name="defaultFilterProcessesUrl"
                          value="/facebook_signin" />
         <property name="rememberMeServices" ref="nowTechBasedRememberMeServices" />
-        <property name="redirectUrl" value="${facebook.connect.fbRedirectUrlOnWebPortal}" />
         <property name="loginRequestParameterName" value="email" />
         <property name="passwordRequestParameterName" value="token" />
         <property name="authenticationManager" ref="authenticationManager" />
