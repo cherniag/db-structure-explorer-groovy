@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 /**
  * AccountCheck
@@ -54,7 +53,6 @@ public class AccountCheckDTO {
 	private PaymentDetailsStatus lastPaymentStatus;
 	
 	private int nextSubPaymentSeconds;
-    private ActivationStatus activation;
 
 	public String getDisplayName() {
 		return displayName;
@@ -302,15 +300,7 @@ public class AccountCheckDTO {
 		this.nextSubPaymentSeconds = nextSubPaymentSeconds;
 	}
 
-    public ActivationStatus getActivation() {
-        return activation;
-    }
-
-    public void setActivation(ActivationStatus activation) {
-        this.activation = activation;
-    }
-
-    @Override
+	@Override
 	public String toString() {
 		return "AccountCheckDTO [userName=" + userName + ", deviceUID=" + deviceUID + ", subBalance=" + subBalance + ", rememberMeToken=" + rememberMeToken
 				+ ", status=" + status + ", paymentEnabled=" + paymentEnabled + ", paymentStatus=" + paymentStatus + ", lastPaymentStatus=" + lastPaymentStatus

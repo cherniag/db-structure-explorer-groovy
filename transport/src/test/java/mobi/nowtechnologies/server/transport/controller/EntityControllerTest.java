@@ -5,11 +5,9 @@ import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,67 +42,9 @@ public class EntityControllerTest {
 
 	@Resource(name = "service.UserService")
 	UserService userService;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
+		
+	@Autowired
 	DeviceUserDataService deviceUserDataService;
-
-    public void givenO2ClientWhoHasSavedPhoneAndPin_whenACC_CHECK_thenActivationIs_ACTIVATED()throws Exception{
-        //given
-        String userName = "test@test.com";
-        EntityController controller = prepareMockController();
-        updateUserActivationStatus(userName, ActivationStatus.ACTIVATED);
-
-        //when
-        ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234");
-        
-        assertEquals("ACTIVATED", getActivation(mav));
-    }
-
-    @Test
-    public void givenO2ClientWhoHasNotSavedPhone_whenACC_CHECK_thenActivationIs_REGISTERED() throws Exception{
-        //given
-        String userName = "test@test.com";
-        EntityController controller = prepareMockController();
-        updateUserActivationStatus(userName, ActivationStatus.REGISTERED);
-
-        //when
-        ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234");
-
-        //then
-        assertEquals("REGISTERED", getActivation(mav));
-    }
-
-    @Test
-    public void givenO2ClientWhoHasSavedPhone_whenACC_CHECK_thenActivationIs_ENTERED_NUMBER()throws Exception{
-        //given
-        String userName = "test@test.com";
-        EntityController controller = prepareMockController();
-        updateUserActivationStatus(userName, ActivationStatus.ENTERED_NUMBER);
-
-        //when
-        ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234");
-
-        //then
-        assertEquals("ENTERED_NUMBER", getActivation(mav));
-    }
-
-
-    private String getActivation(ModelAndView mav) {
-        AccountCheckDTO accountCheckDTO = EntityController.getAccountCheckDtoFrom(mav);
-        return accountCheckDTO.getActivation().toString();
-    }
-
-    private void updateUserActivationStatus(String userName, ActivationStatus status) {
-        User user = userService.findByName(userName);
-        user.setActivationStatus(status);
-        userRepository.save(user);
-    }
 
     @Test
     public void verifyThatTwoDifferentXtifyTokensWhenReceivedWithTheSameUserAndCommunityAndDeviceWillUpdated()throws NoSuchMethodException{
@@ -303,7 +243,6 @@ public class EntityControllerTest {
                         String.class,
                         String.class));
         controller.setDeviceUserDataService(deviceUserDataService);
-        controller.setUserService(userService);
         expect(controller.accountCheck((HttpServletRequest) anyObject(),
                 (String) anyObject(),
                 (String) anyObject(),
@@ -315,15 +254,9 @@ public class EntityControllerTest {
                 (String) anyObject(),
                 (String) anyObject(),
                 (String) anyObject()
-        )).andReturn(modelAndViewWithAccountCheckDto()).anyTimes();
+        )).andReturn(null).anyTimes();
         replay(controller);
         return controller;
-    }
-
-    private ModelAndView modelAndViewWithAccountCheckDto() {
-        AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
-        Object[] objects = {accountCheckDTO};
-        return new ModelAndView("view", Response.class.toString(), new Response(objects));
     }
 
 }

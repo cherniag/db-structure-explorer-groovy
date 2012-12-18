@@ -17,7 +17,6 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
@@ -60,7 +59,6 @@ public class EntityController extends CommonController {
 	private static final String USER_NAME = "USER_NAME";
 	private static final String USER_TOKEN = "USER_TOKEN";
 	private static final String TIMESTAMP = "TIMESTAMP";
-    public static final String MODEL_NAME = Response.class.toString();
 
 	private UserService userService;
 	private DeviceService deviceService;
@@ -129,7 +127,7 @@ public class EntityController extends CommonController {
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/ECHO", "*/ECHO" })
 	public ModelAndView echo() {
-		ModelAndView modelAndView= new ModelAndView(view, MODEL_NAME, new Response(new Object[]{}));
+		ModelAndView modelAndView= new ModelAndView(view, Response.class.toString(), new Response(new Object[]{}));
 		return modelAndView;
 	}
 
@@ -159,41 +157,8 @@ public class EntityController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
-
-    @RequestMapping(method = RequestMethod.POST, value = {"/ACC_CHECK_O2", "*/ACC_CHECK_O2"})
-    public ModelAndView accountCheckForO2Client(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("APP_VERSION") String appVersion,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @RequestParam("API_VERSION") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken) {
-        ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken,
-                timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
-
-        User user = userService.findByName(userName);
-        AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
-
-        ActivationStatus activationStatus = user.getActivationStatus();
-        accountCheckDTO.setActivation(activationStatus);
-
-        return mav;
-    }
-
-    public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
-        Response resp = (Response)mav.
-                getModelMap().
-                get(MODEL_NAME);
-        return (AccountCheckDTO) resp.getObject()[0];
-    }
-
-    // @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
+	
+	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
 	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -251,8 +216,8 @@ public class EntityController extends CommonController {
 					pushNotificationToken, deviceType);
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
-
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} finally {
 			LOGGER.info("command processing finished");
 		}
@@ -305,7 +270,7 @@ public class EntityController extends CommonController {
 			Object[] objects = drmService.processSetDrmCommand(mediaIsrc, newDrmValue, user.getId(),
 					communityName);
 			proccessRememberMeToken(objects);
-			return new ModelAndView(view, MODEL_NAME, new Response(
+			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
 		} finally {
 			LOGGER.info("command processing finished");
@@ -732,7 +697,7 @@ public class EntityController extends CommonController {
 					deviceType) };
 			
 			proccessRememberMeToken(objects);
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} finally {
 			LOGGER.info("command processing finished");
 		}
@@ -781,7 +746,7 @@ public class EntityController extends CommonController {
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 			
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 
 		} finally {
 			LOGGER.info("command processing finished");
@@ -807,7 +772,7 @@ public class EntityController extends CommonController {
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 
 		} finally {
 			LOGGER.info("command processing finished");
