@@ -35,7 +35,7 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	<!-- 
+	
 	<logger name="org.springframework">
 		<level value="INFO"></level>
 		<appender-ref ref="stdout" />
@@ -72,6 +72,6 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	 -->
+	 
 
 </log4j:configuration>

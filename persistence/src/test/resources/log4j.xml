@@ -30,7 +30,7 @@
 			<param name="AcceptOnMatch" value="FALSE" />
 		</filter>
 	</appender>
-<!-- 
+
 	<logger name="org.springframework">
 		<level value="INFO"></level>
 		<appender-ref ref="stdout" />
@@ -46,8 +46,8 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	<logger name="org.hibernate.SQL">
-		<level value="DEBUG"></level>
+	<logger name="org.hibernate">
+		<level value="TRACE"></level>
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
@@ -71,6 +71,6 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
- -->
+ 
 
 </log4j:configuration>
