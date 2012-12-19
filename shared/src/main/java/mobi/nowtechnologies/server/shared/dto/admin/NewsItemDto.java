@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -46,9 +47,8 @@ public class NewsItemDto {
 	@DateTimeFormat(iso=ISO.DATE)
 	private Date publishTime;
 	
-	private Set<FilterDto> filterDtos;
+	private Set<FilterDto> filterDtos = new HashSet<FilterDto>();
 	
-	@NotNull
 	@FileSize(min=1, max=30720)
 	private MultipartFile file;
 	

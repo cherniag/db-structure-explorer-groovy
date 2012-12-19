@@ -20,7 +20,7 @@ public class MultipartFileSize implements ConstraintValidator<FileSize, Multipar
 
 	@Override
 	public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
-		if (null == value)
+		if (null == value || value.isEmpty())
 			return true;
 		long size = value.getSize();
 		return size >= min && size <= max;
