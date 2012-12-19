@@ -234,7 +234,7 @@
 			</ul>
 		</div>
 		<div class="container chartControl" style="overflow-x: auto;">
-			<div class="navButtonsWithoutBorder">
+			<div class="navButtonsWithoutBorder" th:with="cancelUrlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
 					<form id="addNew">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
@@ -245,7 +245,7 @@
 					<form id="updatePositionsForm" class="del_btn">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
-								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}">Cancel</a>
+								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${cancelUrlDate})}">Cancel</a>
 							</li>
 						</ul>
 					</form>
@@ -474,10 +474,11 @@
 				}
 			});
 		});
-		$('#q').keypress(function() {
+		$('#q').keypress(function(event) {
 			if ( event.which == 13 ) {
 			    event.preventDefault();
 				$("#searchButton").click();
+				return false;
 			}
 		});
 		

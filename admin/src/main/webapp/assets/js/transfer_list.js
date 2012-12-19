@@ -15,6 +15,14 @@ $(document).ready(function() {
 		filterSourceList();
 	});
 	
+	filterItem.keypress(function(event) {
+		if ( event.which == 13 ) {
+		    event.preventDefault();
+			filterButton.click();
+			return false;
+		}
+	});
+	
 	addButton.click(function() {
 		$('#sourceList option:selected').each(function(i) {
 			var result = $('#resultList option[value="'+$(this).val()+'"]');
