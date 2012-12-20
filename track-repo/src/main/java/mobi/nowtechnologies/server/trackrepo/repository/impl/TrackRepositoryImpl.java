@@ -78,7 +78,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		if (trackCriteria.getIngestor() != null)
 			addCriteria(criteria, " lower(t.ingestor) like :ingestor");
 
-		if (criteria.length() != 0 || join.length() != 0) {
+		if (criteria.length() != 0 || (join.length() != 0 && join.indexOf("WITH") > 0)) {
 			Query query = getEntityManager().createQuery(baseQuery+join.toString()+buildWhereCause(" WHERE ", criteria));
             setParamLike("genre", trackCriteria.getGenre(), query);
             setParamLike("album", trackCriteria.getAlbum(), query);
