@@ -57,7 +57,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		}
 		
 		if(withFiles){
-			join.append(" left join " +(withFiles?"fetch":"")+ "t.files as file");
+			join.append(" left join " +(withFiles?"fetch":"")+ " t.files as file");
 		}
 
 		StringBuilder criteria = new StringBuilder();
