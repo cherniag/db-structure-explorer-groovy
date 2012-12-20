@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -116,7 +117,7 @@ public class MessageService {
 				"input parameters communityURL, messageTypes: [{}], [{}], [{}]",
 				new Object[] { communityURL, messageTypes, choosedPublishDate });
 
-		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+		Community community = communityService.getCommunityByUrl(communityURL);
 
 		final List<Message> messages;
 		if (choosedPublishDate != null)
@@ -190,7 +191,7 @@ public class MessageService {
 	public MessageDto getMessageDto(Integer messageId) {
 		LOGGER.debug("input parameters messageId: [{}]", messageId);
 
-		Message message = messageRepository.findOneWithFilters(messageId);
+		Message message = getMessageWithFilters(messageId);
 
 		MessageDto messageDto = null;
 		if (message != null)
@@ -200,10 +201,16 @@ public class MessageService {
 	}
 
 	@Transactional(readOnly = true)
+	public Message getMessageWithFilters(Integer messageId) {
+		Message message = messageRepository.findOneWithFilters(messageId);
+		return message;
+	}
+
+	@Transactional(readOnly = true)
 	public NewsItemDto getNewsById(Integer messageId) {
 		LOGGER.info("Selecting news by id {}", messageId);
 
-		Message message = messageRepository.findOneWithFilters(messageId);
+		Message message = getMessageWithFilters(messageId);
 
 		NewsItemDto newsItemDto = null;
 		if (message != null)
@@ -216,7 +223,7 @@ public class MessageService {
 	public void delete(Integer messageId) {
 		LOGGER.info("Deleting message with id: {}", messageId);
 		Message message = messageRepository.findOne(messageId);
-		message.setFilterWithCtiteria(new HashSet<AbstractFilterWithCtiteria>());
+		message.setFilterWithCtiteria(Collections.<AbstractFilterWithCtiteria>emptySet());
 		messageRepository.delete(message);
 		LOGGER.debug("Done deleting message with id {}", messageId);
 	}
@@ -437,5 +444,69 @@ public class MessageService {
 
 	public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
+	}
+
+	@Transactional(readOnly = true)
+	public List<Message> getAds(String communityURL) {
+		
+		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.AD), null);
+		
+		return messages;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Message saveAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos ) {
+		Community community = communityService.getCommunityByUrl(communityURL);
+		
+		Integer position = messageRepository.findMaxPosition(community, MessageType.AD, 0L);
+		if (position != null) {
+			position++;
+		} else
+			position = 1;
+			
+		final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
+
+		message.setPosition(position);
+		message.setCommunity(community);
+		message.setFilterWithCtiteria(filterWithCtiteria);
+
+		message = messageRepository.save(message);
+		
+		String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
+		
+		message.setImageFileName(imageFileName);
+		
+		message = messageRepository.save(message);
+		
+		cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+
+		return message;
+		
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Message updateAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos) {
+		Community community = communityService.getCommunityByUrl(communityURL);
+
+		final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
+
+		message.setCommunity(community);
+		message.setFilterWithCtiteria(filterWithCtiteria);
+
+		message = messageRepository.save(message);
+		
+		if (multipartFile != null && !multipartFile.isEmpty()) {
+			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+		}
+		return message;
+	}
+
+	private Set<AbstractFilterWithCtiteria> fromDtos(Set<FilterDto> filterDtos) {
+		final Set<AbstractFilterWithCtiteria> filterWithCtiteria;
+		if (filterDtos != null)
+			filterWithCtiteria = filterService.find(filterDtos);
+		else
+			filterWithCtiteria = Collections.<AbstractFilterWithCtiteria>emptySet();
+		return filterWithCtiteria;
 	}
 }

@@ -69,4 +69,11 @@
 		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
+	
+	<bean name="admin.AdController"
+		class="mobi.nowtechnologies.server.admin.controller.AdController">
+		<property name="messageService" ref="service.MessageService" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
+		<property name="filterService" ref="service.FilterService" />
+	</bean>
 </beans>

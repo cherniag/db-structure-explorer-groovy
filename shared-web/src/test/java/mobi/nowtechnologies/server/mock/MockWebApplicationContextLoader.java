@@ -48,7 +48,6 @@ public class MockWebApplicationContextLoader extends AbstractContextLoader {
         	File path = ResourceUtils.getFile(basePath);
         	if (!path.exists()) throw new FileNotFoundException("base path does not exist; " + basePath);
         	basePath = "file:" + path.getAbsolutePath();
-        	System.out.println(basePath);
         	
                 // Establish the servlet context and config based on the test class's MockWebApplication annotation.
                 final MockServletContext mockServletContext = new MockServletContext(basePath, new FileSystemResourceLoader());
