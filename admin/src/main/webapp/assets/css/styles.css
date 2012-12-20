@@ -568,7 +568,7 @@ input.m {
 }
 
 .subpayment_user input {
-	width: 120px!important;
+	width: 100px!important;
 }
 
 .utype_user select, .ustatus_user select {
@@ -600,6 +600,7 @@ input.m {
 
 .form-actions {
 	padding: 17px 0 18px!important;
+	background-color: #F5F5F5;
 }
 
 img {
