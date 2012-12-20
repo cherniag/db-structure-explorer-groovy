@@ -58,6 +58,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="drmService" ref="service.DrmService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
+		<property name="o2ClientService" ref="service.O2ClientService" />
 	</bean>
 	
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
@@ -331,6 +332,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
 		<property name="userService" ref="service.UserService" />
+	</bean>
+	
+	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.impl.O2ClientServiceImpl">
+		<property name="serverO2Url" ref="${o2.server.url}" />
 	</bean>
 	
 	<task:annotation-driven/>

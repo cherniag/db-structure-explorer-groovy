@@ -68,6 +68,7 @@ public class UserServiceTest {
 	private PaymentDetailsService mockPaymentDetailsService;
 	private CommunityService mockCommunityService;
 	private CountryService mockCountryService;
+	private O2ClientService mockO2ClientService;
 
 	/**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -807,6 +808,8 @@ public class UserServiceTest {
 		mockMigHttpService = PowerMockito.mock(MigHttpService.class);
 		PaymentService mockPaymentService = PowerMockito.mock(PaymentService.class);
 		mockAccountLogService = PowerMockito.mock(AccountLogService.class);
+		mockO2ClientService = PowerMockito.mock(O2ClientService.class);
+		mockUserRepository = PowerMockito.mock(UserRepository.class);
 		MailService mockMailService = PowerMockito.mock(MailService.class);
 
 		userServiceSpy.setSagePayService(mockSagePayService);
@@ -832,6 +835,8 @@ public class UserServiceTest {
 		userServiceSpy.setPaymentService(mockPaymentService);
 		userServiceSpy.setAccountLogService(mockAccountLogService);
 		userServiceSpy.setMailService(mockMailService);
+		userServiceSpy.setO2ClientService(mockO2ClientService);
+		userServiceSpy.setUserRepository(mockUserRepository);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -1301,6 +1306,48 @@ public class UserServiceTest {
 		OperatorDao.getMapAsIds();
 		verifyStatic(times(0));
 		UserStatusDao.getLimitedUserStatus();
+	}
+	
+	@Test()
+	public void testActivatePhoneNumber_Success() throws Exception {
+		final String phone = "07870111111";
+		final User user = UserFactory.createUser();
+
+		Mockito.when(mockO2ClientService.validatePhoneNumber(anyString())).thenReturn("+447870111111");
+
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
+
+		assertNotNull(user);
+		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
+		assertEquals("+447870111111", userResult.getMobile());
+
+		verify(mockUserRepository, times(1)).save(any(User.class));
+		verify(mockO2ClientService, times(1)).validatePhoneNumber(anyString());
+	}
+	
+	@Test()
+	public void testActivatePhoneNumber_NullPhone_Success() throws Exception {
+		final String phone = null;
+		final User user = UserFactory.createUser();
+
+		Mockito.when(mockO2ClientService.validatePhoneNumber(anyString())).thenAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				String phone = (String)invocation.getArguments()[0];
+				assertEquals(user.getMobile(), phone);
+				
+				return "+447870111111";
+			}
+		});
+
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
+
+		assertNotNull(user);
+		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
+		assertEquals("+447870111111", userResult.getMobile());
+
+		verify(mockUserRepository, times(1)).save(any(User.class));
+		verify(mockO2ClientService, times(1)).validatePhoneNumber(anyString());
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
