@@ -82,8 +82,7 @@ public class MessageService {
 		if (nextNewsPublishTimeMillis == null)
 			nextNewsPublishTimeMillis = -1L;
 
-		List<Message> messages = messageRepository.findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis, lastClientUpdateNewsTimeMillis,
-				currentTimeMillis);
+		List<Message> messages = messageRepository.findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
 
 		List<NewsDetailDto> newsDetailDtos = NewsAsm.toNewsDetailDtos(user, messages);
 
