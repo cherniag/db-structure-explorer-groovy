@@ -8,9 +8,9 @@
 		http://www.springframework.org/schema/jdbc
 		http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
-	<import resource="file:src/main/webapp/WEB-INF/security.xml" />
+	<import resource="classpath:security.xml" />
 
-	<bean id="persistence.DataSource"
+	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
@@ -18,7 +18,7 @@
 		<property name="password" value="1" />
 	</bean>
 
-	<jdbc:initialize-database data-source="persistence.DataSource"
+	<jdbc:initialize-database data-source="dataSource"
 		ignore-failures="DROPS">
 		<jdbc:script location="classpath:META-INF/init-admin-test.sql" />
 <!--			<jdbc:script location="classpath:sql/init-admin.sql" />-->

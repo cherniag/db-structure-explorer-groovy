@@ -1,0 +1,100 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+		<div class="container">
+		<h1 class="head" th:text="#{ads.page.adsTable.ad.edit.headline}">Edit Ad</h1>
+		<form id="saveOrUpdateAdForm" name="saveOrUpdateAdForm"
+			action="#" th:action="@{/ads/__${AD_ITEM_DTO.id}__}"
+			th:object="${AD_ITEM_DTO}" method="post"
+			enctype="multipart/form-data" accept-charset="UTF-8" class="well">
+				<div class="row">
+					<div class="span3">
+						<div class="filtersSelect">
+							<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.image.label}">Select Image:</strong></label>
+							<img class="addedImage" th:src="@{__${filesURL}__/__*{imageFileName}__}" width="270" height="180"/>
+							<br/><br/>
+							<input id="file" name="file" type="file" accept="image"
+								th:field="*{file}"
+								th:title="#{ad.edit.page.saveOrUpdateAdForm.file.chooser}" />
+							<input type="hidden" id="MAX_FILE_SIZE_FOR_NEWS" name="MAX_FILE_SIZE_FOR_NEWS" value="30720" />
+							<div id="fileErrors" class="text-error">
+								<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
+									No file has been selected or file has no content
+								</p>
+							</div>
+						</div>
+
+						<!-- is Oline -->
+						<div class="controls">
+							<label class="checkbox">
+								<input type="checkbox" th:field="*{activated}" />
+								<span th:text="#{ad.edit.page.saveOrUpdateAdForm.activated}">Online:</span>
+							</label>
+						</div>
+						<!-- Filters -->
+				        <div class="filtersSelect">
+							<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.filters}">Filters:</strong></label>
+							<div class="controls">
+				              <label class="checkbox" th:class="#{${'checkbox textColor_'+filterDto.name}}" th:each="filterDto:${allAdFilterDtos}">
+				                <input type="checkbox" th:value="${filterDto.name}" name="filterDtos" th:text="#{${'messages.pages.filter.'+filterDto.name}}" th:checked="${#sets.contains(AD_ITEM_DTO.filterDtos,filterDto)}" />
+				              </label>
+				            </div>
+						  </div>
+						  <div class="controls">&#160;</div>
+						  
+						  <div class="form-actions">
+							<button th:text="#{ad.edit.page.saveOrUpdateAdForm.submit}" class="btn btn-primary" type="submit">
+								Save changes
+							</button>
+							<button th:text="#{ad.edit.page.saveOrUpdateAdForm.cancel}" class="btn btn-primary"  onClick="parent.history.back(); return false;">
+								Cancel
+							</button>
+						</div>  
+					</div>
+					<div class="span8">
+						<div class="filtersSelect">
+							<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.action.label}">Action:</strong></label>
+							<div class="control-group">
+								<input th:field="*{action}"
+									th:class="${#fields.hasErrors('action')}? 'fieldError'"
+									type="text"
+									value=""
+									th:attr="placeholder=#{ad.edit.page.saveOrUpdateAdForm.action.placeholder}"
+									placeholder="Action is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('action')}" th:errors="*{action}">
+									Wrong text format
+								</p>
+								
+							</div>
+							<div class="controls">
+								<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.message.label}">Message:</strong></label>
+								<textarea th:field="*{message}"
+									th:class="${#fields.hasErrors('message')}? 'fieldError'"
+									rows="30" id="textarea"
+									th:attr="placeholder=#{ad.edit.page.saveOrUpdateAdForm.message.placeholder}"
+									placeholder="Full message is here" class="input-xlarge"
+									style="width: 755px; height: 400px; font-size: 11px;"></textarea>
+								<p th:if="${#fields.hasErrors('message')}" th:errors="*{message}">
+									Wrong text format
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ul th:if="${#fields.hasErrors('*')}">
+					<li th:each="err : ${#fields.errors('*')}" th:text="${err}">
+						Input is incorrect
+					</li>
+				</ul>
+				
+				<input type="hidden" th:field="*{id}" />
+				<input type="hidden" th:field="*{position}" />
+				<input type="hidden" th:field="*{imageFileName}" />
+				
+			</form>
+		</div>
+	</body>
+</html>

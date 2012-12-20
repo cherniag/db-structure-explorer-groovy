@@ -20,6 +20,10 @@ import javax.servlet.http.Cookie;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+/**
+ * @author Titov Mykhaylo (titov)
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"classpath:META-INF/security-test.xml",
