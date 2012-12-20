@@ -52,12 +52,12 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 				addCriteria(criteria, " ter.startDate <= :releaseTo");
 			
 			join.append(buildWhereCause(" WITH ", criteria));
-		}else{
-			join.append(" left join t.territories as ter");
+		}else if(withTerritories){
+			join.append(" left join fetch t.territories as ter");
 		}
 		
 		if(withFiles){
-			join.append(" left join t.files as file");
+			join.append(" left join " +(withFiles?"fetch":"")+ " t.files as file");
 		}
 
 		StringBuilder criteria = new StringBuilder();
@@ -78,7 +78,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		if (trackCriteria.getIngestor() != null)
 			addCriteria(criteria, " lower(t.ingestor) like :ingestor");
 
-		if (criteria.length() != 0 || join.length() != 0) {
+		if (criteria.length() != 0 || (join.length() != 0 && join.indexOf("WITH") > 0)) {
 			Query query = getEntityManager().createQuery(baseQuery+join.toString()+buildWhereCause(" WHERE ", criteria));
             setParamLike("genre", trackCriteria.getGenre(), query);
             setParamLike("album", trackCriteria.getAlbum(), query);

@@ -17,7 +17,7 @@ public class CommunityServiceImpl implements CommunityService {
 	
 	@Override
 	public Community getCommunityByUrl(String communityUrl) {
-		return CommunityDao.getMapAsUrls().get(communityUrl.toUpperCase());
+		return communityRepository.findByRewriteUrlParameter(communityUrl);
 	}
 
 	@Override

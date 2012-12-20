@@ -31,8 +31,15 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 	@Query("select max(message.publishTimeMillis) from Message message where message.community=:community and message.messageType='NEWS' and message.publishTimeMillis>:choosedPublishTimeMillis and message.publishTimeMillis<:currentTimeMillis")
 	Long findNextNewsPublishDate(@Param("choosedPublishTimeMillis") long choosedPublishTimeMillis, @Param("community") Community community, @Param("currentTimeMillis") long currentTimeMillis);
 	
-	@Query("select distinct message from Message message left join FETCH  message.filterWithCtiteria where message.community=?1 and message.activated=true and ((message.messageType='NEWS' and message.publishTimeMillis=?2) or (message.messageType<>'NEWS' and message.publishTimeMillis>?3 and message.publishTimeMillis<?4)) order by  message.position asc")
-	List<Message> findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis, long lastUpdateNewsTimeMillis, long currentTimeMillis);
+	@Query("select distinct message from Message message " +
+			"left join FETCH  message.filterWithCtiteria " +
+			"where message.community=?1 " +
+			"and message.activated=true " +
+			"and ((message.messageType='NEWS' " +
+			"and message.publishTimeMillis=?2) " +
+			"or message.messageType<>'NEWS') " +
+			"order by  message.position asc")
+	List<Message> findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis);
 	
 	@Query("select count(message) from Message message where message.community=?1 and message.publishTimeMillis=?2 and message.messageType=?3")
 	long getCount(Community community, long publishTimeMillis, MessageType messageType);

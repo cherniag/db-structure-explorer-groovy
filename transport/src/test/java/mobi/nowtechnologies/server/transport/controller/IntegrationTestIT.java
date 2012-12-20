@@ -60,13 +60,11 @@ import static org.junit.Assert.*;
 @MockWebApplication(name = "transport.EntityController")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-// (isolation=Isolation.READ_COMMITTED)
 @PrepareForTest(Utils.class)
 public class IntegrationTestIT {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(IntegrationTestIT.class.getName());
-	private static final String SRC_TEST_RESOURCES_TEST_DATA = "../service/src/test/resources/testData";
-
+	
 	@Autowired
 	private DispatcherServlet dispatcherServlet;
 
@@ -2996,61 +2994,37 @@ public class IntegrationTestIT {
 	@Test
 	public void testGET_FILTERED_NEWS() throws Exception {
 		try {
-			String password = "zzz@z.com";
 			String userName = "zzz@z.com";
 			String timestamp = "2011_12_26_07_04_23";
-			String apiVersion = "V1.2";
+			String apiVersion = "3.5";
 			String communityName = "Now Music";
 			String appVersion = "CNBETA";
 
-			String deviceString = "Device 1";
 			String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-			String storedToken = Utils.createStoredToken(userName, password);
+			String ipAddress = "2.24.0.1";
+
+			MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/" + apiVersion + "/SIGN_UP_DEVICE");
+			httpServletRequest.addHeader("Content-Type", "text/xml");
+			httpServletRequest.setRemoteAddr(ipAddress);
+			httpServletRequest.setPathInfo("/" + apiVersion + "/SIGN_UP_DEVICE");
+
+			httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
+			httpServletRequest.addParameter("DEVICE_UID", userName);
+			httpServletRequest.addParameter("API_VERSION", apiVersion);
+			httpServletRequest.addParameter("APP_VERSION", appVersion);
+			httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
+
+			MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+			dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
+
+			assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+
+			String contentAsString = mockHttpServletResponse.getContentAsString();
+			String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 			String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType(deviceType);
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString(deviceString);
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber("07580381128");
-			userRegInfo.setOperator(1);
-
-			int timeBeforeRegistrationSeconds = Utils.getEpochSeconds();
-
-			// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp,
-			// userToken, appVersion);
-
-			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<userRegInfo>"
-					+ "<address>33333</address>"
-					+ "<appVersion>" + appVersion + "</appVersion>"
-					+ "<apiVersion>" + apiVersion + "</apiVersion>"
-					+ "<deviceType>" + deviceType + "</deviceType>"
-					+ "<deviceString>" + deviceString + "</deviceString>"
-					+ "<countryFullName>Great Britain</countryFullName>"
-					+ "<city>33</city>"
-					+ "<firstName>33</firstName>"
-					+ "<lastName>33</lastName>"
-					+ "<email>" + userName + "</email>"
-					+ "<communityName>" + communityName + "</communityName>"
-					+ "<displayName>displayName</displayName>"
-					+ "<postCode>null</postCode>"
-					+ "<paymentType>" + UserRegInfo.PaymentType.UNKNOWN + "</paymentType>"
-					+ "<storedToken>" + storedToken + "</storedToken>"
-					+ "<promotionCode>promo</promotionCode>"
-					+ "</userRegInfo>";
-
-			MockHttpServletResponse mockHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-			assertEquals(200, mockHttpServletResponse.getStatus());
-
-			MockHttpServletResponse aHttpServletResponse = new MockHttpServletResponse();
-			MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(
+			httpServletRequest = new MockHttpServletRequest(
 					"POST", "/GET_NEWS");
 			httpServletRequest.setPathInfo("/GET_NEWS");
 
@@ -3064,25 +3038,19 @@ public class IntegrationTestIT {
 			httpServletRequest.addParameter("USER_NAME", userName);
 			httpServletRequest.addParameter("USER_TOKEN", userToken);
 			httpServletRequest.addParameter("TIMESTAMP", timestamp);
+			
+			mockHttpServletResponse = new MockHttpServletResponse();
 
-			dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
+			dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
 
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			// String expected =
-			// "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID>Device 1</deviceUID><displayName>displayName</displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><status>SUBSCRIBED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>1331906484</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>f2ad4ecbe7b82b873224a2ccbcf3f3c2</userToken></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</body><detail>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</detail><i>9</i><messageFrequence>DAILY</messageFrequence><messageType>NOTIFICATION</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item></news></response>";
-			final String contentAsString = aHttpServletResponse.getContentAsString();
-			// assertEquals(expected, contentAsString);
-			assertTrue(contentAsString
-					.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID>Device 1</deviceUID><displayName>displayName</displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><status>SUBSCRIBED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>"));
-			assertTrue(contentAsString
-					.startsWith(
-							"</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>f2ad4ecbe7b82b873224a2ccbcf3f3c2</userToken></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</body><detail>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</detail><i>9</i><messageFrequence>DAILY</messageFrequence><messageType>NOTIFICATION</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item></news></response>",
-							611));
-
-			int timeOfMovingToLimitedStatusSeconds = Integer.parseInt(contentAsString.substring(601, 611));
-			assertTrue((timeBeforeRegistrationSeconds + 2 * Utils.WEEK_SECONDS) < timeOfMovingToLimitedStatusSeconds);
-			assertTrue((Utils.getEpochSeconds() + 2 * Utils.WEEK_SECONDS) >= timeOfMovingToLimitedStatusSeconds);
+			assertEquals(200, mockHttpServletResponse.getStatus());
+			
+			contentAsString = mockHttpServletResponse.getContentAsString();
+		
+			String firstPart=contentAsString.substring(0,790);	
+			String secondPart=contentAsString.substring(contentAsString.indexOf("</rememberMeToken>"));
+			assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID></deviceUID><displayName></displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>true</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>0</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>",firstPart);
+			assertEquals("</rememberMeToken><status>LIMITED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>0</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>"+storedToken+"</userToken><oAuthProvider>NONE</oAuthProvider></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><id>1</id><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</detail><i>2</i><id>2</id><messageFrequence>DAILY</messageFrequence><messageType>POPUP</messageType><position>2</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>http://google.com.ua</detail><i>2</i><id>82</id><messageType>AD</messageType><position>2</position><timestampMilis>0</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><id>4</id><messageType>NEWS</messageType><position>4</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><id>7</id><messageType>NEWS</messageType><position>7</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>4XLS70CD</detail><i>7</i><id>87</id><messageType>AD</messageType><position>7</position><timestampMilis>0</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><id>10</id><messageType>NEWS</messageType><position>10</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>6XLS70CD</detail><i>10</i><id>90</id><messageType>AD</messageType><position>10</position><timestampMilis>0</timestampMilis></item></news></response>",secondPart);
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
