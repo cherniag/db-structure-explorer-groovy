@@ -56,7 +56,7 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<div class="nav-collapse collapse">
-						<a th:href="@{/}" class="brand">Chartsnow Admin Console</a>
+						<a th:href="@{/}" class="brand">MusicQubed Admin Console</a>
 						<ul class="nav" th:object="${#httpServletRequest}">
 							<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
 							<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
@@ -110,7 +110,7 @@
 		<footer th:fragment="footer">
 			<div class="row-fluid show-grid">
 				<div class="span12">
-					Copyright &copy; 2012 <a href="https://chartsnow.mobi">www.chartsnow.mobi</a> ltd. all rights reserved
+					Copyright &copy; 2012 <a href="http://www.musicqubed.com/">www.MusicQubed.com</a> ltd. all rights reserved
 				</div>
 			</div>
 		</footer>
