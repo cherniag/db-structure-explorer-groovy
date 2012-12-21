@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,14 +37,12 @@ public class ApplyInitPromoControllerTest {
 
         //when
         user = userService.findByName(userName);
-        Assert.assertEquals(8, days(user.getNextSubPayment()));
+        Assert.assertEquals(13, days(user.getNextSubPayment()));
     }
 
     private int days(long nextSubPayment) {
-        long currentTime = System.currentTimeMillis();
-        long diff = nextSubPayment - currentTime;
-        long day = 1000*60*60*24;
-        return Math.round(diff/day);
+
+        return Days.daysBetween(new DateTime(System.currentTimeMillis()), new DateTime(nextSubPayment * 1000)).getDays();
 
     }
 

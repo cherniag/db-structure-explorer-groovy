@@ -1691,19 +1691,21 @@ public class UserService {
         return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
     }
 
-    public void setPotentialPromo(String communityName, User user, String promotionCode) {
+    public Promotion setPotentialPromo(String communityName, User user, String promotionCode) {
         Community community = communityService.getCommunityByName(communityName);
         String communityUri = community.getRewriteUrlParameter().toLowerCase();
         String code = messageSource.getMessage(communityUri, promotionCode, null, null);
-        setPotentialPromo(community, user, code);
+        return  setPotentialPromo(community, user, code);
     }
 
-    private void setPotentialPromo(Community community, User user, String code) {
+    private Promotion setPotentialPromo(Community community, User user, String code) {
         if (code != null) {
             Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
             user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
             entityService.updateEntity(user);
+            return potentialPromoCodePromotion;
         }
+        return null;
     }
 
     public void setPotentialPromoCodePromotion(Community community, User user, String promotionCode) {
