@@ -12,39 +12,58 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * ApplyInitPromoConroller
- * 
+ *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
- * 
  */
 @Controller
-public class ApplyInitPromoController extends CommonController{
-	
-	private UserService userService;
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
-	public ModelAndView applyInitialPromotion(
-			@RequestParam("COMMUNITY_NAME") String communityName,
-			@RequestParam("USER_NAME") String userName,
-			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp
-			) {
-		
-		LOGGER.info("command processing started");
-		try {
-			User user = userService.findByNameAndCommunity(userName, communityName);
-			
-			AccountCheckDTO accountCheckDTO = userService.applyInitialPromotion(user);
-			final Object[] objects = new Object[]{accountCheckDTO};
-			proccessRememberMeToken(objects);
+public class ApplyInitPromoController extends CommonController {
 
-			return new ModelAndView(view, Response.class.toString(), new Response(objects));
-		} finally {
-			LOGGER.info("command processing finished");
-		}
-	}
+    private UserService userService;
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
+    public ModelAndView applyInitialPromotion(
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp) {
+
+        LOGGER.info("command processing started");
+        try {
+            User user = userService.findByNameAndCommunity(userName, communityName);
+
+            AccountCheckDTO accountCheckDTO = userService.applyInitialPromotion(user);
+            final Object[] objects = new Object[]{accountCheckDTO};
+            proccessRememberMeToken(objects);
+
+            return new ModelAndView(view, Response.class.toString(), new Response(objects));
+        } finally {
+            LOGGER.info("command processing finished");
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {"/O2/3.6/APPLY_INIT_PROMO", "*/O2/3.6/APPLY_INIT_PROMO"})
+    public void applyO2Promotion(
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token) {
+
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        if(isO2User(token))
+            userService.setPotentialPromo(communityName, user, "promotionCode");
+        else
+            userService.setPotentialPromo(communityName, user, "defaultPromotionCode");
+
+        userService.applyPromotion(user);
+    }
+
+    private boolean isO2User(String token) {
+        return true;
+    }
 }
