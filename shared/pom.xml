@@ -22,6 +22,10 @@
 
 		<!-- General -->
 		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm</artifactId>
 		</dependency>
@@ -57,10 +61,10 @@
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>jboss</groupId>-->
-<!--			<artifactId>jboss-common</artifactId>-->
-<!--		</dependency>-->
+		<!-- <dependency> -->
+		<!-- <groupId>jboss</groupId> -->
+		<!-- <artifactId>jboss-common</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>

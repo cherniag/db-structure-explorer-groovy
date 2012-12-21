@@ -18,9 +18,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	private String serverO2Url;
 
-	private RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate;
 
 	public void init() {
+		restTemplate = new RestTemplate();
 	}
 
 	public void setServerO2Url(String serverO2Url) {
