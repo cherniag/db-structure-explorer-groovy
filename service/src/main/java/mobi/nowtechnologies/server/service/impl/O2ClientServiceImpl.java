@@ -2,7 +2,9 @@ package mobi.nowtechnologies.server.service.impl;
 
 import javax.xml.transform.dom.DOMSource;
 
+import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
 	public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";
+	public final static String GET_USER_DETAILS_REQ = "/user/carrier/o2/details/";
 
 	private String serverO2Url;
 
@@ -39,5 +42,41 @@ public class O2ClientServiceImpl implements O2ClientService {
 			LOGGER.error("Error of the number validation",e);
 			throw new InvalidPhoneNumberException();
 		}
+	}
+
+	@Override
+	public O2UserDetails getUserDetails(String token) {
+		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+			request.add("otac_auth_code", token);
+		try {
+			if ("0000".equals(token)) {
+				return new O2UserDetails("o2", "PAYG");
+			} else if ("1111".equals(token)) {
+				return new O2UserDetails("non-o2", "PAYG");
+			} else if ("2222".equals(token)) {
+				return new O2UserDetails("o2", "PAYGM");
+			} else if ("3333".equals(token)) {
+				return new O2UserDetails("non-o2", "PAYGM");
+			} else if ("4444".equals(token)) {
+				return new O2UserDetails("o2", "business");
+			} else if ("5555".equals(token)) {
+				return new O2UserDetails("non-o2", "business");
+			}
+			throw new ExternalServiceException("not.supported.code", "Not supported code");
+			// TODO uncomment this when command is ready
+			//DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
+			//return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue());
+		}catch (Exception e) {
+			LOGGER.error("Error of the number validation",e);
+			throw new ExternalServiceException("602", "O2 server cannot be reached");
+		}
+	}
+	
+	@Override
+	public boolean isO2User(O2UserDetails userDetails) {
+		if (userDetails.getOperator() != null && "o2".equals(userDetails.getOperator())) {
+			return true;
+		}
+		return false;
 	}
 }
