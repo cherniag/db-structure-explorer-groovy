@@ -254,6 +254,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+    		<groupId>org.skyscreamer</groupId>
+    		<artifactId>jsonassert</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
 			<scope>test</scope>
@@ -379,6 +383,13 @@
 				<artifactId>junit</artifactId>
 				<version>4.8.1</version>
 				<scope>test</scope>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.skyscreamer</groupId>
+			    <artifactId>jsonassert</artifactId>
+			    <version>1.1.0</version>
+			    <scope>test</scope>
 			</dependency>
 
 			<dependency>

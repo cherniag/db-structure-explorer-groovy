@@ -71,6 +71,10 @@ public class CloudFileServiceImpl implements CloudFileService {
 	public String getFilesURL() {
 		return filesURL;
 	}
+	
+	public void setFilesClient(FilesClient filesClient) {
+		this.filesClient = filesClient;
+	}
 
 	public boolean init() throws IOException, HttpException {
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
