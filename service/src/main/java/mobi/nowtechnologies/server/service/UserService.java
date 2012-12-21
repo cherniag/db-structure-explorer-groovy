@@ -51,6 +51,7 @@ import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * UserService
@@ -218,14 +219,10 @@ public class UserService {
 	}
 
 	@Deprecated
-	public User checkCredentials(String userName, String userToken,
-			String timestamp, String communityName) {
-		if (userName == null)
-			throw new ServiceException("The parameter userName is null");
-		if (userToken == null)
-			throw new ServiceException("The parameter userToken is null");
-		if (timestamp == null)
-			throw new ServiceException("The parameter timestamp is null");
+	public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
+		notNull(userName, "The parameter userName is null");
+		notNull(userToken, "The parameter userToken is null");
+		notNull(timestamp, "The parameter timestamp is null");
 		User user = findByNameAndCommunity(userName, communityName);
 
 		if (user != null) {
@@ -304,7 +301,7 @@ public class UserService {
 	@Deprecated
 	public boolean isUserExist(String userName, String storedToken, String communityName) {
 		return userDao.userExists(userName,
-				storedToken, communityName);
+                storedToken, communityName);
 	}
 
 	@Deprecated
@@ -849,7 +846,7 @@ public class UserService {
 		String[] args = { migHttpService.getOtaUrl() + "&CODE=" + user.getCode() };
 		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(user.getMobile());
 		migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-				messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
+                messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
 	}
 
 	public User findById(int id) {
@@ -1158,9 +1155,9 @@ public class UserService {
 
 		LOGGER
 				.debug(
-						"input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-						new Object[] { user, token, paymentType, operator,
-								phoneNumber });
+                        "input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
+                        new Object[]{user, token, paymentType, operator,
+                                phoneNumber});
 
 		PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
 
@@ -1459,7 +1456,6 @@ public class UserService {
 	 * 
 	 * @param phone
 	 *            - the phone number entered on the page
-	 * @param communityUrl
 	 * @param userId
 	 *            - id of the current logged user
 	 * @return
@@ -1630,39 +1626,21 @@ public class UserService {
 		DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
 		if (deviceType == null)
 			deviceType = DeviceTypeDao.getNoneDeviceType();
+
 		Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
-
 		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
+
 		if (null == user) {
-			user = new User();
-			user.setUserName(deviceUID);
-			user.setToken(Utils.createStoredToken(deviceUID, Utils.getRandomString(20)));
-
-			user.setDeviceType(deviceType);
-			user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
-			user.setCountry(countryService.findIdByFullName("Great Britain"));
-			user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
-			user.setPaymentEnabled(false);
-			Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-			user.setOperator(entry.getKey());
-			user.setStatus(UserStatusDao.getLimitedUserStatus());
-			user.setDeviceUID(deviceUID);
-			user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
-			
-			user.setFirstDeviceLoginMillis(System.currentTimeMillis());
-			user.setActivationStatus(ActivationStatus.REGISTERED);
-
-			entityService.saveEntity(user);
+            user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
 		}
 
 		if (createPotentialPromo && user.getNextSubPayment() == 0) {
 			String communityUri = community.getRewriteUrlParameter().toLowerCase();
 			String deviceModel = user.getDeviceModel();
-			final String promotionCode;
-			boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
-			boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
-			boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
-			if (existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList)) {
+
+            final String promotionCode;
+
+			if (canBrPromoted(community, deviceUID, deviceModel)) {
 				promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
 			} else {
 				String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
@@ -1672,13 +1650,8 @@ public class UserService {
 					promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
 			}
 
-			Promotion potentialPromoCodePromotion = null;
-			if (promotionCode != null)
-				potentialPromoCodePromotion = promotionService.getActivePromotion(promotionCode, community.getName());
+            setPotentialPromoCodePromotion(community, user, promotionCode);
 
-			user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
-
-			entityService.updateEntity(user);
 		}
 
 		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
@@ -1686,6 +1659,60 @@ public class UserService {
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
+
+    private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
+        User user;
+        user = new User();
+        user.setUserName(deviceUID);
+        user.setToken(Utils.createStoredToken(deviceUID, Utils.getRandomString(20)));
+
+        user.setDeviceType(deviceType);
+        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
+        user.setCountry(countryService.findIdByFullName("Great Britain"));
+        user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
+        user.setPaymentEnabled(false);
+        Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
+        user.setOperator(entry.getKey());
+        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setDeviceUID(deviceUID);
+        user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
+
+        user.setFirstDeviceLoginMillis(System.currentTimeMillis());
+        user.setActivationStatus(ActivationStatus.REGISTERED);
+
+        entityService.saveEntity(user);
+        return user;
+    }
+
+    private boolean canBrPromoted(Community community, String deviceUID, String deviceModel) {
+        boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
+        boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
+        boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
+        return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
+    }
+
+    public void setPotentialPromo(String communityName, User user, String promotionCode) {
+        Community community = communityService.getCommunityByName(communityName);
+        String communityUri = community.getRewriteUrlParameter().toLowerCase();
+        String code = messageSource.getMessage(communityUri, promotionCode, null, null);
+        setPotentialPromo(community, user, code);
+    }
+
+    private void setPotentialPromo(Community community, User user, String code) {
+        if (code != null) {
+            Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
+            user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
+            entityService.updateEntity(user);
+        }
+    }
+
+    public void setPotentialPromoCodePromotion(Community community, User user, String promotionCode) {
+        if (promotionCode != null) {
+            Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(promotionCode, community.getName());
+            user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
+            entityService.updateEntity(user);
+        }
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitialPromotion(User user) {
