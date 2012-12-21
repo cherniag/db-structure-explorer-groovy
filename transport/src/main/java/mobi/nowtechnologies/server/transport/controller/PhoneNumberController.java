@@ -34,7 +34,7 @@ public class PhoneNumberController extends CommonController {
 	@SuppressWarnings("deprecation")
 	@RequestMapping(method = RequestMethod.POST, value = {"/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER", "/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/PHONE_NUMBER"})
 	public ModelAndView activatePhoneNumber(
-			@RequestParam("PHONE") String phone,
+			@RequestParam(value = "PHONE", required = false) String phone,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp) {
