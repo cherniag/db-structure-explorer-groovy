@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class ApplyInitPromoController extends CommonController {
 
     private UserService userService;
+    private O2ClientService o2ClientService;
+
+    public void setO2ClientService(O2ClientService o2ClientService) {
+        this.o2ClientService = o2ClientService;
+    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -57,7 +63,7 @@ public class ApplyInitPromoController extends CommonController {
 
         User user = userService.findByNameAndCommunity(userName, communityName);
         Promotion promotion = null;
-        if(isO2User(token))
+        if(o2ClientService.isO2User(o2ClientService.getUserDetails(token)))
             promotion = userService.setPotentialPromo(communityName, user, "promotionCode");
         else
             promotion = userService.setPotentialPromo(communityName, user, "defaultPromotionCode");
@@ -65,7 +71,4 @@ public class ApplyInitPromoController extends CommonController {
         userService.applyPromotionByPromoCode(user, promotion);
     }
 
-    private boolean isO2User(String token) {
-        return true;
-    }
 }

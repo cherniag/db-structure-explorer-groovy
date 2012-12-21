@@ -26,7 +26,9 @@
 		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" />
+	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
+        <property name="o2ClientService" ref="service.O2ClientService"/>
+    </bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" parent="transport.CommonController">
 		<property name="communityService" ref="service.communityService" />
