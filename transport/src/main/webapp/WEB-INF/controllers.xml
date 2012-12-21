@@ -44,6 +44,10 @@
 		<property name="userService" ref="service.UserService" />
 		<property name="messageService" ref="service.MessageService" />
 	</bean>
+	
+	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" parent="transport.CommonController">
+		<property name="userService" ref="service.UserService" />
+	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.MigController">
 		<property name="userService" ref="service.UserService" />

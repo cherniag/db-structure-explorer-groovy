@@ -56,6 +56,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
+				<value>mobi.nowtechnologies.server.dto.transport.PhoneActivationDto</value>
 			</list>
 		</property>
 	</bean> 

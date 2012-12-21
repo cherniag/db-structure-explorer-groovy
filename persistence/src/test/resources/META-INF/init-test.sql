@@ -1,5 +1,5 @@
 insert into tb_appVersions ( description, name) values( 'Development Environment', 'CBEMA'), ('Commercial Beta', 'CNBETA');
-INSERT INTO `tb_communities` (`i`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ');
+INSERT INTO `tb_communities` (`i`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ'),(7,'O2',1,7,'O2','O2','O2');
 
 INSERT INTO `tb_deviceTypes` (`i`, `name`)  VALUES (1,'NONE'),(2,'ANDROID'),(3,'J2ME'),(4,'BLACKBERRY'),(5,'IOS'),(6,'SYMBIAN');
 
@@ -172,7 +172,7 @@ insert into `tb_drmTypes` (i, name) values (1,'PLAYS'),(2,'TIME'),(3,'PURCHASED'
 
 insert into `tb_drmPolicy` (i, name, drmType, drmValue, community) values (1,'Default Policy',1,100,1),(2,'Default Policy',1,100,2),(3,'Default Policy',1,100,3),(5,'Default Policy',1,100,4),(6,'Default Policy',1,100,5);
 
-insert into tb_userGroups (i, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3);
+insert into tb_userGroups (i, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3),(7,'O2 Group',7,5,5,3);
 
 INSERT INTO `tb_operators` (`i`,`name`, `migName`) VALUES (1,'Orange UK','MIG01OU'),(2,'Vodafone UK','MIG00VU'),(3,'O2 UK','MIG01XU'),(4,'T-Mobile UK','MIG01TU'),(5,'Three UK','MIG01HU'),(6,'ASDA Mobile','Not Specified'),(7,'BT','Not Specified'),(8,'Giffgaff','Not Specified'),(9,'IDT Mobile','Not Specified'),(10,'Talkmobile','Not Specified'),(11,'TalkTalk','Not Specified'),(12,'Tesco Mobile','Not Specified'),(13,'Truphone','Not Specified'),(14,'Virgin Mobile','Not Specified');
 
