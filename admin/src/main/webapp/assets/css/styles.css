@@ -140,7 +140,7 @@ ul.table li div.date {
 }
 
 ul.table li div {
-	padding: 5px;
+	padding: 5px 4px;
 	overflow: hidden;
 }
 
@@ -624,7 +624,6 @@ ul.table li div.product_id_repo_columns {
 }
 
 ul.table li div.buttons_repo_columns {
-	width: 13%;
 	border: none;
 }
 
