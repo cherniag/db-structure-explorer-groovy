@@ -47,8 +47,7 @@ public class PromotionService {
 				.getI());
 	}
 
-	public Promotion getActivePromotion(String promotionCode,
-			String communityName) {
+	public Promotion getActivePromotion(String promotionCode, String communityName) {
 		if (promotionCode == null)
 			throw new ServiceException("The parameter promotionCode is null");
 		if (communityName == null)

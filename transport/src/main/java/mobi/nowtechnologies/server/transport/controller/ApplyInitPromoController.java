@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class ApplyInitPromoController extends CommonController {
 
     private UserService userService;
+    private O2ClientService o2ClientService;
+
+    public void setO2ClientService(O2ClientService o2ClientService) {
+        this.o2ClientService = o2ClientService;
+    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -55,15 +62,13 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("OTAC_TOKEN") String token) {
 
         User user = userService.findByNameAndCommunity(userName, communityName);
-        if(isO2User(token))
-            userService.setPotentialPromo(communityName, user, "promotionCode");
+        Promotion promotion = null;
+        if(o2ClientService.isO2User(o2ClientService.getUserDetails(token)))
+            promotion = userService.setPotentialPromo(communityName, user, "promotionCode");
         else
-            userService.setPotentialPromo(communityName, user, "defaultPromotionCode");
+            promotion = userService.setPotentialPromo(communityName, user, "defaultPromotionCode");
 
-        userService.applyPromotion(user);
+        userService.applyPromotionByPromoCode(user, promotion);
     }
 
-    private boolean isO2User(String token) {
-        return true;
-    }
 }
