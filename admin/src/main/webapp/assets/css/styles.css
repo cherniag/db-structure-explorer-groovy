@@ -89,11 +89,10 @@ ul.table_up {
 	margin-top: -20px;
 }
 
-ul.table li.title {
+ul.table li.title, thead.header {
 	padding-bottom: 5px;
 	background: url("../img/calendar_bg.png") repeat;
 	border: 8px solid transparent;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
 ul.table li {
@@ -811,3 +810,8 @@ table.hor-minimalist-a td {
 #simplemodal-container h2 {font-size: 2em}
 #simplemodal-container span {font-size: 1em}
 #simplemodal-container a.modalCloseImg {background:url(../img/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+
+.ads_table {
+	border-bottom: 1px solid #DDDDDD!important;
+	border-top: none!important;
+}

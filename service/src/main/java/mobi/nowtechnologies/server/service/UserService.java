@@ -121,6 +121,11 @@ public class UserService {
 	private DrmService drmService;
 	private AccountLogService accountLogService;
 	private UserRepository userRepository;
+	private O2ClientService o2ClientService;
+	
+	public void setO2ClientService(O2ClientService o2ClientService) {
+		this.o2ClientService = o2ClientService;
+	}
 
 	public void setDrmService(DrmService drmService) {
 		this.drmService = drmService;
@@ -1915,6 +1920,17 @@ public class UserService {
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
 	}
-	
-	
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public User activatePhoneNumber(User user, String phone) {
+		
+		String msisdn = o2ClientService.validatePhoneNumber(phone != null ? phone : user.getMobile());
+		
+		user.setMobile(msisdn);
+		user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+		
+		userRepository.save(user);
+		
+		return user;
+	}
 }
