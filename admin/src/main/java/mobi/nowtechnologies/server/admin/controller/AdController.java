@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AdController extends AbstractCommonController {
 	
+	private static final String ERRORS = "errors";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdController.class);
 	
 	private MessageService messageService;
@@ -120,11 +123,13 @@ public class AdController extends AbstractCommonController {
 		if (bindingResult.hasErrors()) {
 			response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
 			modelAndView = new ModelAndView("ads/add");
+			modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
 		} else {
 
 			String communityURL = RequestUtils.getCommunityURL();
 
-			messageService.saveAd(AdItemDto.fromDto(adItemDto), adItemDto.getFile(), communityURL, adItemDto.getFilterDtos());
+			Message message = messageService.saveAd(AdItemDto.fromDto(adItemDto), adItemDto.getFile(), communityURL, adItemDto.getFilterDtos());
+			LOGGER.info("The advertisement has been saved as [" + message + "] successfully");
 			modelAndView = new ModelAndView("redirect:/ads");
 		}
 		return modelAndView;
@@ -137,7 +142,12 @@ public class AdController extends AbstractCommonController {
 		ModelAndView modelAndView;
 		if (bindingResult.hasErrors()) {
 			response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
-			modelAndView = new ModelAndView("ads/add");
+			modelAndView = new ModelAndView("ads/edit");
+			if (adItemDto.getFilterDtos() == null) {
+				adItemDto.setFilterDtos(Collections.<FilterDto> emptySet());
+			}
+			modelAndView.getModelMap().put(AdItemDto.NAME, adItemDto);
+			modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
 		} else {
 			
 			String communityURL = RequestUtils.getCommunityURL();
@@ -150,8 +160,11 @@ public class AdController extends AbstractCommonController {
 				response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
 				bindingResult.addError(new ObjectError(AdItemDto.NAME, new String[] { "message.edit.error.couldNotFindMessage" }, null,
 						"Couldn't find this message in the DB. To save it as new item click 'Save changes' button."));
-			} else
+				modelAndView.addObject(ERRORS, bindingResult.getAllErrors());
+			} else{
+				LOGGER.info("The advertisement has been updated on [" + message + "] successfully");
 				modelAndView = new ModelAndView("redirect:/ads");
+			}
 		}
 		return modelAndView;
 	}
@@ -177,6 +190,8 @@ public class AdController extends AbstractCommonController {
 	public ModelAndView delete(HttpServletRequest request, @PathVariable("adItemId") Integer adItemId) {
 	
 		messageService.delete(adItemId);
+		
+		LOGGER.info("The advertisement with id [" + adItemId + "] has been removed successfully");
 
 		ModelAndView modelAndView = new ModelAndView("redirect:/ads");
 

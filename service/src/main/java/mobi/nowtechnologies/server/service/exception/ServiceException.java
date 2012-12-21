@@ -29,8 +29,15 @@ public class ServiceException extends RuntimeException {
 	public ServiceException(ServerMessage serverMessage) {
 		this.serverMessage = serverMessage;
 	}
-
+	
 	public ServiceException(String code, String defaultMessage) {
+		this.errorCodeForMessageLocalization = code;
+		this.localizedMessage = defaultMessage;
+	}
+
+	public ServiceException(String code, String defaultMessage, String message) {
+		super(message);
+		
 		this.errorCodeForMessageLocalization = code;
 		this.localizedMessage = defaultMessage;
 	}

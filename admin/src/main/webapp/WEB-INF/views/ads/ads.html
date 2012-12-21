@@ -7,44 +7,40 @@
 			<div th:substituteby="tpl::navbar"></div>
 				<div class="container" id="adsTable">
 				<h1 class="head" th:text="#{ads.pages.ad.headline}">Ads</h1>
+					
 					<div class="newsListWide">
+					
 					<ul  class="table">
-						<li class="title">
-								<div class="number" th:text="#{ads.page.adsTable.head.position}">#</div>
-								<div class="image_news" th:text="#{ads.page.adsTable.head.image}">Image</div>
-								<div class="body" th:text="#{ads.page.adsTable.head.action}">Action</div>
-								<div class="body" th:text="#{ads.page.adsTable.head.message}">Message</div>
-								<div class="filters" th:text="#{ads.page.adsTable.head.filters}">Filters</div>
-								<div class="online" th:text="#{ads.page.adsTable.head.activated}">Online?</div>
-	<!--							<div class="date" th:text="#{ads.page.adsTable.head.publishTime}">Publish Date</div>-->
-						</li>
-					</ul>
-					<ul class="table table_up" id="sortable">
-						
-						<li th:each="adDto, it: ${AD_ITEM_DTO_LIST}">
-							<div class="number" th:text="${it.index+1}">1</div>
-							<div class="image_news"><img alt="Ad's picture" width="50" height="50" src="" th:attr="src=@{__${filesURL +adDto.imageFileName}__}" th:alt="#{ads.page.adsTable.ad.img.alt}"/></div>
-							<div class="body">
-								<span th:text="${adDto.action}">http://www.ukr.net</span><br/><br />
-								<span th:text="${adDto.message}">Editorial 1 Cheryl Cole gets fired from the X Factor</span><br/><br />
-								<a th:href="@{/ads/__${adDto.id}__}" th:text="#{ads.page.adsTable.ad.edit.submit}">Edit</a> |
-								<form id="deleteAdForm" name="deleteAdForm" action="#" th:action="@{/ads/__${adDto.id}__}" method="post">
-									<input type="hidden" id="_method" name="_method" value="DELETE" />
-									<button type="submit" class="btn btn-danger">Delete</button>
-								</form>
-							</div>
-							
-							<div class="filters">
-								<span th:each="filterDto: ${adDto.filterDtos}">
-									<span class="label"  th:class="#{${'label label_'+filterDto.name}}" th:text="#{${'messages.pages.filter.'+filterDto.name}}">Filter list</span>
-								</span>
-							</div>
-							
-							<div class="online" th:text="${adDto.activated}?#{ads.page.adsTable.ad.activated}:#{ads.page.adsTable.ad.notActivated}">No</div>
-							
-<!--							<div class="date" th:text="${#dates.format(adDto.publishTime, '__#{ads.page.adsTable.ad.publishDate.format}__')}">12/06/2012 12:00:00</div>-->
-							
-						</li>
+					<table class="ads_table">
+						<thead class="header">
+						<tr>
+						<th th:text="#{ads.page.adsTable.head.position}" scope="col">#</th>
+						<th th:text="#{ads.page.adsTable.head.image}" scope="col">Image</th>
+						<th th:text="#{ads.page.adsTable.head.action}" scope="col">Action</th>
+						<th th:text="#{ads.page.adsTable.head.message}" scope="col">Message</th>
+						<th th:text="#{ads.page.adsTable.head.filters}" scope="col">Filters</th>
+						<th th:text="#{ads.page.adsTable.head.activated}" scope="col">Online?</th>
+						<th scope="col">Actions</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr th:each="adDto, it: ${AD_ITEM_DTO_LIST}">
+						<td th:text="${it.index+1}">1</td>
+						<td><img alt="Ad's picture" width="50" height="50" src="" th:attr="src=@{__${filesURL +adDto.imageFileName}__}" th:alt="#{ads.page.adsTable.ad.img.alt}"/></td>
+						<td th:text="${adDto.action}">Action</td>
+						<td th:text="${adDto.message}">Editorial 1 Cheryl Cole gets fired from the X Factor</td>
+						<td><span th:each="filterDto: ${adDto.filterDtos}"><span th:class="#{${'label label_'+filterDto.name}}" th:text="#{${'messages.pages.filter.'+filterDto.name}}">Filter list</span>&#160;<br/></span></td>
+						<td th:text="${adDto.activated}?#{ads.page.adsTable.ad.activated}:#{ads.page.adsTable.ad.notActivated}">Yes</td>
+						<td>
+						<a th:href="@{/ads/__${adDto.id}__}" th:text="#{ads.page.adsTable.ad.edit.submit}">Edit</a> |
+							<form id="deleteAdForm" name="deleteAdForm" action="#" th:action="@{/ads/__${adDto.id}__}" method="post">
+								<input type="hidden" id="_method" name="_method" value="DELETE" />
+								<button type="submit" class="btn btn-danger">Delete</button>
+							</form>
+						</td>
+						</tr>
+						</tbody>
+					</table>
 					</ul>
 				</div>
 				<div class="navButtons">

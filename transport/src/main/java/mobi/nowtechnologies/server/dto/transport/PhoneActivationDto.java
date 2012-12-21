@@ -1,7 +1,10 @@
 package mobi.nowtechnologies.server.dto.transport;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
+@XmlRootElement(name="phoneActivation")
 public class PhoneActivationDto {
 	private ActivationStatus activation;
 	private String phoneNumber;

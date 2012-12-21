@@ -6,10 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.exception.SagePayException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
@@ -72,6 +69,19 @@ public abstract class CommonController {
 		LOGGER.error(message, exception);
 
 		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+	}
+	
+	@ExceptionHandler(InvalidPhoneNumberException.class)
+	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+
+		final String localizedDisplayMessage = exception.getLocalizedMessage();
+		final String message = exception.getMessage();
+		final Integer errorCode = new Integer(exception.getErrorCode());
+		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
+		
+		LOGGER.error(message, exception);
+
+		return sendResponse(errorMessage, HttpStatus.OK, response);
 	}
 	
 	@ExceptionHandler(ValidationException.class)
