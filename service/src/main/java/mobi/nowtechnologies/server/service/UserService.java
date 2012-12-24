@@ -454,7 +454,7 @@ public class UserService {
 	// }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public synchronized void applyPromotionByPromoCode(User user, Promotion promotion) {
+	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
 		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
 		if (promotion != null) {
 
@@ -479,7 +479,9 @@ public class UserService {
 				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + promotion.getFreeWeeks() - i),
 						TransactionType.SUBSCRIPTION_CHARGE));
 			}
+			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
 		}
+		throw new IllegalArgumentException("No promotion found");
 	}
 
 	private void setPaymentStatusAccoringToPaymentType(User user) {

@@ -55,7 +55,7 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/APPLY_INIT_PROMO", "*/{community:o2}/3.6/APPLY_INIT_PROMO"})
-    public void applyO2Promotion(
+    public ModelAndView applyO2Promotion(
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -70,7 +70,11 @@ public class ApplyInitPromoController extends CommonController {
         else
             promotion = userService.setPotentialPromo(community, user, "defaultPromotionCode");
 
-        userService.applyPromotionByPromoCode(user, promotion);
+        AccountCheckDTO accountCheckDTO = userService.applyPromotionByPromoCode(user, promotion);
+        	final Object[] objects = new Object[]{accountCheckDTO};
+        	proccessRememberMeToken(objects);
+        
+        return new ModelAndView(view, Response.class.toString(), new Response(objects));
     }
 
 }
