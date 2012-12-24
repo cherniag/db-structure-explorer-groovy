@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.validator.constraints.FileSize;
@@ -35,7 +33,7 @@ public class NewsItemDto {
 	private String headline;
 	
 	@NotEmpty
-	@Length(min=1,max=120)
+	@Length(min=1,max=255)
 	private String body;
 	
 	private boolean activated;

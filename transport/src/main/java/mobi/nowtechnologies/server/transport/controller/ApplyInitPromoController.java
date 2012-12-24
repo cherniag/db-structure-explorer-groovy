@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,20 +54,21 @@ public class ApplyInitPromoController extends CommonController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/O2/3.6/APPLY_INIT_PROMO", "*/O2/3.6/APPLY_INIT_PROMO"})
+    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/APPLY_INIT_PROMO", "*/{community:o2}/3.6/APPLY_INIT_PROMO"})
     public void applyO2Promotion(
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("OTAC_TOKEN") String token) {
+            @RequestParam("OTAC_TOKEN") String token,
+            @PathVariable("community") String community) {
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        User user = userService.findByNameAndCommunity(userName, community);
         Promotion promotion = null;
         if(o2ClientService.isO2User(o2ClientService.getUserDetails(token)))
-            promotion = userService.setPotentialPromo(communityName, user, "promotionCode");
+            promotion = userService.setPotentialPromo(community, user, "promotionCode");
         else
-            promotion = userService.setPotentialPromo(communityName, user, "defaultPromotionCode");
+            promotion = userService.setPotentialPromo(community, user, "defaultPromotionCode");
 
         userService.applyPromotionByPromoCode(user, promotion);
     }

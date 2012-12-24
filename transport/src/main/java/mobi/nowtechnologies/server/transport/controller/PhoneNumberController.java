@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,15 +33,16 @@ public class PhoneNumberController extends CommonController {
 	 * @return activation phone number info.
 	 */
 	@SuppressWarnings("deprecation")
-	@RequestMapping(method = RequestMethod.POST, value = {"/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER", "/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/PHONE_NUMBER"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/{community:[a-z0-9]}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER", "/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/PHONE_NUMBER"})
 	public ModelAndView activatePhoneNumber(
 			@RequestParam(value = "PHONE", required = false) String phone,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp,
+			@PathVariable("community") String community) {
 		LOGGER.info("command processing started");
 		try {
-			User user = userService.checkCredentials(userName, userToken, timestamp, "O2");
+			User user = userService.checkCredentials(userName, userToken, timestamp, community);
 
 			user = userService.activatePhoneNumber(user, phone);
 			

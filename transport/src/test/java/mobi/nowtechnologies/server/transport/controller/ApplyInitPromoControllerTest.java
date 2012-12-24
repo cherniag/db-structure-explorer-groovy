@@ -35,7 +35,7 @@ public class ApplyInitPromoControllerTest {
         User user = userService.findByName(userName);
 
         //then
-        controller.applyO2Promotion("Now Music", userName, user.getToken(), "timestemp", "o2_token");
+        controller.applyO2Promotion("Now Music", userName, user.getToken(), "timestemp", "o2_token", "Now Music");
 
         //when
         user = userService.findByName(userName);

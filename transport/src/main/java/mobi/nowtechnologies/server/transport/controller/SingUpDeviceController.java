@@ -15,6 +15,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -98,9 +99,10 @@ public class SingUpDeviceController extends CommonController {
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/O2/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
 	public ModelAndView signUpDevice_O2(HttpServletRequest request,
-			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
+			@PathVariable("community") String community) {
 		LOGGER.info("command processing started");
 		try {
 			if (result.hasErrors()) {
@@ -113,6 +115,7 @@ public class SingUpDeviceController extends CommonController {
 
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
+			userDeviceDetailsDto.setCOMMUNITY_NAME(community);
 
 			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
 
