@@ -50,17 +50,17 @@ public class O2ClientServiceImpl implements O2ClientService {
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 			request.add("otac_auth_code", token);
 		try {
-			if ("0000".equals(token)) {
+			if (token.startsWith("0000")) {
 				return new O2UserDetails("o2", "PAYG");
-			} else if ("1111".equals(token)) {
+			} else if (token.startsWith("1111")) {
 				return new O2UserDetails("non-o2", "PAYG");
-			} else if ("2222".equals(token)) {
+			} else if (token.startsWith("2222")) {
 				return new O2UserDetails("o2", "PAYGM");
-			} else if ("3333".equals(token)) {
+			} else if (token.startsWith("3333")) {
 				return new O2UserDetails("non-o2", "PAYGM");
-			} else if ("4444".equals(token)) {
+			} else if (token.startsWith("4444")) {
 				return new O2UserDetails("o2", "business");
-			} else if ("5555".equals(token)) {
+			} else if (token.startsWith("5555")) {
 				return new O2UserDetails("non-o2", "business");
 			}
 			throw new ExternalServiceException("not.supported.code", "Not supported code");

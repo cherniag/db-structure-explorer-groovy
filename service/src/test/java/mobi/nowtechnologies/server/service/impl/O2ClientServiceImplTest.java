@@ -59,7 +59,7 @@ public class O2ClientServiceImplTest {
 		verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
 
 		assertNotNull(result);
-		assertEquals(expectedPhoneNumber, phoneNumber);
+		assertEquals(expectedPhoneNumber, result);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_O2User_and_PAYGtariff() {
-		String otac_auth_code = "0000";
+		String otac_auth_code = "0000-123123234234";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("o2", userDetails.getOperator());
@@ -85,7 +85,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_notO2User_and_PAYGtariff() {
-		String otac_auth_code = "1111";
+		String otac_auth_code = "1111sfdf1345qwdf";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -94,7 +94,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_O2User_and_PAYGMtariff() {
-		String otac_auth_code = "2222";
+		String otac_auth_code = "22221234asdfasd";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("o2", userDetails.getOperator());
@@ -103,7 +103,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_notO2User_and_PAYGMtariff() {
-		String otac_auth_code = "3333";
+		String otac_auth_code = "3333asdfasdf";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -112,7 +112,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_O2User_and_Businesstariff() {
-		String otac_auth_code = "4444";
+		String otac_auth_code = "4444asdfasdf";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("o2", userDetails.getOperator());
@@ -121,7 +121,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_notO2User_and_Businesstariff() {
-		String otac_auth_code = "5555";
+		String otac_auth_code = "5555asdfasdf";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -130,7 +130,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test(expected=ExternalServiceException.class)
 	public void getUserDetail_Fail() {
-		String otac_auth_code = "6666";
+		String otac_auth_code = "6666fasdffwqe";
 		fixture.getUserDetails(otac_auth_code);
 	}
 	
