@@ -69,7 +69,7 @@ public class ApplyInitPromoController extends CommonController {
             promotion = userService.setPotentialPromo(community, user, "promotionCode");
         else
             promotion = userService.setPotentialPromo(community, user, "defaultPromotionCode");
-
+        	user.setUserName(user.getMobile());
         AccountCheckDTO accountCheckDTO = userService.applyPromotionByPromoCode(user, promotion);
         	final Object[] objects = new Object[]{accountCheckDTO};
         	proccessRememberMeToken(objects);
