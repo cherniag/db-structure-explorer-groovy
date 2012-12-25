@@ -127,7 +127,7 @@ public class EntityController extends CommonController {
 		this.promoService = promoService;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/ECHO", "*/ECHO" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/ECHO", "**/ECHO" })
 	public ModelAndView echo() {
 		ModelAndView modelAndView= new ModelAndView(view, MODEL_NAME, new Response(new Object[]{}));
 		return modelAndView;
@@ -194,7 +194,7 @@ public class EntityController extends CommonController {
         return (AccountCheckDTO) resp.getObject()[0];
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
+    @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "**/ACC_CHECK" })
 	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -260,7 +260,7 @@ public class EntityController extends CommonController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = { "/SET_DRM", "*/SET_DRM" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/SET_DRM", "**/SET_DRM" })
 	public ModelAndView setDRM(HttpServletRequest httpServletRequest,
 			@RequestParam(APP_VERSION) String appVersion,
 			@RequestParam(COMMUNITY_NAME) String communityName,
@@ -313,7 +313,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/BUY_TRACK", "*/BUY_TRACK" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/BUY_TRACK", "**/BUY_TRACK" })
 	public ModelAndView buyTrack(@RequestParam("MEDIA_UID") String isrc,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -353,7 +353,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/SET_PASSWORD", "*/SET_PASSWORD" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/SET_PASSWORD", "**/SET_PASSWORD" })
 	public ModelAndView setPassword(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("NEW_TOKEN") String newToken,
@@ -394,7 +394,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/SET_DEVICE", "*/SET_DEVICE" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/SET_DEVICE", "**/SET_DEVICE" })
 	public ModelAndView setDevice(
 			@RequestParam("DEVICE_TYPE") String deviceType,
 			@RequestParam("DEVICE_UID") String deviceUID,
@@ -444,7 +444,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/CHECK_PIN", "*/CHECK_PIN" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/CHECK_PIN", "**/CHECK_PIN" })
 	public void checkPin(@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
 			@RequestParam("API_VERSION") String apiVersion,
@@ -469,7 +469,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/GET_PAYMENT_POLICY", "*/GET_PAYMENT_POLICY" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/GET_PAYMENT_POLICY", "**/GET_PAYMENT_POLICY" })
 	public ModelAndView getPaymentPolicy(
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -506,7 +506,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_PHONE", "*/UPDATE_PHONE" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_PHONE", "**/UPDATE_PHONE" })
 	public void updatePhone(@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
 			@RequestParam("API_VERSION") String apiVersion,
@@ -590,7 +590,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_PAYMENT_DETAILS", "*/UPDATE_PAYMENT_DETAILS" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_PAYMENT_DETAILS", "**/UPDATE_PAYMENT_DETAILS" })
 	public void updatePaymentDetails(
 			@RequestParam("BODY") String body,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -637,7 +637,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/GET_PROMO_CODE", "*/GET_PROMO_CODE" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/GET_PROMO_CODE", "**/GET_PROMO_CODE" })
 	public ModelAndView getPromoCode(
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -662,7 +662,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/FB_ACC_CHECK", "*/FB_ACC_CHECK" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/FB_ACC_CHECK", "**/FB_ACC_CHECK" })
 	public ModelAndView facebookAccountCheck(
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -739,7 +739,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/SIGN_UP", "*/SIGN_UP" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/SIGN_UP", "**/SIGN_UP" })
 	public void signUp(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
 			BindingResult result) {
 		LOGGER.info("command processing started");
@@ -762,7 +762,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_FACEBOOK_DETAILS", "*/UPDATE_USER_FACEBOOK_DETAILS" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_FACEBOOK_DETAILS", "**/UPDATE_USER_FACEBOOK_DETAILS" })
 	public ModelAndView updateUserFacebookDetails(HttpServletRequest request, @Valid @ModelAttribute(UserFacebookDetailsDto.NAME) UserFacebookDetailsDto userFacebookDetailsDto, BindingResult result) {
 		try {
 			LOGGER.info("command processing started");
@@ -789,7 +789,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_DETAILS", "*/UPDATE_USER_DETAILS" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_DETAILS", "**/UPDATE_USER_DETAILS" })
 	public ModelAndView updateUserDetails(HttpServletRequest request, @Valid @ModelAttribute(UserDetailsDto.NAME) UserDetailsDto userDetailsDto, BindingResult result) {
 		LOGGER.info("command processing started");
 		try {

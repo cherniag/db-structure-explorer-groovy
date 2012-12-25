@@ -2999,6 +2999,7 @@ public class IntegrationTestIT {
 			String apiVersion = "3.5";
 			String communityName = "Now Music";
 			String appVersion = "CNBETA";
+			String communityUrl="nowtop40";
 
 			String deviceType = UserRegInfo.DeviceType.ANDROID;
 
@@ -3024,9 +3025,11 @@ public class IntegrationTestIT {
 			String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 			String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
+			String requestURI = "/"+communityUrl+"/"+apiVersion+"/GET_NEWS";
+			
 			httpServletRequest = new MockHttpServletRequest(
-					"POST", "/GET_NEWS");
-			httpServletRequest.setPathInfo("/GET_NEWS");
+					"POST", requestURI);
+			httpServletRequest.setPathInfo(requestURI);
 
 			httpServletRequest.addHeader("Content-Type", "text/xml");
 			httpServletRequest.addHeader("Content-Length", "0");

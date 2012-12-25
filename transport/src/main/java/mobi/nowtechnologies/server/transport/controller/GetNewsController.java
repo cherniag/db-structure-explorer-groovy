@@ -29,7 +29,7 @@ public class GetNewsController extends CommonController{
 		this.messageService = messageService;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_NEWS", "*/GET_NEWS"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/GET_NEWS", "**/GET_NEWS"})
 	public ModelAndView getNews(
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,

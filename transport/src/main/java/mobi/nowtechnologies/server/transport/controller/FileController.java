@@ -45,7 +45,7 @@ public class FileController extends CommonController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "*/GET_FILE"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "**/GET_FILE"})
 	public ModelAndView getFile(
 			@RequestParam("ID") final String mediaId,
 			@RequestParam("TYPE") String fileType,
