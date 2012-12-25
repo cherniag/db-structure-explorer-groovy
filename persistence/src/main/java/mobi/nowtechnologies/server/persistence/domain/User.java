@@ -929,7 +929,7 @@ public class User implements Serializable {
 				+ ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken=" + newStoredToken + ", tempToken=" + tempToken
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
-				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ "]";
+				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ ", activationStatus="+activationStatus+"]";
 	}
 
 	/**

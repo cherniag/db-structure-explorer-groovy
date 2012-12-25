@@ -467,6 +467,7 @@ public class UserService {
 
 			user.setStatus(UserStatusDao.getSubscribedUserStatus());
 			user.setFreeTrialStartedTimestampMillis(Utils.getEpochMillis());
+			user.setActivationStatus(ActivationStatus.ACTIVATED);
 			user = entityService.updateEntity(user);
 
 			promotion.setNumUsers(promotion.getNumUsers() + 1);
