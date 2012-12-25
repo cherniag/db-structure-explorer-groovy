@@ -160,7 +160,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/O2/3.6/ACC_CHECK", "*/O2/3.6/ACC_CHECK"})
+    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/ACC_CHECK", "*/{community:o2}/3.6/ACC_CHECK"})
     public ModelAndView accountCheckForO2Client(
             HttpServletRequest httpServletRequest,
             @RequestParam("APP_VERSION") String appVersion,
@@ -173,8 +173,9 @@ public class EntityController extends CommonController {
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken) {
-        ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @PathVariable("community") String community) {
+        ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
                 timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
 
         User user = userService.findByName(userName);
