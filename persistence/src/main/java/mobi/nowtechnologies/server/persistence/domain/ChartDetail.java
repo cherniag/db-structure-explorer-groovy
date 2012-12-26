@@ -236,14 +236,19 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
 	
 		String enocodediTunesUrl = null;
+		String enocodedAmazonUrl = null;
 		try {
 			String iTunesUrl = media.getiTunesUrl();
 			if (iTunesUrl != null)
 				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
+			String amazonUrl = media.getAmazonUrl();	
+			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
+			
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new PersistenceException(e.getMessage(), e);
 		}
+		chartDetailDto.setAmazonUrl(enocodedAmazonUrl);
 		chartDetailDto.setiTunesUrl(enocodediTunesUrl);
 		chartDetailDto.setPreviousPosition(prevPosition);
 		chartDetailDto.setChangePosition(chgPosition.getLabel());
