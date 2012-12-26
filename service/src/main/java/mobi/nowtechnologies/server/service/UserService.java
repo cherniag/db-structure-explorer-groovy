@@ -686,11 +686,12 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User mergeUser(User user, User userByDeviceUID) {
+		userByDeviceUID = userRepository.findOne(userByDeviceUID.getId());
 		LOGGER.debug("input parameters user, userByDeviceUID: [{}], [{}]", user, userByDeviceUID);
 		userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
 
 		drmService.moveDrms(userByDeviceUID, user);
-
+		
 		entityService.removeEntity(userByDeviceUID);
 
 		user.setDeviceUID(userByDeviceUID.getDeviceUID());
