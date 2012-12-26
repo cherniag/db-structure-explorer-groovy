@@ -63,18 +63,29 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community) {
 
-        User user = userService.findByNameAndCommunity(userName, community);
-        Promotion promotion = null;
-        if(o2ClientService.isO2User(o2ClientService.getUserDetails(token)))
-            promotion = userService.setPotentialPromo(community, user, "promotionCode");
-        else
-            promotion = userService.setPotentialPromo(community, user, "defaultPromotionCode");
-        	user.setUserName(user.getMobile());
-        AccountCheckDTO accountCheckDTO = userService.applyPromotionByPromoCode(user, promotion);
-        	final Object[] objects = new Object[]{accountCheckDTO};
-        	proccessRememberMeToken(objects);
+        User user = userService.findByDeviceUIDAndCommunityRedirectURL(userName, community);
+        User mobileUser = null;
+        if (null != user)
+        	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
         
-        return new ModelAndView(view, Response.class.toString(), new Response(objects));
+        if (null != mobileUser) {
+        	userService.mergeUser(mobileUser, user);
+        	AccountCheckDTO dto = userService.proceessAccountCheckCommandForAuthorizedUser(mobileUser.getId(), null, mobileUser.getDeviceTypeIdString());
+        	return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{dto}));
+        } else {
+	        Promotion promotion = null;
+	        
+	        if(o2ClientService.isO2User(o2ClientService.getUserDetails(token)))
+	            promotion = userService.setPotentialPromo(community, user, "promotionCode");
+	        else
+	            promotion = userService.setPotentialPromo(community, user, "defaultPromotionCode");
+	        
+	        user.setUserName(user.getMobile());
+	        AccountCheckDTO accountCheckDTO = userService.applyPromotionByPromoCode(user, promotion);
+	        final Object[] objects = new Object[]{accountCheckDTO};
+	        proccessRememberMeToken(objects);
+        	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+        }
     }
 
 }
