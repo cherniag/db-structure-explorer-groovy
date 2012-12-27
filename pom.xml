@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mobi.nowtechnologies.java</groupId>
 	<artifactId>server</artifactId>
-	<version>3.5.5-SNAPSHOT</version>
+	<version>3.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Now Technologies Java Server</name>
 
@@ -29,7 +29,7 @@
 		<org.springframework.version>3.1.1.RELEASE</org.springframework.version>
 		<org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
 		<spring-social.version>1.0.1.RELEASE</spring-social.version>
-		<chartsnow-version>3.5.5-SNAPSHOT</chartsnow-version>
+		<chartsnow-version>3.6-SNAPSHOT</chartsnow-version>
 	</properties>
 
 	<profiles>
