@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -86,6 +87,17 @@ public class ApplyInitPromoControllerTest {
         user = userService.findByName(user.getMobile());
         //when
         Assert.assertNotNull(user);
+    }
+    
+    @Test(expected=UserCredentialsException.class)
+    public void applyInitPromo_whenUserUserNameIsWrong_then_Fail() {
+    	//given
+        
+        
+        //then
+        controller.applyO2Promotion("o2", "+447700000000", "hello token", "timestemp", "0000-4dfghg546456", "o2");
+        
+        //when
     }
     
     private int days(long nextSubPayment) {

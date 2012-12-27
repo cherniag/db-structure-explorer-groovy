@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,14 +66,16 @@ public class ApplyInitPromoController extends CommonController {
 
         User user = userService.findByNameAndCommunity(userName, communityName);
         User mobileUser = null;
-        if (null != user)
+        if (null != user) {
         	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
         	
-    	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
+        	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
     	
-        final Object[] objects = new Object[]{accountCheckDTO};
-        proccessRememberMeToken(objects);
-    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+	        final Object[] objects = new Object[]{accountCheckDTO};
+	        proccessRememberMeToken(objects);
+	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+        }
+        throw new UserCredentialsException("Bad user credentials");
     }
 
 }
