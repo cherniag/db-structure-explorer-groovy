@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -130,5 +131,25 @@ public class GetChartController extends CommonController{
 		} finally {
 			LOGGER.info("command processing finished");
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/GET_CHART", "*/{community:o2}/3.6/GET_CHART"})
+	public ModelAndView getChart_O2(
+			HttpServletRequest request,
+			@RequestParam("APP_VERSION") String appVersion,
+			@RequestParam("COMMUNITY_NAME") String communityName,
+			@RequestParam("API_VERSION") String apiVersion,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+			@PathVariable("community") String community) {
+		
+		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+		
+		Object[] objects = chartService.processGetChartCommand(user, community);
+		
+		proccessRememberMeToken(objects);
+		return new ModelAndView(view, Response.class.toString(), new Response(objects));
 	}
 }
