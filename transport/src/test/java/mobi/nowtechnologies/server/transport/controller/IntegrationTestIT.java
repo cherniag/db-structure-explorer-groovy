@@ -1,12 +1,52 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.dao.*;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.EntityDao;
+import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
+import mobi.nowtechnologies.server.persistence.dao.UserDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.CountryByIpService;
+import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.service.FacebookService;
+import mobi.nowtechnologies.server.service.FileService;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.UserService.AmountCurrencyWeeks;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -14,34 +54,41 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
+
 import org.apache.http.NameValuePair;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
+import org.custommonkey.xmlunit.ElementQualifier;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * The class <code>EntityControllerTest</code> contains tests for the class
@@ -98,12 +145,18 @@ public class IntegrationTestIT {
 	@Resource
 	private EntityController entityController;
 
-	// @Rule
-	// public PowerMockRule powerMockRule = new PowerMockRule();
-
+//	@Rule
+//	public PowerMockRule powerMockRule = new PowerMockRule();
+	
 	@PostConstruct
 	public void setUp() {
-		MockServletContext mockServletContext = new MockServletContext();
+		XMLUnit.setControlParser(
+				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		XMLUnit.setTestParser(
+				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		XMLUnit.setSAXParserFactory(
+				"org.apache.xerces.jaxp.SAXParserFactoryImpl");
+		XMLUnit.setIgnoreWhitespace(true);
 	}
 
 	@Test
@@ -2364,6 +2417,7 @@ public class IntegrationTestIT {
 			String timestamp = "1";
 			String apiVersion = "V1.2";
 			String communityName = "Now Music";
+			String communityUrl = "nowtop40";
 			String appVersion = "CNBETA";
 
 			String storedToken = Utils.createStoredToken(userName, password);
@@ -2382,7 +2436,7 @@ public class IntegrationTestIT {
 
 			registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, appVersion);
 
-			getChart(userName, timestamp, apiVersion, communityName, appVersion, userToken);
+			getChart(userName, timestamp, apiVersion, communityUrl, communityName, appVersion, userToken, storedToken);
 
 			String isrc = "USUM71100721";
 			byte drmValue = 5;
@@ -2609,6 +2663,7 @@ public class IntegrationTestIT {
 			String timestamp = "1";
 			String apiVersion = "V1.2";
 			String communityName = "Now Music";
+			String comunityUrl = "nowtop40";
 			String appVersion = "CNBETA";
 
 			String deviceString = "Device 1";
@@ -2652,10 +2707,7 @@ public class IntegrationTestIT {
 
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp,
-			// userToken, appVersion);
-
-			getChart(userName, timestamp, apiVersion, communityName, appVersion, userToken);
+			getChart(userName, timestamp, apiVersion, comunityUrl, communityName, appVersion, userToken, storedToken);
 
 			String mediaIsrc = "USUM71100721";
 			String type = FileService.FileType.HEADER.name();
@@ -2714,58 +2766,38 @@ public class IntegrationTestIT {
 	@Test
 	public void testGET_CHART() throws Exception {
 		try {
-			String password = "zzz@z.com";
 			String userName = "zzz@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
+			String timestamp = "2011_12_26_07_04_23";
+			String apiVersion = "3.5";
 			String communityName = "Now Music";
 			String appVersion = "CNBETA";
+			String communityUrl="nowtop40";
 
-			String deviceString = "Device 1";
 			String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-			String storedToken = Utils.createStoredToken(userName, password);
+			String ipAddress = "2.24.0.1";
+
+			MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/" + apiVersion + "/SIGN_UP_DEVICE");
+			httpServletRequest.addHeader("Content-Type", "text/xml");
+			httpServletRequest.setRemoteAddr(ipAddress);
+			httpServletRequest.setPathInfo("/" + apiVersion + "/SIGN_UP_DEVICE");
+
+			httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
+			httpServletRequest.addParameter("DEVICE_UID", userName);
+			httpServletRequest.addParameter("API_VERSION", apiVersion);
+			httpServletRequest.addParameter("APP_VERSION", appVersion);
+			httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
+
+			MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+			dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
+
+			assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+
+			String contentAsString = mockHttpServletResponse.getContentAsString();
+			String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType(deviceType);
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString(deviceString);
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber("07580381128");
-			userRegInfo.setOperator(1);
-
-			// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp,
-			// userToken, appVersion);
-
-			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<userRegInfo>"
-					+ "<address>33333</address>"
-					+ "<appVersion>" + appVersion + "</appVersion>"
-					+ "<apiVersion>" + apiVersion + "</apiVersion>"
-					+ "<deviceType>" + deviceType + "</deviceType>"
-					+ "<deviceString>" + deviceString + "</deviceString>"
-					+ "<countryFullName>Great Britain</countryFullName>"
-					+ "<city>33</city>"
-					+ "<firstName>33</firstName>"
-					+ "<lastName>33</lastName>"
-					+ "<email>" + userName + "</email>"
-					+ "<communityName>" + communityName + "</communityName>"
-					+ "<displayName>displayName</displayName>"
-					+ "<postCode>null</postCode>"
-					+ "<paymentType>" + UserRegInfo.PaymentType.UNKNOWN + "</paymentType>"
-					+ "<storedToken>" + storedToken + "</storedToken>"
-					+ "<promotionCode>promo8</promotionCode>"
-					+ "</userRegInfo>";
-
-			MockHttpServletResponse mockHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-			assertEquals(200, mockHttpServletResponse.getStatus());
-
-			getChart(userName, timestamp, apiVersion, communityName, appVersion, userToken);
+			
+			getChart(userName, timestamp, apiVersion, communityUrl, communityName, appVersion, userToken, storedToken);
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -2861,12 +2893,15 @@ public class IntegrationTestIT {
 		}
 	}
 
-	private void getChart(String userName, String timestamp, String apiVersion, String communityName, String appVersion, String userToken)
-			throws ServletException, IOException, UnsupportedEncodingException {
+	@SuppressWarnings("unchecked")
+	private void getChart(String userName, String timestamp, String apiVersion, String communityUrl, String communityName, String appVersion, String userToken, String storedToken)
+			throws ServletException, IOException, UnsupportedEncodingException, SAXException {
 
+		String requestURI = "/" + communityUrl + "/" + apiVersion + "/GET_CHART";
 		MockHttpServletResponse aHttpServletResponse = new MockHttpServletResponse();
+		
 		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(
-				"POST", "/GET_CHART");
+				"POST", requestURI);
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.addHeader("Content-Length", "0");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
@@ -2884,18 +2919,72 @@ public class IntegrationTestIT {
 		assertEquals(200, aHttpServletResponse.getStatus());
 
 		final String contentAsString = aHttpServletResponse.getContentAsString();
+		final String rememberMeToken= contentAsString.substring(contentAsString.indexOf("<rememberMeToken>")+"<rememberMeToken>".length(), contentAsString.indexOf("</rememberMeToken>"));
 
-		String start=contentAsString.substring(0, 761);
-		String middle=contentAsString.substring(836, 943);
-		String end=contentAsString.substring(953);
+		class ChartElementQualifier implements ElementQualifier {
+
+			@Override
+			public boolean qualifyForComparison(Element expectedElement, Element actualElement) {
+
+				final String expectedNodeName = expectedElement.getNodeName();
+				final String actualNodeName = actualElement.getNodeName();
+				final Node expectedParentNode = expectedElement.getParentNode();
+				final Node actualParentNode = actualElement.getParentNode();
+
+				boolean isComparable = false;
+				if ((expectedNodeName.equals("bonusTrack") && actualNodeName.equals("bonusTrack"))||(expectedNodeName.equals("track") && actualNodeName.equals("track"))) {
+
+					if (actualParentNode != null && actualParentNode.getNodeName().equals("chart") && actualParentNode.getParentNode() != null
+							&& actualParentNode.getParentNode().getNodeName().equals("response")) {
+
+						NodeList actualNodeList = actualElement.getChildNodes();
+						NodeList expectedNodeList = expectedElement.getChildNodes();
+						if (actualNodeList.getLength() == expectedNodeList.getLength()) {
+
+							Map<String, String> expectedMap = new HashMap<String, String>();
+							Map<String, String> actualMap = new HashMap<String, String>();
+							for (int i = 0; i < actualNodeList.getLength(); i++) {
+								populate(actualNodeList, actualMap, i);
+
+								populate(expectedNodeList, expectedMap, i);
+							}
+							
+							String actualPosition = actualMap.get("position");
+							if (expectedMap.get("position").equals(actualPosition)) {
+								isComparable = true;
+							}
+
+						}
+					}
+
+				}else if (expectedNodeName.equals(actualNodeName)){
+					if(expectedParentNode.getNodeName().equals(actualParentNode.getNodeName())){
+						isComparable = true;
+					}
+				}
+				return isComparable;
+			}
+
+			private Map<String, String> populate(NodeList nodeList, Map<String, String> map, int i) {
+				Node currentNode = nodeList.item(i);
+				populate(currentNode, "position", map );
+				return map;
+			}	
+			
+			private Map<String, String> populate(Node node, String nodeName, Map<String, String> map){
+				if (node.getNodeName().equals(nodeName)){
+					map.put(nodeName, node.getTextContent()); 
+				}
+				return map;
+			}
+		}
 		
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID>Device 1</deviceUID><displayName>displayName</displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>true</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>false</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>",
-				start);
-		assertEquals("</rememberMeToken><status>SUBSCRIBED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>", middle);
-		assertEquals(
-				"</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>f2ad4ecbe7b82b873224a2ccbcf3f3c2</userToken><oAuthProvider>NONE</oAuthProvider></user><chart><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>98</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>USUM71100721</media><position>21</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>5</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>1</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>145</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>2</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>38</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>3</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>4</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1285</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>5</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>436</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>6</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>7</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>8</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>9</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>33</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>10</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>8888</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>11</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>555</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>12</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>13</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>14</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>6</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>15</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>925</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>16</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>3</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>17</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>18</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>11</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>19</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><artist>Lmfao/Lauren Bennett/Goonrock-Party Rock Anthem</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>111</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>20</position><previousPosition>24</previousPosition><title>HEATSEEKER</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack></chart></response>",
-				end);
+		final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID></deviceUID><displayName></displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>true</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>0</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>"+rememberMeToken+"</rememberMeToken><status>LIMITED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>0</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>"+storedToken+"</userToken><oAuthProvider>NONE</oAuthProvider></user><chart><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>98</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>USAT21001886</media><position>21</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>5</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>1</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>145</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>2</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>38</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>3</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>4</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1285</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>5</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>436</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>6</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>7</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>8</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>9</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>33</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>10</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>8888</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>11</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>555</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>12</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>13</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>14</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><track><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>6</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>15</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></track><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>925</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>16</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>3</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>17</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>18</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>11</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>19</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>111</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><media>US-UM7-11-00061</media><position>20</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack></chart></response>";
+		
+		Diff diff = new Diff(expected, contentAsString);
+		diff.overrideElementQualifier(new ChartElementQualifier());
+		
+		XMLAssert.assertXMLEqual(diff, true);
 	}
 
 	@Test
@@ -2906,6 +2995,7 @@ public class IntegrationTestIT {
 			String timestamp = "1";
 			String apiVersion = "V1.2";
 			String communityName = "Now Music";
+			String comunityUrl = "nowtop40";
 			String appVersion = "CNBETA";
 
 			String deviceString = "Device 1";
@@ -2949,7 +3039,7 @@ public class IntegrationTestIT {
 
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			getChart(userName, timestamp, apiVersion, communityName, appVersion, userToken);
+			getChart(userName, timestamp, apiVersion, comunityUrl, communityName, appVersion, userToken, storedToken);
 
 			String mediaIsrc = "USUM71100721";
 			String type = FileService.FileType.HEADER.name();
@@ -2991,6 +3081,7 @@ public class IntegrationTestIT {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGET_FILTERED_NEWS() throws Exception {
 		try {
@@ -3049,11 +3140,89 @@ public class IntegrationTestIT {
 			assertEquals(200, mockHttpServletResponse.getStatus());
 			
 			contentAsString = mockHttpServletResponse.getContentAsString();
-		
-			String firstPart=contentAsString.substring(0,790);	
-			String secondPart=contentAsString.substring(contentAsString.indexOf("</rememberMeToken>"));
-			assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID></deviceUID><displayName></displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>true</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>0</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>",firstPart);
-			assertEquals("</rememberMeToken><status>LIMITED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>0</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>"+storedToken+"</userToken><oAuthProvider>NONE</oAuthProvider></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><id>1</id><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</detail><i>2</i><id>2</id><messageFrequence>DAILY</messageFrequence><messageType>POPUP</messageType><position>2</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>http://google.com.ua</detail><i>2</i><id>82</id><messageType>AD</messageType><position>2</position><timestampMilis>0</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><id>4</id><messageType>NEWS</messageType><position>4</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><id>7</id><messageType>NEWS</messageType><position>7</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>4XLS70CD</detail><i>7</i><id>87</id><messageType>AD</messageType><position>7</position><timestampMilis>0</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><id>10</id><messageType>NEWS</messageType><position>10</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>6XLS70CD</detail><i>10</i><id>90</id><messageType>AD</messageType><position>10</position><timestampMilis>0</timestampMilis></item></news></response>",secondPart);
+			
+		    final String rememberMeToken= contentAsString.substring(contentAsString.indexOf("<rememberMeToken>")+"<rememberMeToken>".length(), contentAsString.indexOf("</rememberMeToken>"));
+			
+			final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID></deviceUID><displayName></displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>true</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>0</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>"+rememberMeToken+"</rememberMeToken><status>LIMITED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>0</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>"+storedToken+"</userToken><oAuthProvider>NONE</oAuthProvider></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><id>1</id><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</detail><i>2</i><id>2</id><messageFrequence>DAILY</messageFrequence><messageType>POPUP</messageType><position>2</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The Wanted would love to match the drama and musicality of the Take That shows on their upcoming tour. The boys start a 10 date US Tour on Jan 17th and then head back to the UK for their 1st show on February 15th at the Capital FM Arena in Nottingham.</body><detail>http://google.com.ua</detail><i>2</i><id>82</id><messageType>AD</messageType><position>2</position><timestampMilis>0</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><id>4</id><messageType>NEWS</messageType><position>4</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><id>7</id><messageType>NEWS</messageType><position>7</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>4XLS70CD</detail><i>7</i><id>87</id><messageType>AD</messageType><position>7</position><timestampMilis>0</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><id>10</id><messageType>NEWS</messageType><position>10</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>6XLS70CD</detail><i>10</i><id>90</id><messageType>AD</messageType><position>10</position><timestampMilis>0</timestampMilis></item></news></response>";
+			
+			class MessageElementQualifier implements ElementQualifier {
+
+				private static final String ID = "id";
+
+				@Override
+				public boolean qualifyForComparison(Element expectedElement, Element actualElement) {
+
+					final String expectedNodeName = expectedElement.getNodeName();
+					final String actualNodeName = actualElement.getNodeName();
+					final Node expectedParentNode = expectedElement.getParentNode();
+					final Node actualParentNode = actualElement.getParentNode();
+
+					boolean isComparable = false;
+					if (expectedNodeName.equals("item") && actualNodeName.equals("item")) {
+
+						if (actualParentNode != null && actualParentNode.getNodeName().equals("news") && actualParentNode.getParentNode() != null
+								&& actualParentNode.getParentNode().getNodeName().equals("response")) {
+
+							NodeList actualNodeList = actualElement.getChildNodes();
+							NodeList expectedNodeList = expectedElement.getChildNodes();
+							if (actualNodeList.getLength() == expectedNodeList.getLength()) {
+
+								Map<String, String> expectedMap = new HashMap<String, String>();
+								Map<String, String> actualMap = new HashMap<String, String>();
+								for (int i = 0; i < actualNodeList.getLength(); i++) {
+									populate(actualNodeList, actualMap, i);
+
+									populate(expectedNodeList, expectedMap, i);
+								}
+								
+								String actualId = actualMap.get(ID);
+//								String actualMessageType = actualMap.get("messageType");
+//								String actualPosition = actualMap.get("position");
+//								if (expectedMap.get("messageType").equals(actualMessageType) && expectedMap.get("position").equals(actualPosition)) {
+//									isComparable = true;
+//								}
+								if (expectedMap.get(ID).equals(actualId)) {
+									isComparable = true;
+								}
+
+							}
+						}
+
+					}else if (expectedNodeName.equals(actualNodeName)){
+						if(expectedParentNode.getNodeName().equals(actualParentNode.getNodeName())){
+							isComparable = true;
+						}
+					}
+					return isComparable;
+				}
+
+				private Map<String, String> populate(NodeList nodeList, Map<String, String> map, int i) {
+					Node currentNode = nodeList.item(i);
+					populate(currentNode, "messageType", map );
+					populate(currentNode, "position", map );
+					populate(currentNode, ID, map );
+					return map;
+				}	
+				
+				private Map<String, String> populate(Node node, String nodeName, Map<String, String> map){
+					if (node.getNodeName().equals(nodeName)){
+						map.put(nodeName, node.getTextContent()); 
+					}
+					return map;
+				}
+			}
+			
+			Diff diff = new Diff(expected, contentAsString);
+			diff.overrideElementQualifier(new MessageElementQualifier());
+			
+			//DetailedDiff detailedDiff = new DetailedDiff(diff);
+
+			//List<Difference> allDifferences = detailedDiff.getAllDifferences();
+			
+			XMLAssert.assertXMLEqual(diff, true);
+			
+			//assertEquals(1, allDifferences.size());
+			//assertEquals("/response[1]/user[1]/rememberMeToken[1]/text()[1]", allDifferences.get(0).getTestNodeDetail().getXpathLocation());
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -3228,12 +3397,6 @@ public class IntegrationTestIT {
 				mockHttpServletResponse.getContentAsString());
 	}
 
-	public static void main(String[] args) {
-		System.out
-				.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID>Device 1</deviceUID><displayName>displayName</displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><status>SUBSCRIBED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>1331906484</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>f2ad4ecbe7b82b873224a2ccbcf3f3c2</userToken></user><news><item><body>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</body><detail>Blue Ivy Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the youngest person ever to appear in the Billboard chart!</detail><i>1</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</body><detail>Flipping back to music after producing new movie W.E., Madonna revealed that her 12th album will be called MDNA and will more than likely be released in March. The first single Gimme All Your Luvin will feature Nicki Minaj and MIA.</detail><i>4</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</body><detail>Cher Lloyd is engaged! According to reports, the Swagger Jagger hitmaker and her boyfriend, hairdresser Craig Monk, actually got engaged last month but have been trying to keep it a secret. Best of luck to the happy couple!</detail><i>7</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</body><detail>With Little Mix winning X Factor, an original Sugababes reunion and a rumoured new 10th anniversary Girls Aloud album, 2012 looks like the year of the girl band! Wonder what the Spice Girls are up to?</detail><i>9</i><messageFrequence>DAILY</messageFrequence><messageType>NOTIFICATION</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item><item><body>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</body><detail>The BRIT Awards 2012 will be held on Tuesday 21 February at The O2 Arena and broadcast live on ITV1. James Corden will host again this year and nominees have been announced. www.brits.co.uk</detail><i>10</i><messageType>NEWS</messageType><position>1</position><timestampMilis>1315686788000</timestampMilis></item></news></response>"
-						.substring(611));
-	}
-
 	@Test
 	public void testSIGN_UP() throws Exception {
 		String password = "zzz@z.com";
@@ -3293,9 +3456,6 @@ public class IntegrationTestIT {
 			userRegInfo.setOperator(1);
 
 			int timeBeforeRegistrationSeconds = Utils.getEpochSeconds();
-
-			// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp,
-			// userToken, appVersion);
 
 			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 					+ "<userRegInfo>"
