@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MessageService;
 import mobi.nowtechnologies.server.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,4 +70,23 @@ public class GetNewsController extends CommonController{
 		}
 	}
 	
+	
+	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/GET_NEWS", "*/{community:o2}/3.6/GET_NEWS"})
+	public ModelAndView getNews_O2(
+			@RequestParam("APP_VERSION") String appVersion,
+			@RequestParam("COMMUNITY_NAME") String communityName,
+			@RequestParam("API_VERSION") String apiVersion,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@RequestParam(value="LAST_UPDATE_NEWS", required=false) Long lastUpdateNewsTimeMillis,
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+			@PathVariable("community") String community) {
+		
+		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+		
+		Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis);
+		proccessRememberMeToken(objects);
+		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+	}
 }
