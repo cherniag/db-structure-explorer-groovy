@@ -178,7 +178,7 @@ public class EntityController extends CommonController {
         ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
                 timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
 
-        User user = userService.findByName(userName);
+        User user = userService.findByNameAndCommunity(userName, community);
         AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
 
         ActivationStatus activationStatus = user.getActivationStatus();
