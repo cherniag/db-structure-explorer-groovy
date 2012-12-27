@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:META-INF/service-test.xml",
         "classpath:META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:transport-servlet-test.xml"})
 //@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-//@Transactional
+//@Transactional	
 public class ApplyInitPromoControllerTest {
 
     @Autowired
@@ -47,7 +47,7 @@ public class ApplyInitPromoControllerTest {
         
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "o2_token", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "11111-4dfghg546456", "o2");
 
         //when
         User mobileUser = userService.findByName("+447111111111");
@@ -60,7 +60,34 @@ public class ApplyInitPromoControllerTest {
         user = userService.findByName(userName);
         Assert.assertNull(user);
     }
+    
+    @Test
+    public void applyInitPromo_whenUserCallMethodTwice_then_ReturnAUser() {
+    	//given
+        String userName = "+447733333333";
+        User user = userService.findByName(userName);
+        
+        //then
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
 
+        //when
+        Assert.assertEquals(user.getUserName(), "+447733333333");
+    }
+    
+    @Test
+    public void applyInitPromo_whenUserReInstallAppWithNewPhoneNumber_then_ReturnAUserWithNewPhoneNumber() {
+    	//given
+        String userName = "+447766666666";
+        User user = userService.findByName(userName);
+        
+        //then
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        
+        user = userService.findByName(user.getMobile());
+        //when
+        Assert.assertNotNull(user);
+    }
+    
     private int days(long nextSubPayment) {
 
         return Days.daysBetween(new DateTime(System.currentTimeMillis()), new DateTime(nextSubPayment * 1000)).getDays();
