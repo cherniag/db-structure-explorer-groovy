@@ -36,6 +36,7 @@ public class AdItemDto {
 	private String action;
 
 	@NotEmpty
+	@Pattern(regexp = ".{1,30}")
 	private String message;
 
 	private boolean activated;
