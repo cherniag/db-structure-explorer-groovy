@@ -21,8 +21,8 @@
 		<property name="targetMethod" value="initLogging" />
 		<property name="arguments">
 			<list>
-				<value>${log.configLocation}</value>
-				<value>${log.refreshInterval}</value>
+				<value>${admin.log.configLocation}</value>
+				<value>${admin.log.refreshInterval}</value>
 			</list>
 		</property>
 	</bean>
