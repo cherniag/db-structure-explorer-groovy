@@ -1203,6 +1203,7 @@ public class UserServiceTest {
 				accountCheckDTO.setOperator(user.getOperator());
 				accountCheckDTO.setStatus(user.getStatus().getName());
 				accountCheckDTO.setDeviceUID(user.getDeviceUID());
+				accountCheckDTO.setActivation(ActivationStatus.REGISTERED);
 
 				return accountCheckDTO;
 			}
