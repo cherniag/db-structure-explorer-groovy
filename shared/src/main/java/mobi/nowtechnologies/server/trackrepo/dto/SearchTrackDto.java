@@ -189,7 +189,9 @@ public class SearchTrackDto implements SearchTrackCriteria{
 
 	@Override
 	public String toString() {
-		return "SearchTrackDto [album="+album+", artist=" + artist + ", title=" + title + ", isrc=" + isrc + ", ingestFrom=" + ingestFrom + ", ingestTo=" + ingestTo + ", releaseTo=" + releaseTo + ", releaseFrom="
-				+ releaseFrom + ", label=" + label + ", ingestor=" + ingestor + "]";
+		return "SearchTrackDto [isrc=" + isrc + ", artist=" + artist + ", album=" + album + ", genre=" + genre + ", title=" + title + ", ingestor=" + ingestor + ", label=" + label + ", ingestFrom="
+				+ ingestFrom + ", ingestTo=" + ingestTo + ", releaseFrom=" + releaseFrom + ", releaseTo=" + releaseTo + "]";
 	}
+    
+    
 }

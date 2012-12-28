@@ -233,6 +233,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 				addQParam(criteria.getLabel(), "label", queryParams);
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
+                addQParam(criteria.getGenre(), "genre", queryParams);
 
 				String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
 				HttpGet signin = new HttpGet(url);
