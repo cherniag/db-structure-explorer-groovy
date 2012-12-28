@@ -260,8 +260,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     }
 
     private void addQParam(String param, String key, List<NameValuePair> queryParams) {
-        if (hasText(param))
-            queryParams.add(new BasicNameValuePair(key, param));
+    	queryParams.add(new BasicNameValuePair(key, param));
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page){

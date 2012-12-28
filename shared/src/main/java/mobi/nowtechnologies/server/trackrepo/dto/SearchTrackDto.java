@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -33,6 +34,8 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	private String ingestor;
     private String album;
     private String genre;
+    
+    private List<Integer> trackIds;
 	
 	public SearchTrackDto() {
 	}
@@ -110,8 +113,25 @@ public class SearchTrackDto implements SearchTrackCriteria{
     public void setAlbum(String album) {
         this.album = album;
     }
+    
+    public void setTrackIds(List<Integer> trackIds) {
+		this.trackIds = trackIds;
+	}
 
-    @Override
+    public List<Integer> getTrackIds() {
+		return trackIds;
+	}
+    
+	public boolean isPopulated() {
+		boolean isPopulated = false;
+		if (artist != null || title != null || isrc != null || ingestFrom != null || ingestTo != null || releaseTo != null || releaseFrom != null || label != null || ingestor != null || album != null
+				|| genre != null || (trackIds != null && !trackIds.isEmpty())) {
+			isPopulated = true;
+		}
+		return isPopulated;
+	}
+
+	@Override
 	public int hashCode() {
         return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title);
 	}
@@ -187,11 +207,12 @@ public class SearchTrackDto implements SearchTrackCriteria{
 		return true;
 	}
 
-	@Override
+    @Override
 	public String toString() {
 		return "SearchTrackDto [isrc=" + isrc + ", artist=" + artist + ", album=" + album + ", genre=" + genre + ", title=" + title + ", ingestor=" + ingestor + ", label=" + label + ", ingestFrom="
 				+ ingestFrom + ", ingestTo=" + ingestTo + ", releaseFrom=" + releaseFrom + ", releaseTo=" + releaseTo + "]";
 	}
+
     
     
 }

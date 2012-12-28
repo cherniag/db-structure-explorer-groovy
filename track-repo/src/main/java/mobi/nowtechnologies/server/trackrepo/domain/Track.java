@@ -331,11 +331,11 @@ public class Track extends AbstractEntity {
 	
 	@Override
 	public String toString() {
-		return "Track [ingestor=" + ingestor  + ", isrc=" + isrc  + ", title=" + title  + ", subTitle=" + subTitle 
+		return "Track [" + super.toString() + ", ingestor=" + ingestor  + ", isrc=" + isrc  + ", title=" + title  + ", subTitle=" + subTitle 
 				 + ", artist=" + artist  + ", productId=" + productId  + ", productCode=" + productCode  + ", genre=" + genre 
 				 + ", copyright=" + copyright  + ", year=" + year + ", album=" + album  + ", info=" + info+ ", licenced=" + licensed
 				 + ", xml=" + xml + ", ingestionDate=" + ingestionDate + ", ingestionUpdateDate=" + ingestionUpdateDate + ", publishDate=" + publishDate + ", territories=" + territories
 				 + ", files=" + files + ", status=" + status + ", resolution=" + resolution + ", itunesUrl=" + itunesUrl
-				 + super.toString()+ "]";
+				 + "]";
 	}
 }
