@@ -497,7 +497,6 @@ public class UserService {
 
 			user.setStatus(UserStatusDao.getSubscribedUserStatus());
 			user.setFreeTrialStartedTimestampMillis(Utils.getEpochMillis());
-			user.setActivationStatus(ActivationStatus.ACTIVATED);
 			user = entityService.updateEntity(user);
 
 			promotion.setNumUsers(promotion.getNumUsers() + 1);
@@ -1689,7 +1688,6 @@ public class UserService {
 		}
 
 		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
-		accountCheckDTO.setActivation(user.getActivationStatus());
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -2014,9 +2012,11 @@ public class UserService {
 		            promotion = setPotentialPromo(community, user, "defaultPromotionCode");
 		        applyPromotionByPromoCode(user, promotion);
 	    	}
-	    	user.setUserName(user.getMobile());
-	    	userRepository.save(user);
         }
+		user.setActivationStatus(ActivationStatus.ACTIVATED);
+    	user.setUserName(user.getMobile());
+    	userRepository.save(user);
+    	
 		return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
 	}
 }

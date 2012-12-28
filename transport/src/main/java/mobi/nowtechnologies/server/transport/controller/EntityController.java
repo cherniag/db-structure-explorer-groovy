@@ -180,10 +180,10 @@ public class EntityController extends CommonController {
 
         User user = userService.findByNameAndCommunity(userName, community);
         AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
-
+        
         ActivationStatus activationStatus = user.getActivationStatus();
         accountCheckDTO.setActivation(activationStatus);
-
+        
         return mav;
     }
 

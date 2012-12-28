@@ -752,6 +752,8 @@ public class User implements Serializable {
 		if (potentialPromotion != null)
 			accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
 		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
+		
+		accountCheckDTO.setActivation(getActivationStatus());
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;

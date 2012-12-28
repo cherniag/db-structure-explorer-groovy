@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -38,6 +39,7 @@ public class ApplyInitPromoControllerTest {
         //when
         user = userService.findByName(user.getMobile());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
     }
     
     @Test
@@ -72,7 +74,9 @@ public class ApplyInitPromoControllerTest {
         controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
 
         //when
+        user = userService.findByName(userName);
         Assert.assertEquals(user.getUserName(), "+447733333333");
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
     }
     
     @Test
@@ -87,6 +91,7 @@ public class ApplyInitPromoControllerTest {
         user = userService.findByName(user.getMobile());
         //when
         Assert.assertNotNull(user);
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
     }
     
     @Test(expected=UserCredentialsException.class)
