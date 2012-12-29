@@ -91,27 +91,27 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		}
 
 		StringBuilder criteria = new StringBuilder();
-		if (trackCriteria.getLabel() != null)
+		if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty())
 			addCriteria(criteria, " (ter.label like :label or ter.distributor like :label)");
 		if (trackCriteria.getReleaseFrom() != null)
 			addCriteria(criteria, " ter.startDate >= :releaseFrom");
 		if (trackCriteria.getReleaseTo() != null)
 			addCriteria(criteria, " ter.startDate <= :releaseTo");
-		if (trackCriteria.getGenre() != null)
+		if (trackCriteria.getGenre() != null && !trackCriteria.getGenre().isEmpty())
 			addCriteria(criteria, " lower(t.genre) like :genre");
-		if (trackCriteria.getAlbum() != null)
+		if (trackCriteria.getAlbum() != null && !trackCriteria.getAlbum().isEmpty())
 			addCriteria(criteria, " lower(t.album) like :album");
-		if (trackCriteria.getArtist() != null)
+		if (trackCriteria.getArtist() != null && !trackCriteria.getArtist().isEmpty())
 			addCriteria(criteria, " lower(t.artist) like :artist");
-		if (trackCriteria.getTitle() != null)
+		if (trackCriteria.getTitle() != null && !trackCriteria.getTitle().isEmpty())
 			addCriteria(criteria, " lower(t.title) like :title");
-		if (trackCriteria.getIsrc() != null)
+		if (trackCriteria.getIsrc() != null && !trackCriteria.getIsrc().isEmpty())
 			addCriteria(criteria, " lower(t.isrc) like :isrc");
 		if (trackCriteria.getIngestFrom() != null)
 			addCriteria(criteria, " t.ingestionDate >= :from");
 		if (trackCriteria.getIngestTo() != null)
 			addCriteria(criteria, " t.ingestionDate <= :to");
-		if (trackCriteria.getIngestor() != null)
+		if (trackCriteria.getIngestor() != null && !trackCriteria.getIngestor().isEmpty())
 			addCriteria(criteria, " lower(t.ingestor) like :ingestor");
 		if (trackCriteria.getTrackIds() != null)
 			addCriteria(criteria, " t.id in :limitedTrackIdList");
@@ -121,7 +121,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 	}
 
 	private void setParamLike(String paramKey, String paramVal, Query query) {
-		if (paramVal != null)
+		if (paramVal != null && !paramVal.isEmpty())
 			query.setParameter(paramKey, "%" + paramVal.toLowerCase() + "%");
 	}
 }
