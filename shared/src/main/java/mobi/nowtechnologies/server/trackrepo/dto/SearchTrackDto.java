@@ -121,15 +121,6 @@ public class SearchTrackDto implements SearchTrackCriteria{
     public List<Integer> getTrackIds() {
 		return trackIds;
 	}
-    
-	public boolean isPopulated() {
-		boolean isPopulated = false;
-		if (artist != null || title != null || isrc != null || ingestFrom != null || ingestTo != null || releaseTo != null || releaseFrom != null || label != null || ingestor != null || album != null
-				|| genre != null || (trackIds != null && !trackIds.isEmpty())) {
-			isPopulated = true;
-		}
-		return isPopulated;
-	}
 
 	@Override
 	public int hashCode() {

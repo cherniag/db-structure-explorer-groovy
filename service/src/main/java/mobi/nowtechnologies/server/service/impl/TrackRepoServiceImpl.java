@@ -247,15 +247,11 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	public PageListDto<TrackDto> find(SearchTrackDto criteria, Pageable page) {
 		LOGGER.debug("input find(criteria, page): [{}]", new Object[] { criteria, page });
 
-		PageListDto<TrackDto> tracks;
-		if (criteria.isPopulated()){		
-			tracks = client.search(criteria, page);
-			fillTracks(tracks);
-		}else{
-			tracks = new PageListDto<TrackDto>(Collections.<TrackDto>emptyList(), 0, 1, 0);
-		}
+		PageListDto<TrackDto> tracks = client.search(criteria, page);
 
-		LOGGER.info("output find(criteria): [{}]", tracks);
+		fillTracks(tracks);
+
+		LOGGER.info("output find(tracks): [{}]", tracks);
 		return tracks;
 	}
 	

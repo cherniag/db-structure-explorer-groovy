@@ -52,7 +52,6 @@ import static org.mockito.Mockito.*;
  * The class <code>TrackRepoServiceImplTest</code> contains tests for the class <code>{@link TrackRepoServiceImpl}</code>.
  * 
  * @generatedBy CodePro at 8/13/12 1:26 PM
- * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  * @version $Revision: 1.0 $
  */
@@ -164,26 +163,6 @@ public class TrackRepoServiceImplTest {
 			verify(client, times(i)).search(any(SearchTrackDto.class), any(Pageable.class));
 			i++;
 		}
-	}
-	
-	/**
-	 * Run the PageListDto<TrackDto> find(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 8/13/12 1:26 PM
-	 */
-	@Test
-	public void testFindByProperties_WhenSearchTrackDtoIsNotPopulated_Success() throws Exception {
-		
-		Pageable page = new PageRequest(0, 30);
-		PageListDto<TrackDto> result = fixture.find(new SearchTrackDto(), page);
-
-		PageListDto<TrackDto> expected = new PageListDto<TrackDto>(Collections.<TrackDto>emptyList(), 0, 1, 0);
-			
-		assertEquals(expected, result);
-			
-		verify(client, times(0)).search(any(SearchTrackDto.class), any(Pageable.class));	
 	}
 
 	/**
@@ -397,7 +376,7 @@ public class TrackRepoServiceImplTest {
 		mapTrackByQuery.add(new TestCase<String, PageListDto<TrackDto>>(FIND_METHOD, 1, track.getArtist(), TrackDtoFactory.getTrackPage(findTrack, 1)));
 		mapTrackByQuery.add(new TestCase<String, PageListDto<TrackDto>>(FIND_METHOD, 1, track.getTitle(), TrackDtoFactory.getTrackPage(findTrack, 1)));
 		mapTrackByQuery.add(new TestCase<String, PageListDto<TrackDto>>(FIND_METHOD, 1, track.getIsrc(), TrackDtoFactory.getTrackPage(findTrack, 1)));
-		//mapTrackByQuery.add(new TestCase<String, PageListDto<TrackDto>>(FIND_METHOD, 1, "none", TrackDtoFactory.getEmptyTrackPage()));
+		mapTrackByQuery.add(new TestCase<String, PageListDto<TrackDto>>(FIND_METHOD, 1, "none", TrackDtoFactory.getEmptyTrackPage()));
 
 		SearchTrackDto search = new SearchTrackDto();
 		search.setIsrc(track.getIsrc());
@@ -426,7 +405,7 @@ public class TrackRepoServiceImplTest {
 		mapTrackByProperties.add(new TestCase<SearchTrackDto, PageListDto<TrackDto>>(FIND_METHOD, 1, search4, TrackDtoFactory.getTrackPage(findTrack, 1)));
 		mapTrackByProperties.add(new TestCase<SearchTrackDto, PageListDto<TrackDto>>(FIND_METHOD, 1, search5, TrackDtoFactory.getTrackPage(findTrack, 1)));
 		mapTrackByProperties.add(new TestCase<SearchTrackDto, PageListDto<TrackDto>>(FIND_METHOD, 1, search6, TrackDtoFactory.getTrackPage(findTrack, 1)));
-		//mapTrackByProperties.add(new TestCase<SearchTrackDto, PageListDto<TrackDto>>(FIND_METHOD, 1, new SearchTrackDto(), TrackDtoFactory.getEmptyTrackPage()));
+		mapTrackByProperties.add(new TestCase<SearchTrackDto, PageListDto<TrackDto>>(FIND_METHOD, 1, new SearchTrackDto(), TrackDtoFactory.getEmptyTrackPage()));
 	}
 
 	private ResourceFileDto createResourceFile(FileType type, Resolution resolution, Integer size, String isrc, String mediaHash) throws IOException {
