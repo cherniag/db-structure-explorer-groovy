@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "classpath:META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:transport-servlet-test.xml"})
 //@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 //@Transactional	
-public class ApplyInitPromoControllerTest {
+public class ApplyInitPromoControllerIT {
 
     @Autowired
     ApplyInitPromoController controller;
