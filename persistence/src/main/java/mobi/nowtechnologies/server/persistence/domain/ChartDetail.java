@@ -244,7 +244,7 @@ public class ChartDetail {
 			if (iTunesUrl != null)
 				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
 			String amazonUrl = media.getAmazonUrl();	
-			if (amazonUrl == null){
+			if (amazonUrl == null || amazonUrl.isEmpty()){
 				amazonUrl = defaultAmazonUrl;
 			}
 			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
