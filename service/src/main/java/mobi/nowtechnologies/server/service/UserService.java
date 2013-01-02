@@ -2000,6 +2000,7 @@ public class UserService {
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String community) {
+		boolean hasPromo = false;
 		if (null != mobileUser) {
         	if (mobileUser.getId() != user.getId()) {
         		mergeUser(mobileUser, user);
@@ -2014,12 +2015,15 @@ public class UserService {
 		        else
 		            promotion = setPotentialPromo(community, user, "defaultPromotionCode");
 		        applyPromotionByPromoCode(user, promotion);
+		        hasPromo = true;
 	    	}
         }
 		user.setActivationStatus(ActivationStatus.ACTIVATED);
     	user.setUserName(user.getMobile());
     	userRepository.save(user);
     	
-		return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
+		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
+		dto.setHasPotentialPromoCodePromotion(hasPromo);
+		return dto;
 	}
 }
