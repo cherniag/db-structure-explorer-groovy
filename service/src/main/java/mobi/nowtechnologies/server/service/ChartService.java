@@ -73,7 +73,7 @@ public class ChartService {
 		
 		List<ChartDetail> chartDetails = chartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
 
-		String defaultAmazonUrl = serviceMessageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
+		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 		
 		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails, defaultAmazonUrl);
 
