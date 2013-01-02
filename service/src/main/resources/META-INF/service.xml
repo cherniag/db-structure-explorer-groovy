@@ -136,6 +136,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
+		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 	
 	<bean id="service.MailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

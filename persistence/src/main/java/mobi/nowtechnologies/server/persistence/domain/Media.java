@@ -114,7 +114,7 @@ public class Media extends Item implements Serializable {
 
 	private String iTunesUrl;
 	
-	@Column(nullable=false)
+	@Column(nullable=true)
 	private String amazonUrl;
 
 	private int publishDate;

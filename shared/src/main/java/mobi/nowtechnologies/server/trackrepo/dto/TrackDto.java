@@ -46,7 +46,6 @@ public class TrackDto {
 	private String publishTitle;
 	private String publishArtist;
 	private String itunesUrl;
-	@NotEmpty
 	private String amazonUrl;
 	private AudioResolution resolution;
 	private String territories;

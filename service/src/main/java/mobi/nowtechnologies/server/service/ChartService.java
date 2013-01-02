@@ -9,6 +9,8 @@ import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +31,7 @@ public class ChartService {
 	private ChartDetailService chartDetailService;
 	private ChartRepository chartRepository;
 	private MediaService mediaService;
+	private CommunityResourceBundleMessageSource serviceMessageSource;
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
@@ -45,6 +48,10 @@ public class ChartService {
 	
 	public void setMediaService(MediaService mediaService) {
 		this.mediaService = mediaService;
+	}
+	
+	public void setServiceMessageSource(CommunityResourceBundleMessageSource serviceMessageSource) {
+		this.serviceMessageSource = serviceMessageSource;
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
@@ -66,7 +73,9 @@ public class ChartService {
 		
 		List<ChartDetail> chartDetails = chartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
 
-		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails);
+		String defaultAmazonUrl = serviceMessageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
+		
+		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));

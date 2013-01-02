@@ -186,23 +186,25 @@ public class ChartDetail {
 		this.version = version;
 	}
 
-	public static List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails) {
+	public static List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, String defaultAmazonUrl) {
 		if (chartDetails == null)
 			throw new PersistenceException("The parameter chartDetails is null");
+		if (defaultAmazonUrl == null)
+			throw new NullPointerException("The parameter defaultAmazonUrl is null");
 
 		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
 		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
 			if (chartDetail.getChannel()==null)
-				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto()));
+				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
 			else
-				chartDetailDtos.add(chartDetail.toChartDetailDto(new BonusChartDetailDto()));
+				chartDetailDtos.add(chartDetail.toChartDetailDto(new BonusChartDetailDto(), defaultAmazonUrl));
 		}
 		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
 		return chartDetailDtos;
 	}
 
-	private ChartDetailDto toChartDetailDto(ChartDetailDto chartDetailDto) {
+	private ChartDetailDto toChartDetailDto(ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
 		List<Drm> drms = media.getDrms();
 		Drm drm;
 		int drmSize = drms.size();
@@ -242,6 +244,9 @@ public class ChartDetail {
 			if (iTunesUrl != null)
 				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
 			String amazonUrl = media.getAmazonUrl();	
+			if (amazonUrl == null){
+				amazonUrl = defaultAmazonUrl;
+			}
 			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
 			
 		} catch (UnsupportedEncodingException e) {
