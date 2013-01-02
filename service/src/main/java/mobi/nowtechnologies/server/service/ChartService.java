@@ -31,7 +31,7 @@ public class ChartService {
 	private ChartDetailService chartDetailService;
 	private ChartRepository chartRepository;
 	private MediaService mediaService;
-	private CommunityResourceBundleMessageSource serviceMessageSource;
+	private CommunityResourceBundleMessageSource messageSource;
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
@@ -50,8 +50,8 @@ public class ChartService {
 		this.mediaService = mediaService;
 	}
 	
-	public void setServiceMessageSource(CommunityResourceBundleMessageSource serviceMessageSource) {
-		this.serviceMessageSource = serviceMessageSource;
+	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
