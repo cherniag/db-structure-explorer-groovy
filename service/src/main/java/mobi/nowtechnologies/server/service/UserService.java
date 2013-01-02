@@ -1686,6 +1686,9 @@ public class UserService {
             setPotentialPromoCodePromotion(community, user, promotionCode);
 
 		}
+		
+		user.setActivationStatus(ActivationStatus.REGISTERED);
+		userRepository.save(user);
 
 		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
