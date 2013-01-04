@@ -509,6 +509,8 @@ public class MessageService {
 			message = messageRepository.save(message);
 							
 			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+		}else{
+			message = messageRepository.save(message);
 		}
 
 		return message;
