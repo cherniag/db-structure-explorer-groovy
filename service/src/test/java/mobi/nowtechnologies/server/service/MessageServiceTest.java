@@ -4,21 +4,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.MessageFactory;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -87,11 +98,9 @@ public class MessageServiceTest {
 			throws Exception {
 		String communityURL = "";
 		Integer position = null;
-		long currentTimeMillis = System.currentTimeMillis();
-		currentTimeMillis = currentTimeMillis - currentTimeMillis%100000;
 
 		Message message = MessageFactory.createMessage("https://i.ua");
-		MultipartFile multipartFile = new MockMultipartFile("test", "".getBytes());
+		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
 		Set<FilterDto> filterDtos = Collections.<FilterDto> emptySet();
 		Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
 
@@ -110,7 +119,6 @@ public class MessageServiceTest {
 		assertNotNull(result);
 		assertEquals(message, result);
 		assertEquals(1, result.getPosition());
-		assertEquals(currentTimeMillis, result.getPublishTimeMillis() - result.getPublishTimeMillis()%100000);
 
 		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
 		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
@@ -126,7 +134,7 @@ public class MessageServiceTest {
 		Integer position = Integer.MAX_VALUE;
 
 		Message message = MessageFactory.createMessage("https://i.ua");
-		MultipartFile multipartFile = new MockMultipartFile("test", "".getBytes());
+		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
 		Set<FilterDto> filterDtos = Collections.<FilterDto> emptySet();
 		Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
 
@@ -158,8 +166,7 @@ public class MessageServiceTest {
 			throws Exception {
 		String communityURL = "";
 		Community community = CommunityFactory.createCommunity();
-		long currentTimeMillis = System.currentTimeMillis();
-		currentTimeMillis = currentTimeMillis - currentTimeMillis%100000;
+		boolean removeImage = false;
 		
 		Message message = MessageFactory.createMessage("https://i.ua");
 		
@@ -172,12 +179,10 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos, removeImage);
 		
 		assertNotNull(result);
 		assertEquals(message, result);
-		assertEquals(currentTimeMillis, result.getPublishTimeMillis() - result.getPublishTimeMillis()%100000);
-
 
 		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
 		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
@@ -188,6 +193,7 @@ public class MessageServiceTest {
 	@Test
 	public void testUpdateAd_FileIsNotNullAndNotEmpty_Success()
 			throws Exception {
+		boolean removeImage = false;
 		String communityURL = "";
 		Community community = CommunityFactory.createCommunity();
 		
@@ -202,7 +208,7 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos, removeImage);
 		
 		assertNotNull(result);
 		assertEquals(message, result);
@@ -216,6 +222,7 @@ public class MessageServiceTest {
 	@Test
 	public void testUpdateAd_FileIsNull_Success()
 			throws Exception {
+		boolean removeImage = false;
 		String communityURL = "";
 		Community community = CommunityFactory.createCommunity();
 		
@@ -232,7 +239,7 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos, removeImage);
 		
 		assertNotNull(result);
 		assertEquals(message, result);
@@ -246,6 +253,7 @@ public class MessageServiceTest {
 	@Test(expected=Exception.class)
 	public void testUpdateAd_Failure()
 			throws Exception {
+		boolean removeImage = false;
 		String communityURL = "";
 		Community community = CommunityFactory.createCommunity();
 		
@@ -262,7 +270,7 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos, removeImage);
 		
 		assertNotNull(result);
 		assertEquals(message, result);
@@ -271,6 +279,37 @@ public class MessageServiceTest {
 		Mockito.verify(mockFilterService, Mockito.times(0)).find(filterDtos);
 		Mockito.verify(mockMessageRepository, Mockito.times(0)).save(message);
 		Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, imageFileName);
+	}
+	
+	
+	@Test
+	public void testUpdateAd_FileIsNotNullAndNotEmptyAndRemoveImageIsTrue_Success()
+			throws Exception {
+		boolean removeImage = true;
+		String communityURL = "";
+		Community community = CommunityFactory.createCommunity();
+		
+		Message message = MessageFactory.createMessage("https://i.ua");
+		
+		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
+		Set<FilterDto> filterDtos = Collections.<FilterDto> emptySet();
+		Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
+		
+		Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+		Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
+		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
+		Mockito.when(mockCloudFileService.uploadFile(multipartFile, message.getImageFileName())).thenReturn(Boolean.TRUE);
+
+		Message result = fixture.updateAd(message, multipartFile, communityURL, filterDtos, removeImage);
+		
+		assertNotNull(result);
+		assertEquals(message, result);
+		assertEquals(null, result.getImageFileName());
+
+		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
+		Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
+		Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, message.getImageFileName());
 	}
 	
 	@Before

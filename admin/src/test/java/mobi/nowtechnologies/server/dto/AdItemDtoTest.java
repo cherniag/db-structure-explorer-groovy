@@ -275,7 +275,7 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=body, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[FilterDto [name=null]], position=0]", result.toString());
+		assertEquals("AdItemDto [id=1, action=https://i.ua, message=body, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -303,7 +303,7 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=ISRC, filterDtos=[FilterDto [name=null]], position=0]", result.toString());
+		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=ISRC, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -353,6 +353,6 @@ public class AdItemDtoTest {
 		
 		assertNotNull(result);
 		
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=message, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[], position=null]", result);
+		assertEquals("AdItemDto [id=1, action=https://i.ua, message=message, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[], position=null, removeImage=false]", result);
 	}
 }

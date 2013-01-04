@@ -25,9 +25,17 @@
 									No file has been selected or file has no content
 								</p>
 							</div>
+							
+							<!-- Remove image -->
+							<div class="controls">
+								<label class="checkbox">
+									<input type="checkbox" th:field="*{removeImage}" />
+									<span th:text="#{ad.edit.page.saveOrUpdateAdForm.image.remove}">Remove image?:</span>
+								</label>
+							</div>
 						</div>
 
-						<!-- is Oline -->
+						<!-- is Online -->
 						<div class="controls">
 							<label class="checkbox">
 								<input type="checkbox" th:field="*{activated}" />

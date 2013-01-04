@@ -464,41 +464,53 @@ public class MessageService {
 			position = 1;
 			
 		final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
+		long epochMillis = Utils.getEpochMillis();
 
 		message.setPosition(position);
 		message.setCommunity(community);
 		message.setFilterWithCtiteria(filterWithCtiteria);
-		message.setPublishTimeMillis(System.currentTimeMillis());
+		message.setPublishTimeMillis(epochMillis);
 
 		message = messageRepository.save(message);
 		
-		String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
-		
-		message.setImageFileName(imageFileName);
-		
-		message = messageRepository.save(message);
-		
-		cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+		if (multipartFile != null && !multipartFile.isEmpty()) {
+			String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
+			
+			message.setImageFileName(imageFileName);
+			
+			message = messageRepository.save(message);
+			
+			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+		}
 
 		return message;
 		
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Message updateAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos) {
+	public Message updateAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos, boolean removeImage) {
 		Community community = communityService.getCommunityByUrl(communityURL);
 
 		final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
+		long epochMillis = Utils.getEpochMillis();
 
 		message.setCommunity(community);
 		message.setFilterWithCtiteria(filterWithCtiteria);
-		message.setPublishTimeMillis(System.currentTimeMillis());
-
-		message = messageRepository.save(message);
+		message.setPublishTimeMillis(epochMillis);
 		
-		if (multipartFile != null && !multipartFile.isEmpty()) {
+		if (removeImage){
+			message.setImageFileName(null);
+
+			message = messageRepository.save(message);			
+		}else if(multipartFile != null && !multipartFile.isEmpty()){
+			String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
+			
+			message.setImageFileName(imageFileName);
+			message = messageRepository.save(message);
+							
 			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
 		}
+
 		return message;
 	}
 

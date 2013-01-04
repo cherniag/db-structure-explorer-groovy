@@ -152,7 +152,7 @@ public class AdController extends AbstractCommonController {
 			
 			String communityURL = RequestUtils.getCommunityURL();
 
-			Message message = messageService.updateAd(AdItemDto.fromDto(adItemDto), adItemDto.getFile(), communityURL, adItemDto.getFilterDtos());
+			Message message = messageService.updateAd(AdItemDto.fromDto(adItemDto), adItemDto.getFile(), communityURL, adItemDto.getFilterDtos(), adItemDto.isRemoveImage());
 			if (message == null) {
 				modelAndView = new ModelAndView("ads/add");
 				adItemDto.setId(null);

@@ -63,7 +63,7 @@ public class AdItemDtoValidatorTest{
 	}
 	
 	@Test
-	public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Failure(){
+	public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Success(){
 		AdItemDto adItemDto = new AdItemDto();
 		
 		adItemDto.setId(Integer.MAX_VALUE);
@@ -102,13 +102,13 @@ public class AdItemDtoValidatorTest{
 		
 		assertFalse(hasErrors);
 		
-		assertEquals(1, errorList.size());
+		assertEquals(0, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(1)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 	}
 	
 	@Test
-	public void testCustomValidate_FileIsNullAndIdIsNull_Failure(){
+	public void testCustomValidate_FileIsNullAndIdIsNull_Success(){
 		AdItemDto adItemDto = new AdItemDto();
 		
 		adItemDto.setActionType(AdActionType.URL);
@@ -143,9 +143,9 @@ public class AdItemDtoValidatorTest{
 		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 		
 		assertTrue(hasErrors);
-		assertEquals(1, errorList.size());
+		assertEquals(0, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(1)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 	}
 	
 	@Test

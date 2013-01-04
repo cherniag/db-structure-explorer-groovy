@@ -49,6 +49,8 @@ public class AdItemDto {
 
 	private Integer position;
 
+	private boolean removeImage;
+
 	public AdActionType getActionType() {
 		return actionType;
 	}
@@ -134,6 +136,14 @@ public class AdItemDto {
 		return adItemDtos;
 	}
 
+	public boolean isRemoveImage() {
+		return removeImage;
+	}
+
+	public void setRemoveImage(boolean removeImage) {
+		this.removeImage = removeImage;
+	}
+
 	public static AdItemDto toDtoItem(Message message) {
 		AdItemDto adItemDto = null;
 		if (message != null) {
@@ -180,7 +190,7 @@ public class AdItemDto {
 	@Override
 	public String toString() {
 		return "AdItemDto [id=" + id + ", action=" + action + ", message=" + message + ", activated=" + activated + ", imageFileName=" + imageFileName + ", actionType=" + actionType + ", filterDtos="
-				+ filterDtos + ", position=" + position + "]";
+				+ filterDtos + ", position=" + position + ", removeImage=" + removeImage + "]";
 	}
 
 }
