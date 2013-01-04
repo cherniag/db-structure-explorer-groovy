@@ -153,6 +153,7 @@ public class AdItemDto {
 			String title = message.getTitle();
 			adItemDto.setAction(title);
 			adItemDto.setImageFileName(message.getImageFileName());
+			adItemDto.setRemoveImage(message.getImageFileName() == null || message.getImageFileName().isEmpty());
 			adItemDto.setMessage(message.getBody());
 			adItemDto.setActivated(message.isActivated());
 			adItemDto.setFilterDtos(FilterAsm.toDtos(message.getFilterWithCtiteria()));

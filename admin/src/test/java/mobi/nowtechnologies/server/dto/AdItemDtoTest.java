@@ -283,6 +283,7 @@ public class AdItemDtoTest {
 		assertEquals(title, result.getAction());
 		assertEquals(AdActionType.URL, result.getActionType());
 		assertEquals("imageFileName", result.getImageFileName());
+		assertEquals(false, result.isRemoveImage());
 	}
 
 	@Test
@@ -311,6 +312,28 @@ public class AdItemDtoTest {
 		assertEquals(title, result.getAction());
 		assertEquals(AdActionType.ISRC, result.getActionType());
 		assertEquals("imageFileName", result.getImageFileName());
+		assertEquals(false, result.isRemoveImage());
+	}
+	
+	@Test
+	public void testToDtoItem_NotHasImage_Success()
+		throws Exception {
+		String title = "https://i.ua";
+		Message message = MessageFactory.createMessage(title);
+		message.setImageFileName(null);
+
+		Set<AbstractFilterWithCtiteria> filterWithCtiterias = new HashSet<AbstractFilterWithCtiteria>(); 
+		
+		filterWithCtiterias.add(new AndroidFilter());
+		filterWithCtiterias.add(new LimitedFilter());
+		
+		message.setFilterWithCtiteria(filterWithCtiterias);
+
+		AdItemDto result = AdItemDto.toDtoItem(message);
+
+		assertNotNull(result);
+		assertEquals(null, result.getImageFileName());
+		assertEquals(true, result.isRemoveImage());
 	}
 
 	@Test

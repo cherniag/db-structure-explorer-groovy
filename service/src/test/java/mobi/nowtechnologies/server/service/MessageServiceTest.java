@@ -98,6 +98,7 @@ public class MessageServiceTest {
 			throws Exception {
 		String communityURL = "";
 		Integer position = null;
+		boolean removeImage = false;
 
 		Message message = MessageFactory.createMessage("https://i.ua");
 		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
@@ -114,7 +115,7 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, imageFileName)).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.saveAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.saveAd(message, multipartFile, communityURL, filterDtos, removeImage);
 
 		assertNotNull(result);
 		assertEquals(message, result);
@@ -123,15 +124,16 @@ public class MessageServiceTest {
 		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
 		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
 		Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
-		Mockito.verify(mockMessageRepository, Mockito.times(2)).save(message);
+		Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
 		Mockito.verify(mockCloudFileService, Mockito.times(1)).uploadFile(multipartFile, imageFileName);
 	}
-
+	
 	@Test
-	public void testSaveAd_PositionIsMax_Success()
+	public void testSaveAd_RemoveImage_Success()
 			throws Exception {
 		String communityURL = "";
-		Integer position = Integer.MAX_VALUE;
+		Integer position = null;
+		boolean removeImage = true;
 
 		Message message = MessageFactory.createMessage("https://i.ua");
 		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
@@ -148,7 +150,42 @@ public class MessageServiceTest {
 		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
 		Mockito.when(mockCloudFileService.uploadFile(multipartFile, imageFileName)).thenReturn(Boolean.TRUE);
 
-		Message result = fixture.saveAd(message, multipartFile, communityURL, filterDtos);
+		Message result = fixture.saveAd(message, multipartFile, communityURL, filterDtos, removeImage);
+
+		assertNotNull(result);
+		assertEquals(message, result);
+		assertEquals(1, result.getPosition());
+		assertEquals(null, result.getImageFileName());
+
+		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
+		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
+		Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
+		Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
+	}
+
+	@Test
+	public void testSaveAd_PositionIsMax_Success()
+			throws Exception {
+		String communityURL = "";
+		Integer position = Integer.MAX_VALUE;
+		boolean removeImage = false;
+
+		Message message = MessageFactory.createMessage("https://i.ua");
+		MultipartFile multipartFile = new MockMultipartFile("test", "1".getBytes());
+		Set<FilterDto> filterDtos = Collections.<FilterDto> emptySet();
+		Set<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = Collections.<AbstractFilterWithCtiteria>emptySet();
+
+		Community community = CommunityFactory.createCommunity();
+		
+		String imageFileName = MessageType.AD + "_" + Utils.getEpochMillis() + "_" + message.getId();
+
+		Mockito.when(mockCommunityService.getCommunityByUrl(communityURL)).thenReturn(community);
+		Mockito.when(mockFilterService.find(filterDtos)).thenReturn(abstractFilterWithCtiterias);
+		Mockito.when(mockMessageRepository.findMaxPosition(community, MessageType.AD, 0L)).thenReturn(position);
+		Mockito.when(mockMessageRepository.save(message)).thenReturn(message);
+		Mockito.when(mockCloudFileService.uploadFile(multipartFile, imageFileName)).thenReturn(Boolean.TRUE);
+
+		Message result = fixture.saveAd(message, multipartFile, communityURL, filterDtos, removeImage);
 
 		assertNotNull(result);
 		assertEquals(message, result);
@@ -157,7 +194,7 @@ public class MessageServiceTest {
 		Mockito.verify(mockCommunityService, Mockito.times(1)).getCommunityByUrl(communityURL);
 		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
 		Mockito.verify(mockMessageRepository, Mockito.times(1)).findMaxPosition(community, MessageType.AD, 0L);
-		Mockito.verify(mockMessageRepository, Mockito.times(2)).save(message);
+		Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
 		Mockito.verify(mockCloudFileService, Mockito.times(1)).uploadFile(multipartFile, imageFileName);
 	}
 	

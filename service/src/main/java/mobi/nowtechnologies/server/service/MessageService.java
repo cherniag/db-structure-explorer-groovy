@@ -1,33 +1,25 @@
 package mobi.nowtechnologies.server.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
-import mobi.nowtechnologies.server.shared.dto.NewsDto;
-import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
-import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
-import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
-import mobi.nowtechnologies.server.shared.dto.admin.NewsPositionsDto;
+import mobi.nowtechnologies.server.shared.dto.admin.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class MessageService {
 
@@ -156,7 +148,7 @@ public class MessageService {
 		if (message.getId() != null)
 			position = messageDto.getPosition();
 		else {
-			position = messageRepository.findMaxPosition(community,	messageDto.getMessageType(), publishTimeMillis);
+			position = messageRepository.findMaxPosition(community, messageDto.getMessageType(), publishTimeMillis);
 			if (position != null) {
 				position++;
 			} else
@@ -222,7 +214,7 @@ public class MessageService {
 	public void delete(Integer messageId) {
 		LOGGER.info("Deleting message with id: {}", messageId);
 		Message message = messageRepository.findOne(messageId);
-		message.setFilterWithCtiteria(Collections.<AbstractFilterWithCtiteria>emptySet());
+		message.setFilterWithCtiteria(Collections.<AbstractFilterWithCtiteria> emptySet());
 		messageRepository.delete(message);
 		LOGGER.debug("Done deleting message with id {}", messageId);
 	}
@@ -272,7 +264,6 @@ public class MessageService {
 			filterWithCtiteria = filterService.find(filterDtos);
 		else
 			filterWithCtiteria = Collections.EMPTY_SET;
-
 
 		message.setTitle(newsItemDto.getHeadline());
 		message.setActivated(newsItemDto.isActivated());
@@ -373,7 +364,7 @@ public class MessageService {
 		}
 
 		List<Message> newsList = messageRepository.findAll(positionMap.keySet());
-		if(!newsList.isEmpty()){
+		if (!newsList.isEmpty()) {
 			long publishTimeMillis = newsList.get(0).getPublishTimeMillis();
 			Integer max_position = messageRepository.findMaxPosition(newsList.get(0).getCommunity(), MessageType.NEWS, publishTimeMillis);
 			max_position++;
@@ -447,22 +438,22 @@ public class MessageService {
 
 	@Transactional(readOnly = true)
 	public List<Message> getAds(String communityURL) {
-		
+
 		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.AD), null);
-		
+
 		return messages;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Message saveAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos ) {
+	public Message saveAd(Message message, MultipartFile multipartFile, String communityURL, Set<FilterDto> filterDtos, boolean removeImage) {
 		Community community = communityService.getCommunityByUrl(communityURL);
-		
+
 		Integer position = messageRepository.findMaxPosition(community, MessageType.AD, 0L);
 		if (position != null) {
 			position++;
 		} else
 			position = 1;
-			
+
 		final Set<AbstractFilterWithCtiteria> filterWithCtiteria = fromDtos(filterDtos);
 		long epochMillis = Utils.getEpochMillis();
 
@@ -471,20 +462,24 @@ public class MessageService {
 		message.setFilterWithCtiteria(filterWithCtiteria);
 		message.setPublishTimeMillis(epochMillis);
 
-		message = messageRepository.save(message);
-		
-		if (multipartFile != null && !multipartFile.isEmpty()) {
-			String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
-			
-			message.setImageFileName(imageFileName);
-			
+		if (removeImage) {
+			message.setImageFileName(null);
+
 			message = messageRepository.save(message);
-			
+		} else if (multipartFile != null && !multipartFile.isEmpty()) {
+			String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
+
+			message.setImageFileName(imageFileName);
+
+			message = messageRepository.save(message);
+
 			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
+		} else {
+			message = messageRepository.save(message);
 		}
 
 		return message;
-		
+
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -497,19 +492,19 @@ public class MessageService {
 		message.setCommunity(community);
 		message.setFilterWithCtiteria(filterWithCtiteria);
 		message.setPublishTimeMillis(epochMillis);
-		
-		if (removeImage){
+
+		if (removeImage) {
 			message.setImageFileName(null);
 
-			message = messageRepository.save(message);			
-		}else if(multipartFile != null && !multipartFile.isEmpty()){
+			message = messageRepository.save(message);
+		} else if (multipartFile != null && !multipartFile.isEmpty()) {
 			String imageFileName = MessageType.AD + "_" + epochMillis + "_" + message.getId();
-			
+
 			message.setImageFileName(imageFileName);
 			message = messageRepository.save(message);
-							
+
 			cloudFileService.uploadFile(multipartFile, message.getImageFileName());
-		}else{
+		} else {
 			message = messageRepository.save(message);
 		}
 
@@ -521,7 +516,7 @@ public class MessageService {
 		if (filterDtos != null)
 			filterWithCtiteria = filterService.find(filterDtos);
 		else
-			filterWithCtiteria = Collections.<AbstractFilterWithCtiteria>emptySet();
+			filterWithCtiteria = Collections.<AbstractFilterWithCtiteria> emptySet();
 		return filterWithCtiteria;
 	}
 }
