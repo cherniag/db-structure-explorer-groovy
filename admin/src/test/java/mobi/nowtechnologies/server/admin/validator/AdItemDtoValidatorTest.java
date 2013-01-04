@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mobi.nowtechnologies.server.dto.AdItemDto;
@@ -153,9 +154,8 @@ public class AdItemDtoValidatorTest{
 		AdItemDto adItemDto = new AdItemDto();
 		
 		byte[] content = new byte[100000]; 
-		for (int i = 0; i < content.length; i++) {
-			content[i]=Byte.MAX_VALUE;
-		}
+
+		Arrays.fill(content, 0, content.length-1, Byte.MAX_VALUE);
 		
 		adItemDto.setFile(new MockMultipartFile("test", content));
 		adItemDto.setActionType(AdActionType.URL);
