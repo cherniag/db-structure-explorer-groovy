@@ -20,6 +20,7 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
+import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
@@ -2007,15 +2008,17 @@ public class UserService {
         		user = mobileUser;
         	}
         } else {
-		
 			if (user.getDeviceUID().equals(user.getUserName())) {
 		        Promotion promotion = null;
-				if(o2ClientService.isO2User(o2ClientService.getUserDetails(otac)))
+				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac);
+				if(o2ClientService.isO2User(o2UserDetails))
 		            promotion  = setPotentialPromo(community, user, "promotionCode");
 		        else
 		            promotion = setPotentialPromo(community, user, "defaultPromotionCode");
 		        applyPromotionByPromoCode(user, promotion);
 		        hasPromo = true;
+		        user.setContract(o2UserDetails.getTariff());
+		        user.setProvider(o2UserDetails.getOperator());
 	    	}
         }
 		user.setActivationStatus(ActivationStatus.ACTIVATED);

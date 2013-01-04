@@ -40,6 +40,8 @@ public class ApplyInitPromoControllerIT {
         user = userService.findByName(user.getMobile());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+        Assert.assertEquals("o2", user.getProvider());
+        Assert.assertEquals("PAYG", user.getContract());
     }
     
     @Test
