@@ -152,7 +152,12 @@ public class AdItemDtoValidatorTest{
 	public void testCustomValidate_WrongFileSize_Failure(){
 		AdItemDto adItemDto = new AdItemDto();
 		
-		adItemDto.setFile(new MockMultipartFile("test", "".getBytes()));
+		byte[] content = new byte[100000]; 
+		for (int i = 0; i < content.length; i++) {
+			content[i]=Byte.MAX_VALUE;
+		}
+		
+		adItemDto.setFile(new MockMultipartFile("test", content));
 		adItemDto.setActionType(AdActionType.URL);
 		adItemDto.setAction("http://google.com.ua");
 		adItemDto.setMessage("message");
