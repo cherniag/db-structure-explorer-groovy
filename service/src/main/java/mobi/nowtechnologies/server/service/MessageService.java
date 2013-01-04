@@ -468,6 +468,7 @@ public class MessageService {
 		message.setPosition(position);
 		message.setCommunity(community);
 		message.setFilterWithCtiteria(filterWithCtiteria);
+		message.setPublishTimeMillis(System.currentTimeMillis());
 
 		message = messageRepository.save(message);
 		
@@ -491,6 +492,7 @@ public class MessageService {
 
 		message.setCommunity(community);
 		message.setFilterWithCtiteria(filterWithCtiteria);
+		message.setPublishTimeMillis(System.currentTimeMillis());
 
 		message = messageRepository.save(message);
 		
