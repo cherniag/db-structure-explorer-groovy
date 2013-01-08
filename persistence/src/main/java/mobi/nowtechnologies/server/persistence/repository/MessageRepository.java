@@ -41,6 +41,17 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 			"order by  message.position asc")
 	List<Message> findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis);
 	
+	@Query("select distinct message from Message message " +
+			"left join FETCH  message.filterWithCtiteria " +
+			"where message.community=?1 " +
+			"and message.activated=true " +
+			"and ((message.messageType='NEWS' " +
+			"and message.publishTimeMillis=?2) " +
+			"or (message.messageType<>'NEWS' " +
+			"and message.messageType<>'AD')) " +
+			"order by  message.position asc")
+	List<Message> findWithoutAdsByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis);
+	
 	@Query("select count(message) from Message message where message.community=?1 and message.publishTimeMillis=?2 and message.messageType=?3")
 	long getCount(Community community, long publishTimeMillis, MessageType messageType);
 

@@ -61,7 +61,7 @@ public class GetNewsController extends CommonController{
 			
 			//Object[] objects = newsDetailService.processGetNewsCommand(user, communityName);
 			
-			Object[] objects = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis);
+			Object[] objects = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis, false);
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
@@ -85,7 +85,7 @@ public class GetNewsController extends CommonController{
 		
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
-		Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis);
+		Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 		proccessRememberMeToken(objects);
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));
 	}
