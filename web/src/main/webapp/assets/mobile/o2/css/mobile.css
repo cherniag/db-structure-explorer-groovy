@@ -1,0 +1,1218 @@
+@font-face {
+    font-family: 'DroidSansRegular';
+    src: url('../fonts/droidsans-webfont.eot');
+    src: url('../fonts/droidsans-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/droidsans-webfont.woff') format('woff'),
+         url('../fonts/droidsans-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+	font-family: 'DroidSansBold';
+	src: url('../fonts/droidsans-bold-webfont.eot');
+	src: url('../fonts/droidsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/droidsans-bold-webfont.woff') format('woff'),
+		 url('../fonts/droidsans-bold-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	-webkit-text-size-adjust: none;
+	color: #1d3150;
+	font-size: 1em;		
+}
+
+.page {
+	background: #84bdde url(../imgs/bgs/body_right.png) repeat-x left top;		
+}
+
+a {
+	color: #1d3150;
+}
+.rel {
+	position: relative;
+}
+.abs {
+	position: absolute;
+}
+.bold {
+	 font-weight: bold;
+}
+hr {
+	background-color: #787777; 
+	height: 1px; 
+	margin: 18px;
+	border: 0 none;
+}
+hr.addBothSpaces {
+	margin: 15px 8px 22px 8px;
+	display: block;
+}
+h1 {
+	font-size: 1.4em;		
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #1d3150;
+}
+h2 {
+	font-size: 1.2em;		
+	margin-bottom: 0px;
+	margin-top: 4px;
+	font-weight: normal;
+}
+h3 {
+	font-size: 1em;		
+	margin-left: 21px;
+	margin-bottom: 0px;
+	margin-top: 12px;
+	color: #1d3150;
+}
+h2  a {
+	text-decoration: none;
+}
+select {
+	width: 100%;
+	font-size: 0.8em;
+	height: 2em;
+	line-height: 1.6em;
+	padding-left: 2px;
+	padding-right: 0;
+}
+p  {
+	font-size: 1.1em;		
+	margin: 7px 14px 7px 17px;	 
+}
+.content p {
+	margin: 7px 14px 7px 21px;
+	font-size: 1em;		
+	line-height: 1.4em;
+	color: #616465;
+}
+.getAppContent p {margin-left: 42px !important; color: #5f584e;}
+.content .oneQuestion  p  {margin-left: 0px;}
+.content p.firstPar  {
+	margin-top: 1.5em;
+	color: #1d3150;
+}
+.text p {
+	font-size: 0.8em;		
+	line-height: 1.3empx;
+}
+.oneQuestion p
+{
+	color: #838383;	
+}
+td, li {
+	font-size: 1.1em;		
+}
+form {
+	display: block;
+}
+/*service tools*/
+.floatRight {
+	float: right !important; 
+}
+.floatLeft {
+	float: left; 
+}
+.clr {
+	clear: both;
+}
+/*layout*/
+/*header*/
+.header {
+	background: #142847 url(../imgs/bgs/header.png) repeat-x;	
+	height: 71px;	
+	margin-bottom: 2px;
+}		
+.logo {
+	display: block;
+	top: 15px;
+	left: 10px;	
+	position: absolute;	
+}
+.logo img {
+	height: 39px;
+}
+
+.container {
+	
+	padding-bottom: 15px;	
+	padding-top: 12px;	
+}
+
+.content {
+	margin: 10px 17px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	background-color: #ffffff;
+}
+.getAppContent {
+	border: none;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100); 
+ 	opacity: 1.0; 
+ 	-moz-opacity: 1.0; 
+ 	-khtml-opacity: 1.0;
+	/*height: 654px;*/
+	overflow: hidden;
+	position: relative;
+	color: #fff;
+}
+.getAppContent .oneField {
+	margin-left: 27px;
+	margin-right: 27px;
+}
+.getAppContent h1 {
+	color: #1d3150;
+	margin-left: 41px;
+	padding-bottom: 10px;
+}
+.getAppContent .formButton,.getAppContent .formButton input  {
+	background: transparent url(../imgs/bgs/button_pink.png) repeat-x 0px 0px !important;	
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow:  none;
+}
+.orBox {
+	text-align: center;
+	height: 53px;
+	background: transparent url(../imgs/bgs/or_bg.png) repeat-x center center ;
+	/*position: absolute;
+	top: 330px;
+	left: 48%;*/
+}
+.getAppBottom {
+	/*margin-top: 80px;*/
+}
+.getAppContent .formButton {
+	margin-left: 27px; 
+	margin-right: 27px;
+}
+
+.linksToStores {
+	height: 202px;
+	/*position: absolute; 
+	top: 456px;
+	left: 20px;*/
+	width: 99%;
+}
+.linksToStores a {
+	display: block;
+	float: left;
+	width: 29%;
+	margin: 0 7px;
+	height: 173px;
+}
+.appStore {
+	background: transparent url(../imgs/apple.png) no-repeat left bottom;	
+}
+.androidMarket {
+	background: transparent url(../imgs/android.png) no-repeat left bottom;	
+}
+.bbMarket {
+	background: transparent url(../imgs/blackberry.png) no-repeat left bottom;	
+}
+
+/*text content*/
+.text {
+	padding-bottom: 12px;
+}
+a.button, input.button, button {
+	background: #142847 url(../imgs/bgs/button.png) repeat-x 0 center;	
+	height: 32px;	
+	font-weight: bold;
+	color: #ffffff;
+	line-height: 29px;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 20px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border: 1px solid #000000;
+	display: inline-block;	
+	//text-shadow:  0px -1px 1px #6A023F; 	
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+}
+
+input.accounts{
+	padding-left: 25px;
+	line-height: 25px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	border: 1px solid #000000;
+}
+.buttonBox  {
+	float: right;
+	margin: 0px 17px 13px 0;
+	position: relative; 
+}
+.buttonBox .button {
+	font-size: 0.93em;		
+}
+.buttonTop {
+
+}
+.footer .buttonBox a {
+	font-size: 1.3em;
+	margin-right: 0;
+}
+.footer .buttonBox {
+	margin-right: 0;
+}
+.arrow {
+	display: inline-block;
+	width: 15px;
+	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
+	height: 19px;
+	position: absolute;
+	left: 5px;
+	top: 8px;
+}
+
+.buttonWrapper {
+	margin: 17px;	
+}
+
+
+/*marketing*/
+.marketingMaterials {	
+	height: 0px;
+	text-align: center;
+}
+.marketingMaterials img {
+	margin-top: 31px;
+	display: inline-block;
+	text-align: center;
+}
+.rules
+{
+	background-color: #efefef;
+	font-size: 0.8em;		 
+	line-height: 1em;
+	color: #525252;
+	padding: 11px 28px 14px 28px;
+}
+.content p.bigSizeText {
+	font-size: 1.1em;			
+	margin-top: 18px;
+	padding: 0;
+	color: #1d3150;
+}
+.firstPar {
+	margin-top: 23px;
+	color: #1d3150;	
+}
+.footer {	
+	font-size: 0.8em;		
+	padding: 0px 15px 10px 0;
+}
+.footer  a {	
+	text-decoration: none;	
+	font-size: 1.1em;	
+	display: inline-block;
+	margin-right: 20px;
+	font-weight: bold;
+}
+.bottomLinks  {
+	text-align: center;
+	padding: 10px 0 0 0;
+}
+
+.bottomLinks span {
+	display: inline-block;
+	padding: 0 8px;
+	font-size: 0.8em;		
+	line-height: 0.8em;
+}
+.faqLink {
+	display: inline-block; 
+	margin-left: 25%;
+}
+.copyright {
+	text-align: center;
+	line-height: 1em;
+	font-size: 0.8em;
+	padding-top: 10px;
+}
+
+.copyright img {
+	padding-top: 30px;	
+}
+
+.addSpace {	
+	display: inline;
+	vertical-align: bottom;
+}
+.addSpace2 {
+	margin-top: 55px;
+	margin-bottom: 35px;
+}
+.addSmallSpace {
+	margin-top: 20px;
+}
+/*buttons*/
+.contentButton {
+	margin: 17px;	
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+}
+.shortButton  {
+	width: 48%; 
+	float: left;
+	background: transparent url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	height: 81px;
+	border: none none none none;	
+	margin: 0;	
+}
+.oneQuestion {margin-left: 20px;}
+.contentButton a, .contentButton input, .contentButton button {
+	color: #ffffff;
+	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+	display: block;
+	font-size: 0.93em;		
+	text-decoration: none;
+	font-weight: bold;
+	margin: 0px;
+}
+.facebookLoginButton {
+	background: #4266ad url(../imgs/bgs/fb_button.png) repeat-x;	
+	height: 39px;	
+	border-top: solid 1px #6c87b9;
+	border-right: solid 1px #26457e;
+	border-bottom: solid 1px #233f73;
+	border-left: solid 1px #26457e;
+	margin: 8px 17px 17px 17px;	
+}
+.facebookLoginButton  a {
+	background: transparent url(../imgs/bgs/fb.png) no-repeat 10px 0px;	
+	height: 40px;	
+	line-height: 40px;	
+	padding-left: 47px;	
+ 	white-space: nowrap;		
+ 	overflow: hidden;
+}
+
+.formButton, .formButton input {
+	background: #ed0890 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
+	height: 41px !important;
+	border: none none none none;		
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	//text-shadow:  0px -1px 1px #6A023F; 	
+}
+.formDetails .formButton .button {font-size: 1.2em;}
+ .formButton input.button, .formButton input.button  {
+	box-shadow: none; 
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	width: 100%;
+
+ }
+.formButton input, .formButton button {
+	border: none;
+	
+	cursor: pointer;
+}
+.setOfButtons  {
+	margin-bottom: 17px;
+}
+.setOfButtons .formButton{
+	margin-top: 10px;	
+	margin-bottom: 15px;	
+}
+form .formButton  {
+	margin-top: 15px;
+}
+
+.rightButtonArrow, .rightButtonArrowBlack {
+	width: 15px;
+	height: 19px;
+	display: block;
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	background: transparent  url(../imgs/bgs/arrow_button.png) no-repeat 0px 0px;	
+}
+
+.leftButtonArrow {
+	width: 15px;
+	height: 19px;
+	display: block;
+	position: absolute;
+	top: 10px;
+	left: 17px;
+	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
+}
+.formButton  a, .shortButton a {
+	text-align: center;
+	height: 41px;
+	line-height: 41px;
+	background: #279cc9 url(../imgs/bgs/button_form.png) repeat-x 0px center;	
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.buttonsSet {
+	margin: 26px 17px;
+	height: 40px;
+}
+.firstButton  {
+	margin-right: 2%;
+}
+.redButton  {
+	background: transparent url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
+}
+.redButton  a {
+	background: #ff3333 url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
+}
+/*form*/
+.oneField {
+	margin-left: 17px;	
+	margin-top: 8px;	
+	margin-right: 17px;	
+	padding-right: 21px;
+}
+.oneField label {
+	display: block;	
+	font-size: 1em;
+	line-height: 1.5em;
+	color: #5d5d5d;
+}
+div.inputBox, div.inputAreaBox {
+	height: 25px; 
+	border: solid 1px #777777; 
+	padding: 0 10px; 
+	background-color: #ffffff; 
+	border-radius: 7px; 
+	-moz-border-radius: 7px; 
+	-webkit-border-radius: 7px; 	
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;		
+}
+div.inputAreaBox  {
+	height: 180px;
+	background-position: left bottom;
+}
+.inputBox input, .inputBox textarea {
+	display: block;
+	width: 95%;
+	border: none; 
+	height: 25px; 
+	line-height: 25px;  
+	font-size: 0.8em;
+	margin: 0; 
+	padding: 0; 
+	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;	
+	font-family: Helvetica, Arial, sans-serif;	
+}
+ .inputBox textarea 
+{
+	height: 180px;	
+	background-position: left bottom;
+	width: 100%;
+	line-height: 1.2em;  
+}
+.shortField .inputBox {
+	width: 140px;
+}
+.mediumField .inputBox {
+	width: 198px;
+}
+.attention{
+	color: #e80505;
+	font-weight: bold;
+}
+
+/*account details*/
+.accounDetails {
+	margin-top: 18px;
+}
+.accountOneField  {
+	height: 28px; 
+	border: solid 2px #a8aca9; 
+	padding: 12px; 
+	background: #f3f3f3 url(../imgs/bgs/account_field.png) repeat-x 0px 0px;	
+	border-radius: 10px; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	font-size: 1.4em;
+	font-weight: bold;
+	line-height: 28px;
+	margin: 10px 16px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.sign {
+	background: #ffffff url(../imgs/bgs/account_arrow.png) no-repeat center center;	
+	height: 54px;
+	width: 54px;
+	border-radius: 10px; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border: solid 2px #a8aca9; 
+	display: inline-block;
+	margin-right: 6px;
+	text-decoration: none;
+	box-shadow: 0px 0px 8px #ffffff; 
+	-webkit-box-shadow: 0px 0px 8px #ffffff; 
+	-moz-box-shadow: 0px 0px 8px #ffffff; 
+}
+.accountOneFieldCurrent {
+	background: transparent url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	border: none;
+	padding: 13px; 
+	height: 55px;
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	color: #ffffff;
+	margin-bottom: 24px;
+}
+.accountOneFieldCurrent  .sign {
+	height: 54px;
+	width: 54px;
+	border: none;
+	background: #ffffff url(../imgs/bgs/account_arrow_current.png) no-repeat center center;		
+}
+.currentFieldValue{
+	display: block;
+}
+.orangeField {
+	background: #ff6600 url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
+	border: none;
+	height: 56px;
+	margin: 11px 16px;
+	box-shadow: 1px 2px 1px #bdbdbd; 
+	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
+	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
+	color: #ffffff;
+	position: relative;
+	padding-left: 31px;
+}
+.orangeField  .sign {
+	background: transparent url(../imgs/bgs/account_arrow_right.png) repeat-x 0px 0px;	
+	width: 19px;
+	height: 29px;
+	border: none;
+	box-shadow: none; 
+	-webkit-box-shadow: none; 
+	-moz-box-shadow: none; 
+	position: absolute;
+	right: 15px;
+	top: 28px;
+}
+ /*Corners*/
+.rad10 {
+	border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px; 
+}
+.rad5 {
+	border-radius: 0px; 
+	-moz-border-radius: 0px; 
+	-webkit-border-radius: 0px; 
+}
+/*notification*/
+.note {
+	width: 100%; 
+	font-size: 0.75em; 
+	color: #ec008c!important;
+}
+.attention {
+	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
+	height: 50px;
+	margin-top: -60px;
+}
+.successNote {
+
+}
+
+.note   a {
+	display: inline-block; 
+	margin: 7px 9px; 
+	vertical-align: middle; 	
+	position: fixed;
+	right: 0;
+	bottom: -3px;
+	display: none;
+
+}
+/*table dats*/
+.tableList {
+	font-size: 1.2em;
+	width: 440x;
+	margin-left: 28px;
+	margin-top: 13px;
+}
+.oneItem {
+	height: 46px;
+	clear: both;
+}
+.nameCol {
+	width: 180px; 
+	display: block; 
+	float: left;
+}
+.valueCol {
+	width: 200px; 
+	display: block; 
+	float: left; 
+	text-align: left;
+}
+.dateSelect select {
+	width: 140px;
+}
+.devider {
+	display: inline-block; 
+	width: 24px; 
+	text-align: center;
+}
+/*normal table*/
+.table {
+	border-radius: 7px; 	
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px; 
+	border: solid 1px #b3b3b3;
+	margin: -3px 22px 35px 22px;
+
+}
+.table table {
+	width: 100%;
+}
+.table td {
+	height: 57px;
+	border-right: solid 1px #b3b3b3;
+	padding: 0 19px;
+}
+.table td.secondCol 
+{
+	border-left: solid 1px #ffffff;
+	border-right: none;
+}
+
+.total {
+	font-weight: bold;
+}
+.even {
+	background-color: #ebe8e8;
+}
+
+/*account*/
+.oneLine, .oneInputLine {
+	margin-left: 21px; 
+	font-size: 1em; 
+	line-height: 1.3em;
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+.nameCell {display:-moz-inline-box; display:inline-block; vertical-align:top; width:30%; zoom:1; color: #616465;}
+
+ .formDetails .nameCell, .payDetails  .nameCell{
+ 	padding-top: 7px;
+ }
+
+.valueCell {display:-moz-inline-box; display:inline-block; vertical-align:bottom; width:60%; zoom:1; //display:inline}
+.helper {display:-moz-inline-box; display:inline-block; height:100%; width:0px; vertical-align:bottom; zoom:1; //display:inline}
+
+ .valueCell .inputBox input {
+	min-width: 323px;
+ }
+ .disabled input 
+ {
+ 	color: #5d5d5d;
+ }
+ .pink {
+ 	color: #1d3150;
+}
+.valueCell a {
+	display: inline-block;	
+	font-weight: normal;
+	margin-left: 10px;
+}
+/*sms*/
+.oneField label.shortLabel {
+	width: 80px; 
+	float: left; 
+	line-height: 2em; 
+	margin-top: 7px;
+}
+
+.shortInput {
+	width: 270px; 
+}
+
+/*credit card*/
+.payDetails {
+	margin-bottom: 36px;
+}
+.payDetails input, .formDetails input, .oneField  input {
+	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
+    border: 1px solid #777777;
+    border-radius: 3px 3px 3px 3px;
+    height: 2em;
+    padding: 0 10px;
+    margin-top: 5px; 
+    font-size: 0.8em;
+    width: 100%;
+}
+
+.oneField  textarea {
+	padding: 0 10px;
+    margin-top: 5px; 
+    font-size: 0.8em;
+    width: 100%;
+}
+.oneField  textarea , textarea {font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif; padding-top: 5px;  padding-bottom: 5px; height: 15em; background-position: left bottom;}
+
+.payDetails .shortInput {
+	width: 220px;
+}
+.payDetails .shortInput input, .shortInput input {
+	width: 80px;
+	float: right;
+}
+
+.payDetails .shortInput input {
+	float: none;
+}
+
+.payDetails select {
+	margin-top: 7px;
+}
+
+.payDetails select.month, .payDetails select.year {
+	display: inline-block;
+	width: auto;
+	height: auto;
+}
+
+
+ .doubleLines span {
+ 	font-size: 0.7em;
+ 	display: block;
+ }
+ 
+ .cardDetails .oneLine {
+	margin-left: 21px; 
+	font-size: 1em; 
+	margin-bottom: 9px;
+	margin-top: 6px;
+}
+
+ .cardDetails .valueCell {
+ 	color: #ec008c;
+ }
+ 
+ /*for Web Store*/
+ 
+
+.albumIcon {
+	position: absolute;
+	left: 0;
+	width: 97px;
+	height: 97px;
+	border-right: 1px solid #d2d2d2;
+}
+
+.albmTitle {
+	position: absolute;
+	top: 20px;
+	left: 110px;
+	width: 45%;
+	font-family: 'DroidSansBold';
+	font-size: 18px;
+	color: #ec008c;
+}
+
+.albmTitle span {
+	display: block;
+}
+
+
+
+.albumButton a{
+	color: #ffffff;
+	text-decoration: none;
+	font-family: "DroidSans"
+	font-weight: bold;
+	
+	}
+
+.albumMore {
+	position: absolute;
+	bottom: 5px;
+	right: 0;
+	width: 10px;
+	height: 10px;
+}
+
+.trackRow {
+	height: 64px;
+	background-color: #ffffff;
+	border: 1px solid #d2d2d2;
+	margin: 0;
+	padding: 0;
+	margin-top: -1px;
+}
+
+.trackRow img {
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.trackRow span {
+	line-height: 64px;
+	vertical-align: top;
+	font-family: 'DroidSansRegular';
+	font-size: 16px;
+	color: #1428a0;
+	padding-left: 10px;
+}
+
+/*Web Store Accordion*/
+.ac-container{
+	width: 100%;
+	text-align: left;
+}
+
+.ac-container input:checked + label:hover:after{
+	background-image: url(../images/arrow_up.png);
+}
+.ac-container input{
+	display: none;
+}
+.ac-container article{
+	margin-top: -1px;
+	overflow: hidden;
+	height: 0px;
+	position: relative;
+	z-index: 10;
+	
+	width: 100%;
+}
+.ac-container article div{
+	margin-left: 8px;
+	margin-right: 8px;
+	
+}
+.ac-container input:checked ~ article{
+	
+}
+.ac-container input:checked ~ article.ac-small{
+	height: 100%;
+}
+
+.margin {
+ 	margin: 10px;
+ }
+
+  .fieldWidth {
+ 	width: 100%!important;
+ }
+ 
+ /*Offers*/
+.whiteWrapper {
+	background-color: #FFFFFF!important;
+}
+
+.packBlock {
+	position: relative;
+	overflow: hidden;
+	height: 97px;
+	margin: 2px;
+	border: 1px solid #d2d2d2;
+	background-color: #FFFFFF;
+}
+.albumIcon {
+	position: absolute;
+	left: 0;
+	width: 97px;
+	height: 97px;
+	border-right: 1px solid #d2d2d2;
+}
+
+.albmTitle {
+	position: absolute;
+	top: 20px;
+	left: 110px;
+	width: 70%;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	color: #d32287;
+}
+
+.albmBody {
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 12px;
+	color: #1428a0;
+}
+
+p.albmBody {
+	margin: 0;
+} 
+
+.albmPrice {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	padding: 10px;
+
+}
+
+.albmPrice a{
+	text-decoration: none;
+	font-family: "DroidSans"
+	font-weight: bold;
+	color: #ec008c;
+}
+
+.albmPrice span {
+	vertical-align: middle;
+}
+		
+/*Offer*/
+.packBlockDetails {
+	position: relative;
+	height: 192px;
+	margin: 2px;
+	border: 1px solid #d2d2d2;
+	background: url("../imgs/bg_big.png") repeat-x #CCCCCC;
+}
+
+.albumShadow {
+	position: absolute;
+	width: 100%;
+	height: 7px;
+	left: 0;
+	top: 193px;
+	background: url("../imgs/shadow.png") repeat-x #CCCCCC;
+}
+
+.albumIconDetails {
+	position: absolute;
+	left: 0;
+	width: 50%;
+	height: 50%;
+	border-right: 1px solid #d2d2d2;
+}
+
+.albumIconDetails img {
+	width: 50%;
+	height: 50%; 
+}
+
+.albmTitleDetails {
+	position: absolute;
+	top: 20px;
+	left: 210px;
+	width: 60%;
+	font-family: 'DroidSansBold';
+	font-size: 18px;
+	color: #FFFFFF;
+}
+.albmBodyDetails {
+	width: 60%;
+	line-height: 20px;
+	font-family: 'DroidSansRegular';
+	font-size: 14px;
+	color: #FFFFFF;
+}
+
+p.albmBodyDetails {
+	margin: 0;
+} 
+
+.albumButton {
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	font-family: 'DroidSansBold';
+	font-size: 16px;
+	padding: 10px;
+	width: 70px;
+}
+
+.albumButton a{
+	color: #ec008c;
+	text-decoration: none;
+	font-family: "DroidSansRegular";
+	font-weight: bold;
+}
+
+
+/**/
+
+div.itemsDetails {
+	background-color: #ffffff;
+	border-bottom: 1px solid #d2d2d2;
+	width: 100%;
+}
+
+.itemsDetails img {
+	position: relative;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
+
+.itemsDetails {
+	line-height: 64px;
+	vertical-align: top;
+	font-family: 'DroidSansRegular';
+	font-size: 22px;
+	font-weight: bold;
+	color: #d32287;
+	padding-left: 10px;
+}
+
+.itemsDetails {
+	position: relative;
+	float: left;
+}
+
+.itemsImage {
+	position: relative;
+	float: left;
+}
+
+.itemCount {
+	position: relative;
+	left: 20px;
+	top: 1px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #1d3150;
+}
+
+.itemsArtistName span {
+	display: block;
+	line-height: 25px;
+}
+
+
+.itemsCount {
+	position: absolute;
+	left: 90px;
+	top: 10px;
+	font-size: 22px;
+	font-weight: bold;
+	color: #d32287;
+}
+
+.itemsArtistName {
+	position: absolute;
+	left: 90px;
+	top: 5px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #ec008c;
+}
+
+.itemsTrackName {
+	font-family: 'DroidSansRegular';
+	font-weight: normal;
+	font-size: 12px;
+	color: #1428a0;
+}
+
+p.itemsTrackName {
+	margin: 7px 0;
+}
+
+.backButton {
+	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
+	font-size: 16px;
+	padding: 10px;
+	
+}
+
+.backButton a {
+	color: #ffffff;
+	text-decoration: none;
+	font-family: "DroidSansRegular";
+	font-weight: bold;
+}
+
+.buttonBoxSquare  {
+	float: right;
+	margin: 7px 7px 7px 0;
+	position: relative; 
+}
+
+/*Web Store*/
+		
+.logoWebStore {
+	display: block;
+	top: 10px;
+	left: 10px;	
+	position: absolute;	
+}
+
+.logoWebStore img {
+	width: 133px!important;
+	height: 41px!important;
+}
+
+/*Cookie Conteiner*/
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 100%;
+	z-index: 1000;
+}
+	
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.center {
+	border: 1px solid #dad8cd;
+	line-height: 1.8em;
+	background: #fff8d0;
+	margin: 0 10%;
+	padding: 0 10px;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top: 0;
+}
+
+.center span {
+	font-size: 0.7em;
+}
+
+.offers_container {
+	background: url(../imgs/bgs/body_left.jpg) repeat-x left top;
+	min-height: 165px;
+	padding-bottom: 20px;
+}
+
+.offer_block {
+	margin: 2px;
+	padding-bottom: 20px;
+}
+
+.offers_wrapper {
+	margin: 0;
+	padding: 0;
+}

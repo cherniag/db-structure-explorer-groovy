@@ -11,7 +11,7 @@
 			<a href="facebook_signin?registration=true"><s:message code="signin.form.link.facebook.signin" /></a>
 		</div>
 		<hr />
-		<p><s:message code="m.signin.form.header" /></p>
+		<p class="bigSizeText"><s:message code="m.signin.form.header" /></p>
 		<form:form method="post" modelAttribute="UserRegDetailsDto" class="contact">
 			<form:hidden path="appVersion" />
 			<form:hidden path="apiVersion" />
