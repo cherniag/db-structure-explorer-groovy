@@ -20,19 +20,26 @@ public class AdItemDtoValidator extends BaseValidator {
 		MultipartFile file = adItemDto.getFile();
 		Integer id = adItemDto.getId();
 		
-		if (id != null && adItemDto.getImageFileName() == null) {
-			errors.rejectValue("imageFileName", "ad.imageFileNameFieldIsNull.error", "The field imageFileName is mandatory");
-		}
+//		if (id != null && adItemDto.getImageFileName() == null) {
+//			errors.rejectValue("imageFileName", "ad.imageFileNameFieldIsNull.error", "The field imageFileName is mandatory");
+//		}
+//		
+//		if (id == null || file != null) {
+//			if (id == null && file == null) {
+//				errors.rejectValue("file", "ad.fileFieldIsNull.error", "The field file is mandatory");
+//			} else {
+//
+//				long size = file.getSize();
+//				if (id == null && (size < 1 || size > 30720)) {
+//					errors.rejectValue("file", "ad.wrongFileSize.error", "Wrong file size. Should be more than 1 and less than 30720 bytes (30.72 kBytes)");
+//				}
+//			}
+//		}
 		
-		if (id == null || file != null) {
-			if (id == null && file == null) {
-				errors.rejectValue("file", "ad.fileFieldIsNull.error", "The field file is mandatory");
-			} else {
-
-				long size = file.getSize();
-				if (id == null && (size < 1 || size > 30720)) {
-					errors.rejectValue("file", "ad.wrongFileSize.error", "Wrong file size. Should be more than 1 and less than 30720 bytes (30.72 kBytes)");
-				}
+		if(file!=null && !file.isEmpty()){
+			long size = file.getSize();
+			if(size < 1 || size > 30720){
+				errors.rejectValue("file", "ad.wrongFileSize.error", "Wrong file size. Should be more than 1 and less than 30720 bytes (30.72 kBytes)");
 			}
 		}
 

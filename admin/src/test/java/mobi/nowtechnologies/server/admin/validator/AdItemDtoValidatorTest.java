@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mobi.nowtechnologies.server.dto.AdItemDto;
@@ -63,7 +64,7 @@ public class AdItemDtoValidatorTest{
 	}
 	
 	@Test
-	public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Failure(){
+	public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Success(){
 		AdItemDto adItemDto = new AdItemDto();
 		
 		adItemDto.setId(Integer.MAX_VALUE);
@@ -102,13 +103,13 @@ public class AdItemDtoValidatorTest{
 		
 		assertFalse(hasErrors);
 		
-		assertEquals(1, errorList.size());
+		assertEquals(0, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(1)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 	}
 	
 	@Test
-	public void testCustomValidate_FileIsNullAndIdIsNull_Failure(){
+	public void testCustomValidate_FileIsNullAndIdIsNull_Success(){
 		AdItemDto adItemDto = new AdItemDto();
 		
 		adItemDto.setActionType(AdActionType.URL);
@@ -143,16 +144,20 @@ public class AdItemDtoValidatorTest{
 		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 		
 		assertTrue(hasErrors);
-		assertEquals(1, errorList.size());
+		assertEquals(0, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(1)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 	}
 	
 	@Test
 	public void testCustomValidate_WrongFileSize_Failure(){
 		AdItemDto adItemDto = new AdItemDto();
 		
-		adItemDto.setFile(new MockMultipartFile("test", "".getBytes()));
+		byte[] content = new byte[100000]; 
+
+		Arrays.fill(content, 0, content.length-1, Byte.MAX_VALUE);
+		
+		adItemDto.setFile(new MockMultipartFile("test", content));
 		adItemDto.setActionType(AdActionType.URL);
 		adItemDto.setAction("http://google.com.ua");
 		adItemDto.setMessage("message");

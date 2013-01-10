@@ -233,6 +233,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 				addQParam(criteria.getLabel(), "label", queryParams);
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
+                addQParam(criteria.getGenre(), "genre", queryParams);
 
 				String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
 				HttpGet signin = new HttpGet(url);
@@ -260,7 +261,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 
     private void addQParam(String param, String key, List<NameValuePair> queryParams) {
         if (hasText(param))
-            queryParams.add(new BasicNameValuePair(key, param));
+        	queryParams.add(new BasicNameValuePair(key, param));
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page){

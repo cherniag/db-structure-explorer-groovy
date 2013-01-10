@@ -275,7 +275,7 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=body, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[FilterDto [name=null]], position=0]", result.toString());
+		assertEquals("AdItemDto [id=1, action=https://i.ua, message=body, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -283,6 +283,7 @@ public class AdItemDtoTest {
 		assertEquals(title, result.getAction());
 		assertEquals(AdActionType.URL, result.getActionType());
 		assertEquals("imageFileName", result.getImageFileName());
+		assertEquals(false, result.isRemoveImage());
 	}
 
 	@Test
@@ -303,7 +304,7 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=ISRC, filterDtos=[FilterDto [name=null]], position=0]", result.toString());
+		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=ISRC, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -311,6 +312,28 @@ public class AdItemDtoTest {
 		assertEquals(title, result.getAction());
 		assertEquals(AdActionType.ISRC, result.getActionType());
 		assertEquals("imageFileName", result.getImageFileName());
+		assertEquals(false, result.isRemoveImage());
+	}
+	
+	@Test
+	public void testToDtoItem_NotHasImage_Success()
+		throws Exception {
+		String title = "https://i.ua";
+		Message message = MessageFactory.createMessage(title);
+		message.setImageFileName(null);
+
+		Set<AbstractFilterWithCtiteria> filterWithCtiterias = new HashSet<AbstractFilterWithCtiteria>(); 
+		
+		filterWithCtiterias.add(new AndroidFilter());
+		filterWithCtiterias.add(new LimitedFilter());
+		
+		message.setFilterWithCtiteria(filterWithCtiterias);
+
+		AdItemDto result = AdItemDto.toDtoItem(message);
+
+		assertNotNull(result);
+		assertEquals(null, result.getImageFileName());
+		assertEquals(true, result.isRemoveImage());
 	}
 
 	@Test
@@ -353,6 +376,6 @@ public class AdItemDtoTest {
 		
 		assertNotNull(result);
 		
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=message, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[], position=null]", result);
+		assertEquals("AdItemDto [id=1, action=https://i.ua, message=message, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[], position=null, removeImage=false]", result);
 	}
 }

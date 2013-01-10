@@ -127,6 +127,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="chartRepository" ref="chartRepository" />
+		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 	
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">

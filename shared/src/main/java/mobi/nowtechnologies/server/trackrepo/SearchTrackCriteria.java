@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo;
 
 import java.util.Date;
+import java.util.List;
 
 public interface SearchTrackCriteria {
 	String getArtist();
@@ -24,4 +25,8 @@ public interface SearchTrackCriteria {
     String getAlbum();
 
     String getGenre();
+    
+    void setTrackIds(List<Integer> trackIds);
+    
+    List<Integer> getTrackIds();
 }

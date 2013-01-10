@@ -1,9 +1,14 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import java.util.Date;
+
+import javax.validation.Valid;
+
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -12,10 +17,12 @@ import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Date;
 
 @Controller
 public class TrackRepoController extends AbstractCommonController{
@@ -72,7 +79,7 @@ public class TrackRepoController extends AbstractCommonController{
 	}
 	
 	@RequestMapping(value = "/tracks/pull", method = RequestMethod.POST)
-	public ModelAndView pullTrack(@ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
+	public ModelAndView pullTrack(@Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
 		track = trackRepoService.pull(track);

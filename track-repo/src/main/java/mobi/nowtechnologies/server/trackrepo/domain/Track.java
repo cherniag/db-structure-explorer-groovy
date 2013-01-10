@@ -4,6 +4,8 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 
 import javax.persistence.*;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -78,12 +80,12 @@ public class Track extends AbstractEntity {
 	@Lob()
 	protected byte[] xml;	
 
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY)
     @JoinColumn(name="TrackId") 
 	@Column(name="Territories")
 	protected Set<Territory> territories; 
 
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY)
     @JoinColumn(name="TrackId")
 	@Column(name="Files")
 	protected Set<AssetFile> files;
@@ -328,14 +330,12 @@ public class Track extends AbstractEntity {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Track [ingestor=" + ingestor  + ", isrc=" + isrc  + ", title=" + title  + ", subTitle=" + subTitle 
-				 + ", artist=" + artist  + ", productId=" + productId  + ", productCode=" + productCode  + ", genre=" + genre 
-				 + ", copyright=" + copyright  + ", year=" + year + ", album=" + album  + ", info=" + info+ ", licenced=" + licensed
-				 + ", xml=" + xml + ", ingestionDate=" + ingestionDate + ", ingestionUpdateDate=" + ingestionUpdateDate + ", publishDate=" + publishDate + ", territories=" + territories
-				 + ", files=" + files + ", status=" + status + ", resolution=" + resolution + ", itunesUrl=" + itunesUrl
-				 + super.toString()+ "]";
+		return "Track [" + super.toString() + "isrc=" + isrc + ", artist=" + artist + ", title=" + title + ", subTitle=" + subTitle + ", album=" + album + ", genre=" + genre + ", info=" + info + ", itunesUrl=" + itunesUrl
+				+ ", ingestor=" + ingestor + ", publishDate=" + publishDate + ", year=" + year + ", resolution=" + resolution + ", status=" + status + ", copyright=" + copyright + ", ingestionDate="
+				+ ingestionDate + ", ingestionUpdateDate=" + ingestionUpdateDate + ", licensed=" + licensed + ", productCode=" + productCode + ", productId=" + productId + ", xml="
+				+ Arrays.toString(xml) + "]";
 	}
 }

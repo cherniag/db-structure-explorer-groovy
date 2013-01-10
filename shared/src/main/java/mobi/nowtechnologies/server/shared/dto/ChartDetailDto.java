@@ -20,6 +20,7 @@ public class ChartDetailDto {
 	private int imageLargeSize;
 	private int imageSmallSize;
 	private String iTunesUrl;
+	private String amazonUrl;
 	private byte previousPosition;
 	private String changePosition;
 	private String channel;
@@ -152,6 +153,14 @@ public class ChartDetailDto {
 		this.iTunesUrl = iTunesUrl;
 	}
 
+	public String getAmazonUrl() {
+		return amazonUrl;
+	}
+
+	public void setAmazonUrl(String amazonUrl) {
+		this.amazonUrl = amazonUrl;
+	}
+
 	public byte getPreviousPosition() {
 		return previousPosition;
 	}
@@ -219,7 +228,7 @@ public class ChartDetailDto {
 	@Override
 	public String toString() {
 		return "ChartDetailDto [artist=" + artist + ", audioSize=" + audioSize + ", changePosition=" + changePosition + ", drmType=" + drmType + ", drmValue="
-				+ drmValue + ", genre1=" + genre1 + ", genre2=" + genre2 + ", headerSize=" + headerSize + ", iTunesUrl=" + iTunesUrl + ", imageLargeSize="
+				+ drmValue + ", genre1=" + genre1 + ", genre2=" + genre2 + ", headerSize=" + headerSize + ", iTunesUrl=" + iTunesUrl + ", amazonUrl=" + amazonUrl + ", imageLargeSize="
 				+ imageLargeSize + ", imageSmallSize=" + imageSmallSize + ", info=" + info + ", media=" + media + ", position=" + position
 				+ ", previousPosition=" + previousPosition + ", title=" + title + ", channel=" + channel + ", trackSize=" + trackSize + ", chartDetailVersion="
 				+ chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion=" + imageLargeVersion

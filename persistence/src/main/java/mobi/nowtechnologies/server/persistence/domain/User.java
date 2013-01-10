@@ -1,5 +1,32 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PersistenceException;
+import javax.persistence.QueryHint;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
@@ -13,17 +40,10 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The persistent class for the tb_users database table.
@@ -170,6 +190,10 @@ public class User implements Serializable {
     @Column(name = "activation_status")
     @Enumerated(EnumType.STRING)
     private ActivationStatus activationStatus;
+    
+    private String provider;
+    
+    private String contract;
 
 	/*
 	 * @deprecated Unused column
@@ -752,6 +776,8 @@ public class User implements Serializable {
 		if (potentialPromotion != null)
 			accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
 		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
+		
+		accountCheckDTO.setActivation(getActivationStatus());
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -913,6 +939,8 @@ public class User implements Serializable {
     public void setActivationStatus(ActivationStatus activationStatus) {
         this.activationStatus = activationStatus;
     }
+    
+    
 
     @Override
 	public String toString() {
@@ -929,7 +957,7 @@ public class User implements Serializable {
 				+ ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken=" + newStoredToken + ", tempToken=" + tempToken
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
-				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ "]";
+				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ ", activationStatus="+activationStatus+", provider="+provider+", contract="+contract+"]";
 	}
 
 	/**
@@ -938,5 +966,21 @@ public class User implements Serializable {
 	 */
 	public boolean isOnFreeTrial() {
 		return (null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis());
+	}
+
+	public String getProvider() {
+		return provider;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+
+	public String getContract() {
+		return contract;
+	}
+
+	public void setContract(String contract) {
+		this.contract = contract;
 	}
 }

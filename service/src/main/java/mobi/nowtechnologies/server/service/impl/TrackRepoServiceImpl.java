@@ -145,6 +145,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			// Building iTunesUrl
 			media.setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (config.getItunesUrl() != null ? config.getItunesUrl().replace("&", "%26") : "")
 					+ "%26partnerId=2003");
+			
+			media.setAmazonUrl(config.getAmazonUrl());
 
 			// Building media files
 			media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
@@ -249,7 +251,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
 		fillTracks(tracks);
 
-		LOGGER.info("output find(criteria): [{}]", tracks);
+		LOGGER.info("output find(tracks): [{}]", tracks);
 		return tracks;
 	}
 	

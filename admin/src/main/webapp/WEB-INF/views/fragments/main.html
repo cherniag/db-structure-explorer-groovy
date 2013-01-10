@@ -76,7 +76,7 @@
 			                    </ul>
 			                  </li>
 							<li th:class="*{pathInfo}=='/tracks' or *{pathInfo}=='/tracks/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/tracks/list}">Tracks</a></li>
-							<li th:class="*{pathInfo}=='/policies'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/policies}">Payment Policies</a></li>
+<!--							<li th:class="*{pathInfo}=='/policies'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/policies}">Payment Policies</a></li>-->
 							
 							<li class="divider-vertical"></li>
 							<li class="pull-right" th:if="*{userPrincipal}"><p class="navbar-text" th:utext="*{userPrincipal.name + '&nbsp;'}">Hello user</p></li>

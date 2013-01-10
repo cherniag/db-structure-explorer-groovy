@@ -113,6 +113,9 @@ public class Media extends Item implements Serializable {
 	private String info;
 
 	private String iTunesUrl;
+	
+	@Column(nullable=true)
+	private String amazonUrl;
 
 	private int publishDate;
 	
@@ -359,10 +362,18 @@ public class Media extends Item implements Serializable {
 		this.info = info;
 	}
 
+	public String getAmazonUrl() {
+		return amazonUrl;
+	}
+
+	public void setAmazonUrl(String amazonUrl) {
+		this.amazonUrl = amazonUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "Media [" + super.toString() + ", isrc=" + isrc + ", info=" + info + ", publishDate=" + publishDate + ", price_currency=" + price_currency + ", artistId=" + artistId + ", iTunesUrl="
-				+ iTunesUrl + ", label="
+				+ iTunesUrl + ", amazonUrl=" + amazonUrl + ", label="
 				+ label + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", headerFileId=" + headerFileId + ", headerPreviewFileId=" + headerPreviewFileId
 				+ ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId + ", imgFileResolutionId=" + imgFileResolutionId + ", purchasedFileId=" + purchasedFileId
 				+ ", genreId=" + genreId + "]";

@@ -36,6 +36,7 @@ public class AdItemDto {
 	private String action;
 
 	@NotEmpty
+	@Pattern(regexp = ".{1,255}")
 	private String message;
 
 	private boolean activated;
@@ -47,6 +48,8 @@ public class AdItemDto {
 	private String imageFileName;
 
 	private Integer position;
+
+	private boolean removeImage;
 
 	public AdActionType getActionType() {
 		return actionType;
@@ -133,6 +136,14 @@ public class AdItemDto {
 		return adItemDtos;
 	}
 
+	public boolean isRemoveImage() {
+		return removeImage;
+	}
+
+	public void setRemoveImage(boolean removeImage) {
+		this.removeImage = removeImage;
+	}
+
 	public static AdItemDto toDtoItem(Message message) {
 		AdItemDto adItemDto = null;
 		if (message != null) {
@@ -142,6 +153,7 @@ public class AdItemDto {
 			String title = message.getTitle();
 			adItemDto.setAction(title);
 			adItemDto.setImageFileName(message.getImageFileName());
+			adItemDto.setRemoveImage(message.getImageFileName() == null || message.getImageFileName().isEmpty());
 			adItemDto.setMessage(message.getBody());
 			adItemDto.setActivated(message.isActivated());
 			adItemDto.setFilterDtos(FilterAsm.toDtos(message.getFilterWithCtiteria()));
@@ -179,7 +191,7 @@ public class AdItemDto {
 	@Override
 	public String toString() {
 		return "AdItemDto [id=" + id + ", action=" + action + ", message=" + message + ", activated=" + activated + ", imageFileName=" + imageFileName + ", actionType=" + actionType + ", filterDtos="
-				+ filterDtos + ", position=" + position + "]";
+				+ filterDtos + ", position=" + position + ", removeImage=" + removeImage + "]";
 	}
 
 }

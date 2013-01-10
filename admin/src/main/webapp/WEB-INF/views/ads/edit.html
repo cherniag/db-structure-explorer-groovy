@@ -13,21 +13,31 @@
 				<div class="row">
 					<div class="span3">
 						<div class="filtersSelect">
-							<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.image.label}">Select Image:</strong></label>
-							<img class="addedImage" th:src="@{__${filesURL}__/__*{imageFileName}__}" width="270" height="180"/>
-							<br/><br/>
-							<input id="file" name="file" type="file" accept="image"
-								th:field="*{file}"
-								th:title="#{ad.edit.page.saveOrUpdateAdForm.file.chooser}" />
-							<input type="hidden" id="MAX_FILE_SIZE_FOR_NEWS" name="MAX_FILE_SIZE_FOR_NEWS" value="30720" />
-							<div id="fileErrors" class="text-error">
-								<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
-									No file has been selected or file has no content
-								</p>
+							<!-- Remove image -->
+							<div class="controls">
+								<label class="checkbox">
+									<input id="notHasImage" type="checkbox" th:field="*{removeImage}"/>
+									<span th:text="#{ad.edit.page.saveOrUpdateAdForm.image.remove}">Remove image?:</span>
+								</label>
+							</div>
+						
+							<div id="selectImageDiv">
+								<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.image.label}">Select Image:</strong></label>
+								<img class="addedImage" th:src="@{__${filesURL}__/__*{imageFileName}__}" width="240" height="180"/>
+								<br/><br/>
+								<input id="file" name="file" type="file" accept="image"
+									th:field="*{file}"
+									th:title="#{ad.edit.page.saveOrUpdateAdForm.file.chooser}" />
+								<input type="hidden" id="MAX_FILE_SIZE_FOR_NEWS" name="MAX_FILE_SIZE_FOR_NEWS" value="30720" />
+								<div id="fileErrors" class="text-error">
+									<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
+										No file has been selected or file has no content
+									</p>
+								</div>
 							</div>
 						</div>
 
-						<!-- is Oline -->
+						<!-- is Online -->
 						<div class="controls">
 							<label class="checkbox">
 								<input type="checkbox" th:field="*{activated}" />
@@ -96,5 +106,13 @@
 				
 			</form>
 		</div>
+		<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+			$(function() {			
+				$('#notHasImage').change(function() {
+			          var value = $(this).attr("checked");
+			          $('#selectImageDiv').toggle(!value);      
+			    }).change();
+			 });
+			/*]]>*/</script>
 	</body>
 </html>
