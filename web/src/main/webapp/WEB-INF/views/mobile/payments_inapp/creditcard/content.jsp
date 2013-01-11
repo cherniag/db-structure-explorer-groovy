@@ -53,7 +53,7 @@
 				<div class="clr"></div>
 				
 				<div class="oneInputLine">
-					<div class="nameCell doubleLines"><form:label path="issueNumber"><s:message code="pay.cc.form.issue.number" /></form:label></div>
+					<div class="nameCell"><form:label path="issueNumber"><s:message code="pay.cc.form.issue.number" /></form:label></div>
 					<div class="valueCell shortInput">
 						<form:input path="issueNumber"/>
 					</div>

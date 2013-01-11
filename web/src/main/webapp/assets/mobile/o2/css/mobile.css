@@ -792,8 +792,8 @@ div.inputAreaBox  {
     border: 1px solid #777777;
     border-radius: 3px 3px 3px 3px;
     height: 2em;
-    padding: 0 10px;
     margin-top: 5px; 
+    margin-right: 10px; 
     font-size: 0.8em;
     width: 100%;
 }
@@ -811,7 +811,7 @@ div.inputAreaBox  {
 }
 .payDetails .shortInput input, .shortInput input {
 	width: 80px;
-	float: right;
+	float: left;
 }
 
 .payDetails .shortInput input {
@@ -820,12 +820,14 @@ div.inputAreaBox  {
 
 .payDetails select {
 	margin-top: 7px;
+	width: auto;
+	height: 25px;
 }
 
 .payDetails select.month, .payDetails select.year {
 	display: inline-block;
 	width: auto;
-	height: auto;
+	height: 25px;
 }
 
 
