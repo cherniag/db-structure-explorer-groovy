@@ -1,32 +1,44 @@
 @font-face {
-    font-family: 'DroidSansRegular';
-    src: url('../fonts/droidsans-webfont.eot');
-    src: url('../fonts/droidsans-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/droidsans-webfont.woff') format('woff'),
-         url('../fonts/droidsans-webfont.ttf') format('truetype');
+    font-family: 'FrutigerLight';
+    src: url('ftlcx___-light-webfont.eot');
+    src: url('ftlcx___-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('ftlcx___-light-webfont.woff') format('woff'),
+         url('ftlcx___-light-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 
 }
 
+
 @font-face {
-	font-family: 'DroidSansBold';
-	src: url('../fonts/droidsans-bold-webfont.eot');
-	src: url('../fonts/droidsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
-		 url('../fonts/droidsans-bold-webfont.woff') format('woff'),
-		 url('../fonts/droidsans-bold-webfont.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'FrutigerRegular';
+    src: url('../fonts/ftbcx___-webfont.eot');
+    src: url('../fonts/ftbcx___-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/ftbcx___-webfont.woff') format('woff'),
+         url('../fonts/ftbcx___-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FrutigerBold';
+    src: url('../fonts/ftbcx___-bold-webfont.eot');
+    src: url('../fonts/ftbcx___-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/ftbcx___-bold-webfont.woff') format('woff'),
+         url('../fonts/ftbcx___-bold-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 body {
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
 	margin: 0;
 	padding: 0;
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
-	font-size: 1em;		
+	font-size: 14px;	
+	background-color: #82bbdf;	
 }
 
 .page {
@@ -46,7 +58,7 @@ a {
 	 font-weight: bold;
 }
 hr {
-	background-color: #787777; 
+	background-color: #ffffff; 
 	height: 1px; 
 	margin: 18px;
 	border: 0 none;
@@ -59,7 +71,7 @@ h1 {
 	font-size: 1.4em;		
 	margin-left: 21px;
 	margin-bottom: 0px;
-	margin-top: 12px;
+	margin-top: 24px;
 	color: #1d3150;
 }
 h2 {
@@ -92,7 +104,7 @@ p  {
 }
 .content p {
 	margin: 7px 14px 7px 21px;
-	font-size: 1em;		
+	font-size: 16px;		
 	line-height: 1.4em;
 	color: #616465;
 }
@@ -172,7 +184,6 @@ form {
 }
 .getAppContent h1 {
 	color: #1d3150;
-	margin-left: 41px;
 	padding-bottom: 10px;
 }
 .getAppContent .formButton,.getAppContent .formButton input  {
@@ -239,7 +250,7 @@ a.button, input.button, button {
 	border: 1px solid #000000;
 	display: inline-block;	
 	//text-shadow:  0px -1px 1px #6A023F; 	
-	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif!important;
 }
 
 input.accounts{
@@ -255,10 +266,11 @@ input.accounts{
 	position: relative; 
 }
 .buttonBox .button {
-	font-size: 0.93em;		
+	font-size: 14px;
+	text-transform: uppercase;		
 }
 .buttonTop {
-
+ 
 }
 .footer .buttonBox a {
 	font-size: 1.3em;
@@ -311,15 +323,15 @@ input.accounts{
 	color: #1d3150;	
 }
 .footer {	
-	font-size: 0.8em;		
 	padding: 0px 15px 10px 0;
 }
-.footer  a {	
+.footer a {	
 	text-decoration: none;	
-	font-size: 1.1em;	
 	display: inline-block;
 	margin-right: 20px;
-	font-weight: bold;
+	color: #ffffff;
+	font-size: 16px;
+	font-family: 'FrutigerBold';	
 }
 .bottomLinks  {
 	text-align: center;
@@ -376,9 +388,9 @@ input.accounts{
 .oneQuestion {margin-left: 20px;}
 .contentButton a, .contentButton input, .contentButton button {
 	color: #ffffff;
-	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif!important;
+	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif!important;
 	display: block;
-	font-size: 0.93em;		
+	font-size: 14px;		
 	text-decoration: none;
 	font-weight: bold;
 	margin: 0px;
@@ -402,13 +414,16 @@ input.accounts{
 }
 
 .formButton, .formButton input {
-	background: #ed0890 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
+	background: #1d3150 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
 	height: 41px !important;
 	border: none none none none;		
 	box-shadow: 1px 2px 1px #bdbdbd; 
 	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
 	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
-	//text-shadow:  0px -1px 1px #6A023F; 	
+	//text-shadow:  0px -1px 1px #6A023F; 
+	font-family: 'FrutigerBold';
+	font-size: 14px;
+	text-transform: uppercase;		
 }
 .formDetails .formButton .button {font-size: 1.2em;}
  .formButton input.button, .formButton input.button  {
@@ -420,9 +435,17 @@ input.accounts{
  }
 .formButton input, .formButton button {
 	border: none;
-	
 	cursor: pointer;
 }
+
+.formButtonGrey input {
+	background: #d8d9d8 url(../imgs/bgs/button_form_grey.png) repeat-x 0px center!important;
+	display: block;
+}
+
+
+
+
 .setOfButtons  {
 	margin-bottom: 17px;
 }
@@ -625,7 +648,7 @@ div.inputAreaBox  {
 .note {
 	width: 100%; 
 	font-size: 0.75em; 
-	color: #ec008c!important;
+	color: #1d3150!important;
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
@@ -804,13 +827,13 @@ div.inputAreaBox  {
  
  .cardDetails .oneLine {
 	margin-left: 21px; 
-	font-size: 1em; 
+	font-size: 15px; 
 	margin-bottom: 9px;
 	margin-top: 6px;
 }
 
  .cardDetails .valueCell {
- 	color: #ec008c;
+ 	color: #1d3150;
  }
  
  /*for Web Store*/
@@ -829,9 +852,9 @@ div.inputAreaBox  {
 	top: 20px;
 	left: 110px;
 	width: 45%;
-	font-family: 'DroidSansBold';
+	font-family: 'FrutigerBold';
 	font-size: 18px;
-	color: #ec008c;
+	color: #1d3150;
 }
 
 .albmTitle span {
@@ -843,7 +866,7 @@ div.inputAreaBox  {
 .albumButton a{
 	color: #ffffff;
 	text-decoration: none;
-	font-family: "DroidSans"
+	font-family: "DroidSansBold"
 	font-weight: bold;
 	
 	}
@@ -873,7 +896,7 @@ div.inputAreaBox  {
 .trackRow span {
 	line-height: 64px;
 	vertical-align: top;
-	font-family: 'DroidSansRegular';
+	font-family: 'FrutigerRegular';
 	font-size: 16px;
 	color: #1428a0;
 	padding-left: 10px;
@@ -946,14 +969,14 @@ div.inputAreaBox  {
 	top: 20px;
 	left: 110px;
 	width: 70%;
-	font-family: 'DroidSansBold';
+	font-family: 'FrutigerBold';
 	font-size: 16px;
 	color: #d32287;
 }
 
 .albmBody {
 	line-height: 20px;
-	font-family: 'DroidSansRegular';
+	font-family: 'FrutigerRegular';
 	font-size: 12px;
 	color: #1428a0;
 }
@@ -966,7 +989,7 @@ p.albmBody {
 	position: absolute;
 	top: 20px;
 	right: 20px;
-	font-family: 'DroidSansBold';
+	font-family: 'FrutigerBold';
 	font-size: 16px;
 	padding: 10px;
 
@@ -974,9 +997,9 @@ p.albmBody {
 
 .albmPrice a{
 	text-decoration: none;
-	font-family: "DroidSans"
+	font-family: "DroidSansBold"
 	font-weight: bold;
-	color: #ec008c;
+	color: #1d3150;
 }
 
 .albmPrice span {
@@ -1019,14 +1042,14 @@ p.albmBody {
 	top: 20px;
 	left: 210px;
 	width: 60%;
-	font-family: 'DroidSansBold';
+	font-family: 'FrutigerBold';
 	font-size: 18px;
 	color: #FFFFFF;
 }
 .albmBodyDetails {
 	width: 60%;
 	line-height: 20px;
-	font-family: 'DroidSansRegular';
+	font-family: 'FrutigerRegular';
 	font-size: 14px;
 	color: #FFFFFF;
 }
@@ -1037,16 +1060,16 @@ p.albmBodyDetails {
 
 .albumButton {
 	background: url("../imgs/button_pink_bg.jpg") repeat-x #CCCCCC;
-	font-family: 'DroidSansBold';
+	font-family: 'FrutigerBold';
 	font-size: 16px;
 	padding: 10px;
 	width: 70px;
 }
 
 .albumButton a{
-	color: #ec008c;
+	color: #1d3150;
 	text-decoration: none;
-	font-family: "DroidSansRegular";
+	font-family: "FrutigerRegular";
 	font-weight: bold;
 }
 
@@ -1068,7 +1091,7 @@ div.itemsDetails {
 .itemsDetails {
 	line-height: 64px;
 	vertical-align: top;
-	font-family: 'DroidSansRegular';
+	font-family: 'FrutigerRegular';
 	font-size: 22px;
 	font-weight: bold;
 	color: #d32287;
@@ -1115,11 +1138,11 @@ div.itemsDetails {
 	top: 5px;
 	font-size: 16px;
 	font-weight: bold;
-	color: #ec008c;
+	color: #1d3150;
 }
 
 .itemsTrackName {
-	font-family: 'DroidSansRegular';
+	font-family: 'FrutigerRegular';
 	font-weight: normal;
 	font-size: 12px;
 	color: #1428a0;
@@ -1139,7 +1162,7 @@ p.itemsTrackName {
 .backButton a {
 	color: #ffffff;
 	text-decoration: none;
-	font-family: "DroidSansRegular";
+	font-family: "FrutigerRegular";
 	font-weight: bold;
 }
 
