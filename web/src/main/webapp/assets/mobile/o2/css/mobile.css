@@ -37,8 +37,8 @@ body {
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
-	font-size: 14px;	
-	background-color: #82bbdf;	
+	font-size: 14px;
+	background-color: #82bbdf;
 }
 
 .page {
@@ -63,6 +63,15 @@ hr {
 	margin: 18px;
 	border: 0 none;
 }
+
+hr.addSpace2 {
+	background-color: #cccccc; 
+	height: 1px; 
+	border: 0 none;
+	margin-bottom: 35px;
+    margin-top: 35px;
+}
+
 hr.addBothSpaces {
 	margin: 15px 8px 22px 8px;
 	display: block;
@@ -267,7 +276,7 @@ input.accounts{
 }
 .buttonBox .button {
 	font-size: 14px;
-	text-transform: uppercase;		
+	text-transform: uppercase;
 }
 .buttonTop {
  
@@ -648,7 +657,7 @@ div.inputAreaBox  {
 .note {
 	width: 100%; 
 	font-size: 0.75em; 
-	color: #1d3150!important;
+	color: #bf200b!important;
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
