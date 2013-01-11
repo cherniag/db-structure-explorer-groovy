@@ -37,8 +37,8 @@ body {
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
-	font-size: 14px;	
-	background-color: #82bbdf;	
+	font-size: 14px;
+	background-color: #82bbdf;
 }
 
 .page {
@@ -267,7 +267,7 @@ input.accounts{
 }
 .buttonBox .button {
 	font-size: 14px;
-	text-transform: uppercase;		
+	text-transform: uppercase;
 }
 .buttonTop {
  
