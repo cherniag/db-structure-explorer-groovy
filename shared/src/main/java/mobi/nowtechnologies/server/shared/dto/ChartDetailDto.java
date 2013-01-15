@@ -29,6 +29,7 @@ public class ChartDetailDto {
 	private int audioVersion;
 	private int imageLargeVersion;
 	private int imageSmallVersion;
+	private boolean isArtistUrl;
 
 	public ChartDetailDto() {
 	}
@@ -225,10 +226,18 @@ public class ChartDetailDto {
 		this.imageSmallVersion = imageSmallVersion;
 	}
 
+	public boolean isIsArtistUrl() {
+		return isArtistUrl;
+	}
+
+	public void setIsArtistUrl(boolean isArtistUrl) {
+		isArtistUrl = isArtistUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "ChartDetailDto [artist=" + artist + ", audioSize=" + audioSize + ", changePosition=" + changePosition + ", drmType=" + drmType + ", drmValue="
-				+ drmValue + ", genre1=" + genre1 + ", genre2=" + genre2 + ", headerSize=" + headerSize + ", iTunesUrl=" + iTunesUrl + ", amazonUrl=" + amazonUrl + ", imageLargeSize="
+				+ drmValue + ", genre1=" + genre1 + ", genre2=" + genre2 + ", headerSize=" + headerSize + ", iTunesUrl=" + iTunesUrl +", isArtistUrl=" + isArtistUrl + ", amazonUrl=" + amazonUrl + ", imageLargeSize="
 				+ imageLargeSize + ", imageSmallSize=" + imageSmallSize + ", info=" + info + ", media=" + media + ", position=" + position
 				+ ", previousPosition=" + previousPosition + ", title=" + title + ", channel=" + channel + ", trackSize=" + trackSize + ", chartDetailVersion="
 				+ chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion=" + imageLargeVersion

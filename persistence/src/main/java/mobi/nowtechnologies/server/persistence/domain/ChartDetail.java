@@ -255,6 +255,7 @@ public class ChartDetail {
 		}
 		chartDetailDto.setAmazonUrl(enocodedAmazonUrl);
 		chartDetailDto.setiTunesUrl(enocodediTunesUrl);
+		chartDetailDto.setIsArtistUrl(media.getAreArtistUrls());
 		chartDetailDto.setPreviousPosition(prevPosition);
 		chartDetailDto.setChangePosition(chgPosition.getLabel());
 		chartDetailDto.setChannel(channel);

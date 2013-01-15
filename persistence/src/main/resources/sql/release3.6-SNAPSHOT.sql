@@ -6,3 +6,5 @@ alter table tb_users add column activation_status varchar(255);
 
 alter table tb_users add column provider varchar(255);
 alter table tb_users add column contract varchar(255);
+
+alter table tb_media add column areArtistUrls boolean not null;
