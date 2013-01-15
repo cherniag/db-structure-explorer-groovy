@@ -6,9 +6,8 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.MigService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -21,12 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Aspect
-@SuppressWarnings("deprecation")
 public class SMSNotification {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SMSNotification.class);
 	
-	private MigService migService;
+	private MigHttpService migService;
 
 	private CommunityResourceBundleMessageSource messageSource;
 		
@@ -42,7 +40,7 @@ public class SMSNotification {
 	
 	private RestTemplate restTemplate = new RestTemplate();
 	
-	public void setMigService(MigService migService) {
+	public void setMigService(MigHttpService migService) {
 		this.migService = migService;
 	}
 
@@ -145,10 +143,9 @@ public class SMSNotification {
 			LOGGER.error("Error get tinyUrl.");
 		}
 		
-		String messageId = "" + Utils.getBigRandomInt();
 		String[] args = {url};
 		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, args, null);
 		
-		migService.sendFreeSms(messageId, user.getOperator(), user.getMobile(), message);
+		migService.makeFreeSMSRequest(user.getMobile(), message);
 	}
 }
