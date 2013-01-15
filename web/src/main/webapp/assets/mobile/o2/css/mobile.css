@@ -271,7 +271,7 @@ input.accounts{
 }
 .buttonBox  {
 	float: right;
-	margin: 0px 17px 13px 0;
+	margin: 15px 17px 13px 0;
 	position: relative; 
 }
 .buttonBox .button {
@@ -1204,6 +1204,7 @@ p.itemsTrackName {
 	margin: 0;
 	width: 100%;
 	z-index: 1000;
+	display: none;
 }
 	
 .left {
@@ -1249,4 +1250,8 @@ p.itemsTrackName {
 .offers_wrapper {
 	margin: 0;
 	padding: 0;
+}
+
+.gradient_border {
+	display: none;
 }

@@ -47,6 +47,7 @@ public class TrackDto {
 	private String publishArtist;
 	private String itunesUrl;
 	private String amazonUrl;
+	private boolean areArtistUrls;
 	private AudioResolution resolution;
 	private String territories;
 	private List<ResourceFileDto> files;
@@ -320,6 +321,17 @@ public class TrackDto {
 		this.publishArtist = publishArtist;
 	}
 
+	public boolean getAreArtistUrls() {
+		return areArtistUrls;
+	}
+
+
+	public void setAreArtistUrls(boolean areArtistUrls) {
+		this.areArtistUrls = areArtistUrls;
+	}
+
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -338,6 +350,7 @@ public class TrackDto {
 		result = prime * result + ((isrc == null) ? 0 : isrc.hashCode());
 		result = prime * result + ((itunesUrl == null) ? 0 : itunesUrl.hashCode());
 		result = prime * result + ((amazonUrl == null) ? 0 : amazonUrl.hashCode());
+		result = prime * result + (areArtistUrls ? 0 : 1);
 		result = prime * result + ((licensed == null) ? 0 : licensed.hashCode());
 		result = prime * result + ((productCode == null) ? 0 : productCode.hashCode());
 		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
@@ -434,6 +447,8 @@ public class TrackDto {
 				return false;
 		} else if (!amazonUrl.equals(other.amazonUrl))
 			return false;
+		if (areArtistUrls != other.areArtistUrls)
+			return false;
 		if (licensed == null) {
 			if (other.licensed != null)
 				return false;
@@ -497,6 +512,6 @@ public class TrackDto {
 				+ ", coverFileName=" + coverFileName + ", label=" + label + ", subTitle=" + subTitle + ", productId=" + productId + ", productCode=" + productCode + ", genre=" + genre
 				+ ", copyright=" + copyright + ", year=" + year + ", album=" + album + ", info=" + info + ", licensed=" + licensed + ", ingestionUpdateDate=" + ingestionUpdateDate + ", publishDate="
 				+ publishDate + ", releaseDate=" + releaseDate + ", publishTitle=" + publishTitle + ", publishArtist=" + publishArtist + ", itunesUrl=" + itunesUrl + ", amazonUrl=" + amazonUrl
-				+ ", resolution=" + resolution + ", territories=" + territories + ", files=" + files + "]";
+				+", areArtistUrls="+ areArtistUrls + ", resolution=" + resolution + ", territories=" + territories + ", files=" + files + "]";
 	}
 }

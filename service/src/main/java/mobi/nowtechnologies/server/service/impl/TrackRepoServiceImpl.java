@@ -147,6 +147,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 					+ "%26partnerId=2003");
 			
 			media.setAmazonUrl(config.getAmazonUrl());
+			media.setAreArtistUrls(config.getAreArtistUrls());
 
 			// Building media files
 			media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
