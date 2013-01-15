@@ -82,7 +82,8 @@ public class SMSNotification {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
 		try{
-			sendLimitedStatusSMS(user);
+			if (user.getPaymentDetailsList().isEmpty())
+				sendLimitedStatusSMS(user);
 		}catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
