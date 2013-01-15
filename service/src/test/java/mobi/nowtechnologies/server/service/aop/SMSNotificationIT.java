@@ -6,8 +6,15 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.WeeklyUpdateService;
+import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 
@@ -28,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@SuppressWarnings("deprecation")
 public class SMSNotificationIT {
 
 	@Rule
@@ -45,7 +51,7 @@ public class SMSNotificationIT {
 	@Qualifier("service.SpyPaymentDetailsService")
 	private PaymentDetailsService paymentDetailsService;
 	
-	private MigService mockMigService;
+	private MigHttpService mockMigService;
 	
 	private UserService mockUserService;
 	
@@ -57,11 +63,11 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
 		Mockito.doNothing().when(weeklyUpdateService).saveWeeklyPayment(any(User.class));
-		Mockito.doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		
 		weeklyUpdateService.saveWeeklyPayment(user);
 		
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -72,12 +78,12 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
 		Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPamentDetails(any(CreditCardDto.class), anyString(), anyInt());
-		Mockito.doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
 		paymentDetailsService.createCreditCardPamentDetails(creditCardDto, "O2", user.getId());
 		
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
 
 	@Test
@@ -87,12 +93,12 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
 		Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyString(), anyInt());
-		Mockito.doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
 		paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", "O2", user.getId());
 		
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -102,18 +108,18 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
 		Mockito.doReturn(null).when(paymentDetailsService).commitMigPaymentDetails(anyString(), anyInt());
-		Mockito.doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
 		paymentDetailsService.commitMigPaymentDetails("xxxxxxxxxxxxxxxxx", user.getId());
 		
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
 
 	@Before
 	public void setUp()
 			throws Exception {
-		mockMigService = mock(MigService.class);
+		mockMigService = mock(MigHttpService.class);
 		mockUserService = mock(UserService.class);
 		
 		fixture.setMigService(mockMigService);

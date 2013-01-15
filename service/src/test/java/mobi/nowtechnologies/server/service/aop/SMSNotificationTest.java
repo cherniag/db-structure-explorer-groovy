@@ -1,15 +1,21 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.MigService;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -24,11 +30,10 @@ import antlr.Utils;
 
 @RunWith( PowerMockRunner.class )
 @PrepareForTest(Utils.class)
-@SuppressWarnings("deprecation")
 public class SMSNotificationTest {
 	
 	@Mock
-	private MigService mockMigService;
+	private MigHttpService mockMigService;
 	
 	@Mock
 	private CommunityResourceBundleMessageSource mockMessageSource;
@@ -40,11 +45,11 @@ public class SMSNotificationTest {
 		throws Exception {
 		User user = UserFactory.createUser();
 		
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 
 		fixture.sendLimitedStatusSMS(user);
 
-		verify(mockMigService, times(0)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -54,11 +59,11 @@ public class SMSNotificationTest {
 		user.getStatus().setName(UserStatus.LIMITED.name());
 		fixture.setAvailableCommunities("community3, community2, community1");
 		
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 
 		fixture.sendLimitedStatusSMS(user);
 
-		verify(mockMigService, times(0)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -75,12 +80,12 @@ public class SMSNotificationTest {
 		fixture.setTinyUrlService(tinyUrlService);
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text"), any(Object[].class), eq((Locale)null))).thenReturn(msg);
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
 
 		fixture.sendLimitedStatusSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text"), any(Object[].class), eq((Locale)null));
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
 	}
 	
 	@Test
@@ -100,12 +105,12 @@ public class SMSNotificationTest {
 		String[] args = {url};
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text"), eq(args), eq((Locale)null))).thenReturn(msg);
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
 
 		fixture.sendLimitedStatusSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text"), eq(args), eq((Locale)null));
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
 	}
 	
 	@Test
@@ -113,11 +118,11 @@ public class SMSNotificationTest {
 		throws Exception {
 		User user = UserFactory.createUser(null, new BigDecimal(0));
 		
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
-		verify(mockMigService, times(0)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -126,11 +131,11 @@ public class SMSNotificationTest {
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
 		fixture.setAvailableCommunities("community3, community2, community1");
 		
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
-		verify(mockMigService, times(0)).sendFreeSms(anyString(), anyInt(), anyString(), anyString());
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
 	@Test
@@ -146,12 +151,12 @@ public class SMSNotificationTest {
 		fixture.setTinyUrlService(tinyUrlService);
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text"), any(Object[].class), eq((Locale)null))).thenReturn(msg);
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text"), any(Object[].class), eq((Locale)null));
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
 	}
 	
 	@Test
@@ -170,12 +175,12 @@ public class SMSNotificationTest {
 		String[] args = {url};
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text"), eq(args), eq((Locale)null))).thenReturn(msg);
-		doReturn(null).when(mockMigService).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text"), eq(args), eq((Locale)null));
-		verify(mockMigService, times(1)).sendFreeSms(anyString(), anyInt(), anyString(), eq(msg));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
 	}
 
 	@Before

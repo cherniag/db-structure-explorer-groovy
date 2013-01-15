@@ -265,7 +265,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	</bean>
 	
 	<bean id="smsNotificationAspect" class="mobi.nowtechnologies.server.service.aop.SMSNotification">
-		<property name="migService" ref="service.MigService" />
+		<property name="migService" ref="service.migHttpService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="paymentsUrl" value="${payments.url}" />
