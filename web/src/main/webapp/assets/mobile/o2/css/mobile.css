@@ -252,10 +252,7 @@ a.button, input.button, button {
 	color: #ffffff;
 	line-height: 29px;
 	text-decoration: none;
-	padding-right: 10px;
-	padding-left: 20px;
-	padding-top: 2px;
-	padding-bottom: 2px;
+	padding: 2px 0;
 	border: 1px solid #000000;
 	display: inline-block;	
 	//text-shadow:  0px -1px 1px #6A023F; 	
@@ -264,14 +261,15 @@ a.button, input.button, button {
 
 input.accounts{
 	padding-left: 25px;
+	padding-right: 10px;
 	line-height: 25px;
 	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-bottom: 4px;
 	border: 1px solid #000000;
 }
 .buttonBox  {
 	float: right;
-	margin: 15px 17px 13px 0;
+	margin: 18px 17px 13px 0;
 	position: relative; 
 }
 .buttonBox .button {
@@ -295,7 +293,7 @@ input.accounts{
 	height: 19px;
 	position: absolute;
 	left: 5px;
-	top: 8px;
+	top: 6px;
 }
 
 .buttonWrapper {
@@ -1204,6 +1202,7 @@ p.itemsTrackName {
 	margin: 0;
 	width: 100%;
 	z-index: 1000;
+	display: none;
 }
 	
 .left {

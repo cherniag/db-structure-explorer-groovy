@@ -18,6 +18,40 @@
 	</build>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test-mvc</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>mobi.nowtechnologies.java.server</groupId>
+			<artifactId>shared</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>mobi.nowtechnologies.java.server</groupId>
+			<artifactId>shared-web</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		
+		<dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>persistence</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+        
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>service</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
@@ -82,19 +116,19 @@
 			<artifactId>tiles-core</artifactId>
 		</dependency>
 		<dependency>
-           	<groupId>org.apache.tiles</groupId>
-           	<artifactId>tiles-jsp</artifactId>
-        </dependency>
-		 <dependency>
-      		<groupId>org.apache.tiles</groupId>
-       		<artifactId>tiles-el</artifactId>
-   		 </dependency>
-   		 
-   		 <dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-jsp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-el</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
