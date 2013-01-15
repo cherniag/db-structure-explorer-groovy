@@ -2029,4 +2029,33 @@ public class UserService {
 		dto.setHasPotentialPromoCodePromotion(hasPromo);
 		return dto;
 	}
+	
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void saveWeeklyPayment(User user) throws Exception {
+		if (user == null)
+			throw new ServiceException("The parameter user is null");
+
+		final int subBalance = user.getSubBalance();
+		if (subBalance <= 0) {
+			user.setStatus(UserStatusDao.getLimitedUserStatus());
+			userRepository.save(user);
+			LOGGER.info("Unable to make weekly update balance is " + subBalance + ", user id [" + user.getId()
+					+ "]. So the user subscribtion status was changed on LIMITED");
+		} else {
+			final int nextSubPayment = user.getNextSubPayment();
+			final byte status = user.getUserStatusId();
+			final int paymentStatus = user.getPaymentStatus();
+
+			user.setSubBalance((byte) (subBalance - 1));
+			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
+			user.setStatus(UserStatusDao.getSubscribedUserStatus());
+			userRepository.save(user);
+			
+			accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+
+			LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
+					new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
+		}
+	}
 }

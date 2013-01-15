@@ -77,7 +77,7 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("execution(* mobi.nowtechnologies.server.service.WeeklyUpdateService.saveWeeklyPayment(*))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.saveWeeklyPayment(*))")
 	public Object saveWeeklyPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
@@ -120,14 +120,14 @@ public class SMSNotification {
 		if(user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
 			return;
 			
-		sendSMSWithUrl(user, "sms.limited.status.text", paymentsUrl);
+		sendSMSWithUrl(user, "sms.limited.status.text.for."+user.getProvider()+"."+user.getContract(), paymentsUrl);
 	}
 	
 	protected void sendUnsubscribePotentialSMS(User user) {
 		if(user == null || user.getCurrentPaymentDetails() == null)
 			return;
 				
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", unsubscribeUrl);
+		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), unsubscribeUrl);
 	}
 	
 	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl){
