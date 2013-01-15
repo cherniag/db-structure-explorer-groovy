@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Aspect
-@SuppressWarnings("deprecation")
 public class SMSNotification {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SMSNotification.class);
@@ -145,7 +143,6 @@ public class SMSNotification {
 			LOGGER.error("Error get tinyUrl.");
 		}
 		
-		String messageId = "" + Utils.getBigRandomInt();
 		String[] args = {url};
 		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, args, null);
 		
