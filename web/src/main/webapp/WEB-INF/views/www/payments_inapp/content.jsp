@@ -13,7 +13,7 @@
 					<div class="wholePart">						
 						<div class="details noBg">
 							<h2><s:message code="pays.page.h1.options" /></h2>
-							<h3><s:message code="pays.page.h1.options.note" /></h3>
+							<h3>${paymentPoliciesNote}</h3>
 							<div class="oneInputsGroup">
 								<div class="methodsBox">
 									<c:forEach var="paymentPolicy" items="${paymentPolicies}">
