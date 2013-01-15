@@ -46,7 +46,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		</property>
 	</bean>
 	
-	<!-- <bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject">
      	    <bean class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 				<property name="userDao" ref="persistence.UserDao" />
@@ -59,6 +59,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
   	
 	<bean id="service.SpyPaymentDetailsService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.PaymentDetailsService"/>
-  	</bean> -->
+  	</bean>
 
 </beans>

@@ -18,7 +18,8 @@ public enum TransactionType {
 	PROMOTION_BY_PROMO_CODE_APPLIED((byte) 6),
 	SUPPORT_TOPUP((byte) 7),
 	OFFER_PURCHASE((byte) 8),
-	TRIAL_TOPUP((byte) 9);
+	TRIAL_TOPUP((byte) 9),
+	TRACK_GIFT((byte) 10);
 	
 	private byte code;
 	
