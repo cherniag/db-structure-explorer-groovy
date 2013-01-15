@@ -34,7 +34,7 @@
 		</c:if>
 		
 		<h1><s:message code="pays.page.h1.options" /></h1>
-		<p><s:message code="pays.page.h1.options.note" /></p>
+		<p>${paymentPoliciesNote}</p>
 		
 		<div class="setOfButtons">
 			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
