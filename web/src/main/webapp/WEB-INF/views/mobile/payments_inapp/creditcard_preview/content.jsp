@@ -125,7 +125,7 @@
 					</div>
 					<div class="clr"></div>
 				</div>
-				<div class="note" id="errorBoxContainer" style="display:none; margin-bottom: 10px;">111</div>
+				<div class="note" id="errorBoxContainer" style="display:none; margin-bottom: 10px; margin-left: 20px;">111</div>
 		</div>
 	</div>
 	</form:form>
