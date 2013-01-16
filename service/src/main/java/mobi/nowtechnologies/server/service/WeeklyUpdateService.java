@@ -35,12 +35,31 @@ public class WeeklyUpdateService {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("Job start");
-			userService.updateWeekly();
+			process();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		} finally {
 			LOGGER.info("Job finish");
 			LogUtils.removeClassNameMDC();
+		}
+	}
+	
+	public void process() {
+		List<User> users = userDao.getListOfUsersForWeeklyUpdate();
+		LOGGER.info("weekly update job found [{}] users for update", users.size());
+		for (User user : users) {
+			try {
+				MDC.put(LogUtils.LOG_USER_NAME, user.getUserName());
+				MDC.put(LogUtils.LOG_USER_ID, user.getId());
+				
+				userService.saveWeeklyPayment(user);
+				
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			} finally {
+				MDC.remove(LogUtils.LOG_USER_NAME);
+				MDC.remove(LogUtils.LOG_USER_ID);
+			}
 		}
 	}
 
