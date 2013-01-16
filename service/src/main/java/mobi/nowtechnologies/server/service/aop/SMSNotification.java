@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -79,15 +80,21 @@ public class SMSNotification {
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.saveWeeklyPayment(*))")
 	public Object saveWeeklyPayment(ProceedingJoinPoint joinPoint) throws Throwable {
-		Object object = joinPoint.proceed();
-		User user = (User) joinPoint.getArgs()[0];
 		try{
-			if (user.getPaymentDetailsList().isEmpty())
-				sendLimitedStatusSMS(user);
-		}catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			LogUtils.putClassNameMDC(this.getClass());
+			
+			Object object = joinPoint.proceed();
+			User user = (User) joinPoint.getArgs()[0];
+			try{
+				if (user.getPaymentDetailsList().isEmpty())
+					sendLimitedStatusSMS(user);
+			}catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		}finally{
+			LogUtils.removeClassNameMDC();
 		}
-		return object;
 	}
 	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
@@ -106,15 +113,20 @@ public class SMSNotification {
 	 */
 	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-		Object object = joinPoint.proceed();
-		Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
 		try{
-			User user = userService.findById(userId);
-			sendUnsubscribePotentialSMS(user);
-		}catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			LogUtils.putClassNameMDC(this.getClass());
+			Object object = joinPoint.proceed();
+			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
+			try{
+				User user = userService.findById(userId);
+				sendUnsubscribePotentialSMS(user);
+			}catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		}finally{
+			LogUtils.removeClassNameMDC();
 		}
-		return object;
 	}
 	
 	protected void sendLimitedStatusSMS(User user) {

@@ -211,6 +211,23 @@
 		</filter>
 	</appender>
 	
+	<!-- Transport User SMS Notification Logs -->
+	<appender name="userSMSNotificationAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/user-sms-notification-transport.log" />
+		<param name="encoding" value="UTF-8" />
+		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+			<param name="fileNamePattern" value="${catalina.base}/logs/user-sms-notification-transport_%d{yyyy-ww}.gz" />
+		</rollingPolicy>
+		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+		</layout>
+		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+			<param name="contextKey" value="class" />
+			<param name="classNames" value="mobi.nowtechnologies.server.service.aop.SMSNotification" />
+			<param name="acceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	
 	<!-- Payment Job Logs -->
 	<logger name="mobi.nowtechnologies.server.job">
 		<level value="INFO" />
@@ -229,18 +246,20 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 	</logger>
 	<logger name="org.springframework.orm.jpa">
-		<level value="TRACE" />
+		<level value="INFO" />
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	<logger name="org.springframework.transaction">
-		<level value="TRACE" />
+		<level value="INFO" />
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	
 	<logger name="mobi.nowtechnologies.server.service.payment">
@@ -251,26 +270,29 @@
 	</logger>
 	
 	<logger name="org.hibernate.SQL">
-		<level value="DEBUG"></level>
+		<level value="INFO"></level>
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="weeklyUpdateServiceFile" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	<logger name="org.hibernate.type">
-		<level value="TRACE"></level>
+		<level value="INFO"></level>
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="weeklyUpdateServiceFile" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	<logger name="org.hibernate.cache">
-		<level value="TRACE"></level>
+		<level value="INFO"></level>
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	
 	
@@ -285,6 +307,7 @@
 		<appender-ref ref="weeklyUpdateServiceFile" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
+		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	<!-- END MIG Logger -->
 

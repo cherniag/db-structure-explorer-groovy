@@ -134,13 +134,14 @@
 	</form:form>
 	
 </div>
+<s:message code="pay.cc.form.error.nonetwork" var="noNetworkErrorMessage" />
 <script type="text/javascript">
 	$("#creditCardSubscribe").click(function() {
 		$("#actionButtons").hide();
 		$("#ajaxLoading").show();
 		$("#errorBoxContainer").hide();
 		$.ajax({
-			url:"payments/creditcard_details.html",
+			url:"payments_inapp/creditcard_details.html",
 			type:"post",
 			data: $("form#creditCardDto").serialize(),
 			success: function(data) {
@@ -151,7 +152,7 @@
 		}).fail(function(data,x,e) {
 			var errorText = data.responseText;
 			if (0 == data.status) {
-				errorText = "Can't connect to server. Please, check your connection settings.";
+				errorText = "<c:out value='${noNetworkErrorMessage}' />";
 			}
 			$("#errorBoxContainer").html("<span class='validationNotes'>"+errorText+"</span>");
 			$("#ajaxLoading").hide();
@@ -159,4 +160,4 @@
 			$("#errorBoxContainer").css("display","block");
 		});
 	});
-</script>
+	</script>
