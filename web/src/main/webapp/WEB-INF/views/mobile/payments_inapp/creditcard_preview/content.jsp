@@ -149,7 +149,7 @@
 			$("#errorBoxContainer").html("<span class='validationNotes'>"+data.responseText+"</span>");
 			$("#ajaxLoading").hide();
 			$("#actionButtons").show();
-			$("#errorBoxContainer").show();
+			$("#errorBoxContainer").css("display","block");
 		});
 	});
 </script>
