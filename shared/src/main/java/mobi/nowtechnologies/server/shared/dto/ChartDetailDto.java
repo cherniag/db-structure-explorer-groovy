@@ -231,7 +231,7 @@ public class ChartDetailDto {
 	}
 
 	public void setIsArtistUrl(boolean isArtistUrl) {
-		isArtistUrl = isArtistUrl;
+		this.isArtistUrl = isArtistUrl;
 	}
 
 	@Override

@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,21 +53,6 @@ public class SMSNotificationIT {
 	private MigHttpService mockMigService;
 	
 	private UserService mockUserService;
-	
-	@Test
-	public void testSendLimitedStatusSMS_Success()
-			throws Exception {		
-		User user = UserFactory.createUser();
-		user.getStatus().setName(UserStatus.LIMITED.name());
-		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
-		
-		Mockito.doNothing().when(weeklyUpdateService).saveWeeklyPayment(any(User.class));
-		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
-		
-		weeklyUpdateService.saveWeeklyPayment(user);
-		
-		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
-	}
 	
 	@Test
 	public void testSendUnsubscribePotentialSMS_afterCreatedCreditCardPaymentDetails_Success()
