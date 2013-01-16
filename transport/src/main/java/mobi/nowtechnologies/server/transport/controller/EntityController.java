@@ -80,9 +80,9 @@ public class EntityController extends CommonController {
 	}
 
 	public void init() {
-		weeklyUpdateServiceThread = new Thread(weeklyUpdateService);
-		weeklyUpdateServiceThread.setName("weeklyUpdateServiceThread");
-		weeklyUpdateServiceThread.start();
+		//weeklyUpdateServiceThread = new Thread(weeklyUpdateService);
+		//weeklyUpdateServiceThread.setName("weeklyUpdateServiceThread");
+		//weeklyUpdateServiceThread.start();
 	}
 
 	@InitBinder(UserRegDetailsDto.USER_REG_DETAILS_DTO)

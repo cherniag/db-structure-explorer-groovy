@@ -209,6 +209,19 @@
 		<property name="repeatInterval" value="${notificationQuartzTrigger.repeatIntervalMillis}" />
 	</bean>
 	
+	<!-- O2 sms notification job -->
+	<bean id="transport.smsNotification" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="service.WeeklyUpdateService" />
+		<property name="targetMethod" value="updateWeekly" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="transport.smsNotificationQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="transport.smsNotification" />
+		<property name="startDelay" value="${smsNotification.startDelayMillis}" />
+		<property name="repeatInterval" value="${smsNotification.repeatIntervalMillis}" />
+	</bean>
+	
+	
 	<bean id="paymentExecutor" class="mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor">
 		<property name="executor">
 			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -286,6 +299,7 @@
 				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
+				<ref bean="transport.smsNotificationQuartzTrigger" />
 			</list>
 		</property>
 	</bean>

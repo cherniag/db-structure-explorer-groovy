@@ -125,7 +125,7 @@
 					</div>
 					<div class="clr"></div>
 				</div>
-				<div class="note" id="errorBoxContainer" style="display:none; margin-bottom: 10px;"></div>
+				<div class="note" id="errorBoxContainer" style="display:none; margin-bottom: 10px;">111</div>
 		</div>
 	</div>
 	</form:form>
@@ -145,8 +145,12 @@
 				$("#actionButtons").show();
 				$("#mainContent").html(data);
 			}
-		}).fail(function(data,x,e) { 
-			$("#errorBoxContainer").html("<span class='validationNotes'>"+data.responseText+"</span>");
+		}).fail(function(data,x,e) {
+			var errorText = data.responseText;
+			if (0 == data.status) {
+				errorText = "Can't connect to server. Please, check your connection settings.";
+			}
+			$("#errorBoxContainer").html("<span class='validationNotes'>"+errorText+"</span>");
 			$("#ajaxLoading").hide();
 			$("#actionButtons").show();
 			$("#errorBoxContainer").css("display","block");

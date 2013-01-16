@@ -210,13 +210,9 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="fbAppSecret" value="${facebook.connect.fbAppSecret}" />		
 	</bean>
 	
-	<bean id="service.WeeklyUpdateService"
-		class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
+	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userDao" ref="persistence.UserDao" />
-		<property name="entityDao" ref="persistence.EntityDao" />
-		<property name="migHttpService" ref="service.migHttpService" />
-		<property name="messageSource" ref="serviceMessageSource" />
-		<property name="stopped" value="${jobs.stopWeeklyUpdate}" />
+		<property name="userService" ref="service.UserService" />
 	</bean>
 	
 	<bean id="service.UserDeviceDetailsService"
@@ -256,7 +252,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	</bean>
 	
 	<!-- AOP Services -->
-	<aop:aspectj-autoproxy />
+	<aop:aspectj-autoproxy proxy-target-class="true" />
 	
 	<bean id="mailNotificationAspect" class="mobi.nowtechnologies.server.service.aop.MailNotification">
 		<property name="mailService" ref="service.MailService" />

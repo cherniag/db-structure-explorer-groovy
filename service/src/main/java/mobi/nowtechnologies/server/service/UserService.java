@@ -70,9 +70,11 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 
+import org.apache.log4j.MDC;
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -2028,5 +2030,53 @@ public class UserService {
 		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
 		dto.setHasPotentialPromoCodePromotion(hasPromo);
 		return dto;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateWeekly() {
+		List<User> users = userDao.getListOfUsersForWeeklyUpdate();
+		LOGGER.info("weekly update job found [{}] users for update", users.size());
+		for (User user : users) {
+			try {
+				MDC.put(LogUtils.LOG_USER_NAME, user.getUserName());
+				MDC.put(LogUtils.LOG_USER_ID, user.getId());
+				
+				saveWeeklyPayment(user);
+				
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			} finally {
+				MDC.remove(LogUtils.LOG_USER_NAME);
+				MDC.remove(LogUtils.LOG_USER_ID);
+			}
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void saveWeeklyPayment(User user) throws Exception {
+		if (user == null)
+			throw new ServiceException("The parameter user is null");
+
+		final int subBalance = user.getSubBalance();
+		if (subBalance <= 0) {
+			user.setStatus(UserStatusDao.getLimitedUserStatus());
+			userRepository.save(user);
+			LOGGER.info("Unable to make weekly update balance is " + subBalance + ", user id [" + user.getId()
+					+ "]. So the user subscribtion status was changed on LIMITED");
+		} else {
+			final int nextSubPayment = user.getNextSubPayment();
+			final byte status = user.getUserStatusId();
+			final int paymentStatus = user.getPaymentStatus();
+
+			user.setSubBalance((byte) (subBalance - 1));
+			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
+			user.setStatus(UserStatusDao.getSubscribedUserStatus());
+			userRepository.save(user);
+			
+			accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+
+			LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
+					new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
+		}
 	}
 }

@@ -110,7 +110,8 @@ public class UserFactory
 		user.setUserGroup(userGroup);
 		user.setUserName("test_getListOfUsersForUpdate@rbt.com");
 		user.setUserType(UserType.NORMAL);
-		
+		user.setProvider("o2");
+		user.setContract("PAYG");
 		return user;
 	}
 
