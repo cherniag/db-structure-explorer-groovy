@@ -70,9 +70,11 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 
+import org.apache.log4j.MDC;
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -2030,6 +2032,25 @@ public class UserService {
 		return dto;
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateWeekly() {
+		List<User> users = userDao.getListOfUsersForWeeklyUpdate();
+		LOGGER.info("weekly update job found [{}] users for update", users.size());
+		for (User user : users) {
+			try {
+				MDC.put(LogUtils.LOG_USER_NAME, user.getUserName());
+				MDC.put(LogUtils.LOG_USER_ID, user.getId());
+				
+				saveWeeklyPayment(user);
+				
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			} finally {
+				MDC.remove(LogUtils.LOG_USER_NAME);
+				MDC.remove(LogUtils.LOG_USER_ID);
+			}
+		}
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveWeeklyPayment(User user) throws Exception {
