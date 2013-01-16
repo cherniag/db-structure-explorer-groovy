@@ -1253,3 +1253,8 @@ p.itemsTrackName {
 .gradient_border {
 	display: none;
 }
+
+.validationNotes {
+	padding: 20px;
+	padding-left: 0px;
+}
