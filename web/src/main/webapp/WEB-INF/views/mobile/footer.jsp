@@ -3,6 +3,6 @@
 <div class="footer">					
 	<div class="copyright">
 		<s:message code="m.footer.copyright" />
-		<img class="brought" width="80%" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/bgs/brought.png" alt="" />
+		<img class="brought" width="65%" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/bgs/brought.png" alt="" />
 	</div>
 </div> 

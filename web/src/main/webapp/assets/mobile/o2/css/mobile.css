@@ -1,14 +1,13 @@
 @font-face {
     font-family: 'FrutigerLight';
-    src: url('ftlcx___-light-webfont.eot');
-    src: url('ftlcx___-light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('ftlcx___-light-webfont.woff') format('woff'),
-         url('ftlcx___-light-webfont.ttf') format('truetype');
+    src: url('../fonts/ftlcx___-light-webfont.eot');
+    src: url('../fonts/ftlcx___-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/ftlcx___-light-webfont.woff') format('woff'),
+         url('../fonts/ftlcx___-light-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 
 }
-
 
 @font-face {
     font-family: 'FrutigerRegular';
@@ -30,6 +29,17 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'frutigerRoman';
+    src: url('../fonts/ftrc___-roman-webfont.eot');
+    src: url('../fonts/ftrc___-roman-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/ftrc___-roman-webfont.woff') format('woff'),
+         url('../fonts/ftrc___-roman-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 body {
 	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
 	margin: 0;
@@ -38,7 +48,7 @@ body {
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
 	font-size: 14px;
-	background-color: #82bbdf;
+	background-color: #84bcdf;
 }
 
 .page {
@@ -79,8 +89,9 @@ hr.addBothSpaces {
 h1 {
 	font-size: 1.4em;		
 	margin-left: 21px;
+	margin-right: 21px;
 	margin-bottom: 0px;
-	margin-top: 24px;
+	margin-top: 14px;
 	color: #1d3150;
 }
 h2 {
@@ -112,7 +123,7 @@ p  {
 	margin: 7px 14px 7px 17px;	 
 }
 .content p {
-	margin: 7px 14px 7px 21px;
+	margin: 7px 21px;
 	font-size: 16px;		
 	line-height: 1.4em;
 	color: #616465;
@@ -156,12 +167,12 @@ form {
 }		
 .logo {
 	display: block;
-	top: 15px;
-	left: 10px;	
+	top: 17px;
+	left: 14px;	
 	position: absolute;	
 }
 .logo img {
-	height: 39px;
+	height: 32px;
 }
 
 .container {
@@ -254,13 +265,12 @@ a.button, input.button, button {
 	text-decoration: none;
 	padding: 2px 0;
 	border: 1px solid #000000;
-	display: inline-block;	
-	//text-shadow:  0px -1px 1px #6A023F; 	
-	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif!important;
+	display: inline-block;		
+	font-family: Helvetica, Arial, sans-serif;
 }
 
 input.accounts{
-	padding-left: 25px;
+	padding-left: 20px;
 	padding-right: 10px;
 	line-height: 25px;
 	padding-top: 3px;
@@ -274,7 +284,7 @@ input.accounts{
 }
 .buttonBox .button {
 	font-size: 14px;
-	text-transform: uppercase;
+	border-radius: 0px!important;
 }
 .buttonTop {
  
@@ -292,8 +302,11 @@ input.accounts{
 	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
 	height: 19px;
 	position: absolute;
-	left: 5px;
-	top: 6px;
+	left: 8px;
+	top: 11px;
+	width: 8px;
+	height: 10px;
+	background-size: 8px 10px;	
 }
 
 .buttonWrapper {
@@ -395,7 +408,7 @@ input.accounts{
 .oneQuestion {margin-left: 20px;}
 .contentButton a, .contentButton input, .contentButton button {
 	color: #ffffff;
-	font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif!important;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	display: block;
 	font-size: 14px;		
 	text-decoration: none;
@@ -424,12 +437,8 @@ input.accounts{
 	background: #1d3150 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
 	height: 41px !important;
 	border: none none none none;		
-	box-shadow: 1px 2px 1px #bdbdbd; 
-	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
-	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
-	//text-shadow:  0px -1px 1px #6A023F; 
-	font-family: 'FrutigerBold';
-	font-size: 14px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 13px;
 	text-transform: uppercase;
 }
 .formDetails .formButton .button {font-size: 1.2em;}
@@ -438,6 +447,7 @@ input.accounts{
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	width: 100%;
+	border-radius: 0px; 
 
  }
 .formButton input, .formButton button {
@@ -465,13 +475,14 @@ form .formButton  {
 }
 
 .rightButtonArrow, .rightButtonArrowBlack {
-	width: 15px;
-	height: 19px;
 	display: block;
 	position: absolute;
-	top: 10px;
+	top: 15px;
 	right: 15px;
-	background: transparent  url(../imgs/bgs/arrow_button.png) no-repeat 0px 0px;	
+	width: 8px;
+	height: 10px;
+	background: transparent url(../imgs/bgs/arrow_button.png) no-repeat;
+	background-size: 8px 10px;	
 }
 
 .leftButtonArrow {
@@ -778,7 +789,7 @@ div.inputAreaBox  {
 }
 
 .shortInput {
-	width: 270px; 
+	width: 80px; 
 }
 
 /*credit card*/
@@ -804,17 +815,6 @@ div.inputAreaBox  {
 }
 .oneField  textarea , textarea {font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif; padding-top: 5px;  padding-bottom: 5px; height: 15em; background-position: left bottom;}
 
-.payDetails .shortInput {
-	width: 220px;
-}
-.payDetails .shortInput input, .shortInput input {
-	width: 80px;
-	float: left;
-}
-
-.payDetails .shortInput input {
-	float: none;
-}
 
 .payDetails select {
 	margin-top: 7px;
