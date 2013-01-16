@@ -186,6 +186,19 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="transport.smsAccordingToLawO2QuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="transport.smsAccordingToLawQuartzJobDetail" />
+		<property name="startDelay"
+			value="${smsAccordingToLawQuartzTrigger.startDelayMillis}" />
+		<property name="repeatInterval"
+			value="${smsAccordingToLawQuartzTrigger.repeatIntervalMillis}" />
+		<property name="jobDataAsMap">
+			<map merge="true">
+				<entry key="communityURL" value="o2" />
+			</map>
+		</property>
+	</bean>
 
 	<bean id="transport.notificationJob" class="mobi.nowtechnologies.server.job.NotificationJob">
 		<property name="numberOfThreads" value="${notificationJob.numberOfThreads}" />
@@ -299,6 +312,7 @@
 				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
 				<ref bean="transport.smsNotificationQuartzTrigger" />
 			</list>
 		</property>
