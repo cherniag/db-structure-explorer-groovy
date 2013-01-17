@@ -48,11 +48,11 @@ body {
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
 	font-size: 14px;
-	background-color: #000066;
+	background-color: #84bcdf;
 }
 
-.page {	
-	background-color: #000066;
+.page {
+	background: #84bdde url(../imgs/bgs/body_right.png) repeat-x left top;		
 }
 
 a {
