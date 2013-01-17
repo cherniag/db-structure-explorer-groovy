@@ -33,7 +33,6 @@ public class NewsItemDto {
 	private String headline;
 	
 	@NotEmpty
-	@Length(min=1,max=255)
 	private String body;
 	
 	private boolean activated;
