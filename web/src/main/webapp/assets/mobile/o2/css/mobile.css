@@ -663,14 +663,13 @@ div.inputAreaBox  {
 }
 /*notification*/
 .note {
-	width: 100%; 
+	width: 90%; 
 	font-size: 0.75em; 
 	color: #bf200b!important;
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
 	background-size: 37px 52px;
-	
 	height: 52px;
 	margin-top: -60px;
 }
