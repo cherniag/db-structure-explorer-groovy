@@ -286,9 +286,7 @@ input.accounts{
 	font-size: 14px;
 	border-radius: 0px!important;
 }
-.buttonTop {
- 
-}
+
 .footer .buttonBox a {
 	font-size: 1.3em;
 	margin-right: 0;
@@ -486,13 +484,14 @@ form .formButton  {
 }
 
 .leftButtonArrow {
-	width: 15px;
-	height: 19px;
 	display: block;
 	position: absolute;
-	top: 10px;
-	left: 17px;
+	top: 15px;
+	left: 15px;
 	background: transparent  url(../imgs/bgs/arrow_button_left.png) no-repeat 0px 0px;	
+	width: 8px;
+	height: 10px;
+	background-size: 8px 10px;	
 }
 .formButton  a, .shortButton a {
 	text-align: center;
@@ -670,13 +669,11 @@ div.inputAreaBox  {
 }
 .attention {
 	background: transparent url(../imgs/bgs/error_sign.png) no-repeat 48% top;		
-	height: 50px;
+	background-size: 37px 52px;
+	
+	height: 52px;
 	margin-top: -60px;
 }
-.successNote {
-
-}
-
 .note   a {
 	display: inline-block; 
 	margin: 7px 9px; 
