@@ -76,7 +76,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void getUserDetail_Success_with_O2User_and_PAYGtariff() {
-		String otac_auth_code = "0000-123123234234";
+		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code);
 		assertEquals("o2", userDetails.getOperator());
@@ -156,7 +156,7 @@ public class O2ClientServiceImplTest {
 	public void setUp()
 			throws Exception {
 		fixture = new O2ClientServiceImpl();
-		fixture.setServerO2Url("https://uat.mqapi.comgfgfg");
+		fixture.setServerO2Url("https://uat.mqapi.com");
 		
 		whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
 		fixture.init();

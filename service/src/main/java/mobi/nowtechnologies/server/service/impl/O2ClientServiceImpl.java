@@ -50,23 +50,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 			request.add("otac_auth_code", token);
 		try {
-			if (token.startsWith("0000")) {
-				return new O2UserDetails("o2", "PAYG");
-			} else if (token.startsWith("1111")) {
-				return new O2UserDetails("non-o2", "PAYG");
-			} else if (token.startsWith("2222")) {
-				return new O2UserDetails("o2", "PAYGM");
-			} else if (token.startsWith("3333")) {
-				return new O2UserDetails("non-o2", "PAYGM");
-			} else if (token.startsWith("4444")) {
-				return new O2UserDetails("o2", "business");
-			} else if (token.startsWith("5555")) {
-				return new O2UserDetails("non-o2", "business");
-			}
-			throw new ExternalServiceException("not.supported.code", "Not supported code");
-			// TODO uncomment this when command is ready
-			//DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
-			//return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue());
+			DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
+			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue());
 		}catch (Exception e) {
 			LOGGER.error("Error of the number validation",e);
 			throw new ExternalServiceException("602", "O2 server cannot be reached");
@@ -75,7 +60,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	@Override
 	public boolean isO2User(O2UserDetails userDetails) {
-		if (userDetails.getOperator() != null && "o2".equals(userDetails.getOperator())) {
+		if (userDetails != null && "o2".equals(userDetails.getOperator())) {
 			return true;
 		}
 		return false;
