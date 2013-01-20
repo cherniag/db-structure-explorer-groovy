@@ -51,7 +51,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			request.add("otac_auth_code", token);
 		try {
 			DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
-			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue());
+			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getNextSibling().getFirstChild().getNodeValue());
 		}catch (Exception e) {
 			LOGGER.error("Error of the number validation",e);
 			throw new ExternalServiceException("602", "O2 server cannot be reached");
