@@ -181,7 +181,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">/*<![CDATA[*/	
+	<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/	
 	                                          
 		function showEncodeDialog(trackId) {
 			var id = $("#idDiv_" + trackId).text();
@@ -240,7 +240,7 @@
 			$(pulltrackButtonId).hide();
 			$('.busy').show();
 			$.ajax({
-				url : "/jadmin/tracks/encode.json",
+				url : /*[[@{'/tracks/encode.json'}]]*/"",
 				type : "post",
 				data : encodeForm.serialize(),
 				success : function(data) {
@@ -290,7 +290,7 @@
 			$(pulltrackButtonId).hide();
 			$('.busy').show();
 			$.ajax({
-				url : "/jadmin/tracks/pull.json",
+				url : /*[[@{'/tracks/pull.json'}]]*/"",
 				type : "post",
 				data : pullForm.serialize(),
 				success : function(data) {
