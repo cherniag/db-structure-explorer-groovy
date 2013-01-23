@@ -122,7 +122,7 @@ public class TrackServiceImpl implements TrackService {
 	public Track pull(Long trackId) {
 		LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
 
-		Track track = trackRepository.findOne(trackId);
+		Track track = trackRepository.findOneWithCollections(trackId);
 
 		if (track == null || track.getStatus() != TrackStatus.ENCODED)
 			return track;
