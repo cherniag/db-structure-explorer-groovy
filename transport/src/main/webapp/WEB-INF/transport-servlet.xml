@@ -222,6 +222,27 @@
 		<property name="repeatInterval" value="${notificationQuartzTrigger.repeatIntervalMillis}" />
 	</bean>
 	
+	<bean id="transport.notificationO2Job" class="mobi.nowtechnologies.server.job.NotificationJob">
+		<property name="numberOfThreads" value="${notificationJob.numberOfThreads}" />
+		<property name="keystore" value="${notificationJob.keystore}" />
+		<property name="password" value="${notificationJob.password}" />
+		<property name="production" value="${notificationJob.production}" />
+		<property name="communityName" value="o2" />
+		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
+	</bean>
+
+	<bean id="transport.notificationO2QuartzJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="transport.notificationO2Job" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="transport.notificationO2QuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="transport.notificationO2QuartzJobDetail" />
+		<property name="startDelay" value="${notificationQuartzTrigger.startDelayMillis}" />
+		<property name="repeatInterval" value="${notificationQuartzTrigger.repeatIntervalMillis}" />
+	</bean>
+	
 	<!-- O2 sms notification job -->
 	<bean id="transport.smsNotification" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="service.WeeklyUpdateService" />
@@ -303,6 +324,7 @@
 				<ref bean="retryPaymentTrigger" />
 				<ref bean="expiredPaymentTrigger" />
 				<ref bean="transport.notificationQuartzTrigger" />
+				<ref bean="transport.notificationO2QuartzTrigger" />
 <!--			
 				<ref bean="transport.smsAccordingToLawNowTop40QuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawMetalHammerQuartzTrigger" />
