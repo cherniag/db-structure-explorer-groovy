@@ -49,18 +49,18 @@ public class PaymentsController extends CommonController {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = null;
 		PaymentDetails paymentDetails = null;
 		
-		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", null);
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
-		}
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
-		}
+		String paymentsNoteMsg;
 		
 		if (!"o2".equals(user.getProvider())) {
-			paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl.getValue(), userId);
-			paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
-			paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+			//paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl.getValue(), userId);
+			//paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+			//paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+			paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2", null, null);
+		}else{
+			 paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", null);
+			if(StringUtils.isEmpty(paymentsNoteMsg)){
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
+			}
 		}
 			
 		modelAndView.addObject("paymentPolicies", paymentPolicies);
