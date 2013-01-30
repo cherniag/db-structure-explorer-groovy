@@ -750,7 +750,7 @@ public class User implements Serializable {
 		accountCheckDTO.setRememberMeToken(rememberMeToken);
 		accountCheckDTO.setFreeTrial(isOnFreeTrial());
 
-		accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED || EmailValidator.validate(userName));
+		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
 		accountCheckDTO.setoAuthProvider((StringUtils.hasText(facebookId)) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
 		accountCheckDTO.setNextSubPaymentSeconds(getNextSubPayment());

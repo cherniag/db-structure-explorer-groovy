@@ -60,7 +60,7 @@ public class EntityController extends CommonController {
 	private static final String USER_NAME = "USER_NAME";
 	private static final String USER_TOKEN = "USER_TOKEN";
 	private static final String TIMESTAMP = "TIMESTAMP";
-    public static final String MODEL_NAME = Response.class.toString();
+	public static final String MODEL_NAME = Response.class.toString();
 
 	private UserService userService;
 	private DeviceService deviceService;
@@ -80,9 +80,9 @@ public class EntityController extends CommonController {
 	}
 
 	public void init() {
-		//weeklyUpdateServiceThread = new Thread(weeklyUpdateService);
-		//weeklyUpdateServiceThread.setName("weeklyUpdateServiceThread");
-		//weeklyUpdateServiceThread.start();
+		// weeklyUpdateServiceThread = new Thread(weeklyUpdateService);
+		// weeklyUpdateServiceThread.setName("weeklyUpdateServiceThread");
+		// weeklyUpdateServiceThread.start();
 	}
 
 	@InitBinder(UserRegDetailsDto.USER_REG_DETAILS_DTO)
@@ -99,7 +99,7 @@ public class EntityController extends CommonController {
 	public void initUserFacebookDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
 		binder.setValidator(new UserFacebookDetailsDtoValidator());
 	}
-	
+
 	public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
 		this.deviceUserDataService = deviceUserDataService;
 	}
@@ -129,7 +129,7 @@ public class EntityController extends CommonController {
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/ECHO", "**/ECHO" })
 	public ModelAndView echo() {
-		ModelAndView modelAndView= new ModelAndView(view, MODEL_NAME, new Response(new Object[]{}));
+		ModelAndView modelAndView = new ModelAndView(view, MODEL_NAME, new Response(new Object[] {}));
 		return modelAndView;
 	}
 
@@ -160,41 +160,42 @@ public class EntityController extends CommonController {
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/ACC_CHECK", "*/{community:o2}/3.6/ACC_CHECK"})
-    public ModelAndView accountCheckForO2Client(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("APP_VERSION") String appVersion,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @RequestParam("API_VERSION") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @PathVariable("community") String community) {
-        ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
-                timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6/ACC_CHECK", "*/{community:o2}/3.6/ACC_CHECK" })
+	public ModelAndView accountCheckForO2Client(
+			HttpServletRequest httpServletRequest,
+			@RequestParam("APP_VERSION") String appVersion,
+			@RequestParam("COMMUNITY_NAME") String communityName,
+			@RequestParam("API_VERSION") String apiVersion,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+			@PathVariable("community") String community) {
+		ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
+				timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
 
-        User user = userService.findByNameAndCommunity(userName, community);
-        AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
-        
-        ActivationStatus activationStatus = user.getActivationStatus();
-        accountCheckDTO.setActivation(activationStatus);
-        
-        return mav;
-    }
+		User user = userService.findByNameAndCommunity(userName, community);
+		AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
 
-    public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
-        Response resp = (Response)mav.
-                getModelMap().
-                get(MODEL_NAME);
-        return (AccountCheckDTO) resp.getObject()[0];
-    }
+		ActivationStatus activationStatus = user.getActivationStatus();
+		accountCheckDTO.setActivation(activationStatus);
+		accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "**/ACC_CHECK" })
+		return mav;
+	}
+
+	public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
+		Response resp = (Response) mav.
+				getModelMap().
+				get(MODEL_NAME);
+		return (AccountCheckDTO) resp.getObject()[0];
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "**/ACC_CHECK" })
 	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -207,13 +208,13 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken){
-	
+			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken) {
+
 		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken);
-		if(isNotBlank(xtifyToken)){
+		if (isNotBlank(xtifyToken)) {
 			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
 		}
-		
+
 		return mav;
 	}
 
@@ -234,26 +235,26 @@ public class EntityController extends CommonController {
 
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
-			
+
 			User user = null;
 			if (org.springframework.util.StringUtils.hasText(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-			
+
 			MDC.put("ACC_CHECK", "");
 			try {
 				LOGGER.info("The login was successful");
 			} finally {
 				MDC.remove("ACC_CHECK");
 			}
-			
+
 			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType);
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			return new ModelAndView(view, MODEL_NAME, new Response(objects));
 		} finally {
 			LOGGER.info("command processing finished");
 		}
@@ -302,7 +303,7 @@ public class EntityController extends CommonController {
 
 			User user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
-			
+
 			Object[] objects = drmService.processSetDrmCommand(mediaIsrc, newDrmValue, user.getId(),
 					communityName);
 			proccessRememberMeToken(objects);
@@ -379,13 +380,11 @@ public class EntityController extends CommonController {
 				throw new NullPointerException("The argument aTimestamp is null");
 
 			User user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-			
-			
+
 			Object[] objects = userService.processSetPasswordCommand(user.getId(), newToken,
 					communityName);
-			
+
 			proccessRememberMeToken(objects);
-			
 
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(objects));
@@ -632,7 +631,7 @@ public class EntityController extends CommonController {
 			userRegInfo.setEmail(userName);
 
 			userService.updatePaymentDetails(user, userRegInfo);
-		}finally {
+		} finally {
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -728,10 +727,10 @@ public class EntityController extends CommonController {
 
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
-			
+
 			final Object[] objects = new Object[] { userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(), pushNotificationToken,
 					deviceType) };
-			
+
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, MODEL_NAME, new Response(objects));
 		} finally {
@@ -781,7 +780,7 @@ public class EntityController extends CommonController {
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
-			
+
 			return new ModelAndView(view, MODEL_NAME, new Response(objects));
 
 		} finally {

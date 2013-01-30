@@ -2028,6 +2028,7 @@ public class UserService {
     	userRepository.save(user);
     	
 		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
+		dto.setFullyRegistred(true);
 		dto.setHasPotentialPromoCodePromotion(hasPromo);
 		return dto;
 	}
