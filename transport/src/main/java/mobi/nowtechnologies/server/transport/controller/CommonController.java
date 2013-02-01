@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
+import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
@@ -147,6 +148,14 @@ public abstract class CommonController {
 		LOGGER.info(message);
 
 		return sendResponse(errorMessage, HttpStatus.UNAUTHORIZED, response);
+	}
+	
+	@ExceptionHandler(ThrottlingException.class)
+	public ModelAndView handleException(ThrottlingException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+		LOGGER.info(exception.toString());
+		response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+		ErrorMessage errorMessage = getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
+		return sendResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE, response);
 	}
 
 	@ExceptionHandler(ServiceException.class)
