@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import com.rackspacecloud.client.cloudfiles.FilesClient;
+import java.io.IOException;
+import java.util.Collections;
+
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
+
 import org.apache.http.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Collections;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -63,15 +65,15 @@ public class CloudFileServiceImpl implements CloudFileService {
 	public void setContainerName(String containerName) {
 		this.containerName = containerName;
 	}
-	
+
 	public void setFilesURL(String filesURL) {
 		this.filesURL = filesURL;
 	}
-	
+
 	public String getFilesURL() {
 		return filesURL;
 	}
-	
+
 	public void setFilesClient(FilesClient filesClient) {
 		this.filesClient = filesClient;
 	}
@@ -82,43 +84,56 @@ public class CloudFileServiceImpl implements CloudFileService {
 		if (userAgent != null)
 			filesClient.setUserAgent(userAgent);
 		filesClient.setUseETag(useETag);
-//		boolean isLogged = filesClient.login();
-//		if (!isLogged)
-//			throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
-//
-//		LOGGER.debug("Output parameter isLogged=[{}]", isLogged);
-//		return isLogged;
-		boolean isConfigured=true;
+
+		boolean isConfigured = true;
 		LOGGER.debug("Output parameter [{}]", isConfigured);
 		return isConfigured;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mobi.nowtechnologies.server.service.CloudFileService#uploadFile(org.springframework.web.multipart.MultipartFile, java.lang.String)
 	 * 
 	 * This method synchronized because the filesClient isn't thread-safe
+	 */
+	@Override
+	public synchronized boolean login() {
+		LOGGER.info("login on cloud");
+
+		boolean isLogged;
+		try {
+			isLogged = filesClient.login();
+		} catch (IllegalStateException e) {
+			LOGGER.error(e.getMessage(), e);
+			isLogged = true;// On java.lang.IllegalStateException: Invalid use of SingleClientConnManager: connection still allocated.
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
+		}
+
+		if (!isLogged)
+			throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
+
+		return isLogged;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see mobi.nowtechnologies.server.service.CloudFileService#uploadFile(org.springframework.web.multipart.MultipartFile, java.lang.String)
+	 * 
+	 * This method synchronized because the filesClient isn't thread-safe
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public synchronized boolean uploadFile(MultipartFile file, String fileName) {
 		LOGGER.info("Updating file {} on cloud with name {}", file, fileName);
 
-		boolean uploaded = false;	
+		boolean uploaded = false;
 		if (file != null && !file.isEmpty()) {
 
-			boolean isLogged;
-			try {
-				isLogged = filesClient.login();
-			}catch(IllegalStateException e){
-				LOGGER.error(e.getMessage(), e);
-				isLogged=true;// On java.lang.IllegalStateException: Invalid use of SingleClientConnManager: connection still allocated.
-			}catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
-			}
-
-			if (!isLogged)
-				throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
+			login();
 
 			try {
 				filesClient.storeStreamedObject(containerName, file.getInputStream(), "application/octet-stream", fileName, Collections.EMPTY_MAP);
@@ -131,5 +146,24 @@ public class CloudFileServiceImpl implements CloudFileService {
 		}
 
 		return uploaded;
+	}
+
+	@Override
+	public synchronized boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName) {
+		LOGGER.info("Copy file {} from one cloud container to other container {}", new Object[]{destFileName, destContainerName, srcFileName, srcContainerName});
+
+		boolean copied = false;
+
+		login();
+
+		try {
+			filesClient.copyObject(srcContainerName, srcFileName, destContainerName, destFileName);
+			copied = true;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Coudn't copy file on cloud");
+		}
+
+		return copied;
 	}
 }

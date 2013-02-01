@@ -16,9 +16,10 @@ import java.util.List;
  */
 public class TrackFactory {
 	
-	public Track anyTrack() {
+	public static Track anyTrack() {
 		Track track = new Track();
 		
+		track.setId(new Long((int)(Math.random()*100)));
 		track.setTitle("Deth");
 		track.setArtist("Slot");
 		track.setIngestor("EMI");
@@ -29,14 +30,14 @@ public class TrackFactory {
 		return track;
 	}
 	
-	public List<Track> anyTracks(int amount) {
+	public static List<Track> anyTracks(int amount) {
 		List<Track> items = new ArrayList<Track>();
 		for (int i=0; i<amount; i++)
 			items.add(anyTrack());
 		return items;
 	}
 	
-	public List<Track> cloneTracks(Track item, int amount) {
+	public static List<Track> cloneTracks(Track item, int amount) {
 		List<Track> items = new ArrayList<Track>();
 		for (int i=0; i<amount; i++)
 			items.add(item);

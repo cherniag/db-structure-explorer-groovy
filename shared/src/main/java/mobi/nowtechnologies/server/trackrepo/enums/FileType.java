@@ -9,7 +9,8 @@ public enum FileType {
 	ORIGINAL_MP3(0, "", "mp3", "audio/mpeg3"),
 	ORIGINAL_ACC(0, "", "m4a", "audio/x-m4a"),
 	MOBILE_HEADER(1, "header", "hdr", "application/octet-stream"), 
-	MOBILE_AUDIO(2, "audio", "aud", "application/octet-stream"),  
+	MOBILE_AUDIO(2, "audio", "aud", "application/octet-stream"),
+	MOBILE_ENCODED(2, "encoded", "enc", "application/octet-stream"),
 	DOWNLOAD(1, "purchased", "mp3", "audio/mpeg3"), 
 	IMAGE(3, "image", "jpg", "image/jpeg");
 	

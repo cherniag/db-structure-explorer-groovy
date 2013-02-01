@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <bean id="trackRepo.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
+		<property name="userName" value="${cloudFile.userName}" />
+		<property name="password" value="${cloudFile.password}" />
+		<property name="account" value="${cloudFile.account}" />
+		<property name="connectionTimeOutMilliseconds" value="${cloudFile.connectionTimeOutMilliseconds}" />
+		<property name="authenticationURL" value="${cloudFile.authenticationURL}" />
+		<property name="useETag" value="${cloudFile.useETag}" />
+		<property name="userAgent" value="${cloudFile.userAgent}" />
+		<property name="containerName" value="${cloudFile.containerName}" />
+		<property name="filesURL" value="${cloudFile.filesURL}" />
+	</bean>
+    
+    <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">
+        <property name="encodeScript" value="${trackRepo.encode.script}" />
+        <property name="itunesScript" value="${trackRepo.itunes.script}" />
+		<property name="publishDir" value="${trackRepo.pull.publish}" />
+		<property name="neroHome" value="${trackRepo.encode.nero.home}" />
+		<property name="workDir" value="${trackRepo.encode.workdir}" />
+		<property name="classpath" value="${trackRepo.encode.classpath}" />
+		<property name="privateKey" value="${trackRepo.encode.privkey}" />
+		<property name="trackRepository" ref="trackRepository" />
+		<property name="cloudFileService" ref="trackRepo.CloudFileService" />		
+		<property name="srcPullContainer" value="${trackRepo.pull.cdn.container.src}" />
+		<property name="destPullContainer" value="${trackRepo.pull.cdn.container.dest}" />
+	</bean>
+	
+    <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
+		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
+		<property name="workDir" value="${trackRepo.encode.workdir}" />
+    </bean> 
+	
+	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.trackrepo.service.impl.FileServiceImpl">
+		<property name="fileRepository" ref="fileRepository" />
+	</bean>		
+</beans>

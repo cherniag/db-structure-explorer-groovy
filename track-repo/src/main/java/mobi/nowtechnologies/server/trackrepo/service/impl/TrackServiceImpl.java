@@ -1,13 +1,21 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
-import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import mobi.nowtechnologies.server.trackrepo.enums.*;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -17,11 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-
 /**
  * 
  * @author Alexander Kolpakov (akolpakov)
@@ -30,15 +33,24 @@ import java.util.Date;
 public class TrackServiceImpl implements TrackService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
 
+	private CloudFileService cloudFileService;
+	
 	private Resource encodeScript;
 	private Resource itunesScript;
-	private Resource encodeDestination;
+	private Resource publishDir;
 	private Resource neroHome;
 	private Resource workDir;
 	private Resource classpath;
 	private Resource privateKey;
+	
+	private String srcPullContainer;
+	private String destPullContainer;
 
 	private TrackRepository trackRepository;
+
+	public void setCloudFileService(CloudFileService cloudFileService) {
+		this.cloudFileService = cloudFileService;
+	}
 
 	public void init() throws Exception {
 		if (encodeScript == null || !encodeScript.exists())
@@ -47,8 +59,8 @@ public class TrackServiceImpl implements TrackService {
 			throw new IllegalArgumentException("There is no resource under the following context property trackRepo.itunes.script");
 		if (privateKey == null || !privateKey.exists())
 			throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.privkey");
-		if (encodeDestination == null || !encodeDestination.exists())
-			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.destination");
+		if (publishDir == null || !publishDir.exists())
+			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.pull.publish");
 		if (neroHome == null || !neroHome.exists())
 			throw new IllegalArgumentException("There is no folder under the following context  property trackRepo.encode.nero.home");
 		if (workDir == null || !workDir.exists())
@@ -69,9 +81,9 @@ public class TrackServiceImpl implements TrackService {
 		try {
 			track.setStatus(TrackStatus.ENCODING);
 			trackRepository.save(track);
-			
+
 			licensed = licensed == null ? track.getLicensed() : licensed;
-			
+
 			File encodeScriptFile = encodeScript.getFile();
 			ExternalCommandThread thread = new ExternalCommandThread();
 			thread.setCommand(encodeScriptFile.getAbsolutePath());
@@ -87,13 +99,14 @@ public class TrackServiceImpl implements TrackService {
 			thread.addParam(emptyNull(track.getYear()));
 			thread.addParam(emptyNull(track.getCopyright()));
 			thread.addParam(emptyNull(track.getIsrc()));
-			thread.addParam(encodeDestination.getFile().getAbsolutePath());
+			thread.addParam(publishDir.getFile().getAbsolutePath());
 			thread.addParam(classpath.getFile().getAbsolutePath());
 			thread.addParam(neroHome.getFile().getAbsolutePath());
 			thread.addParam(workDir.getFile().getAbsolutePath());
-			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
+			thread.addParam(emptyNull(track.getId()));
 			thread.addParam(licensed != null && licensed ? "NO" : "YES");
 			thread.addParam(privateKey.getFile().getAbsolutePath());
+			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
 			thread.run();
 			if (thread.getExitCode() != 0) {
 				throw new RuntimeException("Cannot encode track files or create zip package.");
@@ -118,16 +131,32 @@ public class TrackServiceImpl implements TrackService {
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Track pull(Long trackId) {
 		LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
 
-		Track track = trackRepository.findOne(trackId);
+		Track track = trackRepository.findOneWithCollections(trackId);
 
 		if (track == null || track.getStatus() != TrackStatus.ENCODED)
 			return track;
 
 		try {
+			
+			String isrc = track.getIsrc();
+			
+			String[] pullFiles = new String[]{
+						isrc+"."+FileType.MOBILE_AUDIO.getExt(),
+						isrc+"."+FileType.MOBILE_ENCODED.getExt(),
+						isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt(),
+						isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
+					};
+			
+			for (int i = 0; i < pullFiles.length; i++) {				
+				cloudFileService.copyFile(pullFiles[i], destPullContainer, trackId+"_"+pullFiles[i], srcPullContainer);
+			}
+			
+			moveFiles(workDir.getFile(), publishDir.getFile());
+			
 			track.setPublishDate(new Date());
 			trackRepository.save(track);
 		} catch (Exception e) {
@@ -177,11 +206,35 @@ public class TrackServiceImpl implements TrackService {
 		return pagelist;
 	}
 
-	private String emptyNull(String str) {
+	private String emptyNull(Object str) {
 		if (str == null) {
 			return "";
 		}
-		return str;
+		return str.toString();
+	}
+	
+	private void moveFiles(File srcDir, File destDir) throws IOException{
+		String destPath = destDir.getAbsolutePath();
+		Collection<File> moveDirs = FileUtils.listFilesAndDirs(srcDir, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
+		Iterator<File> i = moveDirs.iterator();
+		i.next();
+		i.remove();
+		i.next();
+		i.remove();
+		
+		for (File dir : moveDirs) {
+			String dirName = dir.getName();
+			Collection<File> moveFiles = FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, null);
+			for (File file : moveFiles) {
+				File newDestSubDir = new File(destPath+File.separator+dirName);
+				
+				File destFile = new File(newDestSubDir, file.getName());
+				FileUtils.deleteQuietly(destFile);
+				
+				FileUtils.moveFileToDirectory(file, newDestSubDir, true);
+			}
+		}
+		
 	}
 
 	private String getITunesUrl(String artist, String title) throws IOException, InterruptedException {
@@ -210,8 +263,8 @@ public class TrackServiceImpl implements TrackService {
 		this.itunesScript = itunesScript;
 	}
 
-	public void setEncodeDestination(Resource encodeDestination) {
-		this.encodeDestination = encodeDestination;
+	public void setPublishDir(Resource publishDir) {
+		this.publishDir = publishDir;
 	}
 
 	public void setNeroHome(Resource neroHome) {
@@ -228,5 +281,13 @@ public class TrackServiceImpl implements TrackService {
 
 	public void setPrivateKey(Resource privateKey) {
 		this.privateKey = privateKey;
+	}
+
+	public void setSrcPullContainer(String srcPullContainer) {
+		this.srcPullContainer = srcPullContainer;
+	}
+
+	public void setDestPullContainer(String destPullContainer) {
+		this.destPullContainer = destPullContainer;
 	}
 }

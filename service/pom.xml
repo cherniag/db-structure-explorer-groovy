@@ -94,6 +94,11 @@
 		<!-- END Security -->
 		
 		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+		
+		<dependency>
   			<groupId>com.rackspacecloud</groupId>
   			<artifactId>java-cloudfiles</artifactId>
 		</dependency>

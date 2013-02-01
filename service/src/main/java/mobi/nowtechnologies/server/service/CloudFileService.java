@@ -8,4 +8,8 @@ public interface CloudFileService {
 	
 	boolean uploadFile(MultipartFile file, String fileName);
 
+	boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName);
+
+	boolean login();
+
 }

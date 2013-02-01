@@ -75,11 +75,13 @@
 				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}">
 					<div th:id="${'idDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.id}">ID</div>
 					<div th:id="${'iTunesUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.itunesUrl}">iTunesUrl</div>
+					<div th:id="${'amazonUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.amazonUrl}">amazonUrl</div>
 					<div th:id="${'licensedDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.licensed}">Licensed</div>
 					<div th:id="${'infoDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.info}">Info</div>
 					<div th:id="${'publishTitleDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishTitle}">Publish Title</div>
 					<div th:id="${'publishArtistDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishArtist}">Publish Artist</div>
 					<div th:id="${'resolutionDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.resolution}">Resolution</div>
+					<div th:id="${'areArtistUrlsDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.areArtistUrls}">AreArtistUrls</div>
 					
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
@@ -131,10 +133,9 @@
 					<a target="_blank" name="itunesLink"></a> 
 					<input type="text" name="itunesUrl" style="width:98%;"/>
 					<label><strong th:utext="#{tracks.page.pull.dialog.item.amazonUrl}">Amazon Link:</strong></label>
-					<a target="_blank" name="itunesLink"></a> 
+					<a target="_blank" name="amazonLink"></a> 
 					<input type="text" name="amazonUrl" style="width:98%;"/>
 					<label><strong th:utext="#{tracks.page.pull.dialog.item.areArtistUrls}">Are artist URLs:</strong></label>
-					<a target="_blank" name="itunesLink"></a> 
 					<input type="checkbox" name="areArtistUrls" style="width:98%;"/>
 				</div>
 			</form>
@@ -181,7 +182,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">/*<![CDATA[*/	
+	<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/	
 	                                          
 		function showEncodeDialog(trackId) {
 			var id = $("#idDiv_" + trackId).text();
@@ -208,6 +209,8 @@
 			artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
 			var info = $("#infoDiv_" + trackId).text();
 			var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
+			var amazonUrl = $("#amazonUrlDiv_" + trackId).text();
+			var areArtistUrls = $("#areArtistUrlsDiv_" + trackId).text();
 			
 			var pullForm = $("form#pull-form");
 			pullForm.find("input[name='id']").val(id);
@@ -216,9 +219,14 @@
 			pullForm.find("input[name='artist']").val(artist);
 			pullForm.find("input[name='info']").val(info);
 			pullForm.find("input[name='itunesUrl']").val(iTunesUrl);
+			pullForm.find("input[name='areArtistUrls']").attr('checked', (areArtistUrls=="true"));
 			var itunesLink = pullForm.find("a[name='itunesLink']");
 			itunesLink.text(iTunesUrl);
 			itunesLink.attr('href', iTunesUrl);
+			pullForm.find("input[name='amazonUrl']").val(amazonUrl);
+			var itunesLink = pullForm.find("a[name='amazonLink']");
+			itunesLink.text(amazonUrl);
+			itunesLink.attr('href', amazonUrl);
 			
 			$("#pull-dialog").modal("show");
 		};
@@ -240,7 +248,7 @@
 			$(pulltrackButtonId).hide();
 			$('.busy').show();
 			$.ajax({
-				url : "/jadmin/tracks/encode.json",
+				url : /*[[@{'/tracks/encode.json'}]]*/"",
 				type : "post",
 				data : encodeForm.serialize(),
 				success : function(data) {
@@ -284,13 +292,15 @@
 			var publishTitleDivId = "#publishTitleDiv_" + trackId;
 			var publishArtistDivId = "#publishArtistDiv_" + trackId;
 			var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+			var amazonDivId = "#amazonUrlDiv_" + trackId;
 			var infoDivId = "#infoDiv_" + trackId;
+			var areArtistUrls = "#areArtistUrlsDiv_" + trackId;
 			
 			$(encodetrackButtonId).hide();
 			$(pulltrackButtonId).hide();
 			$('.busy').show();
 			$.ajax({
-				url : "/jadmin/tracks/pull.json",
+				url : /*[[@{'/tracks/pull.json'}]]*/"",
 				type : "post",
 				data : pullForm.serialize(),
 				success : function(data) {
@@ -303,6 +313,8 @@
 						$(publishTitleDivId).text(data.TRACK_DTO.title);
 						$(publishArtistDivId).text(data.TRACK_DTO.artist);
 						$(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
+						$(amazonDivId).text(data.TRACK_DTO.amazonUrl);
+						$(areArtistUrls).text(data.TRACK_DTO.areArtistUrls);
 						$(infoDivId).text(data.TRACK_DTO.info);
 				},
 				complete: function() {
