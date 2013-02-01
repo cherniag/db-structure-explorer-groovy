@@ -97,7 +97,7 @@
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
-			<exclusions>
+<!-- 			<exclusions>
 				<exclusion>
 					<groupId>mobi.nowtechnologies.java.server</groupId>
 					<artifactId>persistence</artifactId>
@@ -106,7 +106,7 @@
 					<groupId>mobi.nowtechnologies.java.server</groupId>
 					<artifactId>service</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions> -->
 		</dependency>
 
 		<!-- JSON -->

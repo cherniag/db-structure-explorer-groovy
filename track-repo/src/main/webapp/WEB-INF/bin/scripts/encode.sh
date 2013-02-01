@@ -22,9 +22,10 @@ PUBLISH_DIR=${13}
 CP=${14}
 NERO_DIR=${15}
 WORK_DIR=${16}
-BIT_RATE=${17}
+TRACK_ID=${17}
 PREVIEW_ONLY=${18}
 PRIVATE_KEY=${19}
+BIT_RATE=${20}
 
 echo "********** PARAMS"
 echo $AUDIO_FILE
@@ -43,9 +44,10 @@ echo $PUBLISH_DIR
 echo $CP
 echo $NERO_DIR
 echo $WORK_DIR
-echo $BIT_RATE
+echo $TRACK_ID
 echo $PREVIEW_ONLY
 echo $PRIVATE_KEY
+echo $BIT_RATE
 
 echo "********** PARAMS"
 
@@ -74,6 +76,7 @@ mkdir -p files/header
 mkdir -p files/audio
 mkdir -p files/encoded
 mkdir -p files/purchased
+mkdir -p files/preview
 echo Processing ISRC ${ISRC}
 echo "***** Generating thumbnails *****"
 	IMAGE_GENERIC="${ISRC}.jpg"	
@@ -179,12 +182,8 @@ echo "***** Generating Mobile Preview Audio *****"
 		cp "${PREVIEW_FILE}" "${ISRC}P.m4a"|| { echo "command failed"; exit 1; } 
 	fi
 	${NERO_DIR}/neroAacTag "${ISRC}P.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" -meta:isrc=${ISRC} "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 
-	
-	java -jar ${CP}/uits-3.6-SNAPSHOT.jar ${PRIVATE_KEY} "${ISRC}P.m4a" ${ISRC}P.aud ${ISRC}P.hdr ${ISRC}P.enc || { echo "command failed"; exit 1; }
 
-	mv "${ISRC}P.hdr" files/header/|| { echo "command failed"; exit 1; } 
-	mv "${ISRC}P.aud" files/audio/|| { echo "command failed"; exit 1; }
-	mv "${ISRC}P.enc" files/encoded|| { echo "command failed"; exit 1; }  
+	mv "${ISRC}P.m4a" files/preview/|| { echo "command failed"; exit 1; } 
 
 # Cleaning: don't clean ! Files are reused to compute the MD5 hash
 	#rm -f ${ISRC}P.m4a
@@ -198,42 +197,48 @@ echo "***** Generating Mobile Preview Audio *****"
 	URL=`grep "X-Storage-Url:" auth | cut -f2- -d':' | sed "s/\r//g"`
 	TOKEN=`grep "X-Storage-Token:" auth | cut -f2- -d':' | sed "s/\r//g"`
 
-	for i in `ls files/audio`
-	do
-		curl -X PUT -T files/audio/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
-	done
-	
-	curl -X PUT -T files/audio/${ISRC}${BIT_RATE}.aud  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/${ISRC}.aud
-	curl -X PUT -T files/encoded/${ISRC}${BIT_RATE}.enc  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/${ISRC}.enc
+	curl -X PUT -T files/audio/${ISRC}${BIT_RATE}.aud  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.aud
+	curl -X PUT -T files/encoded/${ISRC}${BIT_RATE}.enc  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.enc
 
-	for i in `ls files/image`
+	for i in files/audio/${ISRC}*
 	do
-		curl -X PUT -T files/image/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
+		curl -X PUT -T files/audio/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+	done
+
+	for i in files/image/${ISRC}*
+	do
+		curl -X PUT -T files/image/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
 	done
 	
-	for i in `ls files/encoded`
+	for i in files/encoded/${ISRC}*
+	do
+		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+	done
+	
+	for i in files/header/${ISRC}*
+	do
+		curl -X PUT -T files/header/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+	done
+	
+	for i in files/purchased/${ISRC}*
+	do
+		curl -X PUT -T files/purchased/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+	done
+	
+	for i in files/preview/${ISRC}*
 	do
 		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
 	done
 	
-	for i in `ls files/header`
-	do
-		curl -X PUT -T files/header/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/`basename $i`
-	done
+	for i in ${ISRC}*.m4a; 
+    do
+        curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+    done
 	
-	for i in `ls files/purchased`
-	do
-		curl -X PUT -T files/purchased/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/`basename $i`
-	done
-	
-	for i in *.m4a; 
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/`basename $i`
-	done
-	
-	mv files/image/* ${PUBLISH_DIR}/image|| { echo "command failed"; exit 1; } 
-	mv files/header/* ${PUBLISH_DIR}/header|| { echo "command failed"; exit 1; } 
-	mv files/audio/* ${PUBLISH_DIR}/audio|| { echo "command failed"; exit 1; } 
-	mv files/encoded/* ${PUBLISH_DIR}/encoded|| { echo "command failed"; exit 1; } 
-	mv files/purchased/* ${PUBLISH_DIR}/purchased|| { echo "command failed"; exit 1; } 
+	# Don't push to public directory
+	#mv files/image/* ${PUBLISH_DIR}/image|| { echo "command failed"; exit 1; } 
+	#mv files/header/* ${PUBLISH_DIR}/header|| { echo "command failed"; exit 1; } 
+	#mv files/audio/* ${PUBLISH_DIR}/audio|| { echo "command failed"; exit 1; } 
+	#mv files/encoded/* ${PUBLISH_DIR}/encoded|| { echo "command failed"; exit 1; } 
+	#mv files/purchased/* ${PUBLISH_DIR}/purchased|| { echo "command failed"; exit 1; } 
 	

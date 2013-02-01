@@ -28,7 +28,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -53,6 +55,7 @@ public class TrackServiceTest {
 
 	private TrackServiceImpl service;
 	private Track track;
+	private ExternalCommandThread command;
 
 	@Before
 	public void before() throws Exception {
@@ -65,7 +68,7 @@ public class TrackServiceTest {
 		track.setIngestionDate(INGESTION_DATE_VALUE);
 		track.setStatus(TrackStatus.NONE);
 
-		ExternalCommandThread command = mock(ExternalCommandThread.class);
+		command = mock(ExternalCommandThread.class);
 		whenNew(ExternalCommandThread.class).withNoArguments().thenReturn(command);
 		doNothing().when(command).run();
 		
@@ -127,7 +130,7 @@ public class TrackServiceTest {
 		ServletContext servletContext = new MockServletContext();
 		service = new TrackServiceImpl();
 		service.setWorkDir(new ServletContextResource(servletContext, WORKDIR_PATH));
-		service.setEncodeDestination(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
+		service.setPublishDir(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
 		service.setEncodeScript(new ServletContextResource(servletContext, ENCODE_SCRIPT_PATH));
 		service.setItunesScript(new ServletContextResource(servletContext, ITUNES_SCRIPT_PATH));
 		service.setClasspath(new ServletContextResource(servletContext, CLASS_PATH));
@@ -175,7 +178,7 @@ public class TrackServiceTest {
 	}
 
 	@Test
-	public void encodeTest() throws Exception {
+	public void encodeTest() throws Exception {	
 		Track track = service.encode(ID_VALUE, false, true);
 
 		assertNotNull(track);
@@ -186,6 +189,10 @@ public class TrackServiceTest {
 		assertEquals(track.getIngestor(), INGESTOR_VALUE);
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
 		assertEquals(track.getStatus(), TrackStatus.ENCODED);
+		
+		verify(command, times(21)).addParam(anyString());
+		verify(command, times(1)).addParam(eq(ID_VALUE.toString()));
+		
 	}
 
 	@Test
