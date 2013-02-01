@@ -50,9 +50,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
      	<property name="realObject">
      	    <bean class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 				<property name="userDao" ref="persistence.UserDao" />
-				<property name="entityDao" ref="persistence.EntityDao" />
-				<property name="migHttpService" ref="service.migHttpService" />
-				<property name="stopped" value="true" />
+				<property name="userService" ref="service.UserService" />
 			</bean>
      	</property>
   	</bean>
