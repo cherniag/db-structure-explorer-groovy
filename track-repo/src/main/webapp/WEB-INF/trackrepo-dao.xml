@@ -10,6 +10,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="trackRepo.EntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="trackRepo.DataSource" />
+		<property name="persistenceUnitName" value="mobi.nowtechnologies.server.trackrepo.domain" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="false" />

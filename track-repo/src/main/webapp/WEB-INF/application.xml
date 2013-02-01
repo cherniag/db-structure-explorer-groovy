@@ -10,7 +10,9 @@
 		<property name="locations">
 			<list>
 				<value>classpath:trackrepo-application.properties</value>
+				<value>classpath:application.properties</value>
 				<value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
 			</list>
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -25,7 +27,7 @@
 	
 	<import resource="trackrepo-dao.xml" />
 	
-	<import resource="services.xml" />
+	<import resource="trackrepo-services.xml" />
 	
 	<import resource="security.xml" />
 </beans>
