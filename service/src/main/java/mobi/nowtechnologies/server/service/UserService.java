@@ -1269,7 +1269,9 @@ public class UserService {
 		Community community = user.getUserGroup().getCommunity();
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
-		accountCheckDTO.setPromotedWeeks(Weeks.weeksBetween(new DateTime(), new DateTime(user.getNextSubPayment() * 1000L)).getWeeks() + 1);
+		// Commented due to JodaTime potential bug
+		//accountCheckDTO.setPromotedWeeks(Weeks.weeksBetween(new DateTime(), new DateTime(user.getNextSubPayment() * 1000L)).getWeeks() + 1);
+		accountCheckDTO.setPromotedWeeks((int)Math.floor((System.currentTimeMillis() - user.getNextSubPayment()*1000L)/1000/60/60/24/7) + 1);
 		
 		List<Integer> relatedMediaUIDsByLogTypeList = accountLogService.getRelatedMediaUIDsByLogType(userId, TransactionType.OFFER_PURCHASE);
 
