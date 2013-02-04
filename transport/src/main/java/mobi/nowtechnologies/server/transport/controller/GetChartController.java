@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
@@ -8,6 +9,12 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import net.spy.memcached.CASMutation;
+import net.spy.memcached.CASMutator;
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.transcoders.IntegerTranscoder;
+import net.spy.memcached.transcoders.LongTranscoder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,15 +36,8 @@ public class GetChartController extends CommonController{
 
 	private UserService userService;
 	private ChartService chartService;
+	private MemcachedClient memcachedClient;
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setChartService(ChartService chartService) {
-		this.chartService = chartService;
-	}
-	
 	@RequestMapping(method = RequestMethod.POST, value = {"/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART", "*/{apiVersion:3\\.4\\.0}/GET_CHART"})
 	public ModelAndView getChart(
 			HttpServletRequest request,
@@ -133,6 +133,11 @@ public class GetChartController extends CommonController{
 		}
 	}
 	
+	public final static String THROTTLING_HEADER = "X-Throttling-3g";
+	public final static String MAX_AMOUNT_OF_REQUESTS = "max_requests_amount";
+	public final static Integer MAX_AMOUNT_OF_REQUESTS_DEFAULT_VALUE = 27;
+	public static final int CACHE_EXPIRE_SEC = 60;
+	
 	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/GET_CHART", "*/{community:o2}/3.6/GET_CHART"})
 	public ModelAndView getChart_O2(
 			HttpServletRequest request,
@@ -144,12 +149,69 @@ public class GetChartController extends CommonController{
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@PathVariable("community") String community) {
-		
+		/*
+		if (request.getHeader(THROTTLING_HEADER) != null && request.getHeader(THROTTLING_HEADER).equalsIgnoreCase("true")) {
+			try {
+				int maxRequests = getMaxAmountOfRequests();
+				int i=0;
+				boolean reject = false;
+				do {
+					if (!shouldReject(i)) {
+						reject = false;
+						break;
+					}
+					reject = true;
+					i++;
+				} while (i < maxRequests);
+				
+				if (reject)
+					throw new ThrottlingException(userName, community);
+			} catch (Exception e) {
+				LOGGER.error("Error while making throtlling", e);
+			}
+		}
+		*/
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
 		Object[] objects = chartService.processGetChartCommand(user, community);
 		
 		proccessRememberMeToken(objects);
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+	}
+	
+	protected boolean shouldReject(final int i) throws Exception {
+		final Long initial = new Long(i);
+		CASMutator<Long> mutator = new CASMutator<Long>(memcachedClient, new LongTranscoder());
+		CASMutation<Long> m = new CASMutation<Long>() {
+			public Long getNewValue(Long current) {
+				return initial.equals(current)?Long.MAX_VALUE:initial;
+			}
+		};
+		if(mutator.cas("thread-"+i, initial, CACHE_EXPIRE_SEC, m) != Long.MAX_VALUE)
+			return false;
+		return true;
+	}
+
+	public int getMaxAmountOfRequests() throws Exception {
+		CASMutator<Integer> mutator = new CASMutator<Integer>(memcachedClient, new IntegerTranscoder());
+		CASMutation<Integer> m = new CASMutation<Integer>() {
+			public Integer getNewValue(Integer current) {
+				return current;
+			}
+		};
+		return mutator.cas(MAX_AMOUNT_OF_REQUESTS, MAX_AMOUNT_OF_REQUESTS_DEFAULT_VALUE, 0, m);
+	}
+	
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setChartService(ChartService chartService) {
+		this.chartService = chartService;
+	}
+	
+	public void setMemcachedClient(MemcachedClient memcachedClient) {
+		this.memcachedClient = memcachedClient;
 	}
 }
