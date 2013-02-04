@@ -39,7 +39,7 @@ public class PaymentsController extends CommonController {
 
 	private UserService userService;
 
-	protected ModelAndView getManagePaymentsPage(String viewName, Cookie communityUrl) {
+	protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl) {
 		LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
 		ModelAndView modelAndView = new ModelAndView(viewName);
 
@@ -49,16 +49,19 @@ public class PaymentsController extends CommonController {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = null;
 		PaymentDetails paymentDetails = null;
 		
-		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", null);
+		String paymentsNoteMsg;
+		if (communityUrl.equals("o2")) {
+			if (!"o2".equals(user.getProvider())) {
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract(), null, "", null);
 		if(StringUtils.isEmpty(paymentsNoteMsg)){
 			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
 		}
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
+			} else {
+				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2", null, null);
+			}
+		} else {
 			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
-		}
-		
-		if (!"o2".equals(user.getProvider())) {
-			paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl.getValue(), userId);
+			paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
 			paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			paymentDetails = paymentDetailsService.getPaymentDetails(userId);
 		}
@@ -103,12 +106,12 @@ public class PaymentsController extends CommonController {
 	}
 
 	@RequestMapping(value = { PAGE_MANAGE_PAYMENTS }, method = RequestMethod.GET)
-	public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+	public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl) {
 		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl);
 	}
 
 	@RequestMapping(value = { PAGE_MANAGE_PAYMENTS_INAPP }, method = RequestMethod.GET)
-	public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+	public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl) {
 		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl);
 	}
 
