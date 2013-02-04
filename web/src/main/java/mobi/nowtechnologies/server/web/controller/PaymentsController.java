@@ -52,12 +52,15 @@ public class PaymentsController extends CommonController {
 		String paymentsNoteMsg;
 		if (communityUrl.equals("o2")) {
 			if (!"o2".equals(user.getProvider())) {
-				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract(), null, "", null);
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
-		}
-			} else {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2", null, null);
+			} else {
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract(), null, "", null);
+				if (StringUtils.isEmpty(paymentsNoteMsg)) {
+					paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider(), null, "", null);
+				}
+				if(StringUtils.isEmpty(paymentsNoteMsg)){
+					paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
+				}
 			}
 		} else {
 			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
