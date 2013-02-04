@@ -376,9 +376,16 @@ public class Media extends Item implements Serializable {
 		return areArtistUrls;
 	}
 
-
 	public void setAreArtistUrls(boolean areArtistUrls) {
 		this.areArtistUrls = areArtistUrls;
+	}
+
+	public Long getTrackId() {
+		return trackId;
+	}
+
+	public void setTrackId(Long trackId) {
+		this.trackId = trackId;
 	}
 
 	@Override
