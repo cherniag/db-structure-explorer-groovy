@@ -149,7 +149,7 @@ public class GetChartController extends CommonController{
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@PathVariable("community") String community) {
-		
+		/*
 		if (request.getHeader(THROTTLING_HEADER) != null && request.getHeader(THROTTLING_HEADER).equalsIgnoreCase("true")) {
 			try {
 				int maxRequests = getMaxAmountOfRequests();
@@ -170,7 +170,7 @@ public class GetChartController extends CommonController{
 				LOGGER.error("Error while making throtlling", e);
 			}
 		}
-		
+		*/
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
 		Object[] objects = chartService.processGetChartCommand(user, community);
