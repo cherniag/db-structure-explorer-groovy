@@ -227,7 +227,7 @@ echo "***** Generating Mobile Preview Audio *****"
 	
 	for i in files/preview/${ISRC}*
 	do
-		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
+		curl -X PUT -T files/preview/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
 	done
 	
 	for i in ${ISRC}*.m4a; 
