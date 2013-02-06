@@ -103,7 +103,7 @@ public class EntityDao extends JpaDaoSupport {
 
 	// TODO Think about propagation and rollback
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void saveEntity(Object entity) {
+	public Object saveEntity(Object entity) {
 		LOGGER.debug("input parameters entity: [{}]", entity);
 		try {
 			if (entity == null)
@@ -111,6 +111,7 @@ public class EntityDao extends JpaDaoSupport {
 			getJpaTemplate().persist(entity);
 			getJpaTemplate().flush();
 			LOGGER.info("[{}] entity [{}] inserted in db", entity.getClass(), entity);
+			return entity;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new PersistenceException("Couldn't save entity");

@@ -1,12 +1,15 @@
 package mobi.nowtechnologies.server.shared;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * The class <code>UtilsTest</code> contains tests for the class
@@ -396,5 +399,117 @@ public class UtilsTest {
 
 		// add additional test code here
 		assertEquals("d41d8cd98f00b204e9800998ecf8427e", result);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsAbsentInTheNextMonth_Success() throws Exception{	
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsPresentInTheNextMonthOfLeapYear_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsAbsentInTheNextMonthOfNotLeapYear_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsPresentInTheNextMonth_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59); 
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
 	}
 }

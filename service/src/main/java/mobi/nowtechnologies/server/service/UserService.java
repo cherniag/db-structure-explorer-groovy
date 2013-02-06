@@ -1213,20 +1213,29 @@ public class UserService {
 	public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
 		// Update last Successful payment time
-		user.setLastSuccessfulPaymentTimeMillis(System.currentTimeMillis());
-		// Update user balance
-		user.setSubBalance(user.getSubBalance() + subweeks);
+		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
+		
+		boolean isNonO2User = isNonO2User(user);
+		if(!isNonO2User){
+			// Update user balance
+			user.setSubBalance(user.getSubBalance() + subweeks);
 
+			// Update next sub payment time
+			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
+		}else{
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
+		}
+		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			user.setSubBalance(user.getSubBalance() - 1);
+			if(!isNonO2User){
+				user.setSubBalance(user.getSubBalance() - 1);
+			}
 			entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 		}
 
-		// Update next sub payment time
-		user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
 
 		// Update user status to subscribed
 		user.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -1234,6 +1243,17 @@ public class UserService {
 		entityService.updateEntity(user);
 
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
+	}
+
+	public boolean isNonO2User(User user) {	
+		String communityUrl = user.getUserGroup().getCommunity().getRewriteUrlParameter();
+		
+		boolean isNonO2User = false;
+		if (communityUrl.equalsIgnoreCase("o2")&& (!user.getProvider().equals("o2"))){
+			isNonO2User = true;
+		}
+		
+		return isNonO2User;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

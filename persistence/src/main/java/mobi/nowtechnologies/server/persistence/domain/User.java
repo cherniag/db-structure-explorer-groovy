@@ -34,9 +34,6 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
-		@NamedQuery(name = User.NQ_GET_USERS_FOR_PENDING_PAYMENT,
-				query = "select u from User u join u.currentPaymentDetails as pd where u.subBalance=0 and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') and pd.activated=true and u.lastDeviceLogin!=0",
-				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
 		@NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
 				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
 		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<?"),
@@ -50,7 +47,6 @@ public class User implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
-	public static final String NQ_GET_USERS_FOR_PENDING_PAYMENT = "getUsersForPendingPayment";
 	public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
 	public static final String NQ_GET_SUBSCRIBED_USERS = "getSubscribedUsers";
 	public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";

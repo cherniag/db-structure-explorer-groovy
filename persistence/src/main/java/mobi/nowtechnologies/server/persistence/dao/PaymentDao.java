@@ -1,7 +1,10 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
@@ -44,6 +47,12 @@ public class PaymentDao extends JpaDaoSupport {
 		}
 	}
 	
+	private UserRepository userRepository;
+	
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+	
 
 	public boolean isUserAlreadyPaidSuccessfully(int userID) {
 		Long foundedRecordsCount = (Long) getJpaTemplate().find(
@@ -84,15 +93,9 @@ public class PaymentDao extends JpaDaoSupport {
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
 	public List<User> getUsersForPendingPayment() {
-		return getJpaTemplate().execute(new JpaCallback<List<User>>() {
-			@Override
-			public List<User> doInJpa(EntityManager em) throws PersistenceException {
-				em.clear();
-				Query queryObject = em.createNamedQuery(User.NQ_GET_USERS_FOR_PENDING_PAYMENT);
-				getJpaTemplate().prepareQuery(queryObject);
-				return queryObject.getResultList();
-			}
-		});
+		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());
+		
+		return users;
 	}
 
 	@SuppressWarnings("unchecked")

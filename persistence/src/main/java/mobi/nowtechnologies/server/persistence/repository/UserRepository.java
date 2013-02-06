@@ -4,10 +4,13 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import javax.persistence.QueryHint;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -72,4 +75,22 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"where " +
 			"user.id=:id")
 	int updateFields(@Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
+
+	
+	@Query(value="select u from User u " +
+			"join u.currentPaymentDetails pd " +
+			"join u.userGroup ug " +
+			"join ug.community c " +
+			"where " +
+			"((c.rewriteUrlParameter not like'o2' " +
+			"and u.subBalance=0) " +
+			"or (c.rewriteUrlParameter like 'o2' " +
+			"and u.provider<>'o2' " +
+			"and (u.nextSubPayment-?1<=86400))) " +
+			"and (pd.lastPaymentStatus='NONE' " +
+			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
+			"and pd.activated=true " +
+			"and u.lastDeviceLogin!=0")
+	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+	List<User> getUsersForPendingPayment(int epochSeconds);
 }
