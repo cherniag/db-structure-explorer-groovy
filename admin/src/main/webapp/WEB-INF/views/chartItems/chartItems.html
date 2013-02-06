@@ -1,109 +1,895 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-	<head th:include="tpl::head" />
-
-		<body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
-			<div th:substituteby="tpl::navbar"></div>
-						<!-- Modal -->
-						<div id="windowTitleDialog" class="modal fade">
-							<div class="modal-body"></div>
-							<div class="modal-footer">
-								<a href="#" class="btn primary" onclick="okClicked ();">OK</a>
-								<a href="#" class="btn secondary" onclick="closeDialog ();">Cancel</a>
-							</div>
-						</div>
-			<div class="container" id="chartItemsTable">
-			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items</h1>
-			<div><a th:text="#{chartItems.page.back}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}" class="btn btn-primary">Back</a></div><br/><br/>
-			<div class="newsListWide">
-				<ul class="table">
-					<li class="title">
-						<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
-						<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
-						<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
-						<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
-						<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
-						<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
-						<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
-						<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
-					</li>
-				</ul>
-				<ul class="table table_up" id="sortable">
-					
-					<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
-						<input type="hidden" id="ID" name="ID" th:value="${chartItemDto.id}" />
-						<input type="hidden" id="position" name="position" th:value="${chartItemDto.position}" />
-						<div class="position_chartItem" th:text="${it.index+1}">1</div>
-						<div class="prev_position_chartItem" th:text="${chartItemDto.prevPosition}">1</div>
-						<div class="change_position_chartItem" th:text="${chartItemDto.chgPosition}">UP</div>
-							<div class="image_chartItem">
-								<img alt="Chart item media picture" src=""
-									th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}"
-									th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}"
-									width="50" height="50" />
-							</div>
-							<div class="channel_chartItem" th:text="${chartItemDto.channel}">HEATSEEKER</div>
-						<div class="ArtistTitle_chartItem">
-							<span th:text="${chartItemDto.mediaDto.artistDto.name} + ' - ' + ${chartItemDto.mediaDto.title}">Брати Гадюкіни - Звьоздочка Моя</span><br/><br />
-							<form id="deleteNewsForm" name="deleteNewsForm" action="#" th:action="@{/charts/__${chartId}__/__${urlDate}__/__${chartItemDto.id}__}" method="post">
-								<input type="hidden" id="_method" name="_method" value="DELETE" />
-								
-								<a class="btn danger editButton" onmouseover="sandwich='pastrami';" th:href="@{/charts/__${chartId}__/__${urlDate}__/__${chartItemDto.id}__}" th:text="#{chartItems.page.chartItemsTable.chartItems.edit.submit}">Edit</a>
-								<button type="submit" class="btn btn-danger" th:text="#{chartItems.page.chartItemsTable.chartItems.delete.submit}">Delete</button>
-							
-							</form>
-						</div>
-						<!-- Button to trigger modal -->
-						
-						
-						<div class="info_chartItem" th:text="${chartItemDto.info}">
-							Пісня Братів Гадюкіних з альбому Всьо Чьотко!
-						</div>
-						
-						<div class="publishDate_chartItem" th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</div>
-						
-					</li>
-				</ul>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="tpl::head" />
+<style type="text/css">
+	.image_chartItemBasket {
+		font-size: 10px;
+    	width: 50px;
+	}
+	.channel_chartItemBasket {
+		font-size: 9px;
+    	font-weight: bold;
+    	width: 80px;
+	}
+	.ArtistTitle_chartItemBasket {
+		font-size: 9px;
+    	font-weight: bold;
+    	width: 150px;
+	}
+	.info_chartItemBasket {
+		font-size: 10px;
+    	width: 150px;
+	}
+	.cover_media {
+    	font-size: 11px;
+    	width: 50px;
+	}
+	.isrc_media {
+    	font-size: 11px;
+    	width: 100px;
+	}
+	.title_media {
+    	font-size: 11px;
+    	width: 150px;
+	}
+	.artist_media {
+    	font-size: 11px;
+    	width: 150px;
+	}
+	
+	.basket_button {
+		font-size: 11px;
+    	width: 10px;
+	}
+	
+	#emptyList {
+		border: 1px dotted #cccccc!important;
+		height: 70px;
+		text-align: center;
+		cursor: auto!important;
+	}
+	
+	#emptyList span {
+		line-height: 70px;
+		font-size: 16px;
+		color: #cccccc;
+	}
+	
+	.nav-pills > li > a {
+	    border-radius: 5px 5px 5px 5px;
+	    margin-bottom: 2px;
+	    margin-top: 2px;
+	    padding: 10px 30px;
+	}
+	
+	.navButtonsWithoutBorder {
+	    margin-left: 920px;
+	    margin-left: 0;
+	}
+	
+	.navButtonsWithoutBorder form {
+		margin-left: 20px;
+	}
+	
+	ul.headerFrame li.title {
+	    background: url("../../assets/img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+	    border: none;
+	    box-shadow: none;
+	    margin-bottom: 25px;
+	}
+	
+	.wellWithoutBorder {
+	    background: url("../../assets/img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+	    border: none;
+	    box-shadow: none;
+	    margin-bottom: 20px;
+	    min-height: 20px;
+	    padding: 19px;
+	}
+	
+	.chartControl {
+		/*margin-left: 920px;*/ 
+		width: 580px; 
+		height: 300px; 
+		top: 75px;
+    	left: 920px;
+    	position: absolute;
+		overflow-y: none;
+	}
+	
+	#chartItemsTable li div {
+    	border: medium none;
+    	display: inline-block;
+    	width: 100px;
+    	height: 100%;
+    	vertical-align: top;
+	}
+	
+	#chartItemsTable li {
+    	background-color: #FFFFFF;
+    	padding: 10px 0;
+    	margin-top: -1px;
+	}
+	
+	#chartItemsTable {
+    	list-style-type: none;
+	}
+	
+	#chartItemsTable li div.position_chartItem {
+    	font-size: 9px;
+    	font-weight: bold;
+    	padding-left: 4px;
+    	width: 5%;
+	}
+	
+	#chartItemsTable li div.prev_position_chartItem {
+    	font-size: 9px;
+    	font-weight: bold;
+    	height: 60px !important;
+    	width: 5%;
+	}
+	
+	#chartItemsTable li div.change_position_chartItem {
+    	font-size: 9px;
+	    font-weight: bold;
+	    width: 9%;
+	}
+	
+	#chartItemsTable li div.image_chartItem {
+	    font-size: 10px;
+	    width: 9%;
+	}
+	
+	#chartItemsTable li div.channel_chartItem {
+	    font-size: 9px;
+	    font-weight: bold;
+	    height: 60px !important;
+	    width: 15%;
+	}
+	
+	#chartItemsTable li div.ArtistTitle_chartItem {
+	    font-size: 9px;
+	    font-weight: bold;
+	    width: 18%;
+	}
+	
+	#chartItemsTable li div.info_chartItem {
+	    font-size: 10px;
+	    height: 60px !important;
+	    overflow: hidden;
+	    width: 15%;
+	}
+	
+	#chartItemsTable li div.publishDate_chartItem {
+	    font-size: 10px;
+	    width: 12%;
+	}
+	
+</style>
+<body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
+	<div th:substituteby="tpl::navbar"></div>
+	<!-- Modal -->
+	<div id="windowTitleDialog" class="modal fade">
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<a href="#" class="btn primary" onclick="okClicked ();">OK</a> 
+			<a href="#" class="btn secondary" onclick="closeDialog ();">Cancel</a>
+		</div>
+	</div>
+	<!-- Input templates -->		
+	<input id="prevPositionInputTpl" type="number" class="quantity" maxlength="2" min="0" max="99" style="width: 70%; display:none"/>
+	<select id="channelSelectTpl" style="width: 100%; display:none">
+			<option th:each="channel: ${allChannels}" th:value="${channel}" th:text="${channel}">
+				MY_CHANNEL
+			</option>
+	</select>
+	<textarea id="infoTextAreaTpl" rows="4" class="input-xlarge" maxlength="200" style="width: 95%; height: 80%; font-size: 11px; display:none;" ></textarea>
+	
+	<div class="container" id="chartItemsTable" style="width: 1500px;">
+		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
+		<form id="changeChartDateTimeForm" method="get">
+			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
+		</form>
+		<div class="newsListWide">
+		
+			<ul class="table">
+				<li class="title">
+					<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
+					<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
+					<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
+					<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
+					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
+					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
+				</li>
+			</ul>
+			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
+				<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
+					<div class="id_chartItem" style="display:none" th:text="${chartItemDto.id}">id</div>
+					<div class="mediaId_chartItem" style="display:none" th:text="${chartItemDto.mediaDto.id}">mediaId</div>
+					<div class="position_chartItem" th:text="${it.index+1}" style="display:inline-block">1</div>
+					<div class="prev_position_chartItem" style="display:inline-block;">
+						<span th:text="${chartItemDto.prevPosition}">1</span>
+					</div>
+					<div class="change_position_chartItem" style="display:inline-block" th:text="${chartItemDto.chgPosition}">UP</div>
+					<div class="image_chartItem" style="display:inline-block">
+						<img alt="Chart item media picture" src="" th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}" th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}" width="50" height="50" />
+					</div>
+					<div class="ArtistTitle_chartItem" style="display:inline-block" th:text="${chartItemDto.mediaDto.artistDto.name} + ' - ' + ${chartItemDto.mediaDto.title}">
+						Брати Гадюкіни - Звьоздочка Моя
+					</div>
+					<div class="info_chartItem" style="display:inline-block;">
+						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
+					</div>
+					<div class="publishDate_chartItem" style="display:inline-block">
+						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
+						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="container chartControl" style="overflow-x: auto;">
+			<div class="navButtonsWithoutBorder" th:with="cancelUrlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
+					<form id="addNew">
+						<ul class="nav nav-pills table_margin">
+							<li class="active">
+								<a href="#" th:text="#{chartItems.page.button.save}" onclick="onSaveChartItems()">Save</a>
+							</li>
+						</ul>
+					</form>
+					<form id="updatePositionsForm" class="del_btn">
+						<ul class="nav nav-pills table_margin">
+							<li class="active">
+								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${cancelUrlDate})}">Cancel</a>
+							</li>
+						</ul>
+					</form>
 			</div>
-			<div class="navButtons">
-				<div class="updateButton">
-				<form id="addNew"> 
-				<ul class="nav nav-pills table_margin">
-				  <li class="active">
-				    <a href="/charts/1/12/06/2012 12:00:00/add" th:href="@{/charts/__${chartId}__/__${urlDate}__/new}" th:text="#{chartItems.page.chartItemsTable.chartItems.add.addNew}">Add New</a>
-				  </li>
-				</ul>
-				</form>
+			<div>
+				<div id="basket" data-spy="affix" data-offset-top="200">
+					<h1 class="head" th:text="#{chartItems.page.chartItemsBasketTable.title}">
+						Chart Items Basket
+					</h1>
+					<div>
+						<ul class="table headerFrame">
+							<li class="title">
+								<div class="image_chartItemBasket" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
+								<div class="ArtistTitle_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
+								<div class="info_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+							</li>
+						</ul>
+						<ul class="table table_up" id="chartItemsBasketSortable" style="min-height: 50px;">
+							<li id="emptyList" class="ui-state-default ui-state-disabled"><span>Drag Chart Items Here</span></li>
+							<!-- <li>
+								<div class="image_chartItem" style="width: 50px;">
+									<img alt="Chart item media picture" src="" th:attr="src='###'" th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}" width="50" height="50" />
+								</div>
+								<div class="ArtistTitle_chartItem" style="width: 150px;">
+									<span>Брати Гадюкіни - Звьоздочка Моя</span>
+								</div>
+								<div class="info_chartItem" style="width: 150px;">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</div>
+							</li> -->
+						</ul>
+					</div>
 				</div>
-				<div class="updateButton">
-			    <form id="cloneChartItemsForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__/list}" method="post" th:if="${#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
-			    <ul class="nav nav-pills table_margin">
-			 		<li class="active">
-						<a href="#" onCLick="$('form#cloneChartItemsForm').submit();" th:text="#{chartItems.page.cloneChartItemsForm.submit.text}">Clone</a>
-					</li>
-				</ul>
-				</form>
-				</div>
-				<div class="updateButton">
-				<form id="updatePositionsForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__}" method="post">
-			    <ul class="nav nav-pills table_margin">
-			 		<li class="active">
-						<a id="updatePositionsButton" href="#" th:text="#{chartItems.page.updateChartItemsForm.submit.text}">Update chart items positions</a>
-					</li>
-				</ul>
-				</form>
-				<form id="deleteChartItemsSetForm"  class="del_btn" th:action="@{/charts/__${chartId}__/__${urlDate}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
-					<input type="hidden" id="_method" name="_method" value="DELETE" />
-				    <ul class="nav nav-pills table_margin">
-				 		<li class="active">
-							<a href="#" class="btn-danger"  onCLick="$('form#deleteChartItemsSetForm').submit();" th:text="#{chartItems.page.deleteChartItemsSetForm.submit.text}">Delete update</a>
-						</li>
-					</ul>
-				</form>
+				<div>
+					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">Media List</h1>
+					<form id="mediaSearchForm" class="wellWithoutBorder">
+						<input type="text" id="q" name="q" class="q" style="margin-bottom: 0!important;"/>
+						<button id="searchButton" th:text="#{chartItems.page.media.search}" class="btn btn-primary s_btn" type="button">
+							Search
+						</button>
+					</form>
+					<div id="searchResult">
+						<ul class="table headerFrame">
+							<li class="title">
+								<div class="cover_media"
+									th:text="#{chartItems.page.mediasTable.head.smallImage}">
+									Cover
+								</div>
+								<div class="isrc_media"
+									th:text="#{chartItems.page.mediasTable.head.isrc}">
+									isrc
+								</div>
+								<div class="title_media"
+									th:text="#{chartItems.page.mediasTable.head.title}">
+									Title
+								</div>
+								<div class="artist_media"
+									th:text="#{chartItems.page.mediasTable.head.artist}">
+									Artist
+								</div>
+							</li>
+						</ul>
+						<ul class="table table_up" id="mediaList">
+							<!-- <li id="mediaDraggable_1">
+	 								<div class="id_chartItem" style="display:none"></div>
+									<div class="mediaId_chartItem" style="display:none">1</div>
+									<div class="position_chartItem" style="display:none">0</div>
+									<div class="prev_position_chartItem" style="display:none">0</div>
+									<div class="change_position_chartItem" style="display:none">UnChanged</div>
+									<div class="ArtistTitle_chartItem" style="display:none">Artist-Title</div>
+									<div class="info_chartItem" style="display:none">Info</div>
+									<div class="publishDate_chartItem" style="display:none">
+										<span>12/06/2012 12:00:00</span>
+										<button type="button" class="btn btn-danger">Basket</button>
+									</div>
+									<div class="cover_media">
+										<img alt="Media picture" th:attr="src='###'" th:alt="#{chartItems.page.mediasTable.media.img.alt}" width="50" height="50" />
+									</div>
+									<div class="isrc_media">
+										<p>US-UM7-11-00061</p>
+									</div>
+									<div class="title_media">
+										Место для шага вперед
+									</div>
+									<div class="artist_media">
+										КИНО
+									</div>
+							</li> -->
+						</ul>
+						<div class="loading-container"><img th:attr="src=@{/assets/img/loading-thumb-small.gif}" /></div>
+					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	<script th:inline="javascript">/*<![CDATA[*/
+	var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';  
+	var $samePrevPositionError = /*[[#{chartItems.error.samePrevPosition}]]*/ 'Chart Item with same previous position already exists!';  
+	var $dateformat = /*[[#{chartItems.publishDate.format}]]*/ 'dd/MM/yyyy hh:mm:ss';  
+	var $mediaImgAlt = /*[[#{chartItems.page.mediasTable.media.img.alt}]]*/ 'Media image';
+	var $mediaImgBaseUrl = /*[[@{__${filesURL}__}]]*/ '###';
+	var $chartId = /*[[${chartId}]]*/ '1';
+	var $selectedPublishDateTime = /*[[${urlDate}]]*/ '2012-09-05_02:45:00';
+	var $draggableProperties = { 
+			connectToSortable: "ul[id*=Sortable]",
+			helper: "clone",
+			revert: "invalid",
+			appendTo: "#chartItemsTable"
+	};
+	
+	$("#datepicker_dateChange").datepicker({
+		dateFormat : 'yy-mm-dd',
+		onSelect: function(dateText) {
+				updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
+			}
+	});
+	
+	$( ".datepicker_dateChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(0,10);
+	}); 
+	
+	$('#timepicker_timeChange').timepicker({
+	    minutes: { interval: 15 },
+	    showCloseButton: true,
+	    timeFormat: "HH:mm",
+	    pickerTimeFormat: "HH:mm",
+	    rows: 3,
+	    showPeriodLabels: true,
+	    minuteText: 'Min',
+	    showSecond: true,
+	    onSelect: function(newTime) {
+			updateChartDateTime($("#datepicker_dateChange").val()+"_"+$('#timepicker_timeChange').val()+":00");
+	    }
+	});
+	
+	$( "#timepicker_timeChange" ).val( function( index, val ) {
+	    return val + $selectedPublishDateTime.substr(11,5);
+	});
+	
+	function updateChartDateTime(newDateTime) {
 		
-		</body>
+		
+		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/2012-09-25_02:45:00';
+		url+=newDateTime;
+		
+		$.ajax({
+			url : url,
+			type : "post",
+			complete: function() {
+				
+			},
+			success : function(data) {
+				var urlToRedirect = /*[[@{/chartsNEW/__${chartId}__/}]]*/ '2012-09-25_02:45:00';
+				location.href = urlToRedirect+newDateTime;
+			},
+			error : function() {
+				alert('Error during chart date/time update');
+			}
+		});
+	}
+	
+
+	
+
+	$(function() {
+		var spycontainer = $(".container.chartControl");
+		var topOffset = parseInt(spycontainer.css('top'));
+		var spycontainerHeight = ($(window).height()-155)+"px";
+
+		spycontainer.css("height", spycontainerHeight);
+		$(window).scroll(function(){
+			spycontainer.css({
+		        'top': $(this).scrollTop() + topOffset
+		    });
+		});
+		
+		$('li[id*=Draggable]').draggable($draggableProperties);
+		
+		var chartItemsBasketList = $( "#chartItemsBasketSortable" );
+		var chartItemsList = $( "#chartItemsSortable" );
+		chartItemsBasketList.sortable( "option", "appendTo", '#chartItemsTable' );
+		chartItemsList.sortable( "option", "appendTo", '#chartItemsTable' );
+		
+		chartItemsBasketList.bind( "sortupdate", function(event, ui) {
+			onDropToBasketList(ui.item);
+		});
+		
+		chartItemsList.bind( "sortupdate", function(event, ui) {
+			onDropToChartItemList(ui.item, ui.sender);
+		});
+		
+		chartItemsList.children().each(function(i) {
+			enableChartItemHandlers($(this), true);
+		});
+		
+		$("body").mousedown(function(event) {
+			var activeElement = $("*[active='true']");
+			if(activeElement.size() > 0){
+				if(activeElement[0] !== event.target && !$(event.target).descendantOf(activeElement)){
+					activeElement.blur();
+				}
+			}
+		});
+		
+		// Search media
+		$("#searchButton").click(function(e) {
+			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
+			$('#searchResult .loading-container').show();
+			$('#mediaList').empty();
+			$.ajax({
+				url : url,
+				type : "get",
+				data : $('form#mediaSearchForm').serialize(),
+				complete: function() {
+					$('#searchResult .loading-container').hide();
+				},
+				success : function(data) {
+					for(var i = 0; i < data.CHART_ITEM_DTO_LIST.length; i++){
+						var li = chartItemToLi(data.CHART_ITEM_DTO_LIST[i]);
+						li.appendTo($('#mediaList'));
+					}
+				},
+				error : function() {
+					
+				}
+			});
+		});
+		$('#q').keypress(function(event) {
+			if ( event.which == 13 ) {
+			    event.preventDefault();
+				$("#searchButton").click();
+				return false;
+			}
+		});
+		
+	});
+	
+	function onToBasketClick(target, isCopy){
+		var button = $(target);
+		var item = button.parent().parent();
+		
+		if(isCopy){
+			item = item.clone();
+		}else{
+			item = item.detach();
+			updateListPosition($( "#chartItemsSortable" ));
+		}
+			
+		item.appendTo($("#chartItemsBasketSortable"));
+		
+		onDropToBasketList(item);
+	}
+	
+ 	function onDropToBasketList(item){
+		
+ 		$("#chartItemsBasketSortable li#emptyList").css("display","none");
+ 		
+ 		
+ 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+		hiddendiv.css("display", "none");
+		
+		var positionDiv = item.find("div.position_chartItem");
+		var artistTitleDiv = item.find("div.ArtistTitle_chartItem");
+		var imageDiv = item.find("div.image_chartItem, div.cover_media");
+		var infoDiv = item.find("div.info_chartItem");
+		
+		positionDiv.text("0");
+		
+		imageDiv.detach().insertBefore(artistTitleDiv);
+		
+		artistTitleDiv.css("display","inline-block");
+		imageDiv.css("display","inline-block");
+		infoDiv.css("display","inline-block");
+		
+		artistTitleDiv.attr("class","ArtistTitle_chartItemBasket");
+		imageDiv.attr("class","image_chartItemBasket");
+		infoDiv.attr("class","info_chartItemBasket");
+		
+		enableChartItemHandlers(item, false);
+	}
+ 	
+ 	function existsChartItem(mediaId, prevPosition){
+ 		if(mediaId){
+ 			var exists = 0;
+ 	 		$("#chartItemsSortable div.mediaId_chartItem").each(function(i) {
+ 				if($(this).text() == mediaId){
+ 					exists++;
+ 					if(exists > 1)
+ 						return false;
+ 				}	
+ 			});
+ 	 		
+ 	 		return exists > 1;
+ 		}
+ 		
+ 		if(prevPosition){
+ 			var exists = 0;
+ 	 		$("#chartItemsSortable div.prev_position_chartItem span").each(function(i) {
+ 				if($(this).text() == prevPosition){
+ 					exists++;
+ 					return false;
+ 				}	
+ 			});
+ 	 		return exists > 0;
+ 		}
+ 	}
+	
+	function onDropToChartItemList(item, sender){
+		var mediaId = item.find("div.mediaId_chartItem").text();
+		
+		if(existsChartItem(mediaId)){
+			if(sender)
+				sender.sortable('cancel');
+			else
+				item.remove();
+			
+			alert($sameMediaError);
+			return false;
+		}
+		
+		item.removeAttr("class");
+		item.removeAttr("style");
+		
+		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+		hiddendiv.css("display", "none");
+		
+		var positionDiv = item.find("div.position_chartItem");
+		var positionPrevDiv = item.find("div.prev_position_chartItem");
+		var chgPositionDiv = item.find("div.change_position_chartItem");
+		var artistTitleDiv = item.find("div.ArtistTitle_chartItem, div.ArtistTitle_chartItemBasket");
+		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
+		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
+		var publishDateDiv = item.find("div.publishDate_chartItem");
+		
+		imageDiv.detach().insertBefore(artistTitleDiv);
+		
+		artistTitleDiv.css("display","inline-block");
+		imageDiv.css("display","inline-block");
+		infoDiv.css("display","inline-block");
+		positionDiv.css("display","inline-block");
+		positionPrevDiv.css("display","inline-block");
+		chgPositionDiv.css("display","inline-block");
+		publishDateDiv.css("display","inline-block");
+		
+		artistTitleDiv.attr("class","ArtistTitle_chartItem");
+		imageDiv.attr("class","image_chartItem");
+		infoDiv.attr("class","info_chartItem");
+		
+		updateListPosition($( "#chartItemsSortable" ));
+		
+		enableChartItemHandlers(item, true);
+		
+		if($("#chartItemsBasketSortable").children().size() == 1){
+			$("#emptyList").css("display","block");
+		}
+	}
+	
+	function enableChartItemHandlers(item, enable){
+		var prevPositionDiv = item.find("div.prev_position_chartItem, div.prev_position_chartItemBasket");
+		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
+		
+		if(enable){
+			prevPositionDiv.bind('dblclick.prevPositionDiv', onClickPrevPosition);
+			infoDiv.bind('dblclick.infoDiv',  onClickInfo);
+		}else{
+			prevPositionDiv.unbind('dblclick.prevPositionDiv');
+			infoDiv.unbind('dblclick.infoDiv');
+		}
+	}
+	
+	function refreshChartItemsList(){
+		var chartItemsList = $( "#chartItemsSortable" );
+		var opts = chartItemsList.sortable( "option" );
+		chartItemsList.sortable( "destroy" );
+		chartItemsList.sortable( opts );
+	}
+
+	function updateListPosition(list){
+		list.children().each(function(i) {
+			var positionDiv = $(this).find("div.position_chartItem");
+			var position = positionDiv.text();
+			var new_position = i+1;
+			if (position != new_position) {
+				 positionDiv.text(new_position);
+				 
+				 updateChgPosition($(this));
+			}
+		});
+	}
+	
+	function updateChgPosition(item){
+		var chgPositionDiv = item.find("div.change_position_chartItem");
+		
+		var position = item.find("div.position_chartItem").text();
+		var prevPosition = item.find("div.prev_position_chartItem span").text();
+		
+		chgPositionDiv.text(getChgPosition(position, prevPosition, false));
+	}
+	
+	function getChgPosition(position, prevPosition, isBonus) {
+		if (!isBonus) {
+			if (prevPosition != 0) {
+				var dif = position - prevPosition;
+				if (dif > 0)
+					return "DOWN";
+				else if (dif < 0)
+					return "UP";
+				else
+					return "UNCHANGED";
+			} else
+				return "UNCHANGED";
+		} 
+			
+		return "NONE";
+	}
+	
+	
+	function onClickInfo(event){
+		var infoDiv = $(event.delegateTarget);
+		
+		var input = infoDiv.find("textarea");
+		if(input.size() == 0){
+			var span = infoDiv.find("span");
+			input = $("#infoTextAreaTpl").clone().val(span.text());
+			
+			span.css("display", "none");
+			input.css("display", "inline-block");
+			input.attr("active","true");
+			input.focusout(onBlurInfo);
+			input.appendTo(infoDiv);
+			input.focus();
+		}else{
+			input.focus();
+		}
+	}
+	
+	function onBlurInfo(event){
+		var input = $(event.delegateTarget);
+		var infoDiv = input.parent();
+		var span = infoDiv.find("span");
+		var newvalue = input.val();
+
+		span.text(newvalue);
+		span.css("display", "inline-block");
+		
+		input.remove();
+		
+		updateChgPosition(infoDiv.parent());
+	}
+		
+	function onClickPrevPosition(event){
+		var prevPositionDiv = $(event.delegateTarget);
+		
+		var input = prevPositionDiv.find("input");
+		if(input.size() == 0){
+			var span = prevPositionDiv.find("span");
+			input = $("#prevPositionInputTpl").clone().val(span.text());
+			
+			span.css("display", "none");
+			
+			input.css("display", "inline-block");
+			input.attr("active","true");
+			input.keypress(keypressNumericHandler);
+			input.focusout(onBlurPrevPosition);
+			input.appendTo(prevPositionDiv);
+			input.focus();
+		}else{
+			input.focus();
+		}
+	}
+	
+	function onBlurPrevPosition(event){
+		var input = $(event.delegateTarget);
+		var prevPositionDiv = input.parent();
+		var span = prevPositionDiv.find("span");
+		var newvalue = input.val();
+
+		span.css("display", "inline-block");
+		
+		input.remove();
+		
+		oldvalue = span.text();
+		newvalue = newvalue != null && newvalue != '' ? newvalue : 0;
+		if(oldvalue == newvalue || !existsChartItem(null, newvalue)){
+			span.text(newvalue);
+			updateChgPosition(prevPositionDiv.parent());
+		}else{
+			setTimeout(function(){alert($samePrevPositionError)}, 200);
+		}		
+	}
+	
+	function keypressNumericHandler(event){
+		// Backspace, tab, enter, end, home, left, right
+		// We don't support the del key in Opera because del == . == 46.
+		var controlKeys = [8, 9, 13, 35, 36, 37, 39];
+		// IE doesn't support indexOf
+		var isControlKey = controlKeys.join(",").match(new RegExp(event.which));
+		// Some browsers just don't raise events for control keys. Easy.
+		// e.g. Safari backspace.
+		if (!event.which || // Control keys in most browsers. e.g. Firefox tab is 0
+			(49 <= event.which && event.which <= 57) || // Always 1 through 9
+			(48 == event.which && $(this).attr("value")) || // No 0 first digit
+			isControlKey) { // Opera assigns values for control keys.
+				    return;
+		} else {
+			 event.preventDefault();
+		}
+	}
+	
+	function onSaveChartItems(){
+		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
+		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
+		
+		$.ajax({
+			url : url,
+			type : "post",
+			contentType: "application/json; charset=utf-8",
+			data: data,
+			dataType: "json",
+			success: function(data) {
+				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00';
+			}
+		}).fail(function(data, x, e) {
+			alert("Can't save chart item list");
+		});
+	}
+	
+	function chartItemsFromUl(ul){
+		var json = [];
+		json.push("[");
+		$(ul).children().each(function(i) {
+			var li = $(this);
+			if(li.attr('id') != "emptyList"){
+				if(i > 0)
+					json.push(",");
+				
+				var obj = chartItemFromLi(li);	
+				json.push(obj);
+			}
+		}); 
+		json.push("]");
+		
+		return json.join("");
+	}
+	
+	function chartItemFromLi(li){
+		var json = [];
+		var id = li.find("div.id_chartItem").text();
+		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
+		var channel = null;
+		json.push(
+		  "{'id':",id != null && id != '' ? id : 'null',",",
+		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
+		  "'position':",li.find("div.position_chartItem").text(),",",
+		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
+		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
+		  "'channel':'",channel,"',",
+		  "'info':'",info,"',",
+		  "'publishTime':'",$selectedPublishDateTime,"',",
+		  "'chartId':",$chartId,"}"
+		);
+		
+		return json.join("");
+	}
+	
+	function chartItemToLi(chartItem){			
+		var li = $('<li>').attr({
+			id:"mediaDraggable_"+chartItem.mediaDto.id
+		}).draggable($draggableProperties);
+		
+		$('<div>').attr({
+			"class":"id_chartItem",
+			"style":"display:none;"
+		}).appendTo(li);
+		$('<div>').attr({
+			"class":"mediaId_chartItem",
+			"style":"display:none;"
+		}).text(chartItem.mediaDto.id).appendTo(li);
+		$('<div>').attr({
+			"class":"position_chartItem",
+			"style":"display:none;"
+		}).text(chartItem.position).appendTo(li);
+		
+		var prevPositionDiv = $('<div>').attr({
+			"class":"prev_position_chartItem",
+			"style":"display:none;"
+		}).appendTo(li);
+		$('<span>').text(chartItem.prevPosition).appendTo(prevPositionDiv);
+		
+		$('<div>').attr({
+			"class":"change_position_chartItem",
+			"style":"display:none; margin: 0 2px"
+		}).text(chartItem.chgPosition).appendTo(li);
+
+		$('<div>').attr({
+			"class":"ArtistTitle_chartItem",
+			"style":"display:none; margin: 0 2px"
+		}).text(chartItem.mediaDto.artistDto.name+" - "+chartItem.mediaDto.title).appendTo(li);
+		
+		var infoDiv = $('<div>').attr({
+			"class":"info_chartItem",
+			"style":"display:none; margin: 0 2px"
+		}).appendTo(li);
+		$('<span>').css("word-wrap","break-word").text(chartItem.info).appendTo(infoDiv);
+		
+		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
+		var publishDateDiv = $('<div>').attr({
+			"class":"publishDate_chartItem",
+			"style":"display:none;"
+		}).appendTo(li);
+		$('<span>').text(dateFormat(chartItem.publishTime, $dateformat)).appendTo(publishDateDiv);
+		$('<button>').attr({
+			"type":"button",
+			"onclick":"onToBasketClick(this, false)",
+			"class":"btn btn-danger"
+		}).text(basketButtonLable).appendTo(publishDateDiv);
+		
+		var coverMediaDiv = $('<div>').attr({
+			"class":"cover_media",
+			"style": "margin: 0 2px"
+		}).appendTo(li);
+		$('<img>').attr({
+			alt:$mediaImgAlt,
+			src:$mediaImgBaseUrl+chartItem.mediaDto.imageFileSmallDto.filename,
+			width:"50",
+			height:"50",
+		}).appendTo(coverMediaDiv);
+		
+		$('<div>').attr({
+			"class":"isrc_media",
+		}).text(chartItem.mediaDto.isrc).appendTo(li);
+		$('<div>').attr({
+			"class":"title_media",
+		}).text(chartItem.mediaDto.title).appendTo(li);
+		
+		var artistMediaDiv = $('<div>').attr({
+			"class":"artist_media"
+		}).text(chartItem.mediaDto.artistDto.name).appendTo(li);
+		
+		var artistMediaDiv = $('<div>').attr({
+			"class":"basket_button"
+		}).appendTo(li);
+		$('<button>').attr({
+			"type":"button",
+			"onclick":"onToBasketClick(this, true)",
+			"class":"btn btn-danger"
+		}).text(basketButtonLable).appendTo(artistMediaDiv);
+		
+		return li;
+	}
+	
+	/*]]>*/</script>
+</body>
 </html>

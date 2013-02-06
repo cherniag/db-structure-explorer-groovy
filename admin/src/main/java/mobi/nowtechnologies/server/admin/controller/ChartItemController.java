@@ -1,16 +1,21 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.*;
+
+import javax.servlet.http.HttpServletResponse;
+
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
+import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,18 +25,29 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Type;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class ChartItemController extends AbstractCommonController{
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
 	private static final String CHANNELS_CODE = "chartItems.channel.list";
 	
 	private ChartDetailService chartDetailService;
 	private MediaService mediaService;
 	private String filesURL;
+	private ChartService chartService;
+	private Map<String, String> viewByChartType;
+	
+	public void setChartService(ChartService chartService) {
+		this.chartService = chartService;
+	}
+
+	public void setViewByChartType(Map<String, String> viewByChartType) {
+		this.viewByChartType = viewByChartType;
+	}
 
 	public void setChartDetailService(ChartDetailService chartDetailService) {
 		this.chartDetailService = chartDetailService;
@@ -55,9 +71,9 @@ public class ChartItemController extends AbstractCommonController{
 	 */
 	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.GET)
 	public ModelAndView getChartItemsPage(@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId, @RequestParam(value="changePosition", required=false) boolean changePosition, Locale locale) {
-
 		LOGGER.debug("input parameters request getChartItemsPage(selectedPublishDateTime, chartId): [{}], [{}]", new Object[] { selectedPublishDateTime, chartId });
-
+		
+		Chart chart = chartService.getChartById(chartId);
 		List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDateTime, changePosition);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
 		
@@ -66,7 +82,7 @@ public class ChartItemController extends AbstractCommonController{
 		allChannels = new LinkedList<String>(allChannels);
 		Collections.sort((List<String>)allChannels);
 
-		ModelAndView modelAndView = new ModelAndView("chartItems/chartItemsNEW");
+		ModelAndView modelAndView = new ModelAndView(viewByChartType.get(chart.getType().name()));
 		modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		modelAndView.addObject("selectedPublishDateTime", selectedPublishDateTime);
 		modelAndView.addObject("filesURL", filesURL);

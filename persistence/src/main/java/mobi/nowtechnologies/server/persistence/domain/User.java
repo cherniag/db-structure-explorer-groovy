@@ -787,45 +787,45 @@ public class User implements Serializable {
 
 	protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
 		if (null == paymentDetails)
-			return PaymentStatusDao.getNULL().getName();
+			return PaymentStatus.NULL;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PAYMENT().getName();
+				return PaymentStatus.AWAITING_PAYMENT;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case NONE:
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PAY_PAL().getName();
+				return PaymentStatus.AWAITING_PAY_PAL;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getPAY_PAL_ERROR().getName();
+				return PaymentStatus.PAY_PAL_ERROR;
 			case NONE:
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PSMS().getName();
+				return PaymentStatus.AWAITING_PSMS;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getPSMS_ERROR().getName();
+				return PaymentStatus.PSMS_ERROR;
 			}
 			if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
-				return PaymentStatusDao.getPIN_PENDING().getName();
+				return PaymentStatus.PIN_PENDING;
 			} else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		}
 		return null;

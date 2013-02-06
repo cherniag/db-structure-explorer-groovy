@@ -195,7 +195,7 @@ public class ChartDetail {
 		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
 		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			if (chartDetail.getChannel()==null)
+			if (chartDetail.getChart().getType() == ChartType.BASIC_CHART)
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
 			else
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new BonusChartDetailDto(), defaultAmazonUrl));
@@ -215,6 +215,12 @@ public class ChartDetail {
 
 		Integer audioSize = media.getAudioSize();
 		int headerSize = media.getHeaderSize();
+		ChartType chartType = getChart().getType();
+		
+		byte pos = chartType == ChartType.HOT_TRACKS ? (byte)(position+40) : position;
+		pos = chartType == ChartType.OTHER_CHART ? (byte)(position+50) : pos;
+		
+		chartDetailDto.setPosition(pos);
 
 		chartDetailDto.setArtist(media.getArtistName());
 		chartDetailDto.setAudioSize(audioSize);
@@ -228,7 +234,6 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallSize(media.getImageSmallSize());
 		chartDetailDto.setInfo(info);
 		chartDetailDto.setMedia(media.getIsrc());
-		chartDetailDto.setPosition(position);
 		chartDetailDto.setTitle(media.getTitle());
 		chartDetailDto.setTrackSize(headerSize + audioSize - 2);
 		chartDetailDto.setChartDetailVersion(version);

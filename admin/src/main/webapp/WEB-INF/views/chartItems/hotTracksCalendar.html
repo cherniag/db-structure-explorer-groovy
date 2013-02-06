@@ -20,9 +20,8 @@
 					<ul  class="table">
 						<li class="title">
 								<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
-								<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
-								<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
 								<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
+								<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
 								<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 								<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 								<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
@@ -32,14 +31,13 @@
 						
 						<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
 							<div class="position_chartItem" th:text="${it.index+1}">1</div>
-							<div class="prev_position_chartItem" th:text="${chartItemDto.prevPosition}">1</div>
-							<div class="change_position_chartItem" th:text="${chartItemDto.chgPosition}">UP</div>
 							<div class="image_chartItem">
 								<img alt="Chart item media picture" src=""
 									th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}"
 									th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}"
 									width="50" height="50" />
 							</div>
+							<div class="channel_chartItem" th:text="${chartItemDto.channel}">HEATSEEKER</div>
 							<div class="ArtistTitle_chartItem">
 								<span th:text="${chartItemDto.mediaDto.artistDto.name} + ' - ' + ${chartItemDto.mediaDto.title}">Led Zeppelin - Kashmir</span><br/><br />
 							</div>
@@ -85,7 +83,7 @@
 				    <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
 					<button class="u_btn" type="submit" value="Edit Chart">Add</button>
 				</form><br/><br/>
-												
+								
 			</div>
 			<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
 			$(function() {

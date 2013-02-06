@@ -1,5 +1,10 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import mobi.nowtechnologies.server.admin.validator.ChartItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
@@ -9,11 +14,9 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
-import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
+import mobi.nowtechnologies.server.shared.dto.admin.*;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -26,12 +29,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -43,6 +40,11 @@ public class ChartController extends AbstractCommonController {
 
 	private ChartService chartService;
 	private String filesURL;
+	private Map<String, String> viewByChartType;
+
+	public void setViewByChartType(Map<String, String> viewByChartType) {
+		this.viewByChartType = viewByChartType;
+	}
 
 	public void setChartService(ChartService chartService) {
 		this.chartService = chartService;
@@ -68,7 +70,7 @@ public class ChartController extends AbstractCommonController {
 		LOGGER.debug("input parameters request [{}]", new Object[] { request });
 
 		String communityURL = RequestUtils.getCommunityURL();
-		List<Chart> charts = chartService.getChartsByCommunityURL(communityURL);
+		List<Chart> charts = chartService.getChartsByCommunity(communityURL, null);
 		List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
 
 		ModelAndView modelAndView = new ModelAndView("charts/charts");
@@ -95,6 +97,7 @@ public class ChartController extends AbstractCommonController {
 		if (selectedPublishDateTime == null)
 			selectedPublishDateTime = new Date();
 
+		Chart chart = chartService.getChartById(chartId);
 		List<ChartDetail> chartDetails = chartService.getActualChartItems(chartId, selectedPublishDateTime);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
 
@@ -105,7 +108,7 @@ public class ChartController extends AbstractCommonController {
 			selectedPublishDateString = dateTimeFormat.format(chartItemDtos.get(0).getPublishTime());
 		}
 
-		ModelAndView modelAndView = new ModelAndView("chartItems/chartItemsCalendar");
+		ModelAndView modelAndView = new ModelAndView(viewByChartType.get(chart.getType().name()));
 		modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		modelAndView.addObject("selectedPublishDateTime", selectedPublishDateString);
 		modelAndView.addObject("selectedDateTime", selectedPublishDateTime);

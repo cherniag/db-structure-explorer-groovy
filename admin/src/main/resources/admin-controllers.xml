@@ -42,13 +42,28 @@
 		class="mobi.nowtechnologies.server.admin.controller.ChartController">
 		<property name="chartService" ref="service.ChartService" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+		<property name="viewByChartType">
+			<map>	
+				<entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
+				<entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
+				<entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
+			</map>
+		</property>	
 	</bean>
 	
 	<bean name="admin.ChartItemController"
 		class="mobi.nowtechnologies.server.admin.controller.ChartItemController">
+		<property name="chartService" ref="service.ChartService" />
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+		<property name="viewByChartType">
+			<map>	
+				<entry key="BASIC_CHART" value="chartItems/chartItems"/>
+				<entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
+				<entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
+			</map>
+		</property>		    
 	</bean>
 	
 	<bean name="admin.UserController"
