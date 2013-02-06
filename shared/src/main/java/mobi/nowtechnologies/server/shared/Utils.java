@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -24,6 +25,8 @@ public class Utils {
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
+	
+	private static final Calendar CALENDAR = Calendar.getInstance();
 	 
     public static String getRandomString(int length) {
         Random rand = new Random(System.currentTimeMillis());
@@ -138,6 +141,25 @@ public class Utils {
 			remoteAddr = request.getRemoteAddr();
 		LOGGER.debug("Output parameter remoteAddr=[{}]", remoteAddr);
 		return remoteAddr;
+	}
+	
+	public static int getMontlyNextSubPayment(int nextSubPayment){
+		LOGGER.debug("input parameters nextSubPayment: [{}]", nextSubPayment);
+		
+		CALENDAR.clear();
+		CALENDAR.setTimeInMillis(nextSubPayment * MILLISECONDS_IN_SECOND);
+		int dayOfMonthBefore = CALENDAR.get(Calendar.DAY_OF_MONTH);
+		CALENDAR.add(Calendar.MONTH, 1);
+		
+		int dayOfMonthAfter = CALENDAR.get(Calendar.DAY_OF_MONTH);
+		if (dayOfMonthBefore != dayOfMonthAfter) {
+			CALENDAR.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		int montlyNextSubPayment = (int) (CALENDAR.getTimeInMillis()/ MILLISECONDS_IN_SECOND);
+		
+		LOGGER.debug("Output parameter montlyNextSubPayment=[{}]", montlyNextSubPayment);
+		return montlyNextSubPayment;
 	}
 	
 	

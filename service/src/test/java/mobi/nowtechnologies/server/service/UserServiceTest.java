@@ -52,7 +52,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class })
+@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class })
 public class UserServiceTest {
 
 	private static final String SMS_SUCCESFULL_PAYMENT_TEXT = "SMS_SUCCESFULL_PAYMENT_TEXT";
@@ -1172,7 +1172,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserGroupDao.class);
 		PowerMockito.mockStatic(OperatorDao.class);
 
-		Mockito.doNothing().when(mockEntityService).saveEntity(any(User.class));
+		Mockito.doReturn(user).when(mockEntityService).saveEntity(any(User.class));
 		Mockito.when(Utils.createStoredToken(anyString(), anyString())).thenReturn(storedToken);
 		Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
 		Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
@@ -1349,6 +1349,360 @@ public class UserServiceTest {
 
 		verify(mockUserRepository, times(1)).save(any(User.class));
 		verify(mockO2ClientService, times(1)).validatePhoneNumber(anyString());
+	}
+	
+	@Test
+	public void testIsNonO2User_NonO2User_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("provider");
+		
+		boolean isNonO2User = userServiceSpy.isNonO2User(user);
+		assertTrue(isNonO2User);
+	}
+	
+	@Test
+	public void testIsNonO2User_O2User_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		
+		boolean isNonO2User = userServiceSpy.isNonO2User(user);
+		assertFalse(isNonO2User);
+	}
+	
+	@Test
+	public void testIsNonO2User_UserFromNotO2Community_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("r");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider(null);
+		
+		boolean isNonO2User = userServiceSpy.isNonO2User(user);
+		assertFalse(isNonO2User);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsNonO2User_UserIsNull_Failure() throws Exception{
+		final User user = null;
+		
+		userServiceSpy.isNonO2User(user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsNonO2User_UserGroupIsNull_Failure() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = null;
+		
+		user.setUserGroup(userGroup);
+		
+		userServiceSpy.isNonO2User(user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsNonO2User_CommunityIsNull_Failure() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = null;
+		
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		
+		userServiceSpy.isNonO2User(user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsNonO2User_RewriteUrlParameterIsO2AndProviderIsNull_Failure() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider(null);
+		
+		userServiceSpy.isNonO2User(user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsNonO2User_RewriteUrlParameterIsNull_Failure() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter(null);
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider(null);
+		
+		userServiceSpy.isNonO2User(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_NonO2User_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("provider");
+		user.setSubBalance(0);
+		user.setStatus(limitedUserStatus);
+		
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(0, passedUser.getSubBalance());
+				assertEquals(Integer.MAX_VALUE, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, Integer.MAX_VALUE, submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_O2LimitedUser_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSubBalance(2);
+		user.setStatus(limitedUserStatus);
+		
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(6, passedUser.getSubBalance());
+				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_O2EulaUser_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSubBalance(2);
+		user.setStatus(eulaUserStatus);
+		
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(6, passedUser.getSubBalance());
+				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_O2SubscribedUser_Success() throws Exception{
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSubBalance(2);
+		user.setStatus(subscribedUserStatus);
+		
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(7, passedUser.getSubBalance());
+				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testProcessPaymentSubBalanceCommand_UserIsNull_Failure() throws Exception{
+		final User user = null;
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
