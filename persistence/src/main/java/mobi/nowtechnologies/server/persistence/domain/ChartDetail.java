@@ -217,8 +217,8 @@ public class ChartDetail {
 		int headerSize = media.getHeaderSize();
 		ChartType chartType = getChart().getType();
 		
-		byte pos = chartType == ChartType.HOT_TRACKS ? (byte)(position+40) : position;
-		pos = chartType == ChartType.OTHER_CHART ? (byte)(position+50) : pos;
+		byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte)(position+40) : position;
+		pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte)(position+50) : pos;
 		
 		chartDetailDto.setPosition(pos);
 
