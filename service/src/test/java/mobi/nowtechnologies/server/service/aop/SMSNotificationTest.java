@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper;
 
 import antlr.Utils;
 
@@ -41,6 +42,8 @@ public class SMSNotificationTest {
 	
 	@Mock
 	private CommunityResourceBundleMessageSource mockMessageSource;
+	
+	private NowTechTokenBasedRememberMeServices rememberMeServices;
 
 	private SMSNotification fixture;
 
@@ -74,25 +77,25 @@ public class SMSNotificationTest {
 	public void testSendLimitedStatusSMS_Success()
 		throws Exception {
 		String msg = "message1";
-		String paymentsUrl = "http://musicqubed.com/web/payments.html";
-		String tinyUrlService = "http://tinyurl.com/api-create.php?url={url}";
-		String rememberMeToken = "rememberMeToken";
+		String paymentsUrl = "http://cherry.dev.now-technologies.mobi/web/payments.html";
+		String tinyUrlService = "http://tinyurl.com/api-create.php";
 		User user = UserFactory.createUser();
 		user.getStatus().setName(UserStatus.LIMITED.name());
+		user.setUserName("+447123412142");
+		user.setToken("57e2d0177a955cf4c075fa6998621f4e");
 		Community community = user.getUserGroup().getCommunity();
+		community.setRewriteUrlParameter("o2");
 		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
 		fixture.setPaymentsUrl(paymentsUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(Object[].class), eq((Locale)null))).thenReturn(msg);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
-		when(mockRememberMeServices.getRememberMeToken(anyString(), anyString())).thenReturn(rememberMeToken);
 		
 		fixture.sendLimitedStatusSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
-		verify(mockRememberMeServices, times(1)).getRememberMeToken(anyString(), anyString());
 	}
 	
 	@Test
@@ -112,15 +115,13 @@ public class SMSNotificationTest {
 		String url =  paymentsUrl + "?_REMEMBER_ME=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
 		String[] args = {url};
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), eq(args), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(String[].class), eq((Locale)null))).thenReturn(msg);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
-		when(mockRememberMeServices.getRememberMeToken(anyString(), anyString())).thenReturn(rememberMeToken);
 
 		fixture.sendLimitedStatusSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), eq(args), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
-		verify(mockRememberMeServices, times(1)).getRememberMeToken(anyString(), anyString());
 	}
 	
 	@Test
@@ -152,7 +153,6 @@ public class SMSNotificationTest {
 	public void testSendUnsubscribePotentialSMS_Success()
 		throws Exception {
 		String msg = "message1";
-		String rememberMeToken = "rememberMeToken";
 		String unsubscribeUrl = "http://musicqubed.com/web/payments/unsubscribe.html";
 		String tinyUrlService = "http://tinyurl.com/api-create.php?url={url}";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
@@ -163,20 +163,17 @@ public class SMSNotificationTest {
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(Object[].class), eq((Locale)null))).thenReturn(msg);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
-		when(mockRememberMeServices.getRememberMeToken(anyString(), anyString())).thenReturn(rememberMeToken);
 		
 		fixture.sendUnsubscribePotentialSMS(user);
 
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
-		verify(mockRememberMeServices, times(1)).getRememberMeToken(anyString(), anyString());
 	}
 	
 	@Test
 	public void testSendUnsubscribePotentialSMS_WithBadTinyServiceUrl_Success()
 		throws Exception {
 		String msg = "message1";
-		String rememberMeToken = "rememberMeToken";
 		String unsubscribeUrl = "http://musicqubed.com/web/payments/unsubscribe.html";
 		String tinyUrlService = "bad url";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
@@ -184,29 +181,30 @@ public class SMSNotificationTest {
 		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
 		fixture.setUnsubscribeUrl(unsubscribeUrl);
 		fixture.setTinyUrlService(tinyUrlService);
+		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
 		
-		String url =  unsubscribeUrl + "?_REMEMBER_ME=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
+		String url =  unsubscribeUrl + "?community="+community.getRewriteUrlParameter()+"&_REMEMBER_ME=" + rememberMeToken;
 		String[] args = {url};
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), eq(args), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(String[].class), eq((Locale)null))).thenReturn(msg);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
-		when(mockRememberMeServices.getRememberMeToken(anyString(), anyString())).thenReturn(rememberMeToken);
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), eq(args), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
-		verify(mockRememberMeServices, times(1)).getRememberMeToken(anyString(), anyString());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Before
 	public void setUp()
 		throws Exception {
+		rememberMeServices = new NowTechTokenBasedRememberMeServices("web", new UserDetailsServiceWrapper());
 		
 		fixture = new SMSNotification();
 		fixture.setMigService(mockMigService);
 		fixture.setMessageSource(mockMessageSource);
 		fixture.setRememberMeTokenCookieName("_REMEMBER_ME");
-		fixture.setRememberMeServices(mockRememberMeServices);
+		fixture.setRememberMeServices(rememberMeServices);
 	}
 }

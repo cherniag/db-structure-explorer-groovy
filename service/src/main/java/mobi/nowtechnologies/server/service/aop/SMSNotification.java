@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Aspect
@@ -146,31 +149,35 @@ public class SMSNotification {
 		}
 	}
 	
-	protected void sendLimitedStatusSMS(User user) {
+	protected void sendLimitedStatusSMS(User user) throws UnsupportedEncodingException {
 		if(user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
 			return;
 			
 		sendSMSWithUrl(user, "sms.limited.status.text.for."+user.getProvider()+"."+user.getContract(), paymentsUrl);
 	}
 	
-	protected void sendUnsubscribePotentialSMS(User user) {
+	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
 		if(user == null || user.getCurrentPaymentDetails() == null)
 			return;
 				
 		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), unsubscribeUrl);
 	}
 	
-	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl){
+	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl) throws UnsupportedEncodingException{
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		if(!availableCommunities.contains(communityUrl))
 			return;
 		
 		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-		String url =  baseUrl + "?"+rememberMeTokenCookieName+"=" + rememberMeToken +"&community="+communityUrl;
+		
+		String url =  baseUrl + "?community="+communityUrl+"&"+rememberMeTokenCookieName+"=" + rememberMeToken;
+		
+		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+		request.add("url", url);
 		
 		try{
-			url = restTemplate.getForObject(tinyUrlService, String.class, url);			
+			url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();			
 		}catch(Exception e){
 			LOGGER.error("Error get tinyUrl.");
 		}
