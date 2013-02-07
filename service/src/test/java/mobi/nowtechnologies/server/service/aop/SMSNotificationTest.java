@@ -109,7 +109,7 @@ public class SMSNotificationTest {
 		fixture.setPaymentsUrl(paymentsUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
-		String url =  paymentsUrl + "?rememberMeToken=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
+		String url =  paymentsUrl + "?_REMEMBER_ME=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
 		String[] args = {url};
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), eq(args), eq((Locale)null))).thenReturn(msg);
@@ -185,7 +185,7 @@ public class SMSNotificationTest {
 		fixture.setUnsubscribeUrl(unsubscribeUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
-		String url =  unsubscribeUrl + "?rememberMeToken=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
+		String url =  unsubscribeUrl + "?_REMEMBER_ME=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
 		String[] args = {url};
 		
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), eq(args), eq((Locale)null))).thenReturn(msg);
@@ -206,6 +206,7 @@ public class SMSNotificationTest {
 		fixture = new SMSNotification();
 		fixture.setMigService(mockMigService);
 		fixture.setMessageSource(mockMessageSource);
+		fixture.setRememberMeTokenCookieName("_REMEMBER_ME");
 		fixture.setRememberMeServices(mockRememberMeServices);
 	}
 }
