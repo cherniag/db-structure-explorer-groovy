@@ -40,10 +40,20 @@ public class SMSNotification {
 	
 	private String tinyUrlService;
 	
+	private String rememberMeTokenCookieName;
+	
 	private NowTechTokenBasedRememberMeServices rememberMeServices;
 	
 	private RestTemplate restTemplate = new RestTemplate();
 	
+	public String getRememberMeTokenCookieName() {
+		return rememberMeTokenCookieName;
+	}
+
+	public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
+		this.rememberMeTokenCookieName = rememberMeTokenCookieName;
+	}
+
 	public void setMigService(MigHttpService migService) {
 		this.migService = migService;
 	}
@@ -157,7 +167,8 @@ public class SMSNotification {
 			return;
 		
 		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-		String url =  baseUrl + "?rememberMeToken=" + rememberMeToken +"&community="+communityUrl;
+		String url =  baseUrl + "?"+rememberMeTokenCookieName+"=" + rememberMeToken +"&community="+communityUrl;
+		
 		try{
 			url = restTemplate.getForObject(tinyUrlService, String.class, url);			
 		}catch(Exception e){
