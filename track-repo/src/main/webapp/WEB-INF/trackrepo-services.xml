@@ -31,7 +31,7 @@
 	</bean>
 	
     <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">
-		<property name="encodeDestination" value="${trackRepo.encode.destination}" />
+		<property name="publishDir" value="${trackRepo.pull.publish}" />
 		<property name="workDir" value="${trackRepo.encode.workdir}" />
     </bean> 
 	

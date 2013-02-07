@@ -154,7 +154,7 @@ public class ResourceFileDtoBuilderTest {
 		fixture = new ResourceFileDtoBuilder();
 		
 		fixture.setWorkDir(new ServletContextResource(servletContext, WORKDIR_PATH));
-		fixture.setEncodeDestination(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
+		fixture.setPublishDir(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
 	}
 
 	/**
