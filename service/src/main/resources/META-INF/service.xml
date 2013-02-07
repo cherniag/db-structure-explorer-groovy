@@ -262,7 +262,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="tinyUrlService" value="${tinyurl.service}" />
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
-		<property name="rememberMeTokenCookieName" value="${rememberMe.key}"/>
+		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 	</bean>
 
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
