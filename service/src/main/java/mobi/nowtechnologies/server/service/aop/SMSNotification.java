@@ -6,6 +6,7 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
@@ -39,6 +40,8 @@ public class SMSNotification {
 	
 	private String tinyUrlService;
 	
+	private NowTechTokenBasedRememberMeServices rememberMeServices;
+	
 	private RestTemplate restTemplate = new RestTemplate();
 	
 	public void setMigService(MigHttpService migService) {
@@ -51,6 +54,10 @@ public class SMSNotification {
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+
+	public void setRememberMeServices(NowTechTokenBasedRememberMeServices rememberMeServices) {
+		this.rememberMeServices = rememberMeServices;
 	}
 
 	public void setAvailableCommunities(String availableCommunities) {
@@ -149,7 +156,8 @@ public class SMSNotification {
 		if(!availableCommunities.contains(communityUrl))
 			return;
 		
-		String url =  baseUrl + "?rememberMeToken=" + user.getToken()+"&community="+communityUrl;
+		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
+		String url =  baseUrl + "?rememberMeToken=" + rememberMeToken +"&community="+communityUrl;
 		try{
 			url = restTemplate.getForObject(tinyUrlService, String.class, url);			
 		}catch(Exception e){

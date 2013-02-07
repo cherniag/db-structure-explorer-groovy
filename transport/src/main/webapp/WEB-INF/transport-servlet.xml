@@ -340,16 +340,5 @@
 		</property>
 	</bean>
 	
-	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"/>
-	
-	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
-		<constructor-arg>
-			<value>${rememberMe.key}</value>
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="security.nowTechUserDetailsService" />
-		</constructor-arg>
-	</bean>
-	
 	<import resource="controllers.xml" />
 </beans>
