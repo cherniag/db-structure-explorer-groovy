@@ -16,7 +16,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 		<property name="username" value="root" />
 		<property name="password" value="Cha3t5N0w1" />
 	</bean>
--->
+
 
 <bean id="persistence.DataSource"
 	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -25,7 +25,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 	<property name="username" value="root" />
 	<property name="password" value="1" />
 </bean>
-
+-->
 
 
 <bean id="persistence.EntityManagerFactory"
@@ -35,8 +35,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="false" />
-<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" /> -->
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
 			</bean>
 		</property>
 		<property name="jpaProperties">
@@ -48,6 +47,6 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 		</property>
 	</bean>
 
-<!-- 	<jdbc:embedded-database id="persistence.DataSource" type="H2" /> -->
+	<jdbc:embedded-database id="persistence.DataSource" type="H2" />
 
 </beans>
