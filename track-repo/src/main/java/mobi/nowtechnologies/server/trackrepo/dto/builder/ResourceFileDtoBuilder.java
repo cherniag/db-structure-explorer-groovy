@@ -25,11 +25,11 @@ public class ResourceFileDtoBuilder {
 	private MP3Manager mp3Manager = new MP3Manager();
 	private MP4Manager mp4manager = new MP4Manager();
 
-	private Resource encodeDestination;
+	private Resource publishDir;
 	private Resource workDir;
-	
-	public void setEncodeDestination(Resource encodeDestination) {
-		this.encodeDestination = encodeDestination;
+
+	public void setPublishDir(Resource publishDir) {
+		this.publishDir = publishDir;
 	}
 
 	public void setWorkDir(Resource workDir) {
@@ -37,7 +37,7 @@ public class ResourceFileDtoBuilder {
 	}
 
 	public void init() throws Exception {
-		if (encodeDestination == null || !encodeDestination.exists())
+		if (publishDir == null || !publishDir.exists())
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.destination");
 		if (workDir == null || !workDir.exists())
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
@@ -45,7 +45,7 @@ public class ResourceFileDtoBuilder {
 	
 	public List<ResourceFileDto> build(String isrc) throws IOException{
 		String workDirPath = workDir.getFile().getAbsolutePath();
-		String distDirPath = encodeDestination.getFile().getAbsolutePath();
+		String distDirPath = publishDir.getFile().getAbsolutePath();
 		
 		String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, isrc));
 		String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, isrc));

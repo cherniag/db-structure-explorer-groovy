@@ -180,6 +180,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			track.setInfo(media.getInfo());
 			track.setItunesUrl(config.getItunesUrl());
 			track.setStatus(TrackStatus.PUBLISHED);
+			track.setAmazonUrl(config.getAmazonUrl());
+			track.setAreArtistUrls(config.getAreArtistUrls());
 
 			LOGGER.info("output pull(track): [{}]", track);
 		} catch (Exception e) {
@@ -298,6 +300,11 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 					track.setPublishTitle(media.getTitle());
 					track.setInfo(media.getArtist().getInfo());
 					track.setPublishArtist(media.getArtistName());
+					track.setAreArtistUrls(media.getAreArtistUrls());
+					final String amazonUrl = media.getAmazonUrl();
+					if (amazonUrl != null && !amazonUrl.isEmpty()) {
+						track.setAmazonUrl(amazonUrl);
+					}
 					if (media.getiTunesUrl() != null && !"".equals(media.getiTunesUrl())) {
 						try {
 							Matcher m = Pattern.compile("url=.*\\%26").matcher(media.getiTunesUrl());
