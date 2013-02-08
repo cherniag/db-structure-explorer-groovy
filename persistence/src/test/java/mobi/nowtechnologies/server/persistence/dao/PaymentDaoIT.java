@@ -82,11 +82,12 @@ public class PaymentDaoIT {
 		createUser(paymentPolicy, PaymentDetailsStatus.NONE, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "o2");
 		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "");
 		createUser(paymentPolicy, null, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, o2UserGroupId, Utils.getEpochSeconds()- 60 * 60, "");
 		
 		List<User> pendingPayments = paymentDao.getUsersForPendingPayment();
 		
 		Assert.assertNotNull(pendingPayments);
-		Assert.assertEquals(7, pendingPayments.size());
+		Assert.assertEquals(8, pendingPayments.size());
 	}
 	
 	private User createUser(PaymentPolicy paymentPolicy, PaymentDetailsStatus lastPaymentStatus, byte usergroupId, int nextSubPayment, String provider) {
