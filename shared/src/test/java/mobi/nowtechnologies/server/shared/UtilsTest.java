@@ -554,8 +554,6 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
-
-		PowerMockito.spy(Utils.class);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
@@ -600,8 +598,6 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
-
-		PowerMockito.spy(Utils.class);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
@@ -646,8 +642,6 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
-
-		PowerMockito.spy(Utils.class);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
