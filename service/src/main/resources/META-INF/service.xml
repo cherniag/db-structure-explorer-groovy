@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-init-method="init" 
-	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd 
 http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-	
-	<!-- Application properties     -->
+
+	<!-- Application properties -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
@@ -19,17 +16,17 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
-	
+
 	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
-		<property name="deviceUserDataRepository" ref="deviceUserDataRepository"/>
-		<property name="userService" ref="service.UserService"/>
-		<property name="communityService" ref="service.communityService" />		
+		<property name="deviceUserDataRepository" ref="deviceUserDataRepository" />
+		<property name="userService" ref="service.UserService" />
+		<property name="communityService" ref="service.communityService" />
 	</bean>
-	
+
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
 		<property name="manifest" value="META-INF/MANIFEST.MF" />
 	</bean>
-	
+
 	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
@@ -52,7 +49,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />
 		<property name="communityService" ref="service.communityService" />
 		<property name="mailService" ref="service.MailService" />
-		<property name="facebookService" ref = "service.FacebookService" />
+		<property name="facebookService" ref="service.FacebookService" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="offerService" ref="service.OfferService" />
 		<property name="drmService" ref="service.DrmService" />
@@ -60,7 +57,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 	</bean>
-	
+
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
@@ -68,9 +65,9 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="migPaymentService" ref="service.migPaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
-		
+
 		<property name="messageSource" ref="serviceMessageSource" />
-		
+
 		<property name="communityService" ref="service.communityService" />
 		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
@@ -94,17 +91,17 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="userService" ref="service.UserService" />
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 	</bean>
-	
+
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService">
 		<property name="accountLogDao" ref="persistence.AccountLogDao" />
 		<property name="accountLogRepository" ref="accountLogRepository" />
 	</bean>
-	
+
 	<bean id="service.NewsDetailService" class="mobi.nowtechnologies.server.service.NewsDetailService">
 		<property name="userService" ref="service.UserService" />
 		<property name="newsDetailDao" ref="persistence.NewsDetailDao" />
 	</bean>
-	
+
 	<bean id="service.MediaLogService" class="mobi.nowtechnologies.server.service.MediaLogService">
 		<property name="mediaLogDao" ref="persistence.MediaLogDao" />
 	</bean>
@@ -112,16 +109,16 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<bean id="service.MediaLogTypeService" class="mobi.nowtechnologies.server.service.MediaLogTypeService">
 		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
 	</bean>
-	
+
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="promotionDao" ref="persistence.PromotionDao" />
 	</bean>
-	
+
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
-		<property name="mailSender" ref="service.MailSender"/>
+		<property name="mailSender" ref="service.MailSender" />
 	</bean>
-	
+
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
@@ -129,7 +126,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
-	
+
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
@@ -138,7 +135,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
 	</bean>
-	
+
 	<bean id="service.MailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="${mail.host}" />
 		<property name="port" value="${mail.port}" />
@@ -146,7 +143,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="password" value="${mail.password}" />
 		<property name="javaMailProperties">
 			<props>
-				<prop key="mail.smtp.auth" >${mail.auth}</prop>
+				<prop key="mail.smtp.auth">${mail.auth}</prop>
 				<prop key="mail.debug">${mail.debug}</prop>
 				<prop key="mail.transport.protocol">${mail.protocol}</prop>
 				<prop key="mail.smtp.from">${mail.from}</prop>
@@ -165,18 +162,17 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
-		<property name="storePath" value="${store.path}"/>
+		<property name="storePath" value="${store.path}" />
 	</bean>
 
-	<bean id="service.CountryAppVersionService"
-		class="mobi.nowtechnologies.server.service.CountryAppVersionService">
+	<bean id="service.CountryAppVersionService" class="mobi.nowtechnologies.server.service.CountryAppVersionService">
 		<property name="countryAppVersionDao" ref="persistence.CountryAppVersionDao" />
 	</bean>
 
 	<bean id="service.CountryService" class="mobi.nowtechnologies.server.service.CountryService">
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
-	
+
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
 		<property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao" />
 	</bean>
@@ -192,7 +188,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="urlRelease" value="${sagepay.releaseUrl}" />
 		<property name="urlRepeat" value="${sagepay.repeatUrl}" />
 	</bean>
-	
+
 	<bean id="service.MigService" class="mobi.nowtechnologies.server.service.MigService">
 		<property name="postService" ref="shared.PostService" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -201,43 +197,40 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="urlPremiumSms" value="${mig.premiumSMSURL}" />
 		<property name="timeToLive" value="${mig.timeToLiveMin}" />
 	</bean>
-	
+
 	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.FacebookService">
 		<property name="postService" ref="shared.PostService" />
 		<property name="messageSource" ref="serviceMessageSource" />
-		
+
 		<property name="fbAppId" value="${facebook.connect.fbAppId}" />
-		<property name="fbAppSecret" value="${facebook.connect.fbAppSecret}" />		
+		<property name="fbAppSecret" value="${facebook.connect.fbAppSecret}" />
 	</bean>
-	
+
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
-	
-	<bean id="service.UserDeviceDetailsService"
-		class="mobi.nowtechnologies.server.service.UserDeviceDetailsService">
+
+	<bean id="service.UserDeviceDetailsService" class="mobi.nowtechnologies.server.service.UserDeviceDetailsService">
 		<property name="entityService" ref="service.EntityService" />
-		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />		
+		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
 		<property name="userAndroidDetailsService" ref="service.UserAndroidDetailsService" />
 	</bean>
-	
-	<bean id="service.UserIPhoneDetailsService"
-		class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService">
-		<property name="userIPhoneDetailsDao" ref="persistence.UserIPhoneDetailsDao" />		
+
+	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService">
+		<property name="userIPhoneDetailsDao" ref="persistence.UserIPhoneDetailsDao" />
 	</bean>
-	
-	
-	<bean id="service.UserAndroidDetailsService"
-		class="mobi.nowtechnologies.server.service.UserAndroidDetailsService">
-		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />		
+
+
+	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService">
+		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />
 	</bean>
-	
+
 	<bean id="service.CountryByIpService" class="mobi.nowtechnologies.server.service.CountryByIpService">
-		<property name="storePath" value="${store.path}"/>
+		<property name="storePath" value="${store.path}" />
 	</bean>
-	
-	<!-- Application properties     -->
+
+	<!-- Application properties -->
 	<bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
 		<property name="basenames">
 			<list>
@@ -250,16 +243,16 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="cacheSeconds" value="180" />
 		<property name="useCodeAsDefaultMessage" value="true" />
 	</bean>
-	
+
 	<!-- AOP Services -->
 	<aop:aspectj-autoproxy proxy-target-class="true" />
-	
+
 	<bean id="mailNotificationAspect" class="mobi.nowtechnologies.server.service.aop.MailNotification">
 		<property name="mailService" ref="service.MailService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
-	
+
 	<bean id="smsNotificationAspect" class="mobi.nowtechnologies.server.service.aop.SMSNotification" depends-on="service.WeeklyUpdateService">
 		<property name="migService" ref="service.migHttpService" />
 		<property name="userService" ref="service.UserService" />
@@ -268,16 +261,18 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
 		<property name="tinyUrlService" value="${tinyurl.service}" />
 		<property name="availableCommunities" value="${sms.available.communities}" />
+		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
+		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 	</bean>
-	
+
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>
-	
+
 	<bean id="service.operatorService" class="mobi.nowtechnologies.server.service.impl.OperatorServiceImpl" />
-	
+
 	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
-	
+
 	<bean id="service.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
 		<property name="userName" value="${cloudFile.userName}" />
 		<property name="password" value="${cloudFile.password}" />
@@ -289,7 +284,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
 	</bean>
-	
+
 	<bean id="service.MessageService" class="mobi.nowtechnologies.server.service.MessageService">
 		<property name="userService" ref="service.UserService" />
 		<property name="filterService" ref="service.FilterService" />
@@ -297,7 +292,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="messageRepository" ref="messageRepository" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
-	
+
 	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
 		<property name="filterService" ref="service.FilterService" />
 		<property name="offerRepository" ref="offerRepository" />
@@ -306,11 +301,11 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
-	
+
 	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl">
-		<property name="trackRepoUrl"  value="${trackRepo.baseURL}" />
+		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
 	</bean>
-	
+
 	<bean id="service.TrackRepoService" class="mobi.nowtechnologies.server.service.impl.TrackRepoServiceImpl">
 		<property name="mediaRepository" ref="mediaRepository" />
 		<property name="mediaFileRepository" ref="mediaFileRepository" />
@@ -318,25 +313,36 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="artistRepository" ref="artistRepository" />
 		<property name="client" ref="trackRepoClient" />
 	</bean>
-	
+
 	<bean id="service.FilterService" class="mobi.nowtechnologies.server.service.FilterService">
 		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
 	</bean>
-	
+
 	<bean id="service.IPaymentService" class="mobi.nowtechnologies.server.service.impl.PaymentServiceImpl">
 		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
 	</bean>
-	
+
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
 		<property name="userService" ref="service.UserService" />
 	</bean>
-	
+
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.impl.O2ClientServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
 	</bean>
-	
-	<task:annotation-driven/>
-	
+
+	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />
+
+	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
+		<constructor-arg>
+			<value>${rememberMe.key}</value>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="security.nowTechUserDetailsService" />
+		</constructor-arg>
+	</bean>
+
+	<task:annotation-driven />
+
 	<import resource="payment.xml" />
 
 </beans>
