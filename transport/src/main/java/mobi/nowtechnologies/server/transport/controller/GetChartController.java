@@ -157,4 +157,8 @@ public class GetChartController extends CommonController{
 	public void setChartService(ChartService chartService) {
 		this.chartService = chartService;
 	}
+
+	public void setThrottlingService(ThrottlingService throttlingService) {
+		this.throttlingService = throttlingService;
+	}
 }

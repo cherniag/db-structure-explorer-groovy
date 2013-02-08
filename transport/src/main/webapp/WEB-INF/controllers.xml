@@ -36,6 +36,7 @@
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" parent="transport.CommonController">
 		<property name="chartService" ref="service.ChartService" />
+		<property name="throttlingService" ref="throttlingService" />
 	</bean>
 	
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController" parent="transport.CommonController">
