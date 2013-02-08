@@ -10,6 +10,12 @@ import java.util.Date;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import com.sun.org.apache.bcel.internal.classfile.PMGClass;
 
 /**
  * The class <code>UtilsTest</code> contains tests for the class
@@ -19,6 +25,8 @@ import org.junit.Test;
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Utils.class)
 public class UtilsTest {
 
 	private static final long MILISECONDS_IN_SECONDS = 1000L;
@@ -414,6 +422,11 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		
 		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
@@ -442,6 +455,11 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		
 		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
@@ -470,6 +488,11 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59);
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		
 		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
@@ -498,11 +521,199 @@ public class UtilsTest {
 		calendar.set(Calendar.SECOND, 59); 
 		
 		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		
 		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsAbsentInTheNextMonth_NextSubPaymentIsLessThanCurrentTime_Success() throws Exception{	
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 30);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int currentTimeSeconds = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsPresentInTheNextMonthOfLeapYear_NextSubPaymentIsLessThanCurrentTime_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 28);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int currentTimeSeconds = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2012);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsAbsentInTheNextMonthOfNotLeapYear_NextSubPaymentIsLessThanCurrentTime_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 28);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 29);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int currentTimeSeconds = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
+	}
+	
+	
+	@Test
+	public void testGetMontlyNextSubPayment_DateIsPresentInTheNextMonth_NextSubPaymentIsLessThanCurrentTime_Success() throws Exception{
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59); 
+		
+		int nextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
+
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 2);
+		calendar.set(Calendar.YEAR, 2013);
+		calendar.set(Calendar.AM_PM, Calendar.PM);
+		calendar.set(Calendar.HOUR, 11);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		
+		int currentTimeSeconds = (int) (calendar.getTimeInMillis()/ 1000);
+
+		PowerMockito.spy(Utils.class);
+		
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		
+		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		
+		calendar.clear();
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, 2);
 		calendar.set(Calendar.YEAR, 2013);
 		calendar.set(Calendar.AM_PM, Calendar.PM);
 		calendar.set(Calendar.HOUR, 11);
