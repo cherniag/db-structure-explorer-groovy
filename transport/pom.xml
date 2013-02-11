@@ -53,6 +53,13 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>mobi.nowtechnologies.java.server</groupId>
+			<artifactId>shared</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		
+		<dependency>
 		    <groupId>opensymphony</groupId>
 		    <artifactId>quartz</artifactId>
 	    </dependency>

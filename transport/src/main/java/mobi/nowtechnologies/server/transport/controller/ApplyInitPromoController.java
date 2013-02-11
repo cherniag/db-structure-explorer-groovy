@@ -55,7 +55,7 @@ public class ApplyInitPromoController extends CommonController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/APPLY_INIT_PROMO", "*/{community:o2}/3.6/APPLY_INIT_PROMO"})
+    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
     public ModelAndView applyO2Promotion(
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,

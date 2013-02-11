@@ -160,7 +160,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6/ACC_CHECK", "*/{community:o2}/3.6/ACC_CHECK" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
