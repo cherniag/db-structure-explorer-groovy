@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.*;
+
+import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
-import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -15,8 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -31,7 +31,12 @@ public class ChartService {
 	private ChartRepository chartRepository;
 	private MediaService mediaService;
 	private CommunityResourceBundleMessageSource messageSource;
+	private CloudFileService cloudFileService;
 
+	public void setCloudFileService(CloudFileService cloudFileService) {
+		this.cloudFileService = cloudFileService;
+	}
+	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -69,8 +74,10 @@ public class ChartService {
 		List<Chart> charts = getChartsByCommunity(null, communityName);
 
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
 		for (Chart chart : charts) {			
 			chartDetails.addAll(chartDetailService.findChartDetailTreeAndUpdateDrm(user, chart.getI()));
+			playlistDtos.add(ChartAsm.toPlaylistDto(chart));
 		}
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
@@ -78,6 +85,7 @@ public class ChartService {
 		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
+		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
 		chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
 		Object[] objects = new Object[] { accountCheck, chartDto };
 
@@ -259,5 +267,20 @@ public class ChartService {
 		LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
 		return clonedChartDetails;
 
+	}
+
+	public Chart updateChart(Chart chart, MultipartFile imageFile) {
+		LOGGER.debug("input updateChart(Chart chart) [{}]", chart);
+
+		if(chart != null){			
+			int updated = chartRepository.updateFields(chart.getI(), chart.getName(), chart.getSubtitle(), chart.getImageFileName());
+			
+			if (updated > 0 && null != imageFile && !imageFile.isEmpty())
+				cloudFileService.uploadFile(imageFile, chart.getImageFileName());
+		}
+		
+		LOGGER.debug("Output updateChart(Chart chart)", chart);
+		
+		return chart;
 	}
 }

@@ -45,3 +45,32 @@ set cd.chart = chn.i
 where cd.position > 50 and cd.channel is not null;
 
  -- end migration
+
+alter table tb_charts add column subtitle char(50) not null default '';
+
+alter table tb_charts add column image_filename varchar(255);
+
+create table community_charts (chart_id tinyint not null, community_id tinyint not null);
+
+alter table community_charts add constraint FK3410E96B82282017 foreign key (community_id) references tb_communities;
+alter table community_charts add constraint FK3410E96B4E1D2677 foreign key (chart_id) references tb_charts;
+
+ -- start migration old one-to-many association between char and comunities to new many-to-many
+ 
+update tb_charts
+set subtitle=name;
+ 
+insert into community_charts (chart_id, community_id)
+select
+ch.i,
+ch.community
+from tb_charts ch
+
+ -- remove community column from tb_charts
+SELECT @SQL:=concat('alter table tb_charts drop foreign key ',constraint_name) FROM information_schema.key_column_usage where constraint_schema = 'cn_service' and table_name = 'tb_charts' and column_name = 'community'; 
+PREPARE stmt FROM @SQL; 
+EXECUTE stmt;
+
+alter table tb_charts drop column community;
+
+ -- end migration

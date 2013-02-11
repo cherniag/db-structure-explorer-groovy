@@ -179,6 +179,26 @@ public class GetChartController extends CommonController{
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.7/GET_CHART", "*/{community:o2}/3.7/GET_CHART"})
+	public ModelAndView getChart_O2_v3d7(
+			HttpServletRequest request,
+			@RequestParam("APP_VERSION") String appVersion,
+			@RequestParam("COMMUNITY_NAME") String communityName,
+			@RequestParam("API_VERSION") String apiVersion,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+			@PathVariable("community") String community) {
+
+		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+		
+		Object[] objects = chartService.processGetChartCommand(user, community);
+		
+		proccessRememberMeToken(objects);
+		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+	}
+	
 	protected boolean shouldReject(final int i) throws Exception {
 		final Long initial = new Long(i);
 		CASMutator<Long> mutator = new CASMutator<Long>(memcachedClient, new LongTranscoder());

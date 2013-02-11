@@ -13,11 +13,18 @@ insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image');
 
 insert into tb_labels (i,name) values (9,'INTERSCOPE');
 
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (1,'Default Chart',20,1,1,1307035342,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (2,'Default Chart',20,2,1,1306787849,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (3,'Default Chart',20,3,1,1317281215,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (4,'The Heavy List',20,4,1,1317107880,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (5,'Default Chart',21,5,1,1321452650,6);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (1,'Default Chart','Default Chart',20,1,1307035342,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (2,'Default Chart','Default Chart',20,1,1306787849,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (3,'Default Chart','Default Chart',20,1,1317281215,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (4,'The Heavy List','The Heavy List',20,1,1317107880,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (5,'Default Chart','Default Chart',21,1,1321452650,6);
+
+insert into community_charts (chart_id, community_id) values (1,1);
+insert into community_charts (chart_id, community_id) values (1,2);
+insert into community_charts (chart_id, community_id) values (2,2);
+insert into community_charts (chart_id, community_id) values (3,3);
+insert into community_charts (chart_id, community_id) values (4,4);
+insert into community_charts (chart_id, community_id) values (5,5);
 
 insert into tb_files (i, filename, size, fileType, version) values (1894,'US-UM7-11-00061.aud',1464070,2,1);
 insert into tb_files (i, filename, size, fileType, version) values (1893,'US-UM7-11-00061.hdr',162676,1,666);

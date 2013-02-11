@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The class <code>ChartRepositoryTest</code> contains tests for the class <code>{@link ChartRepository}</code>.
@@ -24,7 +26,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public class ChartRepositoryIT {
 
 	@Resource(name = "chartRepository")
@@ -37,6 +39,24 @@ public class ChartRepositoryIT {
 
 		assertNotNull(charts);
 		assertEquals(1, charts.size());
+	}
+	
+	@Test
+	public void testGetByCommuntityUrl() throws Exception {
+
+		List<Chart> charts = chartRepository.getByCommunityURL("ChartsNow");
+
+		assertNotNull(charts);
+		assertEquals(1, charts.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void testUpdateFields() throws Exception {
+
+		int updated = chartRepository.updateFields((byte)1, "chart name", "chart subtitle", "chart image");
+
+		assertEquals(1, updated);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import mobi.nowtechnologies.server.admin.validator.ChartDtoValidator;
 import mobi.nowtechnologies.server.admin.validator.ChartItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
@@ -59,10 +60,16 @@ public class ChartController extends AbstractCommonController {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateTimeFormat, true));
 	}
 
-	@InitBinder( { ChartItemDto.CHART_ITEM_DTO })
-	public void initNewsBinder(WebDataBinder binder) {
+	@InitBinder( { ChartItemDto.CHART_ITEM_DTO})
+	public void initChartItemBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, "channel", new StringTrimmerEditor(" ",true));
-		binder.setValidator(new ChartItemDtoValidator());		
+		binder.setValidator(new ChartItemDtoValidator());	
+		binder.setValidator(new ChartDtoValidator());	
+	}
+
+	@InitBinder( {ChartDto.CHART_DTO })
+	public void initChartBinder(WebDataBinder binder) {
+		binder.setValidator(new ChartDtoValidator());	
 	}
 
 	@RequestMapping(value = "/charts/list", method = RequestMethod.GET)
@@ -75,6 +82,27 @@ public class ChartController extends AbstractCommonController {
 
 		ModelAndView modelAndView = new ModelAndView("charts/charts");
 		modelAndView.addObject(ChartDto.CHART_DTO_LIST, chartDtos);
+
+		return modelAndView;
+	}
+	
+	/**Update properties of selected chart
+	 * 
+	 * @param chartItemDto dto of chart
+	 * @param chartId id of chart
+	 * @return redirect to the chart calender page
+	 */
+	@RequestMapping(value = "/charts/{chartId}", method = RequestMethod.POST)
+	public ModelAndView updateChart(
+			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
+			@PathVariable("chartId") Byte chartId) {
+
+		LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
+
+		Chart chart = ChartAsm.toChart(chartDto);
+		chartService.updateChart(chart, chartDto.getFile());
+
+		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
 
 		return modelAndView;
 	}
