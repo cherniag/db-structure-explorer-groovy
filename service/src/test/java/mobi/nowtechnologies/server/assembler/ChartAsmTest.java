@@ -82,7 +82,7 @@ public class ChartAsmTest {
 
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getPlaylistTitle());
-		assertEquals(chart.getI(), result.getId());
+		assertEquals(chart.getI().byteValue(), result.getId().byteValue());
 		assertEquals(chart.getImageFileName(), result.getImage());
 		assertEquals(chart.getSubtitle(), result.getSubtitle());
 	}
