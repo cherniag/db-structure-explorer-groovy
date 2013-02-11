@@ -86,7 +86,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"and u.subBalance=0) " +
 			"or (c.rewriteUrlParameter like 'o2' " +
 			"and u.provider<>'o2' " +
-			"and (u.nextSubPayment-?1<=86400))) " +
+			"and (u.nextSubPayment<=?1+86400))) " +
 			"and (pd.lastPaymentStatus='NONE' " +
 			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
 			"and pd.activated=true " +

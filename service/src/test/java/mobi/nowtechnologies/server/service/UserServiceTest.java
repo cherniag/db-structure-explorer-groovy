@@ -1510,7 +1510,7 @@ public class UserServiceTest {
 		userServiceSpy.processPaymentSubBalanceCommand(user, Integer.MAX_VALUE, submittedPayment);
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
 	}
 	
