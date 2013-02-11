@@ -85,6 +85,7 @@ public class ChartAsmTest {
 		assertEquals(chart.getI().byteValue(), result.getId().byteValue());
 		assertEquals(chart.getImageFileName(), result.getImage());
 		assertEquals(chart.getSubtitle(), result.getSubtitle());
+		assertEquals(chart.getType(), result.getType());
 	}
 
 	@Before

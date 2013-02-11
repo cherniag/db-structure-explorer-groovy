@@ -79,6 +79,7 @@ public class ChartAsm {
 		playlistDto.setPlaylistTitle(chart.getName());
 		playlistDto.setSubtitle(chart.getSubtitle());
 		playlistDto.setImage(chart.getImageFileName());
+		playlistDto.setType(chart.getType());
 		
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;

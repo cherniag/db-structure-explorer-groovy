@@ -13,6 +13,7 @@ import java.util.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
