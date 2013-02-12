@@ -1,24 +1,25 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import javax.servlet.http.Cookie;
+
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import javax.servlet.http.Cookie;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -48,6 +49,161 @@ public class ChartIT {
 		cookie.setMaxAge(365 * 24 * 60 * 60);
 		return cookie;
 	}
+	
+	@Test
+	public void testUpdateChart_Success() throws Exception {
+
+		Integer id = 5;
+		String name = "Basic Chart Name";
+		String subtitle = "Basic Chart Subtitle";
+		byte[] file = "1".getBytes();
+		String requestURI = "/charts/"+id;
+		String communityUrl = "nowtop40";
+		String imageFileName = "someImageFileName";
+
+		MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
+		mockMultipartHttpServletRequest.setMethod(RequestMethod.POST.name());
+		mockMultipartHttpServletRequest.setRequestURI(requestURI);
+		mockMultipartHttpServletRequest.setPathInfo(requestURI);
+
+		Cookie cookie = getCommunityCoockie(mockMultipartHttpServletRequest, communityUrl);
+
+		mockMultipartHttpServletRequest.setCookies(cookie);
+
+		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken("admin", "admin");
+
+		mockMultipartHttpServletRequest.addHeader(nowTechTokenBasedRememberMeServices.getKey(), rememberMeToken);
+		mockMultipartHttpServletRequest.addHeader("Accept", "application/json");
+
+		mockMultipartHttpServletRequest.addParameter("id", id.toString());
+		mockMultipartHttpServletRequest.addParameter("name", name);
+		mockMultipartHttpServletRequest.addParameter("subtitle", subtitle);
+		mockMultipartHttpServletRequest.addParameter("imageFileName", imageFileName);
+		mockMultipartHttpServletRequest.addFile(new MockMultipartFile("file", file));
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+		dispatcherServlet.service(mockMultipartHttpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+
+		assertEquals("/charts/5", mockHttpServletResponse.getRedirectedUrl());
+	}
+	
+	@Test
+	public void testUpdateChart_NotValidName_Failure() throws Exception {
+
+		Integer id = 5;
+		String name = "Basic Chart Name11111111111111111111111111111111111111111111111111";
+		String subtitle = "Basic Chart Subtitle";
+		byte[] file = "1".getBytes();
+		String requestURI = "/charts/"+id;
+		String communityUrl = "nowtop40";
+		String imageFileName = "someImageFileName";
+
+		MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
+		mockMultipartHttpServletRequest.setMethod(RequestMethod.POST.name());
+		mockMultipartHttpServletRequest.setRequestURI(requestURI);
+		mockMultipartHttpServletRequest.setPathInfo(requestURI);
+
+		Cookie cookie = getCommunityCoockie(mockMultipartHttpServletRequest, communityUrl);
+
+		mockMultipartHttpServletRequest.setCookies(cookie);
+
+		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken("admin", "admin");
+
+		mockMultipartHttpServletRequest.addHeader(nowTechTokenBasedRememberMeServices.getKey(), rememberMeToken);
+		mockMultipartHttpServletRequest.addHeader("Accept", "application/json");
+
+		mockMultipartHttpServletRequest.addParameter("id", id.toString());
+		mockMultipartHttpServletRequest.addParameter("name", name);
+		mockMultipartHttpServletRequest.addParameter("subtitle", subtitle);
+		mockMultipartHttpServletRequest.addParameter("imageFileName", imageFileName);
+		mockMultipartHttpServletRequest.addFile(new MockMultipartFile("file", file));
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+		dispatcherServlet.service(mockMultipartHttpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mockHttpServletResponse.getStatus());
+	}
+	
+	@Test
+	public void testUpdateChart_NotValidSubtitle_Failure() throws Exception {
+
+		Integer id = 5;
+		String name = "Basic Chart Name";
+		String subtitle = "Basic Chart Subtitle11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+		byte[] file = "1".getBytes();
+		String requestURI = "/charts/"+id;
+		String communityUrl = "nowtop40";
+		String imageFileName = "someImageFileName";
+
+		MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
+		mockMultipartHttpServletRequest.setMethod(RequestMethod.POST.name());
+		mockMultipartHttpServletRequest.setRequestURI(requestURI);
+		mockMultipartHttpServletRequest.setPathInfo(requestURI);
+
+		Cookie cookie = getCommunityCoockie(mockMultipartHttpServletRequest, communityUrl);
+
+		mockMultipartHttpServletRequest.setCookies(cookie);
+
+		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken("admin", "admin");
+
+		mockMultipartHttpServletRequest.addHeader(nowTechTokenBasedRememberMeServices.getKey(), rememberMeToken);
+		mockMultipartHttpServletRequest.addHeader("Accept", "application/json");
+
+		mockMultipartHttpServletRequest.addParameter("id", id.toString());
+		mockMultipartHttpServletRequest.addParameter("name", name);
+		mockMultipartHttpServletRequest.addParameter("subtitle", subtitle);
+		mockMultipartHttpServletRequest.addParameter("imageFileName", imageFileName);
+		mockMultipartHttpServletRequest.addFile(new MockMultipartFile("file", file));
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+		dispatcherServlet.service(mockMultipartHttpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mockHttpServletResponse.getStatus());
+	}
+	
+	@Test
+	public void testUpdateChart_NotValidFile_Failure() throws Exception {
+
+		Integer id = 5;
+		String name = "Basic Chart Name";
+		String subtitle = "Basic Chart Subtitle";
+		byte[] file = new byte[31000];
+		String requestURI = "/charts/"+id;
+		String communityUrl = "nowtop40";
+		String imageFileName = "someImageFileName";
+
+		MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
+		mockMultipartHttpServletRequest.setMethod(RequestMethod.POST.name());
+		mockMultipartHttpServletRequest.setRequestURI(requestURI);
+		mockMultipartHttpServletRequest.setPathInfo(requestURI);
+
+		Cookie cookie = getCommunityCoockie(mockMultipartHttpServletRequest, communityUrl);
+
+		mockMultipartHttpServletRequest.setCookies(cookie);
+
+		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken("admin", "admin");
+
+		mockMultipartHttpServletRequest.addHeader(nowTechTokenBasedRememberMeServices.getKey(), rememberMeToken);
+		mockMultipartHttpServletRequest.addHeader("Accept", "application/json");
+
+		mockMultipartHttpServletRequest.addParameter("id", id.toString());
+		mockMultipartHttpServletRequest.addParameter("name", name);
+		mockMultipartHttpServletRequest.addParameter("subtitle", subtitle);
+		mockMultipartHttpServletRequest.addParameter("imageFileName", imageFileName);
+		mockMultipartHttpServletRequest.addFile(new MockMultipartFile("file", file));
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+		dispatcherServlet.service(mockMultipartHttpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mockHttpServletResponse.getStatus());
+	}
+
 
 	@Test
 	public void testUpdateChartItems_Success() throws Exception {

@@ -30,6 +30,7 @@ public class ChartDetailDto {
 	private int imageLargeVersion;
 	private int imageSmallVersion;
 	private boolean isArtistUrl;
+	private Integer playlistId;
 
 	public ChartDetailDto() {
 	}
@@ -234,13 +235,20 @@ public class ChartDetailDto {
 		this.isArtistUrl = isArtistUrl;
 	}
 
+	public Integer getPlaylistId() {
+		return playlistId;
+	}
+
+	public void setPlaylistId(Integer playlistId) {
+		this.playlistId = playlistId;
+	}
+
 	@Override
 	public String toString() {
-		return "ChartDetailDto [artist=" + artist + ", audioSize=" + audioSize + ", changePosition=" + changePosition + ", drmType=" + drmType + ", drmValue="
-				+ drmValue + ", genre1=" + genre1 + ", genre2=" + genre2 + ", headerSize=" + headerSize + ", iTunesUrl=" + iTunesUrl +", isArtistUrl=" + isArtistUrl + ", amazonUrl=" + amazonUrl + ", imageLargeSize="
-				+ imageLargeSize + ", imageSmallSize=" + imageSmallSize + ", info=" + info + ", media=" + media + ", position=" + position
-				+ ", previousPosition=" + previousPosition + ", title=" + title + ", channel=" + channel + ", trackSize=" + trackSize + ", chartDetailVersion="
-				+ chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion=" + imageLargeVersion
-				+ ", imageSmallVersion=" + imageSmallVersion + "]";
+		return "ChartDetailDto [position=" + position + ", media=" + media + ", title=" + title + ", artist=" + artist + ", info=" + info + ", genre1=" + genre1 + ", genre2=" + genre2 + ", drmType="
+				+ drmType + ", drmValue=" + drmValue + ", trackSize=" + trackSize + ", headerSize=" + headerSize + ", audioSize=" + audioSize + ", imageLargeSize=" + imageLargeSize
+				+ ", imageSmallSize=" + imageSmallSize + ", iTunesUrl=" + iTunesUrl + ", amazonUrl=" + amazonUrl + ", previousPosition=" + previousPosition + ", changePosition=" + changePosition
+				+ ", channel=" + channel + ", chartDetailVersion=" + chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion="
+				+ imageLargeVersion + ", imageSmallVersion=" + imageSmallVersion + ", isArtistUrl=" + isArtistUrl + ", playlistId=" + playlistId + "]";
 	}
 }

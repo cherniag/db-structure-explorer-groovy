@@ -5,28 +5,14 @@ import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
 import org.slf4j.Logger;
@@ -39,11 +25,9 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 @NamedQueries({
-		@NamedQuery(name = ChartDetail.NQ_IS_BOUNUS_TRACK, query = "select count(chartDetail) from ChartDetail chartDetail join chartDetail.chart chart join chartDetail.media media where chart.communityId=?1 and media.isrc=?2 and chartDetail.position>(chart.numTracks-chart.numBonusTracks)"),
 		@NamedQuery(name = ChartDetail.NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE, query = "select count(media) from Media media where media.isrc=?1 and media.publishDate<=?2")
 })
 public class ChartDetail {
-	public static final String NQ_IS_BOUNUS_TRACK = "isBounusTrack";
 	public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
 	public static final String NQ_FIND_CONTENT_INFO_BY_DRM_TYPE = "ChartDetail.findContentInfoByDrmType";
 	public static final String NQ_FIND_CONTENT_INFO_BY_ISRC = "ChartDetail.findContentInfoByIsrc";
@@ -197,8 +181,10 @@ public class ChartDetail {
 		for (ChartDetail chartDetail : chartDetails) {
 			if (chartDetail.getChart().getType() == ChartType.BASIC_CHART)
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
-			else
+			else {
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new BonusChartDetailDto(), defaultAmazonUrl));
+				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
+			}
 		}
 		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
 		return chartDetailDtos;
@@ -215,13 +201,14 @@ public class ChartDetail {
 
 		Integer audioSize = media.getAudioSize();
 		int headerSize = media.getHeaderSize();
-		ChartType chartType = getChart().getType();
+		ChartType chartType = chart.getType();
 		
 		byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte)(position+40) : position;
 		pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte)(position+50) : pos;
 		
 		chartDetailDto.setPosition(pos);
 
+		chartDetailDto.setPlaylistId(chart.getI().intValue());
 		chartDetailDto.setArtist(media.getArtistName());
 		chartDetailDto.setAudioSize(audioSize);
 		chartDetailDto.setDrmType(drm.getDrmType().getName());

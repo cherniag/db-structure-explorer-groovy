@@ -13,11 +13,18 @@ insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image');
 
 insert into tb_labels (i,name) values (9,'INTERSCOPE');
 
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (1,'Default Chart',20,1,1,1307035342,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (2,'Default Chart',20,2,1,1306787849,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (3,'Default Chart',20,3,1,1317281215,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (4,'The Heavy List',20,4,1,1317107880,0);
-insert into tb_charts (i, name, numTracks, community, genre, timestamp, numBonusTracks) values (5,'Default Chart',21,5,1,1321452650,6);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (1,'Default Chart','Default Chart',20,1,1307035342,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (2,'Default Chart','Default Chart',20,1,1306787849,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (3,'Default Chart','Default Chart',20,1,1317281215,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (4,'The Heavy List','The Heavy List',20,1,1317107880,0);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (5,'Default Chart','Default Chart',21,1,1321452650,6);
+
+insert into community_charts (chart_id, community_id) values (1,1);
+insert into community_charts (chart_id, community_id) values (1,2);
+insert into community_charts (chart_id, community_id) values (2,2);
+insert into community_charts (chart_id, community_id) values (3,3);
+insert into community_charts (chart_id, community_id) values (4,4);
+insert into community_charts (chart_id, community_id) values (5,5);
 
 insert into tb_files (i, filename, size, fileType, version) values (1894,'US-UM7-11-00061.aud',1464070,2,1);
 insert into tb_files (i, filename, size, fileType, version) values (1893,'US-UM7-11-00061.hdr',162676,1,666);
@@ -218,6 +225,7 @@ insert into tb_paymentStatus (id,name) values(8,'AWAITING_PAY_PAL');
 INSERT INTO tb_promotions (i, description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks , userGroup, type, showPromotion, label) VALUES (1,'Test Promotion',0,1000,1306337943,1309016343,0,4,0,1,'noPromoCode',0,'label'),(2,'Metal Hammer Promotion',11,300,1312844400,1437411927,1,4,0,4,'promoCode',0,'label'),(3,'Now Music Promotion',55,300,1312844400,1356991200,1,4,0,5,'noPromoCode',0,'label'),(4,'Free Weeks Now Music Promotion',107,0,1312844400,1356991200,1,2,0,5,'promoCode',1,'label'),(5,'Free Weeks ChartsNow Promotion',35,0,1312844400,1326287900,1,2,0,3,'promoCode',0,'label'),(6,'occ',35,0,1312844400,1437411927,1,2,0,6,'promoCode',1,'label'),(7,'o2',35,0,1312844400,1437411927,1,2,0,7,'promoCode',1,'label'),(8,'o2 Promotion',55,300,1312844400,1356991200,1,4,0,7,'noPromoCode',0,'label');
 INSERT INTO tb_promoCode (id, code, promotionId) VALUES (1,'promo8',4),(2,'promo8',5), (3,'promo8',6),(4,'promo8',7);
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore) VALUES (4,1,'GBP',4,'4.62','creditCard',null,'',true),(5,2,'GBP',4,'5.00','creditCard',null,'',true),(6,3,'GBP',5,'5.00','creditCard',null,'',true),(7,4,'GBP',4,'4.62','creditCard',null,'',true),(8,5,'GBP',5,'5','creditCard',null,'',true),(9,5,'GBP',3,'4','PSMS',2,'80988',true),(10,5,'GBP',3,'4','PSMS',4,'80988',true),(11,5,'GBP',3,'4','PSMS',14,'80988',true),(12,5,'GBP',3,'4','PSMS',1,'80988',true),(13,5,'GBP',3,'4','PSMS',5,'80988',true),(129,3,'GBP',3,'4','PSMS',5,'80988',true),(189,5,'GBP',3,'5','PAY_PAL',null,'',true),(220,4,'GBP',3,'5','PAY_PAL',null,'',true), (221,6,'GBP',3,'4','PSMS',5,'80988',true),(222,6,'GBP',3,'5','PAY_PAL',null,'',true),(223,6,'GBP',3,'5','creditCard',null,'',true), (224,7,'GBP',3,'4','PSMS',5,'80988',true),(225,7,'GBP',3,'5','PAY_PAL',null,'',true),(226,7,'GBP',3,'5','creditCard',null,'',true);
+INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore, app_store_product_id) VALUES (227,7,'GBP',4,'4.99','creditCard',null,'',true, 'com.musicqubed.o2.subscriptiontest');
 
 insert into tb_userStatus(i, name) values (4,'EULA'), (10,'SUBSCRIBED'), (11,'LIMITED');
 

@@ -11,12 +11,15 @@ import java.util.*;
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import org.junit.After;
 import org.junit.Before;

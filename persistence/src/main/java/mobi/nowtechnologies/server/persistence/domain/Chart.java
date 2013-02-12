@@ -2,11 +2,14 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -27,13 +30,6 @@ public class Chart implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Byte i;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "community")
-	private Community community;
-
-	@Column(name="community", insertable=false, updatable=false)
-	private byte communityId;
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "genre")
@@ -45,8 +41,14 @@ public class Chart implements Serializable {
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
 
+	@Column(name="subtitle",columnDefinition="char(50)", nullable = false)
+	private String subtitle;
+
 	@Enumerated(value=EnumType.STRING)
 	private ChartType type;
+	
+	@Column(name="image_filename")
+	private String imageFileName;
 	
 	private byte numTracks;
 	
@@ -58,6 +60,15 @@ public class Chart implements Serializable {
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private Set<ChartDetail> chartDetails = new HashSet<ChartDetail>();
 
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="community_charts",
+    joinColumns=
+        @JoinColumn(name="chart_id", referencedColumnName="i"),
+    inverseJoinColumns=
+        @JoinColumn(name="community_id", referencedColumnName="i")
+    )
+	private List<Community> communities;
+	
     public Chart() {
     }
 
@@ -69,17 +80,28 @@ public class Chart implements Serializable {
 		this.i = i;
 	}
 	
-	public byte getCommunityId() {
-		return communityId;
+	public String getSubtitle() {
+		return subtitle;
 	}
 
-	public void setCommunity(Community community) {
-		this.community = community;
-		communityId = community.getId();
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
 	}
-	
-	public Community getCommunity() {
-		return community;
+
+	public String getImageFileName() {
+		return imageFileName;
+	}
+
+	public void setImageFileName(String imageFileName) {
+		this.imageFileName = imageFileName;
+	}
+
+	public List<Community> getCommunities() {
+		return communities;
+	}
+
+	public void setCommunities(List<Community> communites) {
+		this.communities = communites;
 	}
 
 	public Genre getGenre() {
@@ -149,7 +171,7 @@ public class Chart implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Chart [communityId=" + communityId + ", genreId=" + genreId + ", i=" + i + ", name=" + name + ", numTracks=" + numTracks
+		return "Chart [subtitle=" + subtitle + ", imageFileName=" + imageFileName + ", genreId=" + genreId + ", i=" + i + ", name=" + name + ", numTracks=" + numTracks
 		+ ", numBonusTracks="+numBonusTracks+ ", timestamp=" + timestamp + "type=" + type + "]";
 	}	
 

@@ -5,11 +5,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
 
 /**
+ * @author Alexander Kolpakov (akolpakov)
  * @author Titov Mykhaylo (titov)
  *
  */
 @XmlRootElement(name="chart")
 public class ChartDto {
+	
+	private PlaylistDto[] playlistDtos;
 	
 	private ChartDetailDto[] chartDetailDtos;
 
@@ -22,9 +25,17 @@ public class ChartDto {
 		this.chartDetailDtos = chartDetailDtos;
 	}
 
-	@Override
-	public String toString() {
-		return "ChartDto [chartDetailDtos=" + Arrays.toString(chartDetailDtos) + "]";
+	@XmlAnyElement
+	public PlaylistDto[] getPlaylistDtos() {
+		return playlistDtos;
 	}
 
+	public void setPlaylistDtos(PlaylistDto[] playlistDtos) {
+		this.playlistDtos = playlistDtos;
+	}
+
+	@Override
+	public String toString() {
+		return "ChartDto [playlistDtos=" + Arrays.toString(playlistDtos) + ", chartDetailDtos=" + Arrays.toString(chartDetailDtos) + "]";
+	}
 }
