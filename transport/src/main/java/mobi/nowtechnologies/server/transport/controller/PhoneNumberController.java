@@ -45,7 +45,9 @@ public class PhoneNumberController extends CommonController {
 
 			user = userService.activatePhoneNumber(user, phone);
 			
-			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile())}));
+			String redeemServerO2Url = userService.getRedeemServerO2Url(user, community);
+			
+			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
 
 		} finally {
 			LOGGER.info("command processing finished");

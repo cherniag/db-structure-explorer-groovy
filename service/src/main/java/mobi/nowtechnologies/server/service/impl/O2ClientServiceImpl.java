@@ -22,6 +22,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 	private String serverO2Url;
 
 	private RestTemplate restTemplate;
+	
+	private String redeemServerO2Url;
+
+	private String redeemPromotedServerO2Url;
 
 	public void init() {
 		restTemplate = new RestTemplate();
@@ -29,6 +33,24 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	public void setServerO2Url(String serverO2Url) {
 		this.serverO2Url = serverO2Url;
+	}
+
+	@Override
+	public String getRedeemServerO2Url() {
+		return redeemServerO2Url;
+	}
+
+	public void setRedeemServerO2Url(String redeemServerO2Url) {
+		this.redeemServerO2Url = redeemServerO2Url;
+	}
+
+	@Override
+	public String getRedeemPromotedServerO2Url() {
+		return redeemPromotedServerO2Url;
+	}
+
+	public void setRedeemPromotedServerO2Url(String redeemPromotedServerO2Url) {
+		this.redeemPromotedServerO2Url = redeemPromotedServerO2Url;
 	}
 
 	@Override

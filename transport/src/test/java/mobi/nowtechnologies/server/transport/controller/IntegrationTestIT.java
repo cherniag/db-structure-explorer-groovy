@@ -3706,16 +3706,16 @@ public class IntegrationTestIT {
 	public void testPHONE_NUMBER_O2() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
-		String communityName = "O2";
+		String communityName = "o2";
 		String appVersion = "CNBETA";
 		String phone = "07870111111";
 		String timestamp = "2011_12_26_07_04_23";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/SIGN_UP_DEVICE");
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/SIGN_UP_DEVICE");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.setPathInfo("/o2/3.6/SIGN_UP_DEVICE");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("DEVICE_UID", userName);
@@ -3731,10 +3731,10 @@ public class IntegrationTestIT {
 		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-		httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/PHONE_NUMBER");
+		httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/PHONE_NUMBER");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/PHONE_NUMBER");
+		httpServletRequest.setPathInfo("/o2/3.6/PHONE_NUMBER");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("USER_NAME", userName);
@@ -3749,23 +3749,23 @@ public class IntegrationTestIT {
 		contentAsString = mockHttpServletResponse.getContentAsString();
 
 		assertNotNull(contentAsString);
-		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber></phoneActivation></response>", contentAsString);
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber><redeemServerUrl>https://identity.o2.co.uk</redeemServerUrl></phoneActivation></response>", contentAsString);
 	}
 	
 	@Test
 	public void testPHONE_NUMBER_O2_InvalidNumber() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
-		String communityName = "O2";
+		String communityName = "o2";
 		String appVersion = "CNBETA";
 		String phone = "07870111111dddd";
 		String timestamp = "2011_12_26_07_04_23";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/SIGN_UP_DEVICE");
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/SIGN_UP_DEVICE");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.setPathInfo("/o2/3.6/SIGN_UP_DEVICE");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("DEVICE_UID", userName);
@@ -3781,10 +3781,10 @@ public class IntegrationTestIT {
 		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-		httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/PHONE_NUMBER");
+		httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/PHONE_NUMBER");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/PHONE_NUMBER");
+		httpServletRequest.setPathInfo("/o2/3.6/PHONE_NUMBER");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("USER_NAME", userName);
@@ -3799,23 +3799,23 @@ public class IntegrationTestIT {
 		contentAsString = mockHttpServletResponse.getContentAsString();
 
 		assertNotNull(contentAsString);
-		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><errorMessage><displayMessage>Invalid phone number format</displayMessage><errorCode>601</errorCode><message>phone.number.invalid.format</message></errorMessage></response>", contentAsString);
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber><redeemServerUrl>https://identity.o2.co.uk</redeemServerUrl></phoneActivation></response>", contentAsString);
 	}
 	
 	@Test
 	public void testPHONE_NUMBER_O2_ResendSMS() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
-		String communityName = "O2";
+		String communityName = "o2";
 		String appVersion = "CNBETA";
 		String phone = "07870111111";
 		String timestamp = "2011_12_26_07_04_23";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/SIGN_UP_DEVICE");
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/SIGN_UP_DEVICE");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.setPathInfo("/o2/3.6/SIGN_UP_DEVICE");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("DEVICE_UID", userName);
@@ -3831,10 +3831,10 @@ public class IntegrationTestIT {
 		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-		httpServletRequest = new MockHttpServletRequest("POST", "/O2/3.6/PHONE_NUMBER");
+		httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/PHONE_NUMBER");
 		httpServletRequest.addHeader("Content-Type", "text/xml");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/O2/3.6/PHONE_NUMBER");
+		httpServletRequest.setPathInfo("/o2/3.6/PHONE_NUMBER");
 
 		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
 		httpServletRequest.addParameter("USER_NAME", userName);
@@ -3868,6 +3868,6 @@ public class IntegrationTestIT {
 		contentAsString = mockHttpServletResponse.getContentAsString();
 
 		assertNotNull(contentAsString);
-		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber></phoneActivation></response>", contentAsString);
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber><redeemServerUrl>https://identity.o2.co.uk</redeemServerUrl></phoneActivation></response>", contentAsString);
 	}
 }

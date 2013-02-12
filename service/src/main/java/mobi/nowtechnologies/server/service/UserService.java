@@ -2023,6 +2023,17 @@ public class UserService {
 		return user;
 	}
 	
+	@Transactional(readOnly=true)
+	public String getRedeemServerO2Url(User user, String communityName) {
+		Community community = communityService.getCommunityByName(communityName);
+		
+		String redeemServerO2Url = deviceService.isPromotedDevicePhone(community, user.getMobile())
+													? o2ClientService.getRedeemPromotedServerO2Url()
+													: o2ClientService.getRedeemServerO2Url();
+				
+		return redeemServerO2Url;
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String community) {
 		boolean hasPromo = false;
