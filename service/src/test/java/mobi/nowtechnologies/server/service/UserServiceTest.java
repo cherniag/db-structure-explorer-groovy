@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -1455,6 +1456,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testProcessPaymentSubBalanceCommand_NonO2User_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
