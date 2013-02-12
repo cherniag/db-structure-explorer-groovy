@@ -71,10 +71,10 @@
 				<div class="newsCalendar">
 					<h2 th:text="#{chartItems.page.chartItemsTable.existingCharts.headline}">Updates list</h2>
 					<div th:each="updateTime : ${allPublishTimeMillis}" th:if="${#dates.format(new java.util.Date(updateTime), 'dd/MMM/yyyy').startsWith(#dates.format(selectedDateTime,'dd/MMM/yyyy'))}" class="updateButton">
-						<form class="edit_btn" th:action="@{/chartsNEW/__${chartId}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__/}" method="get">
+						<form class="edit_btn" th:action="@{/chartsNEW/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__/}" method="get">
 							<button class="btn btn-primary updatesList" type="submit" th:text="${#dates.format(new java.util.Date(updateTime), 'HH:mm')}">Edit for this time</button>
 						</form>
-						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chartId}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
 							<input type="hidden" id="_method" name="_method" value="DELETE" />
 								<a href="#" onCLick="$('form#deleteChartItemsSetForm').submit();"><img th:src="@{/assets/img/icon_delete.png}"
 									th:alt="#{chartItems.page.deleteChartItemsSetForm.submit.text}"
@@ -156,7 +156,7 @@
 			};	
 			
 			$(function() {
-				var url = /*[[@{'/charts/'+${chartId}+'.json'}]]*/ '';
+				var url = /*[[@{'/charts/'+${chart.id}+'.json'}]]*/ '';
 				$.ajax({
 					url:url,
 					contentType:'application/json',
@@ -183,9 +183,9 @@
 	    
 							onSelect: function(dateText) {
 								if ((new Date()).setHours(0,0,0,0) == (new Date(dateText)).setHours(0,0,0,0)) {
-									location.href = /*[[@{'/charts/'+${chartId}}]]*/ '';
+									location.href = /*[[@{'/charts/'+${chart.id}}]]*/ '';
 								} else {
-								  	var href= /*[[@{'/charts/'+${chartId}(selectedPublishDateTime=${dateText})}]]*/ '';
+								  	var href= /*[[@{'/charts/'+${chart.id}(selectedPublishDateTime=${dateText})}]]*/ '';
 								    location.href = href+dateText+"_00:00:00";
 								}
 							}
@@ -206,7 +206,7 @@
 				    showPeriodLabels: true,
 				    minuteText: 'Min',
 				    onSelect: function(newTime, inst) {
-				    	var href= /*[[@{'/chartsNEW/'+${chartId} + '/' + ${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
+				    	var href= /*[[@{'/chartsNEW/'+${chart.id} + '/' + ${#dates.format(selectedDateTime,'yyyy-MM-dd')}+'_' }]]*/ '';
 				    	$('#createChartUpdateForm').attr('action', href+newTime+':00');
 				    }
 				});
