@@ -93,4 +93,16 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"and u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
 	List<User> getUsersForPendingPayment(int epochSeconds);
+	
+	@Query(value="select u from User u " +
+			"join u.userGroup ug " +
+			"join ug.community c " +
+			"where " +
+			"u<>?1 "+
+			"and u.nextSubPayment<>?2 " +
+			"and u.appStoreOriginalTransactionId=?3 " +
+			"and u.currentPaymentDetails is NULL " +
+			"and c.rewriteUrlParameter = 'o2' " +
+			"and u.provider<>'o2' ")
+	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId);
 }

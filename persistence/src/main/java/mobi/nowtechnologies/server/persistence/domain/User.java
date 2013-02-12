@@ -236,6 +236,12 @@ public class User implements Serializable {
 	
 	@Column(nullable=true)
 	private Long freeTrialStartedTimestampMillis;
+	
+	@Column(name="base64_encoded_app_store_receipt")
+	private String base64EncodedAppStoreReceipt;
+	
+	@Column(name="app_store_original_transaction_id")
+	private String appStoreOriginalTransactionId;
 
 	public User() {
 		setDisplayName("");
@@ -710,7 +716,7 @@ public class User implements Serializable {
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
 	}
 
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken) {
+	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 		Chart chart = userGroup.getChart();
 		News news = userGroup.getNews();
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
@@ -756,6 +762,17 @@ public class User implements Serializable {
 		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
 		
 		accountCheckDTO.setActivation(getActivationStatus());
+		
+		if(appStoreProductIds!=null){
+			StringBuilder temp = new StringBuilder();
+			for (String appStoreProductId : appStoreProductIds) {
+				if (appStoreProductId != null) {
+					temp.append("," + appStoreProductId);
+				}
+			}
+			if (temp.length() != 0)
+				accountCheckDTO.setAppStoreProductId(temp.substring(1));
+		}
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -917,15 +934,30 @@ public class User implements Serializable {
     public void setActivationStatus(ActivationStatus activationStatus) {
         this.activationStatus = activationStatus;
     }
-    
-    
 
-    @Override
+	public String getBase64EncodedAppStoreReceipt() {
+		return base64EncodedAppStoreReceipt;
+	}
+
+	public void setBase64EncodedAppStoreReceipt(String base64EncodedAppStoreReceipt) {
+		this.base64EncodedAppStoreReceipt = base64EncodedAppStoreReceipt;
+	}
+
+	public String getAppStoreOriginalTransactionId() {
+		return appStoreOriginalTransactionId;
+	}
+
+	public void setAppStoreOriginalTransactionId(String appStoreOriginalTransactionId) {
+		this.appStoreOriginalTransactionId = appStoreOriginalTransactionId;
+	}
+
+	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
 				+ ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId
 				+ ", nextSubPayment=" + nextSubPayment + ", isFreeTrial=" + isOnFreeTrial() + ", currentPaymentDetailsId=" + currentPaymentDetailsId
 				+ ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
+				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
 				+ ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
 				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification
 				+ ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="

@@ -1207,7 +1207,7 @@ public class UserServiceTest {
 
 				return accountCheckDTO;
 			}
-		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		PowerMockito.doReturn(notExistUser ? null : user).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(anyString(), anyString());
 		whenNew(User.class).withNoArguments().thenReturn(user);
 
@@ -1242,7 +1242,7 @@ public class UserServiceTest {
 		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
 		verify(mockCountryService, times(1)).findIdByFullName(anyString());
 		verify(mockEntityService, times(1)).saveEntity(any(User.class));
-		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(1));
 		Utils.createStoredToken(anyString(), anyString());
 		verifyStatic(times(1));
@@ -1296,7 +1296,7 @@ public class UserServiceTest {
 		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
 		verify(mockCountryService, times(0)).findIdByFullName(anyString());
 		verify(mockEntityService, times(0)).saveEntity(any(User.class));
-		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString());
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(0));
 		Utils.createStoredToken(anyString(), anyString());
 		verifyStatic(times(1));

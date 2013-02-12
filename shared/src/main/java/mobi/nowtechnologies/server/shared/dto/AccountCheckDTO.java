@@ -55,6 +55,8 @@ public class AccountCheckDTO {
 	
 	private int nextSubPaymentSeconds;
     private ActivationStatus activation;
+    
+    private String appStoreProductId;
 
 	public String getDisplayName() {
 		return displayName;
@@ -310,13 +312,22 @@ public class AccountCheckDTO {
         this.activation = activation;
     }
 
-    @Override
+    public String getAppStoreProductId() {
+		return appStoreProductId;
+	}
+
+	public void setAppStoreProductId(String appStoreProductId) {
+		this.appStoreProductId = appStoreProductId;
+	}
+
+	@Override
 	public String toString() {
 		return "AccountCheckDTO [userName=" + userName + ", deviceUID=" + deviceUID + ", subBalance=" + subBalance + ", rememberMeToken=" + rememberMeToken
 				+ ", status=" + status + ", paymentEnabled=" + paymentEnabled + ", paymentStatus=" + paymentStatus + ", lastPaymentStatus=" + lastPaymentStatus
 				+ ", fullyRegistred=" + fullyRegistred + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", isFreeTrial=" + isFreeTrial
 				+ ", isPromotedDevice=" + isPromotedDevice + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", promotedWeeks="
 				+ promotedWeeks + ", paymentType=" + paymentType + ", hasOffers=" + hasOffers + ", promotionLabel=" + promotionLabel
+				+ ", appStoreProductId=" + appStoreProductId
 				+ ", timeOfMovingToLimitedStatusSeconds=" + timeOfMovingToLimitedStatusSeconds + ", chartItems=" + chartItems + ", chartTimestamp="
 				+ chartTimestamp + ", deviceType=" + deviceType + ", displayName=" + displayName + ", drmType=" + drmType + ", drmValue=" + drmValue
 				+ ", newsItems=" + newsItems + ", newsTimestamp=" + newsTimestamp + ", oAuthProvider=" + oAuthProvider + ", operator=" + operator

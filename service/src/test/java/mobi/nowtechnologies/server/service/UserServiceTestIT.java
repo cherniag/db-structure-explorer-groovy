@@ -179,7 +179,7 @@ public class UserServiceTestIT {
 	@Test
 	public void testProceessAccountCheckCommand() {
 		int userId=1;
-		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		assertNotNull(accountCheckDTO);
 	}
 

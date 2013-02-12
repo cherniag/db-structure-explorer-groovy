@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.server.service.listener;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
@@ -38,27 +42,39 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 		SubmittedPayment payment = (SubmittedPayment) event.getPayment();
 
 		if (payment.getType() != PaymentDetailsType.PAYMENT) {
+					
 			LOGGER.info("handle SubBalance payment event: [{}]", payment);
 			User user = payment.getUser();
-			Long paymentUID = payment.getI();
 			int subweeks = payment.getSubweeks();
-
-			userService.processPaymentSubBalanceCommand(user, subweeks, payment);
-
-			if (payment.getType() == PaymentDetailsType.FIRST) {
-				LOGGER
-						.info("Applying promotions to user {} after his first successful payment with status {} ", payment.getUser().getId(), payment
-								.getStatus());
-				userService.applyPromotion(payment.getUser());
-				promotionService.applyPromotion(payment.getUser());
+			final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
+			final int nextSubPayment = payment.getNextSubPayment();
+		
+			final List<User> users;
+			if (appStoreOriginalTransactionId != null) {
+				users = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+			}else{
+				users = Collections.singletonList(user);
 			}
-
-			PaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
-			if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
-				userNotificationService.notifyUserAboutSuccesfullPayment(user);
+			
+			for (User actualUser : users) {
+	
+				userService.processPaymentSubBalanceCommand(actualUser, subweeks, payment);
+	
+				if (payment.getType() == PaymentDetailsType.FIRST) {
+					LOGGER
+							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
+									.getStatus());
+					userService.applyPromotion(actualUser);
+					promotionService.applyPromotion(actualUser);
+				}
+	
+				PaymentDetails currentActivePaymentDetails = actualUser.getCurrentPaymentDetails();
+				if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
+					userNotificationService.notifyUserAboutSuccesfullPayment(actualUser);
+				}
+	
+				userService.populateAmountOfMoneyToUserNotification(actualUser, payment);
 			}
-
-			user = userService.populateAmountOfMoneyToUserNotification(user, payment);
 		}
 	}
 

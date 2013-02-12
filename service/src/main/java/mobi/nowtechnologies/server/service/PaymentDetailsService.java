@@ -148,9 +148,23 @@ public class PaymentDetailsService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<PaymentPolicyDto> getPaymentPolicyDetails(String communityUrl, int userId) {
-		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesGroupdeByPaymentType(community.getName());
+		List<PaymentPolicyDto> result = mergePaymentPolicies(userId, paymentPolicies);
+		return result;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<PaymentPolicyDto> getPaymentPolicyDetails(String communityUrl, int userId, String paymentType) {
+		LOGGER.debug("input parameters communityUrl, userId, paymentType: [{}], [{}]", new Object[] {communityUrl, userId, paymentType});
+		Community community = communityService.getCommunityByUrl(communityUrl);
+		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
+		List<PaymentPolicyDto> result = mergePaymentPolicies(userId, paymentPolicies);
+		return result;
+	}
+
+	private List<PaymentPolicyDto> mergePaymentPolicies(int userId, List<PaymentPolicy> paymentPolicies) {
+		User user = userService.findById(userId);
 		List<PaymentPolicyDto> result = new LinkedList<PaymentPolicyDto>();
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
 			if (null != user.getPotentialPromotion()) {

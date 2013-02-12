@@ -156,6 +156,7 @@ public class UserService {
 	private AccountLogService accountLogService;
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
+	private ITunesService iTunesService;
 	
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -249,6 +250,10 @@ public class UserService {
 	
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
+	}
+	
+	public void setiTunesService(ITunesService iTunesService) {
+		this.iTunesService = iTunesService;
 	}
 
 	@Deprecated
@@ -378,7 +383,7 @@ public class UserService {
 			LOGGER.error(e.getMessage(), e);
 			setPassword.setStatus(SetPassword.Status.FAIL);
 		}
-		AccountCheckDTO accountCheck = proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheck = proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		return new Object[] { accountCheck, setPassword };
 	}
 
@@ -512,7 +517,7 @@ public class UserService {
 				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + promotion.getFreeWeeks() - i),
 						TransactionType.SUBSCRIPTION_CHARGE));
 			}
-			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		}
 		throw new IllegalArgumentException("No promotion found");
 	}
@@ -1222,8 +1227,12 @@ public class UserService {
 
 			// Update next sub payment time
 			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-		}else{
+		}else if (user.getCurrentPaymentDetails()!=null){
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
+		}else{
+			user.setNextSubPayment(payment.getNextSubPayment());
+			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+			user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
@@ -1270,9 +1279,14 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType) {
-		LOGGER.debug("input parameters userId, pushToken,  deviceType: [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType });
+	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType, String transactionReceipt) {
+		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt });
 
+		try{
+			iTunesService.processInAppSubscription(userId, transactionReceipt);
+		}catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 		User user = userDao.findUserById(userId);
 		
 		user = assignPotentialPromotion(user);
@@ -1283,10 +1297,13 @@ public class UserService {
 
 		if (deviceType != null && pushNotificationToken != null)
 			userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
-
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null);
-
+		
 		Community community = user.getUserGroup().getCommunity();
+
+		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+
+		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
 		// Commented due to JodaTime potential bug
@@ -1599,7 +1616,7 @@ public class UserService {
 			updateUser(user);
 		}
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1649,7 +1666,7 @@ public class UserService {
 			throw new ServiceException(serverMessage);
 		}
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1715,7 +1732,7 @@ public class UserService {
 		user.setActivationStatus(ActivationStatus.REGISTERED);
 		userRepository.save(user);
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1790,7 +1807,7 @@ public class UserService {
 				applyPromotionByPromoCode(user, potentialPromoCodePromotion);
 			}
 		}
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -2049,7 +2066,7 @@ public class UserService {
     	user.setUserName(user.getMobile());
     	userRepository.save(user);
     	
-		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
+		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		dto.setFullyRegistred(true);
 		dto.setHasPotentialPromoCodePromotion(hasPromo);
 		return dto;
@@ -2078,5 +2095,16 @@ public class UserService {
 			LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
 					new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
 		}
+	}
+	
+	@Transactional(readOnly=true)
+	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId){
+		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
+		
+		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		users.add(user);
+		
+		LOGGER.debug("Output parameter users=[{}]", users);
+		return users;
 	}
 }

@@ -39,6 +39,7 @@ public abstract class PaymentDetails {
 	public static final String SAGEPAY_CREDITCARD_TYPE = "sagePayCreditCard";
 	public static final String PAYPAL_TYPE = "payPal";
 	public static final String MIG_SMS_TYPE = "migSms";
+	public static final String ITNUNES_SUBSCRIPTION="iTunesSubscription";
 	public static final String FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE = "FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE";
 
 	@Id

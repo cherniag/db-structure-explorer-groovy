@@ -45,3 +45,9 @@ set cd.chart = chn.i
 where cd.position > 50 and cd.channel is not null;
 
  -- end migration
+ 
+alter table tb_users add base64_encoded_app_store_receipt varchar(255), add app_store_original_transaction_id varchar(255);
+ 
+alter table tb_paymentpolicy add app_store_product_id varchar(255);
+
+alter table tb_submittedPayments add next_sub_payment int add base64_encoded_app_store_receipt varchar(255), add app_store_original_transaction_id varchar(255);

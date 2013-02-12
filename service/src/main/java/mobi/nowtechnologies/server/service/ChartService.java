@@ -64,7 +64,7 @@ public class ChartService {
 
 		user = userService.findUserTree(userId);
 
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null);
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
 		List<Chart> charts = getChartsByCommunity(null, communityName);
 

@@ -1,14 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,8 +26,30 @@ public class PaymentPolicyService {
 	
 	private PaymentPolicyDao paymentPolicyDao;
 	
+	private PaymentPolicyRepository paymentPolicyRepository;
+	
 	public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
 		this.paymentPolicyDao = paymentPolicyDao;
+	}
+	
+	public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
+		this.paymentPolicyRepository = paymentPolicyRepository;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<String> findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(Community community){
+		LOGGER.debug("input parameters community: [{}]", community);
+		List<String> appStoreProductIds = paymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+		LOGGER.debug("Output parameter appStoreProductIds=[{}]", appStoreProductIds);
+		return appStoreProductIds;
+	}
+	
+	@Transactional(readOnly = true)
+	public PaymentPolicy findByCommunityAndAppStoreProductId(Community community, String appStoreProductId) {
+		LOGGER.debug("input parameters community, appStoreProductId: [{}], [{}]", community, appStoreProductId);
+		PaymentPolicy paymentPolicy = paymentPolicyRepository.findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicy);
+		return paymentPolicy;
 	}
 	
 	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String communityName) {
@@ -89,5 +115,15 @@ public class PaymentPolicyService {
 		
 		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
 		return offerPaymentPolicyDtos;
+	}
+
+	@Transactional(readOnly = true)
+	public List<PaymentPolicy> getPaymentPoliciesByPaymentType(Community community, String paymentType) {
+		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
+		
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType);
+		
+		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
+		return paymentPolicies;
 	}
 }
