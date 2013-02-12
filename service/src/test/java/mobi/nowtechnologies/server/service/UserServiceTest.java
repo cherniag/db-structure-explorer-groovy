@@ -69,6 +69,7 @@ public class UserServiceTest {
 	private CommunityService mockCommunityService;
 	private CountryService mockCountryService;
 	private O2ClientService mockO2ClientService;
+	private DeviceService mockDeviceService;
 
 	/**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -804,7 +805,7 @@ public class UserServiceTest {
 		DrmService mockDrmService = PowerMockito.mock(DrmService.class);
 		FacebookService mockFacebookService = PowerMockito.mock(FacebookService.class);
 		mockCommunityService = PowerMockito.mock(CommunityService.class);
-		DeviceService mockDeviceService = PowerMockito.mock(DeviceService.class);
+		mockDeviceService = PowerMockito.mock(DeviceService.class);
 		mockMigHttpService = PowerMockito.mock(MigHttpService.class);
 		PaymentService mockPaymentService = PowerMockito.mock(PaymentService.class);
 		mockAccountLogService = PowerMockito.mock(AccountLogService.class);
@@ -1703,6 +1704,54 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+	}
+	
+	@Test
+	public void testGetRedeemServerO2Url_Promoted_Success() throws Exception{
+		String redeemServerO2Url = "identity.o2.co.uk"; 
+		String redeemPromotedServerO2Url = "uat.mqapi.com"; 
+		final User user = UserFactory.createUser();
+		final Community community = CommunityFactory.createCommunity();		
+		community.setRewriteUrlParameter("o2");
+		community.setName("o2");
+		
+		when(mockCommunityService.getCommunityByName(anyString())).thenReturn(community);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockO2ClientService.getRedeemPromotedServerO2Url()).thenReturn(redeemPromotedServerO2Url);
+		when(mockO2ClientService.getRedeemServerO2Url()).thenReturn(redeemServerO2Url);
+		
+		String result = userServiceSpy.getRedeemServerO2Url(user, community.getName());
+	
+		assertEquals(redeemPromotedServerO2Url, result);
+		
+		Mockito.verify(mockCommunityService, times(1)).getCommunityByName(anyString());
+		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString());
+		Mockito.verify(mockO2ClientService, times(1)).getRedeemPromotedServerO2Url();
+		Mockito.verify(mockO2ClientService, times(0)).getRedeemServerO2Url();
+	}
+	
+	@Test
+	public void testGetRedeemServerO2Url_NotPromoted_Success() throws Exception{
+		String redeemServerO2Url = "identity.o2.co.uk"; 
+		String redeemPromotedServerO2Url = "uat.mqapi.com"; 
+		final User user = UserFactory.createUser();
+		final Community community = CommunityFactory.createCommunity();		
+		community.setRewriteUrlParameter("o2");
+		community.setName("o2");
+		
+		when(mockCommunityService.getCommunityByName(anyString())).thenReturn(community);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(false);
+		when(mockO2ClientService.getRedeemPromotedServerO2Url()).thenReturn(redeemPromotedServerO2Url);
+		when(mockO2ClientService.getRedeemServerO2Url()).thenReturn(redeemServerO2Url);
+		
+		String result = userServiceSpy.getRedeemServerO2Url(user, community.getName());
+	
+		assertEquals(redeemServerO2Url, result);
+		
+		Mockito.verify(mockCommunityService, times(1)).getCommunityByName(anyString());
+		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString());
+		Mockito.verify(mockO2ClientService, times(0)).getRedeemPromotedServerO2Url();
+		Mockito.verify(mockO2ClientService, times(1)).getRedeemServerO2Url();
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
