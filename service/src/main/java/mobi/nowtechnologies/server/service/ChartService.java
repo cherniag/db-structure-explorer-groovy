@@ -269,6 +269,7 @@ public class ChartService {
 
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Chart updateChart(Chart chart, MultipartFile imageFile) {
 		LOGGER.debug("input updateChart(Chart chart) [{}]", chart);
 

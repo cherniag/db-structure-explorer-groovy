@@ -42,6 +42,7 @@
 		class="mobi.nowtechnologies.server.admin.controller.ChartController">
 		<property name="chartService" ref="service.ChartService" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>

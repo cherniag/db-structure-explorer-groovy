@@ -41,6 +41,7 @@ public class ChartController extends AbstractCommonController {
 
 	private ChartService chartService;
 	private String filesURL;
+	private String chartFilesURL;
 	private Map<String, String> viewByChartType;
 
 	public void setViewByChartType(Map<String, String> viewByChartType) {
@@ -55,6 +56,10 @@ public class ChartController extends AbstractCommonController {
 		this.filesURL = filesURL;
 	}
 	
+	public void setChartFilesURL(String chartFilesURL) {
+		this.chartFilesURL = chartFilesURL;
+	}
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateTimeFormat, true));
@@ -70,6 +75,11 @@ public class ChartController extends AbstractCommonController {
 	@InitBinder( {ChartDto.CHART_DTO })
 	public void initChartBinder(WebDataBinder binder) {
 		binder.setValidator(new ChartDtoValidator());	
+	}
+	
+	@ModelAttribute("chartFilesURL")
+	public String getFilesURL() {
+		return chartFilesURL;
 	}
 
 	@RequestMapping(value = "/charts/list", method = RequestMethod.GET)
@@ -128,6 +138,7 @@ public class ChartController extends AbstractCommonController {
 		Chart chart = chartService.getChartById(chartId);
 		List<ChartDetail> chartDetails = chartService.getActualChartItems(chartId, selectedPublishDateTime);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
+		ChartDto chartDto = ChartAsm.toChartDto(chart);
 
 		final String selectedPublishDateString;
 		if (chartItemDtos.isEmpty()) {
@@ -142,7 +153,7 @@ public class ChartController extends AbstractCommonController {
 		modelAndView.addObject("selectedDateTime", selectedPublishDateTime);
 		modelAndView.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId));
 		modelAndView.addObject("filesURL", filesURL);
-		modelAndView.addObject("chartId", chartId);
+		modelAndView.addObject("chart", chartDto);
 
 		return modelAndView;
 	}
