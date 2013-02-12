@@ -80,7 +80,7 @@ public class Community implements Serializable {
 		return this.name;
 	}
 
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

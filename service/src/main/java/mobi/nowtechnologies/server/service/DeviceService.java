@@ -53,6 +53,14 @@ public class DeviceService {
 		}
 		return false;
 	}
+	
+	public boolean isPromotedDevicePhone(Community community, String phoneNumber) {
+		if (null!=phoneNumber) {
+			String promotedDevicePhones = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "promoted.device.phones", null, null);
+			return (promotedDevicePhones.indexOf(phoneNumber)!=-1)?true:false;
+		}
+		return false;
+	}
 
 	public void setNotPromotedDeviceRepository(
 			NotPromotedDeviceRepository notPromotedDeviceRepository) {
