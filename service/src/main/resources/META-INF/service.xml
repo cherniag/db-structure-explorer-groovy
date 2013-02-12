@@ -56,6 +56,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
+		<property name="iTunesService" ref="service.ITunesService" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">

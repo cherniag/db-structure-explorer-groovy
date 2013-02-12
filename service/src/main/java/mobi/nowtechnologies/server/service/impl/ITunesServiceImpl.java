@@ -85,7 +85,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		final Response response;
 		User user = userService.findById(userId);
 
-		if (user.getCurrentPaymentDetails() == null && ((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus() == UserStatusDao.getLimitedUserStatus())
+		if (user.getCurrentPaymentDetails() == null && ((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
 				|| (transactionReceipt != null && user.getBase64EncodedAppStoreReceipt() == null))) {
 
 			final String base64EncodedAppStoreReceipt;
@@ -108,7 +108,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(response.getMessage(), ITunesInAppSubscriptionResponseDto.class);
 
 				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes cofirmed that encoded receipt [{}] is valid", base64EncodedAppStoreReceipt);
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid", base64EncodedAppStoreReceipt);
 					
 					Receipt receipt = iTunesInAppSubscriptionResponseDto.getReceipt();
 					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), receipt.getProductId());

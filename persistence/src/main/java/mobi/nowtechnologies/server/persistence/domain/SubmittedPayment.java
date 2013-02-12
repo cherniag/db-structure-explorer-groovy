@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -23,6 +24,7 @@ public class SubmittedPayment extends AbstractPayment {
 	@Enumerated(EnumType.STRING)
 	private PaymentDetailsStatus status;
 	
+	@Lob
 	@Column(name="base64_encoded_app_store_receipt")
 	private String base64EncodedAppStoreReceipt;
 	

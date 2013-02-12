@@ -174,16 +174,20 @@ public class Utils {
 		return montlyNextSubPayment;
 	}
 
-	/*
-	 * public static void main(String[] args) { final String USER_NAME =
-	 * "paku@ciklum.net"; final String PASSWORD = "123456"; final String
-	 * TIMESTAMP="1";
-	 * 
-	 * System.out.println(createStoredToken(USER_NAME, PASSWORD));
-	 * System.out.println(createTimestampToken( createStoredToken(USER_NAME,
-	 * PASSWORD), TIMESTAMP));
-	 * 
-	 * //System.out.println(getOTACode(132,"richard.monday@chartsnow.mobi")); }
-	 */
+	
+	public static void main(String[] args) {
+		final String USER_NAME =
+				"test@test.com";
+		final String PASSWORD = "test@test.com";
+		final String TIMESTAMP = "1";
+
+		System.out.println(createStoredToken(USER_NAME, PASSWORD));
+		System.out.println(createTimestampToken(createStoredToken(USER_NAME,
+				PASSWORD), TIMESTAMP));
+
+		// System.out.println(getOTACode(132,"richard.monday@chartsnow.mobi"));
+		//f701af8d07e5c95d3f5cf3bd9a62344d
+	}
+	 
 
 }

@@ -237,6 +237,7 @@ public class User implements Serializable {
 	@Column(nullable=true)
 	private Long freeTrialStartedTimestampMillis;
 	
+	@Lob
 	@Column(name="base64_encoded_app_store_receipt")
 	private String base64EncodedAppStoreReceipt;
 	

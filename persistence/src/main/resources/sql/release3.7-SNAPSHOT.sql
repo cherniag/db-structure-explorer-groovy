@@ -76,8 +76,8 @@ alter table tb_charts drop column community;
  -- end migration
 
 -- IMP-743 iOS Implement in-app purchase and subscription
-alter table tb_users add base64_encoded_app_store_receipt varchar(3200), add app_store_original_transaction_id varchar(255);
+alter table tb_users add base64_encoded_app_store_receipt longtext, add app_store_original_transaction_id varchar(255);
  
 alter table tb_paymentPolicy add app_store_product_id varchar(255);
 
-alter table tb_submittedPayments add next_sub_payment int, add base64_encoded_app_store_receipt varchar(3200), add app_store_original_transaction_id varchar(255);
+alter table tb_submittedPayments add next_sub_payment int, add base64_encoded_app_store_receipt longtext, add app_store_original_transaction_id varchar(255);

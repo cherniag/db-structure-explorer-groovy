@@ -19,7 +19,7 @@ public class ITunesInAppSubscriptionResponseDto {
 	
 	@Expose
 	@SerializedName("latest_receipt_info")
-	private String latestReceiptInfo;
+	private Receipt latestReceiptInfo;
 	
 	public static class Receipt{
 		
@@ -185,11 +185,11 @@ public class ITunesInAppSubscriptionResponseDto {
 		this.latestReceipt = latestReceipt;
 	}
 
-	public String getLatestReceiptInfo() {
+	public Receipt getLatestReceiptInfo() {
 		return latestReceiptInfo;
 	}
 
-	public void setLatestReceiptInfo(String latestReceiptInfo) {
+	public void setLatestReceiptInfo(Receipt latestReceiptInfo) {
 		this.latestReceiptInfo = latestReceiptInfo;
 	}
 
