@@ -68,6 +68,8 @@ public class PaymentsController extends CommonController {
 			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+				paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			}else{
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
