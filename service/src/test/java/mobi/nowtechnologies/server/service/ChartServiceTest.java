@@ -105,7 +105,6 @@ public class ChartServiceTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testProcessGetChartCommand_Success()
 		throws Exception {
 		String communityName = "chartsnow";
@@ -251,7 +250,7 @@ public class ChartServiceTest {
 		testUser = new User(){
 			private static final long serialVersionUID = 1L;
 
-			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken) {
+			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 				return new AccountCheckDTO();
 			}
 		};
