@@ -352,7 +352,7 @@
 	</bean>
 	
 	<!-- Transport only service -->
-	<bean id="throttlingService" class="mobi.nowtechnologies.server.service.ThrottlingServiceImpl">
+	<bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl">
 		<property name="memcachedClient">
 			<bean class="net.spy.memcached.MemcachedClient">
 				<constructor-arg>

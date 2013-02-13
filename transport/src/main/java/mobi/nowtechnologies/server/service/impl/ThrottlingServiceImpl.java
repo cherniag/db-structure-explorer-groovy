@@ -1,14 +1,17 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.server.error.ThrottlingException;
+import mobi.nowtechnologies.server.service.ThrottlingService;
 import net.spy.memcached.CASMutation;
 import net.spy.memcached.CASMutator;
+import net.spy.memcached.CASValue;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.IntegerTranscoder;
 import net.spy.memcached.transcoders.LongTranscoder;
 
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +21,7 @@ public class ThrottlingServiceImpl implements ThrottlingService {
 	
 	public final static String THROTTLING_HEADER = "X-Throttling-3g";
 	public final static String MAX_AMOUNT_OF_REQUESTS = "max_requests_amount";
-	public final static String CACHE_EXPIRATION_TIME = "cache-expiration-time";
+	public final static String CACHE_EXPIRATION_TIME = "cache_expiration_time";
 	public final static String THROTTLING_IS_ON = "throttling";
 	public final static Integer MAX_AMOUNT_OF_REQUESTS_DEFAULT_VALUE = 27;
 	public static final int CACHE_EXPIRE_SEC = 60;
@@ -27,13 +30,16 @@ public class ThrottlingServiceImpl implements ThrottlingService {
 	
 	@Override
 	public boolean handle(HttpServletRequest request, String username, String communityUrl) throws ThrottlingException {
+		try {
+		MDC.put("className", ThrottlingServiceImpl.class.getName());
+		LOGGER.debug("THROTTLING HEADER {} ", request.getHeader(THROTTLING_HEADER));
 		if (isActive() && request.getHeader(THROTTLING_HEADER) != null && request.getHeader(THROTTLING_HEADER).equalsIgnoreCase("true")) {
 				try {
 					int maxRequests = getMaxAmountOfRequests();
 					int i=0;
 					boolean reject = false;
 					do {
-						if (!shouldReject(i)) {
+						if (mayProceed(i)) {
 							reject = false;
 							break;
 						}
@@ -43,52 +49,49 @@ public class ThrottlingServiceImpl implements ThrottlingService {
 					
 					if (reject)
 						throw new ThrottlingException(username, communityUrl);
-				} catch (Exception e) {
-					LOGGER.error("Error while making throtlling", e);
+				} finally {
+					
 				}
 			return true;
 		}
 		return false;
+		} finally {
+			MDC.remove("className");
+		}
 	}
 		
-	protected boolean shouldReject(final int i) throws Exception {
-		final Long initial = new Long(i);
-		CASMutator<Long> mutator = new CASMutator<Long>(memcachedClient, new LongTranscoder());
-		CASMutation<Long> m = new CASMutation<Long>() {
-			public Long getNewValue(Long current) {
-				return initial.equals(current)?Long.MAX_VALUE:initial;
+	protected boolean mayProceed(final int i) {
+		CASValue<Long> casValue = memcachedClient.gets("thread"+i, new LongTranscoder());
+		if (null == casValue) {
+			CASMutator<Long> mutator = new CASMutator<Long>(memcachedClient, new LongTranscoder());
+			CASMutation<Long> m = new CASMutation<Long>() {
+				public Long getNewValue(Long current) {
+					return current;
+				}
+			};
+			try {
+				mutator.cas("thread"+i, Long.MAX_VALUE, getCacheExpirationTime(), m);
+			} catch (Exception e) {
+				LOGGER.error(e.getLocalizedMessage(), e);
 			}
-		};
-		if(mutator.cas("thread-"+i, initial, getCacheExpirationTime(), m) != Long.MAX_VALUE)
-			return false;
-		return true;
+			return true;
+		}
+		return false;
 	}
 
-	protected int getMaxAmountOfRequests() throws Exception {
-		CASMutator<Integer> mutator = new CASMutator<Integer>(memcachedClient, new IntegerTranscoder());
-		CASMutation<Integer> m = new CASMutation<Integer>() {
-			public Integer getNewValue(Integer current) {
-				return current;
-			}
-		};
-		return mutator.cas(MAX_AMOUNT_OF_REQUESTS, MAX_AMOUNT_OF_REQUESTS_DEFAULT_VALUE, 0, m);
+	protected int getMaxAmountOfRequests() {
+		CASValue<Integer> casValue = memcachedClient.gets(MAX_AMOUNT_OF_REQUESTS, new IntegerTranscoder());
+		return (null!=casValue)?casValue.getValue():MAX_AMOUNT_OF_REQUESTS_DEFAULT_VALUE;
 	}
 	
 	protected int getCacheExpirationTime () throws Exception {
-		CASMutator<Integer> mutator = new CASMutator<Integer>(memcachedClient, new IntegerTranscoder());
-		CASMutation<Integer> m = new CASMutation<Integer>() {
-			public Integer getNewValue(Integer current) {
-				return current;
-			}
-		};
-		return mutator.cas(CACHE_EXPIRATION_TIME, CACHE_EXPIRE_SEC, 0, m);
+		CASValue<Integer> casValue = memcachedClient.gets(CACHE_EXPIRATION_TIME, new IntegerTranscoder());
+		return (null!=casValue)?casValue.getValue():CACHE_EXPIRE_SEC;
 	}
 	
 	public boolean isActive() {
 		Object result = memcachedClient.get(THROTTLING_IS_ON);
-		if (null == result)
-			return false;
-		return (Boolean) result;
+		return (null != result && "1".equals(result)) ? true : false;
 	}
 	
 	
