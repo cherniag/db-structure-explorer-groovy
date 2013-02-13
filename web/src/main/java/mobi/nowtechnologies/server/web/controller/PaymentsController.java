@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.web.controller;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -17,7 +15,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -49,21 +50,15 @@ public class PaymentsController extends CommonController {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = null;
 		PaymentDetails paymentDetails = null;
 		
-		String paymentsNoteMsg;
-		if (communityUrl.equals("o2")) {
-			if (!"o2".equals(user.getProvider())) {
-				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2", null, null);
-			} else {
-				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract(), null, "", null);
-				if (StringUtils.isEmpty(paymentsNoteMsg)) {
-					paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider(), null, "", null);
-				}
-				if(StringUtils.isEmpty(paymentsNoteMsg)){
-					paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
-				}
-			}
-		} else {
+		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", null);
+		if(StringUtils.isEmpty(paymentsNoteMsg)){
+			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
+		}
+		if(StringUtils.isEmpty(paymentsNoteMsg)){
 			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
+		}
+		
+		if (!"o2".equals(user.getProvider())) {
 			paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
 			paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			paymentDetails = paymentDetailsService.getPaymentDetails(userId);
