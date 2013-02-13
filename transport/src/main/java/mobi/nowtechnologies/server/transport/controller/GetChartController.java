@@ -2,16 +2,20 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 
+import org.apache.log4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,8 +143,19 @@ public class GetChartController extends CommonController{
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@PathVariable("community") String community) {
-			
-			throttlingService.handle(request, userName, community);
+			try {
+				LogUtils.putClassNameMDC(ThrottlingServiceImpl.class);
+				MDC.put("device", deviceUID);
+				if(throttlingService.handle(request, userName, community)) {
+					LOGGER.info("accepting");
+				} else {
+					LOGGER.info("throttling");
+					throw new ThrottlingException(userName, community);
+				}
+			} finally {
+				LogUtils.removeClassNameMDC();
+				MDC.remove("device");
+			}
 		
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
