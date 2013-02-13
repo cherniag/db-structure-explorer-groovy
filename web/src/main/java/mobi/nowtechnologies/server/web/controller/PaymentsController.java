@@ -62,7 +62,7 @@ public class PaymentsController extends CommonController {
 			}
 		} else {
 			boolean nonO2User = userService.isNonO2User(user);
-			if (user.getDeviceType().getName().equals(DeviceTypeDao.getIOSDeviceType()) && nonO2User && !user.isOnFreeTrial() && user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI()) {
+			if (DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) && nonO2User && !user.isOnFreeTrial() && user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI()) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
 			}else{
