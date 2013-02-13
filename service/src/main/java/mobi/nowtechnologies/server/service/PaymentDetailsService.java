@@ -152,6 +152,7 @@ public class PaymentDetailsService {
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
 		List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(userId, paymentPolicies);
+		LOGGER.debug("Output parameter paymentPolicyDtos=[{}]", paymentPolicyDtos);
 		return paymentPolicyDtos;
 	}
 
