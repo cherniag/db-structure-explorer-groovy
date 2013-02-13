@@ -65,6 +65,9 @@ public class PaymentsController extends CommonController {
 			if (DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) && nonO2User && !user.isOnFreeTrial() && user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI()) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
 			}else{
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);

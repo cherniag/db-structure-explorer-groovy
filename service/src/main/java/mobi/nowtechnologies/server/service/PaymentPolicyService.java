@@ -126,4 +126,13 @@ public class PaymentPolicyService {
 		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
 		return paymentPolicies;
 	}
+
+	public List<PaymentPolicy> getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(Community community, String paymentType) {
+		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
+		
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		
+		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
+		return paymentPolicies;
+	}
 }

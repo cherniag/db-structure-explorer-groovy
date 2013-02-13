@@ -145,6 +145,15 @@ public class PaymentDetailsService {
 		User user = userService.findById(userId);
 		return migPaymentService.commitPaymnetDetails(user, pin);
 	}
+	
+	@Transactional(readOnly = true)
+	public List<PaymentPolicyDto> getPaymentPolicyDetailsWithouPaymentType(String communityUrl, int userId, String paymentType) {
+		LOGGER.debug("input parameters communityUrl, userId, paymentType: [{}], [{}]", new Object[] {communityUrl, userId, paymentType});
+		Community community = communityService.getCommunityByUrl(communityUrl);
+		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(userId, paymentPolicies);
+		return paymentPolicyDtos;
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<PaymentPolicyDto> getPaymentPolicyDetails(String communityUrl, int userId) {
