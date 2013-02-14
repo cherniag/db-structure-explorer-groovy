@@ -1759,6 +1759,52 @@ public class UserServiceTest {
 		Mockito.verify(mockO2ClientService, times(0)).getRedeemPromotedServerO2Url();
 		Mockito.verify(mockO2ClientService, times(1)).getRedeemServerO2Url();
 	}
+	
+	@Test
+	public void testIsIOsNonO2ItunesSubscribedUser_LIMITED_Success() throws Exception{
+		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		
+		final User user = UserFactory.createUser();
+		
+		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
+		user.setStatus(limitedUserStatus);
+		user.setDeviceType(iosDeviceType);
+		
+		PowerMockito.mockStatic(DeviceTypeDao.class);
+		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		
+		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user, true);
+		
+		assertFalse(isIOsNonO2ItunesSubscribedUser);
+	}
+	
+	@Test
+	public void testIsIOsNonO2ItunesSubscribedUser_SUBSCRIBED_Success() throws Exception{
+		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		
+		final User user = UserFactory.createUser();
+		
+		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
+		user.setStatus(subscribedUserStatus);
+		user.setDeviceType(iosDeviceType);
+		
+		PowerMockito.mockStatic(DeviceTypeDao.class);
+		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		
+		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user, true);
+		
+		assertTrue(isIOsNonO2ItunesSubscribedUser);
+	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
 		final ArgumentMatcher<Object[]> matcher = new ArgumentMatcher<Object[]>() {

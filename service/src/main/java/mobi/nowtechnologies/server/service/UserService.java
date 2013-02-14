@@ -2123,4 +2123,17 @@ public class UserService {
 		LOGGER.debug("Output parameter users=[{}]", users);
 		return users;
 	}
+	
+	public boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
+		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user, nonO2User);
+		boolean isIOsNonO2ItunesSubscribedUser = false;
+		
+		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
+		if (lastSubscribedPaymentSystem != null) {
+			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
+					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
+		}
+		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
+		return isIOsNonO2ItunesSubscribedUser;
+	}
 }

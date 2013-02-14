@@ -62,7 +62,7 @@ public class PaymentsController extends CommonController {
 			}
 		} else {
 			boolean nonO2User = userService.isNonO2User(user);
-			if (isIOsNonO2ItunesSubscribedUser(user, nonO2User)) {
+			if (userService.isIOsNonO2ItunesSubscribedUser(user, nonO2User)) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
 			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
@@ -85,17 +85,6 @@ public class PaymentsController extends CommonController {
 
 		LOGGER.debug("Output parameter [{}]", modelAndView);
 		return modelAndView;
-	}
-
-	private boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
-		boolean isIOsNonO2ItunesSubscribedUser = false;
-		
-		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
-		if (lastSubscribedPaymentSystem != null) {
-			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && (lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION))
-					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
-		}
-		return isIOsNonO2ItunesSubscribedUser;
 	}
 
 	@RequestMapping(value = { ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT }, method = RequestMethod.POST)
