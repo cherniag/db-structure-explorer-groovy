@@ -51,7 +51,12 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	<logger name="org.hibernate">
+	<logger name="org.hibernate.TYPE">
+		<level value="TRACE"></level>
+		<appender-ref ref="stdout" />
+		<appender-ref ref="stderr" />
+	</logger>
+	<logger name="org.hibernate.SQL">
 		<level value="TRACE"></level>
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />

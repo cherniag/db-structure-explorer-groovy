@@ -108,7 +108,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(response.getMessage(), ITunesInAppSubscriptionResponseDto.class);
 
 				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid", base64EncodedAppStoreReceipt);
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by response [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
 					
 					Receipt latestReceiptInfo = iTunesInAppSubscriptionResponseDto.getLatestReceiptInfo();
 					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), latestReceiptInfo.getProductId());
