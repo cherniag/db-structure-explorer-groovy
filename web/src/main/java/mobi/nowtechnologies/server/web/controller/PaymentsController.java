@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -61,9 +62,14 @@ public class PaymentsController extends CommonController {
 			}
 		} else {
 			boolean nonO2User = userService.isNonO2User(user);
-			if ( nonO2User && user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI()) {
+			if (DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) && nonO2User && !user.isOnFreeTrial() && user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI()) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+				paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			}else{
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);

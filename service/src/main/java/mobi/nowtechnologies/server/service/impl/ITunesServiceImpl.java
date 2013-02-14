@@ -108,10 +108,10 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(response.getMessage(), ITunesInAppSubscriptionResponseDto.class);
 
 				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid", base64EncodedAppStoreReceipt);
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by response [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
 					
-					Receipt receipt = iTunesInAppSubscriptionResponseDto.getReceipt();
-					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), receipt.getProductId());
+					Receipt latestReceiptInfo = iTunesInAppSubscriptionResponseDto.getLatestReceiptInfo();
+					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), latestReceiptInfo.getProductId());
 					
 					final PaymentDetailsType paymentDetailsType;
 					if (user.getLastSuccessfulPaymentTimeMillis() == 0) {
@@ -125,11 +125,11 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					submittedPayment.setUser(user);
 					submittedPayment.setTimestamp(Utils.getEpochMillis());
 					submittedPayment.setAmount(paymentPolicy.getSubcost());
-					submittedPayment.setExternalTxId(receipt.getOriginalTransactionId());
+					submittedPayment.setExternalTxId(latestReceiptInfo.getOriginalTransactionId());
 					submittedPayment.setType(paymentDetailsType);
 					submittedPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
-					submittedPayment.setNextSubPayment(receipt.getExpiresDateSeconds());
-					submittedPayment.setAppStoreOriginalTransactionId(receipt.getOriginalTransactionId());
+					submittedPayment.setNextSubPayment(latestReceiptInfo.getExpiresDateSeconds());
+					submittedPayment.setAppStoreOriginalTransactionId(latestReceiptInfo.getOriginalTransactionId());
 					submittedPayment.setPaymentSystem(PaymentDetails.ITNUNES_SUBSCRIPTION);
 					submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 					
