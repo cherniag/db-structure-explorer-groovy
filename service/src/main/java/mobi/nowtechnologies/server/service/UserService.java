@@ -293,7 +293,7 @@ public class UserService {
 				deviceUID});
 		User user = checkCredentials(userName, userToken, timestamp, communityName);
 		final String foundDeviceUID = user.getDeviceUID();
-		if (foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
+		if (deviceUID != null && foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
 			Community community = communityService.getCommunityByName(communityName);
 			final String communityURL;
 			if (community != null) {

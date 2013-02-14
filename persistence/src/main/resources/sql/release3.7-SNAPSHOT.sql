@@ -81,3 +81,11 @@ alter table tb_users add base64_encoded_app_store_receipt longtext, add app_stor
 alter table tb_paymentPolicy add app_store_product_id varchar(255);
 
 alter table tb_submittedPayments add next_sub_payment int, add base64_encoded_app_store_receipt longtext, add app_store_original_transaction_id varchar(255);
+
+-- migration on monthly payment system for non o2 user of com
+
+update tb_users u
+set u.nextSubPayment = u.nextSubPayment + u.subBalance * 7 * 86400, u.subBalance = 0
+where u.currentPaymentDetailsId IS NOT NULL and u.provider IS NOT NULL and u.provider <> 'o2';
+
+-- end migration

@@ -25,6 +25,7 @@ insert into community_charts (chart_id, community_id) values (2,2);
 insert into community_charts (chart_id, community_id) values (3,3);
 insert into community_charts (chart_id, community_id) values (4,4);
 insert into community_charts (chart_id, community_id) values (5,5);
+insert into community_charts (chart_id, community_id) values (5,7);
 
 insert into tb_files (i, filename, size, fileType, version) values (1894,'US-UM7-11-00061.aud',1464070,2,1);
 insert into tb_files (i, filename, size, fileType, version) values (1893,'US-UM7-11-00061.hdr',162676,1,666);
