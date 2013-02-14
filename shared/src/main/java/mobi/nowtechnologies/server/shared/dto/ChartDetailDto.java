@@ -32,6 +32,36 @@ public class ChartDetailDto {
 	private boolean isArtistUrl;
 	private Integer playlistId;
 
+	public ChartDetailDto(ChartDetailDto chartDetailDto) 
+	{
+	    this.position = chartDetailDto.position;
+	    this.media = chartDetailDto.media;
+	    this.title = chartDetailDto.title;
+	    this.artist = chartDetailDto.artist;
+	    this.info = chartDetailDto.info;
+	    this.genre1 = chartDetailDto.genre1;
+	    this.genre2 = chartDetailDto.genre2;
+	    this.drmType = chartDetailDto.drmType;
+	    this.drmValue = chartDetailDto.drmValue;
+	    this.trackSize = chartDetailDto.trackSize;
+	    this.headerSize = chartDetailDto.headerSize;
+	    this.audioSize = chartDetailDto.audioSize;
+	    this.imageLargeSize = chartDetailDto.imageLargeSize;
+	    this.imageSmallSize = chartDetailDto.imageSmallSize;
+	    this.iTunesUrl = chartDetailDto.iTunesUrl;
+	    this.amazonUrl = chartDetailDto.amazonUrl;
+	    this.previousPosition = chartDetailDto.previousPosition;
+	    this.changePosition = chartDetailDto.changePosition;
+	    this.channel = chartDetailDto.channel;
+	    this.chartDetailVersion = chartDetailDto.chartDetailVersion;
+	    this.headerVersion = chartDetailDto.headerVersion;
+	    this.audioVersion = chartDetailDto.audioVersion;
+	    this.imageLargeVersion = chartDetailDto.imageLargeVersion;
+	    this.imageSmallVersion = chartDetailDto.imageSmallVersion;
+	    this.isArtistUrl = chartDetailDto.isArtistUrl;
+	    this.playlistId = chartDetailDto.playlistId;
+	}
+
 	public ChartDetailDto() {
 	}
 
