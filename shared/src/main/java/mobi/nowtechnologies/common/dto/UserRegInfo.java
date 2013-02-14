@@ -106,6 +106,7 @@ public class UserRegInfo {
 		public static final String FREEMIUM = "FREEMIUM";
 		public static final String PAY_PAL = "PAY_PAL";
 		public static final String UNKNOWN = "UNKNOWN";
+		public static final String ITUNES_SUBSCRIPTION = "ITNUNES_SUBSCRIPTION";
 
 		public static String[] getPaymentTypes() {
 			return new String[]{CREDIT_CARD, PREMIUM_USER, FREEMIUM, PAY_PAL, UNKNOWN};

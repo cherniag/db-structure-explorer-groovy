@@ -800,6 +800,9 @@ public class User implements Serializable {
 			return PaymentType.PAY_PAL;
 		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PREMIUM_USER;
+		} else if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
+			return PaymentType.ITUNES_SUBSCRIPTION;
 		}
 		return PaymentType.UNKNOWN;
 	}

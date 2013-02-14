@@ -64,10 +64,10 @@ public class PaymentsController extends CommonController {
 			boolean nonO2User = userService.isNonO2User(user);
 			if (isIOsNonO2ItunesSubscribedUser(user, nonO2User)) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
-				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
 			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
-				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITNUNES_SUBSCRIPTION);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
 				paymentDetails = paymentDetailsService.getPaymentDetails(userId);
 				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			}else{
@@ -92,7 +92,7 @@ public class PaymentsController extends CommonController {
 		
 		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
 		if (lastSubscribedPaymentSystem != null) {
-			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && (lastSubscribedPaymentSystem.equals(PaymentDetails.ITNUNES_SUBSCRIPTION))
+			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && (lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION))
 					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
 		}
 		return isIOsNonO2ItunesSubscribedUser;

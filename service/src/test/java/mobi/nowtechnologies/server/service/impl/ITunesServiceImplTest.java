@@ -355,7 +355,7 @@ public class ITunesServiceImplTest {
 		assertEquals(currencyISO, passedSubmittedPayment.getCurrencyISO());
 		assertEquals((int)(expiresDate/1000), passedSubmittedPayment.getNextSubPayment());
 		assertEquals(appStoreOriginalTransactionId, passedSubmittedPayment.getAppStoreOriginalTransactionId());
-		assertEquals(PaymentDetails.ITNUNES_SUBSCRIPTION, passedSubmittedPayment.getPaymentSystem());
+		assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, passedSubmittedPayment.getPaymentSystem());
 		assertEquals(base64EncodedAppStoreReceipt, passedSubmittedPayment.getBase64EncodedAppStoreReceipt());
 	}
 
