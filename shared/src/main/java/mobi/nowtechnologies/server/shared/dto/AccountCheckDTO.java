@@ -57,6 +57,9 @@ public class AccountCheckDTO {
     private ActivationStatus activation;
     
     private String appStoreProductId;
+    
+    private String provider;
+	private String lastSubscribedPaymentSystem;
 
 	public String getDisplayName() {
 		return displayName;
@@ -320,10 +323,27 @@ public class AccountCheckDTO {
 		this.appStoreProductId = appStoreProductId;
 	}
 
+	public String getProvider() {
+		return provider;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+	
+	public String getLastSubscribedPaymentSystem() {
+		return lastSubscribedPaymentSystem;
+	}
+
+	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
+		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
+	}
+
 	@Override
 	public String toString() {
 		return "AccountCheckDTO [userName=" + userName + ", deviceUID=" + deviceUID + ", subBalance=" + subBalance + ", rememberMeToken=" + rememberMeToken
 				+ ", status=" + status + ", paymentEnabled=" + paymentEnabled + ", paymentStatus=" + paymentStatus + ", lastPaymentStatus=" + lastPaymentStatus
+				+ ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
 				+ ", fullyRegistred=" + fullyRegistred + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", isFreeTrial=" + isFreeTrial
 				+ ", isPromotedDevice=" + isPromotedDevice + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", promotedWeeks="
 				+ promotedWeeks + ", paymentType=" + paymentType + ", hasOffers=" + hasOffers + ", promotionLabel=" + promotionLabel
@@ -331,7 +351,7 @@ public class AccountCheckDTO {
 				+ ", timeOfMovingToLimitedStatusSeconds=" + timeOfMovingToLimitedStatusSeconds + ", chartItems=" + chartItems + ", chartTimestamp="
 				+ chartTimestamp + ", deviceType=" + deviceType + ", displayName=" + displayName + ", drmType=" + drmType + ", drmValue=" + drmValue
 				+ ", newsItems=" + newsItems + ", newsTimestamp=" + newsTimestamp + ", oAuthProvider=" + oAuthProvider + ", operator=" + operator
-				+ ", phoneNumber=" + phoneNumber + ", userToken=" + userToken + "]";
+				+ ", provider="+provider+ ", phoneNumber=" + phoneNumber + ", userToken=" + userToken + "]";
 	}	
 
 }

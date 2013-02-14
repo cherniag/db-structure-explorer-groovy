@@ -293,7 +293,7 @@ public class UserService {
 				deviceUID});
 		User user = checkCredentials(userName, userToken, timestamp, communityName);
 		final String foundDeviceUID = user.getDeviceUID();
-		if (foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
+		if (deviceUID != null && foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
 			Community community = communityService.getCommunityByName(communityName);
 			final String communityURL;
 			if (community != null) {
@@ -1219,6 +1219,9 @@ public class UserService {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
 		// Update last Successful payment time
 		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
+		user.setLastSubscribedPaymentSystem(payment.getPaymentSystem());
+
+		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
 		if(!isNonO2User){
@@ -1231,8 +1234,10 @@ public class UserService {
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
 		}else{
 			user.setNextSubPayment(payment.getNextSubPayment());
-			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-			user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
+			if (base64EncodedAppStoreReceipt != null) {
+				user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+				user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+			}
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
@@ -2112,10 +2117,28 @@ public class UserService {
 	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId){
 		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
 		
+		if (user == null)
+			throw new NullPointerException("The parameter user is null");
+		if (appStoreOriginalTransactionId == null)
+			throw new NullPointerException("The parameter appStoreOriginalTransactionId is null");
+		
 		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		users.add(user);
 		
 		LOGGER.debug("Output parameter users=[{}]", users);
 		return users;
+	}
+	
+	public boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
+		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user, nonO2User);
+		boolean isIOsNonO2ItunesSubscribedUser = false;
+		
+		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
+		if (lastSubscribedPaymentSystem != null) {
+			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
+					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
+		}
+		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
+		return isIOsNonO2ItunesSubscribedUser;
 	}
 }

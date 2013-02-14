@@ -89,9 +89,9 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				|| (transactionReceipt != null && user.getBase64EncodedAppStoreReceipt() == null))) {
 
 			final String base64EncodedAppStoreReceipt;
-			if (user.getBase64EncodedAppStoreReceipt() == null) {
+			if (user.getBase64EncodedAppStoreReceipt() == null || transactionReceipt != null) {
 				base64EncodedAppStoreReceipt = transactionReceipt;
-			}else{
+			} else {
 				base64EncodedAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
 			}
 
@@ -108,10 +108,10 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(response.getMessage(), ITunesInAppSubscriptionResponseDto.class);
 
 				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid", base64EncodedAppStoreReceipt);
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by response [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
 					
-					Receipt receipt = iTunesInAppSubscriptionResponseDto.getReceipt();
-					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), receipt.getProductId());
+					Receipt latestReceiptInfo = iTunesInAppSubscriptionResponseDto.getLatestReceiptInfo();
+					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), latestReceiptInfo.getProductId());
 					
 					final PaymentDetailsType paymentDetailsType;
 					if (user.getLastSuccessfulPaymentTimeMillis() == 0) {
@@ -125,12 +125,12 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					submittedPayment.setUser(user);
 					submittedPayment.setTimestamp(Utils.getEpochMillis());
 					submittedPayment.setAmount(paymentPolicy.getSubcost());
-					submittedPayment.setExternalTxId(receipt.getOriginalTransactionId());
+					submittedPayment.setExternalTxId(latestReceiptInfo.getOriginalTransactionId());
 					submittedPayment.setType(paymentDetailsType);
 					submittedPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
-					submittedPayment.setNextSubPayment(receipt.getExpiresDateSeconds());
-					submittedPayment.setAppStoreOriginalTransactionId(receipt.getOriginalTransactionId());
-					submittedPayment.setPaymentSystem(PaymentDetails.ITNUNES_SUBSCRIPTION);
+					submittedPayment.setNextSubPayment(latestReceiptInfo.getExpiresDateSeconds());
+					submittedPayment.setAppStoreOriginalTransactionId(latestReceiptInfo.getOriginalTransactionId());
+					submittedPayment.setPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
 					submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 					
 					submitedPaymentService.save(submittedPayment);
@@ -149,29 +149,6 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		
 		LOGGER.debug("Output parameter response=[{}]", response);
 		return response;
-	}
-
-	public static void main(String[] args) {
-		ITunesInAppSubscriptionRequestDto iTunesInAppSubscriptionRequestDto = new ITunesInAppSubscriptionRequestDto();
-		iTunesInAppSubscriptionRequestDto.setPassword("password");
-		iTunesInAppSubscriptionRequestDto.setReceiptData("receiptData");
-
-		ITunesInAppSubscriptionResponseDto.Receipt receipt = new ITunesInAppSubscriptionResponseDto.Receipt();
-		receipt.setBid("bid");
-
-		ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = new ITunesInAppSubscriptionResponseDto();
-		iTunesInAppSubscriptionResponseDto.setStatus("0");
-		iTunesInAppSubscriptionResponseDto.setReceipt(receipt);
-
-		String res = gson.toJson(iTunesInAppSubscriptionRequestDto);
-		System.out.println(res);
-
-		res = gson.toJson(iTunesInAppSubscriptionResponseDto);
-		System.out.println(res);
-
-		ITunesInAppSubscriptionResponseDto e = gson.fromJson(res, ITunesInAppSubscriptionResponseDto.class);
-		System.out.println(e);
-
 	}
 
 }

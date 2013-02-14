@@ -105,7 +105,6 @@ public class ChartServiceTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testProcessGetChartCommand_Success()
 		throws Exception {
 		String communityName = "chartsnow";
@@ -148,18 +147,16 @@ public class ChartServiceTest {
 
 		ChartDetailDto[] list = ((ChartDto)result[1]).getChartDetailDtos();
 		assertNotNull(list);
-		assertEquals(5, list.length);
+		assertEquals(3, list.length);
 		assertEquals(ChartDetailDto.class, list[0].getClass());
-		assertEquals(BonusChartDetailDto.class, list[1].getClass());
+		assertEquals(ChartDetailDto.class, list[1].getClass());
 		assertEquals(ChartDetailDto.class, list[2].getClass());
-		assertEquals(BonusChartDetailDto.class, list[3].getClass());
-		assertEquals(ChartDetailDto.class, list[4].getClass());
 		assertEquals(1, list[0].getPosition());
 		assertEquals(42, list[1].getPosition());
-		assertEquals(53, list[3].getPosition());
+		assertEquals(53, list[2].getPosition());
 		assertEquals(basicChart.getI().byteValue(), list[0].getPlaylistId().byteValue());
 		assertEquals(topChart.getI().byteValue(), list[1].getPlaylistId().byteValue());
-		assertEquals(otherChart.getI().byteValue(), list[3].getPlaylistId().byteValue());
+		assertEquals(otherChart.getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
 		verify(mockChartRepository).getByCommunityName(anyString());
 		verify(mockChartDetailService).findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)1));
@@ -251,7 +248,7 @@ public class ChartServiceTest {
 		testUser = new User(){
 			private static final long serialVersionUID = 1L;
 
-			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken) {
+			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 				return new AccountCheckDTO();
 			}
 		};

@@ -53,6 +53,10 @@
 					<c:set var="method_name" value="psms" />
 					<s:message code='pays.select.psms' var="method_readable" />
 				</c:if>
+				<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
+					<c:set var="method_name" value="iTunesSubscription" />
+					<s:message code='pays.select.iTunesSubscription' var="method_readable" />
+				</c:if>
 				
 				<c:choose>
 					<c:when test="${(paymentPolicy.paymentType == 'iTunesSubscription') && (paymentDetails!=null) && (false==paymentDetails.activated)}">

@@ -182,7 +182,6 @@ public class ChartDetail {
 			if (chartDetail.getChart().getType() == ChartType.BASIC_CHART)
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
 			else {
-				chartDetailDtos.add(chartDetail.toChartDetailDto(new BonusChartDetailDto(), defaultAmazonUrl));
 				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
 			}
 		}
