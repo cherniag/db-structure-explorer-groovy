@@ -1219,6 +1219,9 @@ public class UserService {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
 		// Update last Successful payment time
 		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
+		user.setLastSubscribedPaymentSystem(payment.getPaymentSystem());
+
+		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
 		if(!isNonO2User){
@@ -1231,8 +1234,10 @@ public class UserService {
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
 		}else{
 			user.setNextSubPayment(payment.getNextSubPayment());
-			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-			user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
+			if (base64EncodedAppStoreReceipt != null) {
+				user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+				user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+			}
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));

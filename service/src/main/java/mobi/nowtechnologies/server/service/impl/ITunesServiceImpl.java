@@ -89,9 +89,9 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 				|| (transactionReceipt != null && user.getBase64EncodedAppStoreReceipt() == null))) {
 
 			final String base64EncodedAppStoreReceipt;
-			if (user.getBase64EncodedAppStoreReceipt() == null) {
+			if (user.getBase64EncodedAppStoreReceipt() == null || transactionReceipt != null) {
 				base64EncodedAppStoreReceipt = transactionReceipt;
-			}else{
+			} else {
 				base64EncodedAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
 			}
 
