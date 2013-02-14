@@ -1849,6 +1849,49 @@ public class UserServiceTest {
 		
 		assertTrue(isIOsNonO2ItunesSubscribedUser);
 	}
+	
+	@Test
+	public void testFindUsersForItunesInAppSubscription_Success(){
+		User user = UserFactory.createUser();
+		User user2 = UserFactory.createUser();
+
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		
+		List<User> users = new ArrayList<User>();
+		users.add(user2);
+		
+		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
+		
+		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		
+		assertNotNull(actualUsers);
+		assertEquals(2, actualUsers.size());
+		assertTrue(users.contains(user));
+		assertTrue(users.contains(user2));
+		
+		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindUsersForItunesInAppSubscription_appStoreOriginalTransactionIdIsNull_Failure(){
+		User user = UserFactory.createUser();
+
+		String appStoreOriginalTransactionId=null;
+		int nextSubPayment = 1;
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindUsersForItunesInAppSubscription_userIsNull_Failure(){
+		User user = null;
+
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
 		final ArgumentMatcher<Object[]> matcher = new ArgumentMatcher<Object[]>() {

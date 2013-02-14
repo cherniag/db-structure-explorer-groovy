@@ -2117,6 +2117,11 @@ public class UserService {
 	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId){
 		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
 		
+		if (user == null)
+			throw new NullPointerException("The parameter user is null");
+		if (appStoreOriginalTransactionId == null)
+			throw new NullPointerException("The parameter appStoreOriginalTransactionId is null");
+		
 		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		users.add(user);
 		
