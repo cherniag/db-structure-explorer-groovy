@@ -792,7 +792,10 @@ public class User implements Serializable {
 
     // TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (null == paymentDetails)
+		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
+			return PaymentType.ITUNES_SUBSCRIPTION;
+		}else if (null == paymentDetails)
 			return PaymentType.UNKNOWN;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.CREDIT_CARD;
@@ -800,9 +803,6 @@ public class User implements Serializable {
 			return PaymentType.PAY_PAL;
 		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PREMIUM_USER;
-		} else if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
-				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
-			return PaymentType.ITUNES_SUBSCRIPTION;
 		}
 		return PaymentType.UNKNOWN;
 	}
