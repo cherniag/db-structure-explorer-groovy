@@ -1477,6 +1477,7 @@ public class UserServiceTest {
 		user.setProvider("provider");
 		user.setSubBalance(0);
 		user.setStatus(limitedUserStatus);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setNextSubPayment(Integer.MIN_VALUE);
@@ -1512,6 +1513,7 @@ public class UserServiceTest {
 				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
 				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
 				assertEquals(iTunesSubscriptionType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
 				
 				return passedUser;
 			}
@@ -1553,6 +1555,7 @@ public class UserServiceTest {
 		user.setStatus(limitedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
@@ -1585,6 +1588,7 @@ public class UserServiceTest {
 				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
 				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
 				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
 				
 				return passedUser;
 			}
@@ -1657,6 +1661,7 @@ public class UserServiceTest {
 				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
 				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
 				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(null, passedUser.getFreeTrialExpiredMillis());
 				
 				return passedUser;
 			}
@@ -1698,6 +1703,7 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(migSmsType);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
@@ -1730,6 +1736,7 @@ public class UserServiceTest {
 				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
 				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
 				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
 				
 				return passedUser;
 			}

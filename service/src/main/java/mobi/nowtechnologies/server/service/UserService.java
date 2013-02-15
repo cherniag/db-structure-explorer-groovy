@@ -1221,7 +1221,8 @@ public class UserService {
 		final String paymentSystem = payment.getPaymentSystem();
 
 		// Update last Successful payment time
-		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
+		final long epochMillis = Utils.getEpochMillis();
+		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
 		user.setLastSubscribedPaymentSystem(paymentSystem);
 
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
@@ -1240,7 +1241,10 @@ public class UserService {
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-			user.setFreeTrialExpiredMillis(Utils.getEpochMillis());
+			final Long freeTrialExpiredMillis = user.getFreeTrialExpiredMillis();
+			if (freeTrialExpiredMillis!=null && freeTrialExpiredMillis > epochMillis) {
+				user.setFreeTrialExpiredMillis(epochMillis);
+			}
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
