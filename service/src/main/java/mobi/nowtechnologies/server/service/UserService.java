@@ -2060,7 +2060,7 @@ public class UserService {
         		user = mobileUser;
         	}
         } else {
-			if (user.getDeviceUID().equals(user.getUserName())) {
+			if (user.getActivationStatus() == ActivationStatus.ENTERED_NUMBER) {
 		        Promotion promotion = null;
 				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac);
 				if(o2ClientService.isO2User(o2UserDetails))

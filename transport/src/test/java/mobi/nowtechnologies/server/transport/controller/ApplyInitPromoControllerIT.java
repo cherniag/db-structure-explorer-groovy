@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -26,13 +27,18 @@ public class ApplyInitPromoControllerIT {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSet(){
         //given
         String userName = "imei_351722057812748";
         User user = userService.findByName(userName);
-
+        user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+        userRepository.save(user);
+        
         //then
         controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
 
@@ -61,6 +67,34 @@ public class ApplyInitPromoControllerIT {
         Assert.assertEquals(user.getDeviceUID(), mobileUser.getDeviceUID());
         Assert.assertEquals(user.getDeviceModel(), mobileUser.getDeviceModel());
         Assert.assertEquals(user.getDeviceString(), mobileUser.getDeviceString());
+        
+        user = userService.findByName(userName);
+        Assert.assertNull(user);
+    }
+    
+    @Test
+    public void givenValidO2Token_whenUserReInstallAppWithOldPhoneNumber_then_ReturnAUserWithOldPhoneNumberAndAppliedPromo() {
+    	//given
+        String userName = "+447111111111";
+        String oldUserName = "+447888888888";
+        User user = userService.findByName(userName);
+        user.setUserName(oldUserName);
+        user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+        user.setNextSubPayment(0);
+        userRepository.save(user);
+        
+        //then
+        controller.applyO2Promotion("o2", oldUserName, user.getToken(), "timestemp", "11111-4dfghg546456", "o2");
+
+        //when
+        User mobileUser = userService.findByName(userName);
+        
+        Assert.assertEquals(user.getDevice(), mobileUser.getDevice());
+        Assert.assertEquals(user.getDeviceUID(), mobileUser.getDeviceUID());
+        Assert.assertEquals(user.getDeviceModel(), mobileUser.getDeviceModel());
+        Assert.assertEquals(user.getDeviceString(), mobileUser.getDeviceString());
+        Assert.assertEquals(ActivationStatus.ACTIVATED, mobileUser.getActivationStatus());
+        Assert.assertEquals(ActivationStatus.ACTIVATED, mobileUser.getNextSubPayment());
         
         user = userService.findByName(userName);
         Assert.assertNull(user);
