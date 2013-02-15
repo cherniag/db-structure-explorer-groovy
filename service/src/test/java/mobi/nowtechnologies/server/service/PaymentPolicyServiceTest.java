@@ -122,6 +122,22 @@ public class PaymentPolicyServiceTest {
 	}
 	
 	@Test
+	public void testGetPaymentPoliciesByPaymentType_Success() {
+		
+		Community community = CommunityFactory.createCommunity();
+		String paymentType ="paymentType";
+		
+		List<PaymentPolicy> paymentPolicies = Collections.<PaymentPolicy>emptyList();
+				
+		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType)).thenReturn(paymentPolicies);
+		
+		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		
+		assertNotNull(actualPaymentPolicies);
+		assertEquals(paymentPolicies, actualPaymentPolicies);
+	}
+	
+	@Test
 	public void testGetPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType_Success() {
 		
 		Community community = CommunityFactory.createCommunity();
