@@ -127,6 +127,7 @@ public class PaymentPolicyService {
 		return paymentPolicies;
 	}
 
+	@Transactional(readOnly = true)
 	public List<PaymentPolicy> getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(Community community, String paymentType) {
 		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
 		

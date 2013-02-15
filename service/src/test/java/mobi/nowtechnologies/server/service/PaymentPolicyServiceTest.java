@@ -1,26 +1,38 @@
 package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.*;
 
+@RunWith(PowerMockRunner.class)
 public class PaymentPolicyServiceTest {
 	
-	private PaymentPolicyService service;
+	private PaymentPolicyService fixturePaymentPolicyService;
+	private PaymentPolicyRepository mockPaymentPolicyRepository;
 	
 	@Before
 	public void before() {
-		service = new PaymentPolicyService();
+		mockPaymentPolicyRepository = Mockito.mock(PaymentPolicyRepository.class);
+
+		fixturePaymentPolicyService = new PaymentPolicyService();
+		fixturePaymentPolicyService.setPaymentPolicyRepository(mockPaymentPolicyRepository);
 	}
 	
 	@Test
@@ -29,7 +41,7 @@ public class PaymentPolicyServiceTest {
 			
 		PromotionPaymentPolicy promotion = createPromotionPaymentPolicy();
 		
-		PaymentPolicyDto dto = service.getPaymentPolicy(paymentPolicy, promotion);
+		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, promotion);
 		
 		assertNotNull(dto);
 		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
@@ -47,7 +59,7 @@ public class PaymentPolicyServiceTest {
 	@Test
 	public void mergePaymentPolicyWithNullPromotion() {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
-		PaymentPolicyDto dto = service.getPaymentPolicy(paymentPolicy, null);
+		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, null);
 		
 		assertNotNull(dto);
 		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
@@ -64,7 +76,7 @@ public class PaymentPolicyServiceTest {
 	
 	@Test
 	public void mergePaymentPolicyWithNulls() {
-		PaymentPolicyDto dto = service.getPaymentPolicy(null, null);
+		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(null, null);
 		assertNull(dto);
 	}
 	
@@ -73,7 +85,7 @@ public class PaymentPolicyServiceTest {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
 		paymentPolicy.setOperator(null);
 		
-		PaymentPolicyDto dto = service.getPaymentPolicy(paymentPolicy, null);
+		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, null);
 		
 		assertNotNull(dto);		
 		assertEquals(paymentPolicy.getPaymentType(), dto.getPaymentType());
@@ -108,4 +120,21 @@ public class PaymentPolicyServiceTest {
 			paymentPolicy.setCommunity(community);
 		return paymentPolicy;
 	}
+	
+	@Test
+	public void testGetPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType_Success() {
+		
+		Community community = CommunityFactory.createCommunity();
+		String paymentType ="paymentType";
+		
+		List<PaymentPolicy> paymentPolicies = Collections.<PaymentPolicy>emptyList();
+				
+		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType)).thenReturn(paymentPolicies);
+		
+		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		
+		assertNotNull(actualPaymentPolicies);
+		assertEquals(paymentPolicies, actualPaymentPolicies);
+	}
+
 }
