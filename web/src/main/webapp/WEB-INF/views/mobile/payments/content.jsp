@@ -59,7 +59,7 @@
 				</c:if>
 				
 				<c:choose>
-					<c:when test="${(paymentPolicy.paymentType == 'iTunesSubscription') && (paymentDetails!=null) && (false==paymentDetails.activated)}">
+					<c:when test="${(paymentPolicy.paymentType == 'iTunesSubscription') && (paymentDetails!=null) && (true==paymentDetails.activated)}">
 						<c:set var="to_display" value="none" />
 					</c:when>
 					<c:otherwise>
