@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
@@ -18,8 +20,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
 
 @RunWith(PowerMockRunner.class)
 public class PaymentPolicyServiceTest {
@@ -122,6 +126,41 @@ public class PaymentPolicyServiceTest {
 	}
 	
 	@Test
+	public void testFindAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull_Success(){
+		Community community = CommunityFactory.createCommunity();
+		
+		List<String> appStoreProductIds = Collections.<String>emptyList();
+		
+		Mockito.when(mockPaymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community)).thenReturn(appStoreProductIds);
+		
+		List<String> actualAppStoreProductIds = fixturePaymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+		
+		assertNotNull(actualAppStoreProductIds);
+		assertEquals(appStoreProductIds, actualAppStoreProductIds);
+		
+		Mockito.verify(mockPaymentPolicyRepository, times(1)).findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+	}
+	
+	@Test
+	public void testFindByCommunityAndAppStoreProductId_Success() {
+		
+		final Community community = CommunityFactory.createCommunity();
+		final String appStoreProductId = "appStoreProductId";
+		
+		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(); 
+		
+		Mockito.when(mockPaymentPolicyRepository.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
+		
+		final PaymentPolicy actaulPaymentPolicy = fixturePaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		
+		assertNotNull(actaulPaymentPolicy);
+		assertEquals(paymentPolicy, actaulPaymentPolicy);
+		
+		Mockito.verify(mockPaymentPolicyRepository, times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		
+	}
+	
+	@Test
 	public void testGetPaymentPoliciesByPaymentType_Success() {
 		
 		Community community = CommunityFactory.createCommunity();
@@ -131,10 +170,12 @@ public class PaymentPolicyServiceTest {
 				
 		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType)).thenReturn(paymentPolicies);
 		
-		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
 		
 		assertNotNull(actualPaymentPolicies);
 		assertEquals(paymentPolicies, actualPaymentPolicies);
+		
+		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesByPaymentType(community, paymentType);
 	}
 	
 	@Test
@@ -151,6 +192,8 @@ public class PaymentPolicyServiceTest {
 		
 		assertNotNull(actualPaymentPolicies);
 		assertEquals(paymentPolicies, actualPaymentPolicies);
+		
+		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
 	}
 
 }
