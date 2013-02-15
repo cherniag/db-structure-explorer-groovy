@@ -252,7 +252,7 @@ public class IntegrationTestIT {
 			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
 
 			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null);
+					apiVersion, communityName, appVersion, null, null, null, null);
 
 			String responseBody = aHttpServletResponse.getContentAsString();
 
@@ -345,7 +345,7 @@ public class IntegrationTestIT {
 			assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
 
 			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null);
+					apiVersion, communityName, appVersion, null, null, null, null);
 
 			responseBody = aHttpServletResponse.getContentAsString();
 
@@ -615,7 +615,7 @@ public class IntegrationTestIT {
 
 	private MockHttpServletResponse acc_check(String timestamp,
 			String userToken, String userName, String apiVersion,
-			String communityName, String appVersion, String deviceType, String pushNotificationToken, String iphoneToken) throws ServletException,
+			String communityName, String appVersion, String deviceType, String pushNotificationToken, String iphoneToken, String transactionReceipt) throws ServletException,
 			IOException {
 		if (timestamp == null)
 			throw new NullPointerException("The parameter timestamp is null");
@@ -645,6 +645,7 @@ public class IntegrationTestIT {
 		httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
 		httpServletRequest.addParameter("PUSH_NOTIFICATION_TOKEN", pushNotificationToken);
 		httpServletRequest.addParameter("IPHONE_TOKEN", iphoneToken);
+		httpServletRequest.addParameter("TRANSACTION_RECEIPT", transactionReceipt);
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
@@ -745,7 +746,7 @@ public class IntegrationTestIT {
 			assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
 
 			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null);
+					apiVersion, communityName, appVersion, null, null, null, null);
 
 			String responseBody = aHttpServletResponse.getContentAsString();
 
@@ -903,7 +904,7 @@ public class IntegrationTestIT {
 			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
 
 			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null);
+					apiVersion, communityName, appVersion, null, null, null, null);
 
 			String responseBody = aHttpServletResponse.getContentAsString();
 
@@ -1058,7 +1059,7 @@ public class IntegrationTestIT {
 		assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
 
 		aHttpServletResponse = acc_check(timestamp, userToken, userName,
-				apiVersion, communityName, appVersion, null, null, null);
+				apiVersion, communityName, appVersion, null, null, null, null);
 
 		String responseBody = aHttpServletResponse.getContentAsString();
 
@@ -1110,7 +1111,7 @@ public class IntegrationTestIT {
 		// assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
 
 		aHttpServletResponse = acc_check(timestamp, userToken, userName,
-				apiVersion, communityName, appVersion, null, null, null);
+				apiVersion, communityName, appVersion, null, null, null, null);
 
 		responseBody = aHttpServletResponse.getContentAsString();
 
@@ -1476,7 +1477,7 @@ public class IntegrationTestIT {
 	@Test
 	public void test_EntityControllerHandleException() {
 		try {
-			acc_check("", "", "testUser", "", "testCommunity", "", null, null, null);
+			acc_check("", "", "testUser", "", "testCommunity", "", null, null, null, null);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			fail(e.getMessage());
@@ -2070,7 +2071,7 @@ public class IntegrationTestIT {
 		user = userService.findByNameAndCommunity(userName, communityName);
 		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
 
-		mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, null, null, null);
+		mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, null, null, null, null);
 		assertEquals(200, mockHttpServletResponse.getStatus());
 
 		String responseBody = mockHttpServletResponse.getContentAsString();
@@ -2365,7 +2366,7 @@ public class IntegrationTestIT {
 			assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
 
 			mockHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null);
+					apiVersion, communityName, appVersion, null, null, null, null);
 			assertEquals(HttpStatus.UNAUTHORIZED.value(), mockHttpServletResponse
 					.getStatus());
 
@@ -2808,10 +2809,11 @@ public class IntegrationTestIT {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testGET_CHART_O2_v3p7() throws Exception {
 		try {
+			String password = "zzz@z.com";
 			String userName = "zzz@z.com";
 			String timestamp = "2011_12_26_07_04_23";
 			String apiVersion = "3.7";
@@ -2819,6 +2821,7 @@ public class IntegrationTestIT {
 			String appVersion = "CNBETA";
 			String communityUrl="o2";
 
+			String deviceString = "Device 1";
 			String deviceType = UserRegInfo.DeviceType.ANDROID;
 
 			String ipAddress = "2.24.0.1";
@@ -3474,7 +3477,7 @@ public class IntegrationTestIT {
 		String wrongUserToken = "wrongUserToken";
 
 		mockHttpServletResponse = acc_check(timestamp, wrongUserToken, userName,
-				apiVersion, communityName, appVersion, null, null, null);
+				apiVersion, communityName, appVersion, null, null, null, null);
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), mockHttpServletResponse
 				.getStatus());
 
@@ -3567,16 +3570,16 @@ public class IntegrationTestIT {
 
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, deviceType, pushNotificationToken, null);
+			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, deviceType, pushNotificationToken, null, null);
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, deviceType, pushNotificationToken, null);
+			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, deviceType, pushNotificationToken, null, null);
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, pushNotificationToken, null);
+			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, pushNotificationToken, null, null);
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
-			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, pushNotificationToken, null);
+			mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, pushNotificationToken, null, null);
 			assertEquals(200, mockHttpServletResponse.getStatus());
 
 		} catch (Exception e) {
@@ -3919,4 +3922,39 @@ public class IntegrationTestIT {
 		assertNotNull(contentAsString);
 		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447870111111</phoneNumber><redeemServerUrl>https://identity.o2.co.uk</redeemServerUrl></phoneActivation></response>", contentAsString);
 	}
+	
+	@Test
+	public void testACC_CHECK_with_TRANSACTION_RECEIPT_param() throws Exception {
+		String userName = "zzz@z.com";
+		String apiVersion = "V3.6";
+		String communityName = "o2";
+		String appVersion = "CNBETA";
+		String phone = "07870111111";
+		String timestamp = "2011_12_26_07_04_23";
+		String deviceType = UserRegInfo.DeviceType.ANDROID;
+		String transactionReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQXNyQUNod2dETm1IYmIvSHU2UU5JbHZEUTY4TEE3dWIvQWlkY3huS2JSeTl1NTYyWWM4VHNtUGROQzcwcmo5KzBxOVE1UlBKYTdMK3lYb2ltU05TS0pCVDd2OVozVjgra2dVNkNwQmFPb1dyOW50TDhOdWZwdmxicUh5dUdjMm1vS1pOYXFsM2JFLzlRVWpkK1FKR2tPMVNmNVVWRDRpeDQ0MGlmMlMzd0p2K0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE1T2pVeU9qQTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9URTFNamd3TXpraU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJelpHTTFOakUwTldaa1pqWmpOREU0WXpRNFlqSm1ZelZrTVRNd09HSTBOR1ZoTlRkaVltUmlJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzFOVGsxT0NJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpreE56QTRNRE01SWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMxTlRrMU9DSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk1TVRVeU9ETTVOaUk3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpOVEl3TlNJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFOVG93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0pwZEdWdExXbGtJaUE5SUNJMk1ESTNNalU0TWpnaU93b0pJbVY0Y0dseVpYTXRaR0YwWlMxbWIzSnRZWFIwWldRaUlEMGdJakl3TVRNdE1ESXRNVElnTVRjNk5UVTZNRGdnUlhSakwwZE5WQ0k3Q2draWNISnZaSFZqZEMxcFpDSWdQU0FpWTI5dExtMTFjMmxqY1hWaVpXUXViekl1WVhWMGIzSmxibVYzTG5SbGMzUWlPd29KSW5CMWNtTm9ZWE5sTFdSaGRHVWlJRDBnSWpJd01UTXRNREl0TVRJZ01UYzZOVEk2TURnZ1JYUmpMMGROVkNJN0Nna2liM0pwWjJsdVlXd3RjSFZ5WTJoaGMyVXRaR0YwWlNJZ1BTQWlNakF4TXkwd01pMHhNaUF4TnpvMU1qb3dPQ0JGZEdNdlIwMVVJanNLQ1NKaWFXUWlJRDBnSW1OdmJTNXRkWE5wWTNGMVltVmtMbTh5SWpzS0NTSndkWEpqYUdGelpTMWtZWFJsTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFNam93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0p4ZFdGdWRHbDBlU0lnUFNBaU1TSTdDbjA9IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
+
+		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/SIGN_UP_DEVICE");
+		httpServletRequest.addHeader("Content-Type", "text/xml");
+		httpServletRequest.setRemoteAddr("2.24.0.1");
+		httpServletRequest.setPathInfo("/o2/3.6/SIGN_UP_DEVICE");
+
+		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
+		httpServletRequest.addParameter("DEVICE_UID", userName);
+		httpServletRequest.addParameter("API_VERSION", apiVersion);
+		httpServletRequest.addParameter("APP_VERSION", appVersion);
+		httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
+
+		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
+
+		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+		String contentAsString = mockHttpServletResponse.getContentAsString();
+		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
+		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+		
+		mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, null, null, transactionReceipt);
+		assertEquals(200, mockHttpServletResponse.getStatus());
+	}
+	
 }
