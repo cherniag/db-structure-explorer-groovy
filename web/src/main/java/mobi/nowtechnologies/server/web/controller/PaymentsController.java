@@ -62,18 +62,17 @@ public class PaymentsController extends CommonController {
 			}
 		} else {
 			boolean nonO2User = userService.isNonO2User(user);
+			paymentDetails = paymentDetailsService.getPaymentDetails(userId);
 			if (userService.isIOsNonO2ItunesSubscribedUser(user, nonO2User)) {
 				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
-			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())){
+			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) || (paymentDetails !=null && paymentDetails.isActivated())){
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
-				paymentDetails = paymentDetailsService.getPaymentDetails(userId);
 				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			}else{
 				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
 				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
-				paymentDetails = paymentDetailsService.getPaymentDetails(userId);
 				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
 			}
 		}
