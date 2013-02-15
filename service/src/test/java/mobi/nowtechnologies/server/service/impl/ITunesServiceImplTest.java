@@ -208,7 +208,79 @@ public class ITunesServiceImplTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testProcessInAppSubscription_WithPaymentDetails_Success()
+	public void testProcessInAppSubscription_WithoutPaymentDetailsInSubscribedStatusAndtTansactionReceiptAndBase64EncodedAppStoreReceiptAreNotNull_Success()
+		throws Exception {
+		final int userId = 1;
+		final String base64EncodedAppStoreReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQW5nNDZNTjRLdjNiV2QrZkNTeE8xS1ZRa3p3RnpNNmh4S3FqMENKZ2xrdlBRMkRRMUpoTE5DRzhSbnZNRlFvMXVBU2RrQjAzemtob29wRnlqYm0zVXduSHBjSmE3RGJ1aVlpa0hSNFhud1V0cnBjOHZIa2JORkN4b3NyYXQ1cEZQL3RYaERpRHZHdHdESW12aWZFVDhPYkRsU1VaSnNNeFYyTkR3ajJ1TEJhZ0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE0T2pBM09qVTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9EVXlOemd5T0RVaU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJeVl6UmtNbVprWXpJNU1HWm1NR00zWlRrMk9ESXlOREJsTkdZMU1tUXdPVEV6TldNME1qVTRJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzBOek01TWlJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpnMU5EVTRNamcxSWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMwTnpNNU1pSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk0TlRJM09EWTJPU0k3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpORGd4T0NJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSjFibWx4ZFdVdGRtVnVaRzl5TFdsa1pXNTBhV1pwWlhJaUlEMGdJa0kzUkRWQlFqUTVMVVpHUkRjdE5ERTBSUzA1TURZNExVSTFNalEzUWtJd05VUXdOQ0k3Q2draVpYaHdhWEpsY3kxa1lYUmxMV1p2Y20xaGRIUmxaQzF3YzNRaUlEMGdJakl3TVRNdE1ESXRNVElnTURnNk1UQTZOVGdnUVcxbGNtbGpZUzlNYjNOZlFXNW5aV3hsY3lJN0Nna2lhWFJsYlMxcFpDSWdQU0FpTmpBeU5qWTFPVEUwSWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrSWlBOUlDSXlNREV6TFRBeUxURXlJREUyT2pFd09qVTRJRVYwWXk5SFRWUWlPd29KSW5CeWIyUjFZM1F0YVdRaUlEMGdJbU52YlM1dGRYTnBZM0YxWW1Wa0xtOHlJanNLQ1NKd2RYSmphR0Z6WlMxa1lYUmxJaUE5SUNJeU1ERXpMVEF5TFRFeUlERTJPakEzT2pVNElFVjBZeTlIVFZRaU93b0pJbTl5YVdkcGJtRnNMWEIxY21Ob1lYTmxMV1JoZEdVaUlEMGdJakl3TVRNdE1ESXRNVElnTVRZNk1EYzZOVGdnUlhSakwwZE5WQ0k3Q2draVltbGtJaUE5SUNKamIyMHViWFZ6YVdOeGRXSmxaQzV2TWlJN0Nna2ljSFZ5WTJoaGMyVXRaR0YwWlMxd2MzUWlJRDBnSWpJd01UTXRNREl0TVRJZ01EZzZNRGM2TlRnZ1FXMWxjbWxqWVM5TWIzTmZRVzVuWld4bGN5STdDZ2tpY1hWaGJuUnBkSGtpSUQwZ0lqRWlPd3A5IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
+		final String transactionReceipt = base64EncodedAppStoreReceipt.replaceAll("=", "\\\\u003d");
+		final String originalTransactionId = "1000000064861007";
+		final long expiresDate = 1360756242000L;
+		final String appStoreOriginalTransactionId = "1000000064861007";
+		
+		UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+
+		Community community = CommunityFactory.createCommunity();
+
+		UserGroup userGroup = UserGroupFactory.createUserGroup();
+		userGroup.setCommunity(community);
+		
+		final User user = UserFactory.createUser();
+		user.setId(userId);
+		user.setCurrentPaymentDetails(null);
+		user.setBase64EncodedAppStoreReceipt("g"+transactionReceipt);
+		user.setStatus(subscribedUserStatus);
+		user.setUserGroup(userGroup);
+		user.setLastSuccessfulPaymentTimeMillis(0L);
+		
+		String body = "{\"receipt-data\":\""+transactionReceipt+"\",\"password\":\""+password+"\"}";
+		
+		final String appStoreProductId = "com.musicqubed.o2.autorenew.test";
+
+		Response expectedResponse = new Response();
+		expectedResponse.setStatusCode(200);
+		expectedResponse.setMessage("{ \"receipt\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703334\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638439\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:44:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:41:42 Etc/GMT\", \"purchase_date_ms\" : \"1360755702795\", \"expires_date_formatted_pst\" : \"2013-02-13 03:44:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:41:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"latest_receipt_info\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703000\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638446\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:50:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:47:42 Etc/GMT\", \"purchase_date_ms\" : \"1360756062000\", \"expires_date_formatted_pst\" : \"2013-02-13 03:50:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:47:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"status\" : 0, \"latest_receipt\" : \""+transactionReceipt+"\" }");
+
+		final BigDecimal paymentPolicySubCost = BigDecimal.TEN;
+		final String currencyISO = "GBP";
+		
+		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+		paymentPolicy.setSubcost(paymentPolicySubCost);
+		paymentPolicy.setCurrencyISO(currencyISO);
+		
+		final long paymentTimestamp = Long.MAX_VALUE;
+		final PaymentDetailsType paymentType = PaymentDetailsType.FIRST;
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+
+		Mockito.when(mockUserService.findById(userId)).thenReturn(user);
+		Mockito.when(mockPostService.sendHttpPost(Mockito.eq(iTunesUrl), (List<NameValuePair>)Mockito.isNull(), Mockito.eq(body))).thenReturn(expectedResponse);
+		Mockito.when(mockPaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy); 
+
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getEpochMillis()).thenReturn(paymentTimestamp);
+		
+		Mockito.when(mockSubmitedPaymentService.save(Mockito.any(SubmittedPayment.class))).thenAnswer(new SubmitedPaymentServiceAnswer(base64EncodedAppStoreReceipt, paymentTimestamp, currencyISO, appStoreOriginalTransactionId, paymentType, paymentPolicySubCost, user, originalTransactionId,
+				expiresDate));
+		
+		Mockito.doAnswer(new PaymentEventAnswer(expiresDate, paymentTimestamp, user, base64EncodedAppStoreReceipt, appStoreOriginalTransactionId, currencyISO, originalTransactionId, paymentType, paymentPolicySubCost)).when(mockApplicationEventPublisher).publishEvent(Mockito.any(PaymentEvent.class));
+
+		mobi.nowtechnologies.server.shared.service.PostService.Response actualResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+		
+		assertNotNull(actualResponse);
+		assertEquals(expectedResponse, actualResponse);
+		
+		Mockito.verify(mockUserService, Mockito.times(1)).findById(userId);
+		Mockito.verify(mockPostService, Mockito.times(1)).sendHttpPost(Mockito.eq(iTunesUrl), (List<NameValuePair>)Mockito.isNull(), Mockito.eq(body));
+		Mockito.verify(mockPaymentPolicyService, Mockito.times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		Mockito.verify(mockSubmitedPaymentService, Mockito.times(1)).save(Mockito.any(SubmittedPayment.class));
+		Mockito.verify(mockApplicationEventPublisher, Mockito.times(1)).publishEvent(Mockito.any(PaymentEvent.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testProcessInAppSubscription_WithDeactivatedPaymentDetails_Success()
 		throws Exception {
 		final int userId = 1;
 		final String base64EncodedAppStoreReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQW5nNDZNTjRLdjNiV2QrZkNTeE8xS1ZRa3p3RnpNNmh4S3FqMENKZ2xrdlBRMkRRMUpoTE5DRzhSbnZNRlFvMXVBU2RrQjAzemtob29wRnlqYm0zVXduSHBjSmE3RGJ1aVlpa0hSNFhud1V0cnBjOHZIa2JORkN4b3NyYXQ1cEZQL3RYaERpRHZHdHdESW12aWZFVDhPYkRsU1VaSnNNeFYyTkR3ajJ1TEJhZ0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE0T2pBM09qVTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9EVXlOemd5T0RVaU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJeVl6UmtNbVprWXpJNU1HWm1NR00zWlRrMk9ESXlOREJsTkdZMU1tUXdPVEV6TldNME1qVTRJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzBOek01TWlJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpnMU5EVTRNamcxSWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMwTnpNNU1pSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk0TlRJM09EWTJPU0k3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpORGd4T0NJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSjFibWx4ZFdVdGRtVnVaRzl5TFdsa1pXNTBhV1pwWlhJaUlEMGdJa0kzUkRWQlFqUTVMVVpHUkRjdE5ERTBSUzA1TURZNExVSTFNalEzUWtJd05VUXdOQ0k3Q2draVpYaHdhWEpsY3kxa1lYUmxMV1p2Y20xaGRIUmxaQzF3YzNRaUlEMGdJakl3TVRNdE1ESXRNVElnTURnNk1UQTZOVGdnUVcxbGNtbGpZUzlNYjNOZlFXNW5aV3hsY3lJN0Nna2lhWFJsYlMxcFpDSWdQU0FpTmpBeU5qWTFPVEUwSWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrSWlBOUlDSXlNREV6TFRBeUxURXlJREUyT2pFd09qVTRJRVYwWXk5SFRWUWlPd29KSW5CeWIyUjFZM1F0YVdRaUlEMGdJbU52YlM1dGRYTnBZM0YxWW1Wa0xtOHlJanNLQ1NKd2RYSmphR0Z6WlMxa1lYUmxJaUE5SUNJeU1ERXpMVEF5TFRFeUlERTJPakEzT2pVNElFVjBZeTlIVFZRaU93b0pJbTl5YVdkcGJtRnNMWEIxY21Ob1lYTmxMV1JoZEdVaUlEMGdJakl3TVRNdE1ESXRNVElnTVRZNk1EYzZOVGdnUlhSakwwZE5WQ0k3Q2draVltbGtJaUE5SUNKamIyMHViWFZ6YVdOeGRXSmxaQzV2TWlJN0Nna2ljSFZ5WTJoaGMyVXRaR0YwWlMxd2MzUWlJRDBnSWpJd01UTXRNREl0TVRJZ01EZzZNRGM2TlRnZ1FXMWxjbWxqWVM5TWIzTmZRVzVuWld4bGN5STdDZ2tpY1hWaGJuUnBkSGtpSUQwZ0lqRWlPd3A5IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";

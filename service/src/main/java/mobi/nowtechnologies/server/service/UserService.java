@@ -36,6 +36,7 @@ import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Payment;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -1217,27 +1218,29 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
+		final String paymentSystem = payment.getPaymentSystem();
+
 		// Update last Successful payment time
 		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
-		user.setLastSubscribedPaymentSystem(payment.getPaymentSystem());
+		user.setLastSubscribedPaymentSystem(paymentSystem);
 
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-		if(!isNonO2User){
+	
+		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
 			// Update next sub payment time
 			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-		}else if (user.getCurrentPaymentDetails()!=null){
+		} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
 		}else{
 			user.setNextSubPayment(payment.getNextSubPayment());
-			if (base64EncodedAppStoreReceipt != null) {
-				user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-				user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-			}
+			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+			user.setFreeTrialExpiredMillis(Utils.getEpochMillis());
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
