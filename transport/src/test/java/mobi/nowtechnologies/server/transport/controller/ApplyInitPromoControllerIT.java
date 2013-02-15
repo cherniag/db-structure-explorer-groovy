@@ -40,7 +40,7 @@ public class ApplyInitPromoControllerIT {
         userRepository.save(user);
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         user = userService.findByName(user.getMobile());
@@ -58,7 +58,7 @@ public class ApplyInitPromoControllerIT {
         
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "11111-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "11111111-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         User mobileUser = userService.findByName("+447111111111");
@@ -84,7 +84,7 @@ public class ApplyInitPromoControllerIT {
         userRepository.save(user);
         
         //then
-        controller.applyO2Promotion("o2", oldUserName, user.getToken(), "timestemp", "11111-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", oldUserName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         User mobileUser = userService.findByName(userName);
@@ -94,10 +94,7 @@ public class ApplyInitPromoControllerIT {
         Assert.assertEquals(user.getDeviceModel(), mobileUser.getDeviceModel());
         Assert.assertEquals(user.getDeviceString(), mobileUser.getDeviceString());
         Assert.assertEquals(ActivationStatus.ACTIVATED, mobileUser.getActivationStatus());
-        Assert.assertEquals(ActivationStatus.ACTIVATED, mobileUser.getNextSubPayment());
-        
-        user = userService.findByName(userName);
-        Assert.assertNull(user);
+        Assert.assertEquals(13, days(mobileUser.getNextSubPayment()));
     }
     
     @Test
@@ -107,7 +104,7 @@ public class ApplyInitPromoControllerIT {
         User user = userService.findByName(userName);
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         user = userService.findByName(userName);
@@ -122,7 +119,7 @@ public class ApplyInitPromoControllerIT {
         User user = userService.findByName(userName);
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
         
         user = userService.findByName(user.getMobile());
         //when
@@ -136,7 +133,7 @@ public class ApplyInitPromoControllerIT {
         
         
         //then
-        controller.applyO2Promotion("o2", "+447700000000", "hello token", "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", "+447700000000", "hello token", "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
         
         //when
     }
