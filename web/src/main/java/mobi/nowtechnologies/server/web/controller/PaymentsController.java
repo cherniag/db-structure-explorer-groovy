@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.web.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -40,7 +41,7 @@ public class PaymentsController extends CommonController {
 
 	private UserService userService;
 
-	protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl) {
+	protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
 		LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
 		ModelAndView modelAndView = new ModelAndView(viewName);
 
@@ -50,12 +51,12 @@ public class PaymentsController extends CommonController {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = null;
 		PaymentDetails paymentDetails = null;
 		
-		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", null);
+		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", locale);
 		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", null);
+			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", locale);
 		}
 		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, null);
+			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, locale);
 		}
 		
 		if (!"o2".equals(user.getProvider())) {
@@ -104,13 +105,13 @@ public class PaymentsController extends CommonController {
 	}
 
 	@RequestMapping(value = { PAGE_MANAGE_PAYMENTS }, method = RequestMethod.GET)
-	public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl) {
-		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl);
+	public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
 	}
 
 	@RequestMapping(value = { PAGE_MANAGE_PAYMENTS_INAPP }, method = RequestMethod.GET)
-	public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl) {
-		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl);
+	public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+		return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale);
 	}
 
 	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
