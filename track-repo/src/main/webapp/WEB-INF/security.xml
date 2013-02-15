@@ -29,6 +29,7 @@
 	
 	<sec:user-service id="userDetailsServiceInMemory">
       <sec:user name="admin" password="ceb4f32325eda6142bd65215f4c0f371" authorities="ROLE_USER, ROLE_ADMIN" />
+      <sec:user name="album" password="dd0d117d91ac00d7f6e83852ac454669" authorities="ROLE_USER" />
     </sec:user-service>
 
 	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">

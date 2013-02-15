@@ -202,56 +202,32 @@ echo "***** Generating Mobile Preview Audio *****"
 
 	for i in files/audio/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-=======
-		curl -X PUT -T files/audio/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 
 	for i in files/image/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-=======
-		curl -X PUT -T files/image/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 	
 	for i in files/encoded/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-=======
-		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 	
 	for i in files/header/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-=======
-		curl -X PUT -T files/header/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 	
 	for i in files/purchased/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-=======
-		curl -X PUT -T files/purchased/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 	
 	for i in files/preview/${ISRC}*
 	do
-<<<<<<< HEAD
 		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
-=======
-		curl -X PUT -T files/encoded/${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
->>>>>>> IMP-868_O2-integration
 	done
 	
 	for i in ${ISRC}*.m4a; 
@@ -266,3 +242,4 @@ echo "***** Generating Mobile Preview Audio *****"
 	#mv files/encoded/* ${PUBLISH_DIR}/encoded|| { echo "command failed"; exit 1; } 
 	#mv files/purchased/* ${PUBLISH_DIR}/purchased|| { echo "command failed"; exit 1; } 
 	
+

@@ -228,6 +228,25 @@
 		</filter>
 	</appender>
 	
+	<appender name="throttlingService" class="org.apache.log4j.rolling.RollingFileAppender">
+                <param name="File" value="${catalina.base}/logs/throttlingService.log" />
+                <param name="encoding" value="UTF-8" />
+                <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+                        <param name="fileNamePattern" value="${catalina.base}/logs/throttlingService_%d{yyyy-ww}.gz" />
+                </rollingPolicy>
+                <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+                        <!--The " ut " will be replace on current "unix time" value-->
+                        <param name="ConversionPattern"
+                                value="%-24d{ISO8601},%t,%X{command},%X{userName},%X{device},%X{community},%m%n" />
+                </layout>
+		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+			<param name="contextKey" value="class" />
+			<param name="classNames"
+				value="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl" />
+			<param name="acceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	
 	<!-- Payment Job Logs -->
 	<logger name="mobi.nowtechnologies.server.job">
 		<level value="INFO" />

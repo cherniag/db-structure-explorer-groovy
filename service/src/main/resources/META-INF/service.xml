@@ -344,7 +344,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<constructor-arg>
 			<ref bean="security.nowTechUserDetailsService" />
 		</constructor-arg>
-	</bean>
+	</bean> 
 	
 	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.impl.ITunesServiceImpl">
 		<property name="postService" ref="shared.PostService" />
