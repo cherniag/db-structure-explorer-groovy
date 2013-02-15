@@ -224,9 +224,12 @@ public class ITunesServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup();
 		userGroup.setCommunity(community);
 		
+		final SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
+		currentPaymentDetails.setActivated(true);
+
 		final User user = UserFactory.createUser();
 		user.setId(userId);
-		user.setCurrentPaymentDetails(new SagePayCreditCardPaymentDetails());
+		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setBase64EncodedAppStoreReceipt(null);
 		user.setStatus(limitedUserStatus);
 		user.setUserGroup(userGroup);
