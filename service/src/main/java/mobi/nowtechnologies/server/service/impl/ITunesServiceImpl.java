@@ -84,7 +84,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		final Response response;
 		User user = userService.findById(userId);
 
-		if (user != null &&((user.getCurrentPaymentDetails() == null || !user.getCurrentPaymentDetails().isActivated()) && ((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
+		if (user != null &&(user.getCurrentPaymentDetails() == null || !user.getCurrentPaymentDetails().isActivated()) && (((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
 				|| transactionReceipt != null))) {
 
 			final String base64EncodedAppStoreReceipt;
