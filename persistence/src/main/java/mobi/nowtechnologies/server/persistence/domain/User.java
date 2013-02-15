@@ -243,6 +243,9 @@ public class User implements Serializable {
 	
 	@Column(name="app_store_original_transaction_id")
 	private String appStoreOriginalTransactionId;
+	
+	@Column(name="last_subscribed_payment_system")
+	private String lastSubscribedPaymentSystem;
 
 	public User() {
 		setDisplayName("");
@@ -752,6 +755,8 @@ public class User implements Serializable {
 		accountCheckDTO.setUserToken(token);
 		accountCheckDTO.setRememberMeToken(rememberMeToken);
 		accountCheckDTO.setFreeTrial(isOnFreeTrial());
+		accountCheckDTO.setProvider(provider);
+		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 
 		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
@@ -779,7 +784,7 @@ public class User implements Serializable {
 		return accountCheckDTO;
 	}
 
-    private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
+	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
         if(news == null) return;
         accountCheckDTO.setNewsTimestamp(news.getTimestamp());
         accountCheckDTO.setNewsItems(news.getNumEntries());
@@ -787,7 +792,10 @@ public class User implements Serializable {
 
     // TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (null == paymentDetails)
+		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
+			return PaymentType.ITUNES_SUBSCRIPTION;
+		}else if (null == paymentDetails)
 			return PaymentType.UNKNOWN;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.CREDIT_CARD;
@@ -952,6 +960,14 @@ public class User implements Serializable {
 		this.appStoreOriginalTransactionId = appStoreOriginalTransactionId;
 	}
 
+	public String getLastSubscribedPaymentSystem() {
+		return lastSubscribedPaymentSystem;
+	}
+
+	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
+		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
@@ -960,7 +976,7 @@ public class User implements Serializable {
 				+ ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
 				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
 				+ ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
-				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification
+				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
 				+ ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="
 				+ potentialPromoCodePromotionId + ", potentialPromotionId=" + potentialPromotionId + ", pin=" + pin + ", code=" + code + ", operator="
 				+ operator + ", mobile=" + mobile + ", conformStoredToken=" + conformStoredToken + ", lastDeviceLogin=" + lastDeviceLogin + ", lastWebLogin="

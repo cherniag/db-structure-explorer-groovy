@@ -5,8 +5,7 @@ alter table tb_charts add column type varchar(255);
 
  -- start migration old chart structure to new three parts structure
  
-update tb_charts
-set type='BASIC_CHART', name='Basic Chart';
+update tb_charts set type='BASIC_CHART', name='Basic Chart';
  
 insert into tb_charts (name, numTracks, community, genre, timestamp, numBonusTracks, type)
 select
@@ -64,7 +63,7 @@ insert into community_charts (chart_id, community_id)
 select
 ch.i,
 ch.community
-from tb_charts ch
+from tb_charts ch;
 
  -- remove community column from tb_charts
 SELECT @SQL:=concat('alter table tb_charts drop foreign key ',constraint_name) FROM information_schema.key_column_usage where constraint_schema = 'cn_service' and table_name = 'tb_charts' and column_name = 'community'; 
@@ -76,7 +75,7 @@ alter table tb_charts drop column community;
  -- end migration
 
 -- IMP-743 iOS Implement in-app purchase and subscription
-alter table tb_users add base64_encoded_app_store_receipt longtext, add app_store_original_transaction_id varchar(255);
+alter table tb_users add base64_encoded_app_store_receipt longtext, add app_store_original_transaction_id varchar(255), add last_subscribed_payment_system varchar(255);
  
 alter table tb_paymentPolicy add app_store_product_id varchar(255);
 

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.java.server.uits.Base64Encoder;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
@@ -85,13 +84,13 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		final Response response;
 		User user = userService.findById(userId);
 
-		if (user.getCurrentPaymentDetails() == null && ((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
-				|| (transactionReceipt != null && user.getBase64EncodedAppStoreReceipt() == null))) {
+		if (user != null &&(user.getCurrentPaymentDetails() == null || !user.getCurrentPaymentDetails().isActivated()) && (((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
+				|| transactionReceipt != null))) {
 
 			final String base64EncodedAppStoreReceipt;
-			if (user.getBase64EncodedAppStoreReceipt() == null) {
+			if (user.getBase64EncodedAppStoreReceipt() == null || transactionReceipt != null) {
 				base64EncodedAppStoreReceipt = transactionReceipt;
-			}else{
+			} else {
 				base64EncodedAppStoreReceipt = user.getBase64EncodedAppStoreReceipt();
 			}
 
@@ -130,7 +129,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					submittedPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
 					submittedPayment.setNextSubPayment(latestReceiptInfo.getExpiresDateSeconds());
 					submittedPayment.setAppStoreOriginalTransactionId(latestReceiptInfo.getOriginalTransactionId());
-					submittedPayment.setPaymentSystem(PaymentDetails.ITNUNES_SUBSCRIPTION);
+					submittedPayment.setPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
 					submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 					
 					submitedPaymentService.save(submittedPayment);
@@ -149,29 +148,6 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		
 		LOGGER.debug("Output parameter response=[{}]", response);
 		return response;
-	}
-
-	public static void main(String[] args) {
-		ITunesInAppSubscriptionRequestDto iTunesInAppSubscriptionRequestDto = new ITunesInAppSubscriptionRequestDto();
-		iTunesInAppSubscriptionRequestDto.setPassword("password");
-		iTunesInAppSubscriptionRequestDto.setReceiptData("receiptData");
-
-		ITunesInAppSubscriptionResponseDto.Receipt receipt = new ITunesInAppSubscriptionResponseDto.Receipt();
-		receipt.setBid("bid");
-
-		ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = new ITunesInAppSubscriptionResponseDto();
-		iTunesInAppSubscriptionResponseDto.setStatus("0");
-		iTunesInAppSubscriptionResponseDto.setReceipt(receipt);
-
-		String res = gson.toJson(iTunesInAppSubscriptionRequestDto);
-		System.out.println(res);
-
-		res = gson.toJson(iTunesInAppSubscriptionResponseDto);
-		System.out.println(res);
-
-		ITunesInAppSubscriptionResponseDto e = gson.fromJson(res, ITunesInAppSubscriptionResponseDto.class);
-		System.out.println(e);
-
 	}
 
 }

@@ -58,7 +58,7 @@
 					<s:message code='pays.select.iTunesSubscription' var="method_readable" />
 				</c:if>
 				
-				<div class="contentButton formButton rad5 rel" >
+				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
 					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.select.payby" /> ${method_readable}" />
 									
 					<span class="rightButtonArrow">

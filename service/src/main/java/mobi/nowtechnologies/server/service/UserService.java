@@ -36,6 +36,7 @@ import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Payment;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -1217,22 +1218,33 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
+		final String paymentSystem = payment.getPaymentSystem();
+
 		// Update last Successful payment time
-		user.setLastSuccessfulPaymentTimeMillis(Utils.getEpochMillis());
+		final long epochMillis = Utils.getEpochMillis();
+		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
+		user.setLastSubscribedPaymentSystem(paymentSystem);
+
+		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-		if(!isNonO2User){
+	
+		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
 			// Update next sub payment time
 			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-		}else if (user.getCurrentPaymentDetails()!=null){
+		} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
 		}else{
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-			user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
+			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+			final Long freeTrialExpiredMillis = user.getFreeTrialExpiredMillis();
+			if (freeTrialExpiredMillis!=null && freeTrialExpiredMillis > epochMillis) {
+				user.setFreeTrialExpiredMillis(epochMillis);
+			}
 		}
 		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
@@ -2112,10 +2124,28 @@ public class UserService {
 	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId){
 		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
 		
+		if (user == null)
+			throw new NullPointerException("The parameter user is null");
+		if (appStoreOriginalTransactionId == null)
+			throw new NullPointerException("The parameter appStoreOriginalTransactionId is null");
+		
 		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		users.add(user);
 		
 		LOGGER.debug("Output parameter users=[{}]", users);
 		return users;
+	}
+	
+	public boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
+		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user, nonO2User);
+		boolean isIOsNonO2ItunesSubscribedUser = false;
+		
+		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
+		if (lastSubscribedPaymentSystem != null) {
+			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
+					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
+		}
+		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
+		return isIOsNonO2ItunesSubscribedUser;
 	}
 }

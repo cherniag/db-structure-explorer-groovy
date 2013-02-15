@@ -1457,7 +1457,13 @@ public class UserServiceTest {
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_NonO2User_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+		
 		final User user = UserFactory.createUser();
+		user.setLastSubscribedPaymentSystem(migSmsType);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1471,11 +1477,13 @@ public class UserServiceTest {
 		user.setProvider("provider");
 		user.setSubBalance(0);
 		user.setStatus(limitedUserStatus);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setNextSubPayment(Integer.MIN_VALUE);
-		submittedPayment.setAppStoreOriginalTransactionId("appStoreOriginalTransactionId");
-		submittedPayment.setBase64EncodedAppStoreReceipt("base64EncodedAppStoreReceipt");
+		submittedPayment.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		submittedPayment.setPaymentSystem(iTunesSubscriptionType);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
@@ -1501,8 +1509,11 @@ public class UserServiceTest {
 				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
-				assertEquals("appStoreOriginalTransactionId", passedUser.getAppStoreOriginalTransactionId());
-				assertEquals("base64EncodedAppStoreReceipt", passedUser.getBase64EncodedAppStoreReceipt());
+				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(iTunesSubscriptionType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
 				
 				return passedUser;
 			}
@@ -1523,6 +1534,11 @@ public class UserServiceTest {
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_O2LimitedUser_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+		
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1537,8 +1553,12 @@ public class UserServiceTest {
 		user.setProvider("o2");
 		user.setSubBalance(2);
 		user.setStatus(limitedUserStatus);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(migSmsType);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
@@ -1564,6 +1584,11 @@ public class UserServiceTest {
 				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
 				
 				return passedUser;
 			}
@@ -1584,6 +1609,10 @@ public class UserServiceTest {
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_O2EulaUser_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1598,8 +1627,11 @@ public class UserServiceTest {
 		user.setProvider("o2");
 		user.setSubBalance(2);
 		user.setStatus(eulaUserStatus);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(migSmsType);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
@@ -1625,6 +1657,11 @@ public class UserServiceTest {
 				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+			
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(null, passedUser.getFreeTrialExpiredMillis());
 				
 				return passedUser;
 			}
@@ -1645,6 +1682,10 @@ public class UserServiceTest {
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_O2SubscribedUser_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+		
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1659,8 +1700,13 @@ public class UserServiceTest {
 		user.setProvider("o2");
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
+		user.setLastSubscribedPaymentSystem(migSmsType);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(migSmsType);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
@@ -1687,6 +1733,11 @@ public class UserServiceTest {
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
+				
 				return passedUser;
 			}
 		});
@@ -1701,6 +1752,81 @@ public class UserServiceTest {
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
 		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_ChartsNowLimitedUserPayedByMig_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+		
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("chartsNow");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider(null);
+		user.setSubBalance(2);
+		user.setStatus(limitedUserStatus);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+		
+		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(migSmsType);
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(6, passedUser.getSubBalance());
+				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
 	}
 	
@@ -1758,6 +1884,95 @@ public class UserServiceTest {
 		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString());
 		Mockito.verify(mockO2ClientService, times(0)).getRedeemPromotedServerO2Url();
 		Mockito.verify(mockO2ClientService, times(1)).getRedeemServerO2Url();
+	}
+	
+	@Test
+	public void testIsIOsNonO2ItunesSubscribedUser_LIMITED_Success() throws Exception{
+		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		
+		final User user = UserFactory.createUser();
+		
+		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
+		user.setStatus(limitedUserStatus);
+		user.setDeviceType(iosDeviceType);
+		
+		PowerMockito.mockStatic(DeviceTypeDao.class);
+		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		
+		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user, true);
+		
+		assertFalse(isIOsNonO2ItunesSubscribedUser);
+	}
+	
+	@Test
+	public void testIsIOsNonO2ItunesSubscribedUser_SUBSCRIBED_Success() throws Exception{
+		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		
+		final User user = UserFactory.createUser();
+		
+		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
+		user.setStatus(subscribedUserStatus);
+		user.setDeviceType(iosDeviceType);
+		
+		PowerMockito.mockStatic(DeviceTypeDao.class);
+		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		
+		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user, true);
+		
+		assertTrue(isIOsNonO2ItunesSubscribedUser);
+	}
+	
+	@Test
+	public void testFindUsersForItunesInAppSubscription_Success(){
+		User user = UserFactory.createUser();
+		User user2 = UserFactory.createUser();
+
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		
+		List<User> users = new ArrayList<User>();
+		users.add(user2);
+		
+		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
+		
+		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		
+		assertNotNull(actualUsers);
+		assertEquals(2, actualUsers.size());
+		assertTrue(users.contains(user));
+		assertTrue(users.contains(user2));
+		
+		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindUsersForItunesInAppSubscription_appStoreOriginalTransactionIdIsNull_Failure(){
+		User user = UserFactory.createUser();
+
+		String appStoreOriginalTransactionId=null;
+		int nextSubPayment = 1;
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindUsersForItunesInAppSubscription_userIsNull_Failure(){
+		User user = null;
+
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
