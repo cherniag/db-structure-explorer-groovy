@@ -36,11 +36,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	private DeviceService deviceService;
 	
-	private Community o2Community;
-
 	public void init() {
 		restTemplate = new RestTemplate();
-		o2Community = communityService.getCommunityByName("o2");
 	}
 
 	public void setServerO2Url(String serverO2Url) {
@@ -53,6 +50,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String getServerO2Url(String phoneNumber) {
+		Community o2Community = communityService.getCommunityByName("o2");
+		
 		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
 				? this.promotedServerO2Url
 				: this.serverO2Url;
@@ -62,6 +61,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String getRedeemServerO2Url(String phoneNumber) {
+		Community o2Community = communityService.getCommunityByName("o2");
+		
 		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
 				? this.redeemPromotedServerO2Url
 				: this.redeemServerO2Url;
