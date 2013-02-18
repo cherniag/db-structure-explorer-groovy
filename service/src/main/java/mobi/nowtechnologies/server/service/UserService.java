@@ -2053,14 +2053,9 @@ public class UserService {
 	}
 	
 	@Transactional(readOnly=true)
-	public String getRedeemServerO2Url(User user, String communityName) {
-		Community community = communityService.getCommunityByName(communityName);
+	public String getRedeemServerO2Url(User user) {
 		
-		String redeemServerO2Url = deviceService.isPromotedDevicePhone(community, user.getMobile())
-													? o2ClientService.getRedeemPromotedServerO2Url()
-													: o2ClientService.getRedeemServerO2Url();
-				
-		return redeemServerO2Url;
+		return o2ClientService.getRedeemServerO2Url(user.getMobile());
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -2074,7 +2069,7 @@ public class UserService {
         } else {
 			if (user.getActivationStatus() == ActivationStatus.ENTERED_NUMBER) {
 		        Promotion promotion = null;
-				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac);
+				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 				if(o2ClientService.isO2User(o2UserDetails))
 		            promotion  = setPotentialPromo(community, user, "promotionCode");
 		        else
