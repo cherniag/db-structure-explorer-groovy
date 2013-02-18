@@ -3,6 +3,9 @@ package mobi.nowtechnologies.server.service.impl;
 import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.service.CommunityService;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
@@ -21,22 +24,48 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	private String serverO2Url;
 
+	private String promotedServerO2Url;
+
 	private RestTemplate restTemplate;
 	
 	private String redeemServerO2Url;
 
 	private String redeemPromotedServerO2Url;
+	
+	private CommunityService communityService;
+	
+	private DeviceService deviceService;
+	
+	private Community o2Community;
 
 	public void init() {
 		restTemplate = new RestTemplate();
+		o2Community = communityService.getCommunityByName("o2");
 	}
 
 	public void setServerO2Url(String serverO2Url) {
 		this.serverO2Url = serverO2Url;
 	}
+	
+	public void setPromotedServerO2Url(String promotedServerO2Url) {
+		this.promotedServerO2Url = promotedServerO2Url;
+	}
 
 	@Override
-	public String getRedeemServerO2Url() {
+	public String getServerO2Url(String phoneNumber) {
+		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
+				? this.promotedServerO2Url
+				: this.serverO2Url;
+		
+		return serverO2Url;
+	}
+
+	@Override
+	public String getRedeemServerO2Url(String phoneNumber) {
+		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
+				? this.redeemPromotedServerO2Url
+				: this.redeemServerO2Url;
+		
 		return redeemServerO2Url;
 	}
 
@@ -44,9 +73,12 @@ public class O2ClientServiceImpl implements O2ClientService {
 		this.redeemServerO2Url = redeemServerO2Url;
 	}
 
-	@Override
-	public String getRedeemPromotedServerO2Url() {
-		return redeemPromotedServerO2Url;
+	public void setCommunityService(CommunityService communityService) {
+		this.communityService = communityService;
+	}
+
+	public void setDeviceService(DeviceService deviceService) {
+		this.deviceService = deviceService;
 	}
 
 	public void setRedeemPromotedServerO2Url(String redeemPromotedServerO2Url) {
@@ -55,9 +87,11 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String validatePhoneNumber(String phoneNumber) {
+		String serverO2Url = getServerO2Url(phoneNumber);
+		
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 		request.add("phone_number", phoneNumber);
-
+		
 		try {
 			DOMSource response = restTemplate.postForObject(serverO2Url + VALIDATE_PHONE_REQ, request, DOMSource.class);
 			return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
@@ -68,7 +102,9 @@ public class O2ClientServiceImpl implements O2ClientService {
 	}
 
 	@Override
-	public O2UserDetails getUserDetails(String token) {
+	public O2UserDetails getUserDetails(String token, String phoneNumber) {
+		String serverO2Url = getServerO2Url(phoneNumber);
+		
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 			request.add("otac_auth_code", token);
 		try {

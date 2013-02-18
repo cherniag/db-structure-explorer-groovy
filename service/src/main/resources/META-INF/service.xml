@@ -331,8 +331,11 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.impl.O2ClientServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
+		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
+		<property name="deviceService" ref="service.DeviceService" />
+		<property name="communityService" ref="service.communityService" />
 	</bean>
 
 	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />
