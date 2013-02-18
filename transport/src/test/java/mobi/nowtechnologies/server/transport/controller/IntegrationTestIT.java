@@ -46,15 +46,18 @@ import mobi.nowtechnologies.server.service.CountryByIpService;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FileService;
+import mobi.nowtechnologies.server.service.ITunesService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.UserService.AmountCurrencyWeeks;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.impl.ITunesServiceImpl;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
+import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 import org.apache.http.NameValuePair;
 import org.custommonkey.xmlunit.DetailedDiff;
@@ -70,13 +73,16 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.rule.PowerMockRule;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -139,6 +145,18 @@ public class IntegrationTestIT {
 
 	// @Resource(name = "transport.EntityController")
 	// private EntityController entityController;
+	
+	@Resource(name = "service.ITunesService")
+	private ITunesServiceImpl iTunesServiceImpl;
+	
+	@Resource(name = "shared.PostService")
+	private PostService postService;
+	
+	@Value("${apple.inApp.password}")
+	private String appleInAppPassword;
+	
+	@Value("${apple.inApp.iTunesUrl}")
+	private String appleInAppITunesUrl;
 
 	@Resource(name = "paymentTask")
 	private CreatePendingPaymentJob createPendingPaymentJob;
@@ -146,8 +164,8 @@ public class IntegrationTestIT {
 	@Resource
 	private EntityController entityController;
 
-//	@Rule
-//	public PowerMockRule powerMockRule = new PowerMockRule();
+	//@Rule
+	//public PowerMockRule powerMockRule = new PowerMockRule();
 	
 	@PostConstruct
 	public void setUp() {
@@ -3925,36 +3943,59 @@ public class IntegrationTestIT {
 	
 	@Test
 	public void testACC_CHECK_with_TRANSACTION_RECEIPT_param() throws Exception {
-		String userName = "zzz@z.com";
+		String userName = "+447111111114";
 		String apiVersion = "V3.6";
 		String communityName = "o2";
 		String appVersion = "CNBETA";
 		String phone = "07870111111";
 		String timestamp = "2011_12_26_07_04_23";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
-		String transactionReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQXNyQUNod2dETm1IYmIvSHU2UU5JbHZEUTY4TEE3dWIvQWlkY3huS2JSeTl1NTYyWWM4VHNtUGROQzcwcmo5KzBxOVE1UlBKYTdMK3lYb2ltU05TS0pCVDd2OVozVjgra2dVNkNwQmFPb1dyOW50TDhOdWZwdmxicUh5dUdjMm1vS1pOYXFsM2JFLzlRVWpkK1FKR2tPMVNmNVVWRDRpeDQ0MGlmMlMzd0p2K0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE1T2pVeU9qQTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9URTFNamd3TXpraU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJelpHTTFOakUwTldaa1pqWmpOREU0WXpRNFlqSm1ZelZrTVRNd09HSTBOR1ZoTlRkaVltUmlJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzFOVGsxT0NJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpreE56QTRNRE01SWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMxTlRrMU9DSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk1TVRVeU9ETTVOaUk3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpOVEl3TlNJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFOVG93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0pwZEdWdExXbGtJaUE5SUNJMk1ESTNNalU0TWpnaU93b0pJbVY0Y0dseVpYTXRaR0YwWlMxbWIzSnRZWFIwWldRaUlEMGdJakl3TVRNdE1ESXRNVElnTVRjNk5UVTZNRGdnUlhSakwwZE5WQ0k3Q2draWNISnZaSFZqZEMxcFpDSWdQU0FpWTI5dExtMTFjMmxqY1hWaVpXUXViekl1WVhWMGIzSmxibVYzTG5SbGMzUWlPd29KSW5CMWNtTm9ZWE5sTFdSaGRHVWlJRDBnSWpJd01UTXRNREl0TVRJZ01UYzZOVEk2TURnZ1JYUmpMMGROVkNJN0Nna2liM0pwWjJsdVlXd3RjSFZ5WTJoaGMyVXRaR0YwWlNJZ1BTQWlNakF4TXkwd01pMHhNaUF4TnpvMU1qb3dPQ0JGZEdNdlIwMVVJanNLQ1NKaWFXUWlJRDBnSW1OdmJTNXRkWE5wWTNGMVltVmtMbTh5SWpzS0NTSndkWEpqYUdGelpTMWtZWFJsTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFNam93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0p4ZFdGdWRHbDBlU0lnUFNBaU1TSTdDbjA9IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
+		String base64EncodedAppStoreReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQXNyQUNod2dETm1IYmIvSHU2UU5JbHZEUTY4TEE3dWIvQWlkY3huS2JSeTl1NTYyWWM4VHNtUGROQzcwcmo5KzBxOVE1UlBKYTdMK3lYb2ltU05TS0pCVDd2OVozVjgra2dVNkNwQmFPb1dyOW50TDhOdWZwdmxicUh5dUdjMm1vS1pOYXFsM2JFLzlRVWpkK1FKR2tPMVNmNVVWRDRpeDQ0MGlmMlMzd0p2K0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE1T2pVeU9qQTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9URTFNamd3TXpraU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJelpHTTFOakUwTldaa1pqWmpOREU0WXpRNFlqSm1ZelZrTVRNd09HSTBOR1ZoTlRkaVltUmlJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzFOVGsxT0NJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpreE56QTRNRE01SWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMxTlRrMU9DSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk1TVRVeU9ETTVOaUk3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpOVEl3TlNJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFOVG93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0pwZEdWdExXbGtJaUE5SUNJMk1ESTNNalU0TWpnaU93b0pJbVY0Y0dseVpYTXRaR0YwWlMxbWIzSnRZWFIwWldRaUlEMGdJakl3TVRNdE1ESXRNVElnTVRjNk5UVTZNRGdnUlhSakwwZE5WQ0k3Q2draWNISnZaSFZqZEMxcFpDSWdQU0FpWTI5dExtMTFjMmxqY1hWaVpXUXViekl1WVhWMGIzSmxibVYzTG5SbGMzUWlPd29KSW5CMWNtTm9ZWE5sTFdSaGRHVWlJRDBnSWpJd01UTXRNREl0TVRJZ01UYzZOVEk2TURnZ1JYUmpMMGROVkNJN0Nna2liM0pwWjJsdVlXd3RjSFZ5WTJoaGMyVXRaR0YwWlNJZ1BTQWlNakF4TXkwd01pMHhNaUF4TnpvMU1qb3dPQ0JGZEdNdlIwMVVJanNLQ1NKaWFXUWlJRDBnSW1OdmJTNXRkWE5wWTNGMVltVmtMbTh5SWpzS0NTSndkWEpqYUdGelpTMWtZWFJsTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFNam93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0p4ZFdGdWRHbDBlU0lnUFNBaU1TSTdDbjA9IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
+		final String transactionReceipt = base64EncodedAppStoreReceipt.replaceAll("=", "\\\\u003d");
+		final String originalTransactionId = "1000000064861007";
+		final long expiresDate = 1360756242000L;
+		final String appStoreOriginalTransactionId = "1000000064861007";
 
-		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/o2/3.6/SIGN_UP_DEVICE");
-		httpServletRequest.addHeader("Content-Type", "text/xml");
-		httpServletRequest.setRemoteAddr("2.24.0.1");
-		httpServletRequest.setPathInfo("/o2/3.6/SIGN_UP_DEVICE");
-
-		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
-		httpServletRequest.addParameter("DEVICE_UID", userName);
-		httpServletRequest.addParameter("API_VERSION", apiVersion);
-		httpServletRequest.addParameter("APP_VERSION", appVersion);
-		httpServletRequest.addParameter("DEVICE_TYPE", deviceType);
-
-		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-		dispatcherServlet.service(httpServletRequest, mockHttpServletResponse);
-
-		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
-		String contentAsString = mockHttpServletResponse.getContentAsString();
-		String storedToken = contentAsString.substring(contentAsString.indexOf("<userToken>") + "<userToken>".length(), contentAsString.indexOf("</userToken>"));
+		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 		
-		mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, null, null, transactionReceipt);
+		final String expectedBody = "{\"receipt-data\":\""+transactionReceipt+"\",\"password\":\""+appleInAppPassword+"\"}";
+		
+		final String appStoreProductId = "com.musicqubed.o2.autorenew.test";
+
+		final Response expectedResponse = new Response();
+		expectedResponse.setStatusCode(200);
+		expectedResponse.setMessage("{ \"receipt\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703334\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638439\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:44:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:41:42 Etc/GMT\", \"purchase_date_ms\" : \"1360755702795\", \"expires_date_formatted_pst\" : \"2013-02-13 03:44:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:41:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"latest_receipt_info\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703000\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638446\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:50:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:47:42 Etc/GMT\", \"purchase_date_ms\" : \"1360756062000\", \"expires_date_formatted_pst\" : \"2013-02-13 03:50:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:47:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"status\" : 0, \"latest_receipt\" : \""+transactionReceipt+"\" }");
+		
+		//PostService mockPostService = Mockito.mock(PostService.class);
+		
+		//Mockito.when(mockPostService.sendHttpPost(Mockito.eq(appleInAppITunesUrl), (List<NameValuePair>)Mockito.isNull(), Mockito.eq(expectedBody))).thenReturn(expectedResponse);
+		
+		PostService mockPostService = new PostService(){
+			@Override
+			public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
+				assertEquals(appleInAppITunesUrl, url);
+				assertEquals(expectedBody, body);
+				assertNull(nameValuePairs);
+				
+				return expectedResponse;
+			}
+		};
+		
+		iTunesServiceImpl.setPostService(mockPostService);
+		
+		MockHttpServletResponse mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, UserRegInfo.DeviceType.ANDROID, null, null, base64EncodedAppStoreReceipt);
 		assertEquals(200, mockHttpServletResponse.getStatus());
+		
+		String actualAccCheckResult = mockHttpServletResponse.getContentAsString();
+		
+		assertNotNull(actualAccCheckResult);
+		
+	    String rememberMeToken= actualAccCheckResult.substring(actualAccCheckResult.indexOf("<rememberMeToken>")+"<rememberMeToken>".length(), actualAccCheckResult.indexOf("</rememberMeToken>"));
+		
+		String expected="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><appStoreProductId>com.musicqubed.o2.autorenew.test</appStoreProductId><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>IOS</deviceType><deviceUID>IOS</deviceUID><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>false</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>false</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>1988143200</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber>+447111111111</phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>1037</promotedWeeks><provider>non-o2</provider><rememberMeToken>"+rememberMeToken+"</rememberMeToken><status>SUBSCRIBED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>1988143200</timeOfMovingToLimitedStatusSeconds><userName>+447111111114</userName><userToken>"+storedToken+"</userToken><oAuthProvider>NONE</oAuthProvider></user></response>";
+		
+		XMLAssert.assertXMLEqual(expected, actualAccCheckResult);
 	}
 	
 }
