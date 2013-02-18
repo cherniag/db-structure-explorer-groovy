@@ -70,8 +70,17 @@ public class GetNewsController extends CommonController{
 		}
 	}
 	
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/GET_NEWS", "*/{community:o2}/3.6/GET_NEWS"})
+	//Support community o2, apiVersion 3.6 and higher
+	//@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:(?:[3-9]|[1-9][0-9])\\.(?:[6-9]|[1-9][0-9]{1,2})}/GET_NEWS", "/{community:o2}/{apiVersion:(?:[3-9]|[1-9][0-9])\\.(?:[6-9]|[1-9][0-9]{1,2})\\.[1-9][0-9]{0,2}}/GET_NEWS"})
+	@RequestMapping(method = RequestMethod.POST, value = {
+			"/{community:o2}/{apiVersion:[3-9]\\.[6-9]}/GET_NEWS",
+			"/{community:o2}/{apiVersion:[3-9]\\.[1-9][0-9]}/GET_NEWS", 
+			"/{community:o2}/{apiVersion:[1-9][0-9]\\.[6-9]}/GET_NEWS",  
+			"/{community:o2}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]}/GET_NEWS",  
+			"/{community:o2}/{apiVersion:[3-9]\\.[6-9]\\.[1-9][0-9]{0,2}}/GET_NEWS", 
+			"/{community:o2}/{apiVersion:[3-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/GET_NEWS",
+			"/{community:o2}/{apiVersion:[1-9][0-9]\\.[6-9]\\.[1-9][0-9]{0,2}}/GET_NEWS",
+			"/{community:o2}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/GET_NEWS"})
 	public ModelAndView getNews_O2(
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
