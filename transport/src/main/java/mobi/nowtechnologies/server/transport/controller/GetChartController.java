@@ -1,21 +1,27 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
+import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
+import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
+
+import org.apache.log4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * GetChartController
@@ -29,15 +35,8 @@ public class GetChartController extends CommonController{
 
 	private UserService userService;
 	private ChartService chartService;
+	private ThrottlingService throttlingService;
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setChartService(ChartService chartService) {
-		this.chartService = chartService;
-	}
-	
 	@RequestMapping(method = RequestMethod.POST, value = {"/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART", "*/{apiVersion:3\\.4\\.0}/GET_CHART"})
 	public ModelAndView getChart(
 			HttpServletRequest request,
@@ -144,6 +143,19 @@ public class GetChartController extends CommonController{
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@PathVariable("community") String community) {
+			try {
+				LogUtils.putClassNameMDC(ThrottlingServiceImpl.class);
+				MDC.put("device", deviceUID);
+				if(throttlingService.handle(request, userName, community)) {
+					LOGGER.info("accepting");
+				} else {
+					LOGGER.info("throttling");
+					throw new ThrottlingException(userName, community);
+				}
+			} finally {
+				LogUtils.removeClassNameMDC();
+				MDC.remove("device");
+			}
 		
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
@@ -151,5 +163,17 @@ public class GetChartController extends CommonController{
 		
 		proccessRememberMeToken(objects);
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+	}	
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setChartService(ChartService chartService) {
+		this.chartService = chartService;
+	}
+
+	public void setThrottlingService(ThrottlingService throttlingService) {
+		this.throttlingService = throttlingService;
 	}
 }

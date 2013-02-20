@@ -351,5 +351,18 @@
 		</constructor-arg>
 	</bean>
 	
+	<!-- Transport only service -->
+	<bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl">
+		<property name="memcachedClient">
+			<bean class="net.spy.memcached.MemcachedClient">
+				<constructor-arg>
+					<bean class="java.net.InetSocketAddress">
+						<constructor-arg index="0" value="${throttling.host}" />
+						<constructor-arg index="1" value="${throttling.port}" />
+					</bean>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
 	<import resource="controllers.xml" />
 </beans>
