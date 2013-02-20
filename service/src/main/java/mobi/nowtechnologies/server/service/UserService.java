@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import javax.persistence.criteria.Order;
+
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -80,6 +82,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Propagation;
@@ -2116,15 +2123,17 @@ public class UserService {
 	}
 	
 	@Transactional(readOnly=true)
-	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId){
-		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
+	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId, Pageable pageable){
+		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId, pageable: [{}], [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId, pageable});
 		
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");
 		if (appStoreOriginalTransactionId == null)
 			throw new NullPointerException("The parameter appStoreOriginalTransactionId is null");
+		if (pageable == null)
+			throw new NullPointerException("The parameter pageable is null");
 		
-		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 		users.add(user);
 		
 		LOGGER.debug("Output parameter users=[{}]", users);

@@ -44,6 +44,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -1911,16 +1913,18 @@ public class UserServiceTest {
 		List<User> users = new ArrayList<User>();
 		users.add(user2);
 		
-		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
 		
-		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable)).thenReturn(users);
+		
+		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 		
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());
 		assertTrue(users.contains(user));
 		assertTrue(users.contains(user2));
 		
-		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1930,7 +1934,9 @@ public class UserServiceTest {
 		String appStoreOriginalTransactionId=null;
 		int nextSubPayment = 1;
 		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1940,7 +1946,28 @@ public class UserServiceTest {
 		int nextSubPayment = 1;
 		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
 		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindUsersForItunesInAppSubscription_PageableIsNull_Failure(){
+		User user = UserFactory.createUser();
+		User user2 = UserFactory.createUser();
+
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		
+		List<User> users = new ArrayList<User>();
+		users.add(user2);
+		
+		Pageable pageable = null;
+		
+		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable)).thenReturn(users);
+		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {

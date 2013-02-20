@@ -18,6 +18,10 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	private MigHttpService migHttpService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private UserNotificationService userNotificationService;
+	private Pageable iTunesUsersAffectedPageable;   
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
@@ -51,7 +56,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 		
 			final List<User> users;
 			if (appStoreOriginalTransactionId != null) {
-				users = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+				users = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, iTunesUsersAffectedPageable);
 			}else{
 				users = Collections.singletonList(user);
 			}
@@ -97,4 +102,14 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	public void setUserNotificationService(UserNotificationService userNotificationService) {
 		this.userNotificationService = userNotificationService;
 	}
+
+	public void setiTunesUsersAffectedCount(Integer iTunesUsersAffectedCount) { 
+		if (iTunesUsersAffectedCount==null){
+			iTunesUsersAffectedCount = Integer.MAX_VALUE;
+		}
+			
+		Sort sort = new Sort(Direction.ASC, "i");
+		iTunesUsersAffectedPageable = new PageRequest(0, iTunesUsersAffectedCount, sort);
+	}
+	
 }
