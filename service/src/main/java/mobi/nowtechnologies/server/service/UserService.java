@@ -2061,6 +2061,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String community) {
 		boolean hasPromo = false;
+		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 		if (null != mobileUser) {
         	if (mobileUser.getId() != user.getId()) {
         		mergeUser(mobileUser, user);
@@ -2069,17 +2070,17 @@ public class UserService {
         } else {
 			if (user.getActivationStatus() == ActivationStatus.ENTERED_NUMBER) {
 		        Promotion promotion = null;
-				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+				
 				if(o2ClientService.isO2User(o2UserDetails))
 		            promotion  = setPotentialPromo(community, user, "promotionCode");
 		        else
 		            promotion = setPotentialPromo(community, user, "defaultPromotionCode");
 		        applyPromotionByPromoCode(user, promotion);
 		        hasPromo = true;
-		        user.setContract(o2UserDetails.getTariff());
-		        user.setProvider(o2UserDetails.getOperator());
 	    	}
         }
+		user.setContract(o2UserDetails.getTariff());
+		user.setProvider(o2UserDetails.getOperator());
 		user.setActivationStatus(ActivationStatus.ACTIVATED);
     	user.setUserName(user.getMobile());
     	userRepository.save(user);
