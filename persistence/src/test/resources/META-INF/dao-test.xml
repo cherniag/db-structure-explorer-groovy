@@ -18,13 +18,11 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 	</bean>
 
 
-<bean id="persistence.DataSource"
-	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-	<property name="url" value="jdbc:mysql://localhost:3306/chartsnow" />
-	<property name="username" value="root" />
-	<property name="password" value="1" />
-</bean>
+ <bean id="persistence.DataSource" 
+ 	class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+ 	<property name="driverClassName" value="com.mysql.jdbc.Driver" /> 
+ 	<property name="url" value="jdbc:mysql://localhost:3306/chartsnow" /> 
+ </bean> 
 -->
 
 
@@ -36,6 +34,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="false" />
 				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" /> -->
 			</bean>
 		</property>
 		<property name="jpaProperties">

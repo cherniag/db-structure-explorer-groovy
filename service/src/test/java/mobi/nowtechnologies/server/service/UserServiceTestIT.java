@@ -1,7 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.SetPassword;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -9,6 +13,8 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -16,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -29,12 +37,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
 @Transactional
 public class UserServiceTestIT {
 	
 	@Resource(name="service.UserService")
 	private UserService userService;
+	
+	@Resource(name="userRepository")
+	private UserRepository userRepository;
 
 	/**
 	 * Run the UserService() constructor test.
@@ -179,8 +190,47 @@ public class UserServiceTestIT {
 	@Test
 	public void testProceessAccountCheckCommand() {
 		int userId=1;
-		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		assertNotNull(accountCheckDTO);
+	}
+	
+	@Test
+	public void testFindUsersForItunesInAppSubscription_Success(){
+		int nextSubPayment = 1;
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+
+		User user = UserFactory.createUser();
+		User user2 = UserFactory.createUser();
+		
+		List<User> users = new ArrayList<User>();
+		users.add(user);
+		users.add(user2);
+		
+		
+		for (int i = 0; i < users.size(); i++) {
+			User u = users.get(i);
+		
+			u.setId(104+i);
+			u.setUserName("userName" + i);
+			u.setDeviceUID("deviceUID" + i);
+			u.setNextSubPayment(0);
+			u.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+			u.setStatus(UserStatusDao.getLimitedUserStatus());
+			u.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get((byte) 7));
+			u.setProvider("provider");
+			u.setCurrentPaymentDetails(null);
+		}
+		
+		userRepository.save(users);
+		
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		
+		List<User> actualUsers = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		
+		assertNotNull(actualUsers);
+		assertEquals(users.size(), actualUsers.size());
+		assertTrue(users.contains(user));
+		assertTrue(users.contains(user2));
 	}
 
 }

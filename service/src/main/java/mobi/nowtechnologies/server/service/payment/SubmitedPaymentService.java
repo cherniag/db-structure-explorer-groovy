@@ -12,5 +12,7 @@ import java.util.List;
 public interface SubmitedPaymentService {
 	
 	List<SubmittedPayment> findByUserIdAndPaymentStatus(List<Integer> userIds, List<PaymentDetailsStatus> paymentDetailsStatuses);
+	
+	SubmittedPayment save(SubmittedPayment submittedPayment);
 
 }

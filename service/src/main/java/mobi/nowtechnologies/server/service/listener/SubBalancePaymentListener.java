@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.server.service.listener;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
@@ -14,6 +18,10 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +39,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	private MigHttpService migHttpService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private UserNotificationService userNotificationService;
+	private Pageable iTunesUsersAffectedPageable;   
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
@@ -38,27 +47,39 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 		SubmittedPayment payment = (SubmittedPayment) event.getPayment();
 
 		if (payment.getType() != PaymentDetailsType.PAYMENT) {
+					
 			LOGGER.info("handle SubBalance payment event: [{}]", payment);
 			User user = payment.getUser();
-			Long paymentUID = payment.getI();
 			int subweeks = payment.getSubweeks();
-
-			userService.processPaymentSubBalanceCommand(user, subweeks, payment);
-
-			if (payment.getType() == PaymentDetailsType.FIRST) {
-				LOGGER
-						.info("Applying promotions to user {} after his first successful payment with status {} ", payment.getUser().getId(), payment
-								.getStatus());
-				userService.applyPromotion(payment.getUser());
-				promotionService.applyPromotion(payment.getUser());
+			final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
+			final int nextSubPayment = payment.getNextSubPayment();
+		
+			final List<User> users;
+			if (appStoreOriginalTransactionId != null) {
+				users = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, iTunesUsersAffectedPageable);
+			}else{
+				users = Collections.singletonList(user);
 			}
-
-			PaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
-			if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
-				userNotificationService.notifyUserAboutSuccesfullPayment(user);
+			
+			for (User actualUser : users) {
+	
+				userService.processPaymentSubBalanceCommand(actualUser, subweeks, payment);
+	
+				if (payment.getType() == PaymentDetailsType.FIRST) {
+					LOGGER
+							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
+									.getStatus());
+					userService.applyPromotion(actualUser);
+					promotionService.applyPromotion(actualUser);
+				}
+	
+				PaymentDetails currentActivePaymentDetails = actualUser.getCurrentPaymentDetails();
+				if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
+					userNotificationService.notifyUserAboutSuccesfullPayment(actualUser);
+				}
+	
+				userService.populateAmountOfMoneyToUserNotification(actualUser, payment);
 			}
-
-			user = userService.populateAmountOfMoneyToUserNotification(user, payment);
 		}
 	}
 
@@ -81,4 +102,14 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	public void setUserNotificationService(UserNotificationService userNotificationService) {
 		this.userNotificationService = userNotificationService;
 	}
+
+	public void setiTunesUsersAffectedCount(Integer iTunesUsersAffectedCount) { 
+		if (iTunesUsersAffectedCount==null){
+			iTunesUsersAffectedCount = Integer.MAX_VALUE;
+		}
+			
+		Sort sort = new Sort(Direction.ASC, "i");
+		iTunesUsersAffectedPageable = new PageRequest(0, iTunesUsersAffectedCount, sort);
+	}
+	
 }

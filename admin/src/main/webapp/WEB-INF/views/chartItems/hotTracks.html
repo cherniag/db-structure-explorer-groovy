@@ -195,8 +195,6 @@
 			<ul class="table">
 				<li class="title">
 					<div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
-					<div class="prev_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.prevPosition}">Prev Position</div>
-					<div class="change_position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.chgPosition}">Change Position</div>
 					<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
 					<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
@@ -209,10 +207,6 @@
 					<div class="id_chartItem" style="display:none" th:text="${chartItemDto.id}">id</div>
 					<div class="mediaId_chartItem" style="display:none" th:text="${chartItemDto.mediaDto.id}">mediaId</div>
 					<div class="position_chartItem" th:text="${it.index+1}" style="display:inline-block">1</div>
-					<div class="prev_position_chartItem" style="display:inline-block;">
-						<span th:text="${chartItemDto.prevPosition}">1</span>
-					</div>
-					<div class="change_position_chartItem" style="display:inline-block" th:text="${chartItemDto.chgPosition}">UP</div>
 					<div class="image_chartItem" style="display:inline-block">
 						<img alt="Chart item media picture" src="" th:attr="src=@{__${filesURL+chartItemDto.mediaDto.imageFileSmallDto.filename}__}" th:alt="#{chartItems.page.chartItemsTable.chart.media.img.alt}" width="50" height="50" />
 					</div>
@@ -504,7 +498,7 @@
  		$("#chartItemsBasketSortable li#emptyList").css("display","none");
  		
  		
- 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+ 		var hiddendiv = item.find("div.position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -577,8 +571,6 @@
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
-		var positionPrevDiv = item.find("div.prev_position_chartItem");
-		var chgPositionDiv = item.find("div.change_position_chartItem");
 		var artistTitleDiv = item.find("div.ArtistTitle_chartItem, div.ArtistTitle_chartItemBasket");
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
 		var channelDiv = item.find("div.channel_chartItem, div.channel_chartItemBasket");
@@ -592,8 +584,6 @@
 		channelDiv.css("display","inline-block");
 		infoDiv.css("display","inline-block");
 		positionDiv.css("display","inline-block");
-		positionPrevDiv.css("display","inline-block");
-		chgPositionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
 		
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
@@ -611,16 +601,13 @@
 	}
 	
 	function enableChartItemHandlers(item, enable){
-		var prevPositionDiv = item.find("div.prev_position_chartItem, div.prev_position_chartItemBasket");
 		var channelDiv = item.find("div.channel_chartItem, div.channel_chartItemBasket");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		
 		if(enable){
-			prevPositionDiv.bind('dblclick.prevPositionDiv', onClickPrevPosition);
 			channelDiv.bind('dblclick.channelDiv', onClickChannel);
 			infoDiv.bind('dblclick.infoDiv',  onClickInfo);
 		}else{
-			prevPositionDiv.unbind('dblclick.prevPositionDiv');
 			channelDiv.unbind('dblclick.channelDiv');
 			infoDiv.unbind('dblclick.infoDiv');
 		}
@@ -640,39 +627,9 @@
 			var new_position = i+1;
 			if (position != new_position) {
 				 positionDiv.text(new_position);
-				 
-				 updateChgPosition($(this));
 			}
 		});
 	}
-	
-	function updateChgPosition(item){
-		var chgPositionDiv = item.find("div.change_position_chartItem");
-		
-		var position = item.find("div.position_chartItem").text();
-		var prevPosition = item.find("div.prev_position_chartItem span").text();
-		var channel = item.find("div.channel_chartItem span").text();
-		
-		chgPositionDiv.text(getChgPosition(position, prevPosition, channel != "" && channel != null));
-	}
-	
-	function getChgPosition(position, prevPosition, isBonus) {
-		if (!isBonus) {
-			if (prevPosition != 0) {
-				var dif = position - prevPosition;
-				if (dif > 0)
-					return "DOWN";
-				else if (dif < 0)
-					return "UP";
-				else
-					return "UNCHANGED";
-			} else
-				return "UNCHANGED";
-		} 
-			
-		return "NONE";
-	}
-	
 	
 	function onClickInfo(event){
 		var infoDiv = $(event.delegateTarget);
@@ -695,16 +652,14 @@
 	
 	function onBlurInfo(event){
 		var input = $(event.delegateTarget);
-		var channelDiv = input.parent();
-		var span = channelDiv.find("span");
+		var infoDiv = input.parent();
+		var span = infoDiv.find("span");
 		var newvalue = input.val();
 
 		span.text(newvalue);
 		span.css("display", "inline-block");
 		
-		input.remove();
-		
-		updateChgPosition(channelDiv.parent());
+		input.remove();		
 	}
 	
 	function onClickChannel(event){
@@ -767,51 +722,8 @@
 		
 		input.remove();
 		
-		updateChgPosition(channelDiv.parent());
-		
 		channelDiv.parent().removeAttr("editing");
 		refreshChartItemsList();
-	}
-	
-	function onClickPrevPosition(event){
-		var prevPositionDiv = $(event.delegateTarget);
-		
-		var input = prevPositionDiv.find("input");
-		if(input.size() == 0){
-			var span = prevPositionDiv.find("span");
-			input = $("#prevPositionInputTpl").clone().val(span.text());
-			
-			span.css("display", "none");
-			
-			input.css("display", "inline-block");
-			input.attr("active","true");
-			input.keypress(keypressNumericHandler);
-			input.focusout(onBlurPrevPosition);
-			input.appendTo(prevPositionDiv);
-			input.focus();
-		}else{
-			input.focus();
-		}
-	}
-	
-	function onBlurPrevPosition(event){
-		var input = $(event.delegateTarget);
-		var prevPositionDiv = input.parent();
-		var span = prevPositionDiv.find("span");
-		var newvalue = input.val();
-
-		span.css("display", "inline-block");
-		
-		input.remove();
-		
-		oldvalue = span.text();
-		newvalue = newvalue != null && newvalue != '' ? newvalue : 0;
-		if(oldvalue == newvalue || !existsChartItem(null, newvalue)){
-			span.text(newvalue);
-			updateChgPosition(prevPositionDiv.parent());
-		}else{
-			setTimeout(function(){alert($samePrevPositionError)}, 200);
-		}		
 	}
 	
 	function keypressNumericHandler(event){
@@ -877,8 +789,8 @@
 		  "{'id':",id != null && id != '' ? id : 'null',",",
 		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
 		  "'position':",li.find("div.position_chartItem").text(),",",
-		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
-		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
+		  "'prevPosition':","0",",",
+		  "'chgPosition':","NONE",",",
 		  "'channel':'",channel,"',",
 		  "'info':'",info,"',",
 		  "'publishTime':'",$selectedPublishDateTime,"',",
@@ -905,17 +817,6 @@
 			"class":"position_chartItem",
 			"style":"display:none;"
 		}).text(chartItem.position).appendTo(li);
-		
-		var prevPositionDiv = $('<div>').attr({
-			"class":"prev_position_chartItem",
-			"style":"display:none;"
-		}).appendTo(li);
-		$('<span>').text(chartItem.prevPosition).appendTo(prevPositionDiv);
-		
-		$('<div>').attr({
-			"class":"change_position_chartItem",
-			"style":"display:none; margin: 0 2px"
-		}).text(chartItem.chgPosition).appendTo(li);
 		
 		var channelDiv = $('<div>').attr({
 			"class":"channel_chartItem",

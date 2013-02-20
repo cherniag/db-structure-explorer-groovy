@@ -39,10 +39,10 @@ public class EntityService {
 		return entityDao.updateEntity(entity);
 	}
 
-	public void saveEntity(Object entity) {
+	public Object saveEntity(Object entity) {
 		if (entity == null)
 			throw new ServiceException("The parameter entity is null");
-		entityDao.saveEntity(entity);
+		return entityDao.saveEntity(entity);
 	}
 
 	public void removeEntity(Class<?> entityClass, Object entityId) {

@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import javax.persistence.criteria.Order;
+
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -36,6 +38,7 @@ import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Payment;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -79,6 +82,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Propagation;
@@ -156,6 +164,7 @@ public class UserService {
 	private AccountLogService accountLogService;
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
+	private ITunesService iTunesService;
 	
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -250,6 +259,10 @@ public class UserService {
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
+	
+	public void setiTunesService(ITunesService iTunesService) {
+		this.iTunesService = iTunesService;
+	}
 
 	@Deprecated
 	public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
@@ -288,7 +301,7 @@ public class UserService {
 				deviceUID});
 		User user = checkCredentials(userName, userToken, timestamp, communityName);
 		final String foundDeviceUID = user.getDeviceUID();
-		if (foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
+		if (deviceUID != null && foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals
 			Community community = communityService.getCommunityByName(communityName);
 			final String communityURL;
 			if (community != null) {
@@ -378,7 +391,7 @@ public class UserService {
 			LOGGER.error(e.getMessage(), e);
 			setPassword.setStatus(SetPassword.Status.FAIL);
 		}
-		AccountCheckDTO accountCheck = proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheck = proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		return new Object[] { accountCheck, setPassword };
 	}
 
@@ -512,7 +525,7 @@ public class UserService {
 				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + promotion.getFreeWeeks() - i),
 						TransactionType.SUBSCRIPTION_CHARGE));
 			}
-			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		}
 		throw new IllegalArgumentException("No promotion found");
 	}
@@ -1212,21 +1225,45 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
 		LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
-		// Update last Successful payment time
-		user.setLastSuccessfulPaymentTimeMillis(System.currentTimeMillis());
-		// Update user balance
-		user.setSubBalance(user.getSubBalance() + subweeks);
+		final String paymentSystem = payment.getPaymentSystem();
 
+		// Update last Successful payment time
+		final long epochMillis = Utils.getEpochMillis();
+		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
+		user.setLastSubscribedPaymentSystem(paymentSystem);
+
+		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
+		
+		boolean isNonO2User = isNonO2User(user);
+	
+		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
+			// Update user balance
+			user.setSubBalance(user.getSubBalance() + subweeks);
+
+			// Update next sub payment time
+			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
+		} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
+		}else{
+			user.setNextSubPayment(payment.getNextSubPayment());
+			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+			final Long freeTrialExpiredMillis = user.getFreeTrialExpiredMillis();
+			if (freeTrialExpiredMillis!=null && freeTrialExpiredMillis > epochMillis) {
+				user.setFreeTrialExpiredMillis(epochMillis);
+			}
+		}
+		
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			user.setSubBalance(user.getSubBalance() - 1);
-			entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
+			if(!isNonO2User){
+				user.setSubBalance(user.getSubBalance() - 1);
+				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
+			}
 		}
 
-		// Update next sub payment time
-		user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
 
 		// Update user status to subscribed
 		user.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -1234,6 +1271,17 @@ public class UserService {
 		entityService.updateEntity(user);
 
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
+	}
+
+	public boolean isNonO2User(User user) {	
+		String communityUrl = user.getUserGroup().getCommunity().getRewriteUrlParameter();
+		
+		boolean isNonO2User = false;
+		if (communityUrl.equalsIgnoreCase("o2")&& (!user.getProvider().equals("o2"))){
+			isNonO2User = true;
+		}
+		
+		return isNonO2User;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -1250,9 +1298,14 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType) {
-		LOGGER.debug("input parameters userId, pushToken,  deviceType: [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType });
+	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType, String transactionReceipt) {
+		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt });
 
+		try{
+			iTunesService.processInAppSubscription(userId, transactionReceipt);
+		}catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 		User user = userDao.findUserById(userId);
 		
 		user = assignPotentialPromotion(user);
@@ -1263,10 +1316,13 @@ public class UserService {
 
 		if (deviceType != null && pushNotificationToken != null)
 			userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
-
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null);
-
+		
 		Community community = user.getUserGroup().getCommunity();
+
+		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+
+		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
 		// Commented due to JodaTime potential bug
@@ -1579,7 +1635,7 @@ public class UserService {
 			updateUser(user);
 		}
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1629,7 +1685,7 @@ public class UserService {
 			throw new ServiceException(serverMessage);
 		}
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1695,7 +1751,7 @@ public class UserService {
 		user.setActivationStatus(ActivationStatus.REGISTERED);
 		userRepository.save(user);
 
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -1770,7 +1826,7 @@ public class UserService {
 				applyPromotionByPromoCode(user, potentialPromoCodePromotion);
 			}
 		}
-		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null);
+		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
@@ -2003,33 +2059,40 @@ public class UserService {
 		return user;
 	}
 	
+	@Transactional(readOnly=true)
+	public String getRedeemServerO2Url(User user) {
+		
+		return o2ClientService.getRedeemServerO2Url(user.getMobile());
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String community) {
 		boolean hasPromo = false;
+		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 		if (null != mobileUser) {
         	if (mobileUser.getId() != user.getId()) {
         		mergeUser(mobileUser, user);
         		user = mobileUser;
         	}
         } else {
-			if (user.getDeviceUID().equals(user.getUserName())) {
+			if (user.getActivationStatus() == ActivationStatus.ENTERED_NUMBER) {
 		        Promotion promotion = null;
-				O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac);
+				
 				if(o2ClientService.isO2User(o2UserDetails))
 		            promotion  = setPotentialPromo(community, user, "promotionCode");
 		        else
 		            promotion = setPotentialPromo(community, user, "defaultPromotionCode");
 		        applyPromotionByPromoCode(user, promotion);
 		        hasPromo = true;
-		        user.setContract(o2UserDetails.getTariff());
-		        user.setProvider(o2UserDetails.getOperator());
 	    	}
         }
+		user.setContract(o2UserDetails.getTariff());
+		user.setProvider(o2UserDetails.getOperator());
 		user.setActivationStatus(ActivationStatus.ACTIVATED);
     	user.setUserName(user.getMobile());
     	userRepository.save(user);
     	
-		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString());
+		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		dto.setFullyRegistred(true);
 		dto.setHasPotentialPromoCodePromotion(hasPromo);
 		return dto;
@@ -2058,5 +2121,36 @@ public class UserService {
 			LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
 					new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
 		}
+	}
+	
+	@Transactional(readOnly=true)
+	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId, Pageable pageable){
+		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId, pageable: [{}], [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId, pageable});
+		
+		if (user == null)
+			throw new NullPointerException("The parameter user is null");
+		if (appStoreOriginalTransactionId == null)
+			throw new NullPointerException("The parameter appStoreOriginalTransactionId is null");
+		if (pageable == null)
+			throw new NullPointerException("The parameter pageable is null");
+		
+		List<User> users = userRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		users.add(user);
+		
+		LOGGER.debug("Output parameter users=[{}]", users);
+		return users;
+	}
+	
+	public boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
+		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user, nonO2User);
+		boolean isIOsNonO2ItunesSubscribedUser = false;
+		
+		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
+		if (lastSubscribedPaymentSystem != null) {
+			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
+					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
+		}
+		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
+		return isIOsNonO2ItunesSubscribedUser;
 	}
 }

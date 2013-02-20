@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -51,18 +52,30 @@ public class PaymentsController extends CommonController {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = null;
 		PaymentDetails paymentDetails = null;
 		
-		String paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider()+"."+user.getContract(), null, "", locale);
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE+"."+user.getProvider(), null, "", locale);
-		}
-		if(StringUtils.isEmpty(paymentsNoteMsg)){
-			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, locale);
-		}
-		
-		if (!"o2".equals(user.getProvider())) {
-			paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
-			paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+		String paymentsNoteMsg;
+		if (communityUrl.equals("o2") && "o2".equals(user.getProvider())) {
+			paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract(), null, "", locale);
+			if (StringUtils.isEmpty(paymentsNoteMsg)) {
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider(), null, "", locale);
+			}
+			if (StringUtils.isEmpty(paymentsNoteMsg)) {
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, locale);
+			}
+		} else {
+			boolean nonO2User = userService.isNonO2User(user);
 			paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+			if (userService.isIOsNonO2ItunesSubscribedUser(user, nonO2User)) {
+				paymentsNoteMsg = messageSource.getMessage("pays.page.h1.options.note.not.o2.inapp.subs", null, locale);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
+			}else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) || (paymentDetails !=null && paymentDetails.isActivated())){
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, locale);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
+				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+			}else{
+				paymentsNoteMsg = messageSource.getMessage(PAYMENTS_NOTE_MSG_CODE, null, locale);
+				paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
+				paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+			}
 		}
 			
 		modelAndView.addObject("paymentPolicies", paymentPolicies);

@@ -56,6 +56,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
+		<property name="iTunesService" ref="service.ITunesService" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
@@ -125,6 +126,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
@@ -175,6 +177,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<bean id="service.PaymentPolicyService" class="mobi.nowtechnologies.server.service.PaymentPolicyService">
 		<property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao" />
+		<property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
 	</bean>
 
 	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
@@ -328,6 +331,11 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.impl.O2ClientServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
+		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
+		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
+		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
+		<property name="deviceService" ref="service.DeviceService" />
+		<property name="communityService" ref="service.communityService" />
 	</bean>
 
 	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />
@@ -339,6 +347,15 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<constructor-arg>
 			<ref bean="security.nowTechUserDetailsService" />
 		</constructor-arg>
+	</bean> 
+	
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.impl.ITunesServiceImpl">
+		<property name="postService" ref="shared.PostService" />
+		<property name="userService" ref="service.UserService" />
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
+		<property name="iTunesUrl" value="${apple.inApp.iTunesUrl}" />
+		<property name="password" value="${apple.inApp.password}" />
 	</bean>
 
 	<task:annotation-driven />

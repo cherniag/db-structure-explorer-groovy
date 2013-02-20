@@ -34,9 +34,6 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
-		@NamedQuery(name = User.NQ_GET_USERS_FOR_PENDING_PAYMENT,
-				query = "select u from User u join u.currentPaymentDetails as pd where u.subBalance=0 and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') and pd.activated=true and u.lastDeviceLogin!=0",
-				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
 		@NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
 				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
 		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<?"),
@@ -50,7 +47,6 @@ public class User implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
-	public static final String NQ_GET_USERS_FOR_PENDING_PAYMENT = "getUsersForPendingPayment";
 	public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
 	public static final String NQ_GET_SUBSCRIBED_USERS = "getSubscribedUsers";
 	public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
@@ -240,6 +236,16 @@ public class User implements Serializable {
 	
 	@Column(nullable=true)
 	private Long freeTrialStartedTimestampMillis;
+	
+	@Lob
+	@Column(name="base64_encoded_app_store_receipt")
+	private String base64EncodedAppStoreReceipt;
+	
+	@Column(name="app_store_original_transaction_id")
+	private String appStoreOriginalTransactionId;
+	
+	@Column(name="last_subscribed_payment_system")
+	private String lastSubscribedPaymentSystem;
 
 	public User() {
 		setDisplayName("");
@@ -714,7 +720,7 @@ public class User implements Serializable {
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
 	}
 
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken) {
+	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 		Chart chart = userGroup.getChart();
 		News news = userGroup.getNews();
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
@@ -749,6 +755,8 @@ public class User implements Serializable {
 		accountCheckDTO.setUserToken(token);
 		accountCheckDTO.setRememberMeToken(rememberMeToken);
 		accountCheckDTO.setFreeTrial(isOnFreeTrial());
+		accountCheckDTO.setProvider(provider);
+		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 
 		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
@@ -760,12 +768,23 @@ public class User implements Serializable {
 		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
 		
 		accountCheckDTO.setActivation(getActivationStatus());
+		
+		if(appStoreProductIds!=null){
+			StringBuilder temp = new StringBuilder();
+			for (String appStoreProductId : appStoreProductIds) {
+				if (appStoreProductId != null) {
+					temp.append("," + appStoreProductId);
+				}
+			}
+			if (temp.length() != 0)
+				accountCheckDTO.setAppStoreProductId(temp.substring(1));
+		}
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
 
-    private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
+	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
         if(news == null) return;
         accountCheckDTO.setNewsTimestamp(news.getTimestamp());
         accountCheckDTO.setNewsItems(news.getNumEntries());
@@ -773,7 +792,10 @@ public class User implements Serializable {
 
     // TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (null == paymentDetails)
+		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
+			return PaymentType.ITUNES_SUBSCRIPTION;
+		}else if (null == paymentDetails)
 			return PaymentType.UNKNOWN;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.CREDIT_CARD;
@@ -787,45 +809,45 @@ public class User implements Serializable {
 
 	protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
 		if (null == paymentDetails)
-			return PaymentStatusDao.getNULL().getName();
+			return PaymentStatus.NULL;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PAYMENT().getName();
+				return PaymentStatus.AWAITING_PAYMENT;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case NONE:
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PAY_PAL().getName();
+				return PaymentStatus.AWAITING_PAY_PAL;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getPAY_PAL_ERROR().getName();
+				return PaymentStatus.PAY_PAL_ERROR;
 			case NONE:
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
-				return PaymentStatusDao.getAWAITING_PSMS().getName();
+				return PaymentStatus.AWAITING_PSMS;
 			case SUCCESSFUL:
-				return PaymentStatusDao.getOK().getName();
+				return PaymentStatus.OK;
 			case ERROR:
 			case EXTERNAL_ERROR:
-				return PaymentStatusDao.getPSMS_ERROR().getName();
+				return PaymentStatus.PSMS_ERROR;
 			}
 			if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
-				return PaymentStatusDao.getPIN_PENDING().getName();
+				return PaymentStatus.PIN_PENDING;
 			} else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
-				return PaymentStatusDao.getNULL().getName();
+				return PaymentStatus.NULL;
 			}
 		}
 		return null;
@@ -921,17 +943,40 @@ public class User implements Serializable {
     public void setActivationStatus(ActivationStatus activationStatus) {
         this.activationStatus = activationStatus;
     }
-    
-    
 
-    @Override
+	public String getBase64EncodedAppStoreReceipt() {
+		return base64EncodedAppStoreReceipt;
+	}
+
+	public void setBase64EncodedAppStoreReceipt(String base64EncodedAppStoreReceipt) {
+		this.base64EncodedAppStoreReceipt = base64EncodedAppStoreReceipt;
+	}
+
+	public String getAppStoreOriginalTransactionId() {
+		return appStoreOriginalTransactionId;
+	}
+
+	public void setAppStoreOriginalTransactionId(String appStoreOriginalTransactionId) {
+		this.appStoreOriginalTransactionId = appStoreOriginalTransactionId;
+	}
+
+	public String getLastSubscribedPaymentSystem() {
+		return lastSubscribedPaymentSystem;
+	}
+
+	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
+		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
+	}
+
+	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
 				+ ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId
 				+ ", nextSubPayment=" + nextSubPayment + ", isFreeTrial=" + isOnFreeTrial() + ", currentPaymentDetailsId=" + currentPaymentDetailsId
 				+ ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
+				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
 				+ ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
-				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification
+				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
 				+ ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="
 				+ potentialPromoCodePromotionId + ", potentialPromotionId=" + potentialPromotionId + ", pin=" + pin + ", code=" + code + ", operator="
 				+ operator + ", mobile=" + mobile + ", conformStoredToken=" + conformStoredToken + ", lastDeviceLogin=" + lastDeviceLogin + ", lastWebLogin="

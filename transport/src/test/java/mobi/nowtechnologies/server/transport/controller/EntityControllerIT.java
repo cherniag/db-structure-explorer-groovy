@@ -59,7 +59,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music");
+                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
         
         assertEquals("ACTIVATED", getActivation(mav));
     }
@@ -73,7 +73,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music");
+                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
 
         //then
         assertEquals("REGISTERED", getActivation(mav));
@@ -88,7 +88,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music");
+                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
 
         //then
         assertEquals("ENTERED_NUMBER", getActivation(mav));
@@ -110,9 +110,9 @@ public class EntityControllerIT {
     public void verifyThatTwoDifferentXtifyTokensWhenReceivedWithTheSameUserAndCommunityAndDeviceWillUpdated()throws NoSuchMethodException{
         EntityController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(
-                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
+                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
         controller.accountCheckWithXtifyToken(
-                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "5678");
+                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "5678", null);
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("5678");
@@ -128,9 +128,9 @@ public class EntityControllerIT {
     public void verifyThatXtifyTokenWillNotDuplicateWithTheSameUserAndCommunityUrl() throws NoSuchMethodException  {
         EntityController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
-                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
         controller.accountCheckWithXtifyToken(null,
-                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
@@ -143,7 +143,7 @@ public class EntityControllerIT {
 
         EntityController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
-                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234");
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("1234");
@@ -216,7 +216,7 @@ public class EntityControllerIT {
 		assertEquals(aHttpServletResponse.getStatus(), 200);
 
 		ModelAndView modelAndView = entityController
-				.accountCheck(null, appVersion, communityName, apiVersion, userName, userToken, timestamp, null, null, null, null);
+				.accountCheck(null, appVersion, communityName, apiVersion, userName, userToken, timestamp, null, null, null, null, null);
 		assertNotNull(modelAndView);
 		Map<String, Object> modelMap = modelAndView.getModel();
 		assertNotNull(modelMap);
@@ -305,6 +305,7 @@ public class EntityControllerIT {
         controller.setDeviceUserDataService(deviceUserDataService);
         controller.setUserService(userService);
         expect(controller.accountCheck((HttpServletRequest) anyObject(),
+                (String) anyObject(),
                 (String) anyObject(),
                 (String) anyObject(),
                 (String) anyObject(),

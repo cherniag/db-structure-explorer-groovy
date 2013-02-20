@@ -136,7 +136,7 @@ echo "***** Generating Download Audio *****"
 			lame -b 256 "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
 	esac
 # Add temporary UITS header to the MP3
-	java -jar ${CP}/uits-3.6-SNAPSHOT.jar ${PRIVATE_KEY} "./files/purchased/${ISRC}.mp3" "./${ISRC}.mp3"    || { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.7-SNAPSHOT.jar ${PRIVATE_KEY} "./files/purchased/${ISRC}.mp3" "./${ISRC}.mp3"    || { echo "command failed"; exit 1; }
 	cp "./${ISRC}.mp3" "./files/purchased/${ISRC}.mp3" || { echo "CP command failed"; exit 1; }
 # Keep the final MP3 in work dir -> used to get the media hash
 #	cp "./files/purchased/${ISRC}.mp3" . || { echo "command failed"; exit 1; }
@@ -156,13 +156,13 @@ echo "***** Generating Mobile Audio *****"
 
 	dmg --input-file "${INPUT}" --mp4-chunk-span 900 --overwrite --audio-only --repair-all --audio-encoder aac --audio-cbr-rate 48 --aac-mode he-aacv1 --output-file "${ISRC}_48.m4a" --input-speech false --clipmode prolimit|| { echo "command failed"; exit 1; } 
 	${NERO_DIR}/neroAacTag "${ISRC}_48.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" "-meta:isrc=${ISRC}" "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 		
-	java -jar ${CP}/uits-3.6-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_48.m4a ${ISRC}_48.aud ${ISRC}_48.hdr ${ISRC}_48.enc || { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.7-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_48.m4a ${ISRC}_48.aud ${ISRC}_48.hdr ${ISRC}_48.enc || { echo "command failed"; exit 1; }
 
 	
 	dmg --input-file "${INPUT}" --mp4-chunk-span 900 --overwrite --audio-only --repair-all --audio-encoder aac --audio-cbr-rate 96 --aac-mode he-aacv1 --output-file "${ISRC}_96.m4a" --input-speech false --clipmode prolimit|| { echo "command failed"; exit 1; } 
 	${NERO_DIR}/neroAacTag "${ISRC}_96.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" "-meta:isrc=${ISRC}" "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 
 
-	java -jar ${CP}/uits-3.6-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_96.m4a ${ISRC}_96.aud ${ISRC}_96.hdr ${ISRC}_96.enc || { echo "command failed"; exit 1; }
+	java -jar ${CP}/uits-3.7-SNAPSHOT.jar ${PRIVATE_KEY} ${ISRC}_96.m4a ${ISRC}_96.aud ${ISRC}_96.hdr ${ISRC}_96.enc || { echo "command failed"; exit 1; }
 #	mv ${ISRC}_96.m4a.u ${ISRC}_96.m4a  || { echo "command failed"; exit 1; } 
 
 	mv "${ISRC}_48.hdr" files/header|| { echo "command failed"; exit 1; } 
@@ -242,3 +242,4 @@ echo "***** Generating Mobile Preview Audio *****"
 	#mv files/encoded/* ${PUBLISH_DIR}/encoded|| { echo "command failed"; exit 1; } 
 	#mv files/purchased/* ${PUBLISH_DIR}/purchased|| { echo "command failed"; exit 1; } 
 	
+

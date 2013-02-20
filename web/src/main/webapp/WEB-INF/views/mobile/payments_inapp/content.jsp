@@ -51,7 +51,16 @@
 					<s:message code='pays.select.psms' var="method_readable" />
 				</c:if>
 				
-				<div class="contentButton formButton rad5 rel" >
+				<c:choose>
+					<c:when test="${(paymentPolicy.paymentType == 'iTunesSubscription')}">
+						<c:set var="to_display" value="none" />
+					</c:when>
+					<c:otherwise>
+						<c:set var="to_display" value="block" />
+					</c:otherwise>
+				</c:choose>
+				
+				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
 					<input class="button" title="payments_inapp/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.select.payby" /> ${method_readable}" />
 					<span class="rightButtonArrow">
 						&nbsp;

@@ -87,7 +87,7 @@ public class DrmService {
 		LOGGER.debug("input parameters mediaIsrc, newDrmValue, userId, communityName: [{}], [{}], [{}], [{}]", new Object[] { mediaIsrc, newDrmValue, userId,
 				communityName });
 
-		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		List<Drm> drmList = findDrmTreeAndUpdateDrmValue(userId, mediaIsrc, newDrmValue);
 
 		DrmDto drmDto = new DrmDto();
@@ -204,7 +204,7 @@ public class DrmService {
 
 		int userId = user.getId();
 
-		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null);
+		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 
 		final BuyTrackDto buyTrackDto = new BuyTrackDto();
 		buyTrackDto.setStatus(BuyTrackDto.Status.FAIL);
@@ -251,7 +251,7 @@ public class DrmService {
 		int userId = user.getId();
 
 		user = userService.findUserTree(userId);
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null);
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
 		List<Drm> drms = drmDao.findByUserAndDrmType(user.getId(), DrmTypeDao.getPURCHASED_DRM_TYPE());
 

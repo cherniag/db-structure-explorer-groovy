@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,6 +40,9 @@ public class Community implements Serializable {
 	
 	@Column(name="rewriteURLParameter")
 	private String rewriteUrlParameter;
+	
+	@ManyToMany(mappedBy = "communities", fetch=FetchType.LAZY)
+	private List<Chart> charts;
 
     public Community() {
     }
@@ -75,7 +80,7 @@ public class Community implements Serializable {
 		return this.name;
 	}
 
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

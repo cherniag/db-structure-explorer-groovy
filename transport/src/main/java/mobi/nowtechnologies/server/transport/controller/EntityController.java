@@ -160,7 +160,7 @@ public class EntityController extends CommonController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6/ACC_CHECK", "*/{community:o2}/3.6/ACC_CHECK" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -174,9 +174,10 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
 			@PathVariable("community") String community) {
 		ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
-				timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken);
+				timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt);
 
 		User user = userService.findByNameAndCommunity(userName, community);
 		AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
@@ -208,9 +209,10 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken) {
+			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) {
 
-		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken);
+		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, transactionReceipt);
 		if (isNotBlank(xtifyToken)) {
 			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
 		}
@@ -229,7 +231,8 @@ public class EntityController extends CommonController {
 			String deviceType,
 			String deviceUID,
 			String pushNotificationToken,
-			String iphoneToken) {
+			String iphoneToken,
+			String transactionReceipt) {
 		try {
 			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);
 
@@ -250,7 +253,7 @@ public class EntityController extends CommonController {
 			}
 
 			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
-					pushNotificationToken, deviceType);
+					pushNotificationToken, deviceType, transactionReceipt);
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 
@@ -729,7 +732,7 @@ public class EntityController extends CommonController {
 				pushNotificationToken = iphoneToken;
 
 			final Object[] objects = new Object[] { userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(), pushNotificationToken,
-					deviceType) };
+					deviceType, null) };
 
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, MODEL_NAME, new Response(objects));

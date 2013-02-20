@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.service.payment.SubmitedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -33,6 +34,16 @@ public class SubmitedPaymentServiceImpl implements SubmitedPaymentService {
 
 		LOGGER.info("Output parameter submittedPayments=[{}]", submittedPayments);
 		return submittedPayments;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public SubmittedPayment save(SubmittedPayment submittedPayment) {
+		LOGGER.debug("input parameters submittedPayment: [{}]", submittedPayment);
+		
+		submittedPayment = submitedPaymentRepository.save(submittedPayment);
+		
+		LOGGER.debug("Output parameter submittedPayment=[{}]", submittedPayment);
+		return submittedPayment;
 	}
 
 }

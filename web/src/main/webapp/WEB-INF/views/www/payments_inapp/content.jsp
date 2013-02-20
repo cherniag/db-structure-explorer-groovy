@@ -32,6 +32,7 @@
 											<s:message code='pays.select.psms' var="method_readable" />
 											<c:set var="method_color" value="blueInnerText" />
 										</c:if>
+										
 										<div class="oneMethodBox rel">
 											<a href="payments_inapp/${method_name}.html" class="rel ${method_color}">
 												<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icons/${method_name}_method.png" alt="">

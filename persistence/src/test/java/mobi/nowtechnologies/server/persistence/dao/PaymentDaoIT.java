@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
 @Transactional
 public class PaymentDaoIT {
 	
@@ -51,41 +52,59 @@ public class PaymentDaoIT {
 		Community community = CommunityDao.getCommunity("CN Commercial Beta");
 		
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
-			paymentPolicy.setAvailableInStore(true);
-			paymentPolicy.setCommunity(community);
-			paymentPolicy.setCurrencyISO("GBP");
-			paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
-			paymentPolicy.setSubcost(BigDecimal.TEN);
-			paymentPolicy.setSubweeks((byte)0);
+		paymentPolicy.setAvailableInStore(true);
+		paymentPolicy.setCommunity(community);
+		paymentPolicy.setCurrencyISO("GBP");
+		paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
+		paymentPolicy.setSubcost(BigDecimal.TEN);
+		paymentPolicy.setSubweeks((byte) 0);
 		entityDao.saveEntity(paymentPolicy);
 		
-		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL);
-		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL);
-		createUser(paymentPolicy, PaymentDetailsStatus.AWAITING);
-		createUser(paymentPolicy, PaymentDetailsStatus.ERROR);
-		createUser(paymentPolicy, PaymentDetailsStatus.NONE);
-		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL);
-		createUser(paymentPolicy, PaymentDetailsStatus.NONE);
-		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR);
+		byte chartsNowUserGroupId = 3;
+		byte o2UserGroupId = 7;
+		
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, chartsNowUserGroupId, 1359547315, null);
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, chartsNowUserGroupId, 1359547315, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.AWAITING, chartsNowUserGroupId, 1359547315, null);
+		createUser(paymentPolicy, PaymentDetailsStatus.ERROR, chartsNowUserGroupId, 1359547315, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, chartsNowUserGroupId, 1359547315, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, chartsNowUserGroupId, 1359547315, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, chartsNowUserGroupId, 1359547315, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR, chartsNowUserGroupId, 1359547315,"");
+		createUser(paymentPolicy, null, chartsNowUserGroupId, 1359547315, "o2");
+			
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, o2UserGroupId, Utils.getEpochSeconds() + 60*60, null);
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.AWAITING, o2UserGroupId, Utils.getEpochSeconds() + 60*60, null);
+		createUser(paymentPolicy, PaymentDetailsStatus.ERROR, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.SUCCESSFUL, o2UserGroupId, Utils.getEpochSeconds() + 86400 + 60 * 60, "");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.EXTERNAL_ERROR, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "");
+		createUser(paymentPolicy, null, o2UserGroupId, Utils.getEpochSeconds() + 60*60, "o2");
+		createUser(paymentPolicy, PaymentDetailsStatus.NONE, o2UserGroupId, Utils.getEpochSeconds()- 60 * 60, "");
 		
 		List<User> pendingPayments = paymentDao.getUsersForPendingPayment();
 		
 		Assert.assertNotNull(pendingPayments);
-		Assert.assertEquals(5, pendingPayments.size());
+		Assert.assertEquals(8, pendingPayments.size());
 	}
 	
-	private User createUser(PaymentPolicy paymentPolicy, PaymentDetailsStatus lastPaymentStatus) {
-		UserGroup userGroup = entityDao.findById(UserGroup.class, (byte) 3);
+	private User createUser(PaymentPolicy paymentPolicy, PaymentDetailsStatus lastPaymentStatus, byte usergroupId, int nextSubPayment, String provider) {
+		UserGroup userGroup = entityDao.findById(UserGroup.class, usergroupId);
 		
 		User user = new User();
-			user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
-			user.setUserName(UUID.randomUUID().toString());
-			user.setUserGroup(userGroup);
-			user.setLastDeviceLogin(55);
-			user.setStatus(UserStatusDao.getLimitedUserStatus());
-			entityDao.saveEntity(user);
+		user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+		user.setUserName(UUID.randomUUID().toString());
+		user.setUserGroup(userGroup);
+		user.setLastDeviceLogin(55);
+		user.setStatus(UserStatusDao.getLimitedUserStatus());
+		user.setNextSubPayment(nextSubPayment);
+		user.setProvider(provider);
+		entityDao.saveEntity(user);
 
-		SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
+		if (lastPaymentStatus!=null){
+			SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
 			currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 			currentPaymentDetails.setLastPaymentStatus(lastPaymentStatus);
 			currentPaymentDetails.setReleased(false);
@@ -93,8 +112,9 @@ public class PaymentDaoIT {
 			currentPaymentDetails.setOwner(user);
 			entityDao.saveEntity(currentPaymentDetails);
 
-		user.setCurrentPaymentDetails(currentPaymentDetails);
-		user = entityDao.updateEntity(user);
+			user.setCurrentPaymentDetails(currentPaymentDetails);
+			user = entityDao.updateEntity(user);
+		}
 
 		return user;
 	}

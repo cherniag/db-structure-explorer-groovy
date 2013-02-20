@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import mobi.nowtechnologies.server.admin.validator.ChartDtoValidator;
 import mobi.nowtechnologies.server.admin.validator.ChartItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
@@ -9,11 +15,9 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
-import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
+import mobi.nowtechnologies.server.shared.dto.admin.*;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -26,12 +30,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -43,6 +41,12 @@ public class ChartController extends AbstractCommonController {
 
 	private ChartService chartService;
 	private String filesURL;
+	private String chartFilesURL;
+	private Map<String, String> viewByChartType;
+
+	public void setViewByChartType(Map<String, String> viewByChartType) {
+		this.viewByChartType = viewByChartType;
+	}
 
 	public void setChartService(ChartService chartService) {
 		this.chartService = chartService;
@@ -52,15 +56,30 @@ public class ChartController extends AbstractCommonController {
 		this.filesURL = filesURL;
 	}
 	
+	public void setChartFilesURL(String chartFilesURL) {
+		this.chartFilesURL = chartFilesURL;
+	}
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateTimeFormat, true));
 	}
 
-	@InitBinder( { ChartItemDto.CHART_ITEM_DTO })
-	public void initNewsBinder(WebDataBinder binder) {
+	@InitBinder( { ChartItemDto.CHART_ITEM_DTO})
+	public void initChartItemBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, "channel", new StringTrimmerEditor(" ",true));
-		binder.setValidator(new ChartItemDtoValidator());		
+		binder.setValidator(new ChartItemDtoValidator());	
+		binder.setValidator(new ChartDtoValidator());	
+	}
+
+	@InitBinder( {ChartDto.CHART_DTO })
+	public void initChartBinder(WebDataBinder binder) {
+		binder.setValidator(new ChartDtoValidator());	
+	}
+	
+	@ModelAttribute("chartFilesURL")
+	public String getFilesURL() {
+		return chartFilesURL;
 	}
 
 	@RequestMapping(value = "/charts/list", method = RequestMethod.GET)
@@ -68,11 +87,32 @@ public class ChartController extends AbstractCommonController {
 		LOGGER.debug("input parameters request [{}]", new Object[] { request });
 
 		String communityURL = RequestUtils.getCommunityURL();
-		List<Chart> charts = chartService.getChartsByCommunityURL(communityURL);
+		List<Chart> charts = chartService.getChartsByCommunity(communityURL, null);
 		List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
 
 		ModelAndView modelAndView = new ModelAndView("charts/charts");
 		modelAndView.addObject(ChartDto.CHART_DTO_LIST, chartDtos);
+
+		return modelAndView;
+	}
+	
+	/**Update properties of selected chart
+	 * 
+	 * @param chartItemDto dto of chart
+	 * @param chartId id of chart
+	 * @return redirect to the chart calender page
+	 */
+	@RequestMapping(value = "/charts/{chartId}", method = RequestMethod.POST)
+	public ModelAndView updateChart(
+			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
+			@PathVariable("chartId") Byte chartId) {
+
+		LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
+
+		Chart chart = ChartAsm.toChart(chartDto);
+		chartService.updateChart(chart, chartDto.getFile());
+
+		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
 
 		return modelAndView;
 	}
@@ -95,8 +135,10 @@ public class ChartController extends AbstractCommonController {
 		if (selectedPublishDateTime == null)
 			selectedPublishDateTime = new Date();
 
+		Chart chart = chartService.getChartById(chartId);
 		List<ChartDetail> chartDetails = chartService.getActualChartItems(chartId, selectedPublishDateTime);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
+		ChartDto chartDto = ChartAsm.toChartDto(chart);
 
 		final String selectedPublishDateString;
 		if (chartItemDtos.isEmpty()) {
@@ -105,13 +147,13 @@ public class ChartController extends AbstractCommonController {
 			selectedPublishDateString = dateTimeFormat.format(chartItemDtos.get(0).getPublishTime());
 		}
 
-		ModelAndView modelAndView = new ModelAndView("chartItems/chartItemsCalendar");
+		ModelAndView modelAndView = new ModelAndView(viewByChartType.get(chart.getType().name()));
 		modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		modelAndView.addObject("selectedPublishDateTime", selectedPublishDateString);
 		modelAndView.addObject("selectedDateTime", selectedPublishDateTime);
 		modelAndView.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId));
 		modelAndView.addObject("filesURL", filesURL);
-		modelAndView.addObject("chartId", chartId);
+		modelAndView.addObject("chart", chartDto);
 
 		return modelAndView;
 	}

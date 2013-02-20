@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -26,15 +27,20 @@ public class ApplyInitPromoControllerIT {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSet(){
         //given
         String userName = "imei_351722057812748";
         User user = userService.findByName(userName);
-
+        user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+        userRepository.save(user);
+        
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         user = userService.findByName(user.getMobile());
@@ -52,7 +58,7 @@ public class ApplyInitPromoControllerIT {
         
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "11111-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "11111111-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         User mobileUser = userService.findByName("+447111111111");
@@ -67,13 +73,38 @@ public class ApplyInitPromoControllerIT {
     }
     
     @Test
+    public void givenValidO2Token_whenUserReInstallAppWithOldPhoneNumber_then_ReturnAUserWithOldPhoneNumberAndAppliedPromo() {
+    	//given
+        String userName = "+447111111111";
+        String oldUserName = "+447888888888";
+        User user = userService.findByName(userName);
+        user.setUserName(oldUserName);
+        user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+        user.setNextSubPayment(0);
+        userRepository.save(user);
+        
+        //then
+        controller.applyO2Promotion("o2", oldUserName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
+
+        //when
+        User mobileUser = userService.findByName(userName);
+        
+        Assert.assertEquals(user.getDevice(), mobileUser.getDevice());
+        Assert.assertEquals(user.getDeviceUID(), mobileUser.getDeviceUID());
+        Assert.assertEquals(user.getDeviceModel(), mobileUser.getDeviceModel());
+        Assert.assertEquals(user.getDeviceString(), mobileUser.getDeviceString());
+        Assert.assertEquals(ActivationStatus.ACTIVATED, mobileUser.getActivationStatus());
+        Assert.assertEquals(13, days(mobileUser.getNextSubPayment()));
+    }
+    
+    @Test
     public void applyInitPromo_whenUserCallMethodTwice_then_ReturnAUser() {
     	//given
         String userName = "+447733333333";
         User user = userService.findByName(userName);
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
 
         //when
         user = userService.findByName(userName);
@@ -88,7 +119,7 @@ public class ApplyInitPromoControllerIT {
         User user = userService.findByName(userName);
         
         //then
-        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", userName, user.getToken(), "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
         
         user = userService.findByName(user.getMobile());
         //when
@@ -102,7 +133,7 @@ public class ApplyInitPromoControllerIT {
         
         
         //then
-        controller.applyO2Promotion("o2", "+447700000000", "hello token", "timestemp", "0000-4dfghg546456", "o2");
+        controller.applyO2Promotion("o2", "+447700000000", "hello token", "timestemp", "00000000-c768-4fe7-bb56-a5e0c722cd44", "o2");
         
         //when
     }

@@ -1,14 +1,26 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
+import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,20 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyByte;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
  * The class <code>ChartItemControllerTest</code> contains tests for the class <code>{@link ChartItemController}</code>.
@@ -50,7 +48,9 @@ public class ChartItemControllerTest extends TestCase {
 	private ChartDetailService chartDetailService;
 	@Mock
 	private MediaService mediaService;
-
+	@Mock
+	private ChartService chartService;
+	
 	/**
 	 * Run the ModelAndView updateChartItems(String,Date,Byte) method test with success expected result.
 	 *
@@ -105,21 +105,103 @@ public class ChartItemControllerTest extends TestCase {
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetChartItemsPage_Successful()
+	public void testGetChartItemsPage_BasicChart_Successful()
 		throws Exception {
 		Byte chartId = new Byte((byte) 1);
+		Chart chart = new Chart();
+		chart.setI(chartId);
+		chart.setType(ChartType.BASIC_CHART);
 		Date selectedPublishDateTime = new Date();
 		String filesUrl = "";
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
 		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartById(anyByte())).thenReturn(chart);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
 		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
 
 		assertNotNull("ModelAndView should not be null", result);
-		ModelAndViewAssert.assertViewName(result, "chartItems/chartItemsNEW");
+		ModelAndViewAssert.assertViewName(result, "chartItems/chartItems");
+		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
+		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
+		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
+		ModelAndViewAssert.assertModelAttributeValue(result, "chartId", chartId);
+		
+		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		verifyStatic(times(1));
+		ChartDetailsAsm.toChartItemDtos(anyList());
+
+	}
+	
+	/**
+	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with success expected result.
+	 *
+	 * @throws Exception
+	 *
+	 * @generatedBy CodePro at 9/3/12 5:14 PM
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetChartItemsPage_HotChart_Successful()
+		throws Exception {
+		Byte chartId = new Byte((byte) 1);
+		Chart chart = new Chart();
+		chart.setI(chartId);
+		chart.setType(ChartType.HOT_TRACKS);
+		Date selectedPublishDateTime = new Date();
+		String filesUrl = "";
+		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
+		
+		fixture.setFilesURL(filesUrl);
+		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
+		
+		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
+
+		assertNotNull("ModelAndView should not be null", result);
+		ModelAndViewAssert.assertViewName(result, "chartItems/hotTracks");
+		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
+		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
+		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
+		ModelAndViewAssert.assertModelAttributeValue(result, "chartId", chartId);
+		
+		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		verifyStatic(times(1));
+		ChartDetailsAsm.toChartItemDtos(anyList());
+
+	}
+	
+	/**
+	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with success expected result.
+	 *
+	 * @throws Exception
+	 *
+	 * @generatedBy CodePro at 9/3/12 5:14 PM
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetChartItemsPage_OtherChart_Successful()
+		throws Exception {
+		Byte chartId = new Byte((byte) 1);
+		Chart chart = new Chart();
+		chart.setI(chartId);
+		chart.setType(ChartType.OTHER_CHART);
+		Date selectedPublishDateTime = new Date();
+		String filesUrl = "";
+		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
+		
+		fixture.setFilesURL(filesUrl);
+		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
+		
+		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
+
+		assertNotNull("ModelAndView should not be null", result);
+		ModelAndViewAssert.assertViewName(result, "chartItems/hotTracks");
 		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
@@ -215,8 +297,15 @@ public class ChartItemControllerTest extends TestCase {
 		
 		mockStatic( ChartDetailsAsm.class );
 
+		Map<String, String> viewByChartType = new HashMap<String, String>();
+		viewByChartType.put("BASIC_CHART", "chartItems/chartItems");
+		viewByChartType.put("HOT_TRACKS", "chartItems/hotTracks");
+		viewByChartType.put("OTHER_CHART", "chartItems/hotTracks");
+		
 		fixture = new ChartItemController();
+		fixture.setViewByChartType(viewByChartType);
 		fixture.setMediaService(mediaService);
+		fixture.setChartService(chartService);
 		fixture.setChartDetailService(chartDetailService);
 		fixture.setFilesURL("");
 		fixture.dateTimeFormat = new SimpleDateFormat();

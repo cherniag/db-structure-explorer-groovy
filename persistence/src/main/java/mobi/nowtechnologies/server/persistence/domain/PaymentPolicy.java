@@ -62,6 +62,9 @@ public class PaymentPolicy {
 	private String currencyISO;
 
 	private boolean availableInStore;
+	
+	@Column(name="app_store_product_id")
+	private String appStoreProductId;
 
 	public void setId(short id) {
 		this.id = id;
@@ -151,6 +154,14 @@ public class PaymentPolicy {
 		this.availableInStore = availableInStore;
 	}
 
+	public String getAppStoreProductId() {
+		return appStoreProductId;
+	}
+
+	public void setAppStoreProductId(String appStoreProductId) {
+		this.appStoreProductId = appStoreProductId;
+	}
+
 	public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
 		OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
 		
@@ -177,7 +188,7 @@ public class PaymentPolicy {
 	public String toString() {
 		return "PaymentPolicy [communityId=" + communityId + ", id=" + id
 				+ ", paymentType=" + paymentType + ", shortCode=" + shortCode
-				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", availableInStore=" + availableInStore + "]";
+				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", appStoreProductId=" + appStoreProductId + ", availableInStore=" + availableInStore + "]";
 	}
 
 	public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {

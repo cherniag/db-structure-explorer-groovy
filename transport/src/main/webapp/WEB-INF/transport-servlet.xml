@@ -57,6 +57,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.PhoneActivationDto</value>
+				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
 			</list>
 		</property>
 	</bean> 
@@ -338,17 +339,6 @@
 				<ref bean="transport.smsNotificationQuartzTrigger" />
 			</list>
 		</property>
-	</bean>
-	
-	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"/>
-	
-	<bean id="nowTechBasedRememberMeServices" class="mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices">
-		<constructor-arg>
-			<value>${rememberMe.key}</value>
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="security.nowTechUserDetailsService" />
-		</constructor-arg>
 	</bean>
 	
 	<!-- Transport only service -->
