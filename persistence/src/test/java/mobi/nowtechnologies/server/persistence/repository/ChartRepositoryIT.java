@@ -38,7 +38,7 @@ public class ChartRepositoryIT {
 		List<Chart> charts = chartRepository.getByCommunityName("CN Commercial Beta");
 
 		assertNotNull(charts);
-		assertEquals(1, charts.size());
+		assertEquals(2, charts.size());
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class ChartRepositoryIT {
 		List<Chart> charts = chartRepository.getByCommunityURL("ChartsNow");
 
 		assertNotNull(charts);
-		assertEquals(1, charts.size());
+		assertEquals(2, charts.size());
 	}
 	
 	@Test
