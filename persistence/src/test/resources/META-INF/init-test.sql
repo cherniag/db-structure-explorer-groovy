@@ -13,11 +13,16 @@ insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image');
 
 insert into tb_labels (i,name) values (9,'INTERSCOPE');
 
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (1,'Default Chart','Default Chart',20,1,1307035342,0);
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (2,'Default Chart','Default Chart',20,1,1306787849,0);
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (3,'Default Chart','Default Chart',20,1,1317281215,0);
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (4,'The Heavy List','The Heavy List',20,1,1317107880,0);
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks) values (5,'Default Chart','Default Chart',21,1,1321452650,6);
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (1,'Basic Chart','Default Chart',20,1,1307035342,0, 'BASIC_CHART');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (2,'Basic Chart','Default Chart',20,1,1306787849,0, 'BASIC_CHART');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (3,'Basic Chart','Default Chart',20,1,1317281215,0, 'BASIC_CHART');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (4,'The Heavy List','The Heavy List',20,1,1317107880,0, 'BASIC_CHART');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (5,'Basic Chart','Default Chart',21,1,1321452650,6, 'BASIC_CHART');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (6,'Hot Chart','Default Chart',20,1,1307035342,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (7,'Hot Chart','Default Chart',20,1,1306787849,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (8,'Hot Chart','Default Chart',20,1,1317281215,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (9,'The Heavy List','The Heavy List',20,1,1317107880,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (10,'Hot Chart','Default Chart',21,1,1321452650,6, 'HOT_TRACKS');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);
@@ -26,6 +31,11 @@ insert into community_charts (chart_id, community_id) values (3,3);
 insert into community_charts (chart_id, community_id) values (4,4);
 insert into community_charts (chart_id, community_id) values (5,5);
 insert into community_charts (chart_id, community_id) values (5,7);
+insert into community_charts (chart_id, community_id) values (6,1);
+insert into community_charts (chart_id, community_id) values (7,2);
+insert into community_charts (chart_id, community_id) values (8,3);
+insert into community_charts (chart_id, community_id) values (9,4);
+insert into community_charts (chart_id, community_id) values (10,5);
 
 insert into tb_files (i, filename, size, fileType, version) values (1894,'US-UM7-11-00061.aud',1464070,2,1);
 insert into tb_files (i, filename, size, fileType, version) values (1893,'US-UM7-11-00061.hdr',162676,1,666);
@@ -78,12 +88,12 @@ insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(13,5,13,62,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, null, 2);
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(14,5,14,63,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, null, 1);
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(15,5,15,64,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, null, 6);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(16,5,16,65,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 925);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(17,5,17,66,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 3);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(18,5,18,67,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 1);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(19,5,19,68,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 11);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(20,5,20,69,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 111);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(21,5,21,49,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 98);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(16,10,16,65,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 925);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(17,10,17,66,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 3);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(18,10,18,67,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 1);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(19,10,19,68,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 11);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(20,10,20,69,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 111);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(21,10,21,49,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',0, 'HEATSEEKER', 98);
 
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(22,5,1,50,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, null, 5);
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(23,5,2,51,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, null, 145);
@@ -100,12 +110,12 @@ insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(34,5,13,62,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, null, 2);
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(35,5,14,63,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, null, 1);
 insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(36,5,15,64,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, null, 6);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(37,5,16,65,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 925);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(38,5,17,66,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 3);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(39,5,18,67,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 1);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(40,5,19,68,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 11);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(41,5,20,69,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 111);
-insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(42,5,21,49,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 98);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(37,10,16,65,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 925);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(38,10,17,66,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 3);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(39,10,18,67,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 1);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(40,10,19,68,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 11);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(41,10,20,69,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 111);
+insert into tb_chartDetail (i,chart,position,media,prevPosition,chgPosition,info, publishTimeMillis, channel, version) values(42,10,21,49,24,2,'LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.',1343806800000, 'HEATSEEKER', 98);
 
 
 insert into tb_news (i, name, numEntries, community, timestamp) values (1,'Default News',10,1,1317653308), (2,'Default News',10,2,1306727773), (3,'Default News',10,3,1316198553), (4,'The Heavy List',10,4,1317027781), (5,'Now Music',10,5,1317300123);
