@@ -7,7 +7,7 @@
 	<c:if test="${result == null}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<input class="button accounts" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />				
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>					
 	</div>
 	</c:if>
 </div>
