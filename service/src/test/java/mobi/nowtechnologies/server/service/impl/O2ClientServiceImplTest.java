@@ -47,7 +47,7 @@ public class O2ClientServiceImplTest {
 	
 
 	@SuppressWarnings("unchecked")
-	@Test
+	//@Test
 	public void testValidatePhoneNumber_NotPromoted_Success()
 			throws Exception {
 		
