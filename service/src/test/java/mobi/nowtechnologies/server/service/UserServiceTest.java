@@ -46,6 +46,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -1913,7 +1915,8 @@ public class UserServiceTest {
 		List<User> users = new ArrayList<User>();
 		users.add(user2);
 		
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		Sort sort = new Sort(Direction.ASC, "id");
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
 		
 		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable)).thenReturn(users);
 		
@@ -1934,7 +1937,8 @@ public class UserServiceTest {
 		String appStoreOriginalTransactionId=null;
 		int nextSubPayment = 1;
 		
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		Sort sort = new Sort(Direction.ASC, "id");
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
 		
 		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 	}
@@ -1946,7 +1950,8 @@ public class UserServiceTest {
 		int nextSubPayment = 1;
 		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
 		
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+		Sort sort = new Sort(Direction.ASC, "id");
+		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
 		
 		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
 	}

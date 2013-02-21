@@ -108,7 +108,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 			iTunesUsersAffectedCount = Integer.MAX_VALUE;
 		}
 			
-		Sort sort = new Sort(Direction.ASC, "i");
+		Sort sort = new Sort(Direction.ASC, "id");
 		iTunesUsersAffectedPageable = new PageRequest(0, iTunesUsersAffectedCount, sort);
 	}
 	
