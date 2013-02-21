@@ -1,24 +1,22 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.QueryHint;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-
 /**
  * @author Titov Mykhaylo (titov)
  *
  */
-public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
+public interface UserRepository extends JpaRepository<User, Integer>{
 
 	@Query(value="select user from User user " +
 			"join user.userGroup userGroup " +
@@ -99,14 +97,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +
 			"join ug.community c " +
-			"left join u.currentPaymentDetails cP " + 
 			"where " +
 			"u<>?1 "+
-			"and u.nextSubPayment<?2 " +
+			"and u.nextSubPayment<>?2 " +
 			"and u.appStoreOriginalTransactionId=?3 " +
-			"and (cP  is NULL " +
-			"or cP.activated=false) "+
+			"and u.currentPaymentDetails is NULL " +
 			"and c.rewriteUrlParameter = 'o2' " +
 			"and u.provider<>'o2' ")
-	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId, Pageable pageable);
+	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId);
 }

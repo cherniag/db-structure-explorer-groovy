@@ -51,11 +51,6 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
-	<logger name="org.hibernate.TYPE">
-		<level value="TRACE"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
-	</logger>
 	<logger name="mobi.nowtechnologies">
 		<level value="INFO"></level>
 		<appender-ref ref="stdout" />

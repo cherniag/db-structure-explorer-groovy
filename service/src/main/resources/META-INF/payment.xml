@@ -101,7 +101,6 @@
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
-		<property name="iTunesUsersAffectedCount" value="${apple.inApp.usersAffectedCount}" />
 	</bean>
 	
 	<bean id="offerPaymentListener" class="mobi.nowtechnologies.server.service.listener.OfferPaymentListener">

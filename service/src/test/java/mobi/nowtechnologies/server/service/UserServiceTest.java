@@ -5,18 +5,53 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import mobi.nowtechnologies.server.persistence.dao.*;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import mobi.nowtechnologies.server.persistence.dao.UserDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -44,10 +79,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -1915,19 +1947,18 @@ public class UserServiceTest {
 		List<User> users = new ArrayList<User>();
 		users.add(user2);
 		
-		Sort sort = new Sort(Direction.ASC, "id");
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
+
+		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
+ 
 		
-		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable)).thenReturn(users);
-		
-		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());
 		assertTrue(users.contains(user));
 		assertTrue(users.contains(user2));
 		
-		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1937,10 +1968,7 @@ public class UserServiceTest {
 		String appStoreOriginalTransactionId=null;
 		int nextSubPayment = 1;
 		
-		Sort sort = new Sort(Direction.ASC, "id");
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
-		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId); 
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1949,30 +1977,8 @@ public class UserServiceTest {
 
 		int nextSubPayment = 1;
 		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
-		
-		Sort sort = new Sort(Direction.ASC, "id");
-		Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, sort);
-		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
-	}
 	
-	@Test(expected=NullPointerException.class)
-	public void testFindUsersForItunesInAppSubscription_PageableIsNull_Failure(){
-		User user = UserFactory.createUser();
-		User user2 = UserFactory.createUser();
-
-		int nextSubPayment = 1;
-		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
-		
-		List<User> users = new ArrayList<User>();
-		users.add(user2);
-		
-		Pageable pageable = null;
-		
-		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable)).thenReturn(users);
-		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId, pageable);
-		
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId); 
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
