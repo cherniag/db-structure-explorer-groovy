@@ -269,6 +269,20 @@ a.button, input.button, button {
 	font-family: Helvetica, Arial, sans-serif;
 }
 
+a.button {
+	background: #142847 url(../imgs/bgs/button.png) repeat-x 0 center;	
+	height: 30px!important;	
+	font-weight: bold;
+	color: #ffffff;
+	line-height: 30px!important;
+	text-decoration: none;
+	padding: 0px 15px 0px 22px!important;
+	border: 1px solid #000000;
+	display: inline-block;		
+	font-family: Helvetica, Arial, sans-serif;
+	border-radius: 0px!important;
+}
+
 input.accounts{
 	padding-left: 20px;
 	padding-right: 10px;

@@ -726,7 +726,8 @@ public class User implements Serializable {
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
 
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = (null != currentPaymentDetails && currentPaymentDetails.isActivated());
+		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated())||(lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
 		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
 		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 

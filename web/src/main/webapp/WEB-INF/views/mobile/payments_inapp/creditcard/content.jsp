@@ -6,7 +6,7 @@
 	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<input class="button buttonSmall accounts" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />	
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
 	</div>				
 </div>
 <div class="container">

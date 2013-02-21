@@ -7,8 +7,8 @@
 	<div class="header">
 		<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 		<div class="buttonBox">
-			<input class="button accounts" type="submit" value="<s:message code="m.page.main.menu.back" />" />
-			<span class="arrow">&nbsp;</span>
+		<span class="arrow">&nbsp;</span>
+		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
 		</div>				
 	</div>
 	<div class="container">

@@ -7,8 +7,8 @@
 	<div class="gradient_border">&#160;</div>
 		<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	
 		<div class="buttonBox">
-			<input class="button accounts" type="submit" value="<s:message code="m.page.main.menu.back" />" />
-			<span class="arrow">&nbsp;</span>
+		<span class="arrow">&nbsp;</span>
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
 		</div>				
 	</div>
 	<div class="container">

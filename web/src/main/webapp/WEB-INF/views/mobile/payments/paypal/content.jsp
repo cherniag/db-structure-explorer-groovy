@@ -7,8 +7,8 @@
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 	<c:if test="${result==null||result=='fail'}">
 	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>	
-		<input class="button accounts" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />		
+		<span class="arrow">&nbsp;</span>
+		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>			
 	</div>				
 	</c:if>
 </div>

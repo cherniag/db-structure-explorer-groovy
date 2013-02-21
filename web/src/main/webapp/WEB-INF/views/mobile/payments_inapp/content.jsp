@@ -7,7 +7,7 @@
 	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<input class="button accounts" class="buttonTop" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='page.main.menu.my.account' />" />
+		<a href="account.html" class="button buttonSmall accounts"><s:message code='page.main.menu.my.account' /></a>
 	</div>			
 </div>
 <div class="container">
