@@ -78,8 +78,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
+import org.powermock.modules.junit4.PowerMockRunner; 
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -1946,10 +1945,9 @@ public class UserServiceTest {
 		
 		List<User> users = new ArrayList<User>();
 		users.add(user2);
-		
+
 
 		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
- 
 		
 		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		
@@ -1968,7 +1966,7 @@ public class UserServiceTest {
 		String appStoreOriginalTransactionId=null;
 		int nextSubPayment = 1;
 		
-		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId); 
+		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);  
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1976,7 +1974,7 @@ public class UserServiceTest {
 		User user = null;
 
 		int nextSubPayment = 1;
-		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
+		String appStoreOriginalTransactionId="appStoreOriginalTransactionId"; 
 	
 		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId); 
 	}

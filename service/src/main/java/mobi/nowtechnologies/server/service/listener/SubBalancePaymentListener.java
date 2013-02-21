@@ -96,5 +96,6 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	
 	public void setUserNotificationService(UserNotificationService userNotificationService) {
 		this.userNotificationService = userNotificationService;
-	} 
+	}
+ 
 }
