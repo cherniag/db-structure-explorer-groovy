@@ -91,6 +91,8 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 //			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
 //			"and pd.activated=true " +
 //			"and u.lastDeviceLogin!=0")
+//	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+//	List<User> getUsersForPendingPayment(int epochSeconds);
 	
 	@Query(value="select u from User u " +
 			"join u.currentPaymentDetails as pd " +
@@ -100,7 +102,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"and pd.activated=true and " +
 			"u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
-	List<User> getUsersForPendingPayment(int epochSeconds);
+	List<User> getUsersForPendingPayment();
 	
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +
