@@ -88,3 +88,7 @@ set u.nextSubPayment = u.nextSubPayment + u.subBalance * 7 * 86400, u.subBalance
 where u.currentPaymentDetailsId IS NOT NULL and u.provider IS NOT NULL and u.provider <> 'o2';
 
 -- end migration
+
+-- CL-8738: Subscription cannot be renewed if amountOfMoneyToUserNotification becomes more than 99.99
+-- http://jira.dev.now-technologies.mobi:8181/browse/CL-8738
+alter table tb_users modify amountOfMoneyToUserNotification DECIMAL(12,2) not null;
