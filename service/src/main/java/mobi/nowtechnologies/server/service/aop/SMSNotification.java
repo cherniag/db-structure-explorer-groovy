@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
@@ -106,7 +107,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try{
-				if (user.getPaymentDetailsList().isEmpty())
+				if (user.getPaymentDetailsList().isEmpty() && !DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()))
 					sendLimitedStatusSMS(user);
 			}catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
@@ -139,7 +140,9 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
 			try{
 				User user = userService.findById(userId);
-				sendUnsubscribePotentialSMS(user);
+				if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType())) {
+						sendUnsubscribePotentialSMS(user);
+				}
 			}catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
