@@ -11,17 +11,23 @@
 	</div>			
 </div>
 <div class="container">
+    <div class="content">
+        <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle" />
+        <span>${paymentAccountNotes}</span>
+    </div>
 	<div class="content">
 		<c:if test="${paymentDetailsByPaymentDto!=null&&paymentDetailsByPaymentDto.activated==false}">
 			<h1><s:message code="pays.subscription.header" /></h1>
-			<p>
-			<c:set var="paymentType">
-				<s:message code="${paymentDetailsByPaymentDto.paymentType}"/>
-			</c:set>
-			<c:set var="currencyISO">
-				<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
-			</c:set>
-			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
+            <p>
+                <c:set var="paymentType">
+                    <s:message code="${paymentDetailsByPaymentDto.paymentType}"/>
+                </c:set>
+                <c:set var="currencyISO">
+                    <s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
+                </c:set>
+                <s:message code="pays.subscription.description"
+                           arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/>
+            </p>
 			<div class="contentButton formButton rad5 rel" >
 				<form action="payments_inapp/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
 					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />

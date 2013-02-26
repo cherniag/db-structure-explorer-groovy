@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  *
@@ -48,17 +50,16 @@ public class PromotionService {
 	}
 
 	public Promotion getActivePromotion(String promotionCode, String communityName) {
-		if (promotionCode == null)
-			throw new ServiceException("The parameter promotionCode is null");
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
+		notNull(promotionCode, "The parameter promotionCode is null");
+		notNull(communityName, "The parameter communityName is null");
 
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 
 		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
 				UserGroup.Fields.communityId.toString(), community.getId());
 
-		return promotionDao.getActivePromoCodePromotion(promotionCode, userGroup.getI());
+        Promotion promoCode = promotionDao.getActivePromoCodePromotion(promotionCode, userGroup.getI());
+        return promoCode;
 	}
 	
 	public List<PromoCode> getPromoCodes(final String communityName) {

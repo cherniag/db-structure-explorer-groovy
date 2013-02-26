@@ -283,11 +283,20 @@
 			<artifactId>easymock</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
 	</dependencies>
 	<dependencyManagement>
 
 		<dependencies>
-			<dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>r09</version>
+            </dependency>
+            <dependency>
 				<groupId>mobi.nowtechnologies.java.server</groupId>
 				<artifactId>track-repo</artifactId>
 				<version>${chartsnow-version}</version>

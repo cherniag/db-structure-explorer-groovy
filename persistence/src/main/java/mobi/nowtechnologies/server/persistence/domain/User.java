@@ -1,17 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -22,10 +12,19 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The persistent class for the tb_users database table.
@@ -56,7 +55,25 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-	public static enum Fields {
+    public boolean isNonO2User() {
+        Community community = this.userGroup.getCommunity();
+        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+
+        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+            return true;
+
+        return false;
+    }
+
+    public boolean isO2Client() {
+        return "o2".equals(this.provider);
+    }
+
+    public boolean isNotO2Client(){
+        return !isO2Client();
+    }
+
+    public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -151,7 +168,7 @@ public class User implements Serializable {
 	private byte userGroupId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "userGroup")
+	@JoinColumn(name = "userGroup", nullable = false)
 	private UserGroup userGroup;
 
 	@Column(name = "userName", columnDefinition = "char(40)")
@@ -996,7 +1013,35 @@ public class User implements Serializable {
 		return (null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis());
 	}
 
-	public String getProvider() {
+    public boolean isLimited() {
+        return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
+    }
+
+    public boolean isSubscribed(){
+        return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
+    }
+
+    public boolean isLimitedAfterOverdue() {
+        return false;//TODO
+    }
+
+    public boolean isUnsubscribedWithFullAccess() {
+        return false;//TODO
+    }
+
+    public boolean isOverdue() {
+        return false;//TODO
+    }
+
+    public boolean isSubscribedViaInApp() {
+        return false;//TODO
+    }
+
+    public boolean isTrialExpired() {
+        return false;//TODO
+    }
+
+    public String getProvider() {
 		return provider;
 	}
 

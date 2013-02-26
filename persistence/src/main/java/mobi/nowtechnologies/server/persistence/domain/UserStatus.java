@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
@@ -13,6 +13,9 @@ import javax.persistence.*;
 public class UserStatus implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+    public static final String SUBSCRIBED = "SUBSCRIBED";
+    public static final String LIMITED = "LIMITED";
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private byte i;
@@ -21,6 +24,10 @@ public class UserStatus implements Serializable {
 	private String name;
 
     public UserStatus() {
+    }
+
+    public UserStatus(String name) {
+        this.name = name;
     }
 
 	public byte getI() {

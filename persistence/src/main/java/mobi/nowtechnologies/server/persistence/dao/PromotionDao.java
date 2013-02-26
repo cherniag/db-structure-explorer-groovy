@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  *
@@ -45,9 +47,7 @@ public class PromotionDao extends JpaDaoSupport {
 
 	public Promotion getActivePromoCodePromotion(final String promotionCode, final byte userGroupId) {
 		Promotion outPromo = null;
-		if (promotionCode == null)
-			throw new PersistenceException(
-					"The parameter promotionCode is null");
+		notNull(promotionCode, "The parameter promotionCode is null");
 		
 		
 		final String promotionId = PromoCode.Fields.promotionId.toString();
