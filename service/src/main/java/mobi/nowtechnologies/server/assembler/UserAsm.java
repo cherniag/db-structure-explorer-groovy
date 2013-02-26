@@ -155,6 +155,9 @@ public class UserAsm {
 		user.setNextSubPayment((int) (userDto.getNextSubPayment().getTime() / 1000));
 		user.setUserType(userDto.getUserType());
 		user.setPaymentEnabled(userDto.getPaymentEnabled());
+		
+		if(user.isOnFreeTrial())
+			user.setFreeTrialExpiredMillis(user.getNextSubPayment()*1000L);
 
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
