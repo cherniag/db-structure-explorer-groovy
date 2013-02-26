@@ -1,57 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
-import static org.apache.commons.lang.Validate.notNull;
-
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao.TxType;
-import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.SetPassword;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
-import mobi.nowtechnologies.server.service.exception.SagePayException;
-import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -71,13 +31,9 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
-
-import org.apache.log4j.MDC;
-import org.joda.time.DateTime;
-import org.joda.time.Weeks;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -86,6 +42,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
+
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * UserService
@@ -1110,27 +1077,27 @@ public class UserService {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	private void applyPromotionByPromoCode(final User user, final String promotionCode) {
-		if (user == null)
-			throw new ServiceException(
-					"The parameter user is null");
-		if (promotionCode == null)
-			throw new ServiceException(
-					"The parameter promotionCode is null");
-		LOGGER.debug(
-				"input parameters user, promotionCode, communityName: [{}], [{}]",
-				new Object[] { user, promotionCode });
+		Validate.notNull(user, "The parameter user is null");
+        Validate.notNull(promotionCode, "The parameter promotionCode is null");
 
-		Promotion userPromotion = promotionService.getActivePromotion(promotionCode, user.getUserGroup().getCommunity().getName());
+		LOGGER.debug("input parameters user, promotionCode, communityName: [{}], [{}]", user, promotionCode);
+
+		Promotion userPromotion = promotionService.getActivePromotion(promotionCode, communityName(user));
 		if (userPromotion == null) {
 			LOGGER.info("Promotion code [{}] does not exist", promotionCode);
-			throw new ServiceException(
-					"Invalid promotion code. Please re-enter the code or leave the field blank");
+			throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
 		}
 
 		applyPromotionByPromoCode(user, userPromotion);
 	}
 
-	// TODO remove this method
+    private String communityName(User user) {
+        UserGroup userGroup = user.getUserGroup();
+        Community community = userGroup.getCommunity();
+        return community.getName();
+    }
+
+    // TODO remove this method
 	@Deprecated
 	void saveOrUpdateUserWithPaymentDetails(final User user,
 			final String token, final UserRegInfo userRegInfo) {
@@ -1267,11 +1234,12 @@ public class UserService {
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
 	}
 
-	public boolean isNonO2User(User user) {	
-		String communityUrl = user.getUserGroup().getCommunity().getRewriteUrlParameter();
+	public boolean isNonO2User(User user) {
+        Community community = user.getUserGroup().getCommunity();
+        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 		
 		boolean isNonO2User = false;
-		if (communityUrl.equalsIgnoreCase("o2")&& (!user.getProvider().equals("o2"))){
+		if ("o2".equalsIgnoreCase(communityUrl)&& (!"o2".equals(user.getProvider()))){
 			isNonO2User = true;
 		}
 		
@@ -1363,7 +1331,7 @@ public class UserService {
 	public User assignPotentialPromotion(User existingUser) {
 		LOGGER.debug("input parameters communityName: [{}]", existingUser);
 		if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
-			String communityName = existingUser.getUserGroup().getCommunity().getName();
+			String communityName = communityName(existingUser);
 			Promotion promotion = promotionService.getPromotionForUser(communityName, existingUser);
 			existingUser.setPotentialPromotion(promotion);
 			existingUser = entityService.updateEntity(existingUser);
@@ -1394,24 +1362,10 @@ public class UserService {
 
 		final String deviceString = userRegDetailsDto.getDeviceString();
 
-		User user = new User();
-		user.setUserName(userName);
-		user.setToken(Utils.createStoredToken(userName, userRegDetailsDto.getPassword()));
-
-		user.setDeviceType(deviceType);
-		if (deviceString != null)
-			user.setDeviceString(deviceString);
-
 		Community community = communityService.getCommunityByName(userRegDetailsDto.getCommunityName());
-		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
-		user.setCountry(countryService.findIdByFullName("Great Britain"));
-		user.setIpAddress(userRegDetailsDto.getIpAddress());
-		user.setCanContact(userRegDetailsDto.isNewsDeliveringConfirmed());
-		user.setPaymentEnabled(false);
-		Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-		user.setOperator(entry.getKey());
-		user.setStatus(UserStatusDao.getEulaUserStatus());
-		user.setFacebookId(userRegDetailsDto.getFacebookId());
+
+        User user = newUser(userRegDetailsDto, userName, deviceType, deviceString, community);
+		entityService.saveEntity(user);
 
 		String communityName = community.getName();
 
@@ -1419,7 +1373,6 @@ public class UserService {
 		if (promotionCode == null)
 			promotionCode = getDefaultPromoCode(communityName);
 
-		entityService.saveEntity(user);
 
 		applyPromotionByPromoCode(user, promotionCode);
 
@@ -1428,10 +1381,31 @@ public class UserService {
 		return user;
 	}
 
-	public String getDefaultPromoCode(String communityName) {
+    private User newUser(UserRegDetailsDto userRegDetailsDto, String userName, DeviceType deviceType, String deviceString, Community community) {
+        User user = new User();
+        user.setUserName(userName);
+        user.setToken(Utils.createStoredToken(userName, userRegDetailsDto.getPassword()));
+
+        user.setDeviceType(deviceType);
+        if (deviceString != null)
+            user.setDeviceString(deviceString);
+
+        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
+        user.setCountry(countryService.findIdByFullName("Great Britain"));
+        user.setIpAddress(userRegDetailsDto.getIpAddress());
+        user.setCanContact(userRegDetailsDto.isNewsDeliveringConfirmed());
+        user.setPaymentEnabled(false);
+        Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
+        user.setOperator(entry.getKey());
+        user.setStatus(UserStatusDao.getEulaUserStatus());
+        user.setFacebookId(userRegDetailsDto.getFacebookId());
+        return user;
+    }
+
+    public String getDefaultPromoCode(String communityName) {
 		LOGGER.debug("input parameters communityName: [{}], [{}]", communityName);
 		Community community = CommunityDao.getMapAsNames().get(communityName);
-		
+
 		String promotionCode = messageSource.getMessage(community.getRewriteUrlParameter(), "defaultPromotionCode", null, null);
 		LOGGER.info("Output parameter [{}]", promotionCode);
 		return promotionCode;
@@ -2133,13 +2107,14 @@ public class UserService {
 		return users;
 	}
 	
-	public boolean isIOsNonO2ItunesSubscribedUser(User user, boolean nonO2User) {
-		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user, nonO2User);
+	public boolean isIOsNonO2ItunesSubscribedUser(User user) {
+		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user);
 		boolean isIOsNonO2ItunesSubscribedUser = false;
 		
 		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
 		if (lastSubscribedPaymentSystem != null) {
-			isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(user.getDeviceType().getName()) && nonO2User && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
+            String deviceType = user.getDeviceType().getName();
+            isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(deviceType) && user.isNonO2User() && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
 					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
 		}
 		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);

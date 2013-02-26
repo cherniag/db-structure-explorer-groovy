@@ -559,6 +559,9 @@ div.inputAreaBox  {
 	white-space: nowrap;
 	overflow: hidden;
 }
+.inline{
+    display: inline-block;
+}
 .sign {
 	background: #ffffff url(../imgs/bgs/account_arrow.png) no-repeat center center;	
 	height: 54px;
