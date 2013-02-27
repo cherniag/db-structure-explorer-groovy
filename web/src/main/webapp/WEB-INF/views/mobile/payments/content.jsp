@@ -43,7 +43,7 @@
 			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
 				<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 					<c:set var="method_name" value="creditcard" />
-					<s:message code='pays.select.creditcard' var="method_readable" />
+					<s:message code='pays.select.creditcard' var="payment_label" />
 				</c:if>
 				<c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
 					<c:set var="method_name" value="paypal" />
@@ -59,7 +59,7 @@
 				</c:if>
 				
 				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
-					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.select.payby" /> ${method_readable}" />
+					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.select.payby" /> ${payment_label}" />
 									
 					<span class="rightButtonArrow">
 						&nbsp;

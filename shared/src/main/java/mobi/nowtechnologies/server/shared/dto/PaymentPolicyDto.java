@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import mobi.nowtechnologies.common.dto.UserRegInfo;
+
 import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,8 +25,24 @@ public class PaymentPolicyDto {
 	private Integer oldSubweeks;
 	private String currencyISO;
 	
-	public PaymentPolicyDto() {
-	}
+	public PaymentPolicyDto() { }
+
+    public boolean isO2FiveWeekPsmsSubscription(){
+        return subweeks.equals(5) && isO2PsmsSubscribtion();
+    }
+
+    public boolean isO2OneWeekPsmsSubscription(){
+        return subweeks.equals(1) && isO2PsmsSubscribtion();
+    }
+
+    private boolean isO2PsmsSubscribtion() {
+        return UserRegInfo.PaymentType.PREMIUM_USER.equals(paymentType)
+                && "O2 UK".equals(operatorName);
+    }
+
+    public boolean isO2TwoWeekPsmsSubscription(){
+        return subweeks.equals(2) && isO2PsmsSubscribtion();
+    }
 	
 	public short getId() {
 		return id;
@@ -97,4 +115,8 @@ public class PaymentPolicyDto {
 	public void setCurrencyISO(String currencyISO) {
 		this.currencyISO = currencyISO;
 	}
+
+    public boolean isO2BusinessPolicy() {
+        return isO2OneWeekPsmsSubscription()|| isO2TwoWeekPsmsSubscription() || isO2FiveWeekPsmsSubscription();
+    }
 }

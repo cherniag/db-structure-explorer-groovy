@@ -77,21 +77,6 @@ public class PaymentPolicyDaoTest {
 		}
 	}
 
-	/**
-	 * Run the List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 20.10.11 10:32
-	 */
-	@Test(expected = mobi.nowtechnologies.server.persistence.dao.PersistenceException.class)
-	public void testGetPaymentPoliciesGroupdeByPaymentType_3()
-		throws Exception {
-		String communityName = null;
-
-		List<PaymentPolicy> result = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(communityName);
-	}
-	
 	@Test
 	public void testGetPaymentPolicy_1() throws Exception {
 		
