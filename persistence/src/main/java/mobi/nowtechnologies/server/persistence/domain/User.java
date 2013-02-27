@@ -263,6 +263,10 @@ public class User implements Serializable {
 	
 	@Column(name="last_subscribed_payment_system")
 	private String lastSubscribedPaymentSystem;
+	
+	private String consumer;
+	
+	private String segment;
 
 	public User() {
 		setDisplayName("");
@@ -986,13 +990,29 @@ public class User implements Serializable {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 	}
 
+	public String getConsumer() {
+		return consumer;
+	}
+
+	public void setConsumer(String consumer) {
+		this.consumer = consumer;
+	}
+
+	public String getSegment() {
+		return segment;
+	}
+
+	public void setSegment(String segment) {
+		this.segment = segment;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
 				+ ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId
 				+ ", nextSubPayment=" + nextSubPayment + ", isFreeTrial=" + isOnFreeTrial() + ", currentPaymentDetailsId=" + currentPaymentDetailsId
 				+ ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
-				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
+				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId=" + appStoreOriginalTransactionId
 				+ ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
 				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
 				+ ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="
@@ -1002,7 +1022,8 @@ public class User implements Serializable {
 				+ ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken=" + newStoredToken + ", tempToken=" + tempToken
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
-				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ ", activationStatus="+activationStatus+", provider="+provider+", contract="+contract+"]";
+				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
+				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", consumer=" + consumer + ", segment=" + segment + "]";
 	}
 
 	/**
