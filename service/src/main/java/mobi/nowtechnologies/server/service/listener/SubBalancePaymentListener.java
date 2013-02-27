@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.listener;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
