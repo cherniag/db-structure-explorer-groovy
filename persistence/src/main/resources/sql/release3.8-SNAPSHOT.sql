@@ -13,3 +13,4 @@ alter table tb_submittedpayments modify next_sub_payment int not null;
 
 alter table tb_users add column contract varchar(255);
 alter table tb_users add column segment varchar(255);
+alter table tb_users add column lastPaymentTryMillis BIGINT not null;
