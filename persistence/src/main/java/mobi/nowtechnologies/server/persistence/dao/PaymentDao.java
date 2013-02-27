@@ -93,8 +93,8 @@ public class PaymentDao extends JpaDaoSupport {
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
 	public List<User> getUsersForPendingPayment() {
-		//List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());
-		List<User> users = userRepository.getUsersForPendingPayment();
+		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());
+		//List<User> users = userRepository.getUsersForPendingPayment();
 		
 		return users;
 	}

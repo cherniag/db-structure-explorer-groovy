@@ -250,7 +250,7 @@ public class User implements Serializable {
 	
 	private long lastSuccesfullPaymentSmsSendingTimestampMillis;
 	
-	@Column(precision=5, scale=2, nullable=false)
+	@Column(precision=12, scale=2, nullable=false)
 	private BigDecimal amountOfMoneyToUserNotification;
 	
 	@Column(nullable=true)

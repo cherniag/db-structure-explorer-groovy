@@ -26,8 +26,6 @@ public class Utils {
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
 
-	private static final Calendar CALENDAR = Calendar.getInstance();
-
 	public static String getRandomString(int length) {
 		Random rand = new Random(System.currentTimeMillis());
 		StringBuffer sb = new StringBuffer();
@@ -158,17 +156,18 @@ public class Utils {
 			startTimeSeconds = epochSeconds;
 		}
 
-		CALENDAR.clear();
-		CALENDAR.setTimeInMillis(startTimeSeconds * MILLISECONDS_IN_SECOND);
-		int dayOfMonthBefore = CALENDAR.get(Calendar.DAY_OF_MONTH);
-		CALENDAR.add(Calendar.MONTH, 1);
+		final Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.setTimeInMillis(startTimeSeconds * MILLISECONDS_IN_SECOND);
+		int dayOfMonthBefore = calendar.get(Calendar.DAY_OF_MONTH);
+		calendar.add(Calendar.MONTH, 1);
 
-		int dayOfMonthAfter = CALENDAR.get(Calendar.DAY_OF_MONTH);
+		int dayOfMonthAfter = calendar.get(Calendar.DAY_OF_MONTH);
 		if (dayOfMonthBefore != dayOfMonthAfter) {
-			CALENDAR.add(Calendar.DAY_OF_MONTH, 1);
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
 
-		int montlyNextSubPayment = (int) (CALENDAR.getTimeInMillis() / MILLISECONDS_IN_SECOND);
+		int montlyNextSubPayment = (int) (calendar.getTimeInMillis() / MILLISECONDS_IN_SECOND);
 
 		LOGGER.debug("Output parameter montlyNextSubPayment=[{}]", montlyNextSubPayment);
 		return montlyNextSubPayment;
