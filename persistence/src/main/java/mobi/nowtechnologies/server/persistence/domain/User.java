@@ -264,8 +264,6 @@ public class User implements Serializable {
 	@Column(name="last_subscribed_payment_system")
 	private String lastSubscribedPaymentSystem;
 	
-	private String consumer;
-	
 	private String segment;
 
 	public User() {
@@ -990,14 +988,6 @@ public class User implements Serializable {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 	}
 
-	public String getConsumer() {
-		return consumer;
-	}
-
-	public void setConsumer(String consumer) {
-		this.consumer = consumer;
-	}
-
 	public String getSegment() {
 		return segment;
 	}
@@ -1023,7 +1013,7 @@ public class User implements Serializable {
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
 				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
-				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", consumer=" + consumer + ", segment=" + segment + "]";
+				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + "]";
 	}
 
 	/**
