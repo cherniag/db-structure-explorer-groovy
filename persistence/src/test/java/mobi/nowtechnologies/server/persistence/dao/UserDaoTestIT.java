@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +12,7 @@ import javax.annotation.Resource;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
@@ -218,19 +221,19 @@ public class UserDaoTestIT {
 		
 		User testUser = createUser();
 		testUser.setContract("payg");
-		testUser.setSegment("consumer");
+		testUser.setSegment(CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
 		testUser.setContract("paym");
-		testUser.setSegment("consumer");
+		testUser.setSegment(CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
 		testUser.setContract("paym");
-		testUser.setSegment("business");
+		testUser.setSegment(BUSINESS);
 		
 		entityDao.saveEntity(testUser);
 		

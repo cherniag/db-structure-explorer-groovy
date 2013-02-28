@@ -147,34 +147,24 @@ public class PaymentDetailsService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetailsWithouPaymentType(String communityUrl, int userId, String paymentType) {
-		LOGGER.debug("input parameters communityUrl, userId, paymentType: [{}], [{}]", new Object[] {communityUrl, userId, paymentType});
-		Community community = communityService.getCommunityByUrl(communityUrl);
+	public List<PaymentPolicyDto> getPaymentPolicyWithoutPaymentType(Community community, User user, String paymentType) {
 		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
-		List<PaymentPolicyDto> paymentPolicyDtos = mergePaymentPolicies(userId, paymentPolicies);
-		LOGGER.debug("Output parameter paymentPolicyDtos=[{}]", paymentPolicyDtos);
-		return paymentPolicyDtos;
+		return mergePaymentPolicies(user, paymentPolicies);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetails(String communityUrl, int userId) {
-		Community community = communityService.getCommunityByUrl(communityUrl);
+	public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user) {
 		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesGroupdeByPaymentType(community.getName());
-		List<PaymentPolicyDto> result = mergePaymentPolicies(userId, paymentPolicies);
-		return result;
+		return mergePaymentPolicies(user, paymentPolicies);
 	}
 	
 	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetails(String communityUrl, int userId, String paymentType) {
-		LOGGER.debug("input parameters communityUrl, userId, paymentType: [{}], [{}]", new Object[] {communityUrl, userId, paymentType});
-		Community community = communityService.getCommunityByUrl(communityUrl);
-		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
-		List<PaymentPolicyDto> result = mergePaymentPolicies(userId, paymentPolicies);
-		return result;
+	public List<PaymentPolicyDto> getPaymentPolicyDetails(Community community, User user, String paymentType) {
+        List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
+		return mergePaymentPolicies(user, paymentPolicies);
 	}
 
-	private List<PaymentPolicyDto> mergePaymentPolicies(int userId, List<PaymentPolicy> paymentPolicies) {
-		User user = userService.findById(userId);
+	private List<PaymentPolicyDto> mergePaymentPolicies(User user, List<PaymentPolicy> paymentPolicies) {
 		List<PaymentPolicyDto> result = new LinkedList<PaymentPolicyDto>();
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
 			if (null != user.getPotentialPromotion()) {
@@ -214,8 +204,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public PaymentDetails getPaymentDetails(int userId) {
-		User user = userService.findById(userId);
+	public PaymentDetails getPaymentDetails(User user) {
 		return user.getCurrentPaymentDetails();
 	}
 

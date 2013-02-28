@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -186,14 +184,14 @@ public class PaymentPolicyServiceTest {
 		
 		List<PaymentPolicy> paymentPolicies = Collections.<PaymentPolicy>emptyList();
 				
-		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType)).thenReturn(paymentPolicies);
+		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType)).thenReturn(paymentPolicies);
 		
 		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
 		
 		assertNotNull(actualPaymentPolicies);
 		assertEquals(paymentPolicies, actualPaymentPolicies);
 		
-		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
 	}
 
 }

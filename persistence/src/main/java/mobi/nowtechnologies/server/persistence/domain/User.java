@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -35,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
 				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
-		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<? and (u.contract IS NULL or lower(u.contract)!='payg' or u.segment IS NULL or lower(u.segment)!='consumer')"),
+		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<? and (u.contract IS NULL or lower(u.contract)!='payg' or u.segment IS NULL or lower(u.segment.name())!='consumer')"),
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -172,28 +173,7 @@ public class User implements Serializable {
 
 	private String contract;
 
-	private String segment;
-
-	/*
-	 * @deprecated Unused column
-	 */
-	public boolean isNonO2User() {
-		Community community = this.userGroup.getCommunity();
-		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
-
-		if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
-			return true;
-
-		return false;
-	}
-
-	public boolean isO2Client() {
-		return "o2".equals(this.provider);
-	}
-
-	public boolean isNotO2Client() {
-		return !isO2Client();
-	}
+	private SegmentType segment;
 
 	@Deprecated
 	private boolean paymentEnabled;
@@ -287,21 +267,47 @@ public class User implements Serializable {
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
 	}
 
-	public void addPaymentDetails(PaymentDetails paymentDetails) {
-		if (null != paymentDetails) {
-			this.paymentDetailsList.add(paymentDetails);
-			if (paymentDetails.getOwner() != this)
-				paymentDetails.setOwner(this);
-		}
-	}
+	  public boolean isNonO2User() {
+	        Community community = this.userGroup.getCommunity();
+	        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-	public PaymentDetails getPendingPaymentDetails() {
-		for (PaymentDetails pd : paymentDetailsList) {
-			if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus()))
-				return pd;
-		}
-		return null;
-	}
+	        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+	            return true;
+
+	        return false;
+	    }
+
+	    public boolean isO2Client() {
+	        return "o2".equals(this.provider);
+	    }
+
+	    public boolean isNotO2Client(){
+	        return !isO2Client();
+	    }
+
+	    public boolean isO2Business() {
+	        return false;//TODO
+	    }
+
+	    public boolean isO2Consumer() {
+	        return false;
+	    }
+
+	    public void addPaymentDetails(PaymentDetails paymentDetails) {
+	        if (null != paymentDetails) {
+	            this.paymentDetailsList.add(paymentDetails);
+	            if (paymentDetails.getOwner() != this)
+	                paymentDetails.setOwner(this);
+	        }
+	    }
+
+	    public PaymentDetails getPendingPaymentDetails() {
+	        for (PaymentDetails pd : paymentDetailsList) {
+	            if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus()))
+	                return pd;
+	        }
+	        return null;
+	    }
 
 	public int getId() {
 		return this.id;
@@ -311,11 +317,11 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public String getSegment() {
+	public SegmentType getSegment() {
 		return segment;
 	}
 
-	public void setSegment(String segment) {
+	public void setSegment(SegmentType segment) {
 		this.segment = segment;
 	}
 
@@ -787,7 +793,7 @@ public class User implements Serializable {
 		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 		accountCheckDTO.setProvider(provider);
 		accountCheckDTO.setContract(contract);
-		accountCheckDTO.setSegment(segment);
+		accountCheckDTO.setSegment(segment.name());
 
 		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 

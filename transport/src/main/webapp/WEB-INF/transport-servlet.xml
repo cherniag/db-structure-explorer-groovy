@@ -318,8 +318,9 @@
 	
 	<!-- Before 48H O2 PSMS Payment task -->
 	<bean id="before48hPSMSPaymentTask" class="mobi.nowtechnologies.server.job.Before48hExpirePSMSPaymentJob">
-		<property name="userSerivce" ref="service.UserService" />
+		<property name="userService" ref="service.UserService" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
+		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 	<bean id="before48hPSMSPaymentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="before48hPSMSPaymentTask" />

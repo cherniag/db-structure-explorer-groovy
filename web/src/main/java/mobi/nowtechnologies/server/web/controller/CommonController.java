@@ -19,7 +19,6 @@ public abstract class CommonController implements MessageSourceAware {
 	public static final String FAIL = "fail";
 	public static final String REDIRECT = "redirect:";
 	public static final String PATH_DELIM = "/";
-	public static final String PARAM_DELIM = "&";
 	public static final String START_PARAM_DELIM = "?";
 	public static final String PAGE_EXT = ".html";
 	public static final String PAGE_VERIFY = PATH_DELIM+"verify.html";

@@ -7,3 +7,5 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 update tb_submittedpayments set next_sub_payment=0 where next_sub_payment is null;
 
 alter table tb_submittedpayments modify next_sub_payment int not null;
+
+alter table tb_users add column segment varchar(255);
