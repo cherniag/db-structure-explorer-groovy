@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -9,20 +15,13 @@ import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoVali
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.List;
 
 /**
  * SingUpDeviceController
@@ -135,5 +134,10 @@ public class SingUpDeviceController extends CommonController {
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+	
+	public static void main(String[] args) {
+		  Long device = 1357207434453L;
+		  System.out.println(new Date(device));
 	}
 }

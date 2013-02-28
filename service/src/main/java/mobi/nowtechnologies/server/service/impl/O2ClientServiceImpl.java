@@ -124,4 +124,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean sendFreeSms(String phoneNumber, String message) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

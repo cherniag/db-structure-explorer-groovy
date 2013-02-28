@@ -55,7 +55,7 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-    public static enum Fields {
+	public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -164,37 +164,37 @@ public class User implements Serializable {
 
 	private String paymentType;
 
-    @Column(name = "activation_status")
-    @Enumerated(EnumType.STRING)
-    private ActivationStatus activationStatus;
-    
-    private String provider;
-    
-    private String contract;
-    
-    private String segment;
+	@Column(name = "activation_status")
+	@Enumerated(EnumType.STRING)
+	private ActivationStatus activationStatus;
+
+	private String provider;
+
+	private String contract;
+
+	private String segment;
 
 	/*
 	 * @deprecated Unused column
 	 */
-    public boolean isNonO2User() {
-        Community community = this.userGroup.getCommunity();
-        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+	public boolean isNonO2User() {
+		Community community = this.userGroup.getCommunity();
+		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
-            return true;
+		if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+			return true;
 
-        return false;
-    }
+		return false;
+	}
 
-    public boolean isO2Client() {
-        return "o2".equals(this.provider);
-    }
+	public boolean isO2Client() {
+		return "o2".equals(this.provider);
+	}
 
-    public boolean isNotO2Client(){
-        return !isO2Client();
-    }
-    
+	public boolean isNotO2Client() {
+		return !isO2Client();
+	}
+
 	@Deprecated
 	private boolean paymentEnabled;
 
@@ -206,15 +206,15 @@ public class User implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = true)
 	private PaymentDetails currentPaymentDetails;
-	
+
 	@Column(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = false)
 	private Long currentPaymentDetailsId;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "potentialPromotion_i", nullable = true)
 	private Promotion potentialPromotion;
-	
-	@Column(name="potentialPromotion_i", insertable=false, updatable=false)
+
+	@Column(name = "potentialPromotion_i", insertable = false, updatable = false)
 	private Byte potentialPromotionId;
 
 	@OneToOne(fetch = FetchType.EAGER)
@@ -223,7 +223,7 @@ public class User implements Serializable {
 
 	@Column(name = "potentialPromoCodePromotion_i", insertable = false, updatable = false)
 	private Byte potentialPromoCodePromotionId;
-	
+
 	@Transient
 	@XmlTransient
 	private String newStoredToken;
@@ -247,23 +247,23 @@ public class User implements Serializable {
 	private Long firstDeviceLoginMillis;
 
 	private Long firstUserLoginMillis;
-	
+
 	private long lastSuccesfullPaymentSmsSendingTimestampMillis;
-	
-	@Column(precision=12, scale=2, nullable=false)
+
+	@Column(precision = 12, scale = 2, nullable = false)
 	private BigDecimal amountOfMoneyToUserNotification;
-	
-	@Column(nullable=true)
+
+	@Column(nullable = true)
 	private Long freeTrialStartedTimestampMillis;
-	
+
 	@Lob
-	@Column(name="base64_encoded_app_store_receipt")
+	@Column(name = "base64_encoded_app_store_receipt")
 	private String base64EncodedAppStoreReceipt;
-	
-	@Column(name="app_store_original_transaction_id")
+
+	@Column(name = "app_store_original_transaction_id")
 	private String appStoreOriginalTransactionId;
-	
-	@Column(name="last_subscribed_payment_system")
+
+	@Column(name = "last_subscribed_payment_system")
 	private String lastSubscribedPaymentSystem;
 
 	public User() {
@@ -310,7 +310,7 @@ public class User implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getSegment() {
 		return segment;
 	}
@@ -583,10 +583,10 @@ public class User implements Serializable {
 
 	public void setCurrentPaymentDetails(PaymentDetails currentPaymentDetails) {
 		this.currentPaymentDetails = currentPaymentDetails;
-		if (currentPaymentDetails!=null)
+		if (currentPaymentDetails != null)
 			currentPaymentDetailsId = currentPaymentDetails.getI();
 	}
-	
+
 	public Long getCurrentPaymentDetailsId() {
 		return currentPaymentDetailsId;
 	}
@@ -717,7 +717,7 @@ public class User implements Serializable {
 
 	public void setPotentialPromotion(Promotion potentialPromotion) {
 		this.potentialPromotion = potentialPromotion;
-		if(potentialPromotion!=null)
+		if (potentialPromotion != null)
 			potentialPromotionId = potentialPromotion.getI();
 	}
 
@@ -753,7 +753,8 @@ public class User implements Serializable {
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
 
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated())||(lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated()) || (lastSubscribedPaymentSystem != null
+				&& lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
 		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
 		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -761,7 +762,7 @@ public class User implements Serializable {
 		AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
 		accountCheckDTO.setChartTimestamp(chart.getTimestamp());
 		accountCheckDTO.setChartItems(chart.getNumTracks());
-        setNewsItemsAndTimestamp(news, accountCheckDTO);
+		setNewsItemsAndTimestamp(news, accountCheckDTO);
 
 		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
 		if (null != getCurrentPaymentDetails())
@@ -783,8 +784,10 @@ public class User implements Serializable {
 		accountCheckDTO.setUserToken(token);
 		accountCheckDTO.setRememberMeToken(rememberMeToken);
 		accountCheckDTO.setFreeTrial(isOnFreeTrial());
-		accountCheckDTO.setProvider(provider);
 		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+		accountCheckDTO.setProvider(provider);
+		accountCheckDTO.setContract(contract);
+		accountCheckDTO.setSegment(segment);
 
 		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
@@ -794,10 +797,10 @@ public class User implements Serializable {
 		if (potentialPromotion != null)
 			accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
 		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
-		
+
 		accountCheckDTO.setActivation(getActivationStatus());
-		
-		if(appStoreProductIds!=null){
+
+		if (appStoreProductIds != null) {
 			StringBuilder temp = new StringBuilder();
 			for (String appStoreProductId : appStoreProductIds) {
 				if (appStoreProductId != null) {
@@ -813,23 +816,24 @@ public class User implements Serializable {
 	}
 
 	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-        if(news == null) return;
-        accountCheckDTO.setNewsTimestamp(news.getTimestamp());
-        accountCheckDTO.setNewsItems(news.getNumEntries());
-    }
+		if (news == null)
+			return;
+		accountCheckDTO.setNewsTimestamp(news.getTimestamp());
+		accountCheckDTO.setNewsItems(news.getNumEntries());
+	}
 
-    // TODO Review this code after client refactoring
+	// TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
 		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
 			return PaymentType.ITUNES_SUBSCRIPTION;
-		}else if (null == paymentDetails)
+		} else if (null == paymentDetails)
 			return PaymentType.UNKNOWN;
 		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.CREDIT_CARD;
 		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PAY_PAL;
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType()) || PaymentDetails.O2_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PREMIUM_USER;
 		}
 		return PaymentType.UNKNOWN;
@@ -964,13 +968,13 @@ public class User implements Serializable {
 		this.freeTrialStartedTimestampMillis = freeTrialStartedTimestampMillis;
 	}
 
-    public ActivationStatus getActivationStatus() {
-        return activationStatus;
-    }
+	public ActivationStatus getActivationStatus() {
+		return activationStatus;
+	}
 
-    public void setActivationStatus(ActivationStatus activationStatus) {
-        this.activationStatus = activationStatus;
-    }
+	public void setActivationStatus(ActivationStatus activationStatus) {
+		this.activationStatus = activationStatus;
+	}
 
 	public String getBase64EncodedAppStoreReceipt() {
 		return base64EncodedAppStoreReceipt;
@@ -1002,7 +1006,7 @@ public class User implements Serializable {
 				+ ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId
 				+ ", nextSubPayment=" + nextSubPayment + ", isFreeTrial=" + isOnFreeTrial() + ", currentPaymentDetailsId=" + currentPaymentDetailsId
 				+ ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
-				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
+				+ ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId=" + appStoreOriginalTransactionId
 				+ ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
 				+ lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
 				+ ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="
@@ -1012,46 +1016,48 @@ public class User implements Serializable {
 				+ ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken=" + newStoredToken + ", tempToken=" + tempToken
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
-				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ ", activationStatus="+activationStatus+", provider="+provider+", contract="+contract+", segment="+segment+"]";
+				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
+				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + "]";
 	}
 
 	/**
 	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
+	 * 
 	 * @return
 	 */
 	public boolean isOnFreeTrial() {
-		return (null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis());
+		return (null != this.freeTrialExpiredMillis && this.freeTrialExpiredMillis > System.currentTimeMillis());
 	}
 
-    public boolean isLimited() {
-        return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
-    }
+	public boolean isLimited() {
+		return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
+	}
 
-    public boolean isSubscribed(){
-        return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
-    }
+	public boolean isSubscribed() {
+		return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
+	}
 
-    public boolean isLimitedAfterOverdue() {
-        return false;//TODO
-    }
+	public boolean isLimitedAfterOverdue() {
+		return false;// TODO
+	}
 
-    public boolean isUnsubscribedWithFullAccess() {
-        return false;//TODO
-    }
+	public boolean isUnsubscribedWithFullAccess() {
+		return false;// TODO
+	}
 
-    public boolean isOverdue() {
-        return false;//TODO
-    }
+	public boolean isOverdue() {
+		return false;// TODO
+	}
 
-    public boolean isSubscribedViaInApp() {
-        return false;//TODO
-    }
+	public boolean isSubscribedViaInApp() {
+		return false;// TODO
+	}
 
-    public boolean isTrialExpired() {
-        return false;//TODO
-    }
+	public boolean isTrialExpired() {
+		return false;// TODO
+	}
 
-    public String getProvider() {
+	public String getProvider() {
 		return provider;
 	}
 

@@ -316,6 +316,22 @@
     	<property name="repeatInterval" value="${expired.job.repeatIntervalMillis}" />
 	</bean>
 	
+	<!-- Before 48H O2 PSMS Payment task -->
+	<bean id="before48hPSMSPaymentTask" class="mobi.nowtechnologies.server.job.Before48hExpirePSMSPaymentJob">
+		<property name="userSerivce" ref="service.UserService" />
+		<property name="o2ClientService" ref="service.O2ClientService" />
+	</bean>
+	<bean id="before48hPSMSPaymentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="before48hPSMSPaymentTask" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="before48hPSMSPaymentTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    	<property name="jobDetail" ref="before48hPSMSPaymentJob" />
+    	<property name="startDelay" value="${before48h.expired.payment.job.startDelayMillis}" />
+    	<property name="repeatInterval" value="${before48h.expired.payment.job.repeatIntervalMillis}" />
+	</bean>
+	
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="${jobs.autoStartup}" />

@@ -59,7 +59,35 @@ public class AccountCheckDTO {
     private String appStoreProductId;
     
     private String provider;
+    private String contract;
+    private String segment;
+    private int graceCredit;
+    
 	private String lastSubscribedPaymentSystem;
+	
+	public int getGraceCredit() {
+		return graceCredit;
+	}
+
+	public void setGraceCredit(int graceCredit) {
+		this.graceCredit = graceCredit;
+	}
+
+	public String getContract() {
+		return contract;
+	}
+
+	public void setContract(String contract) {
+		this.contract = contract;
+	}
+
+	public String getSegment() {
+		return segment;
+	}
+
+	public void setSegment(String segment) {
+		this.segment = segment;
+	}
 
 	public String getDisplayName() {
 		return displayName;
@@ -341,17 +369,14 @@ public class AccountCheckDTO {
 
 	@Override
 	public String toString() {
-		return "AccountCheckDTO [userName=" + userName + ", deviceUID=" + deviceUID + ", subBalance=" + subBalance + ", rememberMeToken=" + rememberMeToken
-				+ ", status=" + status + ", paymentEnabled=" + paymentEnabled + ", paymentStatus=" + paymentStatus + ", lastPaymentStatus=" + lastPaymentStatus
-				+ ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
-				+ ", fullyRegistred=" + fullyRegistred + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", isFreeTrial=" + isFreeTrial
-				+ ", isPromotedDevice=" + isPromotedDevice + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", promotedWeeks="
-				+ promotedWeeks + ", paymentType=" + paymentType + ", hasOffers=" + hasOffers + ", promotionLabel=" + promotionLabel
-				+ ", appStoreProductId=" + appStoreProductId
-				+ ", timeOfMovingToLimitedStatusSeconds=" + timeOfMovingToLimitedStatusSeconds + ", chartItems=" + chartItems + ", chartTimestamp="
-				+ chartTimestamp + ", deviceType=" + deviceType + ", displayName=" + displayName + ", drmType=" + drmType + ", drmValue=" + drmValue
-				+ ", newsItems=" + newsItems + ", newsTimestamp=" + newsTimestamp + ", oAuthProvider=" + oAuthProvider + ", operator=" + operator
-				+ ", provider="+provider+ ", phoneNumber=" + phoneNumber + ", userToken=" + userToken + "]";
-	}	
+		return "AccountCheckDTO [displayName=" + displayName + ", subBalance=" + subBalance + ", status=" + status + ", deviceType=" + deviceType + ", deviceUID=" + deviceUID + ", chartTimestamp="
+				+ chartTimestamp + ", chartItems=" + chartItems + ", newsTimestamp=" + newsTimestamp + ", newsItems=" + newsItems + ", drmType=" + drmType + ", drmValue=" + drmValue
+				+ ", phoneNumber=" + phoneNumber + ", operator=" + operator + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType + ", paymentEnabled=" + paymentEnabled
+				+ ", rememberMeToken=" + rememberMeToken + ", userName=" + userName + ", userToken=" + userToken + ", timeOfMovingToLimitedStatusSeconds=" + timeOfMovingToLimitedStatusSeconds
+				+ ", promotionLabel=" + promotionLabel + ", fullyRegistred=" + fullyRegistred + ", oAuthProvider=" + oAuthProvider + ", isPromotedDevice=" + isPromotedDevice + ", promotedWeeks="
+				+ promotedWeeks + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", hasOffers=" + hasOffers + ", isFreeTrial=" + isFreeTrial + ", lastPaymentStatus="
+				+ lastPaymentStatus + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", activation=" + activation + ", appStoreProductId=" + appStoreProductId + ", provider=" + provider
+				+ ", contract=" + contract + ", segment=" + segment + ", graceCredit=" + graceCredit + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem + "]";
+	}
 
 }

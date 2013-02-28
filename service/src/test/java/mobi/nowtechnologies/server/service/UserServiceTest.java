@@ -1,5 +1,20 @@
 package mobi.nowtechnologies.server.service;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -17,10 +32,8 @@ import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -29,19 +42,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -814,6 +816,7 @@ public class UserServiceTest {
 		mockUserRepository = PowerMockito.mock(UserRepository.class);
 		MailService mockMailService = PowerMockito.mock(MailService.class);
 
+		userServiceSpy.setGraceDuration(48*60*60);
 		userServiceSpy.setSagePayService(mockSagePayService);
 		userServiceSpy.setPaymentPolicyService(mockPaymentPolicyService);
 		userServiceSpy.setCountryService(mockCountryService);
@@ -1214,6 +1217,58 @@ public class UserServiceTest {
 		whenNew(User.class).withNoArguments().thenReturn(user);
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
+	}
+	
+	@Test
+	public void testGraceCredit_NotO2PSMSLastPayment_Success() throws Exception {
+		final User user = UserFactory.createUser();
+		user.setLastSubscribedPaymentSystem(PaymentDetails.PAYPAL_TYPE);
+
+		int graceCredit = userServiceSpy.getO2PSMSGraceCredit(user);
+		
+		assertEquals(0, graceCredit);
+	}
+	
+	@Test
+	public void testGraceCredit_NotExpiredPayment_Success() throws Exception {
+		final User user = UserFactory.createUser();
+		user.setNextSubPayment(Utils.getEpochSeconds()+10000000);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_SMS_TYPE);
+
+		int graceCredit = userServiceSpy.getO2PSMSGraceCredit(user);
+		
+		assertEquals(0, graceCredit);
+	}
+	
+	@Test
+	public void testGraceCredit_NullUser_Success() throws Exception {
+		final User user = null;
+
+		int graceCredit = userServiceSpy.getO2PSMSGraceCredit(user);
+		
+		assertEquals(0, graceCredit);
+	}
+	
+	@Test
+	public void testGraceCredit_GraceEnded_Success() throws Exception {
+		final User user = UserFactory.createUser();
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_SMS_TYPE);
+
+		int graceCredit = userServiceSpy.getO2PSMSGraceCredit(user);
+		
+		assertEquals(48*60*60, graceCredit);
+	}
+	
+	@Test
+	public void testGraceCredit_InGraceNow_Success() throws Exception {
+		final User user = UserFactory.createUser();
+		user.setNextSubPayment(Utils.getEpochSeconds() - 24*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_SMS_TYPE);
+
+		int graceCredit = userServiceSpy.getO2PSMSGraceCredit(user);
+		
+		assertEquals(24*60*60, graceCredit);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1923,6 +1978,139 @@ public class UserServiceTest {
 		assertTrue(users.contains(user2));
 		
 		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {"o2"};
+		String[] availableSegments = {"consumer"};
+		String[] availableContracts = {"payg"};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(1, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(1)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_EmptyAvailableProviders_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {};
+		String[] availableSegments = {"consumer"};
+		String[] availableContracts = {"payg"};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_NullAvailableProviders_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = null;
+		String[] availableSegments = {"consumer"};
+		String[] availableContracts = {"payg"};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), anyListOf(String.class), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), anyListOf(String.class), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_EmptyAvailableSegments_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {"o2"};
+		String[] availableSegments = {};
+		String[] availableContracts = {"payg"};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_NullAvailableSegments_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {"o2"};
+		String[] availableSegments = null;
+		String[] availableContracts = {"payg"};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), anyListOf(String.class), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), anyListOf(String.class), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_EmptyAvailableContracts_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {"o2"};
+		String[] availableSegments = {"consumer"};
+		String[] availableContracts = {};
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page));
+	}
+	
+	@Test
+	public void testGetBefore48hExpireUsers_NullAvailableContracts_Success(){
+		User user = UserFactory.createUser();
+
+		String[] availableProviders = {"o2"};
+		String[] availableSegments = {"consumer"};
+		String[] availableContracts = null;
+
+		Pageable page = new PageRequest(0, 1000);
+		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), anyListOf(String.class), eq(page))).thenReturn(Collections.singletonList(user));
+		
+		List<User> resultUsers = userServiceSpy.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+		
+		assertNotNull(resultUsers);
+		assertEquals(0, resultUsers.size());
+		
+		Mockito.verify(mockUserRepository, times(0)).findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), anyListOf(String.class), eq(page));
 	}
 	
 	@Test(expected=NullPointerException.class)
