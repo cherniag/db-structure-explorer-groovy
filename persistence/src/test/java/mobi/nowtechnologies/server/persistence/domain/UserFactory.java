@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 
 
 /**
@@ -112,7 +115,7 @@ public class UserFactory
 		user.setUserType(UserType.NORMAL);
 		user.setProvider("o2");
 		user.setContract("PAYG");
-		user.setSegment("consumer");
+		user.setSegment(CONSUMER);
 		return user;
 	}
 

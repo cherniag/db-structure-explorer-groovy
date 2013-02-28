@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -26,10 +27,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * The persistent class for the tb_users database table.
- *
- */
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
@@ -54,32 +51,6 @@ public class User implements Serializable {
     public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
     public static final String NONE = "NONE";
-
-    public boolean isNonO2User() {
-        Community community = this.userGroup.getCommunity();
-        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
-
-        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
-            return true;
-
-        return false;
-    }
-
-    public boolean isO2Client() {
-        return "o2".equals(this.provider);
-    }
-
-    public boolean isNotO2Client(){
-        return !isO2Client();
-    }
-
-    public boolean isO2Business() {
-        return false;//TODO
-    }
-
-    public boolean isO2Consumer() {
-        return false;
-    }
 
     public static enum Fields {
         userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
@@ -198,9 +169,6 @@ public class User implements Serializable {
 
     private String contract;
 
-    /*
-     * @deprecated Unused column
-     */
     @Deprecated
     private boolean paymentEnabled;
 
@@ -272,6 +240,9 @@ public class User implements Serializable {
     @Column(name="last_subscribed_payment_system")
     private String lastSubscribedPaymentSystem;
 
+    @Enumerated(EnumType.STRING)
+    private SegmentType segment;
+
     public User() {
         setDisplayName("");
         setTitle("");
@@ -291,6 +262,32 @@ public class User implements Serializable {
         setPaymentDetailsList(new ArrayList<PaymentDetails>());
         setUserType(UserType.UNDEFINED);
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+    }
+
+    public boolean isNonO2User() {
+        Community community = this.userGroup.getCommunity();
+        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+
+        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+            return true;
+
+        return false;
+    }
+
+    public boolean isO2Client() {
+        return "o2".equals(this.provider);
+    }
+
+    public boolean isNotO2Client(){
+        return !isO2Client();
+    }
+
+    public boolean isO2Business() {
+        return false;//TODO
+    }
+
+    public boolean isO2Consumer() {
+        return false;
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
@@ -1063,5 +1060,12 @@ public class User implements Serializable {
 
     public void setContract(String contract) {
         this.contract = contract;
+    }
+    public void setSegment(SegmentType segment) {
+        this.segment = segment;
+    }
+
+    public SegmentType getSegment() {
+        return segment;
     }
 }
