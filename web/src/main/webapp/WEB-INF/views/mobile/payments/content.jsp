@@ -13,6 +13,15 @@
 	--%>
 </div>
 <div class="container">
+    <c:set var="accountBannerON">
+        <s:message code="pays.page.note.account.on"/>
+    </c:set>
+    <c:if test="${accountBannerON eq 'true'}">
+        <div class="content">
+            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
+            <span>${paymentAccountNotes}</span>
+        </div>
+    </c:if>
 	<div class="content">
 		
 		<c:if test="${paymentDetailsByPaymentDto!=null&&paymentDetailsByPaymentDto.activated==false}">
@@ -43,23 +52,35 @@
 			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
 				<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 					<c:set var="method_name" value="creditcard" />
-					<s:message code='pays.select.creditcard' var="payment_label" />
+					<s:message code='pays.select.payby.creditcard' var="payment_label" />
 				</c:if>
 				<c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
 					<c:set var="method_name" value="paypal" />
-					<s:message code='pays.select.paypal' var="method_readable" />
+					<s:message code='pays.select.payby.paypal' var="payment_label" />
 				</c:if>
 				<c:if test="${paymentPolicy.paymentType == 'PSMS'}">
 					<c:set var="method_name" value="psms" />
-					<s:message code='pays.select.psms' var="method_readable" />
+					<s:message code='pays.select.payby.psms' var="payment_label" />
 				</c:if>
+                <c:if test="${paymentPolicy.o2OneWeekPsmsSubscription}">
+                    <c:set var="method_name" value="psms" />
+                    <s:message code='pays.select.payby.psms.week1' var="payment_label" />
+                </c:if>
+                <c:if test="${paymentPolicy.o2TwoWeekPsmsSubscription}">
+                    <c:set var="method_name" value="psms" />
+                    <s:message code='pays.select.payby.psms.week2' var="payment_label" />
+                </c:if>
+                <c:if test="${paymentPolicy.o2FiveWeekPsmsSubscription}">
+                    <c:set var="method_name" value="psms" />
+                    <s:message code='pays.select.payby.psms.week5' var="payment_label" />
+                </c:if>
 				<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
 					<c:set var="method_name" value="iTunesSubscription" />
-					<s:message code='pays.select.iTunesSubscription' var="method_readable" />
+					<s:message code='pays.select.iTunesSubscription' var="payment_label" />
 				</c:if>
 				
 				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
-					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.select.payby" /> ${payment_label}" />
+					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
 									
 					<span class="rightButtonArrow">
 						&nbsp;

@@ -36,8 +36,15 @@ public class PaymentPolicyDto {
     }
 
     private boolean isO2PsmsSubscribtion() {
-        return UserRegInfo.PaymentType.PREMIUM_USER.equals(paymentType)
-                && "O2 UK".equals(operatorName);
+        return isPsmsPolicy() && isO2Operator();
+    }
+
+    private boolean isPsmsPolicy() {
+        return UserRegInfo.PaymentType.PREMIUM_USER.equals(paymentType);
+    }
+
+    private boolean isO2Operator() {
+        return "O2 UK".equals(operatorName);
     }
 
     public boolean isO2TwoWeekPsmsSubscription(){
@@ -117,6 +124,26 @@ public class PaymentPolicyDto {
 	}
 
     public boolean isO2BusinessPolicy() {
+        return isO2Operator() && (isPayPalPolicy() || isCreditCardPolicy());
+    }
+
+    public boolean isNonO2Policy() {
+        return isO2Operator() && (isPayPalPolicy() || isCreditCardPolicy() || isInAppPolicy());
+    }
+
+    private boolean isInAppPolicy() {
+        return UserRegInfo.PaymentType.ITUNES_SUBSCRIPTION.equals(paymentType);
+    }
+
+    private boolean isCreditCardPolicy() {
+        return UserRegInfo.PaymentType.CREDIT_CARD.equals(paymentType);
+    }
+
+    private boolean isPayPalPolicy() {
+        return UserRegInfo.PaymentType.PAY_PAL.equals(paymentType);
+    }
+
+    public boolean isO2ConsumerPolicy() {
         return isO2OneWeekPsmsSubscription()|| isO2TwoWeekPsmsSubscription() || isO2FiveWeekPsmsSubscription();
     }
 }

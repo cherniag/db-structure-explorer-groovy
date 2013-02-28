@@ -204,8 +204,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public PaymentDetails getPaymentDetails(int userId) {
-		User user = userService.findById(userId);
+	public PaymentDetails getPaymentDetails(User user) {
 		return user.getCurrentPaymentDetails();
 	}
 
