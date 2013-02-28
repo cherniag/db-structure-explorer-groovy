@@ -112,6 +112,7 @@ public class UserFactory
 		user.setUserType(UserType.NORMAL);
 		user.setProvider("o2");
 		user.setContract("PAYG");
+		user.setSegment("consumer");
 		return user;
 	}
 

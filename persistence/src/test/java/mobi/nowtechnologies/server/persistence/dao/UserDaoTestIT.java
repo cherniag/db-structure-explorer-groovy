@@ -1,11 +1,18 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,13 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * The class <code>UserDaoTest</code> contains tests for the class <code>{@link UserDao}</code>.
@@ -144,6 +147,7 @@ public class UserDaoTestIT {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetActivePromotion() {
 //		int startDate = Utils.getEpochSeconds();
 //		int endDate = 300 + startDate;
@@ -212,45 +216,28 @@ public class UserDaoTestIT {
 	
 	@Test
 	public void test_GetListOfUsersForWeeklyUpdate() {
-		User testUser= new User();
-		testUser.setAddress1("678");
-		testUser.setAddress2("");
-		testUser.setCanContact(true);
-		testUser.setCity("St.Albans");
-		testUser.setCode("f72b0b018fed801932f97f3e3a26b23f");
-		testUser.setCountry(1);
-		testUser.setDevice("HTC HERO");
-		testUser.setDeviceString("iPhone");
-		//testUser.setDeviceType((byte) 2);
-		testUser.setDisplayName("Nigel");
-		testUser.setFirstName("Nigel");
-		testUser.setIpAddress("217.35.32.182");
-		testUser.setLastDeviceLogin(1306902146);
-		testUser.setLastName("Rees");
-		testUser.setLastPaymentTx(72);
-		testUser.setLastWebLogin(1306873638);
-		testUser.setMobile("+447770608575");
-		testUser.setNextSubPayment(1307219588);
-		testUser.setPostcode("412");
-		testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
-		testUser.setSubBalance((byte) 5);
-		testUser.setTempToken("NONE");
-		testUser.setTitle("Mr");
-		testUser.setToken("26b34b31237dfffb4caeb9518ad1ce02");
-		//testUser.setUserGroup((byte) 1);
-		testUser.setUserName("test_getListOfUsersForUpdate@rbt.com");
-		testUser.setUserType(UserType.NORMAL);
-		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
-		testUser.setPin("pin");
-		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-		testUser.setPaymentEnabled(true);
+		
+		User testUser = createUser();
+		testUser.setContract("payg");
+		testUser.setSegment("consumer");
+		
+		entityDao.saveEntity(testUser);
+		
+		testUser = createUser();
+		testUser.setContract("paym");
+		testUser.setSegment("consumer");
+		
+		entityDao.saveEntity(testUser);
+		
+		testUser = createUser();
+		testUser.setContract("paym");
+		testUser.setSegment("business");
 		
 		entityDao.saveEntity(testUser);
 		
 		List<User> users=userDao.getListOfUsersForWeeklyUpdate();
 		assertNotNull(users);
-		assertTrue(users.size()<1001&&users.size()>0);
+		assertTrue(users.size() == 2);
 		for (User user : users) {
 			assertTrue(Utils.getEpochSeconds()>user.getNextSubPayment());
 			assertEquals(10,user.getUserStatusId());
@@ -315,5 +302,50 @@ public class UserDaoTestIT {
 		int userId = 1;
 		User user = userDao.findUserTree(userId);
 		assertNotNull(user);
+	}
+	
+	private User createUser(){
+		DeviceType deviceType = new DeviceType();
+		deviceType.setI((byte)5);
+		
+		UserGroup userGroup = new UserGroup();
+		UserFactory.createUser();
+		userGroup.setI((byte)7);
+		
+		User testUser= new User();
+		testUser.setAddress1("678");
+		testUser.setAddress2("");
+		testUser.setCanContact(true);
+		testUser.setCity("St.Albans");
+		testUser.setCode("f72b0b018fed801932f97f3e3a26b23f");
+		testUser.setCountry(1);
+		testUser.setDevice("HTC HERO");
+		testUser.setDeviceString("iPhone");
+		testUser.setDeviceType(deviceType);
+		testUser.setDisplayName("Nigel");
+		testUser.setFirstName("Nigel");
+		testUser.setIpAddress("217.35.32.182");
+		testUser.setLastDeviceLogin(1306902146);
+		testUser.setLastName("Rees");
+		testUser.setLastPaymentTx(72);
+		testUser.setLastWebLogin(1306873638);
+		testUser.setMobile("+447770608575");
+		testUser.setNextSubPayment(1307219588);
+		testUser.setPostcode("412");
+		testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setSubBalance((byte) 5);
+		testUser.setTempToken("NONE");
+		testUser.setTitle("Mr");
+		testUser.setToken("26b34b31237dfffb4caeb9518ad1ce02");
+		testUser.setUserGroup(userGroup);
+		testUser.setUserName("test_getListOfUsersForUpdate@rbt.com");
+		testUser.setUserType(UserType.NORMAL);
+		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
+		testUser.setPin("pin");
+		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
+		testUser.setPaymentEnabled(true);
+		
+		return testUser;
 	}
 }

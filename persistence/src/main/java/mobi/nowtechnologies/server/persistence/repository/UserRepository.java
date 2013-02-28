@@ -77,32 +77,32 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	int updateFields(@Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
 
 	
-//	@Query(value="select u from User u " +
-//			"join u.currentPaymentDetails pd " +
-//			"join u.userGroup ug " +
-//			"join ug.community c " +
-//			"where " +
-//			"((c.rewriteUrlParameter not like'o2' " +
-//			"and u.subBalance=0) " +
-//			"or (c.rewriteUrlParameter like 'o2' " +
-//			"and u.provider<>'o2' " +
-//			"and (u.nextSubPayment<=?1+86400))) " +
-//			"and (pd.lastPaymentStatus='NONE' " +
-//			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
-//			"and pd.activated=true " +
-//			"and u.lastDeviceLogin!=0")
-//	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
-//	List<User> getUsersForPendingPayment(int epochSeconds);
-	
 	@Query(value="select u from User u " +
-			"join u.currentPaymentDetails as pd " +
-			"where u.subBalance=0 " +
+			"join u.currentPaymentDetails pd " +
+			"join u.userGroup ug " +
+			"join ug.community c " +
+			"where " +
+			"((c.rewriteUrlParameter not like'o2' " +
+			"and u.subBalance=0) " +
+			"or (c.rewriteUrlParameter like 'o2' " +
+			"and u.provider<>'o2' " +
+			"and (u.nextSubPayment<=?1+86400))) " +
 			"and (pd.lastPaymentStatus='NONE' " +
 			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
-			"and pd.activated=true and " +
-			"u.lastDeviceLogin!=0")
+			"and pd.activated=true " +
+			"and u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
-	List<User> getUsersForPendingPayment();
+	List<User> getUsersForPendingPayment(int epochSeconds);
+	
+//	@Query(value="select u from User u " +
+//			"join u.currentPaymentDetails as pd " +
+//			"where u.subBalance=0 " +
+//			"and (pd.lastPaymentStatus='NONE' " +
+//			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
+//			"and pd.activated=true and " +
+//			"u.lastDeviceLogin!=0")
+//	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+//	List<User> getUsersForPendingPayment();
 	
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +

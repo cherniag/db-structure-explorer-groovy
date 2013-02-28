@@ -1196,15 +1196,14 @@ public class UserService {
 		
 		boolean isNonO2User = isNonO2User(user);
 	
-		if(/**!isNonO2User && **/!paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
+		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
 			// Update next sub payment time
 			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-		/**} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
-		**/	
+		} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));	
 		}else{
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
