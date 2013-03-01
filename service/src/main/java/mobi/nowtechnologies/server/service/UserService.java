@@ -126,10 +126,10 @@ public class UserService {
 	private O2ClientService o2ClientService;
 	private ITunesService iTunesService;
 	
-	private Integer graceDuration;
+	private Integer graceDurationSeconds;
 	
-	public void setGraceDuration(Integer graceDuration) {
-		this.graceDuration = graceDuration;
+	public void setGraceDurationSeconds(Integer graceDurationSeconds) {
+		this.graceDurationSeconds = graceDurationSeconds;
 	}
 
 	public void setO2ClientService(O2ClientService o2ClientService) {
@@ -1201,8 +1201,15 @@ public class UserService {
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-	
-		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
+		final boolean o2Consumer = user.isO2Consumer();
+		
+		if (o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
+			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
+				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
+			} else {
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCredit(user));
+			}
+		}else if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
@@ -1224,7 +1231,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if(!isNonO2User){
+			if(!isNonO2User && !o2Consumer){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
@@ -1808,13 +1815,13 @@ public class UserService {
 
 	public int getO2PSMSGraceCredit(User user) {
 		int curTime = Utils.getEpochSeconds();
-		if (user == null || !PaymentDetails.O2_PSMS_TYPE.equals(user.getLastSubscribedPaymentSystem()) || curTime-user.getNextSubPayment() < 0)
+		if (user == null || !PaymentDetails.O2_PSMS_TYPE.equals(user.getLastSubscribedPaymentSystem()) || curTime - user.getNextSubPayment() < 0)
 			return 0;
 
-		if (curTime-user.getNextSubPayment() > graceDuration)
-			return graceDuration;
-		
-		return curTime-user.getNextSubPayment();
+		if (curTime - user.getNextSubPayment() > graceDurationSeconds)
+			return graceDurationSeconds;
+
+		return curTime - user.getNextSubPayment();
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
