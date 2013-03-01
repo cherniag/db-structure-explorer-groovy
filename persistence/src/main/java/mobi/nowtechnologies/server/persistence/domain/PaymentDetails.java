@@ -173,11 +173,6 @@ public abstract class PaymentDetails {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentDetails [activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
-				+ disableTimestampMillis + ", i=" + i + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", owner=" + owner + ", retriesOnError=" + retriesOnError + "]";
-	}
 
 	public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
@@ -192,4 +187,9 @@ public abstract class PaymentDetails {
 		return paymentDetailsByPaymentDto;
 	}
 	
+	@Override
+	public String toString() {
+		return "i=" + i + ", activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
+		+ disableTimestampMillis + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", retriesOnError=" + retriesOnError;
+	}
 }
