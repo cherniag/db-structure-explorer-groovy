@@ -25,7 +25,9 @@ import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDe
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -69,14 +71,6 @@ public class UserServiceIT {
 		o2, non_o2
 	}
 	
-	public enum Contract {
-		PAYG, PAYM
-	}
-	
-	public enum UserSegment {
-		Consumer, Business
-	}
-
 	public static int count;
 
 	@DataPoints

@@ -7,6 +7,8 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
 import org.junit.Test;
 
@@ -63,8 +65,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYG);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -83,8 +85,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("non_o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYG);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -104,7 +106,7 @@ public class UserTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
 		user.setSegment("");
-		user.setContract(User.PAYG);
+		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -123,8 +125,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYG);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -143,8 +145,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYM);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYM.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -163,8 +165,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYG);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -177,8 +179,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(null);
 		user.setProvider("o2");
-		user.setSegment(User.CONSUMER);
-		user.setContract(User.PAYG);
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
 		
 		user.isO2Consumer();
 	}

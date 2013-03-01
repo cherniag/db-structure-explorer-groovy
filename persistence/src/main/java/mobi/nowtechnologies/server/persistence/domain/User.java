@@ -9,7 +9,9 @@ import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.slf4j.Logger;
@@ -42,10 +44,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
 public class User implements Serializable {
-	public static final String PAYG = "PAYG";
-	public static final String PAYM = "PAYM";
-
-	public static final String CONSUMER = "consumer";
 
 	private static final long serialVersionUID = 4414398062970887453L;
 
@@ -302,8 +300,8 @@ public class User implements Serializable {
 	public boolean isO2Consumer() {
 		Community community = userGroup.getCommunity();
 
-		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && CONSUMER.equals(segment)
-				&& PAYG.equals(contract);
+		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && UserSegment.Consumer.name().equals(segment)
+				&& Contract.PAYG.name().equals(contract);
 
 		return isO2Consumer;
 	}
