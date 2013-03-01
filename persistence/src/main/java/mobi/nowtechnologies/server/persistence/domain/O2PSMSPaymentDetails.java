@@ -10,10 +10,25 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(PaymentDetails.O2_PSMS_TYPE)
 public class O2PSMSPaymentDetails extends PaymentDetails {
+	
+	private String phoneNumber;
+	
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
 	@Override
 	public String getPaymentType() {
 		return PaymentDetails.O2_PSMS_TYPE;
+	}
+
+	@Override
+	public String toString() {
+		return "O2PSMSPaymentDetails ["+ super.toString()+", phoneNumber=" + phoneNumber + "]";
 	}
 
 }

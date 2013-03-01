@@ -14,3 +14,5 @@ alter table tb_submittedpayments modify next_sub_payment int not null;
 alter table tb_users add column contract varchar(255);
 alter table tb_users add column segment varchar(255);
 alter table tb_users add column last_payment_try_millis default 0;
+
+alter table tb_paymentdetails add column phoneNumber varchar(255);
