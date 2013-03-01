@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -10,8 +13,10 @@ import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
@@ -40,29 +45,29 @@ public class UserRepositoryIT {
 
 		User testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract("payg");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(PAYG);
+		testUser.setSegment(CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract("payg");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(PAYG);
+		testUser.setSegment(CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract("paym");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(PAYM);
+		testUser.setSegment(CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract("paym");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(PAYM);
+		testUser.setSegment(CONSUMER);
 		
 		Pageable page = new PageRequest(0, 1);
 		

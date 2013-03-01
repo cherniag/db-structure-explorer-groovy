@@ -32,7 +32,6 @@ import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.junit.*;

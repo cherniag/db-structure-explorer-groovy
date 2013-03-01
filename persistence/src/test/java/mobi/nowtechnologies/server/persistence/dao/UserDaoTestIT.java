@@ -1,22 +1,12 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
+import org.hibernate.validator.util.Contracts;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +16,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static org.junit.Assert.*;
 
 /**
  * The class <code>UserDaoTest</code> contains tests for the class <code>{@link UserDao}</code>.
@@ -37,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
 @Transactional
 public class UserDaoTestIT {
 	private static final Logger LOGGER = LoggerFactory
@@ -221,20 +220,20 @@ public class UserDaoTestIT {
 	public void test_GetListOfUsersForWeeklyUpdate() {
 		
 		User testUser = createUser();
-		testUser.setContract("payg");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(Contract.PAYG);
+		testUser.setSegment(CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract("paym");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(PAYM);
+		testUser.setSegment(CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract("paym");
-		testUser.setSegment("BUSINESS");
+		testUser.setContract(PAYM);
+		testUser.setSegment(BUSINESS);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -248,7 +247,7 @@ public class UserDaoTestIT {
 	}
 	
 	@Test
-	@Ignore
+
 	public void test_getListOfUsersForUpdate() throws Exception {
 		User testUser= new User();
 		testUser.setAddress1("678");
@@ -281,6 +280,7 @@ public class UserDaoTestIT {
 		testUser.setUserType(UserType.NORMAL);
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
+        testUser.setSegment(SegmentType.CONSUMER);
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PAYMENT().getId());
 		testUser.setPaymentEnabled(true);
 		

@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
@@ -26,6 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -167,7 +170,9 @@ public class User implements Serializable {
 
     private String provider;
 
-    private String contract;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char")
+    private Contract contract;
 
     @Deprecated
     private boolean paymentEnabled;
@@ -278,20 +283,19 @@ public class User implements Serializable {
         return false;
     }
 
-    public boolean isO2Client() {
-        return "o2".equals(this.provider);
-    }
-
-    public boolean isNotO2Client(){
-        return !isO2Client();
+    public boolean isO2User() {
+        Community community = this.getUserGroup().getCommunity();
+        return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
     }
 
     public boolean isO2Business() {
-        return false;//TODO
+        return segment.equals(BUSINESS);
     }
 
     public boolean isO2Consumer() {
-        return false;
+        return  isO2User()
+                && segment.equals(CONSUMER)
+                && contract.equals(Contract.PAYG);
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
@@ -1066,11 +1070,11 @@ public class User implements Serializable {
         this.provider = provider;
     }
 
-    public String getContract() {
+    public Contract getContract() {
         return contract;
     }
 
-    public void setContract(String contract) {
+    public void setContract(Contract contract) {
         this.contract = contract;
     }
     public void setSegment(SegmentType segment) {
