@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -11,8 +9,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
@@ -23,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,19 +222,19 @@ public class UserDaoTestIT {
 		
 		User testUser = createUser();
 		testUser.setContract("payg");
-		testUser.setSegment(CONSUMER);
+		testUser.setSegment("CONSUMER");
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
 		testUser.setContract("paym");
-		testUser.setSegment(CONSUMER);
+		testUser.setSegment("CONSUMER");
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
 		testUser.setContract("paym");
-		testUser.setSegment(BUSINESS);
+		testUser.setSegment("BUSINESS");
 		
 		entityDao.saveEntity(testUser);
 		

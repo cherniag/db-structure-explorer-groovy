@@ -1,13 +1,18 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+import javax.swing.text.Segment;
+
+import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 
 
 /**
@@ -55,68 +60,59 @@ public class UserFactory
 	 * @generatedBy CodePro at 21.08.12 10:58
 	 */
 	public static User createUser() {
+		
 		UserStatus userStatus = new UserStatus();
+		userStatus.setI((byte)10);
 		userStatus.setName(UserStatusDao.SUBSCRIBED);
-
+		
+		PaymentStatus paymentStatus = new PaymentStatus();
+		paymentStatus.setId(2);
+		
+		DeviceType deviceType = new DeviceType();
+		deviceType.setI((byte)5);
+		
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = new UserGroup();
+		userGroup.setI((byte)7);
 		userGroup.setCommunity(community);
 		
-		User user = new User();
-		
-		user.setAddress1("678");
-		user.setAddress2("");
-		user.setCanContact(true);
-		user.setCity("St.Albans");
-		user.setCode("f72b0b018fed801932f97f3e3a26b23f");
-		user.setConformStoredToken("conformStoredToken");
-		user.setCountry(1);
-		user.setCountryIdString("25");
-		user.setCurrentPaymentDetails(null);
-		user.setDevice("HTC HERO");
-		user.setDeviceModel("deviceModel");
-		user.setDeviceString("Android");
-		user.setDeviceType(null);
-		user.setDeviceUID("deviceUID");
-		user.setDisplayName("Nigel");
-		user.setDrms(null);
-		user.setFacebookId("facebookId");
-		user.setFirstDeviceLoginMillis(654564L);
-		user.setFirstName("Nigel");
-		user.setFirstUserLoginMillis(65545646L);
-		user.setId(56);
-		user.setIpAddress("217.35.32.182");
-		user.setLastDeviceLogin(1306902146);
-		user.setLastName("Rees");
-		user.setLastPaymentTx(72);
-		user.setLastSuccessfulPaymentTimeMillis(646574L);
-		user.setLastWebLogin(1306873638);
-		user.setMobile("+447770608575");
-		user.setNewStoredToken("newStoredToken");
-		user.setNextSubPayment(1307219588);
-		user.setNumPsmsRetries(2);
-		user.setOperator(2);
-		user.setPaymentDetailsList(null);
-		user.setPaymentEnabled(true);
-		user.setPaymentStatus(12);
-		user.setPaymentType("UNKNOWN");
-		user.setPin("pin");
-		user.setPostcode("412");
-		user.setPotentialPromoCodePromotion(null);
-		user.setPotentialPromotion(null);
-		user.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-		user.setStatus(userStatus);
-		user.setSubBalance((byte) 5);
-		user.setTempToken("NONE");
-		user.setTitle("Mr");
-		user.setToken("26b34b31237dfffb4caeb9518ad1ce02");
-		user.setUserGroup(userGroup);
-		user.setUserName("test_getListOfUsersForUpdate@rbt.com");
-		user.setUserType(UserType.NORMAL);
-		user.setProvider("o2");
-		user.setContract("PAYG");
-		user.setSegment(CONSUMER);
-		return user;
+		User testUser= new User();
+		testUser.setAddress1("678");
+		testUser.setAddress2("");
+		testUser.setCanContact(true);
+		testUser.setCity("St.Albans");
+		testUser.setCode("f72b0b018fed801932f97f3e3a26b23f");
+		testUser.setCountry(1);
+		testUser.setDevice("HTC HERO");
+		testUser.setDeviceString("iPhone");
+		testUser.setDeviceType(deviceType);
+		testUser.setDisplayName("Nigel");
+		testUser.setFirstName("Nigel");
+		testUser.setIpAddress("217.35.32.182");
+		testUser.setLastDeviceLogin(1306902146);
+		testUser.setLastName("Rees");
+		testUser.setLastPaymentTx(72);
+		testUser.setLastWebLogin(1306873638);
+		testUser.setMobile("+447770608575");
+		testUser.setNextSubPayment(1307219588);
+		testUser.setPostcode("412");
+		testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
+		testUser.setStatus(userStatus);
+		testUser.setSubBalance((byte) 5);
+		testUser.setTempToken("NONE");
+		testUser.setTitle("Mr");
+		testUser.setToken("26b34b31237dfffb4caeb9518ad1ce02");
+		testUser.setUserGroup(userGroup);
+		testUser.setUserName("test_getListOfUsersForUpdate@rbt.com");
+		testUser.setUserType(UserType.NORMAL);
+		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
+		testUser.setPin("pin");
+		testUser.setPaymentStatus(paymentStatus.getId());
+		testUser.setPaymentEnabled(true);
+		testUser.setProvider("o2");
+		testUser.setContract(Contract.PAYG.name());
+		testUser.setSegment(UserSegment.Consumer.name());
+		return testUser;
 	}
 
 

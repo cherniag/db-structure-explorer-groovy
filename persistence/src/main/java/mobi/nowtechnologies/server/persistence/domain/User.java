@@ -240,6 +240,9 @@ public class User implements Serializable {
     @Column(name="last_subscribed_payment_system")
     private String lastSubscribedPaymentSystem;
 
+    @Column(name="last_payment_try_millis", columnDefinition="BIGINT default 0")
+    private long lastPaymentTryMillis;
+    
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char")
     private SegmentType segment;
@@ -990,6 +993,14 @@ public class User implements Serializable {
 
     public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
         this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
+    }
+
+    public long getLastPaymentTryMillis() {
+        return lastPaymentTryMillis;
+    }
+
+    public void setLastPaymentTryMillis(long lastPaymentTryMillis) {
+        this.lastPaymentTryMillis = lastPaymentTryMillis;
     }
 
     @Override

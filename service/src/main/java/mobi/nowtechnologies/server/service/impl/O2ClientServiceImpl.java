@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,5 +124,17 @@ public class O2ClientServiceImpl implements O2ClientService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean sendFreeSms(String phoneNumber, String message) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public O2Response makePremiumSMSRequest(String internalTxId, String shortCode, String o2PhoneNumber, String message) {
+		O2Response o2Response = O2Response.successfulO2Response();
+		return o2Response;
 	}
 }

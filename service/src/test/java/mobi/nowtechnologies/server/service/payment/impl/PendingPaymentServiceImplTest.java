@@ -67,7 +67,7 @@ public class PendingPaymentServiceImplTest {
 					,generateUserWithSagePayPaymentDetails((byte)0, PaymentDetailsStatus.SUCCESSFUL)
 		);
 		
-		Mockito.when(paymentDao.getUsersForPendingPayment()).thenReturn(users);
+		Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
 		
 		List<PendingPayment> createPendingPayments = service.createPendingPayments();
 		

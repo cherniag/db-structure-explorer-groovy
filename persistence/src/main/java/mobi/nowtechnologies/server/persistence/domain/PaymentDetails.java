@@ -39,6 +39,7 @@ public abstract class PaymentDetails {
 	public static final String SAGEPAY_CREDITCARD_TYPE = "sagePayCreditCard";
 	public static final String PAYPAL_TYPE = "payPal";
 	public static final String MIG_SMS_TYPE = "migSms";
+	public static final String O2_PSMS_TYPE = "o2Psms";
 	public static final String ITUNES_SUBSCRIPTION="iTunesSubscription";
 	public static final String FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE = "FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE";
 
@@ -172,11 +173,6 @@ public abstract class PaymentDetails {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentDetails [activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
-				+ disableTimestampMillis + ", i=" + i + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", owner=" + owner + ", retriesOnError=" + retriesOnError + "]";
-	}
 
 	public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
@@ -191,4 +187,9 @@ public abstract class PaymentDetails {
 		return paymentDetailsByPaymentDto;
 	}
 	
+	@Override
+	public String toString() {
+		return "i=" + i + ", activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
+		+ disableTimestampMillis + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", retriesOnError=" + retriesOnError;
+	}
 }

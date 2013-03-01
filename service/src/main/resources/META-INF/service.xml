@@ -57,6 +57,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="iTunesService" ref="service.ITunesService" />
+		<property name="graceDurationSeconds" value="${o2.payment.psms.grace.duration.seconds}" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">

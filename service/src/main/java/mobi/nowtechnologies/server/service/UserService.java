@@ -1,5 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import static org.apache.commons.lang.Validate.notNull;
+
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -23,10 +35,7 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.web.*;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
@@ -36,23 +45,14 @@ import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
-import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * UserService
@@ -126,6 +126,12 @@ public class UserService {
 	private O2ClientService o2ClientService;
 	private ITunesService iTunesService;
 	
+	private Integer graceDurationSeconds;
+	
+	public void setGraceDurationSeconds(Integer graceDurationSeconds) {
+		this.graceDurationSeconds = graceDurationSeconds;
+	}
+
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
@@ -1195,8 +1201,15 @@ public class UserService {
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-	
-		if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
+		final boolean o2Consumer = user.isO2Consumer();
+		
+		if (o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
+			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
+				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
+			} else {
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCredit(user));
+			}
+		}else if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
@@ -1218,7 +1231,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if(!isNonO2User){
+			if(!isNonO2User && !(o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
@@ -1298,6 +1311,8 @@ public class UserService {
 			if (contentOfferDtos != null && contentOfferDtos.size() > 0)
 				accountCheckDTO.setHasOffers(true);
 		}
+		
+		accountCheckDTO.setGraceCredit(getO2PSMSGraceCredit(user));
 		
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -1798,6 +1813,17 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
+	public int getO2PSMSGraceCredit(User user) {
+		int curTime = Utils.getEpochSeconds();
+		if (user == null || !PaymentDetails.O2_PSMS_TYPE.equals(user.getLastSubscribedPaymentSystem()) || curTime - user.getNextSubPayment() < 0)
+			return 0;
+
+		if (curTime - user.getNextSubPayment() > graceDurationSeconds)
+			return graceDurationSeconds;
+
+		return curTime - user.getNextSubPayment();
+	}
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User updateLastDeviceLogin(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
@@ -2118,5 +2144,38 @@ public class UserService {
 		}
 		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
 		return isIOsNonO2ItunesSubscribedUser;
+	}
+	
+	@Transactional(readOnly=true)
+	public List<User> getUsersForPendingPayment() {
+		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());	
+		return users;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<User> getBefore48hExpireUsers(String[] availableProviders, String[] availableSegments, String[] availableContracts) {
+		LOGGER.debug("input availableProviders, availableSegments, availableContracts: [{}], [{}], [{}]", new Object[]{availableProviders, availableSegments, availableContracts});
+		
+		if(availableProviders == null || availableProviders.length == 0 
+				|| availableSegments == null || availableSegments.length == 0 
+				|| availableContracts == null || availableContracts.length == 0 )
+			return Collections.emptyList();
+		
+		Pageable page = new PageRequest(0, 1000);
+		List<User> users = userRepository.findBefore48hExpireUsers(getEpochSeconds(), Arrays.asList(availableProviders), Arrays.asList(availableSegments), Arrays.asList(availableContracts), page);
+		
+		LOGGER.debug("Output [{}]", users);
+		return users;
+	}
+	
+	public boolean mustTheAttemptsOfPaymentContinue(User user) {
+		LOGGER.debug("input parameters user: [{}]", user);
+		boolean isOnGracePeriod = false;
+		final int o2psmsGraceCredit = getO2PSMSGraceCredit(user);
+		if (o2psmsGraceCredit >= 0 && user.getLastPaymentTryMillis() <= (user.getNextSubPayment() + graceDurationSeconds) * 1000L && graceDurationSeconds > 0) {
+			isOnGracePeriod = true;
+		}
+		LOGGER.debug("Output parameter isOnGracePeriod=[{}]", isOnGracePeriod);
+		return isOnGracePeriod;
 	}
 }

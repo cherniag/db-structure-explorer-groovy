@@ -86,11 +86,23 @@
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 	</bean>
 	
+	<bean id="service.o2PaymentService" class="mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl">
+		<property name="retriesOnError" value="${mig.retriesOnError}" />
+		<property name="expireMillis" value="${mig.pendingExpireMillis}" />
+		<property name="entityService" ref="service.EntityService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="o2ClientService" ref="service.O2ClientService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+		<property name="userService" ref="service.UserService" />
+	</bean>
+	
 	
 	<util:map id="service.map.paymentSystems" key-type="java.lang.String" value-type="mobi.nowtechnologies.server.service.payment.PaymentSystemService">
 		<entry key="sagePayCreditCard" value-ref="service.sagePayPaymentService" />
 		<entry key="payPal" value-ref="service.payPalPaymentService" />
-		<entry key="migSms" value-ref="service.migPaymentService" />	
+		<entry key="migSms" value-ref="service.migPaymentService" />
+		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
 	</util:map>
 	
 	<!-- Listeners -->
