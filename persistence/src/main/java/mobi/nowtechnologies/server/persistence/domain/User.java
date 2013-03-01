@@ -241,6 +241,7 @@ public class User implements Serializable {
     private String lastSubscribedPaymentSystem;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "chart")
     private SegmentType segment;
 
     public User() {
