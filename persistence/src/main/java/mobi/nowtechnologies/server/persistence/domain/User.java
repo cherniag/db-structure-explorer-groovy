@@ -294,9 +294,14 @@ public class User implements Serializable {
 	        return false;//TODO
 	    }
 
-	    public boolean isO2Consumer() {
-	        return false;
-	    }
+	public boolean isO2Consumer() {
+		Community community = userGroup.getCommunity();
+
+		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && "consumer".equals(segment)
+				&& "PAYG".equals(contract);
+
+		return isO2Consumer;
+	}
 
 	public void addPaymentDetails(PaymentDetails paymentDetails) {
 		if (null != paymentDetails) {
