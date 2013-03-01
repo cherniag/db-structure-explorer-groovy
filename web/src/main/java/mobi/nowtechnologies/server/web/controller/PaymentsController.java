@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -41,29 +44,31 @@ public class PaymentsController extends CommonController {
     private PaymentDetailsService paymentDetailsService;
 
     private UserService userService;
+    private CommunityService communityService;
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
         LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
         ModelAndView modelAndView = new ModelAndView(viewName);
-        final int userId = getSecurityContextDetails().getUserId();
-        User user = userService.findById(userId);
+        User user = userService.findById(getUserId());
+        Community community = communityService.getCommunityByUrl(communityUrl);
 
         List<PaymentPolicyDto> paymentPolicies = Collections.emptyList();
 
-        if (user.isNotO2Client()) {
-            PaymentDetails paymentDetails = paymentDetailsService.getPaymentDetails(userId);
+        if (user.isNonO2User()) {
+            PaymentDetails paymentDetails = paymentDetailsService.getPaymentDetails(user);
             modelAndView.addObject("paymentDetails", paymentDetails);
 
             if (userService.isIOsNonO2ItunesSubscribedUser(user)) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
+                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
             } else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) || (paymentDetails != null && paymentDetails.isActivated())) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetailsWithouPaymentType(communityUrl, userId, PaymentDetails.ITUNES_SUBSCRIPTION);
+                paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
             } else {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(communityUrl, userId);
+                paymentPolicies = paymentDetailsService.getPaymentPolicy(community, user);
             }
         }
 
-        modelAndView.addObject("paymentPolicies", paymentPolicies);
+
+        modelAndView.addObject("paymentPolicies", filterPoliciesIfO2(paymentPolicies, user));
 
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         modelAndView.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
@@ -75,6 +80,48 @@ public class PaymentsController extends CommonController {
 
         LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
+    }
+
+    private List<PaymentPolicyDto> filterPoliciesIfO2(List<PaymentPolicyDto> policies, User user) {
+
+        List<PaymentPolicyDto> result = filterNonO2Policies(policies, user);
+        result = filterO2BusinessPolicy(result, user);
+        result = filterO2Consumer(result, user);
+
+        return result;
+    }
+
+    private List<PaymentPolicyDto> filterO2Consumer(List<PaymentPolicyDto> policies, User user) {
+        if(user.isO2Consumer()){
+            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
+            for(PaymentPolicyDto policy: policies)
+                if(policy.isO2ConsumerPolicy())
+                    result.add(policy);
+            return result;
+        }
+        return policies;
+    }
+
+    private List<PaymentPolicyDto> filterO2BusinessPolicy(List<PaymentPolicyDto> policies, User user) {
+        if(user.isO2Business()){
+            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
+            for(PaymentPolicyDto policy: policies)
+                if(policy.isO2BusinessPolicy())
+                    result.add(policy);
+            return result;
+        }
+        return policies;
+    }
+
+    private List<PaymentPolicyDto> filterNonO2Policies(List<PaymentPolicyDto> policies, User user) {
+        if(user.isNonO2User()){
+            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
+            for(PaymentPolicyDto policy: policies)
+                if(policy.isNonO2Policy())
+                    result.add(policy);
+            return result;
+        }
+        return policies;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
@@ -182,5 +229,9 @@ public class PaymentsController extends CommonController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
     }
 }

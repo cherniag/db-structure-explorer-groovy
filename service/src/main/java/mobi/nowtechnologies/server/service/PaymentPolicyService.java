@@ -9,9 +9,9 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepositor
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -53,9 +53,7 @@ public class PaymentPolicyService {
 	}
 	
 	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String communityName) {
-		if (communityName == null)
-			throw new ServiceException(
-					"The parameter communityName is null");
+		Validate.notNull(communityName, "The parameter communityName is null");
 		
 		return paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(communityName);
 	}
@@ -131,7 +129,7 @@ public class PaymentPolicyService {
 	public List<PaymentPolicy> getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(Community community, String paymentType) {
 		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
 		
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
 		
 		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
 		return paymentPolicies;

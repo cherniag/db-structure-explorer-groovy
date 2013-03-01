@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
 				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
-		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<?"),
+		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<? and (u.contract IS NULL or lower(u.contract)!='payg' or u.segment IS NULL or lower(u.segment.name())!='consumer')"),
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -54,24 +54,6 @@ public class User implements Serializable {
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";
-
-    public boolean isNonO2User() {
-        Community community = this.userGroup.getCommunity();
-        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
-
-        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
-            return true;
-
-        return false;
-    }
-
-    public boolean isO2Client() {
-        return "o2".equals(this.provider);
-    }
-
-    public boolean isNotO2Client(){
-        return !isO2Client();
-    }
 
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
@@ -289,6 +271,32 @@ public class User implements Serializable {
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
 	}
+
+	  public boolean isNonO2User() {
+	        Community community = this.userGroup.getCommunity();
+	        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+
+	        if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+	            return true;
+
+	        return false;
+	    }
+
+	    public boolean isO2Client() {
+	        return "o2".equals(this.provider);
+	    }
+
+	    public boolean isNotO2Client(){
+	        return !isO2Client();
+	    }
+
+	    public boolean isO2Business() {
+	        return false;//TODO
+	    }
+
+	    public boolean isO2Consumer() {
+	        return false;
+	    }
 
 	public void addPaymentDetails(PaymentDetails paymentDetails) {
 		if (null != paymentDetails) {
@@ -748,7 +756,8 @@ public class User implements Serializable {
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
 
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated())||(lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated()) || (lastSubscribedPaymentSystem != null
+				&& lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
 		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
 		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -778,8 +787,10 @@ public class User implements Serializable {
 		accountCheckDTO.setUserToken(token);
 		accountCheckDTO.setRememberMeToken(rememberMeToken);
 		accountCheckDTO.setFreeTrial(isOnFreeTrial());
-		accountCheckDTO.setProvider(provider);
 		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+		accountCheckDTO.setProvider(provider);
+		accountCheckDTO.setContract(contract);
+		accountCheckDTO.setSegment(segment);
 
 		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
@@ -808,7 +819,8 @@ public class User implements Serializable {
 	}
 
 	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-        if(news == null) return;
+		if (news == null)
+			return;
         accountCheckDTO.setNewsTimestamp(news.getTimestamp());
         accountCheckDTO.setNewsItems(news.getNumEntries());
     }
@@ -824,7 +836,7 @@ public class User implements Serializable {
 			return PaymentType.CREDIT_CARD;
 		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PAY_PAL;
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType()) || PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return PaymentType.PREMIUM_USER;
 		}
 		return PaymentType.UNKNOWN;

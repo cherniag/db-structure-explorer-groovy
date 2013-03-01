@@ -77,12 +77,12 @@ public class SMSNotificationTest {
 	public void testSendLimitedStatusSMS_Success()
 		throws Exception {
 		String msg = "message1";
-		String paymentsUrl = "http://cherry.dev.now-technologies.mobi/web/payments.html";
+		String paymentsUrl = "https://chartsnow.mobi/web/payments.html";
 		String tinyUrlService = "http://tinyurl.com/api-create.php";
 		User user = UserFactory.createUser();
 		user.getStatus().setName(UserStatus.LIMITED.name());
-		user.setUserName("+447123412142");
-		user.setToken("57e2d0177a955cf4c075fa6998621f4e");
+		user.setUserName("+447989326753");
+		user.setToken("8875de694fdc1e69f582672f0ab97a6c");
 		Community community = user.getUserGroup().getCommunity();
 		community.setRewriteUrlParameter("o2");
 		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());

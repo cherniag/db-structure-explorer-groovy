@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -112,4 +114,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"and c.rewriteUrlParameter = 'o2' " +
 			"and u.provider<>'o2' ")
 	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId);
+
+	@Query("select u from User u where u.status=10 and u.nextSubPayment<?1 and lower(u.provider) in (?2) and lower(u.segment) in (?3) and lower(u.contract) in (?4)")
+	List<User> findBefore48hExpireUsers(int epochSeconds, List<String> availableProviders, List<String> availableSegments, List<String> availableContracts, Pageable page);
 }

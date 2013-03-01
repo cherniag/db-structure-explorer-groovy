@@ -13,4 +13,6 @@ public interface O2ClientService {
 	String getRedeemServerO2Url(String phoneNumber);
 
 	O2UserDetails getUserDetails(String token, String phoneNumber);
+	
+	boolean sendFreeSms(String phoneNumber, String message);
 }

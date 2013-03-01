@@ -11,8 +11,8 @@
 		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.paymentType=? and paymentPolicy.communityId=? ]]></query>
 	</named-query>
 	
-	<named-query name="PaymentPolicy.getPaymentPoliciesForCommunityGroupedByPaymentType">
-		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.communityId=? group by paymentPolicy.paymentType]]></query>
+	<named-query name="PaymentPolicy.getPaymentPoliciesForCommunity">
+		<query ><![CDATA[select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.communityId=? ]]></query>
 	</named-query>
 	
 	<named-query name="PaymentPolicy.getPaymentPoliciesByCommunityAndPaymentType">

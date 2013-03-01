@@ -19,7 +19,7 @@
 									<c:forEach var="paymentPolicy" items="${paymentPolicies}">
 										<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 											<c:set var="method_name" value="creditcard" />
-											<s:message code='pays.select.creditcard' var="method_readable" />
+											<s:message code='pays.select.creditcard' var="payment_label" />
 											<c:set var="method_color" value="greyInnerText" />
 										</c:if>
 										<c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
@@ -40,7 +40,7 @@
 													<span style="">${paymentPolicy.subweeks} <s:message code="pays.select.weeks" /></span>
 												</span>
 												<span class="payBy abs"><s:message code="pays.select.payby" /><br/>
-													<span>${method_readable}</span>
+													<span>${payment_label}</span>
 												</span>
 											</a>
 											<a id="popup${method_name}" href="#" class="infoSign"><img alt="" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icons/info.png"></a>
