@@ -265,6 +265,9 @@ public class User implements Serializable {
 	private String lastSubscribedPaymentSystem;
 	
 	private String segment;
+	
+	@Column(name="last_payment_try_millis", columnDefinition="BIGINT default 0")
+	private long lastPaymentTryMillis;
 
 	public User() {
 		setDisplayName("");
@@ -996,6 +999,14 @@ public class User implements Serializable {
 		this.segment = segment;
 	}
 
+	public long getLastPaymentTryMillis() {
+		return lastPaymentTryMillis;
+	}
+
+	public void setLastPaymentTryMillis(long lastPaymentTryMillis) {
+		this.lastPaymentTryMillis = lastPaymentTryMillis;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
@@ -1013,7 +1024,8 @@ public class User implements Serializable {
 				+ ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
 				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
-				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + "]";
+				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + ", lastPaymentTryMillis="
+				+ lastPaymentTryMillis + "]";
 	}
 
 	/**
