@@ -1069,7 +1069,7 @@ public class User implements Serializable {
 		this.freeTrialExpiredMillis = freeTrialExpiredMillis;
 	}
 
-    public void setFreeTrialExpiredMillis(Date freeTrialExpiredMillis) {
+    public void setFreeTrialExpired(Date freeTrialExpiredMillis) {
         this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
     }
 

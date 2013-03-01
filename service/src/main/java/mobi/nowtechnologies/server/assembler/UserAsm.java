@@ -156,7 +156,7 @@ public class UserAsm {
 		user.setUserType(userDto.getUserType());
 		user.setPaymentEnabled(userDto.getPaymentEnabled());
         if(userDto.getFreeTrialExpiredMillis() != 0)
-        user.setFreeTrialExpiredMillis(userDto.getFreeTrialExpiredAsDate());
+        user.setFreeTrialExpired(userDto.getFreeTrialExpiredAsDate());
 
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
