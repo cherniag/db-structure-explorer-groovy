@@ -38,6 +38,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.*;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -1546,7 +1547,7 @@ public class UserService {
 		user.setCode(code);
 		updateUser(user);
 		MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-				messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
+                messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
 		LOGGER.info("OTA link has been sent to user {}", userId);
 		if (200 == response.getHttpStatus())
 			return true;
@@ -2079,7 +2080,7 @@ public class UserService {
 		        hasPromo = true;
 	    	}
         }
-		user.setContract(o2UserDetails.getTariff());
+		user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
 		user.setProvider(o2UserDetails.getOperator());
 		user.setActivationStatus(ActivationStatus.ACTIVATED);
     	user.setUserName(user.getMobile());

@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.service;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -17,6 +19,7 @@ import java.util.concurrent.Future;
 
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -1914,8 +1917,8 @@ public class UserServiceTest {
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(currentTimeSeconds-4*graceDurationSeconds);
 		
 		final SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
@@ -1999,8 +2002,8 @@ public class UserServiceTest {
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		final int oldNextSubPayment = currentTimeSeconds-graceDurationSeconds/2;
 		user.setNextSubPayment(oldNextSubPayment);
 		
@@ -2157,8 +2160,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableSegments = {SegmentType.CONSUMER.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2176,8 +2179,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {};
-		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableSegments = {SegmentType.CONSUMER.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2195,8 +2198,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = null;
-		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableSegments = {SegmentType.CONSUMER.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), anyListOf(String.class), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2215,7 +2218,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = {};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2234,7 +2237,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = null;
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), anyListOf(String.class), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2252,7 +2255,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {UserSegment.Consumer.name()};
+		String[] availableSegments = {SegmentType.CONSUMER.name()};
 		String[] availableContracts = {};
 
 		Pageable page = new PageRequest(0, 1000);
@@ -2271,7 +2274,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {UserSegment.Consumer.name()};
+		String[] availableSegments = {SegmentType.CONSUMER.name()};
 		String[] availableContracts = null;
 
 		Pageable page = new PageRequest(0, 1000);
@@ -2340,8 +2343,8 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
@@ -2362,8 +2365,8 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
@@ -2389,8 +2392,8 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
@@ -2413,8 +2416,8 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
@@ -2437,8 +2440,8 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
+		user.setSegment(CONSUMER);
+		user.setContract(PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);

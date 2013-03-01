@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UserTest {

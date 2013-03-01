@@ -125,7 +125,7 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if(user.isNotO2Client()){
+        if(user.isNonO2User()){
             if (!userService.isIOsNonO2ItunesSubscribedUser(user)) {
                 return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
             }
