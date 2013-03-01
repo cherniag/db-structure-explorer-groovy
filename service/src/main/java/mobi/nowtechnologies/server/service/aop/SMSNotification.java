@@ -179,7 +179,7 @@ public class SMSNotification {
 		try{
 			url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();			
 		}catch(Exception e){
-			LOGGER.error("Error get tinyUrl.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		
 		String[] args = {url};
