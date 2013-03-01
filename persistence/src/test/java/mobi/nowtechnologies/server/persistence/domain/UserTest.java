@@ -63,8 +63,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment("consumer");
-		user.setContract("PAYG");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -83,8 +83,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("non_o2");
-		user.setSegment("consumer");
-		user.setContract("PAYG");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -104,7 +104,7 @@ public class UserTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
 		user.setSegment("");
-		user.setContract("PAYG");
+		user.setContract(User.PAYG);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -123,8 +123,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment("consumer");
-		user.setContract("PAYG");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -143,8 +143,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment("consumer");
-		user.setContract("PAYM");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYM);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -163,8 +163,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSegment("consumer");
-		user.setContract("PAYM");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -177,8 +177,8 @@ public class UserTest {
 		User user = new User();
 		user.setUserGroup(null);
 		user.setProvider("o2");
-		user.setSegment("consumer");
-		user.setContract("PAYM");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
 		
 		user.isO2Consumer();
 	}

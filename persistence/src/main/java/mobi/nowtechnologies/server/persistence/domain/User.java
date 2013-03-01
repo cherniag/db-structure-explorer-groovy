@@ -42,6 +42,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
 public class User implements Serializable {
+	public static final String PAYG = "PAYG";
+	public static final String PAYM = "PAYM";
+
+	public static final String CONSUMER = "consumer";
+
 	private static final long serialVersionUID = 4414398062970887453L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
@@ -297,8 +302,8 @@ public class User implements Serializable {
 	public boolean isO2Consumer() {
 		Community community = userGroup.getCommunity();
 
-		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && "consumer".equals(segment)
-				&& "PAYG".equals(contract);
+		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && CONSUMER.equals(segment)
+				&& PAYG.equals(contract);
 
 		return isO2Consumer;
 	}
