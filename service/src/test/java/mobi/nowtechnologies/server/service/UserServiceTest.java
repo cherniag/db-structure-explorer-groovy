@@ -2156,8 +2156,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {"consumer"};
-		String[] availableContracts = {"payg"};
+		String[] availableSegments = {User.CONSUMER};
+		String[] availableContracts = {User.PAYG};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2175,8 +2175,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {};
-		String[] availableSegments = {"consumer"};
-		String[] availableContracts = {"payg"};
+		String[] availableSegments = {User.CONSUMER};
+		String[] availableContracts = {User.PAYG};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2194,8 +2194,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = null;
-		String[] availableSegments = {"consumer"};
-		String[] availableContracts = {"payg"};
+		String[] availableSegments = {User.CONSUMER};
+		String[] availableContracts = {User.PAYG};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), anyListOf(String.class), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2214,7 +2214,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = {};
-		String[] availableContracts = {"payg"};
+		String[] availableContracts = {User.PAYG};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2233,7 +2233,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = null;
-		String[] availableContracts = {"payg"};
+		String[] availableContracts = {User.PAYG};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), anyListOf(String.class), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2251,7 +2251,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {"consumer"};
+		String[] availableSegments = {User.CONSUMER};
 		String[] availableContracts = {};
 
 		Pageable page = new PageRequest(0, 1000);
@@ -2270,7 +2270,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 
 		String[] availableProviders = {"o2"};
-		String[] availableSegments = {"consumer"};
+		String[] availableSegments = {User.CONSUMER};
 		String[] availableContracts = null;
 
 		Pageable page = new PageRequest(0, 1000);
@@ -2327,5 +2327,124 @@ public class UserServiceTest {
 
 	private void mockMakeFreeSMSRequest(final MigPaymentDetails currentMigPaymentDetails, String message, MigResponse migResponse) {
 		Mockito.when(mockMigHttpService.makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), message)).thenReturn(migResponse);
+	}
+	
+	@Test
+	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisBeforeNextSubPayment_Success(){		
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
+		
+		userServiceSpy.setGraceDurationSeconds(2*Utils.WEEK_SECONDS);
+		
+		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
+		assertTrue(mustTheAttemptsOfPaymentContinue);
+	}
+	
+	@Test
+	public void testMustTheAttemptsOfPaymentContinue_CurrentTimeEqNextSubPayment_Success(){		
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
+		
+		userServiceSpy.setGraceDurationSeconds(2*Utils.WEEK_SECONDS);
+		
+		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
+		assertTrue(mustTheAttemptsOfPaymentContinue);
+	}
+	
+	@Test
+	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisEqGracePeriodEnding_Success(){		
+		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
+
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
+		
+		userServiceSpy.setGraceDurationSeconds(graceDurationSeconds);
+		
+		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
+		assertTrue(mustTheAttemptsOfPaymentContinue);
+	}
+	
+	@Test
+	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisAfterGracePeriodEnding_Success(){		
+		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
+
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
+		
+		userServiceSpy.setGraceDurationSeconds(graceDurationSeconds);
+		
+		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
+		assertFalse(mustTheAttemptsOfPaymentContinue);
+	}
+	
+	@Test
+	public void testMustTheAttemptsOfPaymentContinue_graceDurationSecondsIs0_Success(){		
+		final int graceDurationSeconds = 0;
+
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(User.CONSUMER);
+		user.setContract(User.PAYG);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
+		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
+		
+		userServiceSpy.setGraceDurationSeconds(graceDurationSeconds);
+		
+		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
+		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
 }

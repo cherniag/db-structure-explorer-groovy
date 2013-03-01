@@ -1231,7 +1231,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if(!isNonO2User && !o2Consumer){
+			if(!isNonO2User && !(o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
@@ -2166,5 +2166,16 @@ public class UserService {
 		
 		LOGGER.debug("Output [{}]", users);
 		return users;
+	}
+	
+	public boolean mustTheAttemptsOfPaymentContinue(User user) {
+		LOGGER.debug("input parameters user: [{}]", user);
+		boolean isOnGracePeriod = false;
+		final int o2psmsGraceCredit = getO2PSMSGraceCredit(user);
+		if (o2psmsGraceCredit >= 0 && user.getLastPaymentTryMillis() <= (user.getNextSubPayment() + graceDurationSeconds) * 1000L && graceDurationSeconds > 0) {
+			isOnGracePeriod = true;
+		}
+		LOGGER.debug("Output parameter isOnGracePeriod=[{}]", isOnGracePeriod);
+		return isOnGracePeriod;
 	}
 }

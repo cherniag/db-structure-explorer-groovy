@@ -106,8 +106,8 @@ public class UserFactory
 		testUser.setPaymentStatus(paymentStatus.getId());
 		testUser.setPaymentEnabled(true);
 		testUser.setProvider("o2");
-		testUser.setContract("PAYG");
-		testUser.setSegment("CONSUMER");
+		testUser.setContract(User.PAYG);
+		testUser.setSegment(User.CONSUMER);
 		return testUser;
 	}
 
