@@ -82,27 +82,24 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"join u.userGroup ug " +
 			"join ug.community c " +
 			"where " +
-			"((c.rewriteUrlParameter not like'o2' " +
-			"and u.subBalance=0) " +
-			"or (c.rewriteUrlParameter like 'o2' " +
-			"and u.provider<>'o2' " +
-			"and (u.nextSubPayment<=?1+86400))) " +
+			"(c.rewriteUrlParameter!='o2' " +
+			"and u.subBalance=0 " +
 			"and (pd.lastPaymentStatus='NONE' " +
-			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
+			"or pd.lastPaymentStatus='SUCCESSFUL')) " +
+			"or (c.rewriteUrlParameter='o2' " +
+			"and (u.provider='o2' " +
+			"and u.segment='consumer' " +
+			"and u.contract='PAYG' " +
+			"and TYPE(pd) = O2PSMSPaymentDetails " +
+			"and pd.lastPaymentStatus<>'AWAITING' "+
+			"and ((u.nextSubPayment<=?1 and u.lastPaymentTryMillis<u.nextSubPayment) or  ((u.nextSubPayment+86400000<=?1 or u.nextSubPayment+172800000<=?1) and u.lastPaymentTryMillis<=u.nextSubPayment+172800000))) " +
+			"or (u.provider<>'o2' and u.nextSubPayment<=?1+86400 " +
+			"and (pd.lastPaymentStatus='NONE' " +
+			"or pd.lastPaymentStatus='SUCCESSFUL'))) " +
 			"and pd.activated=true " +
 			"and u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
 	List<User> getUsersForPendingPayment(int epochSeconds);
-	
-//	@Query(value="select u from User u " +
-//			"join u.currentPaymentDetails as pd " +
-//			"where u.subBalance=0 " +
-//			"and (pd.lastPaymentStatus='NONE' " +
-//			"or  pd.lastPaymentStatus='SUCCESSFUL') " +
-//			"and pd.activated=true and " +
-//			"u.lastDeviceLogin!=0")
-//	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
-//	List<User> getUsersForPendingPayment();
 	
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +

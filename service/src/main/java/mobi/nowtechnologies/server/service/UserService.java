@@ -2119,4 +2119,10 @@ public class UserService {
 		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
 		return isIOsNonO2ItunesSubscribedUser;
 	}
+	
+	@Transactional(readOnly=true)
+	public List<User> getUsersForPendingPayment() {
+		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());	
+		return users;
+	}
 }

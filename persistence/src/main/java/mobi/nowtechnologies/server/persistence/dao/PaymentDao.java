@@ -89,16 +89,6 @@ public class PaymentDao extends JpaDaoSupport {
 		return  payPalPayments.get(0);
 	}
 
-
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
-	public List<User> getUsersForPendingPayment() {
-		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());
-		//List<User> users = userRepository.getUsersForPendingPayment();
-		
-		return users;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
 	public List<User> getUsersForRetryPayment() {
