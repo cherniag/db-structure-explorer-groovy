@@ -1198,11 +1198,14 @@ public class UserService {
 		boolean isNonO2User = isNonO2User(user);
 		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
 		
+		boolean wasInLimitedStatus = UserStatusDao.getLimitedUserStatus().getName().equals(user.getStatus().getName());
+		
 		if (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
-			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
+			if (!wasInLimitedStatus) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCreditSeconds(user));
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - (int)(user.getFullGraceCreditMillis()/1000));
+				user.setFullGraceCreditMillis(0L);
 			}
 		}else if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
@@ -1225,7 +1228,7 @@ public class UserService {
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
-		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
+		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
 			if(!isNonO2User && !(isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
