@@ -125,12 +125,6 @@ public class UserService {
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
 	private ITunesService iTunesService;
-	
-	private Integer graceDurationSeconds;
-	
-	public void setGraceDurationSeconds(Integer graceDurationSeconds) {
-		this.graceDurationSeconds = graceDurationSeconds;
-	}
 
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -1201,13 +1195,13 @@ public class UserService {
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-		final boolean o2Consumer = user.isO2Consumer();
+		final boolean o2Consumer = user.isO2PAYGConsumer();
 		
 		if (o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
 			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCredit(user));
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCreditSeconds(user));
 			}
 		}else if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
@@ -1312,7 +1306,7 @@ public class UserService {
 				accountCheckDTO.setHasOffers(true);
 		}
 		
-		accountCheckDTO.setGraceCredit(getO2PSMSGraceCredit(user));
+		accountCheckDTO.setGraceCredit(getO2PSMSGraceCreditSeconds(user));
 		
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -1813,15 +1807,38 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-	public int getO2PSMSGraceCredit(User user) {
-		int curTime = Utils.getEpochSeconds();
-		if (user == null || !PaymentDetails.O2_PSMS_TYPE.equals(user.getLastSubscribedPaymentSystem()) || curTime - user.getNextSubPayment() < 0)
-			return 0;
+	public int getO2PSMSGraceCreditSeconds(User user) {
+		LOGGER.debug("input parameters user: [{}]", user);
+		final int o2PSMSGraceCreditSeconds;
+		
+		Integer graceDurationSeconds = getGraceDurationSeconds(user);
+		
+		int epochSeconds = Utils.getEpochSeconds();
+		if (user == null || !PaymentDetails.O2_PSMS_TYPE.equals(user.getLastSubscribedPaymentSystem()) || epochSeconds - user.getNextSubPayment() < 0){
+			o2PSMSGraceCreditSeconds = 0;
+		}else if (epochSeconds - user.getNextSubPayment() > graceDurationSeconds){
+			o2PSMSGraceCreditSeconds = graceDurationSeconds;
+		}else{
+			o2PSMSGraceCreditSeconds=epochSeconds - user.getNextSubPayment();
+		}
 
-		if (curTime - user.getNextSubPayment() > graceDurationSeconds)
-			return graceDurationSeconds;
+		LOGGER.debug("Output parameter o2PSMSGraceCreditSeconds=[{}]", o2PSMSGraceCreditSeconds);
+		return o2PSMSGraceCreditSeconds;
+	}
 
-		return curTime - user.getNextSubPayment();
+	public int getGraceDurationSeconds(User user) {
+		LOGGER.debug("input parameters user: [{}]", user);
+		
+		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "o2.payment.psms.grace.duration.seconds", null, null);
+		int graceDurationSeconds;
+		try{
+			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);
+		}catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			graceDurationSeconds = 0;
+		}
+		LOGGER.debug("Output parameter graceDurationSeconds=[{}]", graceDurationSeconds);
+		return graceDurationSeconds;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -2170,8 +2187,11 @@ public class UserService {
 	
 	public boolean mustTheAttemptsOfPaymentContinue(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
+		
+		Integer graceDurationSeconds = getGraceDurationSeconds(user);
+		
 		boolean isOnGracePeriod = false;
-		final int o2psmsGraceCredit = getO2PSMSGraceCredit(user);
+		final int o2psmsGraceCredit = getO2PSMSGraceCreditSeconds(user);
 		if (o2psmsGraceCredit >= 0 && user.getLastPaymentTryMillis() <= (user.getNextSubPayment() + graceDurationSeconds) * 1000L && graceDurationSeconds > 0) {
 			isOnGracePeriod = true;
 		}
