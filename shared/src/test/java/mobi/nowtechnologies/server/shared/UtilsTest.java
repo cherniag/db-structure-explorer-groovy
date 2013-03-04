@@ -312,7 +312,7 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() - ONE_DAY_SECONDS;
 		int subBalance = 0;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertEquals(nextSubPayment, result);
@@ -330,7 +330,7 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 1;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertEquals(nextSubPayment+WEEK_SECONDS, result);
@@ -348,7 +348,7 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 5;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertTrue((nextSubPayment +(subBalance) * WEEK_SECONDS) <= result);

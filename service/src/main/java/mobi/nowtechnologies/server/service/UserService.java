@@ -1293,7 +1293,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds, getGraceDurationSeconds(user));
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
@@ -1519,7 +1519,7 @@ public class UserService {
 
 		User user = findById(userId);
 
-		AccountDto accountDto = user.toAccountDto();
+		AccountDto accountDto = user.toAccountDto(getGraceDurationSeconds(user));
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1563,7 +1563,7 @@ public class UserService {
 
 		updateUser(user);
 
-		accountDto = user.toAccountDto();
+		accountDto = user.toAccountDto(getGraceDurationSeconds(user));
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1833,7 +1833,9 @@ public class UserService {
 	public int getGraceDurationSeconds(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
 		
-		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "o2.payment.psms.grace.duration.seconds", null, null);
+		final String code = user.getProvider() + ".provider." + user.getSegment()
+				+ ".segment." + user.getContract() + ".contract.payment.psms.grace.duration.seconds";
+		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), code, null, null);
 		int graceDurationSeconds;
 		try{
 			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);

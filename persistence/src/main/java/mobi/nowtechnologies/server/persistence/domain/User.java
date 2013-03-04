@@ -1,5 +1,35 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PersistenceException;
+import javax.persistence.QueryHint;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -14,19 +44,10 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The persistent class for the tb_users database table.
@@ -770,7 +791,7 @@ public class User implements Serializable {
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
 	}
 
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
+	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds, int currentGraceDurationSeconds) {
 		Chart chart = userGroup.getChart();
 		News news = userGroup.getNews();
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
@@ -787,7 +808,14 @@ public class User implements Serializable {
 		accountCheckDTO.setChartItems(chart.getNumTracks());
         setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
+		int graceDurationSeconds;
+		if (UserStatus.LIMITED.equals(status.getName())) {
+			graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+		} else {
+			graceDurationSeconds = currentGraceDurationSeconds;
+		}
+        
+		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds));
 		if (null != getCurrentPaymentDetails())
 			accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
 
@@ -908,7 +936,7 @@ public class User implements Serializable {
 		return null;
 	}
 
-	public AccountDto toAccountDto() {
+	public AccountDto toAccountDto(int currentGraceDurationSeconds) {
 		AccountDto accountDto = new AccountDto();
 		accountDto.setEmail(userName);
 		accountDto.setPhoneNumber(mobile);
@@ -927,7 +955,15 @@ public class User implements Serializable {
 			throw new PersistenceException("Couldn't recognize the user subscription");
 
 		accountDto.setSubscription(subscription);
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
+		
+		int graceDurationSeconds;
+		if (UserStatus.LIMITED.equals(status.getName())) {
+			graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+		} else {
+			graceDurationSeconds = currentGraceDurationSeconds;
+		}
+		
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);

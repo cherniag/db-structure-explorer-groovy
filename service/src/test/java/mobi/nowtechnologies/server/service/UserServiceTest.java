@@ -1288,6 +1288,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testGraceCredit_GraceEnded_Success() throws Exception {
+		final int graceDurationSeconds = 48*60*60;
 		
 		final Community community = new Community();
 		community.setRewriteUrlParameter("o2");
@@ -1299,14 +1300,19 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-
+		
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		
 		int graceCredit = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
 		
-		assertEquals(48*60*60, graceCredit);
+		assertEquals(graceDurationSeconds, graceCredit);
+
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null);
 	}
 	
 	@Test
 	public void testGraceCredit_InGraceNow_Success() throws Exception {
+		final int graceDurationSeconds = 2*24*60*60;
 		final Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
@@ -1315,12 +1321,17 @@ public class UserServiceTest {
 		
 		final User user = UserFactory.createUser();
 		user.setUserGroup(userGroup);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 24*60*60);
+		final int halfOfGraceDurationSeconds = graceDurationSeconds/2;
+		user.setNextSubPayment(Utils.getEpochSeconds() - halfOfGraceDurationSeconds);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-
+		
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+	
 		int graceCredit = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
 		
-		assertEquals(24*60*60, graceCredit);
+		assertEquals(graceDurationSeconds-halfOfGraceDurationSeconds, graceCredit);
+
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2398,7 +2409,7 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
 		
 		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
@@ -2423,7 +2434,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
 		
 		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
@@ -2447,7 +2458,7 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
@@ -2471,7 +2482,7 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
@@ -2495,7 +2506,7 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
@@ -2520,13 +2531,13 @@ public class UserServiceTest {
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(graceDurationSeconds, actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null);
 		
 	}
 	
@@ -2546,13 +2557,13 @@ public class UserServiceTest {
 		user.setSegment(UserSegment.Consumer.name());
 		user.setContract(Contract.PAYG.name());
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null);
 		
 	}
 	
@@ -2572,13 +2583,13 @@ public class UserServiceTest {
 		user.setSegment(UserSegment.Consumer.name());
 		user.setContract(Contract.PAYG.name());
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", "o2.provider.Consumer.segment.PAYG.contract.payment.psms.grace.duration.seconds", null, null);
 		
 	}
 }
