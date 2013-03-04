@@ -1195,9 +1195,9 @@ public class UserService {
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 		
 		boolean isNonO2User = isNonO2User(user);
-		final boolean o2Consumer = user.isO2PAYGConsumer();
+		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
 		
-		if (o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
+		if (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
 			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
@@ -1225,7 +1225,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if(!isNonO2User && !(o2Consumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
+			if(!isNonO2User && !(isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
