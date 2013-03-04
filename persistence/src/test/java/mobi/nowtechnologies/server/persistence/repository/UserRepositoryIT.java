@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
