@@ -297,11 +297,17 @@ public class User implements Serializable {
 	        return false;//TODO
 	    }
 
+	public boolean isO2PAYGConsumer() {
+		boolean isO2PAYGConsumer = isO2Consumer()
+				&& Contract.PAYG.name().equals(contract);
+
+		return isO2PAYGConsumer;
+	}
+	
 	public boolean isO2Consumer() {
 		Community community = userGroup.getCommunity();
 
-		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && UserSegment.Consumer.name().equals(segment)
-				&& Contract.PAYG.name().equals(contract);
+		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && UserSegment.Consumer.name().equals(segment);
 
 		return isO2Consumer;
 	}
@@ -1045,7 +1051,7 @@ public class User implements Serializable {
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
 				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
 				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + ", lastPaymentTryMillis="
-				+ lastPaymentTryMillis + "]";
+				+ lastPaymentTryMillis  + "]";
 	}
 
 	/**

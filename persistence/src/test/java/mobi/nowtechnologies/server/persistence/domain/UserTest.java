@@ -54,7 +54,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void isO2Consumer_Success(){
+	public void isO2PAYGConsumer_Success(){
 
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
@@ -67,6 +67,137 @@ public class UserTest {
 		user.setProvider("o2");
 		user.setSegment(UserSegment.Consumer.name());
 		user.setContract(Contract.PAYG.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertTrue(isO2PAYGConsumer);
+	}
+	
+	@Test
+	public void isO2PAYGConsumer_non_o2_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter("o2");
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("non_o2");
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertFalse(isO2PAYGConsumer);
+	}
+	
+	@Test
+	public void isO2PAYGConsumer_emptySegment_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter("o2");
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment("");
+		user.setContract(Contract.PAYG.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertFalse(isO2PAYGConsumer);
+	}
+	
+	@Test
+	public void isO2PAYGConsumer_chartsnow_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter("chartsnow");
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertFalse(isO2PAYGConsumer);
+	}
+	
+	@Test
+	public void isO2PAYGConsumer_PAYM_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter("o2");
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYM.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertFalse(isO2PAYGConsumer);
+	}
+	
+	@Test()
+	public void isO2PAYGConsumer_RewriteUrlParameterIsNull_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter(null);
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
+		
+		boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
+		
+		assertFalse(isO2PAYGConsumer);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void isO2PAYGConsumer_UserGroupIsNull_Failure(){
+		
+		User user = new User();
+		user.setUserGroup(null);
+		user.setProvider("o2");
+		user.setSegment(UserSegment.Consumer.name());
+		user.setContract(Contract.PAYG.name());
+		
+		user.isO2PAYGConsumer();
+	}
+	
+	@Test
+	public void isO2Consumer_Success(){
+
+		Community community = new Community();
+		community.setRewriteUrlParameter("o2");
+		
+		UserGroup userGroup = new UserGroup();
+		userGroup.setCommunity(community);
+		
+		User user = new User();
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSegment(UserSegment.Consumer.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -86,7 +217,6 @@ public class UserTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("non_o2");
 		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -106,7 +236,6 @@ public class UserTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
 		user.setSegment("");
-		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -133,26 +262,6 @@ public class UserTest {
 		assertFalse(isO2Consumer);
 	}
 	
-	@Test
-	public void isO2Consumer_PAYM_Success(){
-
-		Community community = new Community();
-		community.setRewriteUrlParameter("o2");
-		
-		UserGroup userGroup = new UserGroup();
-		userGroup.setCommunity(community);
-		
-		User user = new User();
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYM.name());
-		
-		boolean isO2Consumer = user.isO2Consumer();
-		
-		assertFalse(isO2Consumer);
-	}
-	
 	@Test()
 	public void isO2Consumer_RewriteUrlParameterIsNull_Success(){
 
@@ -166,7 +275,6 @@ public class UserTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
 		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
 		
 		boolean isO2Consumer = user.isO2Consumer();
 		
@@ -180,7 +288,6 @@ public class UserTest {
 		user.setUserGroup(null);
 		user.setProvider("o2");
 		user.setSegment(UserSegment.Consumer.name());
-		user.setContract(Contract.PAYG.name());
 		
 		user.isO2Consumer();
 	}
