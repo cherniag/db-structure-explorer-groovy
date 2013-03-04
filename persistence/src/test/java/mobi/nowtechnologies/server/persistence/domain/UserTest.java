@@ -91,6 +91,7 @@ public class UserTest {
 	}
 	
 	@Test
+    @Ignore("Should be deleted after Vova's M investigations.")
 	public void isO2Consumer_emptySegment_Success(){
 
 		Community community = new Community();

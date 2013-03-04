@@ -29,6 +29,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -289,13 +290,11 @@ public class User implements Serializable {
     }
 
     public boolean isO2Business() {
-        return segment.equals(BUSINESS);
+        return isO2User() && segment == BUSINESS;
     }
 
     public boolean isO2Consumer() {
-        return  isO2User()
-                && segment.equals(CONSUMER)
-                && contract.equals(Contract.PAYG);
+        return  isO2User() && segment == CONSUMER;
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
