@@ -1968,6 +1968,7 @@ public class UserServiceTest {
 		user.setSegment(UserSegment.Consumer.name());
 		user.setContract(Contract.PAYG.name());
 		user.setNextSubPayment(currentTimeSeconds-4*graceDurationSeconds);
+		user.setFullGraceCreditMillis(graceDurationSeconds*1000L);
 		
 		final SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(paymentDetailsType);
