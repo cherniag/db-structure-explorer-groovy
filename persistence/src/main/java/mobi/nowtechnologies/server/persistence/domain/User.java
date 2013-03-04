@@ -284,6 +284,10 @@ public class User implements Serializable {
         return false;
     }
 
+    public boolean isO2PAYGConsumer() {
+        return isO2Consumer() && Contract.PAYG == contract;
+    }
+
     public boolean isO2User() {
         Community community = this.getUserGroup().getCommunity();
         return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
@@ -786,6 +790,8 @@ public class User implements Serializable {
         accountCheckDTO.setRememberMeToken(rememberMeToken);
         accountCheckDTO.setFreeTrial(isOnFreeTrial());
         accountCheckDTO.setProvider(provider);
+        accountCheckDTO.setContract(contract.toString());
+        accountCheckDTO.setSegment(segment.toString());
         accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 
         accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));

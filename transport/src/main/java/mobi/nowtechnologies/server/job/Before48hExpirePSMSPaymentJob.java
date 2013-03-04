@@ -3,8 +3,11 @@ package mobi.nowtechnologies.server.job;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -12,36 +15,37 @@ import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+
 public class Before48hExpirePSMSPaymentJob {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(Before48hExpirePSMSPaymentJob.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hExpirePSMSPaymentJob.class);
 	
-	private String[] availableCommunities = {"o2"};
-	private String[] availableProviders = {"o2"};
-	private String[] availableSegments = {"consumer"};
-	private String[] availableContracts = {"payg"};
+	private String availableCommunities = "o2";
+	private String availableProviders = "o2";
+	private SegmentType availableSegments = SegmentType.CONSUMER;
+	private Contract availableContracts = Contract.PAYG;
 
 	private O2ClientService o2ClientService;
 
-	private UserService userService;
+	private UserRepository userRepository;
 	
 	private CommunityResourceBundleMessageSource messageSource;
+    final private String messageCode = "job.before48.psms.consumer";
 
-	public void execute() {
+    public void execute() {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("[START] Before 48h Expire PSMS Payment job...");
 			
-			List<User> users = userService.getBefore48hExpireUsers(availableProviders, availableSegments, availableContracts);
+			List<User> users = userRepository.findBefore48hExpireUsers(getEpochSeconds(), availableProviders, availableSegments, availableContracts);
 			LOGGER.info("Before 48h Expire PSMS Payment [{}] users for handling", users.size());
 			for (User user : users) {
 				try {
 					MDC.put(LogUtils.LOG_USER_NAME, user.getUserName());
 					MDC.put(LogUtils.LOG_USER_ID, user.getId());
-					
-					String msgCode = availableCommunities[0]+".psms."+availableProviders[0]+"."+availableSegments[0]+"."+availableContracts[0];
-					String msg = messageSource.getMessage(availableCommunities[0], msgCode, null, null);
-					
+
+					String msg = messageSource.getMessage(availableCommunities, messageCode, null, null);
+
 					o2ClientService.sendFreeSms(user.getMobile(), msg);
 					
 				} catch (Exception e) {
@@ -64,16 +68,12 @@ public class Before48hExpirePSMSPaymentJob {
 		this.o2ClientService = o2ClientService;
 	}
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
-	}
-
-	public void setAvailableCommunities(String[] availableCommunities) {
-		this.availableCommunities = availableCommunities;
 	}
 
 }

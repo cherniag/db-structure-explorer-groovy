@@ -8,25 +8,16 @@ import java.util.List;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
-/**
- * The class <code>UserFactory</code> implements static methods that return instances of the class <code>{@link User}</code>.
- *
- * @generatedBy CodePro at 21.08.12 10:58
- * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
- */
+
 public class UserFactory
  {
-	/**
-	 * Prevent creation of instances of this class.
-	 *
-	 * @generatedBy CodePro at 21.08.12 10:58
-	 */
 	private UserFactory() {
 	}
 
@@ -52,11 +43,6 @@ public class UserFactory
 	}
 
 
-	/**
-	 * Create an instance of the class <code>{@link User}</code>.
-	 *
-	 * @generatedBy CodePro at 21.08.12 10:58
-	 */
 	public static User createUser() {
 		
 		UserStatus userStatus = new UserStatus();
@@ -108,17 +94,12 @@ public class UserFactory
 		testUser.setPaymentStatus(paymentStatus.getId());
 		testUser.setPaymentEnabled(true);
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYG.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(PAYG);
+		testUser.setSegment(CONSUMER);
 		return testUser;
 	}
 
 
-	/**
-	 * Create an instance of the class <code>{@link User}</code>.
-	 *
-	 * @generatedBy CodePro at 21.08.12 10:58
-	 */
 	public static User createUserByDefaultConstructor() {
 		return new User();
 	}

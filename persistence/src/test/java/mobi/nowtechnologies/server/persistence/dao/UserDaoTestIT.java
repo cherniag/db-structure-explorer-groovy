@@ -15,9 +15,9 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import org.junit.Ignore;
@@ -52,85 +52,7 @@ public class UserDaoTestIT {
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 
-//	/**
-//	 * Run the User findByName(String) method test.
-//	 *
-//	 * @throws Exception
-//	 *
-//	 * @generatedBy CodePro at 24.06.11 11:19
-//	 */
-//	@Test
-//	@Ignore
-//	public void testFindByName_1()
-//		throws Exception {
-//		
-//		User testUser= new User();
-//		testUser.setAddress1("678");
-//		testUser.setAddress2("");
-//		testUser.setCanContact(true);
-//		testUser.setCity("St.Albans");
-//		testUser.setCode("f72b0b018fed801932f97f3e3a26b23f");
-//		testUser.setCountry(1);
-//		testUser.setDevice("HTC HERO");
-//		testUser.setDeviceString("iPhone");
-//		testUser.setDeviceType((byte) 2);
-//		testUser.setDisplayName("Nigel");
-//		testUser.setFirstName("Nigel");
-//		testUser.setFreeBalance((byte) 0);
-//		testUser.setId(1);
-//		testUser.setIpAddress("217.35.32.182");
-//		testUser.setLastDeviceLogin(1306902146);
-//		testUser.setLastName("Rees");
-//		testUser.setLastPaymentTx(72);
-//		testUser.setLastWebLogin(1306873638);
-//		testUser.setMobile("+447770608575");
-//		testUser.setNextSubPayment(1307219588);
-//		testUser.setPostcode("412");
-//		testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
-//		testUser.setStatus((byte) 10);
-//		testUser.setSubBalance((byte) 5);
-//		testUser.setTempToken("NONE");
-//		testUser.setTitle("Mr");
-//		testUser.setToken("26b34b31237dfffb4caeb9518ad1ce02");
-//		testUser.setUserGroup((byte) 1);
-//		testUser.setUserName("nr@rbt.com");
-//		testUser.setUserType((byte) 4);
-//
-//		User result = userDao.findByName(testUser.getUserName());
-//
-//		assertNotNull(result);
-//		assertEquals(testUser.getAddress1(), result.getAddress1());
-//		assertEquals(testUser.getAddress2(), result.getAddress2());
-//		assertEquals(testUser.getCanContact(), result.getCanContact());
-//		assertEquals(testUser.getCity(), result.getCity());
-//		assertEquals(testUser.getCode(), result.getCode());
-//		assertEquals(testUser.getCountry(), result.getCountry());
-//		assertEquals(testUser.getDevice(), result.getDevice());
-//		assertEquals(testUser.getDeviceString(), result.getDeviceString());
-//		assertEquals(testUser.getDeviceType(), result.getDeviceType());
-//		assertEquals(testUser.getDisplayName(), result.getDisplayName());
-//		assertEquals(testUser.getFirstName(), result.getFirstName());
-//		assertEquals(testUser.getFreeBalance(), result.getFreeBalance());
-//		assertEquals(testUser.getId(), result.getId());
-//		assertEquals(testUser.getIpAddress(), result.getIpAddress());
-//		assertEquals(testUser.getLastDeviceLogin(), result.getLastDeviceLogin());
-//		assertEquals(testUser.getLastName(), result.getLastName());
-//		assertEquals(testUser.getLastPaymentTx(), result.getLastPaymentTx());
-//		assertEquals(testUser.getLastWebLogin(), result.getLastWebLogin());
-//		assertEquals(testUser.getMobile(), result.getMobile());
-//		assertEquals(testUser.getNextSubPayment(), result.getNextSubPayment());
-//		assertEquals(testUser.getPostcode(), result.getPostcode());
-//		assertEquals(testUser.getSessionID(), result.getSessionID());
-//		assertEquals(testUser.getStatus(), result.getStatus());
-//		assertEquals(testUser.getSubBalance(), result.getSubBalance());
-//		assertEquals(testUser.getTempToken(), result.getTempToken());
-//		assertEquals(testUser.getTitle(), result.getTitle());
-//		assertEquals(testUser.getToken(), result.getToken());
-//		assertEquals(testUser.getUserGroup(), result.getUserGroup());
-//		assertEquals(testUser.getUserName(), result.getUserName());
-//		assertEquals(testUser.getUserType(), result.getUserType());
-//	}
-	
+
 	@Test
 	public void testGetCommunityNameByUserGroup(){
 		System.out.println(userDao.getCommunityNameByUserGroup((byte) 4));
@@ -224,20 +146,20 @@ public class UserDaoTestIT {
 	public void test_GetListOfUsersForWeeklyUpdate() {
 		
 		User testUser = createUser();
-		testUser.setContract(Contract.PAYG.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYG);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract(Contract.PAYM.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYM);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract(Contract.PAYM.name());
-		testUser.setSegment(UserSegment.Business.name());
+		testUser.setContract(Contract.PAYM);
+		testUser.setSegment(SegmentType.BUSINESS);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -284,7 +206,7 @@ public class UserDaoTestIT {
 		testUser.setUserType(UserType.NORMAL);
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
-        testUser.setSegment(UserSegment.Consumer.name());
+        testUser.setSegment(SegmentType.CONSUMER);
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PAYMENT().getId());
 		testUser.setPaymentEnabled(true);
 		

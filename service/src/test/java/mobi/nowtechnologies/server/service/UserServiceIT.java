@@ -24,20 +24,17 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -87,7 +84,7 @@ public class UserServiceIT {
 	public static final Contract[] contracts = Arrays.copyOf(Contract.values(), Contract.values().length + 1);
 
 	@DataPoints
-	public static final UserSegment[] segments = UserSegment.values();
+	public static final SegmentType[] segments = SegmentType.values();
 
 	@DataPoints
 	public static final long[] lastPaymentTryMilliss = new long[] { EPOCH_SECONDS * 1000L };
@@ -117,28 +114,28 @@ public class UserServiceIT {
 	public static void generateDataPoints() throws Exception {
 		User o2ConsumerUser = new User();
 		o2ConsumerUser.setProvider(Provider.o2.name());
-		o2ConsumerUser.setSegment(UserSegment.Consumer.name());
-		o2ConsumerUser.setContract(Contract.PAYG.name());
+		o2ConsumerUser.setSegment(SegmentType.CONSUMER);
+		o2ConsumerUser.setContract(Contract.PAYG);
 
 		User o2BussinessUser = new User();
 		o2BussinessUser.setProvider(Provider.o2.name());
-		o2BussinessUser.setSegment(UserSegment.Consumer.name());
-		o2BussinessUser.setContract(Contract.PAYG.name());
+		o2BussinessUser.setSegment(SegmentType.CONSUMER);
+		o2BussinessUser.setContract(Contract.PAYG);
 
 		User o2ConsumerPaymUser = new User();
 		o2ConsumerPaymUser.setProvider(Provider.o2.name());
-		o2ConsumerPaymUser.setSegment(UserSegment.Consumer.name());
-		o2ConsumerPaymUser.setContract(Contract.PAYM.name());
+		o2ConsumerPaymUser.setSegment(SegmentType.CONSUMER);
+		o2ConsumerPaymUser.setContract(Contract.PAYM);
 
 		User o2BussinessPaygUser = new User();
 		o2BussinessPaygUser.setProvider(Provider.o2.name());
-		o2BussinessPaygUser.setSegment(UserSegment.Consumer.name());
-		o2BussinessPaygUser.setContract(Contract.PAYG.name());
+		o2BussinessPaygUser.setSegment(SegmentType.CONSUMER);
+		o2BussinessPaygUser.setContract(Contract.PAYG);
 
 		User notO2User = new User();
 		notO2User.setProvider(Provider.non_o2.name());
-		notO2User.setSegment(UserSegment.Consumer.name());
-		notO2User.setContract(Contract.PAYG.name());
+		notO2User.setSegment(SegmentType.CONSUMER);
+		notO2User.setContract(Contract.PAYG);
 
 		User chartsNowUser = new User();
 

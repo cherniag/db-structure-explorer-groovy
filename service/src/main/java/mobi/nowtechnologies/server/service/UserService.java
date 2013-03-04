@@ -566,41 +566,6 @@ public class UserService {
 		Community community = CommunityDao.getMapAsNames().get(userRegInfo.getCommunityName());
 		user = findById(user.getId());
 		createPaymentDetails(userRegInfo, user, community);
-		/*
-		 * String paymentType = userRegInfo.getPaymentType(); if (paymentType.equals(UserRegInfoServer.PaymentType.PAY_PAL)) throw new ServiceException(
-		 * "Coudn't update payment details with current payment type. It can't be [" + UserRegInfoServer.PaymentType.PAY_PAL + "]");
-		 * 
-		 * int paymentStatus = user.getPaymentStatus(); boolean isUserInPaymentProcessing = isUserInPaymentProcessing(user); if (isUserInPaymentProcessing){
-		 * 
-		 * ServiceException serviceException = new ServiceException("User has incorrect status [" + PaymentStatusDao.getMapIdAsKey().get(paymentStatus) + "] to update payment details");
-		 * 
-		 * String localizedMessage = messageSource.getMessage(PAYD_CC_ERROR, null, locale);
-		 * 
-		 * serviceException.setLocalizedMessage(localizedMessage);
-		 * 
-		 * throw serviceException; } String token = null; Payment payment = null; if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD)){ try { payment = validateCreditCard(user.getId(),
-		 * userRegInfo); token = payment.getExternalTxCode(); } catch (SagePayException e) { LOGGER.error(e.getMessage(), e); user.setPaymentEnabled(false); updateUser(user); throw e; } }
-		 * 
-		 * user.setPaymentType(paymentType);
-		 * 
-		 * if (!paymentType.equals(UserRegInfoServer.PaymentType.FREEMIUM)) user.setPaymentEnabled(true);
-		 * 
-		 * String phoneNumber = userRegInfo.getPhoneNumber(); if (phoneNumber == null) userRegInfo.setPhoneNumber("");
-		 * 
-		 * user.setPin(""); String pin = "" + Utils.generateRandomPIN();
-		 * 
-		 * if (paymentType.equals(UserRegInfoServer.PaymentType.PREMIUM_USER)) { user.setOperator(userRegInfo.getOperator()); user.setMobile(userRegInfo.getPhoneNumber());
-		 * 
-		 * sendPinToUser(userRegInfo.getCommunityName(), userRegInfo.getPaymentType(), userRegInfo.getOperator(), phoneNumber, user, pin);
-		 * 
-		 * user.setPaymentStatus(PaymentStatusDao.getPIN_PENDING().getId()); } else if (paymentType .equals(UserRegInfoServer.PaymentType.CREDIT_CARD) && paymentStatus !=
-		 * PaymentStatusDao.getNULL().getId() && user.getStatus() != UserStatus.EULA.getCode() && user.getSubBalance() == 0) user.setPaymentStatus (PaymentStatusDao.getAWAITING_PAYMENT().getId());
-		 * else{ user.setPaymentStatus(PaymentStatusDao.getNULL().getId()); }
-		 * 
-		 * saveOrUpdateUserWithPaymentDetails(user, token, userRegInfo);
-		 * 
-		 * if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD)) saveInitialPayment(payment, user.getId());
-		 */
 	}
 
 	public boolean isUserInPaymentProcessing(User user) {
@@ -1052,30 +1017,6 @@ public class UserService {
 		return createPaymentDetails;
 	}
 
-	/*
-	 * @Deprecated private void continueRegistrationAccordingToPaymentType(final User user, final UserRegInfo userRegInfo, final String communityName) { if (user == null) throw new ServiceException(
-	 * "The parameter user is null"); if (userRegInfo == null) throw new ServiceException( "The parameter userRegInfo is null"); if (communityName == null) throw new ServiceException(
-	 * "The parameter communityName is null"); LOGGER.debug( "input parameters user, promotionCode, communityName: [{}], [{}], [{}]", new Object[] { user, userRegInfo, communityName });
-	 * 
-	 * Payment payment = null;
-	 * 
-	 * String paymentType = userRegInfo.getPaymentType(); PaymentDetailsValidator.validate(userRegInfo);
-	 * 
-	 * String token = null; if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD)) { payment = validateCreditCard(0, userRegInfo); token = payment.getExternalTxCode();
-	 * user.setPaymentEnabled(true); } user.setPaymentType(paymentType);
-	 * 
-	 * setPaymentStatusAccoringToPaymentType(user);
-	 * 
-	 * user.setStatus(UserStatus.EULA.code); String pin = String.valueOf(Utils.generateRandomPIN());
-	 * 
-	 * if (paymentType.equals(UserRegInfoServer.PaymentType.PREMIUM_USER)) { sendPinToUser(userRegInfo.getCommunityName(), userRegInfo .getPaymentType(), userRegInfo.getOperator(),
-	 * userRegInfo.getPhoneNumber(), user, pin); }
-	 * 
-	 * if (!paymentType.equals(UserRegInfoServer.PaymentType.UNKNOWN)) saveOrUpdateUserWithPaymentDetails(user, token, userRegInfo); else entityService.saveEntity(user); updateUserOTALink(user,
-	 * Utils.getOTACode(user.getId(), user.getUserName()));
-	 * 
-	 * // if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD)) // saveInitialPayment(payment, user.getId()); }
-	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	private void applyPromotionByPromoCode(final User user, final String promotionCode) {
 		Validate.notNull(user, "The parameter user is null");
@@ -1098,61 +1039,6 @@ public class UserService {
         return community.getName();
     }
 
-    // TODO remove this method
-	@Deprecated
-	void saveOrUpdateUserWithPaymentDetails(final User user,
-			final String token, final UserRegInfo userRegInfo) {
-		/*
-		 * if (user == null) throw new ServiceException("The parameter user is null"); if (userRegInfo == null) throw new ServiceException("The parameter userRegInfo is null");
-		 * 
-		 * LOGGER.debug( "input parameters user, token, userRegInfo: [{}], [{}], [{}]", new Object[] { user, token, userRegInfo }); String paymentType = userRegInfo.getPaymentType();
-		 * 
-		 * byte communtyId = CommunityDao.getMapAsNames().get( userRegInfo.getCommunityName()).getId();
-		 * 
-		 * final boolean isUserAlreadyExsist = (user.getId() != 0);
-		 * 
-		 * int operatorId = userRegInfo.getOperator(); PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy( operatorId, paymentType, communtyId);
-		 * 
-		 * final Operator operator = Operator.getMapAsIds().get(operatorId); String phoneNumber = userRegInfo.getPhoneNumber();
-		 * 
-		 * PaymentDetails paymentDetails; if (!isUserAlreadyExsist) { paymentDetails = PaymentDetailsService.getPaymentDetails( paymentType, token, operator, phoneNumber);
-		 * entityService.saveEntity(user); } else { paymentDetails = getPaymentDetailsForUserUpdate(user, token, paymentType, operator, phoneNumber); entityService.updateEntity(user); }
-		 * 
-		 * paymentDetails.setPaymentPolicy(paymentPolicy);
-		 * 
-		 * if (paymentDetails.getI() != null) entityService.updateEntity(paymentDetails); else entityService.saveEntity(paymentDetails);
-		 * 
-		 * user.setCurrentPaymentDetails(paymentDetails); entityService.updateEntity(user);
-		 */
-	}
-
-	// PaymentDetails getPaymentDetailsForUserUpdate(final User user,
-	// final String token, String paymentType, final Operator operator,
-	// String phoneNumber) {
-	// if (user == null)
-	// throw new ServiceException("The parameter user is null");
-	// if (paymentType == null)
-	// throw new ServiceException("The parameter paymentType is null");
-	//
-	// LOGGER
-	// .debug(
-	// "input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-	// new Object[] { user, token, paymentType, operator,
-	// phoneNumber });
-	//
-	// PaymentDetails paymentDetails = paymentDetailsService
-	// .findPaymentDetails(paymentType, user.getId());
-	// if (paymentDetails == null)
-	// paymentDetails = PaymentDetailsService.getPaymentDetails(
-	// paymentType, token, operator, phoneNumber);
-	// else
-	// paymentDetails = PaymentDetailsService.populatePaymentDetails(
-	// paymentDetails, paymentType, token, operator, phoneNumber);
-	//
-	// LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-	// return paymentDetails;
-	// }
-
 	// TODO remove this method
 	@Deprecated
 	PaymentDetails getPaymentDetailsForUserUpdate(final User user,
@@ -1163,9 +1049,7 @@ public class UserService {
 		if (paymentType == null)
 			throw new ServiceException("The parameter paymentType is null");
 
-		LOGGER
-				.debug(
-                        "input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
+		LOGGER.debug("input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
                         new Object[]{user, token, paymentType, operator,
                                 phoneNumber});
 
@@ -2097,8 +1981,7 @@ public class UserService {
 		        hasPromo = true;
 	    	}
         }
-		//user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-		user.setContract(o2UserDetails.getTariff());
+		user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
 		user.setProvider(o2UserDetails.getOperator());
 		user.setActivationStatus(ActivationStatus.ACTIVATED);
     	user.setUserName(user.getMobile());
@@ -2168,22 +2051,6 @@ public class UserService {
 	@Transactional(readOnly=true)
 	public List<User> getUsersForPendingPayment() {
 		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());	
-		return users;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<User> getBefore48hExpireUsers(String[] availableProviders, String[] availableSegments, String[] availableContracts) {
-		LOGGER.debug("input availableProviders, availableSegments, availableContracts: [{}], [{}], [{}]", new Object[]{availableProviders, availableSegments, availableContracts});
-		
-		if(availableProviders == null || availableProviders.length == 0 
-				|| availableSegments == null || availableSegments.length == 0 
-				|| availableContracts == null || availableContracts.length == 0 )
-			return Collections.emptyList();
-		
-		Pageable page = new PageRequest(0, 1000);
-		List<User> users = userRepository.findBefore48hExpireUsers(getEpochSeconds(), Arrays.asList(availableProviders), Arrays.asList(availableSegments), Arrays.asList(availableContracts), page);
-		
-		LOGGER.debug("Output [{}]", users);
 		return users;
 	}
 	

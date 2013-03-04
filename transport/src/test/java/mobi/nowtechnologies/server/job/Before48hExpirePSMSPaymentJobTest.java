@@ -46,13 +46,11 @@ public class Before48hExpirePSMSPaymentJobTest {
 		String msg = "Test warning message";
 		String msgCode = availableCommunities[0]+".psms."+availableProviders[0]+"."+availableSegments[0]+"."+availableContracts[0];
 
-		when(mockUserService.getBefore48hExpireUsers(eq(availableProviders), eq(availableSegments), eq(availableContracts))).thenReturn(Collections.singletonList(user));
 		when(mockMessageSource.getMessage(eq("o2"), eq(msgCode), eq((Object[])null), eq((Locale)null))).thenReturn(msg);
 		when(mockO2ClientService.sendFreeSms(eq(user.getMobile()), eq(msg))).thenReturn(true);
 		
 		fixture.execute();
 
-		verify(mockUserService, times(1)).getBefore48hExpireUsers(eq(availableProviders), eq(availableSegments), eq(availableContracts));
 		verify(mockMessageSource, times(1)).getMessage(eq("o2"), eq(msgCode), eq((Object[])null), eq((Locale)null));
 		verify(mockO2ClientService, times(1)).sendFreeSms(eq(user.getMobile()), eq(msg));
 	}
@@ -62,7 +60,6 @@ public class Before48hExpirePSMSPaymentJobTest {
 		throws Exception {
 		fixture = new Before48hExpirePSMSPaymentJob();
 		fixture.setO2ClientService(mockO2ClientService);
-		fixture.setUserService(mockUserService);
 		fixture.setMessageSource(mockMessageSource);
 	}
 }

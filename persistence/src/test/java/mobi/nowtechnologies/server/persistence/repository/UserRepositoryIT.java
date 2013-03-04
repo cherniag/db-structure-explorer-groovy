@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -12,9 +10,9 @@ import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,13 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-/**
- * The class <code>ChartRepositoryTest</code> contains tests for the class <code>{@link ChartRepository}</code>.
- * 
- * @generatedBy CodePro at 28.05.12 17:33
- * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
@@ -44,33 +35,33 @@ public class UserRepositoryIT {
 
 		User testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYG.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYG);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYG.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYG);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYM.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYM);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		userRepository.save(testUser);
 		
 		testUser = UserFactory.createUser();
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYG.name());
-		testUser.setSegment(UserSegment.Consumer.name());
+		testUser.setContract(Contract.PAYG);
+		testUser.setSegment(SegmentType.CONSUMER);
 		
 		Pageable page = new PageRequest(0, 1);
 		
-		List<User> user = userRepository.findBefore48hExpireUsers(Utils.getEpochSeconds(), Collections.singletonList("o2"), Collections.singletonList("consumer"), Collections.singletonList("payg"), page);
+		List<User> user = userRepository.findBefore48hExpireUsers(Utils.getEpochSeconds(), "o2", SegmentType.CONSUMER, Contract.PAYG);
 
 		assertNotNull(user);
 		assertEquals(1, user.size());
