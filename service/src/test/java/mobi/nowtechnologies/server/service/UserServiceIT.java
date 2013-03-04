@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -70,7 +71,7 @@ public class UserServiceIT {
 	public enum Provider {
 		o2, non_o2
 	}
-	
+
 	public static int count;
 
 	@DataPoints
@@ -89,13 +90,16 @@ public class UserServiceIT {
 	public static final UserSegment[] segments = UserSegment.values();
 
 	@DataPoints
-	public static final long[] lastPaymentTryMilliss = new long[] { 0L };
+	public static final long[] lastPaymentTryMilliss = new long[] { EPOCH_SECONDS * 1000L };
 
 	@DataPoints
 	public static final PaymentDetailsStatus[] lastPaymentStatuss = PaymentDetailsStatus.values();
 
 	@DataPoints
 	public static final PaymentDetailsType[] paymentDetailsTypes = PaymentDetailsType.values();
+	
+	@DataPoints
+	public static mobi.nowtechnologies.server.shared.enums.UserStatus[] userStatuses = new mobi.nowtechnologies.server.shared.enums.UserStatus[]{mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED, mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED};
 
 	@DataPoints
 	public static User[] users;
@@ -180,9 +184,9 @@ public class UserServiceIT {
 
 	@Theory
 	public void test_getUsersForPendingPayment_Successful(User user, int nextSubPayment, long lastPaymentTryMillis,
-			PaymentDetailsStatus lastPaymentStatus, PaymentDetailsType paymentDetailsType) {
+			PaymentDetailsStatus lastPaymentStatus, PaymentDetailsType paymentDetailsType,  mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 
-		User expectedUser = prepareTestData(nextSubPayment, user, lastPaymentTryMillis, lastPaymentStatus, paymentDetailsType);
+		User expectedUser = prepareTestData(nextSubPayment, user, lastPaymentTryMillis, lastPaymentStatus, paymentDetailsType, userStatus);
 
 		boolean isExpectedUser = isExpectedUser(expectedUser);
 
@@ -257,8 +261,8 @@ public class UserServiceIT {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		final long lastPaymentTryMillis = user.getLastPaymentTryMillis();
 		final int nextSubPayment = user.getNextSubPayment();
-		final int dayAfterNextSubPayment = nextSubPayment + DAY_SECONDS;
-		final int twoDayAfterNextSubPayment = nextSubPayment + TWO_DAY_SECONDS;
+		final int dayAfterNextSubPaymentSeconds = nextSubPayment + DAY_SECONDS;
+		final int twoDayAfterNextSubPaymentSeconds = nextSubPayment + TWO_DAY_SECONDS;
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
@@ -267,14 +271,16 @@ public class UserServiceIT {
 				&& "PAYG".equals(user.getContract())
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
-				&& ((lastPaymentTryMillis < nextSubPayment && currentTimeSeconds > nextSubPayment) || (lastPaymentTryMillis < twoDayAfterNextSubPayment && (currentTimeSeconds > dayAfterNextSubPayment || currentTimeSeconds > twoDayAfterNextSubPayment)));
+				&& (user.getStatus().getName().equals(UserStatusDao.LIMITED) || ((lastPaymentTryMillis <= nextSubPayment * 1000L && currentTimeSeconds >= nextSubPayment)
+						|| (lastPaymentTryMillis >= nextSubPayment * 1000L && lastPaymentTryMillis <= dayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds > dayAfterNextSubPaymentSeconds) || (lastPaymentTryMillis >= twoDayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds >= twoDayAfterNextSubPaymentSeconds)));
 		return isExpectedO2User;
 	}
 
 	private User prepareTestData(int nextSubPayment, User user, long lastPaymentTryMillis, PaymentDetailsStatus lastPaymentStatus,
-			PaymentDetailsType paymentDetailsType) {
+			PaymentDetailsType paymentDetailsType, mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 		user.setNextSubPayment(nextSubPayment);
 		user.setLastPaymentTryMillis(lastPaymentTryMillis);
+		user.setStatus(UserStatusDao.getUserStatusMapUserStatusAsKey().get(userStatus));
 		entityDao.updateEntity(user);
 
 		if (lastPaymentStatus != null) {

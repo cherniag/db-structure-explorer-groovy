@@ -83,6 +83,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"join u.currentPaymentDetails pd " +
 			"join u.userGroup ug " +
 			"join ug.community c " +
+			"join u.status s " +
 			"where " +
 			"(c.rewriteUrlParameter!='o2' " +
 			"and u.subBalance=0 " +
@@ -94,7 +95,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 			"and u.contract='PAYG' " +
 			"and TYPE(pd) = O2PSMSPaymentDetails " +
 			"and pd.lastPaymentStatus<>'AWAITING' "+
-			"and ((u.nextSubPayment<=?1 and u.lastPaymentTryMillis<u.nextSubPayment) or  ((u.nextSubPayment+86400000<=?1 or u.nextSubPayment+172800000<=?1) and u.lastPaymentTryMillis<=u.nextSubPayment+172800000))) " +
+			"and (s.name='LIMITED' or ((u.nextSubPayment<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000) or  (u.nextSubPayment+86400<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000+86400000 and u.lastPaymentTryMillis>=u.nextSubPayment*1000) or (u.nextSubPayment+172800<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000+172800000)  ))) " +
 			"or (u.provider<>'o2' and u.nextSubPayment<=?1+86400 " +
 			"and (pd.lastPaymentStatus='NONE' " +
 			"or pd.lastPaymentStatus='SUCCESSFUL'))) " +
