@@ -312,7 +312,7 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() - ONE_DAY_SECONDS;
 		int subBalance = 0;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertEquals(nextSubPayment, result);
@@ -330,7 +330,7 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 1;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertEquals(nextSubPayment+WEEK_SECONDS, result);
@@ -348,11 +348,35 @@ public class UtilsTest {
 		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 5;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
 
 		// add additional test code here
 		assertTrue((nextSubPayment +(subBalance) * WEEK_SECONDS) <= result);
 		assertTrue((nextSubPayment +(subBalance) * WEEK_SECONDS) >= result);
+	}
+	
+	@Test
+	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentOverOneDayAndSubBalanceIs5GraceDurationSecondsIs3_Success() throws Exception {
+		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
+		int subBalance = 5;
+		int graceDurationSeconds = 3;
+
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds);
+
+		// add additional test code here
+		assertEquals((nextSubPayment +(subBalance) * WEEK_SECONDS + graceDurationSeconds), result);
+	}
+	
+	@Test
+	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentWasOneDayAgoAndSubBalanceIs5GraceDurationSecondsIs3_Success() throws Exception {
+		int nextSubPayment = Utils.getEpochSeconds() - ONE_DAY_SECONDS;
+		int subBalance = 5;
+		int graceDurationSeconds = 3;
+
+		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds);
+
+		// add additional test code here
+		assertEquals((nextSubPayment + graceDurationSeconds), result);
 	}
 
 	/**

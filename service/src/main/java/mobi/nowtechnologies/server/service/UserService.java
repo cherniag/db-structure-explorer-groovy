@@ -1082,11 +1082,14 @@ public class UserService {
 		boolean isNonO2User = isNonO2User(user);
 		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
 		
+		boolean wasInLimitedStatus = UserStatusDao.getLimitedUserStatus().getName().equals(user.getStatus().getName());
+		
 		if (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)){
-			if (UserStatusDao.getLimitedUserStatus().getI() != user.getStatus().getI()) {
+			if (!wasInLimitedStatus) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - getO2PSMSGraceCreditSeconds(user));
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - (int)(user.getFullGraceCreditMillis()/1000));
+				user.setFullGraceCreditMillis(0L);
 			}
 		}else if(!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) ){
 			// Update user balance
@@ -1109,7 +1112,7 @@ public class UserService {
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
-		if (UserStatusDao.getLimitedUserStatus().getI() == user.getStatus().getI() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
+		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
 			if(!isNonO2User && !(isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))){
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
@@ -1174,7 +1177,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds, getGraceDurationSeconds(user));
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
@@ -1191,7 +1194,7 @@ public class UserService {
 				accountCheckDTO.setHasOffers(true);
 		}
 		
-		accountCheckDTO.setGraceCredit(getO2PSMSGraceCreditSeconds(user));
+		accountCheckDTO.setGraceCreditSeconds(getO2PSMSGraceCreditSeconds(user));
 		
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -1400,7 +1403,7 @@ public class UserService {
 
 		User user = findById(userId);
 
-		AccountDto accountDto = user.toAccountDto();
+		AccountDto accountDto = user.toAccountDto(getGraceDurationSeconds(user));
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1444,7 +1447,7 @@ public class UserService {
 
 		updateUser(user);
 
-		accountDto = user.toAccountDto();
+		accountDto = user.toAccountDto(getGraceDurationSeconds(user));
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1714,7 +1717,9 @@ public class UserService {
 	public int getGraceDurationSeconds(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
 		
-		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "o2.payment.psms.grace.duration.seconds", null, null);
+		final String code = user.getProvider() + ".provider." + user.getSegment()
+				+ ".segment." + user.getContract() + ".contract.payment.psms.grace.duration.seconds";
+		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), code, null, null);
 		int graceDurationSeconds;
 		try{
 			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);

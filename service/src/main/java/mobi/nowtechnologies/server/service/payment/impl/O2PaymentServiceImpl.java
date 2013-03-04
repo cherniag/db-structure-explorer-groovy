@@ -100,6 +100,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 					reson = "The payment attempt was unsuccesed for user in LIMITED status";
 				}else{
 					reson = "Grace period expired";
+					user.setFullGraceCreditMillis(userService.getGraceDurationSeconds(user)*1000L);
 				}
 				
 				user.setStatus(UserStatusDao.getLimitedUserStatus());
