@@ -1,12 +1,25 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-import org.hibernate.validator.util.Contracts;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +29,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static org.junit.Assert.*;
 
 /**
  * The class <code>UserDaoTest</code> contains tests for the class <code>{@link UserDao}</code>.
@@ -220,20 +224,20 @@ public class UserDaoTestIT {
 	public void test_GetListOfUsersForWeeklyUpdate() {
 		
 		User testUser = createUser();
-		testUser.setContract(Contract.PAYG);
-		testUser.setSegment(CONSUMER);
+		testUser.setContract(Contract.PAYG.name());
+		testUser.setSegment(UserSegment.Consumer.name());
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract(PAYM);
-		testUser.setSegment(CONSUMER);
+		testUser.setContract(Contract.PAYM.name());
+		testUser.setSegment(UserSegment.Consumer.name());
 		
 		entityDao.saveEntity(testUser);
 		
 		testUser = createUser();
-		testUser.setContract(PAYM);
-		testUser.setSegment(BUSINESS);
+		testUser.setContract(Contract.PAYM.name());
+		testUser.setSegment(UserSegment.Business.name());
 		
 		entityDao.saveEntity(testUser);
 		
@@ -280,7 +284,7 @@ public class UserDaoTestIT {
 		testUser.setUserType(UserType.NORMAL);
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
-        testUser.setSegment(SegmentType.CONSUMER);
+        testUser.setSegment(UserSegment.Consumer.name());
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PAYMENT().getId());
 		testUser.setPaymentEnabled(true);
 		

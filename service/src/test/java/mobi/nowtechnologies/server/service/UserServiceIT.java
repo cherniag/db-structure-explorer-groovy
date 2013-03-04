@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -27,17 +24,20 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,7 +71,7 @@ public class UserServiceIT {
 	public enum Provider {
 		o2, non_o2
 	}
-	
+
 	public static int count;
 
 	@DataPoints
@@ -87,16 +87,19 @@ public class UserServiceIT {
 	public static final Contract[] contracts = Arrays.copyOf(Contract.values(), Contract.values().length + 1);
 
 	@DataPoints
-	public static final SegmentType[] segments = SegmentType.values();
+	public static final UserSegment[] segments = UserSegment.values();
 
 	@DataPoints
-	public static final long[] lastPaymentTryMilliss = new long[] { 0L };
+	public static final long[] lastPaymentTryMilliss = new long[] { EPOCH_SECONDS * 1000L };
 
 	@DataPoints
 	public static final PaymentDetailsStatus[] lastPaymentStatuss = PaymentDetailsStatus.values();
 
 	@DataPoints
 	public static final PaymentDetailsType[] paymentDetailsTypes = PaymentDetailsType.values();
+	
+	@DataPoints
+	public static mobi.nowtechnologies.server.shared.enums.UserStatus[] userStatuses = new mobi.nowtechnologies.server.shared.enums.UserStatus[]{mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED, mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED};
 
 	@DataPoints
 	public static User[] users;
@@ -114,28 +117,28 @@ public class UserServiceIT {
 	public static void generateDataPoints() throws Exception {
 		User o2ConsumerUser = new User();
 		o2ConsumerUser.setProvider(Provider.o2.name());
-		o2ConsumerUser.setSegment(CONSUMER);
-		o2ConsumerUser.setContract(PAYG);
+		o2ConsumerUser.setSegment(UserSegment.Consumer.name());
+		o2ConsumerUser.setContract(Contract.PAYG.name());
 
 		User o2BussinessUser = new User();
 		o2BussinessUser.setProvider(Provider.o2.name());
-		o2BussinessUser.setSegment(CONSUMER);
-		o2BussinessUser.setContract(PAYG);
+		o2BussinessUser.setSegment(UserSegment.Consumer.name());
+		o2BussinessUser.setContract(Contract.PAYG.name());
 
 		User o2ConsumerPaymUser = new User();
 		o2ConsumerPaymUser.setProvider(Provider.o2.name());
-		o2ConsumerPaymUser.setSegment(CONSUMER);
-		o2ConsumerPaymUser.setContract(PAYM);
+		o2ConsumerPaymUser.setSegment(UserSegment.Consumer.name());
+		o2ConsumerPaymUser.setContract(Contract.PAYM.name());
 
 		User o2BussinessPaygUser = new User();
 		o2BussinessPaygUser.setProvider(Provider.o2.name());
-		o2BussinessPaygUser.setSegment(CONSUMER);
-		o2BussinessPaygUser.setContract(PAYG);
+		o2BussinessPaygUser.setSegment(UserSegment.Consumer.name());
+		o2BussinessPaygUser.setContract(Contract.PAYG.name());
 
 		User notO2User = new User();
 		notO2User.setProvider(Provider.non_o2.name());
-		notO2User.setSegment(CONSUMER);
-		notO2User.setContract(PAYG);
+		notO2User.setSegment(UserSegment.Consumer.name());
+		notO2User.setContract(Contract.PAYG.name());
 
 		User chartsNowUser = new User();
 
@@ -181,9 +184,9 @@ public class UserServiceIT {
 
 	@Theory
 	public void test_getUsersForPendingPayment_Successful(User user, int nextSubPayment, long lastPaymentTryMillis,
-			PaymentDetailsStatus lastPaymentStatus, PaymentDetailsType paymentDetailsType) {
+			PaymentDetailsStatus lastPaymentStatus, PaymentDetailsType paymentDetailsType,  mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 
-		User expectedUser = prepareTestData(nextSubPayment, user, lastPaymentTryMillis, lastPaymentStatus, paymentDetailsType);
+		User expectedUser = prepareTestData(nextSubPayment, user, lastPaymentTryMillis, lastPaymentStatus, paymentDetailsType, userStatus);
 
 		boolean isExpectedUser = isExpectedUser(expectedUser);
 
@@ -258,8 +261,8 @@ public class UserServiceIT {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		final long lastPaymentTryMillis = user.getLastPaymentTryMillis();
 		final int nextSubPayment = user.getNextSubPayment();
-		final int dayAfterNextSubPayment = nextSubPayment + DAY_SECONDS;
-		final int twoDayAfterNextSubPayment = nextSubPayment + TWO_DAY_SECONDS;
+		final int dayAfterNextSubPaymentSeconds = nextSubPayment + DAY_SECONDS;
+		final int twoDayAfterNextSubPaymentSeconds = nextSubPayment + TWO_DAY_SECONDS;
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
@@ -268,14 +271,16 @@ public class UserServiceIT {
 				&& "PAYG".equals(user.getContract())
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
-				&& ((lastPaymentTryMillis < nextSubPayment && currentTimeSeconds > nextSubPayment) || (lastPaymentTryMillis < twoDayAfterNextSubPayment && (currentTimeSeconds > dayAfterNextSubPayment || currentTimeSeconds > twoDayAfterNextSubPayment)));
+				&& (user.getStatus().getName().equals(UserStatusDao.LIMITED) || ((lastPaymentTryMillis <= nextSubPayment * 1000L && currentTimeSeconds >= nextSubPayment)
+						|| (lastPaymentTryMillis >= nextSubPayment * 1000L && lastPaymentTryMillis <= dayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds > dayAfterNextSubPaymentSeconds) || (lastPaymentTryMillis >= twoDayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds >= twoDayAfterNextSubPaymentSeconds)));
 		return isExpectedO2User;
 	}
 
 	private User prepareTestData(int nextSubPayment, User user, long lastPaymentTryMillis, PaymentDetailsStatus lastPaymentStatus,
-			PaymentDetailsType paymentDetailsType) {
+			PaymentDetailsType paymentDetailsType, mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 		user.setNextSubPayment(nextSubPayment);
 		user.setLastPaymentTryMillis(lastPaymentTryMillis);
+		user.setStatus(UserStatusDao.getUserStatusMapUserStatusAsKey().get(userStatus));
 		entityDao.updateEntity(user);
 
 		if (lastPaymentStatus != null) {

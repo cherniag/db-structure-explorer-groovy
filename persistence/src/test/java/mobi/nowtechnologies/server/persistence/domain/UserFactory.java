@@ -8,11 +8,9 @@ import java.util.List;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 
 
 /**
@@ -110,8 +108,8 @@ public class UserFactory
 		testUser.setPaymentStatus(paymentStatus.getId());
 		testUser.setPaymentEnabled(true);
 		testUser.setProvider("o2");
-		testUser.setContract(Contract.PAYG);
-		testUser.setSegment(CONSUMER);
+		testUser.setContract(Contract.PAYG.name());
+		testUser.setSegment(UserSegment.Consumer.name());
 		return testUser;
 	}
 
