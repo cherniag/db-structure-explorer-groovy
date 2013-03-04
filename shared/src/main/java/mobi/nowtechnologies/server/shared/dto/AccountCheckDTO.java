@@ -61,16 +61,16 @@ public class AccountCheckDTO {
     private String provider;
     private String contract;
     private String segment;
-    private int graceCredit;
+    private int graceCreditSeconds;
     
 	private String lastSubscribedPaymentSystem;
-	
-	public int getGraceCredit() {
-		return graceCredit;
+
+	public int getGraceCreditSeconds() {
+		return graceCreditSeconds;
 	}
 
-	public void setGraceCredit(int graceCredit) {
-		this.graceCredit = graceCredit;
+	public void setGraceCreditSeconds(int graceCreditSeconds) {
+		this.graceCreditSeconds = graceCreditSeconds;
 	}
 
 	public String getContract() {
@@ -376,7 +376,7 @@ public class AccountCheckDTO {
 				+ ", promotionLabel=" + promotionLabel + ", fullyRegistred=" + fullyRegistred + ", oAuthProvider=" + oAuthProvider + ", isPromotedDevice=" + isPromotedDevice + ", promotedWeeks="
 				+ promotedWeeks + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", hasOffers=" + hasOffers + ", isFreeTrial=" + isFreeTrial + ", lastPaymentStatus="
 				+ lastPaymentStatus + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", activation=" + activation + ", appStoreProductId=" + appStoreProductId + ", provider=" + provider
-				+ ", contract=" + contract + ", segment=" + segment + ", graceCredit=" + graceCredit + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem + "]";
+				+ ", contract=" + contract + ", segment=" + segment + ", graceCreditSeconds=" + graceCreditSeconds + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem + "]";
 	}
 
 }

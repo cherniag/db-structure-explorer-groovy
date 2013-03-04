@@ -1310,7 +1310,7 @@ public class UserService {
 				accountCheckDTO.setHasOffers(true);
 		}
 		
-		accountCheckDTO.setGraceCredit(getO2PSMSGraceCreditSeconds(user));
+		accountCheckDTO.setGraceCreditSeconds(getO2PSMSGraceCreditSeconds(user));
 		
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
