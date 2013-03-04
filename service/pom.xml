@@ -94,6 +94,12 @@
 		<!-- END Security -->
 		
 		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws</artifactId>
+			<classifier>all</classifier>
+		</dependency>
+		
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
