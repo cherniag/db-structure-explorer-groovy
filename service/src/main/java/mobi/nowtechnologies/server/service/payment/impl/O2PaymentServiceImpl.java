@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
@@ -82,16 +83,30 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.debug("input parameters pendingPayment, response: [{}], [{}]", pendingPayment, response);
 
-		final User user = pendingPayment.getUser();
+		final User user = pendingPayment.getUser();	
 		user.setLastPaymentTryMillis(Utils.getEpochMillis());
 		
 		SubmittedPayment submittedPayment = super.commitPayment(pendingPayment, response);
 		
 		final PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+		final boolean isUserInLimitedStatus = user.getStatus().getName().equals(UserStatusDao.LIMITED);
 		
-		if (!response.isSuccessful() && userService.mustTheAttemptsOfPaymentContinue(user)){
-			paymentDetails.setActivated(true);
+		if (!response.isSuccessful()){
+			if(!isUserInLimitedStatus && userService.mustTheAttemptsOfPaymentContinue(user)){
+				paymentDetails.setActivated(true);
+			}else{
+				final String reson;
+				if (isUserInLimitedStatus){
+					reson = "The payment attempt was unsuccesed for user in LIMITED status";
+				}else{
+					reson = "Grace period expired";
+				}
+				
+				user.setStatus(UserStatusDao.getLimitedUserStatus());
+				userService.unsubscribeUser(user, reson);				
+			}
 		}
+		
 		
 		
 		LOGGER.debug("Output parameter submittedPayment=[{}]", submittedPayment);
