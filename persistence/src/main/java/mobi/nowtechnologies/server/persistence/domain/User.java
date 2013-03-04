@@ -253,6 +253,9 @@ public class User implements Serializable {
 	
 	@Column(name="last_payment_try_millis", columnDefinition="BIGINT default 0")
 	private long lastPaymentTryMillis;
+	
+	@Column(name="full_grace_credit_millis")
+	private long fullGraceCreditMillis;
 
 	public User() {
 		setDisplayName("");
@@ -1036,6 +1039,14 @@ public class User implements Serializable {
 		this.lastPaymentTryMillis = lastPaymentTryMillis;
 	}
 
+	public long getFullGraceCreditMillis() {
+		return fullGraceCreditMillis;
+	}
+
+	public void setFullGraceCreditMillis(long fullGraceCreditMillis) {
+		this.fullGraceCreditMillis = fullGraceCreditMillis;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
@@ -1054,7 +1065,7 @@ public class User implements Serializable {
 				+ title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
 				+ canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis=" + freeTrialStartedTimestampMillis + ", activationStatus="
 				+ activationStatus + ", provider=" + provider + ", contract=" + contract + ", segment=" + segment + ", lastPaymentTryMillis="
-				+ lastPaymentTryMillis  + "]";
+				+ lastPaymentTryMillis +", fullGraceCreditMillis=" + fullGraceCreditMillis  + "]";
 	}
 
 	/**
