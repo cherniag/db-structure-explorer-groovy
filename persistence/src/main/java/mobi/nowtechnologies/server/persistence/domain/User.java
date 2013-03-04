@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.enums.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -163,7 +162,8 @@ public class User implements Serializable {
 
     private String pin;
 
-    private String paymentType;
+    @Enumerated(EnumType.STRING)
+    private mobi.nowtechnologies.server.persistence.domain.enums.PaymentType paymentType;
 
     @Column(name = "activation_status")
     @Enumerated(EnumType.STRING)
@@ -646,11 +646,11 @@ public class User implements Serializable {
     }
 
     public String getPaymentType() {
-        return paymentType;
+        return paymentType.toString();
     }
 
     public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
+        this.paymentType = mobi.nowtechnologies.server.persistence.domain.enums.PaymentType.valueOf(paymentType);
     }
 
     /*
@@ -824,17 +824,17 @@ public class User implements Serializable {
     protected String getOldPaymentType(PaymentDetails paymentDetails) {
         if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
-            return PaymentType.ITUNES_SUBSCRIPTION;
+            return "ITUNES_SUBSCRIPTION";
         }else if (null == paymentDetails)
-            return PaymentType.UNKNOWN;
+            return "UNKNOWN";
         if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-            return PaymentType.CREDIT_CARD;
+            return "creditCard";
         } else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-            return PaymentType.PAY_PAL;
+            return "PAY_PAL";
         } else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-            return PaymentType.PREMIUM_USER;
+            return "PSMS";
         }
-        return PaymentType.UNKNOWN;
+        return "UNKNOWN";
     }
 
     protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
