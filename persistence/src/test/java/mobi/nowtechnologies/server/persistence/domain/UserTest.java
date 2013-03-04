@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserSegment;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -224,6 +225,7 @@ public class UserTest {
 	}
 	
 	@Test
+    @Ignore("Should be deleted after Vova's M investigations.")
 	public void isO2Consumer_emptySegment_Success(){
 
 		Community community = new Community();

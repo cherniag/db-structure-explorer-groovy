@@ -5,12 +5,6 @@
 <div class="header">
 <div class="gradient_border">&#160;</div>
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-	<%--
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<input class="button accounts" class="buttonTop" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='page.main.menu.my.account' />" />
-	</div>			
-	--%>
 </div>
 <div class="container">
     <c:set var="accountBannerON">

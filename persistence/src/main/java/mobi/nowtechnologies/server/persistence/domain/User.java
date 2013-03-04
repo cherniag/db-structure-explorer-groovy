@@ -299,7 +299,7 @@ public class User implements Serializable {
 	    }
 
 	    public boolean isO2Business() {
-	        return segment.equals(UserSegment.Business.name());
+	        return isO2User() && segment.equals(UserSegment.Business.name());
 	    }
 
 	public boolean isO2PAYGConsumer() {
@@ -310,9 +310,7 @@ public class User implements Serializable {
 	}
 	
 	public boolean isO2Consumer() {
-		Community community = userGroup.getCommunity();
-
-		boolean isO2Consumer = "o2".equals(provider) && "o2".equals(community.getRewriteUrlParameter()) && UserSegment.Consumer.name().equals(segment);
+		boolean isO2Consumer = isO2User() && UserSegment.Consumer.name().equals(segment);
 
 		return isO2Consumer;
 	}
