@@ -125,7 +125,7 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if(user.isNotO2Client()){
+        if(user.isNonO2User()){
             if (!userService.isIOsNonO2ItunesSubscribedUser(user)) {
                 return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
             }
@@ -135,7 +135,7 @@ public class PaymentsController extends CommonController {
 
     private String paymentsNoteMessage(Locale locale, User user) {
         String paymentsNoteMsg;
-        if (user.isO2Client()) {
+        if (user.isO2User()) {
             String code_1 = PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract();
             String code_2 = PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider();
 

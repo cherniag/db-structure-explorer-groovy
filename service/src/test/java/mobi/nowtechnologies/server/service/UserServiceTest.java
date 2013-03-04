@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -11,12 +12,42 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import mobi.nowtechnologies.server.persistence.dao.*;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import mobi.nowtechnologies.server.persistence.dao.UserDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPaymentFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -35,7 +66,10 @@ import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserSegment;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -2175,7 +2209,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2194,7 +2228,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {};
 		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2213,7 +2247,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = null;
 		String[] availableSegments = {UserSegment.Consumer.name()};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), anyListOf(String.class), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2232,7 +2266,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = {};
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), eq(Arrays.asList(availableSegments)), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));
@@ -2251,7 +2285,7 @@ public class UserServiceTest {
 
 		String[] availableProviders = {"o2"};
 		String[] availableSegments = null;
-		String[] availableContracts = {Contract.PAYG.name()};
+		String[] availableContracts = {PAYG.name()};
 
 		Pageable page = new PageRequest(0, 1000);
 		Mockito.when(mockUserRepository.findBefore48hExpireUsers(anyInt(), eq(Arrays.asList(availableProviders)), anyListOf(String.class), eq(Arrays.asList(availableContracts)), eq(page))).thenReturn(Collections.singletonList(user));

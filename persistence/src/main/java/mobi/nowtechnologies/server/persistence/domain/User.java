@@ -284,6 +284,11 @@ public class User implements Serializable {
 
 	        return false;
 	    }
+	    
+		public boolean isO2User() {
+        	Community community = this.getUserGroup().getCommunity();
+	        return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
+        }
 
 	    public boolean isO2Client() {
 	        return "o2".equals(this.provider);
@@ -294,7 +299,7 @@ public class User implements Serializable {
 	    }
 
 	    public boolean isO2Business() {
-	        return false;//TODO
+	        return segment.equals(UserSegment.Business.name());
 	    }
 
 	public boolean isO2PAYGConsumer() {

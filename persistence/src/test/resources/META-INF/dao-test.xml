@@ -17,13 +17,14 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 		<property name="password" value="Cha3t5N0w1" />
 	</bean>
 
-
  <bean id="persistence.DataSource" 
  	class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
  	<property name="driverClassName" value="com.mysql.jdbc.Driver" /> 
- 	<property name="url" value="jdbc:mysql://localhost:3306/chartsnow" /> 
+ 	<property name="url" value="jdbc:mysql://localhost:3306/chartsnow" />
+     <property name="username" value="root" />
  </bean> 
 -->
+
 
 
 <bean id="persistence.EntityManagerFactory"
@@ -34,12 +35,12 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="false" />
 				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
-<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" /> -->
+<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
 			</bean>
 		</property>
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.import_files">/META-INF/init-test.sql</prop>
 			</props>
