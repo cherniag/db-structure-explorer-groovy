@@ -301,11 +301,11 @@ public class User implements Serializable {
     }
 
     public boolean isO2Business() {
-        return isO2User() && segment.equals(BUSINESS);
+        return isO2User() && BUSINESS.equals(segment);
     }
 
     public boolean isO2Consumer() {
-        return  isO2User() && segment.equals(CONSUMER);
+        return  isO2User() && CONSUMER.equals(segment);
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
