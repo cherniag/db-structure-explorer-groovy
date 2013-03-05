@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.*;
@@ -252,6 +253,9 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char")
     private SegmentType segment;
+
+    @Column(name="full_grace_credit_millis")
+    private long fullGraceCreditMillis;
 
     public User() {
         setDisplayName("");
@@ -753,7 +757,7 @@ public class User implements Serializable {
             potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
     }
 
-    public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
+    public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds, int currentGraceDurationSeconds) {
         Chart chart = userGroup.getChart();
         News news = userGroup.getNews();
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
@@ -769,7 +773,14 @@ public class User implements Serializable {
         accountCheckDTO.setChartItems(chart.getNumTracks());
         setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
+        int graceDurationSeconds;
+        if (UserStatus.LIMITED.equals(status.getName())) {
+            graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+        } else {
+            graceDurationSeconds = currentGraceDurationSeconds;
+        }
+
+        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds));
         if (null != getCurrentPaymentDetails())
             accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
 
@@ -889,7 +900,7 @@ public class User implements Serializable {
         return null;
     }
 
-    public AccountDto toAccountDto() {
+    public AccountDto toAccountDto(int currentGraceDurationSeconds) {
         AccountDto accountDto = new AccountDto();
         accountDto.setEmail(userName);
         accountDto.setPhoneNumber(mobile);
@@ -908,7 +919,14 @@ public class User implements Serializable {
             throw new PersistenceException("Couldn't recognize the user subscription");
 
         accountDto.setSubscription(subscription);
-        accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
+        int graceDurationSeconds;
+        if (UserStatus.LIMITED.equals(status.getName())) {
+            graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+        } else {
+            graceDurationSeconds = currentGraceDurationSeconds;
+        }
+
+        accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds) * 1000L));
         if (potentialPromotion != null)
             accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
         LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
@@ -1011,24 +1029,70 @@ public class User implements Serializable {
     public void setLastPaymentTryMillis(long lastPaymentTryMillis) {
         this.lastPaymentTryMillis = lastPaymentTryMillis;
     }
+    public long getFullGraceCreditMillis() {
+        return fullGraceCreditMillis;
+    }
+
+    public void setFullGraceCreditMillis(long fullGraceCreditMillis) {
+        this.fullGraceCreditMillis = fullGraceCreditMillis;
+    }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID
-                + ", subBalance=" + subBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId
-                + ", nextSubPayment=" + nextSubPayment + ", isFreeTrial=" + isOnFreeTrial() + ", currentPaymentDetailsId=" + currentPaymentDetailsId
-                + ", lastPaymentTx=" + lastPaymentTx + ", token=" + token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType
-                + ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId="+appStoreOriginalTransactionId
-                + ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries=" + numPsmsRetries + ", lastSuccessfulPaymentTimeMillis="
-                + lastSuccessfulPaymentTimeMillis + ", amountOfMoneyToUserNotification=" + amountOfMoneyToUserNotification + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
-                + ", lastSuccesfullPaymentSmsSendingTimestampMillis=" + lastSuccesfullPaymentSmsSendingTimestampMillis + ", potentialPromoCodePromotionId="
-                + potentialPromoCodePromotionId + ", potentialPromotionId=" + potentialPromotionId + ", pin=" + pin + ", code=" + code + ", operator="
-                + operator + ", mobile=" + mobile + ", conformStoredToken=" + conformStoredToken + ", lastDeviceLogin=" + lastDeviceLogin + ", lastWebLogin="
-                + lastWebLogin + ", firstUserLoginMillis=" + firstUserLoginMillis + ", firstDeviceLoginMillis=" + firstDeviceLoginMillis + ", device=" + device
-                + ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken=" + newStoredToken + ", tempToken=" + tempToken
-                + ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country=" + country + ", city=" + city + ", title="
-                + title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName + ", ipAddress=" + ipAddress + ", canContact="
-                + canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + ", freeTrialStartedTimestampMillis="+freeTrialStartedTimestampMillis+ ", activationStatus="+activationStatus+", provider="+provider+", contract="+contract+"]";
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("userName", userName)
+                .add("facebookId", facebookId)
+                .add("deviceUID", deviceUID)
+                .add("subBalance", subBalance)
+                .add("userGroupId", userGroupId)
+                .add("userStatusId", userStatusId)
+                .add("nextSubPayment", nextSubPayment)
+                .add("isFreeTrial", isOnFreeTrial())
+                .add("currentPaymentDetailsId", currentPaymentDetailsId)
+                .add("lastPaymentTx", lastPaymentTx)
+                .add("token", token)
+                .add("paymentStatus", paymentStatus)
+                .add("paymentType", paymentType)
+                .add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
+                .add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
+                .add("numPsmsRetries", numPsmsRetries)
+                .add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                .add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
+                .add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
+                .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
+                .add("potentialPromotionId", potentialPromotionId)
+                .add("pin", pin)
+                .add("code", code)
+                .add("operator", operator)
+                .add("mobile", mobile)
+                .add("conformStoredToken", conformStoredToken)
+                .add("lastDeviceLogin", lastDeviceLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("firstUserLoginMillis", firstUserLoginMillis)
+                .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
+                .add("device", device)
+                .add("deviceModel", deviceModel)
+                .add("deviceTypeId", deviceTypeId)
+                .add("newStoredToken", newStoredToken)
+                .add("tempToken", tempToken)
+                .add("postcode", postcode)
+                .add("address1", address1)
+                .add("address2", country)
+                .add("city", city)
+                .add("title", title)
+                .add("displayName ", displayName)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("ipAddress", ipAddress)
+                .add("canContact", canContact)
+                .add("deviceString", deviceString)
+                .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("activationStatus", activationStatus)
+                .add("provider", provider)
+                .add("contract", contract).toString();
     }
 
     /**

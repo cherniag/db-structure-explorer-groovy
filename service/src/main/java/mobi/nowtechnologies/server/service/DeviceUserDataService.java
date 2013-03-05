@@ -44,7 +44,7 @@ public class DeviceUserDataService {
         try{
             deviceUserDataRepository.save(data);
         }catch (Exception e){
-            LOGGER.error("Error on save xtify_token="+data, e);
+            LOGGER.warn("Duplicated xtify_token will not save to db:"+data, e.getMessage());
         }
     }
 
