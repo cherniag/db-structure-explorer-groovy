@@ -120,4 +120,14 @@
 		<property name="drmService" ref="service.DrmService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 	</bean>
+	
+	<!-- O2 SOA -->
+	
+	 <bean id="service.messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+	 
+	 <bean id="service.webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <constructor-arg ref="service.messageFactory"/>
+        <property name="defaultUri" value="http://example.com/WebService"/>
+    </bean>
+	 
 </beans>
