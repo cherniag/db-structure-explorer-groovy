@@ -36,7 +36,7 @@ import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 @NamedQueries({
         @NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
                 hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
-        @NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<?"),
+		@NamedQuery(name = User.NQ_GET_SUBSCRIBED_USERS, query = "select u from User u where u.status=10 and u.nextSubPayment<? and (u.contract IS NULL or u.contract!='payg' or u.segment IS NULL or u.segment!='consumer')"),
         @NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
         @NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
         @NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -176,6 +176,9 @@ public class User implements Serializable {
     @Column(columnDefinition = "char")
     private Contract contract;
 
+	/*
+	 * @deprecated Unused column
+	 */
     @Deprecated
     private boolean paymentEnabled;
 
@@ -231,7 +234,7 @@ public class User implements Serializable {
 
     private long lastSuccesfullPaymentSmsSendingTimestampMillis;
 
-    @Column(precision=5, scale=2, nullable=false)
+	@Column(precision=12, scale=2, nullable=false)
     private BigDecimal amountOfMoneyToUserNotification;
 
     @Column(nullable=true)

@@ -318,7 +318,7 @@
 	
 	<!-- Before 48H O2 PSMS Payment task -->
 	<bean id="before48hPSMSPaymentTask" class="mobi.nowtechnologies.server.job.Before48hExpirePSMSPaymentJob">
-		<property name="userService" ref="service.UserService" />
+		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>

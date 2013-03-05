@@ -1717,9 +1717,11 @@ public class UserService {
 	public int getGraceDurationSeconds(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
 		
-		final String code = user.getProvider() + ".provider." + user.getSegment()
-				+ ".segment." + user.getContract() + ".contract.payment.psms.grace.duration.seconds";
-		String graceDurationSecondsString = messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), code, null, null);
+		final String code = (user.getProvider() + ".provider." + user.getSegment()
+				+ ".segment." + user.getContract() + ".contract.payment.psms.grace.duration.seconds").toLowerCase();
+		final UserGroup userGroup = user.getUserGroup();
+		final Community community = userGroup.getCommunity();
+		String graceDurationSecondsString = messageSource.getMessage(community.getRewriteUrlParameter(), code, null, null);
 		int graceDurationSeconds;
 		try{
 			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);
