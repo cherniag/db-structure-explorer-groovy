@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 
 import java.math.BigDecimal;
 
@@ -27,6 +29,29 @@ public class PaymentPolicyDto {
 	
 	public PaymentPolicyDto() { }
 
+    public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotion){
+        this(policy);
+        if (null != promotion) {
+            setSubcost(promotion.getSubcost());
+            setSubweeks(promotion.getSubweeks());
+        }
+    }
+
+    public PaymentPolicyDto(PaymentPolicy policy){
+        setId(policy.getId());
+        setCurrencyISO(policy.getCurrencyISO());
+        setOldSubweeks(Integer.valueOf(policy.getSubweeks()));
+        setSubcost(policy.getSubcost());
+        setSubweeks(Integer.valueOf(policy.getSubweeks()));
+        if (null!=policy.getOperator()) {
+            setOperator(policy.getOperator().getId());
+            setOperatorName(policy.getOperator().getName());
+        }
+        setPaymentType(policy.getPaymentType());
+        setShortCode(policy.getShortCode());
+        setCurrencyISO(policy.getCurrencyISO());
+    }
+
     public boolean isO2FiveWeekPsmsSubscription(){
         return subweeks.equals(5) && isO2PsmsSubscribtion();
     }
@@ -40,7 +65,7 @@ public class PaymentPolicyDto {
     }
 
     private boolean isPsmsPolicy() {
-        return UserRegInfo.PaymentType.PREMIUM_USER.equals(paymentType);
+        return paymentType.equalsIgnoreCase("");
     }
 
     private boolean isO2Operator() {
@@ -132,15 +157,15 @@ public class PaymentPolicyDto {
     }
 
     private boolean isInAppPolicy() {
-        return UserRegInfo.PaymentType.ITUNES_SUBSCRIPTION.equals(paymentType);
+        return true;
     }
 
     private boolean isCreditCardPolicy() {
-        return UserRegInfo.PaymentType.CREDIT_CARD.equals(paymentType);
+        return true;
     }
 
     private boolean isPayPalPolicy() {
-        return UserRegInfo.PaymentType.PAY_PAL.equals(paymentType);
+        return true;
     }
 
     public boolean isO2ConsumerPolicy() {

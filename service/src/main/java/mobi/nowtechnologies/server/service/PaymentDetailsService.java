@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -157,8 +159,8 @@ public class PaymentDetailsService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetails(Community community, User user, String paymentType) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType);
+	public List<PaymentPolicyDto> getPaymentPolicyDetails(Community community, User user, mobi.nowtechnologies.server.shared.enums.PaymentType paymentType) {
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community, toStringIfNull(paymentType));
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 
@@ -171,7 +173,7 @@ public class PaymentDetailsService {
 				boolean inList = false;
 				for (PromotionPaymentPolicy promotionPolicy : promotionPaymentPolicies) {
 					if (promotionPolicy.getPaymentPolicies().contains(paymentPolicy)) {
-						result.add(paymentPolicyService.getPaymentPolicy(paymentPolicy, promotionPolicy));
+						result.add(new PaymentPolicyDto(paymentPolicy, promotionPolicy));
 						inList = true;
 					}
 				}
@@ -196,11 +198,6 @@ public class PaymentDetailsService {
 	{
 		return getPaymentPolicy(PaymentType.PAY_PAL, communityUrl);
 	}
-	
-	public PaymentPolicyDto getCreditCardPaymentPolicy(String communityUrl)
-	{
-		return getPaymentPolicy(PaymentType.CREDIT_CARD, communityUrl);
-	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public PaymentDetails getPaymentDetails(User user) {
@@ -214,11 +211,8 @@ public class PaymentDetailsService {
 	}
 
 	public static PaymentDetails getPaymentDetails(final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",
-				new Object[] { paymentType, token });
+		Validate.notNull(paymentType, "The parameter paymentType is null");
+		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",paymentType, token );
 
 		PaymentDetails paymentDetails;
 		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {

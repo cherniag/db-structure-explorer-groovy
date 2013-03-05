@@ -53,40 +53,14 @@ public class PaymentPolicyService {
 	}
 
 	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, byte communityId){
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-		
-		LOGGER.debug("Input params: operatorId = [{}], paymentType = [{}], communityName = [{}] ", new Object[]{operatorId,paymentType, communityId});
-		
-		//PaymentSystem paymentSystem = PaymentSystem.getPaymentSystem(paymentType);
-		
-		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
-		
-		LOGGER.debug("Output param: [{}]", paymentPolicy);
-		return paymentPolicy;
+		Validate.notNull(paymentType, "The parameter paymentType is null");
+        return paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
 	}
 	
 	public PaymentPolicyDto getPaymentPolicy(PaymentPolicy paymentPolicy, PromotionPaymentPolicy promotionPaymentPolicy) {
 		PaymentPolicyDto dto = null;
 		if (null != paymentPolicy) {
-			dto = new PaymentPolicyDto();
-			dto.setId(paymentPolicy.getId());
-			dto.setOldSubcost(paymentPolicy.getSubcost());
-			dto.setOldSubweeks(Integer.valueOf(paymentPolicy.getSubweeks()));
-			dto.setSubcost(paymentPolicy.getSubcost());
-			dto.setSubweeks(Integer.valueOf(paymentPolicy.getSubweeks()));
-			if (null!=paymentPolicy.getOperator()) {
-				dto.setOperator(paymentPolicy.getOperator().getId());
-				dto.setOperatorName(paymentPolicy.getOperator().getName());
-			}
-			dto.setPaymentType(paymentPolicy.getPaymentType());
-			dto.setShortCode(paymentPolicy.getShortCode());
-			dto.setCurrencyISO(paymentPolicy.getCurrencyISO());
-			
-			if (null != promotionPaymentPolicy) {
-				dto.setSubcost(promotionPaymentPolicy.getSubcost());
-				dto.setSubweeks(promotionPaymentPolicy.getSubweeks());
-			}
+			dto = new PaymentPolicyDto(paymentPolicy, promotionPaymentPolicy);
 		}
 		return dto;
 	}

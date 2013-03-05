@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentSystem;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,11 +81,10 @@ public class PaymentPolicyDaoTest {
 		
 		Integer operatorId=1;
 		Integer communityId=5;
-		PaymentSystem paymentSystem = PaymentSystem.Mig; 
+		String paymentSystem = "Mig";
 		
 		String paymentType = UserRegInfo.PaymentType.PREMIUM_USER;
 		
-		//PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentSystem, communityId);
 		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
 		assertNotNull(paymentPolicy);
 		
@@ -99,10 +97,9 @@ public class PaymentPolicyDaoTest {
 	public void testGetPaymentPolicy_2() throws Exception {
 		
 		Integer communityId=5;
-		PaymentSystem paymentSystem = PaymentSystem.PayPal; 
+		String  paymentSystem = "PayPal";
 		String paymentType = UserRegInfo.PaymentType.PAY_PAL;
 		
-		//PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentSystem, communityId);
 		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
 		assertNotNull(paymentPolicy);
 		
@@ -115,7 +112,7 @@ public class PaymentPolicyDaoTest {
 	public void testGetPaymentPolicy_3() throws Exception {
 		
 		Integer communityId=5;
-		PaymentSystem paymentSystem = PaymentSystem.SagePay; 
+		String  paymentSystem = "SagePay";
 		String paymentType = UserRegInfo.PaymentType.CREDIT_CARD;
 		
 		//PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentSystem, communityId);

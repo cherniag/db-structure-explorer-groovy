@@ -9,10 +9,8 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.UserType;
+import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +163,7 @@ public class User implements Serializable {
     private String pin;
 
     @Enumerated(EnumType.STRING)
-    private mobi.nowtechnologies.server.persistence.domain.enums.PaymentType paymentType;
+    private mobi.nowtechnologies.server.shared.enums.PaymentType paymentType;
 
     @Column(name = "activation_status")
     @Enumerated(EnumType.STRING)
@@ -680,7 +678,7 @@ public class User implements Serializable {
     }
 
     public void setPaymentType(String paymentType) {
-        this.paymentType = mobi.nowtechnologies.server.persistence.domain.enums.PaymentType.valueOf(paymentType);
+        this.paymentType = PaymentType.valueOf(paymentType);
     }
 
     /*

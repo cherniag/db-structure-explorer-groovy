@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -47,7 +47,6 @@ public class PaymentsController extends CommonController {
     private CommunityService communityService;
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
-        LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
 
@@ -65,7 +64,6 @@ public class PaymentsController extends CommonController {
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
 
-        LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
     }
 
@@ -74,7 +72,7 @@ public class PaymentsController extends CommonController {
         if (user.isNonO2User()) {
 
             if (user.isIOsNonO2ItunesSubscribedUser()) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
+                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentType.ITUNES_SUBSCRIPTION);
             } else if (user.isNotIOSDevice() || user.hasActivePaymentDetails()) {
                 paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
             } else {
@@ -219,6 +217,7 @@ public class PaymentsController extends CommonController {
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
     public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+        LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
         return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
     }
 
