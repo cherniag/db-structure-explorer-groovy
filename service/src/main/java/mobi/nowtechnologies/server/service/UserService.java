@@ -1726,7 +1726,7 @@ public class UserService {
 		try{
 			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);
 		}catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.warn("Couldn't parse graceDurationSeconds seconds. Set it to 0. "+e.getMessage());
 			graceDurationSeconds = 0;
 		}
 		LOGGER.debug("Output parameter graceDurationSeconds=[{}]", graceDurationSeconds);
