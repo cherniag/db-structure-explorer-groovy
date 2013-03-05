@@ -187,6 +187,11 @@ public class Utils {
 		// System.out.println(getOTACode(132,"richard.monday@chartsnow.mobi"));
 		//f701af8d07e5c95d3f5cf3bd9a62344d
 	}
-	 
 
+
+    public static <T> String toStringIfNull(T obj) {
+        if(obj == null)
+            return  null;
+        return obj.toString();
+    }
 }

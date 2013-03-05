@@ -29,7 +29,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -800,9 +800,9 @@ public class User implements Serializable {
         accountCheckDTO.setUserToken(token);
         accountCheckDTO.setRememberMeToken(rememberMeToken);
         accountCheckDTO.setFreeTrial(isOnFreeTrial());
-        accountCheckDTO.setProvider(provider);
-        accountCheckDTO.setContract(contract.toString());
-        accountCheckDTO.setSegment(segment.toString());
+        accountCheckDTO.setProvider((String)provider);
+        accountCheckDTO.setContract(toStringIfNull(contract));
+        accountCheckDTO.setSegment(toStringIfNull(segment));
         accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 
         accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
