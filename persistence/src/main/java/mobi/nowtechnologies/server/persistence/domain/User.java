@@ -292,7 +292,7 @@ public class User implements Serializable {
     }
 
     public boolean isO2PAYGConsumer() {
-        return isO2Consumer() && Contract.PAYG == contract;
+        return isO2Consumer() && Contract.PAYG.equals(contract);
     }
 
     public boolean isO2User() {
@@ -301,11 +301,11 @@ public class User implements Serializable {
     }
 
     public boolean isO2Business() {
-        return isO2User() && segment == BUSINESS;
+        return isO2User() && segment.equals(BUSINESS);
     }
 
     public boolean isO2Consumer() {
-        return  isO2User() && segment == CONSUMER;
+        return  isO2User() && segment.equals(CONSUMER);
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
@@ -803,7 +803,7 @@ public class User implements Serializable {
         accountCheckDTO.setUserToken(token);
         accountCheckDTO.setRememberMeToken(rememberMeToken);
         accountCheckDTO.setFreeTrial(isOnFreeTrial());
-        accountCheckDTO.setProvider((String)provider);
+        accountCheckDTO.setProvider(provider);
         accountCheckDTO.setContract(toStringIfNull(contract));
         accountCheckDTO.setSegment(toStringIfNull(segment));
         accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
