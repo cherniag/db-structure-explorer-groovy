@@ -51,13 +51,7 @@ public class PaymentPolicyService {
 		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicy);
 		return paymentPolicy;
 	}
-	
-	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String communityName) {
-		Validate.notNull(communityName, "The parameter communityName is null");
-		
-		return paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(communityName);
-	}
-	
+
 	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, byte communityId){
 		if (paymentType == null)
 			throw new ServiceException("The parameter paymentType is null");
@@ -66,8 +60,7 @@ public class PaymentPolicyService {
 		
 		//PaymentSystem paymentSystem = PaymentSystem.getPaymentSystem(paymentType);
 		
-		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(operatorId,
-				paymentType, communityId);
+		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
 		
 		LOGGER.debug("Output param: [{}]", paymentPolicy);
 		return paymentPolicy;
@@ -113,16 +106,6 @@ public class PaymentPolicyService {
 		
 		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
 		return offerPaymentPolicyDtos;
-	}
-
-	@Transactional(readOnly = true)
-	public List<PaymentPolicy> getPaymentPoliciesByPaymentType(Community community, String paymentType) {
-		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
-		
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType);
-		
-		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
-		return paymentPolicies;
 	}
 
 	@Transactional(readOnly = true)

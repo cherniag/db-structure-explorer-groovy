@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
@@ -19,13 +20,9 @@ public class PaymentPolicyDao extends JpaDaoSupport {
 		LoggerFactory.getLogger(PaymentPolicyDao.class);
 	
 	@SuppressWarnings("unchecked")
-	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(
-			String communityName) {
-		if (communityName == null)
-			throw new PersistenceException(
-					"The parameter communityName is null");
-		LOGGER.debug("input parameters communityName: [{}]",
-				new Object[] { communityName });
+	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String communityName) {
+		Validate.notNull(communityName, "The parameter communityName is null");
+		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 		if (community==null) return new ArrayList<PaymentPolicy>();
@@ -37,61 +34,14 @@ public class PaymentPolicyDao extends JpaDaoSupport {
 		return paymentPolicies;
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public PaymentPolicy getPaymentPolicy(int operatorId,
-//			PaymentSystem paymentSystem, int communityId) {
-//		if (paymentSystem == null)
-//			throw new PersistenceException("The parameter paymentSystem is null");
-//		Object[] argArray = new Object[] { operatorId, paymentSystem,
-//				communityId };
-//
-//		LOGGER
-//				.debug(
-//						"Input parameters: operatorId = [{}], paymentSystem = [{}], communityId = [{}] ",
-//						argArray);
-//
-//		List<PaymentPolicy> paymentPolicies;
-//		Object[] queryArgArray;
-//		if (paymentSystem.equals(PaymentSystem.Mig)) {
-//			queryArgArray = new Object[] { operatorId, paymentSystem, communityId};
-//
-//			paymentPolicies = getJpaTemplate().findByNamedQuery(
-//					"PaymentPolicy.getPaymentPolicyForMigPaymentType", queryArgArray);
-//		} else {
-//			queryArgArray = new Object[] { paymentSystem, communityId };
-//			paymentPolicies = getJpaTemplate().findByNamedQuery(
-//					"PaymentPolicy.getPaymentPolicyForNotMigPaymentType",
-//					queryArgArray);
-//		}
-//
-//		PaymentPolicy paymentPolicy = null;
-//		if (paymentPolicies.size() > 1)
-//			throw new PersistenceException(
-//					"There are more than one paymentPolicies in the table for operatorId = ["
-//							+ operatorId + "], paymentSystem = ["
-//							+ paymentSystem + "], communityId = ["
-//							+ communityId + "]");
-//		else if (paymentPolicies.size() == 1)
-//			paymentPolicy = paymentPolicies.get(0);
-//
-//		LOGGER.debug("Output parameter paymentPolicy=[{}]", paymentPolicy);
-//		return paymentPolicy;
-//	}
-	
+
 	@SuppressWarnings("unchecked")
-	public PaymentPolicy getPaymentPolicy(int operatorId,
-			String paymentType, int communityId) {
-		if (paymentType == null)
-			throw new PersistenceException("The parameter paymentType is null");
-		Object[] argArray = new Object[] { operatorId, paymentType,
-				communityId };
+	public PaymentPolicy getPaymentPolicy(int operatorId, String paymentType, int communityId) {
+		Validate.notNull(paymentType, "The parameter paymentType is null");
+		LOGGER.debug("Input parameters: operatorId = [{}], paymentType = [{}], communityId = [{}] ",
+                operatorId, paymentType, communityId);
 
-		LOGGER
-				.debug(
-						"Input parameters: operatorId = [{}], paymentType = [{}], communityId = [{}] ",
-						argArray);
-
-		List<PaymentPolicy> paymentPolicies;
+        List<PaymentPolicy> paymentPolicies;
 		Object[] queryArgArray;
 		if (paymentType.equals(UserRegInfo.PaymentType.PREMIUM_USER)) {
 			queryArgArray = new Object[] { operatorId, paymentType, communityId};

@@ -2040,22 +2040,8 @@ public class UserService {
 		LOGGER.debug("Output parameter users=[{}]", users);
 		return users;
 	}
-	
-	public boolean isIOsNonO2ItunesSubscribedUser(User user) {
-		LOGGER.debug("input parameters user, nonO2User: [{}], [{}]", user);
-		boolean isIOsNonO2ItunesSubscribedUser = false;
-		
-		final String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
-		if (lastSubscribedPaymentSystem != null) {
-            String deviceType = user.getDeviceType().getName();
-            isIOsNonO2ItunesSubscribedUser = DeviceTypeDao.getIOSDeviceType().getName().equals(deviceType) && user.isNonO2User() && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)
-					&& user.getStatus().getI() == UserStatusDao.getSubscribedUserStatus().getI();
-		}
-		LOGGER.debug("Output parameter lastSubscribedPaymentSystem=[{}]", lastSubscribedPaymentSystem);
-		return isIOsNonO2ItunesSubscribedUser;
-	}
-	
-	@Transactional(readOnly=true)
+
+    @Transactional(readOnly=true)
 	public List<User> getUsersForPendingPayment() {
 		List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());	
 		return users;

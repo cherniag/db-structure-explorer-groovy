@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
 public class PaymentsController extends CommonController {
@@ -48,28 +48,15 @@ public class PaymentsController extends CommonController {
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
         LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
-        ModelAndView modelAndView = new ModelAndView(viewName);
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
 
-        List<PaymentPolicyDto> paymentPolicies = Collections.emptyList();
+        ModelAndView modelAndView = new ModelAndView(viewName);
 
-        if (user.isNonO2User()) {
-            PaymentDetails paymentDetails = paymentDetailsService.getPaymentDetails(user);
-            modelAndView.addObject("paymentDetails", paymentDetails);
-
-            if (userService.isIOsNonO2ItunesSubscribedUser(user)) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
-            } else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) || (paymentDetails != null && paymentDetails.isActivated())) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
-            } else {
-                paymentPolicies = paymentDetailsService.getPaymentPolicy(community, user);
-            }
-        }
-
-
+        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, community);
         modelAndView.addObject("paymentPolicies", filterPoliciesIfO2(paymentPolicies, user));
 
+        modelAndView.addObject("paymentDetails", getPaymentDetails(user));
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         modelAndView.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         modelAndView.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
@@ -80,6 +67,25 @@ public class PaymentsController extends CommonController {
 
         LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
+    }
+
+    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community) {
+        List<PaymentPolicyDto> paymentPolicies = Collections.emptyList();
+        if (user.isNonO2User()) {
+
+            if (user.isIOsNonO2ItunesSubscribedUser()) {
+                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
+            } else if (user.isNotIOSDevice() || user.hasActivePaymentDetails()) {
+                paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
+            } else {
+                paymentPolicies = paymentDetailsService.getPaymentPolicy(community, user);
+            }
+        }
+        return paymentPolicies;
+    }
+
+    private PaymentDetails getPaymentDetails(User user) {
+        return  (user.isNonO2User())? paymentDetailsService.getPaymentDetails(user): null;
     }
 
     private List<PaymentPolicyDto> filterPoliciesIfO2(List<PaymentPolicyDto> policies, User user) {
@@ -125,10 +131,8 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if(user.isNonO2User()){
-            if (!userService.isIOsNonO2ItunesSubscribedUser(user)) {
-                return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
-            }
+        if (!user.isIOsNonO2ItunesSubscribedUser()) {
+            return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
         }
         return null;
     }
@@ -141,7 +145,7 @@ public class PaymentsController extends CommonController {
 
             paymentsNoteMsg = getFirstSutableMessage(locale, code_1, code_2, PAYMENTS_NOTE_MSG_CODE);
         } else {
-            if (userService.isIOsNonO2ItunesSubscribedUser(user))
+            if (user.isIOsNonO2ItunesSubscribedUser())
                 paymentsNoteMsg = message(locale, "pays.page.h1.options.note.not.o2.inapp.subs");
             else
                 paymentsNoteMsg = message(locale, PAYMENTS_NOTE_MSG_CODE);
@@ -152,7 +156,7 @@ public class PaymentsController extends CommonController {
     private String getFirstSutableMessage(Locale locale, String... codes) {
         for (String code : codes) {
             String msg = messageSource.getMessage(code, null, "", locale);
-            if (isEmpty(msg))
+            if (isNotEmpty(msg))
                 return msg;
         }
         return "";

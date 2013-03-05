@@ -60,6 +60,8 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
+        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
+        <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>
 		<property name="paymentDetailsDao" ref="persistence.PaymentDetailsDao" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />

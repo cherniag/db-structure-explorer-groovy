@@ -30,6 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -176,9 +177,6 @@ public class User implements Serializable {
     @Column(columnDefinition = "char")
     private Contract contract;
 
-	/*
-	 * @deprecated Unused column
-	 */
     @Deprecated
     private boolean paymentEnabled;
 
@@ -279,6 +277,27 @@ public class User implements Serializable {
         setPaymentDetailsList(new ArrayList<PaymentDetails>());
         setUserType(UserType.UNDEFINED);
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+    }
+
+    public boolean isIOsNonO2ItunesSubscribedUser(){
+        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribed();
+    }
+
+    public boolean isSubscribedByITunes() {
+        return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION);
+    }
+
+    public boolean isIOSDevice(){
+        return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
+    }
+
+    public boolean isNotIOSDevice() {
+        return !isIOSDevice();
+    }
+
+    public boolean hasActivePaymentDetails() {
+        PaymentDetails details = this.getCurrentPaymentDetails();
+        return details != null && details.isActivated();
     }
 
     public boolean isNonO2User() {
