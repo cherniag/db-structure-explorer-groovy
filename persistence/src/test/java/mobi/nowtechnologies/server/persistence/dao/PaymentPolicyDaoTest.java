@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,35 +36,11 @@ public class PaymentPolicyDaoTest {
 	@Resource(name = "persistence.PaymentPolicyDao")
 	private PaymentPolicyDao paymentPolicyDao;
 
-	/**
-	 * Run the List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 20.10.11 10:32
-	 */
 	@Test
-	public void testGetPaymentPoliciesGroupdeByPaymentType_communityNameIsEmpty()
-		throws Exception {
-		String communityName = "";
+	public void testGetPaymentPoliciesGroupdeByPaymentType_paymentPoliciesExsist() throws Exception {
+        Community community = new Community().withRewriteUrl("Now Music");
 
-		List<PaymentPolicy> result = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(communityName);
-		assertNotNull(result);
-	}
-
-	/**
-	 * Run the List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 20.10.11 10:32
-	 */
-	@Test
-	public void testGetPaymentPoliciesGroupdeByPaymentType_paymentPoliciesExsist()
-		throws Exception {
-		String communityName = "Now Music";
-
-		List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(communityName);
+		List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(community);
 		assertNotNull(paymentPolicies);
 		
 		Set<String> paymentTypes = new HashSet<String>();
@@ -115,7 +92,6 @@ public class PaymentPolicyDaoTest {
 		String  paymentSystem = "SagePay";
 		String paymentType = UserRegInfo.PaymentType.CREDIT_CARD;
 		
-		//PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentSystem, communityId);
 		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
 		assertNotNull(paymentPolicy);
 		

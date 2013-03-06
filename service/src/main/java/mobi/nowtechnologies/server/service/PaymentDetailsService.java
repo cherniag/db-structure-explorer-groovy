@@ -145,22 +145,10 @@ public class PaymentDetailsService {
 		User user = userService.findById(userId);
 		return migPaymentService.commitPaymnetDetails(user, pin);
 	}
-	
-	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyWithoutPaymentType(Community community, User user, String paymentType) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(community.getName());
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetails(Community community, User user, mobi.nowtechnologies.server.shared.enums.PaymentType paymentType) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community, toStringIfNull(paymentType));
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community);
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 

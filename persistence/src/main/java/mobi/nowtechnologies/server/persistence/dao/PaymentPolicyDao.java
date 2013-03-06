@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,22 +17,13 @@ import java.util.List;
  *
  */
 public class PaymentPolicyDao extends JpaDaoSupport {
-	private static final Logger LOGGER = 
-		LoggerFactory.getLogger(PaymentPolicyDao.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicyDao.class);
 	
 	@SuppressWarnings("unchecked")
-	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(String communityName) {
-		Validate.notNull(communityName, "The parameter communityName is null");
-		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-		if (community==null) return new ArrayList<PaymentPolicy>();
-		Integer communityId = Integer.valueOf(community.getId());
-		
-		List<PaymentPolicy> paymentPolicies = getJpaTemplate().findByNamedQuery("PaymentPolicy.getPaymentPoliciesForCommunityGroupedByPaymentType",  new Object[] {communityId});
-		
-		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
-		return paymentPolicies;
+	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(Community community) {
+        Integer communityId = Integer.valueOf(community.getId());
+        return getJpaTemplate()
+                .findByNamedQuery("PaymentPolicy.getPaymentPoliciesForCommunityGroupedByPaymentType",  communityId);
 	}
 
 

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -52,7 +53,7 @@ public class PaymentsController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView(viewName);
 
-        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, community);
+        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community));
         modelAndView.addObject("paymentPolicies", filterPoliciesIfO2(paymentPolicies, user));
 
         modelAndView.addObject("paymentDetails", getPaymentDetails(user));
@@ -68,18 +69,10 @@ public class PaymentsController extends CommonController {
     }
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community) {
-        List<PaymentPolicyDto> paymentPolicies = Collections.emptyList();
         if (user.isNonO2User()) {
-
-            if (user.isIOsNonO2ItunesSubscribedUser()) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentType.ITUNES_SUBSCRIPTION);
-            } else if (user.isNotIOSDevice() || user.hasActivePaymentDetails()) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
-            } else {
-                paymentPolicies = paymentDetailsService.getPaymentPolicy(community, user);
-            }
+                return  paymentDetailsService.getPaymentPolicy(community, user);
         }
-        return paymentPolicies;
+        return Collections.emptyList();
     }
 
     private PaymentDetails getPaymentDetails(User user) {
