@@ -12,8 +12,8 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 
+import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -157,25 +157,7 @@ public class PaymentPolicyServiceTest {
 		Mockito.verify(mockPaymentPolicyRepository, times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
 		
 	}
-	
-	@Test
-	public void testGetPaymentPoliciesByPaymentType_Success() {
-		
-		Community community = CommunityFactory.createCommunity();
-		String paymentType ="paymentType";
-		
-		List<PaymentPolicy> paymentPolicies = Collections.<PaymentPolicy>emptyList();
-				
-		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesByPaymentType(community, paymentType)).thenReturn(paymentPolicies);
-		
-		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
-		
-		assertNotNull(actualPaymentPolicies);
-		assertEquals(paymentPolicies, actualPaymentPolicies);
-		
-		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesByPaymentType(community, paymentType);
-	}
-	
+
 	@Test
 	public void testGetPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType_Success() {
 		

@@ -2164,7 +2164,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user);
+		boolean isIOsNonO2ItunesSubscribedUser = user.isIOsNonO2ItunesSubscribedUser();
 		
 		assertFalse(isIOsNonO2ItunesSubscribedUser);
 	}
@@ -2189,7 +2189,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsNonO2ItunesSubscribedUser = userServiceSpy.isIOsNonO2ItunesSubscribedUser(user);
+		boolean isIOsNonO2ItunesSubscribedUser = user.isIOsNonO2ItunesSubscribedUser();
 		
 		assertTrue(isIOsNonO2ItunesSubscribedUser);
 	}

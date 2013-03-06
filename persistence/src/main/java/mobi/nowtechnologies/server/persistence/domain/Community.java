@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * The persistent class for the tb_communities database table.
- * 
- */
+
 @Entity
 @Table(name="tb_communities")
 public class Community implements Serializable {
@@ -45,6 +42,11 @@ public class Community implements Serializable {
 	private List<Chart> charts;
 
     public Community() {
+    }
+
+    public Community withRewriteUrl(String url){
+        rewriteUrlParameter = url;
+        return  this;
     }
 
 	public byte getId() {

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -9,6 +8,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
 public class PaymentsController extends CommonController {
@@ -47,29 +48,15 @@ public class PaymentsController extends CommonController {
     private CommunityService communityService;
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
-        LOGGER.debug("input parameters viewName, communityUrl: [{}], [{}]", viewName, communityUrl);
-        ModelAndView modelAndView = new ModelAndView(viewName);
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
 
-        List<PaymentPolicyDto> paymentPolicies = Collections.emptyList();
+        ModelAndView modelAndView = new ModelAndView(viewName);
 
-        if (user.isNonO2User()) {
-            PaymentDetails paymentDetails = paymentDetailsService.getPaymentDetails(user);
-            modelAndView.addObject("paymentDetails", paymentDetails);
-
-            if (userService.isIOsNonO2ItunesSubscribedUser(user)) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyDetails(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
-            } else if (!DeviceTypeDao.getIOSDeviceType().equals(user.getDeviceType()) || (paymentDetails != null && paymentDetails.isActivated())) {
-                paymentPolicies = paymentDetailsService.getPaymentPolicyWithoutPaymentType(community, user, PaymentDetails.ITUNES_SUBSCRIPTION);
-            } else {
-                paymentPolicies = paymentDetailsService.getPaymentPolicy(community, user);
-            }
-        }
-
-
+        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community));
         modelAndView.addObject("paymentPolicies", filterPoliciesIfO2(paymentPolicies, user));
 
+        modelAndView.addObject("paymentDetails", getPaymentDetails(user));
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         modelAndView.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         modelAndView.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
@@ -78,8 +65,18 @@ public class PaymentsController extends CommonController {
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
 
-        LOGGER.debug("Output parameter [{}]", modelAndView);
         return modelAndView;
+    }
+
+    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community) {
+        if (user.isNonO2User()) {
+                return  paymentDetailsService.getPaymentPolicy(community, user);
+        }
+        return Collections.emptyList();
+    }
+
+    private PaymentDetails getPaymentDetails(User user) {
+        return  (user.isNonO2User())? paymentDetailsService.getPaymentDetails(user): null;
     }
 
     private List<PaymentPolicyDto> filterPoliciesIfO2(List<PaymentPolicyDto> policies, User user) {
@@ -125,10 +122,8 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if(user.isNonO2User()){
-            if (!userService.isIOsNonO2ItunesSubscribedUser(user)) {
-                return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
-            }
+        if (!user.isIOsNonO2ItunesSubscribedUser()) {
+            return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
         }
         return null;
     }
@@ -141,7 +136,7 @@ public class PaymentsController extends CommonController {
 
             paymentsNoteMsg = getFirstSutableMessage(locale, code_1, code_2, PAYMENTS_NOTE_MSG_CODE);
         } else {
-            if (userService.isIOsNonO2ItunesSubscribedUser(user))
+            if (user.isIOsNonO2ItunesSubscribedUser())
                 paymentsNoteMsg = message(locale, "pays.page.h1.options.note.not.o2.inapp.subs");
             else
                 paymentsNoteMsg = message(locale, PAYMENTS_NOTE_MSG_CODE);
@@ -152,7 +147,7 @@ public class PaymentsController extends CommonController {
     private String getFirstSutableMessage(Locale locale, String... codes) {
         for (String code : codes) {
             String msg = messageSource.getMessage(code, null, "", locale);
-            if (isEmpty(msg))
+            if (isNotEmpty(msg))
                 return msg;
         }
         return "";
@@ -215,6 +210,7 @@ public class PaymentsController extends CommonController {
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
     public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+        LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
         return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
     }
 

@@ -4,7 +4,9 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
+import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
@@ -17,6 +19,7 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -54,14 +59,9 @@ public class PaymentDetailsService {
 
 	private OfferService offerService;
 
-	/**
-	 * 
-	 * @param dto
-	 * @param user
-	 * @param community
-	 * @return
-	 * @throws ServiceException
-	 */
+    private PaymentPolicyRepository paymentPolicyRepository;
+    private PaymentPolicyDao paymentPolicyDao;
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
@@ -145,34 +145,23 @@ public class PaymentDetailsService {
 		User user = userService.findById(userId);
 		return migPaymentService.commitPaymnetDetails(user, pin);
 	}
-	
-	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyWithoutPaymentType(Community community, User user, String paymentType) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesGroupdeByPaymentType(community.getName());
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyDetails(Community community, User user, String paymentType) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyService.getPaymentPoliciesByPaymentType(community, paymentType);
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community);
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 
 	private List<PaymentPolicyDto> mergePaymentPolicies(User user, List<PaymentPolicy> paymentPolicies) {
 		List<PaymentPolicyDto> result = new LinkedList<PaymentPolicyDto>();
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
-			if (null != user.getPotentialPromotion()) {
-				List<PromotionPaymentPolicy> promotionPaymentPolicies = user.getPotentialPromotion().getPromotionPaymentPolicies();
+            Promotion potentialPromotion = user.getPotentialPromotion();
+            if (null != potentialPromotion) {
+				List<PromotionPaymentPolicy> promotionPaymentPolicies = potentialPromotion.getPromotionPaymentPolicies();
 				boolean inList = false;
-				for (PromotionPaymentPolicy promotionPaymentPolicy : promotionPaymentPolicies) {
-					if (promotionPaymentPolicy.getPaymentPolicies().contains(paymentPolicy)) {
-						result.add(paymentPolicyService.getPaymentPolicy(paymentPolicy, promotionPaymentPolicy));
+				for (PromotionPaymentPolicy promotionPolicy : promotionPaymentPolicies) {
+					if (promotionPolicy.getPaymentPolicies().contains(paymentPolicy)) {
+						result.add(new PaymentPolicyDto(paymentPolicy, promotionPolicy));
 						inList = true;
 					}
 				}
@@ -189,18 +178,13 @@ public class PaymentDetailsService {
 	public PaymentPolicyDto getPaymentPolicy(String paymentType, String communityUrl)
 	{
 		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(0, paymentType, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, community.getId());
 		return paymentPolicyService.getPaymentPolicy(paymentPolicy, null);
 	}
 	
 	public PaymentPolicyDto getPayPalPaymentPolicy(String communityUrl)
 	{
 		return getPaymentPolicy(PaymentType.PAY_PAL, communityUrl);
-	}
-	
-	public PaymentPolicyDto getCreditCardPaymentPolicy(String communityUrl)
-	{
-		return getPaymentPolicy(PaymentType.CREDIT_CARD, communityUrl);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -215,11 +199,8 @@ public class PaymentDetailsService {
 	}
 
 	public static PaymentDetails getPaymentDetails(final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",
-				new Object[] { paymentType, token });
+		Validate.notNull(paymentType, "The parameter paymentType is null");
+		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",paymentType, token );
 
 		PaymentDetails paymentDetails;
 		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {
@@ -254,41 +235,31 @@ public class PaymentDetailsService {
 	}
 
 	public static PaymentDetails populatePaymentDetails(PaymentDetails paymentDetails, final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER
-				.debug(
-						"input parameters paymentDetails, paymentType, token, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-						new Object[] { paymentDetails, paymentType, token,
-								operator, phoneNumber });
+		Validate.notNull(paymentType, "The parameter paymentType is null");
+		LOGGER.debug("input parameters paymentDetails, paymentType, token, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
+						paymentDetails, paymentType, token, operator, phoneNumber);
 
 		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {
 			SagePayCreditCardPaymentDetails creditCardPaymentDetails = (SagePayCreditCardPaymentDetails) paymentDetails;
 
-			if (token == null)
-				throw new ServiceException("The parameter token is null");
+            Validate.notNull(token, "The parameter token is null");
 			creditCardPaymentDetails.setVPSTxId(token);
 		} else if (paymentType.equals(UserRegInfo.PaymentType.PREMIUM_USER)) {
 			MigPaymentDetails premiumSmsPaymentDetails = (MigPaymentDetails) paymentDetails;
 
-			if (operator == null)
-				throw new ServiceException("The parameter operator is null");
-			if (phoneNumber == null)
-				throw new ServiceException("The parameter phoneNumber is null");
+            Validate.notNull(operator, "The parameter operator is null");
+            Validate.notNull(phoneNumber, "The parameter phoneNumber is null");
 
 			premiumSmsPaymentDetails.setMigPhoneNumber(operator.getMigName() + "." + phoneNumber);
 
 		} else if (paymentType.equals(UserRegInfo.PaymentType.PAY_PAL)) {
 			PayPalPaymentDetails payPalPaymentDetails = (PayPalPaymentDetails) paymentDetails;
 
-			if (token == null)
-				throw new ServiceException("The parameter token is null");
+            Validate.notNull(token, "The parameter token is null");
 			payPalPaymentDetails.setBillingAgreementTxId(token);
 
 		} else
-			throw new ServiceException("Unknown payment type: [" + paymentType
-					+ "]");
+			throw new ServiceException("Unknown payment type: [" + paymentType + "]");
 
 		paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
 
@@ -355,7 +326,7 @@ public class PaymentDetailsService {
 		
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), PaymentType.PAY_PAL, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PaymentType.PAY_PAL, community.getId());
 		
 		if (null != paymentPolicy) {
 			Offer offer = offerService.getOffer(offerId);
@@ -478,5 +449,13 @@ public class PaymentDetailsService {
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
 	}
+
+    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
+        this.paymentPolicyRepository = paymentPolicyRepository;
+    }
+
+    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
+        this.paymentPolicyDao = paymentPolicyDao;
+    }
 
 }

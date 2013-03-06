@@ -9,10 +9,8 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.UserType;
+import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -162,7 +161,7 @@ public class User implements Serializable {
     private String pin;
 
     @Enumerated(EnumType.STRING)
-    private mobi.nowtechnologies.server.persistence.domain.enums.PaymentType paymentType;
+    private mobi.nowtechnologies.server.shared.enums.PaymentType paymentType;
 
     @Column(name = "activation_status")
     @Enumerated(EnumType.STRING)
@@ -174,9 +173,6 @@ public class User implements Serializable {
     @Column(columnDefinition = "char(255)")
     private Contract contract;
 
-	/*
-	 * @deprecated Unused column
-	 */
     @Deprecated
     private boolean paymentEnabled;
 
@@ -277,6 +273,27 @@ public class User implements Serializable {
         setPaymentDetailsList(new ArrayList<PaymentDetails>());
         setUserType(UserType.UNDEFINED);
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+    }
+
+    public boolean isIOsNonO2ItunesSubscribedUser(){
+        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribed();
+    }
+
+    public boolean isSubscribedByITunes() {
+        return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION);
+    }
+
+    public boolean isIOSDevice(){
+        return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
+    }
+
+    public boolean isNotIOSDevice() {
+        return !isIOSDevice();
+    }
+
+    public boolean hasActivePaymentDetails() {
+        PaymentDetails details = this.getCurrentPaymentDetails();
+        return details != null && details.isActivated();
     }
 
     public boolean isNonO2User() {
@@ -659,7 +676,7 @@ public class User implements Serializable {
     }
 
     public void setPaymentType(String paymentType) {
-        this.paymentType = mobi.nowtechnologies.server.persistence.domain.enums.PaymentType.valueOf(paymentType);
+        this.paymentType = PaymentType.valueOf(paymentType);
     }
 
     /*
