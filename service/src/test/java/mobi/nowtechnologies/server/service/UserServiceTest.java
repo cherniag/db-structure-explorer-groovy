@@ -1315,6 +1315,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testGraceCredit_InGraceNow_Success() throws Exception {
+		final int currentTimeSeconds = Integer.MAX_VALUE/2;
 		final int graceDurationSeconds = 2*24*60*60;
 		final Community community = new Community();
 		community.setRewriteUrlParameter("o2");
@@ -1325,8 +1326,11 @@ public class UserServiceTest {
 		final User user = UserFactory.createUser();
 		user.setUserGroup(userGroup);
 		final int halfOfGraceDurationSeconds = graceDurationSeconds/2;
-		user.setNextSubPayment(Utils.getEpochSeconds() - halfOfGraceDurationSeconds);
+		user.setNextSubPayment(currentTimeSeconds - halfOfGraceDurationSeconds);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
 		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
 	
@@ -1335,6 +1339,8 @@ public class UserServiceTest {
 		assertEquals(graceDurationSeconds-halfOfGraceDurationSeconds, graceCredit);
 
 		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		PowerMockito.verifyStatic(Mockito.times(1));
+		Utils.getEpochSeconds();
 	}
 
 	@SuppressWarnings("unchecked")
