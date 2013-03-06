@@ -54,6 +54,10 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			}
 		}
 		
+		if (!response.isSuccessful() && submittedPayment.getExternalTxId()==null){
+			submittedPayment.setExternalTxId("");
+		}
+		
 		// Store submitted payment
 		submittedPayment.setStatus(status);
 		paymentDetails.setLastPaymentStatus(status);
