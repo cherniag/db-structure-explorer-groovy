@@ -20,12 +20,7 @@ import org.slf4j.LoggerFactory;
 public class WeeklyUpdateService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WeeklyUpdateService.class);
 
-	private UserDao userDao;
 	private UserService userService;
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
@@ -45,7 +40,7 @@ public class WeeklyUpdateService {
 	}
 	
 	public void process() {
-		List<User> users = userDao.getListOfUsersForWeeklyUpdate();
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
 		LOGGER.info("weekly update job found [{}] users for update", users.size());
 		for (User user : users) {
 			try {
