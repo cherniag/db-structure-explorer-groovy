@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import mobi.nowtechnologies.server.shared.enums.FileType;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 
 /**
  * @author Titov Mykhaylo (titov)

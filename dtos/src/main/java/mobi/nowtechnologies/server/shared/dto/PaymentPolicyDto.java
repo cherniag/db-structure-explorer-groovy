@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 
@@ -13,21 +12,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="PaymentPolicy")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class PaymentPolicyDto {
-	
-	public static final String PAYMENT_POLICY_DTO = "paymentPolicy"; 
-	
-	private short id;
-	private BigDecimal subcost;
-	private Integer subweeks;
-	private Integer operator;
-	private String operatorName;
-	private String paymentType;
-	private String shortCode;
-	private BigDecimal oldSubcost;
-	private Integer oldSubweeks;
-	private String currencyISO;
-	
-	public PaymentPolicyDto() { }
+
+    public static final String PAYMENT_POLICY_DTO = "paymentPolicy";
+
+    private short id;
+    private BigDecimal subcost;
+    private Integer subweeks;
+    private Integer operator;
+    private String operatorName;
+    private String paymentType;
+    private String shortCode;
+    private BigDecimal oldSubcost;
+    private Integer oldSubweeks;
+    private String currencyISO;
+
+    public PaymentPolicyDto() { }
 
     public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotion){
         this(policy);
@@ -42,6 +41,7 @@ public class PaymentPolicyDto {
         setCurrencyISO(policy.getCurrencyISO());
         setOldSubweeks(Integer.valueOf(policy.getSubweeks()));
         setSubcost(policy.getSubcost());
+        setOldSubcost(policy.getSubcost());
         setSubweeks(Integer.valueOf(policy.getSubweeks()));
         if (null!=policy.getOperator()) {
             setOperator(policy.getOperator().getId());
@@ -75,78 +75,78 @@ public class PaymentPolicyDto {
     public boolean isO2TwoWeekPsmsSubscription(){
         return subweeks.equals(2) && isO2PsmsSubscribtion();
     }
-	
-	public short getId() {
-		return id;
-	}
-	public void setId(short id) {
-		this.id = id;
-	}
-	public BigDecimal getSubcost() {
-		return subcost;
-	}
-	public void setSubcost(BigDecimal subcost) {
-		this.subcost = subcost;
-	}
-	
-	public Integer getSubweeks() {
-		return subweeks;
-	}
 
-	public void setSubweeks(Integer subweeks) {
-		this.subweeks = subweeks;
-	}
+    public short getId() {
+        return id;
+    }
+    public void setId(short id) {
+        this.id = id;
+    }
+    public BigDecimal getSubcost() {
+        return subcost;
+    }
+    public void setSubcost(BigDecimal subcost) {
+        this.subcost = subcost;
+    }
 
-	public BigDecimal getOldSubcost() {
-		return oldSubcost;
-	}
+    public Integer getSubweeks() {
+        return subweeks;
+    }
 
-	public void setOldSubcost(BigDecimal oldSubcost) {
-		this.oldSubcost = oldSubcost;
-	}
+    public void setSubweeks(Integer subweeks) {
+        this.subweeks = subweeks;
+    }
 
-	public Integer getOldSubweeks() {
-		return oldSubweeks;
-	}
+    public BigDecimal getOldSubcost() {
+        return oldSubcost;
+    }
 
-	public void setOldSubweeks(Integer oldSubweeks) {
-		this.oldSubweeks = oldSubweeks;
-	}
+    public void setOldSubcost(BigDecimal oldSubcost) {
+        this.oldSubcost = oldSubcost;
+    }
 
-	public Integer getOperator() {
-		return operator;
-	}
-	public void setOperator(Integer operator) {
-		this.operator = operator;
-	}
-	public String getPaymentType() {
-		return paymentType;
-	}
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
-	public String getShortCode() {
-		return shortCode;
-	}
-	public void setShortCode(String shortCode) {
-		this.shortCode = shortCode;
-	}
+    public Integer getOldSubweeks() {
+        return oldSubweeks;
+    }
 
-	public String getOperatorName() {
-		return operatorName;
-	}
+    public void setOldSubweeks(Integer oldSubweeks) {
+        this.oldSubweeks = oldSubweeks;
+    }
 
-	public void setOperatorName(String operatorName) {
-		this.operatorName = operatorName;
-	}
+    public Integer getOperator() {
+        return operator;
+    }
+    public void setOperator(Integer operator) {
+        this.operator = operator;
+    }
+    public String getPaymentType() {
+        return paymentType;
+    }
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+    public String getShortCode() {
+        return shortCode;
+    }
+    public void setShortCode(String shortCode) {
+        this.shortCode = shortCode;
+    }
 
-	public String getCurrencyISO() {
-		return currencyISO;
-	}
+    public String getOperatorName() {
+        return operatorName;
+    }
 
-	public void setCurrencyISO(String currencyISO) {
-		this.currencyISO = currencyISO;
-	}
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
+
+    public String getCurrencyISO() {
+        return currencyISO;
+    }
+
+    public void setCurrencyISO(String currencyISO) {
+        this.currencyISO = currencyISO;
+    }
 
     public boolean isO2BusinessPolicy() {
         return isO2Operator() && (isPayPalPolicy() || isCreditCardPolicy());

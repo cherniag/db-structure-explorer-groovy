@@ -18,7 +18,8 @@
 		<module>shared-web</module>
 		<module>track-repo</module>
 		<module>uits</module>
-	</modules>
+        <module>dtos</module>
+    </modules>
 
 	<scm>
 		<developerConnection>scm:git:http://git.dev.now-technologies.mobi/server/tree/chart-management-improvments</developerConnection>
@@ -345,6 +346,11 @@
 				<artifactId>service</artifactId>
 				<version>${chartsnow-version}</version>
 			</dependency>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>dtos</artifactId>
+                <version>${chartsnow-version}</version>
+            </dependency>
 			<dependency>
 				<groupId>mobi.nowtechnologies.java.server</groupId>
 				<artifactId>service</artifactId>

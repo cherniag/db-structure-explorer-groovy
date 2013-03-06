@@ -19,10 +19,6 @@
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>uits</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>persistence</artifactId>
-        </dependency>
 
 		<!-- General -->
 		<dependency>
