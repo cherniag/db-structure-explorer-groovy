@@ -289,21 +289,6 @@ public class UserDao extends JpaDaoSupport {
 //						+ "' order by o.status desc limit 0,1000");
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<User> getListOfUsersForWeeklyUpdate() {
-		return (List<User>) getJpaTemplate().executeFind(new JpaCallback<List>() {
-			@Override
-			public List doInJpa(EntityManager entityManager) throws javax.persistence.PersistenceException {
-				Query query = entityManager.createNamedQuery(User.NQ_GET_SUBSCRIBED_USERS);
-					query.setParameter(1, getEpochSeconds());
-	                query.setFirstResult(0);
-	                query.setMaxResults(1000);
-                List results = query.getResultList();
-                return results;
-			}
-		});
-	}
-
 	public List<Integer> getOperatorsAccordingToPaymentPolicies(
 			String communityName, String paymentType) {
 		 int communityId = Community.getMapAsNames().get(communityName).getId();

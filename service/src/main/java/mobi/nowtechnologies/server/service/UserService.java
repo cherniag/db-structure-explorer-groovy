@@ -126,6 +126,7 @@ public class UserService {
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
 	private ITunesService iTunesService;
+	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -724,6 +725,10 @@ public class UserService {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");
+		
+		if (user.getFullGraceCreditMillis() == 0) {
+			user.setFullGraceCreditMillis(getGraceDurationSeconds(user) * 1000L);
+		}
 		
 		user.setPaymentEnabled(false);
 		
@@ -1707,7 +1712,7 @@ public class UserService {
 		}else if (epochSeconds - user.getNextSubPayment() > graceDurationSeconds){
 			o2PSMSGraceCreditSeconds = graceDurationSeconds;
 		}else{
-			o2PSMSGraceCreditSeconds=epochSeconds - user.getNextSubPayment();
+			o2PSMSGraceCreditSeconds = epochSeconds - user.getNextSubPayment();
 		}
 
 		LOGGER.debug("Output parameter o2PSMSGraceCreditSeconds=[{}]", o2PSMSGraceCreditSeconds);
@@ -2073,5 +2078,11 @@ public class UserService {
 		}
 		LOGGER.debug("Output parameter isOnGracePeriod=[{}]", isOnGracePeriod);
 		return isOnGracePeriod;
+	}
+
+	@Transactional(readOnly=true)
+	public List<User> getListOfUsersForWeeklyUpdate() {
+		List<User> users = userRepository.getListOfUsersForWeeklyUpdate(Utils.getEpochSeconds(), PAGEABLE_FOR_WEEKLY_UPDATE);
+		return users;
 	}
 }

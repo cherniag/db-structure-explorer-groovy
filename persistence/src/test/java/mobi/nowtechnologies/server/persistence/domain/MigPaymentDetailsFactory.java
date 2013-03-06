@@ -11,23 +11,15 @@ package mobi.nowtechnologies.server.persistence.domain;
  */
 public class MigPaymentDetailsFactory
  {
-	/**
-	 * Prevent creation of instances of this class.
-	 *
-	 * @generatedBy CodePro at 29.08.12 11:04
-	 */
-	private MigPaymentDetailsFactory() {
-	}
 
-
-	/**
-	 * Create an instance of the class <code>{@link MigPaymentDetails}</code>.
-	 *
-	 * @generatedBy CodePro at 29.08.12 11:04
-	 */
 	public static MigPaymentDetails createMigPaymentDetails() {
 		final MigPaymentDetails migPaymentDetails = new MigPaymentDetails();
 		migPaymentDetails.setMigPhoneNumber("migPhoneNumber");
 		return migPaymentDetails;
+	}
+
+
+	public static MigPaymentDetails createMigPaymentDetails2() {
+		return new MigPaymentDetails();
 	}
 }

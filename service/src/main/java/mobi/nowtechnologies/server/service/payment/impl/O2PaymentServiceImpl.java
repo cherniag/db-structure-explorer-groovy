@@ -101,8 +101,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 				}else{
 					reson = "Grace period expired";
 				}
-				
-				user.setStatus(UserStatusDao.getLimitedUserStatus());
 				userService.unsubscribeUser(user, reson);				
 			}
 		}

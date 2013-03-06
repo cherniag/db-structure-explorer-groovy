@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -18,11 +19,14 @@ import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -31,6 +35,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -48,7 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(Theories.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
 @Transactional
 public class UserServiceIT {
 
@@ -305,6 +310,122 @@ public class UserServiceIT {
 		}
 
 		return user;
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActivePaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePast_Success() {		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(1);
+		testUser.setFullGraceCreditMillis(Long.MAX_VALUE);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()-100);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		
+		currentMigPaymentDetails.setActivated(false);
+		currentMigPaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentMigPaymentDetails);
+		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactivePaymentDetailsAndZeroBalanceAndGracePeriodExpired_Success() {
+		final int gracePeriodSeconds = TWO_DAY_SECONDS;
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()-gracePeriodSeconds - 10);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		
+		currentMigPaymentDetails.setActivated(false);
+		currentMigPaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentMigPaymentDetails);
+		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActivePaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		
+		currentMigPaymentDetails.setActivated(true);
+		currentMigPaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentMigPaymentDetails);
+		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(0, users.size());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithoutPaymentDetailsAndZeroBalanceAndGracePeriodExpired_Success() {
+		final int gracePeriodSeconds = TWO_DAY_SECONDS;
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - gracePeriodSeconds - 10);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
+		testUser.setCurrentPaymentDetails(null);
+		
+		entityDao.saveEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithoutPaymentDetailsAndZeroBalanceAndAndGracePeriodNotExpired_Success() {
+		final int gracePeriodSeconds = TWO_DAY_SECONDS;
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - gracePeriodSeconds/2);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
+		testUser.setCurrentPaymentDetails(null);
+		
+		entityDao.saveEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(0, users.size());
 	}
 
 }

@@ -49,7 +49,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject">
      	    <bean class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
-				<property name="userDao" ref="persistence.UserDao" />
 				<property name="userService" ref="service.UserService" />
 			</bean>
      	</property>

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ import javax.persistence.QueryHint;
  * @author Titov Mykhaylo (titov)
  *
  */
-public interface UserRepository extends JpaRepository<User, Integer>{
+public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
 
 	@Query(value="select user from User user " +
 			"join user.userGroup userGroup " +
@@ -120,4 +121,15 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 
 	@Query("select u from User u where u.status=10 and u.nextSubPayment<?1 and lower(u.provider) = ?2 and u.segment in ?3 and u.contract in ?4")
 	List<User> findBefore48hExpireUsers(int epochSeconds, String provider, SegmentType segment, Contract contracts);
+
+	@Query("select u from User u " +
+			"left join u.currentPaymentDetails pd " +
+			"where u.status=10 " +
+			"and " +
+			"(" +
+			"(u.subBalance>0 and u.nextSubPayment<?1) " +
+			"or " +
+			"( u.subBalance=0 and (u.nextSubPayment+u.fullGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
+			")")
+	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 }

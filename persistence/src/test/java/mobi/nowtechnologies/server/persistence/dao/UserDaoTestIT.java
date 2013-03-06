@@ -143,37 +143,6 @@ public class UserDaoTestIT {
 	}
 	
 	@Test
-	public void test_GetListOfUsersForWeeklyUpdate() {
-		
-		User testUser = createUser();
-		testUser.setContract(Contract.PAYG);
-		testUser.setSegment(SegmentType.CONSUMER);
-		
-		entityDao.saveEntity(testUser);
-		
-		testUser = createUser();
-		testUser.setContract(Contract.PAYM);
-		testUser.setSegment(SegmentType.CONSUMER);
-		
-		entityDao.saveEntity(testUser);
-		
-		testUser = createUser();
-		testUser.setContract(Contract.PAYM);
-		testUser.setSegment(SegmentType.BUSINESS);
-		
-		entityDao.saveEntity(testUser);
-		
-		List<User> users=userDao.getListOfUsersForWeeklyUpdate();
-		assertNotNull(users);
-		assertTrue(users.size() == 2);
-		for (User user : users) {
-			assertTrue(Utils.getEpochSeconds()>user.getNextSubPayment());
-			assertEquals(10,user.getUserStatusId());
-		}
-	}
-	
-	@Test
-
 	public void test_getListOfUsersForUpdate() throws Exception {
 		User testUser= new User();
 		testUser.setAddress1("678");

@@ -210,7 +210,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	</bean>
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
-		<property name="userDao" ref="persistence.UserDao" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
 
