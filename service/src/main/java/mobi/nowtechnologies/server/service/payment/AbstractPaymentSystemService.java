@@ -40,14 +40,14 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	@Override
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
-		SubmittedPayment payment = SubmittedPayment.valueOf(pendingPayment);		
+		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);		
 		
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		
 		PaymentDetailsStatus status = PaymentDetailsStatus.SUCCESSFUL;
 		if (!response.isSuccessful() && HttpServletResponse.SC_OK==response.getHttpStatus()) {
 			status = PaymentDetailsStatus.ERROR;
-			payment.setDescriptionError(response.getDescriptionError());
+			submittedPayment.setDescriptionError(response.getDescriptionError());
 			
 			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError()) {
 				paymentDetails.setActivated(false);
@@ -55,22 +55,22 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		}
 		
 		// Store submitted payment
-		payment.setStatus(status);
+		submittedPayment.setStatus(status);
 		paymentDetails.setLastPaymentStatus(status);
-		payment = entityService.updateEntity(payment); 
+		submittedPayment = entityService.updateEntity(submittedPayment); 
 		entityService.updateEntity(paymentDetails);
-		LOGGER.info("Submitted payment with id {} has been created", payment.getI());
+		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
 		
 		// Send sync-event about commited payment
-		if(payment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
-			applicationEventPublisher.publishEvent(new PaymentEvent(payment));
+		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
+			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
 		
 		// Deleting pending payment
 		entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
 
-		LOGGER.info("Commit process for payment with tx:{} has been finished with status {}.", payment.getInternalTxId(), payment.getStatus());
+		LOGGER.info("Commit process for payment with tx:{} has been finished with status {}.", submittedPayment.getInternalTxId(), submittedPayment.getStatus());
 		
-		return payment;
+		return submittedPayment;
 	}
 
 	public void setEntityService(EntityService entityService) {
