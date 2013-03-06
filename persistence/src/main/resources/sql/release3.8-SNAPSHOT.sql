@@ -17,3 +17,5 @@ alter table tb_users add column last_payment_try_millis BIGINT default 0;
 alter table tb_users add column full_grace_credit_millis BIGINT default 0;
 
 alter table tb_paymentdetails add column phoneNumber varchar(255);
+alter table tb_paymentPolicy add column contract char(255);
+alter table tb_paymentPolicy add column segment char(255);

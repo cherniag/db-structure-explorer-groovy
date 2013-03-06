@@ -1,12 +1,16 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +69,15 @@ public class PaymentPolicy {
 	
 	@Column(name="app_store_product_id")
 	private String appStoreProductId;
+	
+	@Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)")
+    private SegmentType segment;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "char(255)")
+	private Contract contract;
+	
 
 	public void setId(short id) {
 		this.id = id;
@@ -182,13 +195,29 @@ public class PaymentPolicy {
 		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
 		return offerPaymentPolicyDtos;
 	}
-	
+
+	public SegmentType getSegment() {
+		return segment;
+	}
+
+	public void setSegment(SegmentType segment) {
+		this.segment = segment;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 
 	@Override
 	public String toString() {
 		return "PaymentPolicy [communityId=" + communityId + ", id=" + id
 				+ ", paymentType=" + paymentType + ", shortCode=" + shortCode
-				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", appStoreProductId=" + appStoreProductId + ", availableInStore=" + availableInStore + "]";
+				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", appStoreProductId=" + appStoreProductId + ", availableInStore=" + availableInStore + ", segment=" + segment + ", contract="
+				+ contract + "]";
 	}
 
 	public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
