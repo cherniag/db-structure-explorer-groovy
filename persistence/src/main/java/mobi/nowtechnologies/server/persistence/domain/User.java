@@ -868,6 +868,8 @@ public class User implements Serializable {
             return "PAY_PAL";
         } else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "PSMS";
+        }else if (PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())){
+        	return "O2_PSMS";
         }
         return "UNKNOWN";
     }
