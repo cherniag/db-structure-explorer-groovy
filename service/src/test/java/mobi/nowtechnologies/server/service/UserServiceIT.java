@@ -22,6 +22,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
@@ -313,12 +314,13 @@ public class UserServiceIT {
 	}
 	
 	@Test
-	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActivePaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePast_Success() {		
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(1);
 		testUser.setFullGraceCreditMillis(Long.MAX_VALUE);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()-100);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(null);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -338,7 +340,7 @@ public class UserServiceIT {
 	}
 	
 	@Test
-	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactivePaymentDetailsAndZeroBalanceAndGracePeriodExpired_Success() {
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactiveMigPaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsPSMS_Success() {
 		final int gracePeriodSeconds = TWO_DAY_SECONDS;
 		
 		User testUser = UserFactory.createUser();
@@ -365,40 +367,12 @@ public class UserServiceIT {
 	}
 	
 	@Test
-	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActivePaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
-		
+	public void testGetListOfUsersForWeeklyUpdate_FreeTrial_Success() {
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
 		testUser.setFullGraceCreditMillis(0L);
-		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()- 10);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
-		
-		entityDao.saveEntity(testUser);
-		
-		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
-		
-		currentMigPaymentDetails.setActivated(true);
-		currentMigPaymentDetails.setOwner(testUser);
-		
-		entityDao.saveEntity(currentMigPaymentDetails);
-		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
-		entityDao.updateEntity(testUser);
-		
-		List<User> users = userService.getListOfUsersForWeeklyUpdate();
-		assertNotNull(users);
-		assertEquals(0, users.size());
-	}
-	
-	@Test
-	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithoutPaymentDetailsAndZeroBalanceAndGracePeriodExpired_Success() {
-		final int gracePeriodSeconds = TWO_DAY_SECONDS;
-		
-		User testUser = UserFactory.createUser();
-		testUser.setSubBalance(0);
-		testUser.setFullGraceCreditMillis(0L);
-		testUser.setNextSubPayment(Utils.getEpochSeconds() - gracePeriodSeconds - 10);
-		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
-		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
 		testUser.setCurrentPaymentDetails(null);
 		
 		entityDao.saveEntity(testUser);
@@ -410,22 +384,83 @@ public class UserServiceIT {
 	}
 	
 	@Test
-	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithoutPaymentDetailsAndZeroBalanceAndAndGracePeriodNotExpired_Success() {
-		final int gracePeriodSeconds = TWO_DAY_SECONDS;
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
 		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
 		testUser.setFullGraceCreditMillis(0L);
-		testUser.setNextSubPayment(Utils.getEpochSeconds() - gracePeriodSeconds/2);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
-		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
-		testUser.setCurrentPaymentDetails(null);
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		
 		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
 		
 		List<User> users = userService.getListOfUsersForWeeklyUpdate();
 		assertNotNull(users);
 		assertEquals(0, users.size());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(false);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsMIG_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.MIG_SMS_TYPE);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
 	}
 
 }
