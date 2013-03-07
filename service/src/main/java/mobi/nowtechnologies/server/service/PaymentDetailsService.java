@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
+import mobi.nowtechnologies.server.service.payment.O2PaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -52,6 +53,8 @@ public class PaymentDetailsService {
 	private PayPalPaymentService payPalPaymentService;
 
 	private MigPaymentService migPaymentService;
+	
+	private O2PaymentService o2PaymentService;
 
 	private PromotionService promotionService;
 
@@ -90,6 +93,8 @@ public class PaymentDetailsService {
 					pendingPaymentDetails.setDescriptionError("Was not verified and replaced by another payment details");
 				}
 				paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
+			}else if(dto.getPaymentType().equals(PaymentType.O2_PSMS)){
+				paymentDetails = o2PaymentService.createPaymentDetails(dto.getPhoneNumber(), user, paymentPolicy);
 			}
 
 			if (null != paymentDetails) {
@@ -469,6 +474,8 @@ public class PaymentDetailsService {
     public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
         this.paymentPolicyDao = paymentPolicyDao;
     }
-
-
+    
+    public void setO2PaymentService(O2PaymentService o2PaymentService) {
+		this.o2PaymentService = o2PaymentService;
+	}
 }

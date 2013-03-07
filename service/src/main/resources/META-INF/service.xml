@@ -67,6 +67,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="sagePayPaymentService" ref="service.sagePayPaymentService" />
 		<property name="payPalPaymentService" ref="service.payPalPaymentService" />
 		<property name="migPaymentService" ref="service.migPaymentService" />
+		<property name="o2PaymentService" ref="service.o2PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 
 		<property name="messageSource" ref="serviceMessageSource" />

@@ -226,4 +226,24 @@ public class UserRepositoryIT {
 		assertNotNull(users);
 		assertEquals(0, users.size());
 	}
+	
+	@Test
+	public void testUpdateLastBefore48SmsMillis_Success() throws Exception {
+		long newLastBefore48SmsMillis = 10L;
+
+		User testUser = UserFactory.createUser();
+		testUser.setLastBefore48SmsMillis(Long.MIN_VALUE);
+		
+		testUser = userRepository.save(testUser);
+		
+		int updatedCount = userRepository.updateLastBefore48SmsMillis(newLastBefore48SmsMillis , testUser.getId());
+		assertEquals(1, updatedCount);
+		
+//		User user = userRepository.findOne(testUser.getId());
+//		
+//		assertNotNull(user);
+//		assertEquals(testUser.getId(), user.getId());
+//		assertEquals(newLastBefore48SmsMillis, user.getLastBefore48SmsMillis());
+		
+	}
 }

@@ -106,10 +106,11 @@ public class UserRegInfo {
 		public static final String FREEMIUM = "FREEMIUM";
 		public static final String PAY_PAL = "PAY_PAL";
 		public static final String UNKNOWN = "UNKNOWN";
+		public static final String O2_PSMS = "o2Psms";
 		public static final String ITUNES_SUBSCRIPTION = "ITUNES_SUBSCRIPTION";
 
 		public static String[] getPaymentTypes() {
-			return new String[]{CREDIT_CARD, PREMIUM_USER, FREEMIUM, PAY_PAL, UNKNOWN};
+			return new String[]{CREDIT_CARD, PREMIUM_USER, FREEMIUM, PAY_PAL, ITUNES_SUBSCRIPTION, O2_PSMS, UNKNOWN};
 		}
 	}
 
