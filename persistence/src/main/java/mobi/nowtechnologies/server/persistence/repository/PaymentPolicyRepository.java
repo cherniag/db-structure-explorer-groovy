@@ -5,6 +5,7 @@ import java.util.List;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -33,10 +34,18 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Sh
             "where paymentPolicy.community=?1 " +
             " group by paymentPolicy.paymentType ")
     List<PaymentPolicy> getPaymentPoliciesByPaymentType(Community community);
+
+
 	
 	@Query(value="select paymentPolicy from PaymentPolicy paymentPolicy "+
 			"where paymentPolicy.community=?1 " +
 			"and paymentPolicy.paymentType<>?2 ")
 	List<PaymentPolicy> getPaymentPoliciesWithoutSelectedPaymentType(Community community, String paymentType);
 
+    @Query(value="select paymentPolicy from PaymentPolicy paymentPolicy "+
+            " where paymentPolicy.community=?1 " +
+            " and paymentPolicy.segment = ?2 " +
+            " and paymentPolicy.operator.id = ?3 " +
+            " group by paymentPolicy.paymentType")
+    List<PaymentPolicy> getPaymentPolicies(Community community, SegmentType segment, int operator);
 }

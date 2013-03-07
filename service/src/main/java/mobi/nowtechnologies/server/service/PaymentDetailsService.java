@@ -6,6 +6,7 @@ import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
@@ -151,6 +152,12 @@ public class PaymentDetailsService {
 		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community);
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
+
+    @Transactional
+    public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment, int operator) {
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment, operator);
+        return mergePaymentPolicies(user, paymentPolicies);
+    }
 
 	private List<PaymentPolicyDto> mergePaymentPolicies(User user, List<PaymentPolicy> paymentPolicies) {
 		List<PaymentPolicyDto> result = new LinkedList<PaymentPolicyDto>();
@@ -462,5 +469,6 @@ public class PaymentDetailsService {
     public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
         this.paymentPolicyDao = paymentPolicyDao;
     }
+
 
 }
