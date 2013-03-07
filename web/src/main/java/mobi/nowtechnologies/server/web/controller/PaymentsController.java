@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -10,6 +11,7 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -53,8 +56,8 @@ public class PaymentsController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView(viewName);
 
-        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community));
-        modelAndView.addObject("paymentPolicies", filterPoliciesIfO2(paymentPolicies, user));
+        List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator());
+        modelAndView.addObject("paymentPolicies", paymentPolicies);
 
         modelAndView.addObject("paymentDetails", getPaymentDetails(user));
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
@@ -68,57 +71,15 @@ public class PaymentsController extends CommonController {
         return modelAndView;
     }
 
-    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community) {
-        if (user.isNonO2User()) {
-                return  paymentDetailsService.getPaymentPolicy(community, user);
-        }
-        return Collections.emptyList();
+    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
+        List<PaymentPolicyDto> paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment, operator);
+        if(isEmpty(paymentPolicy))
+            return Collections.emptyList();
+        return paymentPolicy;
     }
 
     private PaymentDetails getPaymentDetails(User user) {
         return  (user.isNonO2User())? paymentDetailsService.getPaymentDetails(user): null;
-    }
-
-    private List<PaymentPolicyDto> filterPoliciesIfO2(List<PaymentPolicyDto> policies, User user) {
-
-        List<PaymentPolicyDto> result = filterNonO2Policies(policies, user);
-        result = filterO2BusinessPolicy(result, user);
-        result = filterO2Consumer(result, user);
-
-        return result;
-    }
-
-    private List<PaymentPolicyDto> filterO2Consumer(List<PaymentPolicyDto> policies, User user) {
-        if(user.isO2Consumer()){
-            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
-            for(PaymentPolicyDto policy: policies)
-                if(policy.isO2ConsumerPolicy())
-                    result.add(policy);
-            return result;
-        }
-        return policies;
-    }
-
-    private List<PaymentPolicyDto> filterO2BusinessPolicy(List<PaymentPolicyDto> policies, User user) {
-        if(user.isO2Business()){
-            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
-            for(PaymentPolicyDto policy: policies)
-                if(policy.isO2BusinessPolicy())
-                    result.add(policy);
-            return result;
-        }
-        return policies;
-    }
-
-    private List<PaymentPolicyDto> filterNonO2Policies(List<PaymentPolicyDto> policies, User user) {
-        if(user.isNonO2User()){
-            List<PaymentPolicyDto> result = new ArrayList<PaymentPolicyDto>();
-            for(PaymentPolicyDto policy: policies)
-                if(policy.isNonO2Policy())
-                    result.add(policy);
-            return result;
-        }
-        return policies;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
