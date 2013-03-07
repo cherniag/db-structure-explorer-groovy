@@ -7,12 +7,15 @@ import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.SetPassword;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
@@ -24,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -51,6 +55,10 @@ import static org.junit.Assert.*;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class UserServiceTestIT {
+	
+	private static final int HOUR_SECONDS = 60 * 60;
+	private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
+	private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
 	
 	@Resource(name="service.UserService")
 	private UserService userService;
@@ -203,6 +211,161 @@ public class UserServiceTestIT {
 		int userId=1;
 		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
 		assertNotNull(accountCheckDTO);
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(1);
+		testUser.setFullGraceCreditMillis(Long.MAX_VALUE);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()-100);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(null);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		
+		currentMigPaymentDetails.setActivated(false);
+		currentMigPaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentMigPaymentDetails);
+		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactiveMigPaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsPSMS_Success() {
+		final int gracePeriodSeconds = TWO_DAY_SECONDS;
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(gracePeriodSeconds*1000L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()-gracePeriodSeconds - 10);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentMigPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		
+		currentMigPaymentDetails.setActivated(false);
+		currentMigPaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentMigPaymentDetails);
+		testUser.setCurrentPaymentDetails(currentMigPaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_FreeTrial_Success() {
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()- 10);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setCurrentPaymentDetails(null);
+		
+		entityDao.saveEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(0, users.size());
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(false);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+		assertEquals(testUser.getId(), users.get(0).getId());
+	}
+	
+	@Test
+	@Rollback
+	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsMIG_Success() {
+		
+		User testUser = UserFactory.createUser();
+		testUser.setSubBalance(0);
+		testUser.setFullGraceCreditMillis(0L);
+		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
+		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
+		testUser.setLastSubscribedPaymentSystem(PaymentDetails.MIG_SMS_TYPE);
+		
+		entityDao.saveEntity(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		
+		entityDao.saveEntity(currentO2PaymentDetails);
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		entityDao.updateEntity(testUser);
+		
+		List<User> users = userService.getListOfUsersForWeeklyUpdate();
+		assertNotNull(users);
+		assertEquals(0, users.size());
 	}
 
 }

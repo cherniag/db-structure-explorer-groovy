@@ -127,7 +127,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"where u.status=10 " +
 			"and " +
 			"(" +
-			"((u.lastSubscribedPaymentSystem is null or u.lastSubscribedPaymentSystem<>'o2Psms') and u.nextSubPayment<?1) " +
+			"((pd is null or TYPE(pd)<> O2PSMSPaymentDetails) and u.nextSubPayment<?1) " +
 			"or " +
 			"(u.lastSubscribedPaymentSystem='o2Psms' and (u.nextSubPayment+u.fullGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
 			")")
