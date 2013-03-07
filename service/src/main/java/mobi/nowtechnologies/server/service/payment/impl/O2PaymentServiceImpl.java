@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.service.payment.O2PaymentService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.slf4j.Logger;
@@ -126,15 +127,36 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	}
 
 	@Override
-	public O2PSMSPaymentDetails commitPaymnetDetails(User user) throws ServiceException {
+	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
 		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("Commiting o2Psms payment details for user {} ...", user.getUserName());
+		
+		O2PSMSPaymentDetails o2PSMSPaymentDetails = new O2PSMSPaymentDetails();
+		o2PSMSPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+		o2PSMSPaymentDetails.setPaymentPolicy(paymentPolicy);
+		o2PSMSPaymentDetails.setMadeRetries(0);
+		o2PSMSPaymentDetails.setRetriesOnError(getRetriesOnError());
+		o2PSMSPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
+		//o2PSMSPaymentDetails.setActivated(activated);
+		
+		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+		
+		user.setCurrentPaymentDetails(o2PSMSPaymentDetails);
+		o2PSMSPaymentDetails.setOwner(user);
+
+		o2PSMSPaymentDetails = (O2PSMSPaymentDetails) getPaymentDetailsRepository().save(o2PSMSPaymentDetails);
+		
+		LOGGER.info("Done creation of o2Psms payment details for user {}", user.getUserName());
+		
+		return o2PSMSPaymentDetails;
 	}
 
 	@Override
 	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("Creating o2Psms payment details...");
+		
+		O2PSMSPaymentDetails o2PSMSPaymentDetails = commitPaymnetDetails(user, paymentPolicy);
+		return o2PSMSPaymentDetails;
 	}
 
 }

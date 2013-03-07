@@ -13,6 +13,6 @@ public interface O2PaymentService {
 	
 	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException;
 	
-	public O2PSMSPaymentDetails commitPaymnetDetails(User user) throws ServiceException;
+	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException;
 
 }
