@@ -50,7 +50,8 @@ public class Before48hPSMSPaymentJob {
 
 					o2ClientService.sendFreeSms(user.getMobile(), msg);
 					
-					userRepository.updateLastBefore48SmsMillis(Utils.getEpochMillis(), user.getId());
+					user.setLastBefore48SmsMillis(Utils.getEpochMillis());
+					userRepository.updateLastBefore48SmsMillis(user.getLastBefore48SmsMillis(), user.getId());
 					
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
