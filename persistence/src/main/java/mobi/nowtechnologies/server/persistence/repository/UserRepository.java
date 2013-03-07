@@ -129,7 +129,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"(" +
 			"((pd is null or TYPE(pd)<> O2PSMSPaymentDetails) and u.nextSubPayment<?1) " +
 			"or " +
-			"(u.lastSubscribedPaymentSystem='o2Psms' and (u.nextSubPayment+u.fullGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
+			"(u.lastSubscribedPaymentSystem='o2Psms' and (u.nextSubPayment+u.deactivatedO2PSMSGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
 			")")
 	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 }

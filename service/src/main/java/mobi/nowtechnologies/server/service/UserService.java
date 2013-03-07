@@ -758,10 +758,6 @@ public class UserService {
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");
 
-		if (user.getFullGraceCreditMillis() == 0) {
-			user.setFullGraceCreditMillis(getGraceDurationSeconds(user) * 1000L);
-		}
-
 		user.setPaymentEnabled(false);
 
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
@@ -1125,8 +1121,8 @@ public class UserService {
 			if (!wasInLimitedStatus) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - (int) (user.getFullGraceCreditMillis() / 1000));
-				user.setFullGraceCreditMillis(0L);
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - (int) (user.getDeactivatedO2PSMSGraceCreditMillis() / 1000));
+				user.setDeactivatedO2PSMSGraceCreditMillis(0L);
 			}
 		} else if (!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			// Update user balance
@@ -1736,7 +1732,7 @@ public class UserService {
 
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		if (currentPaymentDetails == null || !currentPaymentDetails.getPaymentType().equals(PaymentDetails.O2_PSMS_TYPE) || !currentPaymentDetails.isActivated()) {
-			o2PSMSGraceCreditSeconds = (int) user.getFullGraceCreditMillis() / 1000;
+			o2PSMSGraceCreditSeconds = (int) user.getDeactivatedO2PSMSGraceCreditMillis() / 1000;
 		} else {
 			final int epochSeconds = Utils.getEpochSeconds();
 			final Integer graceDurationSeconds = getGraceDurationSeconds(user);

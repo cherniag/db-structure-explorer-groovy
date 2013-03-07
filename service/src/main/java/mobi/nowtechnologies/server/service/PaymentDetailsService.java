@@ -436,6 +436,11 @@ public class PaymentDetailsService {
 		
 		user = userService.setToZeroSmsAccordingToLawAttributes(user);
 		
+		if (user.getDeactivatedO2PSMSGraceCreditMillis() == 0) {
+			user.setDeactivatedO2PSMSGraceCreditMillis(userService.getGraceDurationSeconds(user) * 1000L);
+			userService.updateUser(user);
+		}
+		
 		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		
 		if(currentPaymentDetails!=null){

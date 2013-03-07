@@ -1306,7 +1306,7 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setFullGraceCreditMillis(fullGraceCreditSeconds*1000L);
+		user.setDeactivatedO2PSMSGraceCreditMillis(fullGraceCreditSeconds*1000L);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
@@ -1997,7 +1997,7 @@ public class UserServiceTest {
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(currentTimeSeconds-4*graceDurationSeconds);
-		user.setFullGraceCreditMillis(graceDurationSeconds*1000L);
+		user.setDeactivatedO2PSMSGraceCreditMillis(graceDurationSeconds*1000L);
 		
 		final SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(paymentDetailsType);

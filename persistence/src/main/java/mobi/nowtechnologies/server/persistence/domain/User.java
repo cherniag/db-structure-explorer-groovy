@@ -251,8 +251,8 @@ public class User implements Serializable {
     @Column(columnDefinition = "char(255)")
     private SegmentType segment;
 
-    @Column(name="full_grace_credit_millis")
-    private long fullGraceCreditMillis;
+    @Column(name="deactivated_o2_psms_grace_credit_millis", columnDefinition="BIGINT default 0")
+    private long deactivatedO2PSMSGraceCreditMillis;
 
     public User() {
         setDisplayName("");
@@ -793,7 +793,7 @@ public class User implements Serializable {
 
         int graceDurationSeconds;
         if (UserStatus.LIMITED.equals(status.getName())) {
-            graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+            graceDurationSeconds = getDeactivatedO2PSMSGraceCreditSeconds();
         } else {
             graceDurationSeconds = currentGraceDurationSeconds;
         }
@@ -941,7 +941,7 @@ public class User implements Serializable {
         accountDto.setSubscription(subscription);
         int graceDurationSeconds;
         if (UserStatus.LIMITED.equals(status.getName())) {
-            graceDurationSeconds = (int) (fullGraceCreditMillis / 1000);
+            graceDurationSeconds = getDeactivatedO2PSMSGraceCreditSeconds();
         } else {
             graceDurationSeconds = currentGraceDurationSeconds;
         }
@@ -1049,13 +1049,23 @@ public class User implements Serializable {
     public void setLastPaymentTryMillis(long lastPaymentTryMillis) {
         this.lastPaymentTryMillis = lastPaymentTryMillis;
     }
-    public long getFullGraceCreditMillis() {
-        return fullGraceCreditMillis;
+
+    public long getDeactivatedO2PSMSGraceCreditMillis() {
+        return deactivatedO2PSMSGraceCreditMillis;
     }
 
-    public void setFullGraceCreditMillis(long fullGraceCreditMillis) {
-        this.fullGraceCreditMillis = fullGraceCreditMillis;
+    public void setDeactivatedO2PSMSGraceCreditMillis(long deactivatedO2PSMSGraceCreditMillis) {
+        this.deactivatedO2PSMSGraceCreditMillis = deactivatedO2PSMSGraceCreditMillis;
     }
+    
+    public int getDeactivatedO2PSMSGraceCreditSeconds() {
+        return (int)(deactivatedO2PSMSGraceCreditMillis/1000L);
+    }
+
+    public void setDeactivatedO2PSMSGraceCreditSeconds(int deactivatedO2PSMSGraceCreditSeconds) {
+        this.deactivatedO2PSMSGraceCreditMillis = deactivatedO2PSMSGraceCreditSeconds*1000L;
+    }
+
 
     @Override
     public String toString() {
@@ -1083,6 +1093,7 @@ public class User implements Serializable {
                 .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
                 .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
                 .add("potentialPromotionId", potentialPromotionId)
+                .add("deactivatedO2PSMSGraceCreditMillis", deactivatedO2PSMSGraceCreditMillis)
                 .add("pin", pin)
                 .add("code", code)
                 .add("operator", operator)

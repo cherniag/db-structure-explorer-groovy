@@ -188,7 +188,6 @@ public class UserServiceIT {
 	}
 
 	@Theory
-	@Ignore
 	public void test_getUsersForPendingPayment_Successful(User user, int nextSubPayment, long lastPaymentTryMillis,
 			PaymentDetailsStatus lastPaymentStatus, PaymentDetailsType paymentDetailsType,  mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 
