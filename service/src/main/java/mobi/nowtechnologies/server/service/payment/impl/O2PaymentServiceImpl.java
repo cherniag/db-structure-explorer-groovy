@@ -111,4 +111,16 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		return submittedPayment;
 	}
 
+	@Override
+	public O2PSMSPaymentDetails commitPaymnetDetails(User user) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
