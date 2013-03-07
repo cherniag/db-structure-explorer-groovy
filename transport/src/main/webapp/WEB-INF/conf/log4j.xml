@@ -223,7 +223,7 @@
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
-			<param name="classNames" value="mobi.nowtechnologies.server.service.aop.SMSNotification" />
+			<param name="classNames" value="mobi.nowtechnologies.server.service.aop.SMSNotification, mobi.nowtechnologies.server.job.Before48hPSMSPaymentJob" />
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>

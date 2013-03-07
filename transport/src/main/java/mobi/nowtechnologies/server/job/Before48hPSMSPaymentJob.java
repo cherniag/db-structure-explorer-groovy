@@ -1,30 +1,29 @@
 package mobi.nowtechnologies.server.job;
 
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+
 import java.util.List;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.O2ClientService;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-
-public class Before48hExpirePSMSPaymentJob {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hExpirePSMSPaymentJob.class);
+public class Before48hPSMSPaymentJob {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hPSMSPaymentJob.class);
 	
-	private String availableCommunities = "o2";
-	private String availableProviders = "o2";
-	private SegmentType availableSegments = SegmentType.CONSUMER;
-	private Contract availableContracts = Contract.PAYG;
-
+	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000);
+	
 	private O2ClientService o2ClientService;
 
 	private UserRepository userRepository;
@@ -37,16 +36,21 @@ public class Before48hExpirePSMSPaymentJob {
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("[START] Before 48h Expire PSMS Payment job...");
 			
-			List<User> users = userRepository.findBefore48hExpireUsers(getEpochSeconds(), availableProviders, availableSegments, availableContracts);
+			List<User> users = userRepository.findBefore48hExpireUsers(getEpochSeconds(), PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB);
 			LOGGER.info("Before 48h Expire PSMS Payment [{}] users for handling", users.size());
 			for (User user : users) {
 				try {
 					MDC.put(LogUtils.LOG_USER_NAME, user.getUserName());
 					MDC.put(LogUtils.LOG_USER_ID, user.getId());
 
-					String msg = messageSource.getMessage(availableCommunities, messageCode, null, null);
+					final UserGroup userGroup = user.getUserGroup();
+					final Community community = userGroup.getCommunity();
+					final String rewriteUrlParameter = community.getRewriteUrlParameter();
+					String msg = messageSource.getMessage(rewriteUrlParameter, messageCode, null, null);
 
 					o2ClientService.sendFreeSms(user.getMobile(), msg);
+					
+					userRepository.updateLastBefore48SmsMillis(Utils.getEpochMillis(), user.getId());
 					
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);

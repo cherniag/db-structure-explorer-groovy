@@ -119,8 +119,17 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"and u.provider<>'o2' ")
 	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId);
 
-	@Query("select u from User u where u.status=10 and u.nextSubPayment<?1 and lower(u.provider) = ?2 and u.segment in ?3 and u.contract in ?4")
-	List<User> findBefore48hExpireUsers(int epochSeconds, String provider, SegmentType segment, Contract contracts);
+	@Query("select u from User u " +
+			"join u.currentPaymentDetails pd " +
+			"where " +
+			"TYPE(pd)=O2PSMSPaymentDetails " +
+			"and pd.activated=true "+
+			"and u.status=10 " +
+			"and u.nextSubPayment<=?1+172800 " +
+			"and u.nextSubPayment>?1 " +
+			"and u.lastBefore48SmsMillis/1000+172800<u.nextSubPayment"
+			)
+	List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable);
 
 	@Query("select u from User u " +
 			"left join u.currentPaymentDetails pd " +
@@ -132,4 +141,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"(u.lastSubscribedPaymentSystem='o2Psms' and (u.nextSubPayment+u.deactivatedO2PSMSGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
 			")")
 	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
+
+	@Modifying
+	@Query(value="update User user " +
+			"set " +
+			"user.lastBefore48SmsMillis=:lastBefore48SmsMillis " +
+			"where " +
+			"user.id=:id")
+	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 }

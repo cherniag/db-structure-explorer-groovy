@@ -253,6 +253,9 @@ public class User implements Serializable {
 
     @Column(name="deactivated_o2_psms_grace_credit_millis", columnDefinition="BIGINT default 0")
     private long deactivatedO2PSMSGraceCreditMillis;
+    
+    @Column(name="last_before48_sms_millis", columnDefinition="BIGINT default 0")
+    private long lastBefore48SmsMillis;
 
     public User() {
         setDisplayName("");
@@ -1066,8 +1069,15 @@ public class User implements Serializable {
         this.deactivatedO2PSMSGraceCreditMillis = deactivatedO2PSMSGraceCreditSeconds*1000L;
     }
 
+    public long getLastBefore48SmsMillis() {
+		return lastBefore48SmsMillis;
+	}
 
-    @Override
+	public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
+		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
+	}
+
+	@Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
@@ -1104,6 +1114,7 @@ public class User implements Serializable {
                 .add("lastWebLogin", lastWebLogin)
                 .add("firstUserLoginMillis", firstUserLoginMillis)
                 .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
+                .add("lastBefore48SmsMillis", lastBefore48SmsMillis)
                 .add("device", device)
                 .add("deviceModel", deviceModel)
                 .add("deviceTypeId", deviceTypeId)
