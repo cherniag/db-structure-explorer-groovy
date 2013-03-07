@@ -37,6 +37,7 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
@@ -95,7 +96,7 @@ import org.springframework.data.domain.Pageable;
 @PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class })
 public class UserServiceTest {
 	
-	final String o2PaygConsumerGraceDurationCode = ("o2.provider."+SegmentType.CONSUMER+".segment."+Contract.PAYG+".contract.payment.psms.grace.duration.seconds").toLowerCase();
+	public static final String O2_PAYG_CONSUMER_GRACE_DURATION_CODE = ("o2.provider."+SegmentType.CONSUMER+".segment."+Contract.PAYG+".contract."+PaymentDetails.O2_PSMS_TYPE+".payment.grace.duration.seconds").toLowerCase();
 
 	private static final String SMS_SUCCESFULL_PAYMENT_TEXT = "SMS_SUCCESFULL_PAYMENT_TEXT";
 	private static final String SMS_SUCCESFULL_PAYMENT_TEXT_MESSAGE_CODE = "sms.succesfullPayment.text";
@@ -855,7 +856,7 @@ public class UserServiceTest {
 		mockUserRepository = PowerMockito.mock(UserRepository.class);
 		MailService mockMailService = PowerMockito.mock(MailService.class);
 
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(48*60*60+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 		
 		userServiceSpy.setSagePayService(mockSagePayService);
 		userServiceSpy.setPaymentPolicyService(mockPaymentPolicyService);
@@ -1260,7 +1261,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testGraceCredit_NotO2PSMSLastPayment_Success() throws Exception {
+	public void testgGetO2PSMSGraceCreditSeconds_NotO2PSMSLastPayment_Success() throws Exception {
 		final User user = UserFactory.createUser();
 		user.setLastSubscribedPaymentSystem(PaymentDetails.PAYPAL_TYPE);
 
@@ -1270,7 +1271,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testGraceCredit_NotExpiredPayment_Success() throws Exception {
+	public void testGetO2PSMSGraceCreditSeconds_NotExpiredPayment_Success() throws Exception {
 		final User user = UserFactory.createUser();
 		user.setNextSubPayment(Utils.getEpochSeconds()+10000000);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
@@ -1281,20 +1282,22 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testGraceCredit_NullUser_Success() throws Exception {
+	public void testGetO2PSMSGraceCreditSeconds_NullUser_Success() throws Exception {
 		final User user = null;
 
-		int graceCredit = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
-		
-		assertEquals(0, graceCredit);
+		userServiceSpy.getO2PSMSGraceCreditSeconds(user);
 	}
 	
 	@Test
-	public void testGraceCredit_GraceEnded_Success() throws Exception {
+	public void testGetO2PSMSGraceCreditSeconds_GraceEnded_Success() throws Exception {
 		final int graceDurationSeconds = 48*60*60;
+		final int fullGraceCreditSeconds = graceDurationSeconds/2;
 		
 		final Community community = new Community();
 		community.setRewriteUrlParameter("o2");
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setActivated(false);
 		
 		final UserGroup userGroup = new UserGroup();
 		userGroup.setCommunity(community);
@@ -1303,22 +1306,27 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setFullGraceCreditMillis(fullGraceCreditSeconds*1000L);
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
 		
-		int graceCredit = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
+		int o2PSMSGraceCreditSeconds = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
 		
-		assertEquals(graceDurationSeconds, graceCredit);
+		assertEquals(fullGraceCreditSeconds, o2PSMSGraceCreditSeconds);
 
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource, times(0)).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
 	}
 	
 	@Test
-	public void testGraceCredit_InGraceNow_Success() throws Exception {
+	public void testGetO2PSMSGraceCreditSeconds_InGraceNow_Success() throws Exception {
 		final int currentTimeSeconds = Integer.MAX_VALUE/2;
 		final int graceDurationSeconds = 2*24*60*60;
 		final Community community = new Community();
 		community.setRewriteUrlParameter("o2");
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setActivated(true);
 		
 		final UserGroup userGroup = new UserGroup();
 		userGroup.setCommunity(community);
@@ -1328,17 +1336,18 @@ public class UserServiceTest {
 		final int halfOfGraceDurationSeconds = graceDurationSeconds/2;
 		user.setNextSubPayment(currentTimeSeconds - halfOfGraceDurationSeconds);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
 	
 		int graceCredit = userServiceSpy.getO2PSMSGraceCreditSeconds(user);
 		
 		assertEquals(graceDurationSeconds-halfOfGraceDurationSeconds, graceCredit);
 
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
 		PowerMockito.verifyStatic(Mockito.times(1));
 		Utils.getEpochSeconds();
 	}
@@ -2270,128 +2279,12 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisBeforeNextSubPayment_Success(){		
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
-		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
-		
-		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_CurrentTimeEqNextSubPayment_Success(){		
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryMillis((user.getNextSubPayment()-10)*1000L);
-		
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
-		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(2*Utils.WEEK_SECONDS+"");
-		
-		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisEqGracePeriodEnding_Success(){		
-		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
-
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
-		
-		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisAfterGracePeriodEnding_Success(){		
-		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
-
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
-		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
-		
-		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertFalse(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_graceDurationSecondsIs0_Success(){		
-		final int graceDurationSeconds = 0;
-
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
-		
-		boolean mustTheAttemptsOfPaymentContinue = userServiceSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertFalse(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
 	public void testGetGraceDurationSeconds_Seconds(){
 		
 		final Integer graceDurationSeconds = Integer.MAX_VALUE;
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setActivated(true);
 
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
@@ -2406,14 +2299,15 @@ public class UserServiceTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(graceDurationSeconds, actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
 		
 	}
 	
@@ -2421,6 +2315,8 @@ public class UserServiceTest {
 	public void testGetGraceDurationSeconds_graceDurationSecondsIsNull_Seconds(){
 		
 		final Integer graceDurationSeconds = null;
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
@@ -2432,14 +2328,15 @@ public class UserServiceTest {
 		user.setProvider("o2");
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
 		
 	}
 	
@@ -2448,6 +2345,8 @@ public class UserServiceTest {
 		
 		final String graceDurationSeconds = "graceDurationSeconds";
 
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -2458,14 +2357,15 @@ public class UserServiceTest {
 		user.setProvider("o2");
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", o2PaygConsumerGraceDurationCode, null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
 		
 		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
 		
 		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", o2PaygConsumerGraceDurationCode, null, null);
+		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
 		
 	}
 }

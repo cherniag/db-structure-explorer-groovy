@@ -92,7 +92,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		final boolean isUserInLimitedStatus = user.getStatus().getName().equals(UserStatusDao.LIMITED);
 		
 		if (!response.isSuccessful()){
-			if(!isUserInLimitedStatus && userService.mustTheAttemptsOfPaymentContinue(user)){
+			if(!isUserInLimitedStatus && mustTheAttemptsOfPaymentContinue(user)){
 				paymentDetails.setActivated(true);
 			}else{
 				final String reson;
@@ -109,6 +109,20 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		
 		LOGGER.debug("Output parameter submittedPayment=[{}]", submittedPayment);
 		return submittedPayment;
+	}
+	
+	public boolean mustTheAttemptsOfPaymentContinue(User user) {
+		LOGGER.debug("input parameters user: [{}]", user);
+		
+		Integer graceDurationSeconds = userService.getGraceDurationSeconds(user);
+		
+		boolean isOnGracePeriod = false;
+		final int o2PSMSGraceCreditSeconds = userService.getO2PSMSGraceCreditSeconds(user);
+		if (o2PSMSGraceCreditSeconds >= 0 && user.getLastPaymentTryMillis() <= (user.getNextSubPayment() + graceDurationSeconds) * 1000L && graceDurationSeconds > 0) {
+			isOnGracePeriod = true;
+		}
+		LOGGER.debug("Output parameter isOnGracePeriod=[{}]", isOnGracePeriod);
+		return isOnGracePeriod;
 	}
 
 	@Override
