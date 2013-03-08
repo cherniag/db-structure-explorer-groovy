@@ -43,7 +43,7 @@ public class NewsDetailService {
 		int userId = user.getId();
 		user = userService.findUserTree(userId);
 		
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null, userService.getGraceDurationSeconds(user)); 
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null); 
 		byte newsId = user.getUserGroup().getNewsId();
 
 		NewsDto newsDto = getNews(user, newsId);

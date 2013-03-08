@@ -448,8 +448,8 @@ public class PaymentDetailsService {
 		
 		user = userService.setToZeroSmsAccordingToLawAttributes(user);
 		
-		if (user.getDeactivatedO2PSMSGraceCreditMillis() == 0) {
-			user.setDeactivatedO2PSMSGraceCreditMillis(userService.getGraceDurationSeconds(user) * 1000L);
+		if (user.getDeactivatedGraceCreditSeconds() == 0) {
+			user.setDeactivatedGraceCreditSeconds(user.getUsedGraceDurationSeconds());
 			userService.updateUser(user);
 		}
 		
@@ -461,6 +461,9 @@ public class PaymentDetailsService {
 			currentPaymentDetails.setDescriptionError(reason);
 
 			currentPaymentDetails = update(currentPaymentDetails);
+			
+			user.setLastPaymentTryInCycleMillis(0L);
+			userService.updateUser(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);

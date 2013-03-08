@@ -264,7 +264,7 @@ public class UserServiceIT {
 
 	private boolean isExpectedO2User(User user) {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		final long lastPaymentTryMillis = user.getLastPaymentTryMillis();
+		final long lastPaymentTryMillis = user.getLastPaymentTryInCycleMillis();
 		final int nextSubPayment = user.getNextSubPayment();
 		final int dayAfterNextSubPaymentSeconds = nextSubPayment + DAY_SECONDS;
 		final int twoDayAfterNextSubPaymentSeconds = nextSubPayment + TWO_DAY_SECONDS;
@@ -284,7 +284,7 @@ public class UserServiceIT {
 	private User prepareTestData(int nextSubPayment, User user, long lastPaymentTryMillis, PaymentDetailsStatus lastPaymentStatus,
 			PaymentDetailsType paymentDetailsType, mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 		user.setNextSubPayment(nextSubPayment);
-		user.setLastPaymentTryMillis(lastPaymentTryMillis);
+		user.setLastPaymentTryInCycleMillis(lastPaymentTryMillis);
 		user.setStatus(UserStatusDao.getUserStatusMapUserStatusAsKey().get(userStatus));
 		entityDao.updateEntity(user);
 

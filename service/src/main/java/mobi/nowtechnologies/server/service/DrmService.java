@@ -251,7 +251,7 @@ public class DrmService {
 		int userId = user.getId();
 
 		user = userService.findUserTree(userId);
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null, userService.getGraceDurationSeconds(user));
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
 		List<Drm> drms = drmDao.findByUserAndDrmType(user.getId(), DrmTypeDao.getPURCHASED_DRM_TYPE());
 

@@ -84,9 +84,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.debug("input parameters pendingPayment, response: [{}], [{}]", pendingPayment, response);
 
-		final User user = pendingPayment.getUser();	
-		user.setLastPaymentTryMillis(Utils.getEpochMillis());
-		
+		final User user = pendingPayment.getUser();		
 		SubmittedPayment submittedPayment = super.commitPayment(pendingPayment, response);
 		
 		final PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
@@ -98,7 +96,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 			}else{
 				final String reson;
 				if (isUserInLimitedStatus){
-					reson = "The payment attempt was unsuccesed for user in LIMITED status";
+					reson = "The payment attempt was unsucceeded for user in LIMITED status";
 				}else{
 					reson = "Grace period expired";
 				}
@@ -115,15 +113,14 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	public boolean mustTheAttemptsOfPaymentContinue(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
 		
-		Integer graceDurationSeconds = userService.getGraceDurationSeconds(user);
+		int graceDurationSeconds = user.getGraceDurationSeconds();
 		
-		boolean isOnGracePeriod = false;
-		final int o2PSMSGraceCreditSeconds = userService.getO2PSMSGraceCreditSeconds(user);
-		if (o2PSMSGraceCreditSeconds >= 0 && user.getLastPaymentTryMillis() <= (user.getNextSubPayment() + graceDurationSeconds) * 1000L && graceDurationSeconds > 0) {
-			isOnGracePeriod = true;
+		boolean mustTheAttemptsOfPaymentContinue = false;
+		if (user.isSubscribed() && user.getLastPaymentTryInCycleSeconds() <= (user.getNextSubPayment() + graceDurationSeconds)) {
+			mustTheAttemptsOfPaymentContinue = true;
 		}
-		LOGGER.debug("Output parameter isOnGracePeriod=[{}]", isOnGracePeriod);
-		return isOnGracePeriod;
+		LOGGER.debug("Output parameter mustTheAttemptsOfPaymentContinue=[{}]", mustTheAttemptsOfPaymentContinue);
+		return mustTheAttemptsOfPaymentContinue;
 	}
 
 	@Override

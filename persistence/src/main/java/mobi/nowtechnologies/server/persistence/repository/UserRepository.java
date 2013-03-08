@@ -132,14 +132,15 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable);
 
 	@Query("select u from User u " +
-			"left join u.currentPaymentDetails pd " +
-			"where u.status=10 " +
-			"and " +
-			"(" +
-			"((pd is null or TYPE(pd)<> O2PSMSPaymentDetails) and u.nextSubPayment<?1) " +
-			"or " +
-			"(u.lastSubscribedPaymentSystem='o2Psms' and (u.nextSubPayment+u.deactivatedO2PSMSGraceCreditMillis/1000)<?1 and (pd is NULL or pd.activated=false))" +
-			")")
+			"left join u.gracePeriod gp " +
+			"where " +
+			"u.status=10 " +
+			"and ((gp is not null " +
+			"and u.lastSubscribedPaymentSystem is not null " +
+			"and u.nextSubPayment + gp.durationMillis/1000<?1) " +
+			"or ((gp is null " +
+			"or u.lastSubscribedPaymentSystem is null) " +
+			"and u.nextSubPayment<?1))")
 	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 
 	@Modifying
@@ -149,4 +150,13 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"where " +
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
+
+	@Modifying
+	@Query(value="update User user " +
+			"set " +
+			"user.nextSubPayment=:nextSubPaymentSeconds, " +
+			"user.deactivatedGraceCreditMillis=:deactivatedGraceCreditMillis " +
+			"where " +
+			"user.id=:id")
+	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
 }

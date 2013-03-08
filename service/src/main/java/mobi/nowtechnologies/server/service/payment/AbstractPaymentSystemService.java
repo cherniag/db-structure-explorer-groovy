@@ -5,12 +5,14 @@ import javax.servlet.http.HttpServletResponse;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import org.slf4j.Logger;
@@ -40,7 +42,10 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	@Override
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
-		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);		
+		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
+		
+		final User user = pendingPayment.getUser();
+		user.setLastPaymentTryInCycleMillis(Utils.getEpochMillis());
 		
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		

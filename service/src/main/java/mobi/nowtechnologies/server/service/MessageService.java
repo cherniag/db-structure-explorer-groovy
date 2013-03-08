@@ -49,7 +49,7 @@ public class MessageService {
 		int userId = user.getId();
 		user = userService.findUserTree(userId);
 
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null, userService.getGraceDurationSeconds(user));
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 		Community community = user.getUserGroup().getCommunity();
 
 		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withAds);

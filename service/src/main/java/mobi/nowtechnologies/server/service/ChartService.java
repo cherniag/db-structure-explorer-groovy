@@ -69,7 +69,7 @@ public class ChartService {
 
 		user = userService.findUserTree(userId);
 
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null, userService.getGraceDurationSeconds(user));
+		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
 		List<Chart> charts = getChartsByCommunity(null, communityName);
 

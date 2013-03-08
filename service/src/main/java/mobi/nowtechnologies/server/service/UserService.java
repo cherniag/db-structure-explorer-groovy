@@ -33,6 +33,7 @@ import mobi.nowtechnologies.server.persistence.dao.PaymentDao.TxType;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.GracePeriod;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.Payment;
@@ -735,6 +736,10 @@ public class UserService {
 		List<MigPaymentDetails> migPaymentDetails = paymentDetailsService.findMigPaymentDetails(operatorMigName, phoneNumber);
 		LOGGER.info("Trying to unsubscribe {} user(s) having {} as mobile number", migPaymentDetails.size(), phoneNumber);
 		for (MigPaymentDetails migPaymentDetail : migPaymentDetails) {
+			final User owner = migPaymentDetail.getOwner();
+			if(owner!=null && migPaymentDetail.equals(owner.getCurrentPaymentDetails())){
+				unsubscribeUser(owner, "STOP sms");
+			}
 			migPaymentDetail.setActivated(false);
 			migPaymentDetail.setDisableTimestampMillis(System.currentTimeMillis());
 			entityService.updateEntity(migPaymentDetail);
@@ -1115,14 +1120,13 @@ public class UserService {
 		boolean isNonO2User = isNonO2User(user);
 		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
 
-		boolean wasInLimitedStatus = UserStatusDao.getLimitedUserStatus().getName().equals(user.getStatus().getName());
+		boolean wasInLimitedStatus = UserStatusDao.LIMITED.equals(user.getStatus().getName());
 
 		if (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)) {
 			if (!wasInLimitedStatus) {
 				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
 			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS - (int) (user.getDeactivatedO2PSMSGraceCreditMillis() / 1000));
-				user.setDeactivatedO2PSMSGraceCreditMillis(0L);
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 			}
 		} else if (!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			// Update user balance
@@ -1141,6 +1145,8 @@ public class UserService {
 				user.setFreeTrialExpiredMillis(epochMillis);
 			}
 		}
+		
+		user = payOffDebt(user, payment);
 
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
@@ -1158,6 +1164,26 @@ public class UserService {
 		entityService.updateEntity(user);
 
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public User payOffDebt(User user, SubmittedPayment submittedPayment) {
+		LOGGER.debug("input parameters user: [{}]", user);
+
+		final int userId = user.getId();
+
+		user.setNextSubPayment(user.getNextSubPayment() - user.getDeactivatedGraceCreditSeconds());
+		user.setDeactivatedGraceCreditSeconds(0);
+		int count = userRepository.payOffDebt(user.getNextSubPayment(), user.getDeactivatedGraceCreditMillis(), userId);
+
+		if (count != 1) {
+			throw new ServiceException("Wrong update row count [" + count + "]");
+		}
+
+		accountLogService.logAccountEvent(userId, user.getSubBalance(), null, submittedPayment, TransactionType.PAY_OFF_DEBT, null);
+
+		LOGGER.debug("Output parameter user=[{}]", user);
+		return user;
 	}
 
 	public boolean isNonO2User(User user) {
@@ -1209,7 +1235,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds, getGraceDurationSeconds(user));
+		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
@@ -1225,8 +1251,6 @@ public class UserService {
 			if (contentOfferDtos != null && contentOfferDtos.size() > 0)
 				accountCheckDTO.setHasOffers(true);
 		}
-
-		accountCheckDTO.setGraceCreditSeconds(getO2PSMSGraceCreditSeconds(user));
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
@@ -1434,7 +1458,7 @@ public class UserService {
 
 		User user = findById(userId);
 
-		AccountDto accountDto = user.toAccountDto(getGraceDurationSeconds(user));
+		AccountDto accountDto = user.toAccountDto();
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1478,7 +1502,7 @@ public class UserService {
 
 		updateUser(user);
 
-		accountDto = user.toAccountDto(getGraceDurationSeconds(user));
+		accountDto = user.toAccountDto();
 
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
@@ -1725,57 +1749,7 @@ public class UserService {
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
-
-	public int getO2PSMSGraceCreditSeconds(User user) {
-		LOGGER.debug("input parameters user: [{}]", user);
-		final int o2PSMSGraceCreditSeconds;
-
-		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		if (currentPaymentDetails == null || !currentPaymentDetails.getPaymentType().equals(PaymentDetails.O2_PSMS_TYPE) || !currentPaymentDetails.isActivated()) {
-			o2PSMSGraceCreditSeconds = (int) user.getDeactivatedO2PSMSGraceCreditMillis() / 1000;
-		} else {
-			final int epochSeconds = Utils.getEpochSeconds();
-			final Integer graceDurationSeconds = getGraceDurationSeconds(user);
-
-			final int delta = epochSeconds - user.getNextSubPayment();
-			if (delta - graceDurationSeconds > 0) {
-				o2PSMSGraceCreditSeconds = graceDurationSeconds;
-			} else {
-				o2PSMSGraceCreditSeconds = delta;
-			}
-		}
-
-		LOGGER.debug("Output parameter o2PSMSGraceCreditSeconds=[{}]", o2PSMSGraceCreditSeconds);
-		return o2PSMSGraceCreditSeconds;
-	}
-
-	public int getGraceDurationSeconds(User user) {
-		LOGGER.debug("input parameters user: [{}]", user);
-
-		final String paymentSystem;
-		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		if (currentPaymentDetails != null) {
-			paymentSystem = currentPaymentDetails.getPaymentType();
-		} else {
-			paymentSystem = null;
-		}
-
-		final String code = (user.getProvider() + ".provider." + user.getSegment()
-				+ ".segment." + user.getContract() + ".contract." + paymentSystem + ".payment.grace.duration.seconds").toLowerCase();
-		final UserGroup userGroup = user.getUserGroup();
-		final Community community = userGroup.getCommunity();
-		String graceDurationSecondsString = messageSource.getMessage(community.getRewriteUrlParameter(), code, null, null);
-		int graceDurationSeconds;
-		try {
-			graceDurationSeconds = Integer.valueOf(graceDurationSecondsString);
-		} catch (Exception e) {
-			LOGGER.warn("Couldn't parse graceDurationSeconds seconds. Set it to 0. " + e.getMessage());
-			graceDurationSeconds = 0;
-		}
-		LOGGER.debug("Output parameter graceDurationSeconds=[{}]", graceDurationSeconds);
-		return graceDurationSeconds;
-	}
-
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User updateLastDeviceLogin(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);

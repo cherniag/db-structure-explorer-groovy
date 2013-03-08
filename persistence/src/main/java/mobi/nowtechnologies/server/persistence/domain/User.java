@@ -244,18 +244,23 @@ public class User implements Serializable {
     @Column(name="last_subscribed_payment_system")
     private String lastSubscribedPaymentSystem;
 
-    @Column(name="last_payment_try_millis", columnDefinition="BIGINT default 0")
-    private long lastPaymentTryMillis;
+    @Column(name="last_payment_try_in_cycle_millis", columnDefinition="BIGINT default 0")
+    private long lastPaymentTryInCycleMillis;
     
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
     private SegmentType segment;
 
-    @Column(name="deactivated_o2_psms_grace_credit_millis", columnDefinition="BIGINT default 0")
-    private long deactivatedO2PSMSGraceCreditMillis;
+    @Column(name="deactivated_grace_credit_millis", columnDefinition="BIGINT default 0")
+    private long deactivatedGraceCreditMillis;
     
     @Column(name="last_before48_sms_millis", columnDefinition="BIGINT default 0")
     private long lastBefore48SmsMillis;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment"), @JoinColumn(name = "contract", referencedColumnName = "contract"),
+			@JoinColumn(name = "provider", referencedColumnName = "provider"), @JoinColumn(name = "userGroup", referencedColumnName = "userGroup") })
+    private GracePeriod gracePeriod;
 
     public User() {
         setDisplayName("");
@@ -777,8 +782,24 @@ public class User implements Serializable {
         if (potentialPromoCodePromotion != null)
             potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
     }
+    
+	public long getGraceDurationMillis() {
+		final long graceDurationMillis;
+		if (gracePeriod != null) {
+			graceDurationMillis = gracePeriod.getDurationMillis();
+		} else {
+			graceDurationMillis = 0;
+		}
 
-    public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds, int currentGraceDurationSeconds) {
+		return graceDurationMillis;
+	}
+    
+    public int getGraceDurationSeconds() {
+		final int graceDurationSeconds = (int) (getGraceDurationMillis() / 1000);
+		return graceDurationSeconds;
+	}
+
+	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
         Chart chart = userGroup.getChart();
         News news = userGroup.getNews();
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
@@ -794,17 +815,15 @@ public class User implements Serializable {
         accountCheckDTO.setChartItems(chart.getNumTracks());
         setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-        int graceDurationSeconds;
-        if (UserStatus.LIMITED.equals(status.getName())) {
-            graceDurationSeconds = getDeactivatedO2PSMSGraceCreditSeconds();
-        } else {
-            graceDurationSeconds = currentGraceDurationSeconds;
-        }
+        final int actualGraceDurationSeconds = getActualGraceDurationSeconds();
 
-        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds));
+        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, actualGraceDurationSeconds));
         if (null != getCurrentPaymentDetails())
             accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
 
+        final int usedGraceDurationSeconds = getUsedGraceDurationSeconds();
+        
+        accountCheckDTO.setGraceCreditSeconds(usedGraceDurationSeconds);
         accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
         accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
         accountCheckDTO.setStatus(status.getName());
@@ -851,6 +870,16 @@ public class User implements Serializable {
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
+
+	private int getActualGraceDurationSeconds() {
+		final int actualGraceDurationSeconds;
+		if (deactivatedGraceCreditMillis != 0) {
+			actualGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
+		}else{
+			actualGraceDurationSeconds = getGraceDurationSeconds();
+		}
+		return actualGraceDurationSeconds;
+	}
 
     private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
         if(news == null) return;
@@ -923,7 +952,7 @@ public class User implements Serializable {
         return null;
     }
 
-    public AccountDto toAccountDto(int currentGraceDurationSeconds) {
+    public AccountDto toAccountDto() {
         AccountDto accountDto = new AccountDto();
         accountDto.setEmail(userName);
         accountDto.setPhoneNumber(mobile);
@@ -942,19 +971,34 @@ public class User implements Serializable {
             throw new PersistenceException("Couldn't recognize the user subscription");
 
         accountDto.setSubscription(subscription);
-        int graceDurationSeconds;
-        if (UserStatus.LIMITED.equals(status.getName())) {
-            graceDurationSeconds = getDeactivatedO2PSMSGraceCreditSeconds();
-        } else {
-            graceDurationSeconds = currentGraceDurationSeconds;
-        }
+        final int actualGraceDurationSeconds = getActualGraceDurationSeconds();
 
-        accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds) * 1000L));
+        accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, actualGraceDurationSeconds) * 1000L));
         if (potentialPromotion != null)
             accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
         LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
         return accountDto;
     }
+
+	public int getUsedGraceDurationSeconds() {
+		final int usedGraceDurationSeconds;
+		if (UserStatus.LIMITED.equals(status.getName())) {
+            usedGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
+        } else {
+			int delta = Utils.getEpochSeconds() - nextSubPayment;
+			if (delta < 0 || lastSubscribedPaymentSystem == null) {
+				usedGraceDurationSeconds = 0;
+			} else {
+				final int graceDurationSeconds = getGraceDurationSeconds();
+				if(delta < graceDurationSeconds){
+					usedGraceDurationSeconds = delta;
+				}else{
+					usedGraceDurationSeconds = graceDurationSeconds;
+				}
+			}
+        }
+		return usedGraceDurationSeconds;
+	}
 
     public ContactUsDto toContactUsDto() {
         ContactUsDto contactUsDto = new ContactUsDto();
@@ -1045,29 +1089,38 @@ public class User implements Serializable {
         this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
     }
 
-    public long getLastPaymentTryMillis() {
-        return lastPaymentTryMillis;
+    public long getLastPaymentTryInCycleMillis() {
+        return lastPaymentTryInCycleMillis;
     }
 
-    public void setLastPaymentTryMillis(long lastPaymentTryMillis) {
-        this.lastPaymentTryMillis = lastPaymentTryMillis;
+    public void setLastPaymentTryInCycleMillis(long lastPaymentTryInCycleMillis) {
+    	this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleMillis;
     }
 
-    public long getDeactivatedO2PSMSGraceCreditMillis() {
-        return deactivatedO2PSMSGraceCreditMillis;
+    public void setLastPaymentTryInCycleSeconds(int lastPaymentTryInCycleSeconds) {
+		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleSeconds * 1000L;
+	}
+
+	public int getLastPaymentTryInCycleSeconds() {
+		return (int) (lastPaymentTryInCycleMillis / 1000);
+	}
+
+
+    public long getDeactivatedGraceCreditMillis() {
+        return deactivatedGraceCreditMillis;
     }
 
-    public void setDeactivatedO2PSMSGraceCreditMillis(long deactivatedO2PSMSGraceCreditMillis) {
-        this.deactivatedO2PSMSGraceCreditMillis = deactivatedO2PSMSGraceCreditMillis;
+    public void setDeactivatedGraceCreditMillis(long deactivatedGraceCreditMillis) {
+        this.deactivatedGraceCreditMillis = deactivatedGraceCreditMillis;
     }
     
-    public int getDeactivatedO2PSMSGraceCreditSeconds() {
-        return (int)(deactivatedO2PSMSGraceCreditMillis/1000L);
-    }
+	public int getDeactivatedGraceCreditSeconds() {
+		return (int) (deactivatedGraceCreditMillis / 1000L);
+	}
 
-    public void setDeactivatedO2PSMSGraceCreditSeconds(int deactivatedO2PSMSGraceCreditSeconds) {
-        this.deactivatedO2PSMSGraceCreditMillis = deactivatedO2PSMSGraceCreditSeconds*1000L;
-    }
+	public void setDeactivatedGraceCreditSeconds(int deactivatedGraceCreditSeconds) {
+		this.deactivatedGraceCreditMillis = deactivatedGraceCreditSeconds * 1000L;
+	}
 
     public long getLastBefore48SmsMillis() {
 		return lastBefore48SmsMillis;
@@ -1075,6 +1128,14 @@ public class User implements Serializable {
 
 	public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
+	}
+
+	public GracePeriod getGracePeriod() {
+		return gracePeriod;
+	}
+
+	public void setGracePeriod(GracePeriod gracePeriod) {
+		this.gracePeriod = gracePeriod;
 	}
 
 	@Override
@@ -1103,7 +1164,7 @@ public class User implements Serializable {
                 .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
                 .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
                 .add("potentialPromotionId", potentialPromotionId)
-                .add("deactivatedO2PSMSGraceCreditMillis", deactivatedO2PSMSGraceCreditMillis)
+                .add("deactivatedGraceCreditMillis", deactivatedGraceCreditMillis)
                 .add("pin", pin)
                 .add("code", code)
                 .add("operator", operator)
