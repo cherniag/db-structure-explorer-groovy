@@ -135,11 +135,19 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"left join u.gracePeriod gp " +
 			"where " +
 			"u.status=10 " +
+			
 			"and ((gp is not null " +
+			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
 			"and u.nextSubPayment + gp.durationMillis/1000<?1) " +
+			
+			"or (u.deactivatedGraceCreditMillis>0 " +
+			"and u.lastSubscribedPaymentSystem is not null " +
+			"and u.nextSubPayment + u.deactivatedGraceCreditMillis/1000<?1) " +
+			
 			"or ((gp is null " +
 			"or u.lastSubscribedPaymentSystem is null) " +
+			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.nextSubPayment<?1))")
 	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 

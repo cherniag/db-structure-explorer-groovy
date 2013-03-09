@@ -57,10 +57,10 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError()) {
 				paymentDetails.setActivated(false);
 			}
-		}
-		
-		if (!response.isSuccessful() && submittedPayment.getExternalTxId()==null){
-			submittedPayment.setExternalTxId("");
+			
+			if (submittedPayment.getExternalTxId() == null) {
+				submittedPayment.setExternalTxId("");
+			}
 		}
 		
 		// Store submitted payment
