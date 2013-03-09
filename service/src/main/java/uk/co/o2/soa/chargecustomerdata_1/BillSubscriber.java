@@ -361,4 +361,12 @@ public class BillSubscriber {
         this.promotionCode = value;
     }
 
+	@Override
+	public String toString() {
+		return "BillSubscriber [msisdn=" + msisdn + ", applicationReference=" + applicationReference + ", priceGross=" + priceGross + ", priceNet=" + priceNet
+				+ ", smsNotify=" + smsNotify + ", smsMessage=" + smsMessage + ", contentCategory=" + contentCategory + ", contentDescription="
+				+ contentDescription + ", contentType=" + contentType + ", debitCredit=" + debitCredit + ", promotionCode=" + promotionCode
+				+ ", subMerchantId=" + subMerchantId + "]";
+	}
+
 }

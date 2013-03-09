@@ -61,4 +61,9 @@ public class BillSubscriberResponse {
         this.result = value;
     }
 
+	@Override
+	public String toString() {
+		return "BillSubscriberResponse [result=" + result + "]";
+	}
+
 }

@@ -1,5 +1,11 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
@@ -16,6 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapHeaderElement;
+import org.springframework.ws.soap.SoapMessage;
+
+import uk.co.o2.soa.chargecustomerdata_1.BillSubscriber;
+import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -37,6 +52,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	private DeviceService deviceService;
 	
+	private WebServiceTemplate webServiceTemplate;
+	
 	public void init() {
 		restTemplate = new RestTemplate();
 	}
@@ -47,6 +64,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	public void setPromotedServerO2Url(String promotedServerO2Url) {
 		this.promotedServerO2Url = promotedServerO2Url;
+	}
+	
+	public void setWebServiceTemplate(WebServiceTemplate webServiceTemplate) {
+		this.webServiceTemplate = webServiceTemplate;
 	}
 
 	@Override
@@ -133,8 +154,50 @@ public class O2ClientServiceImpl implements O2ClientService {
 	}
 
 	@Override
-	public O2Response makePremiumSMSRequest(String internalTxId, String shortCode, String o2PhoneNumber, String message) {
-		O2Response o2Response = O2Response.successfulO2Response();
+	public O2Response makePremiumSMSRequest(final int userId, String internalTxId, BigDecimal subCost, final String o2PhoneNumber, String message) {
+		LOGGER.debug("input parameters userId, internalTxId, subCost, o2PhoneNumber, message: [{}], [{}], [{}], [{}], [{}]", userId, internalTxId, subCost, o2PhoneNumber, message);
+		
+		final BigInteger subCostPences = subCost.multiply(new BigDecimal("100")).toBigInteger();
+
+		BillSubscriber billSubscriber = new BillSubscriber();
+		
+		billSubscriber.setMsisdn(o2PhoneNumber);
+		billSubscriber.setSubMerchantId(null);
+		billSubscriber.setPriceGross(subCostPences);
+		billSubscriber.setPriceNet(null);
+		billSubscriber.setDebitCredit("DEBIT");
+		billSubscriber.setContentCategory(null);
+		billSubscriber.setContentType(null);
+		billSubscriber.setContentDescription(null);
+		billSubscriber.setApplicationReference(internalTxId);
+		billSubscriber.setSmsNotify(true);
+		billSubscriber.setSmsMessage(message);
+		billSubscriber.setPromotionCode(null);
+		
+		WebServiceMessageCallback webServiceMessageCallback = new WebServiceMessageCallback() {
+			
+			@Override
+			public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
+				SoapMessage soapMessage = (SoapMessage) message;
+				SoapHeader soapHeader = soapMessage.getSoapHeader();
+				
+				QName soaConsumerTransactionIDQName = new QName("http://soa.o2.co.uk/coredata_1", "SOAConsumerTransactionID", "cor");
+				SoapHeaderElement soaConsumerTransactionIDHeaderElement = soapHeader.addHeaderElement(soaConsumerTransactionIDQName);
+				soaConsumerTransactionIDHeaderElement.setText(o2PhoneNumber + ":" + userId);
+				
+				QName securityQName = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security", "wsse");
+				SoapHeaderElement securityHeaderElement = soapHeader.addHeaderElement(securityQName);
+				
+				//securityHeaderElement.add
+			}
+		};
+		
+		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
+		Object objectResponse = webServiceTemplate.marshalSendAndReceive(billSubscriber, webServiceMessageCallback);
+		
+		O2Response o2Response = O2Response.valueOf(objectResponse);
+	
+		LOGGER.debug("Output parameter o2Response=[{}]", o2Response);
 		return o2Response;
 	}
 }

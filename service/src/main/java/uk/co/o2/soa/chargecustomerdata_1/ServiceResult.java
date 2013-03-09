@@ -172,4 +172,10 @@ public class ServiceResult {
         this.resultData = value;
     }
 
+	@Override
+	public String toString() {
+		return "ServiceResult [applicationReference=" + applicationReference + ", sagTransactionId=" + sagTransactionId + ", resultCode=" + resultCode
+				+ ", resultData=" + resultData + ", resultDescription=" + resultDescription + "]";
+	}
+
 }

@@ -63,17 +63,17 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		Community community = user.getUserGroup().getCommunity();
 		
 		String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.psms",
-				new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+				new Object[] {community.getDisplayName(), pendingPayment.getAmount(), pendingPayment.getSubweeks(), paymentPolicy.getShortCode() }, null);
 		
 		String internalTxId = Utils.getBigRandomInt().toString();
-		O2Response response = o2ClientService.makePremiumSMSRequest(internalTxId, paymentPolicy.getShortCode(), currentPaymentDetails.getPhoneNumber(), message);
+		O2Response response = o2ClientService.makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), currentPaymentDetails.getPhoneNumber(), message);
 		
 		pendingPayment.setInternalTxId(internalTxId);
-		//pendingPayment.setExternalTxId(response.getExternalTxId());
+		pendingPayment.setExternalTxId(response.getExternalTxId());
 			entityService.updateEntity(pendingPayment);
-		LOGGER.info("Sent request to O2 with pending payment {}. {}", pendingPayment.getI(), response);
+		LOGGER.info("Sent request to O2 with pending payment [{}]. [{}]", pendingPayment.getI(), response);
 		if (!response.isSuccessful()) {
-			LOGGER.error("External exception while making payment transaction with O2 for user {} ", user.getId());
+			LOGGER.error("External exception while making payment transaction with O2 for user with id: [{}] ", user.getId());
 		}
 		
 		commitPayment(pendingPayment, response);
