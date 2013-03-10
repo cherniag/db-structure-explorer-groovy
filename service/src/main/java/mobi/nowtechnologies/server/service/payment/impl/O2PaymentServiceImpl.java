@@ -88,15 +88,16 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		SubmittedPayment submittedPayment = super.commitPayment(pendingPayment, response);
 		
 		final PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-		final boolean isUserInLimitedStatus = user.getStatus().getName().equals(UserStatusDao.LIMITED);
+		
+		final boolean isUserHasDedt = user.getDeactivatedGraceCreditMillis()==0;
 		
 		if (!response.isSuccessful()){
-			if(!isUserInLimitedStatus && mustTheAttemptsOfPaymentContinue(user)){
+			if( !isUserHasDedt && mustTheAttemptsOfPaymentContinue(user)){
 				paymentDetails.setActivated(true);
 			}else{
 				final String reson;
-				if (isUserInLimitedStatus){
-					reson = "The payment attempt was unsucceeded for user in LIMITED status";
+				if (isUserHasDedt){
+					reson = "The payment attempt was unsucceeded for user with debt";
 				}else{
 					reson = "Grace period expired";
 				}
