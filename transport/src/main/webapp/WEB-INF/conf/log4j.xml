@@ -314,8 +314,15 @@
 		<appender-ref ref="userSMSNotificationAppender" />
 	</logger>
 	
+	<logger name="org.springframework.ws.client.MessageTracing.sent">
+		<level value="TRACE"></level>
+		<appender-ref ref="paymentExecutionAppender"/>
+	</logger>
 	
-	
+	<logger name="org.springframework.ws.client.MessageTracing.sent">
+		<level value="TRACE"></level>
+		<appender-ref ref="paymentExecutionAppender"/>
+	</logger>
 
 	<!-- MIG Logger -->
 	<logger name="mobi.nowtechnologies">
