@@ -184,11 +184,11 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
+		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment() + graceDurationSeconds);
 		user.setGracePeriod(gracePeriod);
 		
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImpl.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
+		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
 	
 	@Test
