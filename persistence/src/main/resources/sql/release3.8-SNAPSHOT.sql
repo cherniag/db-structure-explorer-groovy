@@ -36,3 +36,6 @@ create table grace_period
 engine=innodb default charset=utf8;
 
 create unique index PRIMARY on grace_period(id);
+
+-- Before 48 sms
+alter table tb_users add column last_before48_sms_millis BIGINT default 0;
