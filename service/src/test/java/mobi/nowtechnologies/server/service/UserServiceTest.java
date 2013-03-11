@@ -1960,11 +1960,14 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
+		Mockito.when(mockUserRepository.payOffDebt(Integer.MIN_VALUE, 0, user.getId())).thenReturn(0);
+		
 		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
 		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(mockUserRepository, times(0)).payOffDebt(Integer.MIN_VALUE, 0, user.getId());
 	}
 	
 	@Test
@@ -2024,7 +2027,7 @@ public class UserServiceTest {
 				User passedUser = (User)invocation.getArguments()[0];
 				
 				assertEquals(2, passedUser.getSubBalance());
-				assertEquals(currentTimeSeconds+submittedPayment.getSubweeks()*Utils.WEEK_SECONDS-graceDurationSeconds, passedUser.getNextSubPayment());
+				assertEquals(currentTimeSeconds + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS - graceDurationSeconds, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(currentTimeSeconds, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
@@ -2046,11 +2049,14 @@ public class UserServiceTest {
 		
 		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
+		Mockito.when(mockUserRepository.payOffDebt(currentTimeSeconds + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS - graceDurationSeconds, 0, user.getId())).thenReturn(1);
+		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
 		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(mockUserRepository, times(1)).payOffDebt(currentTimeSeconds + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS - graceDurationSeconds, 0, user.getId());
 	}
 	
 	@Test

@@ -117,7 +117,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		int graceDurationSeconds = user.getGraceDurationSeconds();
 		
 		boolean mustTheAttemptsOfPaymentContinue = false;
-		if (user.isSubscribed() && user.getLastPaymentTryInCycleSeconds() <= (user.getNextSubPayment() + graceDurationSeconds)) {
+		if (user.isSubscribed() && user.getLastPaymentTryInCycleSeconds() < (user.getNextSubPayment() + graceDurationSeconds)) {
 			mustTheAttemptsOfPaymentContinue = true;
 		}
 		LOGGER.debug("Output parameter mustTheAttemptsOfPaymentContinue=[{}]", mustTheAttemptsOfPaymentContinue);

@@ -248,7 +248,7 @@ public class ChartServiceTest {
 		testUser = new User(){
 			private static final long serialVersionUID = 1L;
 
-			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds, int currentGraceDurationSeconds) {
+			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 				return new AccountCheckDTO();
 			}
 		};
