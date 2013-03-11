@@ -48,11 +48,7 @@ body {
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
 	font-size: 14px;
-	background-color: #84bcdf;
-}
-
-.page {
-	background: #84bdde url(../imgs/bgs/body_right.png) repeat-x left top;		
+    background-color: #003399;
 }
 
 a {
@@ -88,16 +84,10 @@ hr.addBothSpaces {
 }
 h1 {
 	font-size: 1.4em;		
-	margin-left: 21px;
-	margin-right: 21px;
-	margin-bottom: 0px;
-	margin-top: 14px;
 	color: #1d3150;
 }
 h2 {
 	font-size: 1.2em;		
-	margin-bottom: 0px;
-	margin-top: 4px;
 	font-weight: normal;
 }
 h3 {
@@ -119,11 +109,9 @@ select {
 	padding-right: 0;
 }
 p  {
-	font-size: 1.1em;		
-	margin: 7px 14px 7px 17px;	 
+	font-size: 1.1em;
 }
 .content p {
-	margin: 7px 21px;
 	font-size: 16px;		
 	line-height: 1.4em;
 	color: #616465;
@@ -136,7 +124,7 @@ p  {
 }
 .text p {
 	font-size: 0.8em;		
-	line-height: 1.3empx;
+	line-height: 1.3em;
 }
 .oneQuestion p
 {
@@ -161,9 +149,10 @@ form {
 /*layout*/
 /*header*/
 .header {
-	background: #142847 url(../imgs/bgs/header.png) repeat-x;	
-	height: 71px;	
-	margin-bottom: 2px;
+    background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
+	height: 71px;
 }		
 .logo {
 	display: block;
@@ -176,16 +165,31 @@ form {
 }
 
 .container {
-	
-	padding-bottom: 15px;	
-	padding-top: 12px;	
+	background-color: #003399;
+	padding: 17px;
+}
+
+.banner-pane{
+    background-image: linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
+    border-radius: 5px;
+}
+
+.banner-pane span {
+    margin: 7px 21px;
+    font-size: 16px;
+    line-height: 1.4em;
+    color: #fff;
+}
+.container > div {
+    margin-bottom: 17px;;
 }
 
 .content {
-	margin: 10px 17px;
-	padding-top: 1px;
-	padding-bottom: 1px;
+	padding: 15px;
 	background-color: #ffffff;
+    border-radius: 5px;
 }
 .getAppContent {
 	border: none;
@@ -204,14 +208,8 @@ form {
 }
 .getAppContent h1 {
 	color: #1d3150;
-	padding-bottom: 10px;
 }
-.getAppContent .formButton,.getAppContent .formButton input  {
-	background: transparent url(../imgs/bgs/button_pink.png) repeat-x 0px 0px !important;	
-	box-shadow: none;
-	-moz-box-shadow: none;
-	-webkit-box-shadow:  none;
-}
+
 .orBox {
 	text-align: center;
 	height: 53px;
@@ -256,8 +254,7 @@ form {
 .text {
 	padding-bottom: 12px;
 }
-a.button, input.button, button {
-	background: #142847 url(../imgs/bgs/button.png) repeat-x 0 center;	
+a.button, button {
 	height: 32px;	
 	font-weight: bold;
 	color: #ffffff;
@@ -265,7 +262,7 @@ a.button, input.button, button {
 	text-decoration: none;
 	padding: 2px 0;
 	border: 1px solid #000000;
-	display: inline-block;		
+	display: inline-block;
 	font-family: Helvetica, Arial, sans-serif;
 }
 
@@ -284,11 +281,8 @@ a.button {
 }
 
 input.accounts{
-	padding-left: 20px;
-	padding-right: 10px;
+	padding: 3px 10px 4px 20px;
 	line-height: 25px;
-	padding-top: 3px;
-	padding-bottom: 4px;
 	border: 1px solid #000000;
 }
 .buttonBox  {
@@ -298,7 +292,6 @@ input.accounts{
 }
 .buttonBox .button {
 	font-size: 14px;
-	border-radius: 0px!important;
 }
 
 .footer .buttonBox a {
@@ -402,13 +395,7 @@ input.accounts{
 .addSmallSpace {
 	margin-top: 20px;
 }
-/*buttons*/
-.contentButton {
-	margin: 17px;	
-	box-shadow: 1px 2px 1px #bdbdbd; 
-	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
-	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
-}
+
 .shortButton  {
 	width: 48%; 
 	float: left;
@@ -445,23 +432,8 @@ input.accounts{
  	overflow: hidden;
 }
 
-.formButton, .formButton input {
-	background: #1d3150 url(../imgs/bgs/button_form.png) repeat-x 0px center !important;	
-	height: 41px !important;
-	border: none none none none;		
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 13px;
-	text-transform: uppercase;
-}
 .formDetails .formButton .button {font-size: 1.2em;}
- .formButton input.button, .formButton input.button  {
-	box-shadow: none; 
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	width: 100%;
-	border-radius: 0px; 
 
- }
 .formButton input, .formButton button {
 	border: none;
 	cursor: pointer;
@@ -471,9 +443,6 @@ input.accounts{
 	background: #d8d9d8 url(../imgs/bgs/button_form_grey.png) repeat-x 0px center!important;
 	display: block;
 }
-
-
-
 
 .setOfButtons  {
 	margin-bottom: 17px;
@@ -516,6 +485,39 @@ form .formButton  {
 	overflow: hidden;
 }
 
+.button3{
+    height: 32px;
+    border-radius: 5px;
+    background-image: linear-gradient(bottom, rgb(0,39,131) 24%, rgb(0,44,146) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,39,131) 24%, rgb(0,44,146) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,39,131) 24%, rgb(0,44,146) 62%);
+
+    line-height: 29px;
+
+    padding: 0 10px 0 20px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.button2 {
+    width: 100%;
+    height: 41px;
+    background-image: linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,139) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,139) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,139) 62%);
+    border-radius: 5px;
+
+    text-align: center;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .buttonsSet {
 	margin: 26px 17px;
 	height: 40px;
@@ -528,13 +530,6 @@ form .formButton  {
 }
 .redButton  a {
 	background: #ff3333 url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
-}
-/*form*/
-.oneField {
-	margin-left: 17px;	
-	margin-top: 8px;	
-	margin-right: 17px;	
-	padding-right: 21px;
 }
 .oneField label {
 	display: block;	
@@ -616,18 +611,12 @@ div.inputAreaBox  {
 	display: inline-block;
 	margin-right: 6px;
 	text-decoration: none;
-	box-shadow: 0px 0px 8px #ffffff; 
-	-webkit-box-shadow: 0px 0px 8px #ffffff; 
-	-moz-box-shadow: 0px 0px 8px #ffffff; 
 }
 .accountOneFieldCurrent {
 	background: transparent url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
 	border: none;
 	padding: 13px; 
 	height: 55px;
-	box-shadow: 1px 2px 1px #bdbdbd; 
-	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
-	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
 	color: #ffffff;
 	margin-bottom: 24px;
 }
@@ -645,9 +634,6 @@ div.inputAreaBox  {
 	border: none;
 	height: 56px;
 	margin: 11px 16px;
-	box-shadow: 1px 2px 1px #bdbdbd; 
-	-moz-box-shadow: 1px 2px 1px #bdbdbd; 
-	-webkit-box-shadow: 1px 2px 1px #bdbdbd;
 	color: #ffffff;
 	position: relative;
 	padding-left: 31px;
@@ -657,9 +643,6 @@ div.inputAreaBox  {
 	width: 19px;
 	height: 29px;
 	border: none;
-	box-shadow: none; 
-	-webkit-box-shadow: none; 
-	-moz-box-shadow: none; 
 	position: absolute;
 	right: 15px;
 	top: 28px;

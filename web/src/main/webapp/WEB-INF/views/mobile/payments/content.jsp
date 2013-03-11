@@ -11,7 +11,7 @@
         <s:message code="pays.page.note.account.on"/>
     </c:set>
     <c:if test="${accountBannerON eq 'true'}">
-        <div class="content">
+        <div class="banner-pane">
             <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
             <span>${paymentAccountNotes}</span>
         </div>
@@ -73,8 +73,8 @@
 					<s:message code='pays.select.iTunesSubscription' var="payment_label" />
 				</c:if>
 				
-				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
-					<input class="button" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+				<div class="rel">
+					<input class="button2" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
 									
 					<span class="rightButtonArrow">
 						&nbsp;
@@ -86,7 +86,7 @@
 		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
-			<div class="contentButton contentButtonGrey formButton rad5 rel formButtonGrey" >
+			<div class="contentButton contentButtonGrey formButton rel formButtonGrey" >
 				<input class="button buttonSmall accounts" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
 				<span class="rightButtonArrowBlack">
 					&nbsp;
