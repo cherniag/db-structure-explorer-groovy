@@ -1172,15 +1172,19 @@ public class UserService {
 
 		final int userId = user.getId();
 
-		user.setNextSubPayment(user.getNextSubPayment() - user.getDeactivatedGraceCreditSeconds());
-		user.setDeactivatedGraceCreditSeconds(0);
-		int count = userRepository.payOffDebt(user.getNextSubPayment(), user.getDeactivatedGraceCreditMillis(), userId);
+		final int deactivatedGraceCreditSeconds = user.getDeactivatedGraceCreditSeconds();
+		
+		if (deactivatedGraceCreditSeconds > 0) {
+			user.setNextSubPayment(user.getNextSubPayment() - deactivatedGraceCreditSeconds);
+			user.setDeactivatedGraceCreditSeconds(0);
+			int count = userRepository.payOffDebt(user.getNextSubPayment(), user.getDeactivatedGraceCreditMillis(), userId);
 
-		if (count != 1) {
-			throw new ServiceException("Wrong update row count [" + count + "]");
+			if (count != 1) {
+				throw new ServiceException("Wrong update row count [" + count + "]");
+			}
+
+			accountLogService.logAccountEvent(userId, user.getSubBalance(), null, submittedPayment, TransactionType.PAY_OFF_DEBT, null);
 		}
-
-		accountLogService.logAccountEvent(userId, user.getSubBalance(), null, submittedPayment, TransactionType.PAY_OFF_DEBT, null);
 
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
