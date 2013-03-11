@@ -42,10 +42,8 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Sh
 			"and paymentPolicy.paymentType<>?2 ")
 	List<PaymentPolicy> getPaymentPoliciesWithoutSelectedPaymentType(Community community, String paymentType);
 
-    @Query(value="select paymentPolicy from PaymentPolicy paymentPolicy "+
-            " where paymentPolicy.community=?1 " +
-            " and paymentPolicy.segment = ?2 " +
-            " and paymentPolicy.operator.id = ?3 " +
-            " group by paymentPolicy.paymentType")
+    @Query(value="select p from PaymentPolicy p "+
+            " where p.community=?1  and p.segment = ?2   and p.operator.id = ?3 " +
+            " group by p.paymentType")
     List<PaymentPolicy> getPaymentPolicies(Community community, SegmentType segment, int operator);
 }
