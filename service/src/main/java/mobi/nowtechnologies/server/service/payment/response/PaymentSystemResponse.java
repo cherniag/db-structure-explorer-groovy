@@ -10,6 +10,7 @@ public abstract class PaymentSystemResponse {
 	protected String descriptionError;
 	protected int httpStatus;
 	protected String message;
+	protected String errorCode;
 	
 	public PaymentSystemResponse(Response response) {
 		httpStatus = response.getStatusCode();
@@ -36,8 +37,12 @@ public abstract class PaymentSystemResponse {
 		return message;
 	}
 	
+	public String getErrorCode() {
+		return errorCode;
+	}
+
 	@Override
 	public String toString() {
-		return "HTTP response for payment system. HTTP Code: " + httpStatus + " | " +descriptionError;
+		return "httpStatus=" + httpStatus + ", errorCode=" + errorCode + ", descriptionError=" + descriptionError + ", isSuccessful=" + isSuccessful + ", message=" + message;
 	}
 }
