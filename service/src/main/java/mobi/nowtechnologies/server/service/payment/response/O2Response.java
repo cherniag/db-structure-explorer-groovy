@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
+import uk.co.o2.soa.chargecustomerdata_1.ServiceResult;
 import uk.co.o2.soa.chargecustomerservice_1.BillSubscriberFault;
+import uk.co.o2.soa.coredata_1.SOAFaultType;
 
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
@@ -78,13 +80,16 @@ public class O2Response extends PaymentSystemResponse {
 			BillSubscriberResponse billSubscriberResponse = (BillSubscriberResponse) objectResponse;
 
 			isSuccessful = true;
-			externalTxId = billSubscriberResponse.getResult().getSagTransactionId();
+			final ServiceResult serviceResult = billSubscriberResponse.getResult();
+			externalTxId = serviceResult.getSagTransactionId();
 
 		} else if (objectResponse instanceof BillSubscriberFault) {
 			BillSubscriberFault billSubscriberFault = (BillSubscriberFault) objectResponse;
 
 			isSuccessful = false;
-			descriptionError = billSubscriberFault.getFaultInfo().getFaultDescription();
+			final SOAFaultType soaFaultType = billSubscriberFault.getFaultInfo();
+			descriptionError = soaFaultType.getFaultDescription();
+			errorCode = soaFaultType.getSOAFaultCode();
 		} else {
 			throw new ServiceException("Unknown response object [" + objectResponse + "]");
 		}
