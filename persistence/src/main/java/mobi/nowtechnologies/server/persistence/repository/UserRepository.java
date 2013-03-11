@@ -139,11 +139,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"and ((u.gracePeriod is not null " +
 			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
-			"and u.nextSubPayment + gp.durationMillis/1000<?1) " +
+			"and (u.nextSubPayment + gp.durationMillis/1000)<?1) " +
 			
 			"or (u.deactivatedGraceCreditMillis>0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
-			"and u.nextSubPayment + u.deactivatedGraceCreditMillis/1000<?1) " +
+			"and (u.nextSubPayment + u.deactivatedGraceCreditMillis/1000)<?1) " +
 			
 			"or ((u.gracePeriod is null " +
 			"or u.lastSubscribedPaymentSystem is null) " +
