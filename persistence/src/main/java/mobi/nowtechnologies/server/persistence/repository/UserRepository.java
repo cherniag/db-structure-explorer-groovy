@@ -98,7 +98,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"and u.contract='PAYG' " +
 			"and TYPE(pd) = O2PSMSPaymentDetails " +
 			"and pd.lastPaymentStatus<>'AWAITING' "+
-			"and (s.name='LIMITED' or ((u.nextSubPayment<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000) or  (u.nextSubPayment+86400<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000+86400000 and u.lastPaymentTryMillis>=u.nextSubPayment*1000) or (u.nextSubPayment+172800<=?1 and u.lastPaymentTryMillis<=u.nextSubPayment*1000+172800000)  ))) " +
+			"and (s.name='LIMITED' or ((u.nextSubPayment<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000) or  (u.nextSubPayment+86400<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000+86400000 and u.lastPaymentTryInCycleMillis>=u.nextSubPayment*1000) or (u.nextSubPayment+172800<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000+172800000)  ))) " +
 			"or (u.provider<>'o2' and u.nextSubPayment<=?1+86400 " +
 			"and (pd.lastPaymentStatus='NONE' " +
 			"or pd.lastPaymentStatus='SUCCESSFUL'))) " +
@@ -136,7 +136,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"where " +
 			"u.status=10 " +
 			
-			"and ((gp is not null " +
+			"and ((u.gracePeriod is not null " +
 			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
 			"and u.nextSubPayment + gp.durationMillis/1000<?1) " +
@@ -145,7 +145,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"and u.lastSubscribedPaymentSystem is not null " +
 			"and u.nextSubPayment + u.deactivatedGraceCreditMillis/1000<?1) " +
 			
-			"or ((gp is null " +
+			"or ((u.gracePeriod is null " +
 			"or u.lastSubscribedPaymentSystem is null) " +
 			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.nextSubPayment<?1))")

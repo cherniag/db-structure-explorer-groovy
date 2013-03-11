@@ -258,8 +258,8 @@ public class User implements Serializable {
     private long lastBefore48SmsMillis;
     
     @ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment"), @JoinColumn(name = "contract", referencedColumnName = "contract"),
-			@JoinColumn(name = "provider", referencedColumnName = "provider"), @JoinColumn(name = "userGroup", referencedColumnName = "userGroup") })
+	@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract", insertable=false, updatable=false),
+			@JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false, updatable=false) })
     private GracePeriod gracePeriod;
 
     public User() {
