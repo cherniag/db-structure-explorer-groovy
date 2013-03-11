@@ -1,10 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,10 +23,14 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
  * 
  */
 @Entity
-@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "community_id", "provider" }))
-public class GracePeriod {
+//@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "community_id", "provider" }))
+@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "user_group_id", "provider" }))
+public class GracePeriod implements Serializable{
+	
+	private static final long serialVersionUID = 3156970365842675613L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Enumerated(EnumType.STRING)
