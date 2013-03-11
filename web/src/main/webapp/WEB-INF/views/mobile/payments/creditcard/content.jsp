@@ -3,11 +3,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>		
-	</div>				
+		<a href="payments.html" class="button3"><s:message code='m.page.main.menu.back' /></a>
+	</div>
 </div>
 <div class="container">
 	<div class="content">
@@ -218,7 +218,7 @@
 			</div>
 			<!--button-->
 			<div class="contentButton formButton rad5 rel" >
-				<input type="submit" class="button" value="<s:message code='pay.cc.form.submit.next' />" />
+				<input type="submit" class="button2" value="<s:message code='pay.cc.form.submit.next' />" />
 				<span class="rightButtonArrow">
 					&nbsp;
 				</span>

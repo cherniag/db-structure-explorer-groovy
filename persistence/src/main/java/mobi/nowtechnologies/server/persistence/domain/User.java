@@ -1203,7 +1203,7 @@ public class User implements Serializable {
      * @return
      */
     public boolean isOnFreeTrial() {
-        return (null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis());
+        return null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis();
     }
 
     public boolean isLimited() {
