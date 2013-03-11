@@ -12,6 +12,8 @@ import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -1215,23 +1217,29 @@ public class User implements Serializable {
     }
 
     public boolean isLimitedAfterOverdue() {
-        return false;//TODO
+        boolean wasOnGrace = new DateTime(getNextSubPaymentAsDate()).plus(getGraceDurationMillis()).isBeforeNow();
+        return isLimited() && wasOnGrace;
     }
 
     public boolean isUnsubscribedWithFullAccess() {
-        return false;//TODO
+        return !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     public boolean isOverdue() {
-        return false;//TODO
+        boolean onGrace = new DateTime(getNextSubPaymentAsDate()).plus(getGraceDurationMillis()).isAfterNow();
+        return isSubscribed() && onGrace;
+    }
+
+    private Date getNextSubPaymentAsDate() {
+        return new Date(((long)getNextSubPayment()) * 1000L);
     }
 
     public boolean isSubscribedViaInApp() {
-        return false;//TODO
+        return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && isSubscribed();
     }
 
     public boolean isTrialExpired() {
-        return false;//TODO
+        return new DateTime(freeTrialExpiredMillis).isBeforeNow();
     }
 
     public String getProvider() {
