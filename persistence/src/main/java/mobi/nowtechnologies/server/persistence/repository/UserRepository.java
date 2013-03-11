@@ -149,7 +149,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"or u.lastSubscribedPaymentSystem is null) " +
 			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.nextSubPayment<?1))")
-	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
+	List<User> getListOfUsersForWeeklyUpdate(long epochSeconds, Pageable pageable);
 
 	@Modifying
 	@Query(value="update User user " +
