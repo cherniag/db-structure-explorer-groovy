@@ -980,7 +980,7 @@
 
 		<repository>
 			<id>libs-snapshot</id>
-			<url>http://repo.springsource.org/libs-snapshot</url>
+			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/libs-snapshot/</url>
 		</repository>
 
 	</repositories>
