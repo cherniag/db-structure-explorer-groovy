@@ -340,7 +340,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="communityService" ref="service.communityService" />
-<!--		<property name="webServiceTemplate" ref="service.WebServiceTemplate"/>-->
+		<property name="webServiceTemplate" ref="service.WebServiceTemplate"/>
 	</bean>
 
 	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />

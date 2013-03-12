@@ -76,5 +76,17 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
+	
+	<logger name="org.springframework.ws.client.MessageTracing.sent">
+		<level value="TRACE"></level>
+		<appender-ref ref="stdout"/>
+		<appender-ref ref="stderr" />
+	</logger>
+	
+	<logger name="org.springframework.ws.client.MessageTracing.sent">
+		<level value="TRACE"></level>
+		<appender-ref ref="stdout"/>
+		<appender-ref ref="stderr" />
+	</logger>
 
 </log4j:configuration>
