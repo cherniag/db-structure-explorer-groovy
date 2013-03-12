@@ -1226,8 +1226,10 @@ public class User implements Serializable {
     }
 
     public boolean isOverdue() {
-        boolean onGrace = new DateTime(getNextSubPaymentAsDate()).plus(getGraceDurationMillis()).isAfterNow();
-        return isSubscribed() && onGrace;
+        DateTime nextSubPayment = new DateTime(getNextSubPaymentAsDate());
+        boolean onGrace = nextSubPayment.plus(getGraceDurationMillis()).isAfterNow();
+        boolean nextSubPaymentInPast = nextSubPayment.isBeforeNow();
+        return isSubscribed() && onGrace && nextSubPaymentInPast;
     }
 
     private Date getNextSubPaymentAsDate() {
