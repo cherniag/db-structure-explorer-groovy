@@ -973,6 +973,12 @@
 		</repository>
 
 		<repository>
+			<id>spring-ext</id>
+			<name>Spring repo-ext</name>
+			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+		</repository>
+
+		<repository>
 			<id>libs-snapshot</id>
 			<url>http://repo.springsource.org/libs-snapshot</url>
 		</repository>
