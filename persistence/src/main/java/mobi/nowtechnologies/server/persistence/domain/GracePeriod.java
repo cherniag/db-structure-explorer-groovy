@@ -133,7 +133,5 @@ public class GracePeriod implements Serializable{
 //		return "GracePeriod [id=" + id + ", communityId=" + communityId + ", contract=" + contract + ", provider=" + provider + ", segment=" + segment
 //				+ ", durationMillis=" + durationMillis + "]";
 //	}
-	
-	
 
 }

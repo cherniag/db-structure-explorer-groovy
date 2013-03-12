@@ -33,6 +33,8 @@ import uk.co.o2.soa.chargecustomerdata_1.BillSubscriber;
 import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
 
 public class O2ClientServiceImpl implements O2ClientService {
+	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
+
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
 	public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";
@@ -157,7 +159,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	public O2Response makePremiumSMSRequest(final int userId, String internalTxId, BigDecimal subCost, final String o2PhoneNumber, String message) {
 		LOGGER.debug("input parameters userId, internalTxId, subCost, o2PhoneNumber, message: [{}], [{}], [{}], [{}], [{}]", userId, internalTxId, subCost, o2PhoneNumber, message);
 		
-		final BigInteger subCostPences = subCost.multiply(new BigDecimal("100")).toBigInteger();
+		final BigInteger subCostPences = subCost.multiply(MULTIPLICAND_100).toBigInteger();
 
 		BillSubscriber billSubscriber = new BillSubscriber();
 		
@@ -184,11 +186,6 @@ public class O2ClientServiceImpl implements O2ClientService {
 				QName soaConsumerTransactionIDQName = new QName("http://soa.o2.co.uk/coredata_1", "SOAConsumerTransactionID", "cor");
 				SoapHeaderElement soaConsumerTransactionIDHeaderElement = soapHeader.addHeaderElement(soaConsumerTransactionIDQName);
 				soaConsumerTransactionIDHeaderElement.setText(o2PhoneNumber + ":" + userId);
-				
-				QName securityQName = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security", "wsse");
-				SoapHeaderElement securityHeaderElement = soapHeader.addHeaderElement(securityQName);
-				
-				//securityHeaderElement.add
 			}
 		};
 		
