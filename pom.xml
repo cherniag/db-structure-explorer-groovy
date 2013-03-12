@@ -613,10 +613,26 @@
 			</dependency>
 			
 			<dependency>
+				<groupId>com.sun.xml.wss</groupId>
+				<artifactId>xws-security</artifactId>
+				<version>3.0</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.springframework.ws</groupId>
 				<artifactId>spring-ws</artifactId>
 				<version>2.1.2.RELEASE</version>
 				<classifier>all</classifier>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.httpcomponents</groupId>
+						<artifactId>httpclient</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<!-- END Spring Section -->
 
@@ -752,11 +768,10 @@
 				<artifactId>servlet-api</artifactId>
 				<version>2.5</version>
 			</dependency>
-			<!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId> <version>3.1</version> </dependency> -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.1.1</version>
+				<version>4.2.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -887,13 +902,13 @@
 				<artifactId>gson</artifactId>
 				<version>2.0</version>
 			</dependency>
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-core-asl</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
+			
+			<dependency>
+				<groupId>javax.xml.crypto</groupId>
+				<artifactId>jsr105-api</artifactId>
+				<version>1.0.1</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-mapper-asl</artifactId>
@@ -905,54 +920,6 @@
 				<artifactId>spymemcached</artifactId>
 				<version>2.8.4</version>
 			</dependency>
-		
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-jaxrs</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-xc</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-core-lgpl</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-mapper-lgpl</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-smile</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-asl</artifactId> -->
-			<!-- <version>0.9.5</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-mrbean</artifactId> -->
-			<!-- <version>1.9.9</version> -->
-			<!-- </dependency> -->
-			<!-- -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.codehaus.jackson</groupId> -->
-			<!-- <artifactId>jackson-lgpl</artifactId> -->
-			<!-- <version>0.9.5</version> -->
-			<!-- </dependency> -->
 
 		</dependencies>
 	</dependencyManagement>
@@ -1003,6 +970,12 @@
 			<id>spring-milestone</id>
 			<name>Panda Spring Maven MILESTONE Repository</name>
 			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/spring-milestone/</url>
+		</repository>
+
+		<repository>
+			<id>spring-ext</id>
+			<name>Spring repo-ext</name>
+			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
 		</repository>
 
 		<repository>
