@@ -777,7 +777,16 @@
 						<groupId>commons-logging</groupId>
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
+<!--					<exclusion>-->
+<!--						<groupId>org.apache.httpcomponents</groupId>-->
+<!--						<artifactId>httpcore</artifactId>-->
+<!--					</exclusion>-->
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>4.2.3</version>
 			</dependency>
 
 			<dependency>
@@ -889,6 +898,12 @@
 				<groupId>com.rackspacecloud</groupId>
 				<artifactId>java-cloudfiles</artifactId>
 				<version>1.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.httpcomponents</groupId>
+						<artifactId>httpcore</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
