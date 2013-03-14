@@ -16,7 +16,7 @@ alter table tb_users add column segment char(255);
 alter table tb_users add column last_payment_try_in_cycle_millis BIGINT default 0;
 alter table tb_users add column deactivated_grace_credit_millis BIGINT default 0;
 
-alter table tb_paymentdetails add column phoneNumber varchar(255);
+alter table tb_paymentdetails add column phone_number varchar(255);
 alter table tb_paymentPolicy add column contract char(255);
 alter table tb_paymentPolicy add column segment char(255);
 
