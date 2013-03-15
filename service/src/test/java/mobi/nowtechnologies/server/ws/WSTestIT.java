@@ -1,17 +1,18 @@
 package mobi.nowtechnologies.server.ws;
 
+import java.io.File;
+import java.net.URL;
+
 import org.junit.Assert;
 import org.junit.Test;
+
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
 import uk.co.o2.soa.subscriberservice.SubscriberService;
 import uk.co.o2.soa.utils.SOAPLoggingHandler;
 import uk.co.o2.soa.utils.SecurityHandler;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
-import java.io.File;
-import java.net.URL;
-
-public class WSTest {
+public class WSTestIT {
 
     @Test
     public void pingO2() throws Exception {

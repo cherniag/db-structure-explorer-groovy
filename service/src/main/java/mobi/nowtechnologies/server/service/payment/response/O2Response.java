@@ -2,6 +2,9 @@ package mobi.nowtechnologies.server.service.payment.response;
 
 import javax.servlet.http.HttpServletResponse;
 
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.service.PostService.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,9 +12,6 @@ import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
 import uk.co.o2.soa.chargecustomerdata.ServiceResult;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
 import uk.co.o2.soa.coredata.SOAFaultType;
-
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 /**
  * @author Titov Mykhaylo (titov)
