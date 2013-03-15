@@ -259,10 +259,10 @@ public class User implements Serializable {
     @Column(name="last_before48_sms_millis", columnDefinition="BIGINT default 0")
     private long lastBefore48SmsMillis;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract", insertable=false, updatable=false),
-			@JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false, updatable=false) })
-    private GracePeriod gracePeriod;
+    //@ManyToOne(fetch = FetchType.LAZY)
+	//@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract", insertable=false, updatable=false),
+	//		@JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false, updatable=false) })
+    private transient GracePeriod gracePeriod;
 
     public User() {
         setDisplayName("");

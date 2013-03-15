@@ -43,7 +43,7 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:META-INF/service.xml;classpath:META-INF/dao.xml;classpath:META-INF/shared.xml</param-value>
+		<param-value>classpath:transport-root.xml</param-value>
 	</context-param>
 
 	<context-param>

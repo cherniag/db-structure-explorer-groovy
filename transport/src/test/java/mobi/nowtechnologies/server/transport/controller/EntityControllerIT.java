@@ -1,16 +1,20 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.job.SpringContext;
+import mobi.nowtechnologies.server.job.UpdateO2UserJob;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +30,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
@@ -73,7 +80,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
+                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("REGISTERED", getActivation(mav));
@@ -88,7 +95,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
+                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("ENTERED_NUMBER", getActivation(mav));
@@ -292,6 +299,7 @@ public class EntityControllerIT {
     private EntityController prepareMockController() throws NoSuchMethodException {
         EntityController controller = createMock(EntityController.class,
                 EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
+                        String.class,
                         String.class,
                         String.class,
                         String.class,

@@ -111,4 +111,9 @@ public class SubscriberProfileType {
                 .toString();
     }
 
+    public mobi.nowtechnologies.server.persistence.domain.enums.SegmentType getSegmentType() {
+        return SegmentType.CONSUMER.equals(getSegmentType()) ?
+                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER :
+                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+    }
 }

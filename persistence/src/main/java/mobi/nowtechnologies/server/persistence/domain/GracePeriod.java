@@ -22,23 +22,23 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
  * @author Titov Mykhaylo (titov)
  * 
  */
-@Entity
+//@Entity
 //@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "community_id", "provider" }))
-@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "user_group_id", "provider" }))
+//@Table(name = "grace_period", uniqueConstraints = @UniqueConstraint(columnNames = { "segment", "contract", "user_group_id", "provider" }))
 public class GracePeriod implements Serializable{
 	
 	private static final long serialVersionUID = 3156970365842675613L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@Id
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "char(255)")
+	//@Enumerated(EnumType.STRING)
+	//@Column(columnDefinition = "char(255)")
 	private SegmentType segment;
 
-	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "char(255)")
+	//@Enumerated(EnumType.STRING)
+	//@Column(columnDefinition = "char(255)")
 	private Contract contract;
 
 	//@ManyToOne(fetch = FetchType.EAGER)
@@ -48,16 +48,16 @@ public class GracePeriod implements Serializable{
 	//@Column(name = "community_id", insertable = false, updatable = false)
 	//private byte communityId;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_group_id", nullable = false)
+	//@ManyToOne(fetch = FetchType.EAGER)
+	//@JoinColumn(name = "user_group_id", nullable = false)
 	private UserGroup userGroup;
 	
-	@Column(name = "user_group_id", insertable = false, updatable = false)
+	//@Column(name = "user_group_id", insertable = false, updatable = false)
 	private byte userGroupId;
 
 	private String provider;
 
-	@Column(name = "duration_millis", nullable = false)
+	//@Column(name = "duration_millis", nullable = false)
 	private long durationMillis;
 
 	public Integer getId() {

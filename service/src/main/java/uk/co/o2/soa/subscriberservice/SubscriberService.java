@@ -1,6 +1,8 @@
 
 package uk.co.o2.soa.subscriberservice;
 
+import uk.co.o2.soa.utils.SubscriberPortDecorator;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -28,6 +30,10 @@ public class SubscriberService extends Service {
     @WebEndpoint(name = "SubscriberPort")
     public SubscriberPort getSubscriberPort() {
         return super.getPort(new QName("http://soa.o2.co.uk/subscriberservice_2", "SubscriberPort"), SubscriberPort.class);
+    }
+
+    public SubscriberPortDecorator getSubscriberPortDecorator(){
+        return new SubscriberPortDecorator(getSubscriberPort());
     }
 
     @WebEndpoint(name = "SubscriberPort")

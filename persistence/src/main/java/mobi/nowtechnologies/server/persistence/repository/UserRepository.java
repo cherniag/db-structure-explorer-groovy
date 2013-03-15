@@ -132,21 +132,16 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable);
 
 	@Query("select u from User u " +
-			"left join u.gracePeriod gp " +
-			"where " +
-			"u.status=10 " +
-			
-			"and ((gp.id is not null " +
-			"and u.deactivatedGraceCreditMillis=0 " +
+			"where u.status=10 " +
+			"and ((  u.deactivatedGraceCreditMillis=0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
-			"and (u.nextSubPayment + gp.durationMillis/1000)<?1) " +
+			"and (u.nextSubPayment)<?1) " +
 			
 			"or (u.deactivatedGraceCreditMillis>0 " +
 			"and u.lastSubscribedPaymentSystem is not null " +
 			"and (u.nextSubPayment + u.deactivatedGraceCreditMillis/1000)<?1) " +
 			
-			"or ((gp.id is null " +
-			"or u.lastSubscribedPaymentSystem is null) " +
+			"or (( u.lastSubscribedPaymentSystem is null) " +
 			"and u.deactivatedGraceCreditMillis=0 " +
 			"and u.nextSubPayment<?1))")
 	List<User> getListOfUsersForWeeklyUpdate(long epochSeconds, Pageable pageable);
@@ -167,4 +162,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"where " +
 			"user.id=:id")
 	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
+
+    @Query(value = "select user from User user where user.id not in (?1)")
+    List<User> findUsersForUpdate(List<Integer> updatedUsers);
 }

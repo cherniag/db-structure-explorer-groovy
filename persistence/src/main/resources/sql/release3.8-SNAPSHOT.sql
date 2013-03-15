@@ -39,3 +39,11 @@ create unique index PRIMARY on grace_period(id);
 
 -- Before 48 sms
 alter table tb_users add column last_before48_sms_millis BIGINT default 0;
+
+ create table user_logs (
+   id int auto_increment,
+   user_id int,
+   last_update bigint,
+   status char(255),
+   primary key (id)
+ );

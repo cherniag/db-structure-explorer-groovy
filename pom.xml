@@ -84,6 +84,14 @@
 							<name>catalina.base</name>
 							<value>d:/svn</value>
 						</systemProperty>
+                        <systemProperty>
+                            <name>javax.net.ssl.keyStore</name>
+                            <value>d:/keystore.jks</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>javax.net.ssl.keyStorePassword</name>
+                            <value>Fb320p007++</value>
+                        </systemProperty>
 					</systemProperties>
 
 					<scanIntervalSeconds>3</scanIntervalSeconds>
@@ -813,7 +821,6 @@
 				<version>1.6.11</version>
 			</dependency>
 
-			<!-- Quartz API -->
 			<dependency>
 				<groupId>opensymphony</groupId>
 				<artifactId>quartz</artifactId>

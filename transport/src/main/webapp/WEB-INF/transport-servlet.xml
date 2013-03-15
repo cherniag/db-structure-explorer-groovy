@@ -332,9 +332,46 @@
     	<property name="startDelay" value="${before48h.expired.payment.job.startDelayMillis}" />
     	<property name="repeatInterval" value="${before48h.expired.payment.job.repeatIntervalMillis}" />
 	</bean>
-	
 
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <!-- Update O2 User Status Job -->
+    <bean id="job.updateO2User" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="mobi.nowtechnologies.server.job.UpdateO2UserJob" />
+    </bean>
+    <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="job.updateO2User" />
+        <property name="cronExpression" value="0 * * * * ?"/>
+    </bean>
+
+    <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+        <property name="applicationContextSchedulerContextKey" value="applicationContext" />
+        <property name="dataSource" ref="persistence.DataSource"/>
+        <property name="transactionManager" ref="persistence.TransactionManager"/>
+        <property name="overwriteExistingJobs" value="true"/>
+        <property name="autoStartup" value="true" />
+        <property name="triggers">
+            <list>
+                <ref bean="jobTrigger.updateO2User"/>
+            </list>
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.instanceName">MQBatchScheduler</prop>
+                <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                <prop key="org.quartz.jobStore.misfireThreshold">10000</prop>
+                <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+                <prop key="org.quartz.jobStore.isClustered">true</prop>
+                <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+                <prop key="org.quartz.threadPool.threadCount">5</prop>
+                <prop key="org.quartz.threadPool.threadPriority">1</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.job.SpringContext"/>
+
+    <!-- NON_CLUSTERED JOBS-->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="${jobs.autoStartup}" />
 		<property name="triggers">
 			<list>
@@ -366,5 +403,5 @@
 			</bean>
 		</property>
 	</bean>
-	<import resource="controllers.xml" />
+	<import resource="classpath:controllers.xml" />
 </beans>
