@@ -1,9 +1,9 @@
 package uk.co.o2.soa.utils;
 
-import uk.co.o2.soa.coredata.PaymentCategoryType;
-import uk.co.o2.soa.coredata.SegmentType;
-import uk.co.o2.soa.subscriberdata.*;
-import uk.co.o2.soa.subscriberservice.*;
+import uk.co.o2.soa.coredata_1.PaymentCategoryType;
+import uk.co.o2.soa.coredata_1.SegmentType;
+import uk.co.o2.soa.subscriberdata_2.*;
+import uk.co.o2.soa.subscriberservice_2.*;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
@@ -54,7 +54,7 @@ public class SubscriberPortDecorator implements SubscriberPort {
     }
 
     @Override
-    public void getSubscriberAndBillingSystem(String msisdn, Holder<uk.co.o2.soa.coredata.SubscriberProfileType> subscriberProfile, Holder<BillingProfileType> billingProfile) throws GetSubscriberAndBillingSystemFault {
+    public void getSubscriberAndBillingSystem(String msisdn, Holder<uk.co.o2.soa.coredata_1.SubscriberProfileType> subscriberProfile, Holder<BillingProfileType> billingProfile) throws GetSubscriberAndBillingSystemFault {
 
     }
 

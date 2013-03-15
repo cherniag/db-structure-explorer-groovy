@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import uk.co.o2.soa.coredata_1.SubscriberProfileType;
+
 
 /**
  * Returns the Subscriber Profile and Billing System

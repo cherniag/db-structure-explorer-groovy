@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
 import uk.co.o2.soa.chargecustomerdata.ServiceResult;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
-import uk.co.o2.soa.coredata.SOAFaultType;
+import uk.co.o2.soa.coredata_1.SOAFaultType;
 
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;

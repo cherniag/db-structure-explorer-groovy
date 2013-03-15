@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;

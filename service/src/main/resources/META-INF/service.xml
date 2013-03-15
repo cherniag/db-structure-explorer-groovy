@@ -333,15 +333,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 	</bean>
 
-	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.impl.O2ClientServiceImpl">
+	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
 		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="communityService" ref="service.communityService" />		
-		<property name="webServiceGateway" ref="service.WebServiceGateway"/>
-		<property name="webServiceTemplate" ref="service.WebServiceTemplate"/>
+		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
 	</bean>
 
 	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />
@@ -368,7 +367,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
         	<list>
-				<value>uk.co.o2.soa.chargecustomerdata_1</value>
+				<value>uk.co.o2.soa.chargecustomerdata</value>
 				<value>uk.co.o2.soa.subscriberdata_2</value>
 			</list>
         </property>
@@ -380,107 +379,20 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         </property>
 	</bean>
 	
-	<bean id="service.WebServiceGateway" class="mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway">
+	<bean id="service.O2WebServiceGateway" class="mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway">
 		<property name="messageFactory" ref="service.Soap11MessageFactory"/>
 		<property name="marshaller" ref="service.O2Marshaller"/>
 		<property name="unmarshaller" ref="service.O2Marshaller"/>
-		<property name="xwssMessageSigner" ref="xwssMessageSigner"/>
+		<property name="defaultWebServiceMessageHandler" ref="service.O2WebServiceMessageHandler"/>
+		<property name="keystoreLocation" value="${o2.service.security.keystore.url}"/>
+		<property name="KeystorePassword" value="${o2.service.security.keystore.password}"/>
 	</bean>
 	
-	<bean id="xwssMessageSigner" class="mobi.nowtechnologies.server.service.o2.impl.XwssMessageSigner">
-		<constructor-arg value="${o2.service.security.policy.url}"/>
-	  	<constructor-arg>
-	    	<bean class="org.springframework.ws.soap.security.xwss.callback.KeyStoreCallbackHandler">
-				<property name="keyStore" ref="clientKeystore" />
-				<property name="defaultAlias" value="${o2.service.security.keystore.alias}"/>
-				<property name="privateKeyPassword" value="${o2.service.security.key.private.password}"/>
-	    	</bean>
-	  	</constructor-arg>        
+	<bean id="service.O2WebServiceMessageHandler" class="mobi.nowtechnologies.server.service.o2.impl.O2WebServiceMessageHandler">
+		<property name="username" value="${o2.service.security.token.username}"/>
+		<property name="password" value="${o2.service.security.token.password}"/>        
+		<property name="soaConsumerTransactionID" value="${o2.service.security.token.ConsumerTransactionID}"/>        
 	</bean>
-	 
-	<bean id="clientKeystore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
-		<property name="location" value="${o2.service.security.keystore.url}"/>
-		<property name="password" value="${o2.service.security.keystore.password}"/>
-	</bean>
-	
-	<!---  -->
-
-	<bean id="service.WebServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
-		<constructor-arg ref="service.Soap11MessageFactory" />
-		<property name="messageSender">
-			<bean
-				class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
-				<property name="credentials">
-					<bean class="org.apache.http.auth.UsernamePasswordCredentials">
-						<constructor-arg value="${o2.psms.userName}" />
-						<constructor-arg value="${o2.psms.password}" />
-					</bean>
-				</property>
-<!--				<property name="httpClient">-->
-<!--					<bean class="org.apache.commons.httpclient.HttpClient">-->
-<!--						<property name="httpConnectionManager">-->
-<!--							<bean-->
-<!--								class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">-->
-<!--								<property name="maxConnectionsPerHost" value="10" />-->
-<!--								<property name="maxTotalConnections" value="1000" />-->
-<!--							</bean>-->
-<!--						</property>-->
-<!--					</bean>-->
-<!--				</property>-->
-			</bean>
-		</property>
-		<property name="marshaller" ref="service.O2Marshaller"></property>
-		<property name="unmarshaller" ref="service.O2Marshaller"></property>
-		<property name="defaultUri" value="${o2.psms.defaultUri}" />
-		<property name="interceptors">
-			<list>
-				<ref local="service.XWSSecurityInterceptor" />
-			</list>
-		</property>
-	</bean>
-
-	<!--
-		References Chapter 7. Securing your Web services with Spring-WS -
-		http://static.springsource.org/spring-ws/sites/2.0/reference/html/security.html
-		7.2 XwsSecurityInterceptor -
-		http://static.springsource.org/spring-ws/sites/2.0/reference/html/security.html#security-xws-security-interceptor
-		What is the XWS-Security Framework? -
-		http://download.oracle.com/docs/cd/E17802_01/webservices/webservices/docs/1.6/tutorial/doc/XWS-SecurityIntro4.html#wp564887
-		Example of SOAP request authenticated with WS-UsernameToken -
-		http://stackoverflow.com/questions/3448498/example-of-soap-request-authenticated-with-ws-usernametoken
-	-->
-	<!--
-		This is not documented in the Spring WS Reference but the API shows
-		that we can add interceptors
-	-->
-	<bean id="service.XWSSecurityInterceptor"
-		class="org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor">
-		<property name="policyConfiguration" value="/META-INF/securityPolicy.xml" />
-		<property name="callbackHandlers">
-			<list>
-<!--				<ref bean="service.CallbackHandler" />-->
-			</list>
-		</property>
-	</bean>
-
-	<!--
-		As a client the username and password generated by the server must
-		match with the client!
-	-->
-	<!--
-		a simple callback handler to configure users and passwords with an
-		in-memory Properties object.
-	-->
-	<bean id="service.CallbackHandler"
-		class="org.springframework.ws.soap.security.xwss.callback.SimplePasswordValidationCallbackHandler">
-		<property name="users">
-			<props>
-				<prop key="mojo">mojopass</prop>
-				<prop key="user">pass</prop>
-			</props>
-		</property>
-	</bean>
-	
 
 	<task:annotation-driven />
 

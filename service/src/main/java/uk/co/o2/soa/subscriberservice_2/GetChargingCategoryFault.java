@@ -2,8 +2,7 @@
 package uk.co.o2.soa.subscriberservice_2;
 
 import javax.xml.ws.WebFault;
-
-import uk.co.o2.soa.coredata.SOAFaultType;
+import uk.co.o2.soa.coredata_1.SOAFaultType;
 
 
 /**

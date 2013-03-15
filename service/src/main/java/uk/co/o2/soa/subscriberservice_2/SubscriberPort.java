@@ -2,16 +2,20 @@
 package uk.co.o2.soa.subscriberservice_2;
 
 import java.util.List;
-
-import javax.jws.*;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
-
-import uk.co.o2.soa.coredata.PaymentCategoryType;
-import uk.co.o2.soa.coredata.SegmentType;
-import uk.co.o2.soa.subscriberdata_2.*;
+import uk.co.o2.soa.coredata_1.PaymentCategoryType;
+import uk.co.o2.soa.coredata_1.SegmentType;
+import uk.co.o2.soa.subscriberdata_2.BillingProfileType;
+import uk.co.o2.soa.subscriberdata_2.MsisdnList;
+import uk.co.o2.soa.subscriberdata_2.ProductListType;
+import uk.co.o2.soa.subscriberdata_2.ServiceProviderDetailsType;
 
 
 /**
@@ -22,8 +26,8 @@ import uk.co.o2.soa.subscriberdata_2.*;
  */
 @WebService(name = "SubscriberPort", targetNamespace = "http://soa.o2.co.uk/subscriberservice_2")
 @XmlSeeAlso({
-    uk.co.o2.soa.subscriberdata.ObjectFactory.class,
-    uk.co.o2.soa.coredata.ObjectFactory.class
+    uk.co.o2.soa.subscriberdata_2.ObjectFactory.class,
+    uk.co.o2.soa.coredata_1.ObjectFactory.class
 })
 public interface SubscriberPort {
 
@@ -144,7 +148,7 @@ public interface SubscriberPort {
         @WebParam(name = "msisdn", targetNamespace = "http://soa.o2.co.uk/subscriberdata_2")
         String msisdn,
         @WebParam(name = "subscriberProfile", targetNamespace = "http://soa.o2.co.uk/subscriberdata_2", mode = WebParam.Mode.OUT)
-        Holder<uk.co.o2.soa.coredata.SubscriberProfileType> subscriberProfile,
+        Holder<uk.co.o2.soa.coredata_1.SubscriberProfileType> subscriberProfile,
         @WebParam(name = "billingProfile", targetNamespace = "http://soa.o2.co.uk/subscriberdata_2", mode = WebParam.Mode.OUT)
         Holder<BillingProfileType> billingProfile)
         throws GetSubscriberAndBillingSystemFault

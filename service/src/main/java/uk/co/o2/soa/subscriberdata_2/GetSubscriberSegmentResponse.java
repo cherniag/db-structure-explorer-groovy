@@ -1,9 +1,11 @@
 
 package uk.co.o2.soa.subscriberdata_2;
 
-import javax.xml.bind.annotation.*;
-
-import uk.co.o2.soa.coredata.SegmentType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import uk.co.o2.soa.coredata_1.SegmentType;
 
 
 /**
