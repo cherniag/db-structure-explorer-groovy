@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
-import uk.co.o2.soa.chargecustomerdata_1.ServiceResult;
-import uk.co.o2.soa.chargecustomerservice_1.BillSubscriberFault;
-import uk.co.o2.soa.coredata_1.SOAFaultType;
+import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
+import uk.co.o2.soa.chargecustomerdata.ServiceResult;
+import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
+import uk.co.o2.soa.coredata.SOAFaultType;
 
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;

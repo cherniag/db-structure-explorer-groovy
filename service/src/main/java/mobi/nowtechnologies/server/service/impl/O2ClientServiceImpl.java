@@ -29,8 +29,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 
-import uk.co.o2.soa.chargecustomerdata_1.BillSubscriber;
-import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
+import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");

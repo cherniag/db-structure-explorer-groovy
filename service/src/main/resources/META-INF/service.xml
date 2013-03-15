@@ -365,7 +365,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	
 	<!-- O2 SOA beans -->
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="uk.co.o2.soa.chargecustomerdata_1" />
+        <property name="contextPath" value="uk.co.o2.soa.chargecustomerdata" />
     </bean>
 	
 	<bean id="service.MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
