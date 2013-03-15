@@ -38,8 +38,8 @@
 	</logger>
 	<logger name="org.apache.commons">
 		<level value="INFO"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="net.sf.hibernate.cfg">
 		<level value="INFO"></level>
@@ -48,45 +48,45 @@
 	</logger>
 	<logger name="org.hibernate.tool.hbm2ddl">
 		<level value="DEBUG"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="org.hibernate.SQL">
 		<level value="DEBUG"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="org.hibernate.TYPE">
 		<level value="DEBUG"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="mobi.nowtechnologies">
 		<level value="INFO"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="httpclient">
 		<level value="TRACE"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	<logger name="org.apache">
 		<level value="TRACE"></level>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout" /> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	
 	<logger name="org.springframework.ws.client.MessageTracing.sent">
 		<level value="TRACE"></level>
-		<appender-ref ref="stdout"/>
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout"/> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 	
 	<logger name="org.springframework.ws.client.MessageTracing.sent">
 		<level value="TRACE"></level>
-		<appender-ref ref="stdout"/>
-		<appender-ref ref="stderr" />
+<!-- 		<appender-ref ref="stdout"/> -->
+<!-- 		<appender-ref ref="stderr" /> -->
 	</logger>
 
 </log4j:configuration>

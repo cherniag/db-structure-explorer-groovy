@@ -339,7 +339,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
 		<property name="deviceService" ref="service.DeviceService" />
-		<property name="communityService" ref="service.communityService" />
+		<property name="communityService" ref="service.communityService" />		
+		<property name="webServiceGateway" ref="service.WebServiceGateway"/>
 		<property name="webServiceTemplate" ref="service.WebServiceTemplate"/>
 	</bean>
 
@@ -365,17 +366,47 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	
 	<!-- O2 SOA beans -->
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="uk.co.o2.soa.chargecustomerdata_1" />
+        <property name="contextPaths">
+        	<list>
+				<value>uk.co.o2.soa.chargecustomerdata_1</value>
+				<value>uk.co.o2.soa.subscriberdata_2</value>
+			</list>
+        </property>
     </bean>
 	
-	<bean id="service.MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
+	<bean id="service.Soap11MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
 		<property name="soapVersion">
             <util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_11" />
         </property>
 	</bean>
+	
+	<bean id="service.WebServiceGateway" class="mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway">
+		<property name="messageFactory" ref="service.Soap11MessageFactory"/>
+		<property name="marshaller" ref="service.O2Marshaller"/>
+		<property name="unmarshaller" ref="service.O2Marshaller"/>
+		<property name="xwssMessageSigner" ref="xwssMessageSigner"/>
+	</bean>
+	
+	<bean id="xwssMessageSigner" class="mobi.nowtechnologies.server.service.o2.impl.XwssMessageSigner">
+		<constructor-arg value="${o2.service.security.policy.url}"/>
+	  	<constructor-arg>
+	    	<bean class="org.springframework.ws.soap.security.xwss.callback.KeyStoreCallbackHandler">
+				<property name="keyStore" ref="clientKeystore" />
+				<property name="defaultAlias" value="${o2.service.security.keystore.alias}"/>
+				<property name="privateKeyPassword" value="${o2.service.security.key.private.password}"/>
+	    	</bean>
+	  	</constructor-arg>        
+	</bean>
+	 
+	<bean id="clientKeystore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
+		<property name="location" value="${o2.service.security.keystore.url}"/>
+		<property name="password" value="${o2.service.security.keystore.password}"/>
+	</bean>
+	
+	<!---  -->
 
 	<bean id="service.WebServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
-		<constructor-arg ref="service.MessageFactory" />
+		<constructor-arg ref="service.Soap11MessageFactory" />
 		<property name="messageSender">
 			<bean
 				class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
@@ -424,7 +455,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	-->
 	<bean id="service.XWSSecurityInterceptor"
 		class="org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor">
-		<property name="policyConfiguration" value="/WEB-INF/securityPolicy.xml" />
+		<property name="policyConfiguration" value="/META-INF/securityPolicy.xml" />
 		<property name="callbackHandlers">
 			<list>
 <!--				<ref bean="service.CallbackHandler" />-->

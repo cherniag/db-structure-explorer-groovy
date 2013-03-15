@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 
 import uk.co.o2.soa.chargecustomerdata_1.BillSubscriber;
-import uk.co.o2.soa.chargecustomerdata_1.BillSubscriberResponse;
+import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfile;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -56,6 +57,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	private WebServiceTemplate webServiceTemplate;
 	
+	private WebServiceGateway webServiceGateway;
+	
 	public void init() {
 		restTemplate = new RestTemplate();
 	}
@@ -70,6 +73,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	public void setWebServiceTemplate(WebServiceTemplate webServiceTemplate) {
 		this.webServiceTemplate = webServiceTemplate;
+	}
+
+	public void setWebServiceGateway(WebServiceGateway webServiceGateway) {
+		this.webServiceGateway = webServiceGateway;
 	}
 
 	@Override
@@ -151,7 +158,27 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public boolean sendFreeSms(String phoneNumber, String message) {
-		// TODO Auto-generated method stub
+		GetSubscriberProfile getSubscriberProfile = new GetSubscriberProfile();
+		getSubscriberProfile.setSubscriberID("447702059016");
+		
+//		WebServiceMessageCallback webServiceMessageCallback = new WebServiceMessageCallback() {
+//			
+//			@Override
+//			public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
+//				SoapMessage soapMessage = (SoapMessage) message;
+//				SoapHeader soapHeader = soapMessage.getSoapHeader();
+//				
+//				QName soaConsumerTransactionIDQName = new QName("http://soa.o2.co.uk/coredata_1", "SOAConsumerTransactionID", "cor");
+//				SoapHeaderElement soaConsumerTransactionIDHeaderElement = soapHeader.addHeaderElement(soaConsumerTransactionIDQName);
+//				soaConsumerTransactionIDHeaderElement.setText(o2PhoneNumber + ":" + userId);
+//			}
+//		};
+//		
+//		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
+//		Object objectResponse = webServiceTemplate.marshalSendAndReceive(billSubscriber, webServiceMessageCallback);
+		Object objectResponse = webServiceGateway.sendAndReceive("https://sdpapi.ref.o2.co.uk/services/Subscriber_2_0", getSubscriberProfile);
+		
+		O2Response o2Response = O2Response.valueOf(objectResponse);
 		return false;
 	}
 
@@ -191,9 +218,9 @@ public class O2ClientServiceImpl implements O2ClientService {
 		
 		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
 		Object objectResponse = webServiceTemplate.marshalSendAndReceive(billSubscriber, webServiceMessageCallback);
-		
-		O2Response o2Response = O2Response.valueOf(objectResponse);
 	
+		O2Response o2Response = O2Response.valueOf(objectResponse);
+		
 		LOGGER.debug("Output parameter o2Response=[{}]", o2Response);
 		return o2Response;
 	}
