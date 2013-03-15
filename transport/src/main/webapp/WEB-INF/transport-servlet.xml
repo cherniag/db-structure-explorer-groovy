@@ -343,11 +343,6 @@
 				<ref bean="expiredPaymentTrigger" />
 				<ref bean="transport.notificationQuartzTrigger" />
 				<ref bean="transport.notificationO2QuartzTrigger" />
-<!--			
-				<ref bean="transport.smsAccordingToLawNowTop40QuartzTrigger" />
-				<ref bean="transport.smsAccordingToLawMetalHammerQuartzTrigger" />
--->
-				
 				<ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />

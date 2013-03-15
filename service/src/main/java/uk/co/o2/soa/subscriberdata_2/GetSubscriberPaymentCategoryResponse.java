@@ -1,12 +1,9 @@
 
 package uk.co.o2.soa.subscriberdata_2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import uk.co.o2.soa.coredata_1.PaymentCategoryType;
+import javax.xml.bind.annotation.*;
 
+import uk.co.o2.soa.coredata.PaymentCategoryType;
 
 /**
  * returns prepay or postpay
