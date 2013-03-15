@@ -1,10 +1,8 @@
 
-package uk.co.o2.soa.chargecustomerservice;
+package uk.co.o2.soa.subscriberservice;
 
 import javax.xml.ws.WebFault;
-
 import uk.co.o2.soa.coredata.SOAFaultType;
-
 
 
 /**
@@ -13,8 +11,8 @@ import uk.co.o2.soa.coredata.SOAFaultType;
  * Generated source version: 2.1
  * 
  */
-@WebFault(name = "billSubscriberFault", targetNamespace = "http://soa.o2.co.uk/chargecustomerdata_1")
-public class BillSubscriberFault
+@WebFault(name = "getSubscriberSegmentFault", targetNamespace = "http://soa.o2.co.uk/subscriberdata_2")
+public class GetSubscriberSegmentFault
     extends Exception
 {
 
@@ -29,7 +27,7 @@ public class BillSubscriberFault
      * @param message
      * @param faultInfo
      */
-    public BillSubscriberFault(String message, SOAFaultType faultInfo) {
+    public GetSubscriberSegmentFault(String message, SOAFaultType faultInfo) {
         super(message);
         this.faultInfo = faultInfo;
     }
@@ -40,11 +38,16 @@ public class BillSubscriberFault
      * @param faultInfo
      * @param cause
      */
-    public BillSubscriberFault(String message, SOAFaultType faultInfo, Throwable cause) {
+    public GetSubscriberSegmentFault(String message, SOAFaultType faultInfo, Throwable cause) {
         super(message, cause);
         this.faultInfo = faultInfo;
     }
 
+    /**
+     * 
+     * @return
+     *     returns fault bean: uk.co.o2.soa.coredata_1.SOAFaultType
+     */
     public SOAFaultType getFaultInfo() {
         return faultInfo;
     }

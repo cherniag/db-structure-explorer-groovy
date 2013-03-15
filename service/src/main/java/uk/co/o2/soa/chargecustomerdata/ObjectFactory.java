@@ -5,7 +5,9 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
-import uk.co.o2.soa.coredata_1.SOAFaultType;
+
+import uk.co.o2.soa.coredata.SOAFaultType;
+
 
 
 /**

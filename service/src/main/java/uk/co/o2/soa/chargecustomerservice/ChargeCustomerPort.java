@@ -21,7 +21,7 @@ import uk.co.o2.soa.chargecustomerdata.ServiceResult;
 @WebService(name = "ChargeCustomerPort", targetNamespace = "http://soa.o2.co.uk/chargecustomerservice_1")
 @XmlSeeAlso({
     uk.co.o2.soa.chargecustomerdata.ObjectFactory.class,
-    uk.co.o2.soa.coredata_1.ObjectFactory.class
+    uk.co.o2.soa.coredata.ObjectFactory.class
 })
 public interface ChargeCustomerPort {
 

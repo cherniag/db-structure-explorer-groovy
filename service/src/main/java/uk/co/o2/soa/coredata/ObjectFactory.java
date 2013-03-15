@@ -1,5 +1,5 @@
 
-package uk.co.o2.soa.coredata_1;
+package uk.co.o2.soa.coredata;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
