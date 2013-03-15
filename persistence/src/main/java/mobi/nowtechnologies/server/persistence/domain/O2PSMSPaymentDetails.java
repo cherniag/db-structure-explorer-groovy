@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -11,6 +12,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue(PaymentDetails.O2_PSMS_TYPE)
 public class O2PSMSPaymentDetails extends PaymentDetails {
 	
+	@Column(name="phone_number")
 	private String phoneNumber;
 	
 	public void setPhoneNumber(String phoneNumber) {
