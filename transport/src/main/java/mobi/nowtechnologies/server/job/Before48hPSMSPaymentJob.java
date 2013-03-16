@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -24,9 +25,12 @@ public class Before48hPSMSPaymentJob {
 	
 	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000);
 	
+	@SuppressWarnings("unused")
 	private O2ClientService o2ClientService;
 
 	private UserRepository userRepository;
+	
+	private MigHttpService migHttpService;
 	
 	private CommunityResourceBundleMessageSource messageSource;
     final private String messageCode = "job.before48.psms.consumer";
@@ -48,7 +52,7 @@ public class Before48hPSMSPaymentJob {
 					final String rewriteUrlParameter = community.getRewriteUrlParameter();
 					String msg = messageSource.getMessage(rewriteUrlParameter, messageCode, null, null);
 
-					o2ClientService.sendFreeSms(user.getMobile(), msg);
+					migHttpService.makeFreeSMSRequest(user.getMobile(), msg);
 					
 					user.setLastBefore48SmsMillis(Utils.getEpochMillis());
 					userRepository.updateLastBefore48SmsMillis(user.getLastBefore48SmsMillis(), user.getId());
@@ -81,4 +85,7 @@ public class Before48hPSMSPaymentJob {
 		this.messageSource = messageSource;
 	}
 
+	public void setMigHttpService(MigHttpService migHttpService) {
+		this.migHttpService = migHttpService;
+	}
 }
