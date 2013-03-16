@@ -23,7 +23,7 @@ public class PaymentControllerTest {
 
         static {
             when(LIMITED.isLimited()).thenReturn(true);
-            when(SUBSCRIBED.isSubscribed()).thenReturn(true);
+            when(SUBSCRIBED.isSubscribedStatus()).thenReturn(true);
             when(FREE_TRIAL.isOnFreeTrial()).thenReturn(true);
             when(OVERDUE_LIMITED.isLimitedAfterOverdue()).thenReturn(true);
             when(UNSUBSCRIBED_WITH_FULL_ACCESS.isUnsubscribedWithFullAccess()).thenReturn(true);

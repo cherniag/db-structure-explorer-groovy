@@ -9,9 +9,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
