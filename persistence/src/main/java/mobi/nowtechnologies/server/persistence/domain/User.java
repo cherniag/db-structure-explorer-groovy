@@ -1222,20 +1222,8 @@ public class User implements Serializable {
                 && new DateTime(freeTrialExpiredMillis).isAfterNow();
     }
 
-    public boolean isLimitedAfterOverdue() {
-        boolean wasOnGrace = new DateTime(getNextSubPaymentAsDate()).plus(getGraceDurationMillis()).isBeforeNow();
-        return isLimited() && wasOnGrace;
-    }
-
     public boolean isUnsubscribedWithFullAccess() {
         return !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
-    }
-
-    public boolean isOverdue() {
-        DateTime nextSubPayment = new DateTime(getNextSubPaymentAsDate());
-        boolean onGrace = nextSubPayment.plus(getGraceDurationMillis()).isAfterNow();
-        boolean nextSubPaymentInPast = nextSubPayment.isBeforeNow();
-        return isSubscribedStatus() && onGrace && nextSubPaymentInPast;
     }
 
     private Date getNextSubPaymentAsDate() {

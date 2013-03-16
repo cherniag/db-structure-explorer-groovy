@@ -123,10 +123,6 @@ public class PaymentsController extends CommonController {
             messageCode = "pays.page.note.account.freetrial";
         else if (user.isSubscribed())
             messageCode = "pays.page.note.account.subscribed";
-        else if (user.isLimitedAfterOverdue())
-            messageCode = "pays.page.note.account.overdue_limited";
-        else if (user.isOverdue())
-            messageCode = "pays.page.note.account.overdue";
         else if (user.isSubscribedViaInApp())
             messageCode = "pays.page.note.account.subscribed_via_inapp";
         else if (user.isTrialExpired())
