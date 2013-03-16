@@ -368,7 +368,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="contextPaths">
         	<list>
 				<value>uk.co.o2.soa.chargecustomerdata</value>
-				<value>uk.co.o2.soa.subscriberdata_2</value>
+				<value>uk.co.o2.soa.subscriberdata</value>
 			</list>
         </property>
     </bean>

@@ -1,10 +1,7 @@
 
 package uk.co.o2.soa.subscriberdata;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -28,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+@XmlRootElement(name = "getSubscriberProfile", namespace="http://soa.o2.co.uk/subscriberdata_2")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getSubscriberProfile", propOrder = {
     "subscriberID"

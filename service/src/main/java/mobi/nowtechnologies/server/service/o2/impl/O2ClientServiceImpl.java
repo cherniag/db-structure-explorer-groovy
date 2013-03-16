@@ -22,8 +22,8 @@ import org.springframework.web.client.RestTemplate;
 
 import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
-import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfile;
-import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfileResponse;
+import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
+import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
