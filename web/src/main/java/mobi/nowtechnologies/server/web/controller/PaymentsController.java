@@ -141,7 +141,7 @@ public class PaymentsController extends CommonController {
     }
 
     private String message(Locale locale, String messageCode) {
-        return messageSource.getMessage(messageCode, null, locale);
+        return messageSource.getMessage(messageCode, null, "",  locale);
     }
 
     @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)

@@ -115,7 +115,7 @@
 				<div class="addSmallSpace"></div>
 				
 				<div class="contentButton formButton rad5 rel" id="actionButtons" >
-					<input type="button" class="button" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
+					<input type="button" class="button2" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>

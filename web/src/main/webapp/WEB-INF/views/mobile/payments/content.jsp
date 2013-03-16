@@ -12,7 +12,9 @@
     </c:set>
     <c:if test="${accountBannerON eq 'true'}">
         <div class="banner-pane">
-            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
+            <c:if test="${not empty paymentAccountBanner}">
+                <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
+            </c:if>
             <span>${paymentAccountNotes}</span>
         </div>
     </c:if>
@@ -87,7 +89,7 @@
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="contentButton contentButtonGrey formButton rel formButtonGrey" >
-				<input class="button buttonSmall accounts" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+				<input class="button2" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
 				<span class="rightButtonArrowBlack">
 					&nbsp;
 				</span>
