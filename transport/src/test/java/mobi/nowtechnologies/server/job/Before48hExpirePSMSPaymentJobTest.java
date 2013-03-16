@@ -10,15 +10,10 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Locale;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.O2ClientService;
-import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
 
 import org.junit.Before;
@@ -40,6 +35,9 @@ public class Before48hExpirePSMSPaymentJobTest {
 	@Mock
 	private O2ClientService mockO2ClientService;
 	
+	@Mock
+	private MigHttpService mockMigHttpService;
+	
 	private Before48hPSMSPaymentJob fixture;
 	
 	@Test
@@ -59,11 +57,13 @@ public class Before48hExpirePSMSPaymentJobTest {
 		when(mockUserRepository.findBefore48hExpireUsers(anyInt(), any(Pageable.class))).thenReturn(Collections.singletonList(user));
 		when(mockMessageSource.getMessage(eq("o2"), eq(msgCode), eq((Object[])null), eq((Locale)null))).thenReturn(msg);
 		when(mockO2ClientService.sendFreeSms(eq(user.getMobile()), eq(msg))).thenReturn(true);
+		when(mockMigHttpService.makeFreeSMSRequest(eq(user.getMobile()), eq(msg))).thenReturn(null);
 		
 		fixture.execute();
 
 		verify(mockMessageSource, times(1)).getMessage(eq("o2"), eq(msgCode), eq((Object[])null), eq((Locale)null));
-		verify(mockO2ClientService, times(1)).sendFreeSms(eq(user.getMobile()), eq(msg));
+		verify(mockO2ClientService, times(0)).sendFreeSms(eq(user.getMobile()), eq(msg));
+		verify(mockMigHttpService, times(1)).makeFreeSMSRequest(eq(user.getMobile()), eq(msg));
 		verify(mockUserRepository, times(1)).findBefore48hExpireUsers(anyInt(), any(Pageable.class));
 	}
 
@@ -74,5 +74,6 @@ public class Before48hExpirePSMSPaymentJobTest {
 		fixture.setO2ClientService(mockO2ClientService);
 		fixture.setMessageSource(mockMessageSource);
 		fixture.setUserRepository(mockUserRepository);
+		fixture.setMigHttpService(mockMigHttpService);
 	}
 }

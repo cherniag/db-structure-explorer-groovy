@@ -320,6 +320,7 @@
 	<bean id="before48hPSMSPaymentTask" class="mobi.nowtechnologies.server.job.Before48hPSMSPaymentJob">
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
+		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 	<bean id="before48hPSMSPaymentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -327,10 +328,10 @@
 		<property name="targetMethod" value="execute" />
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="before48hPSMSPaymentTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-    	<property name="jobDetail" ref="before48hPSMSPaymentJob" />
-    	<property name="startDelay" value="${before48h.expired.payment.job.startDelayMillis}" />
-    	<property name="repeatInterval" value="${before48h.expired.payment.job.repeatIntervalMillis}" />
+	
+	<bean id="before48hPSMSPaymentTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="before48hPSMSPaymentJob" />
+		<property name="cronExpression" value="${before48h.expired.payment.job.cronExpression}" />
 	</bean>
 
     <!-- Update O2 User Status Job -->
@@ -359,6 +360,7 @@
         <property name="triggers">
             <list>
                 <ref bean="jobTrigger.updateO2User"/>
+                <ref bean="before48hPSMSPaymentTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
