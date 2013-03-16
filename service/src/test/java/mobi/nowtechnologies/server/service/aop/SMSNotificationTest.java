@@ -194,6 +194,90 @@ public class SMSNotificationTest {
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
 	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_NotCurrentPaymentDetails_Failure()
+		throws Exception {
+		User user = UserFactory.createUser(null, new BigDecimal(0));
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+
+		fixture.sendUnsubscribeAfterSMS(user);
+
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_NotAvailableCommunity_Failure()
+		throws Exception {
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		fixture.setAvailableCommunities("community3, community2, community1");
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+
+		fixture.sendUnsubscribeAfterSMS(user);
+
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_Success()
+		throws Exception {
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null))).thenReturn(msg);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
+		
+		fixture.sendUnsubscribeAfterSMS(user);
+
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
+	}
+	
+	@Test
+	public void testSendLowBalanceWarning_NotCurrentPaymentDetails_Failure()
+			throws Exception {
+		User user = UserFactory.createUser(null, new BigDecimal(0));
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+		
+		fixture.sendLowBalanceWarning(user);
+		
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendLowBalanceWarning_NotAvailableCommunity_Failure()
+			throws Exception {
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		fixture.setAvailableCommunities("community3, community2, community1");
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+		
+		fixture.sendLowBalanceWarning(user);
+		
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendLowBalanceWarning_Success()
+			throws Exception {
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq((Locale)null))).thenReturn(msg);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg));
+		
+		fixture.sendLowBalanceWarning(user);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg));
+	}
 
 	@SuppressWarnings("deprecation")
 	@Before

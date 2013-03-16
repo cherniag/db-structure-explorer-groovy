@@ -1,16 +1,10 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.WeeklyUpdateService;
@@ -47,12 +41,46 @@ public class SMSNotificationIT {
 	private WeeklyUpdateService weeklyUpdateService;
 	
 	@Autowired
+	@Qualifier("service.SpyUserService")
+	private UserService userService;
+	
+	@Autowired
 	@Qualifier("service.SpyPaymentDetailsService")
 	private PaymentDetailsService paymentDetailsService;
 	
 	private MigHttpService mockMigService;
 	
 	private UserService mockUserService;
+	
+	@Test
+	public void testUpdateLastBefore48SmsMillis_Success()
+			throws Exception {		
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
+		
+		Mockito.doNothing().when(userService).updateLastBefore48SmsMillis(anyLong(), anyInt());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+		
+		userService.updateLastBefore48SmsMillis(System.currentTimeMillis(), user.getId());
+		
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_Success()
+			throws Exception {		
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
+		
+		Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
+		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
+		
+		userService.unsubscribeUser(user, "fd");
+		
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
+	}
 	
 	@Test
 	public void testSendUnsubscribePotentialSMS_afterCreatedCreditCardPaymentDetails_Success()

@@ -2074,4 +2074,16 @@ public class UserService {
 		LOGGER.debug("Output parameter users=[{}]", users);
 		return users;
 	}
+
+	@Transactional(readOnly = true)
+	public List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable) {
+		
+		return userRepository.findBefore48hExpireUsers(epochSeconds, pageable);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
+	
+		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
+	}
 }
