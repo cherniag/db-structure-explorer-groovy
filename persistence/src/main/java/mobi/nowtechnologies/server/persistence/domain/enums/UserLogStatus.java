@@ -1,5 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain.enums;
 
-public enum UserLosStatus {
+public enum UserLogStatus {
     SUCCESS, O2_FAIL, FAIL
 }

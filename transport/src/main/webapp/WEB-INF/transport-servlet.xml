@@ -336,10 +336,17 @@
     <!-- Update O2 User Status Job -->
     <bean id="job.updateO2User" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="mobi.nowtechnologies.server.job.UpdateO2UserJob" />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="username" value="${o2.service.security.token.username}"/>
+                <entry key="password" value="${o2.service.security.token.password}"/>
+                <entry key="endpoint" value="${o2.service.endpoint.subscriber_2_0}"/>
+            </map>
+        </property>
     </bean>
     <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="job.updateO2User" />
-        <property name="cronExpression" value="0 * * * * ?"/>
+        <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
 
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
@@ -347,6 +354,7 @@
         <property name="dataSource" ref="persistence.DataSource"/>
         <property name="transactionManager" ref="persistence.TransactionManager"/>
         <property name="overwriteExistingJobs" value="true"/>
+        <!--<property name="autoStartup" value="${jobs.autoStartup}" />-->
         <property name="autoStartup" value="true" />
         <property name="triggers">
             <list>
@@ -364,6 +372,7 @@
                 <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
                 <prop key="org.quartz.threadPool.threadCount">5</prop>
                 <prop key="org.quartz.threadPool.threadPriority">1</prop>
+                <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
             </props>
         </property>
     </bean>

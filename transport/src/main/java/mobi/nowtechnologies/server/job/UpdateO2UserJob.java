@@ -2,14 +2,17 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
-import mobi.nowtechnologies.server.persistence.domain.enums.UserLosStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
@@ -19,45 +22,51 @@ import uk.co.o2.soa.utils.SOAPLoggingHandler;
 import uk.co.o2.soa.utils.SecurityHandler;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
-import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
-public class UpdateO2UserJob extends QuartzJobBean {
+public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserJob.class);
 
     private transient UserRepository userRepository;
     private transient UserLogRepository userLogRepository;
     private transient SubscriberService subscriberService;
+    private transient SubscriberPortDecorator port;
+    private String username;
+    private String password;
+    private String endpoint;
 
     public UpdateO2UserJob() {
         userRepository = (UserRepository) SpringContext.getBean("userRepository");
         userLogRepository = (UserLogRepository) SpringContext.getBean("userLogRepository");
         subscriberService = (SubscriberService) SpringContext.getBean("saop.subscriberService");
+        port = subscriberService.getSubscriberPortDecorator();
+        port.setHandler(new SOAPLoggingHandler());
     }
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         LOG.info("starting ...");
+        try {
+            port.setEndpoint(endpoint);
+            port.setHandler(new SecurityHandler(username, password));
 
-        List<User> users = selectUsersForUpdate();
+            List<User> users = selectUsersForUpdate();
 
-        if (isNotEmpty(users))
-            for (User u : users)
-                handleUserUpdate(u);
-
-        LOG.info("finished!");
+            if (isNotEmpty(users))
+                for (User u : users)
+                    handleUserUpdate(u);
+        } catch (Throwable t) {
+            LOG.error("Job ended with error.", t);
+        } finally {
+            LOG.info("finished!");
+        }
     }
 
     public List<User> selectUsersForUpdate() {
-        List<Integer> updatedUsers = userLogRepository.findUpdatedUsers(new DateTime().minusDays(1).getMillis());
-        List<User> users;
-        if(isEmpty(updatedUsers))
-            users = (List<User>)userRepository.findAll();
-        else
-            users = userRepository.findUsersForUpdate(updatedUsers);
+        List<User> users = userRepository.findUsersForUpdate(new DateTime().minusDays(1).getMillis(),  new PageRequest(0, 1000));
         LOG.info("Will try to update {} users.", users.size());
         return users;
     }
@@ -67,35 +76,42 @@ public class UpdateO2UserJob extends QuartzJobBean {
         try {
             updateUser(u);
         } catch (GetSubscriberProfileFault e) {
-            makeUserLog(u, UserLosStatus.O2_FAIL, e);
+            makeUserLog(u, UserLogStatus.O2_FAIL, e.getFaultInfo().toString());
         } catch (Throwable t) {
-            makeUserLog(u, UserLosStatus.FAIL, t);
+            makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
         } finally {
             LOG.info("Finished update user[{}]", u.getMobile());
         }
     }
 
     private void updateUser(User u) throws GetSubscriberProfileFault {
-        SubscriberPortDecorator port = subscriberService.getSubscriberPortDecorator();
-
-        //TODO
-        port.setEndpoint("https://sdpapi.ref.o2.co.uk/services/Subscriber_2_0");
-        port.setHandler(new SOAPLoggingHandler());
-        port.setHandler(new SecurityHandler("musicQubed_1001", "BA4sWteQ"));
-
         SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
         u.setSegment(profile.getSegmentType());
+        u.setProvider(profile.getOperator());
         userRepository.save(u);
-        makeUserLog(u, UserLosStatus.SUCCESS, null);
+        makeUserLog(u, UserLogStatus.SUCCESS, null);
     }
 
-    private void makeUserLog(User u, UserLosStatus status, Throwable t) {
-        UserLog userLog = new UserLog(u.getId(), System.currentTimeMillis(), status);
-        if (t == null)
+    private void makeUserLog(User u, UserLogStatus status, String description) {
+        UserLog oldLog = userLogRepository.findByUser(u.getId());
+        UserLog userLog = new UserLog(oldLog, u.getId(), status, description);
+
+        userLogRepository.save(userLog);
+        if (UserLogStatus.SUCCESS == status)
             LOG.info("User[{}] segment[{}] updated.", u.getMobile(), u.getSegment());
         else
-            LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, t.getMessage());
-        userLogRepository.save(userLog);
+            LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, description);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 }

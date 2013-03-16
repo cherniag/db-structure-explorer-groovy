@@ -1,6 +1,8 @@
 
 package uk.co.o2.soa.coredata;
 
+import com.google.common.base.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -172,6 +174,17 @@ public class SOAFaultType {
      */
     public void setSOATransactionID(String value) {
         this.soaTransactionID = value;
+    }
+
+    @Override
+    public String toString(){
+        return Objects.toStringHelper(this)
+                .add("soaFaultOriginator", soaFaultOriginator)
+                .add("soaFaultCode", soaFaultCode)
+                .add("faultDescription", faultDescription)
+                .add("soaTransactionID", soaTransactionID)
+                .add("faultTrace", faultTrace)
+                .toString();
     }
 
 }

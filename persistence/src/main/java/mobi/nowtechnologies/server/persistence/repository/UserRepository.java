@@ -163,6 +163,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
 
-    @Query(value = "select user from User user where user.id not in (?1)")
-    List<User> findUsersForUpdate(List<Integer> updatedUsers);
+    @Query(value = "select user from User user " +
+            "where user.id not in " +
+            " (select userLog.userId from UserLog userLog where  userLog.last_update > ?1)")
+    List<User> findUsersForUpdate(long afterDate, Pageable pagable);
 }
