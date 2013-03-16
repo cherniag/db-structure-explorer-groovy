@@ -194,4 +194,10 @@ public class Utils {
             return  null;
         return obj.toString();
     }
+
+    public static String substring(String s, int i) {
+        if(s == null || s.length() < i)
+            return s;
+        return s.substring(0,i);
+    }
 }

@@ -45,5 +45,6 @@ alter table tb_users add column last_before48_sms_millis BIGINT default 0;
    user_id int,
    last_update bigint,
    status char(255),
+   description varchar(255),
    primary key (id)
  );

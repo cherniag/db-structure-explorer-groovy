@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface UserLogRepository extends JpaRepository<UserLog, Integer> {
 
-    @Query(value = "select userLog.userId from UserLog userLog  where userLog.last_update > ?1")
-    List<Integer> findUpdatedUsers(long lastUpdate);
+    @Query(value = "select userLog from UserLog userLog where userLog.userId = ?1")
+    UserLog findByUser(int id);
 }

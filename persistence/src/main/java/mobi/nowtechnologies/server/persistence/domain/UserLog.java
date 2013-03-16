@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import com.google.common.base.Objects;
-import mobi.nowtechnologies.server.persistence.domain.enums.UserLosStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "user_logs")
@@ -22,14 +23,23 @@ public class UserLog {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char")
-    private UserLosStatus status;
+    private UserLogStatus status;
+
+    private String description;
 
     public UserLog(){/* 4hibernate*/}
 
-    public UserLog(Integer userId, long last_update, UserLosStatus status) {
+    public UserLog(UserLog oldLog, Integer userId, UserLogStatus status, String description) {
+        if(oldLog != null)
+            id = oldLog.getId();
         this.userId = userId;
-        this.last_update = last_update;
+        this.last_update = System.currentTimeMillis();
         this.status = status;
+        this.description = Utils.substring(description, 255);
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Integer getUserId() {
@@ -40,7 +50,7 @@ public class UserLog {
         return new DateTime(last_update);
     }
 
-    public UserLosStatus getStatus() {
+    public UserLogStatus getStatus() {
         return status;
     }
 
