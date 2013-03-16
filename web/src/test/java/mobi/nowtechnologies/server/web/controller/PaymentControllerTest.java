@@ -15,15 +15,13 @@ public class PaymentControllerTest {
         public static User LIMITED = mock(User.class);
         public static User SUBSCRIBED = mock(User.class);
         public static User FREE_TRIAL = mock(User.class);
-        public static User OVERDUE_LIMITED = mock(User.class);
         public static User UNSUBSCRIBED_WITH_FULL_ACCESS = mock(User.class);
-        public static User OVERDUE = mock(User.class);
         public static User SUBSCRIBED_VIA_INAPP = mock(User.class);
         public static User TRIAL_EXPIRED = mock(User.class);
 
         static {
             when(LIMITED.isLimited()).thenReturn(true);
-            when(SUBSCRIBED.isSubscribedStatus()).thenReturn(true);
+            when(SUBSCRIBED.isSubscribed()).thenReturn(true);
             when(FREE_TRIAL.isOnFreeTrial()).thenReturn(true);
             when(UNSUBSCRIBED_WITH_FULL_ACCESS.isUnsubscribedWithFullAccess()).thenReturn(true);
             when(SUBSCRIBED_VIA_INAPP.isSubscribedViaInApp()).thenReturn(true);
