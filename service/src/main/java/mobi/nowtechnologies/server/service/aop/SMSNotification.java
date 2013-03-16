@@ -117,6 +117,52 @@ public class SMSNotification {
 		}
 	}
 	
+	/**
+	 * Sending sms after user unsubscribe
+	 * @param joinPoint
+	 * @throws Throwable
+	 */
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, String))")
+	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
+		try{
+			LogUtils.putClassNameMDC(this.getClass());
+			
+			Object object = joinPoint.proceed();
+			User user = (User) joinPoint.getArgs()[0];
+			try{
+				sendUnsubscribeAfterSMS(user);
+			}catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		}finally{
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	
+	/**
+	 * Sending sms before 48 h expire subscription
+	 * @param joinPoint
+	 * @throws Throwable
+	 */
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.updateLastBefore48SmsMillis(..))")
+	public Object updateLastBefore48SmsMillis(ProceedingJoinPoint joinPoint) throws Throwable {
+		try{
+			LogUtils.putClassNameMDC(this.getClass());
+			Object object = joinPoint.proceed();
+			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
+			try{
+				User user = userService.findById(userId);
+				sendLowBalanceWarning(user);
+			}catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		}finally{
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
 	protected void createdCreditCardPaymentDetails() {}
 	
@@ -163,26 +209,43 @@ public class SMSNotification {
 		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), unsubscribeUrl);
 	}
 	
+	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
+		if(user == null || user.getCurrentPaymentDetails() == null)
+			return;
+		
+		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract(), null);
+	}
+	
+	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
+		if(user == null || user.getCurrentPaymentDetails() == null)
+			return;
+		
+		sendSMSWithUrl(user, "sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), null);
+	}
+	
 	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl) throws UnsupportedEncodingException{
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		if(!availableCommunities.contains(communityUrl))
 			return;
 		
-		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-		
-		String url =  baseUrl + "?community="+communityUrl+"&"+rememberMeTokenCookieName+"=" + rememberMeToken;
-		
-		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-		request.add("url", url);
-		
-		try{
-			url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();			
-		}catch(Exception e){
-			LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
+		String[] args = null;
+		if (baseUrl != null) {			
+			String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
+			String url =  baseUrl + "?community="+communityUrl+"&"+rememberMeTokenCookieName+"=" + rememberMeToken;
+			
+			MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+			request.add("url", url);
+			
+			try{
+				url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();			
+			}catch(Exception e){
+				LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
+			}
+			
+			args = new String[]{url};
 		}
 		
-		String[] args = {url};
 		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, args, null);
 		
 		migService.makeFreeSMSRequest(user.getMobile(), message);

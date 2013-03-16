@@ -57,5 +57,9 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<bean id="service.SpyPaymentDetailsService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.PaymentDetailsService"/>
   	</bean>
+  	
+	<bean id="service.SpyUserService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.UserService"/>
+  	</bean>
 
 </beans>
