@@ -250,7 +250,7 @@ public class User implements Serializable {
     private long lastPaymentTryInCycleMillis;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(255)")
+    @Column(columnDefinition = "char")
     private SegmentType segment;
 
     @Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")
@@ -1225,8 +1225,7 @@ public class User implements Serializable {
     public boolean isSubscribed(){
         return isSubscribedStatus()
                 && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-                && org.apache.commons.lang.StringUtils.isNotEmpty(getLastSubscribedPaymentSystem())
-                && (isSubscribedViaInApp() || isActivePaymentDetails());
+                && isActivePaymentDetails();
     }
 
     public boolean isActivePaymentDetails(){
