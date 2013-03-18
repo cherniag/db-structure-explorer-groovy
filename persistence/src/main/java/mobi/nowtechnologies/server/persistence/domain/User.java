@@ -1213,7 +1213,9 @@ public class User implements Serializable {
 
     public boolean isLimited() {
         return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
-                || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow() && !isActivePaymentDetails());
+                || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
+                && getLastSubscribedPaymentSystem() != null
+                && !isActivePaymentDetails());
     }
 
     public boolean isSubscribedStatus() {
