@@ -1,5 +1,7 @@
 package uk.co.o2.soa.utils;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
 import uk.co.o2.soa.subscriberdata.*;
@@ -25,7 +27,7 @@ public class SubscriberPortDecorator implements SubscriberPort {
 
     @Override
     public SubscriberProfileType getSubscriberProfile(String subscriberID) throws GetSubscriberProfileFault {
-        return port.getSubscriberProfile(subscriberID);
+        return port.getSubscriberProfile(CharMatcher.DIGIT.retainFrom(subscriberID));
     }
 
     @Override
