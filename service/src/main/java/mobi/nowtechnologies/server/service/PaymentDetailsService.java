@@ -31,8 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
-
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -153,8 +151,8 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesByPaymentType(community);
+	public List<PaymentPolicyDto> getPaymentPolicyWithOutSegment(Community community, User user) {
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community);
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 

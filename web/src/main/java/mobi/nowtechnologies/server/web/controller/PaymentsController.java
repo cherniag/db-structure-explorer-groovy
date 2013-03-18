@@ -71,7 +71,7 @@ public class PaymentsController extends CommonController {
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
         List<PaymentPolicyDto> paymentPolicy = null;
         if(user.isNonO2User())
-            paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user);
+            paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         else
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment, operator);
         if(isEmpty(paymentPolicy))
