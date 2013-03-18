@@ -321,7 +321,7 @@
 		<property name="jobClass" value="mobi.nowtechnologies.server.job.Before48hPSMSPaymentJob" />
         <property name="jobDataAsMap">
             <map>
-                <entry key="userService" value="service.UserService"/>
+                <entry key="userService" value-ref="service.UserService"/>
             </map>
         </property>
 	</bean>
@@ -352,12 +352,10 @@
         <property name="dataSource" ref="persistence.DataSource"/>
         <property name="transactionManager" ref="persistence.TransactionManager"/>
         <property name="overwriteExistingJobs" value="true"/>
-        <!--<property name="autoStartup" value="${jobs.autoStartup}" />-->
-        <property name="autoStartup" value="true" />
+        <property name="autoStartup" value="${jobs.autoStartup}" />
         <property name="triggers">
             <list>
                 <ref bean="jobTrigger.updateO2User"/>
-                <ref bean="before48hPSMSPaymentTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -394,6 +392,7 @@
 				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
 				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
 				<ref bean="transport.smsNotificationQuartzTrigger" />
+				<ref bean="before48hPSMSPaymentTrigger"/>
 			</list>
 		</property>
 	</bean>

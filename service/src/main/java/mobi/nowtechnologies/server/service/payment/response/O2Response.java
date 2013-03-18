@@ -19,12 +19,20 @@ import uk.co.o2.soa.coredata.SOAFaultType;
  */
 public class O2Response extends PaymentSystemResponse {
 
+	private static final BillSubscriberResponse BILL_SUBSCRIBER_RESPONSE;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(O2Response.class);
+
+	static{
+		BILL_SUBSCRIBER_RESPONSE = new BillSubscriberResponse();
+		
+		BILL_SUBSCRIBER_RESPONSE.setResult(new ServiceResult());
+	}
 
 	private String externalTxId;
 
 	public static O2Response successfulO2Response() {
-		return new O2Response(null, new Response() {
+		return new O2Response(BILL_SUBSCRIBER_RESPONSE, new Response() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
@@ -94,8 +102,17 @@ public class O2Response extends PaymentSystemResponse {
 			throw new ServiceException("Unknown response object [" + objectResponse + "]");
 		}
 	}
+	
+	public void setExternalTxId(String externalTxId) {
+		this.externalTxId = externalTxId;
+	}
 
 	public String getExternalTxId() {
 		return externalTxId;
+	}
+
+	@Override
+	public String toString() {
+		return "O2Response [externalTxId=" + externalTxId + ", " + super.toString() + "]";
 	}
 }

@@ -19,7 +19,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJob {
+public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJob{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hPSMSPaymentJob.class);
 	
 	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000, new Sort(Direction.ASC, "nextSubPayment"));
