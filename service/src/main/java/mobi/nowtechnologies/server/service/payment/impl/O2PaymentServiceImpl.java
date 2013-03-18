@@ -61,12 +61,15 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		final PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
 		Community community = user.getUserGroup().getCommunity();
 		
-		String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.psms",
+		Boolean smsNotify = Boolean.valueOf(messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.o2_psms.send",
+				null, null));
+		
+		String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.o2_psms",
 				new Object[] {community.getDisplayName(), pendingPayment.getAmount(), pendingPayment.getSubweeks(), paymentPolicy.getShortCode() }, null);
 		
 		String internalTxId = Utils.getBigRandomInt().toString();
 		O2Response response = o2ClientService.makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), currentPaymentDetails.getPhoneNumber(), message,
-				paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId());
+				paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify);
 		
 		pendingPayment.setInternalTxId(internalTxId);
 		pendingPayment.setExternalTxId(response.getExternalTxId());
@@ -78,38 +81,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		
 		commitPayment(pendingPayment, response);
 	}
-	
-//	@Override
-//	@Transactional(propagation = Propagation.REQUIRED)
-//	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
-//		LOGGER.debug("input parameters pendingPayment, response: [{}], [{}]", pendingPayment, response);
-//
-//		final User user = pendingPayment.getUser();		
-//		SubmittedPayment submittedPayment = super.commitPayment(pendingPayment, response);
-//		
-//		final PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-//		
-//		final boolean isUserHasDedt = user.getDeactivatedGraceCreditMillis()==0;
-//		
-//		if (!response.isSuccessful()){
-//			if( !isUserHasDedt && mustTheAttemptsOfPaymentContinue(user)){
-//				paymentDetails.setActivated(true);
-//			}else{
-//				final String reson;
-//				if (isUserHasDedt){
-//					reson = "The payment attempt was unsucceeded for user with debt";
-//				}else{
-//					reson = "Grace period expired";
-//				}
-//				userService.unsubscribeUser(user, reson);				
-//			}
-//		}
-//		
-//		
-//		
-//		LOGGER.debug("Output parameter submittedPayment=[{}]", submittedPayment);
-//		return submittedPayment;
-//	}
 	
 	
 	public boolean mustTheAttemptsOfPaymentContinue(User user) {

@@ -157,10 +157,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public O2Response makePremiumSMSRequest(final int userId, String internalTxId, BigDecimal subCost, final String o2PhoneNumber, String message, String contentCategory, String contentType,
-			String contentDescription, String subMerchantId) {
+			String contentDescription, String subMerchantId, boolean smsNotify) {
 		LOGGER.debug(
-				"input parameters userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId: [{}], [{}], [{}], [{}], [{}], [{}], [{}], , [{}], , [{}]",
-				userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId);
+				"input parameters userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId, smsNotify: [{}], [{}], [{}], [{}], [{}], [{}], [{}], [{}], [{}], [{}]",
+				userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId, smsNotify);
 
 		final BigInteger subCostPences = subCost.multiply(MULTIPLICAND_100).toBigInteger();
 
@@ -169,13 +169,13 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setMsisdn(o2PhoneNumber);
 		billSubscriber.setSubMerchantId(subMerchantId);
 		billSubscriber.setPriceGross(subCostPences);
-		billSubscriber.setPriceNet(BigInteger.valueOf(0));
+		billSubscriber.setPriceNet(BigInteger.ZERO);
 		billSubscriber.setDebitCredit("DEBIT");
 		billSubscriber.setContentCategory(contentCategory);
 		billSubscriber.setContentType(contentType);
 		billSubscriber.setContentDescription(contentDescription);
 		billSubscriber.setApplicationReference(internalTxId);
-		billSubscriber.setSmsNotify(true);
+		billSubscriber.setSmsNotify(smsNotify);
 		billSubscriber.setSmsMessage(message);
 		billSubscriber.setPromotionCode(null);
 
