@@ -1220,11 +1220,17 @@ public class User implements Serializable {
     public boolean isSubscribed(){
         return isSubscribedStatus()
                 && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-                && new DateTime(freeTrialExpiredMillis).isAfterNow();
+                && org.apache.commons.lang.StringUtils.isNotEmpty(lastSubscribedPaymentSystem)
+                && isActivePaymentDetails();
+    }
+
+    public boolean isActivePaymentDetails(){
+        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+        return currentPaymentDetails != null && currentPaymentDetails.isActivated();
     }
 
     public boolean isUnsubscribedWithFullAccess() {
-        return !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
+        return !isActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     private Date getNextSubPaymentAsDate() {
@@ -1238,7 +1244,7 @@ public class User implements Serializable {
     public boolean isTrialExpired() {
         return new DateTime(freeTrialExpiredMillis).isBeforeNow()
                 && new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
-                && org.apache.commons.lang.StringUtils.isNotEmpty(lastSubscribedPaymentSystem);
+                && org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
     }
 
     public String getProvider() {

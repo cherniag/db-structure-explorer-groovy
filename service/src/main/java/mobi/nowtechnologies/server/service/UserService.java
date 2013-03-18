@@ -542,26 +542,6 @@ public class UserService {
 					+ "]");
 	}
 
-	/*
-	 * private void sendPinToUser(String communityName, String paymentType, int operator, String mobile, User user, String pin) { if (communityName == null) throw new
-	 * ServiceException("The parameter communityName is null"); if (paymentType == null) throw new ServiceException("The parameter paymentType is null"); if (mobile == null) throw new
-	 * ServiceException("The parameter mobile is null"); if (user == null) throw new ServiceException("The parameter user is null"); if (pin == null) throw new
-	 * ServiceException("The parameter pin is null");
-	 * 
-	 * LOGGER .debug( "input parameters communityName, paymentType, operator, mobile, user, pin: [{}],[{}],[{}],[{}],[{}],[{}]" , new Object[] { communityName, paymentType, operator, mobile, user, pin
-	 * });
-	 * 
-	 * Community community = CommunityDao.getMapAsNames().get(communityName);
-	 * 
-	 * PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(operator, paymentType, community.getId());
-	 * 
-	 * Locale locale = null;
-	 * 
-	 * String message = messageSource.getMessage(AppConstants.SMS_FREE_MSG, new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(),
-	 * paymentPolicy.getShortCode(), pin }, locale);
-	 * 
-	 * migService.sendFreeSms("" + getBigRandomInt(), operator, mobile, message); user.setPaymentStatus(PaymentStatus.PIN_PENDING_CODE); user.setPin(pin); }
-	 */
 	public void updateMobile(User user, String mobile, Integer operator, String communityName) {
 		if (communityName == null)
 			throw new NullPointerException(
