@@ -65,7 +65,8 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 				new Object[] {community.getDisplayName(), pendingPayment.getAmount(), pendingPayment.getSubweeks(), paymentPolicy.getShortCode() }, null);
 		
 		String internalTxId = Utils.getBigRandomInt().toString();
-		O2Response response = o2ClientService.makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), currentPaymentDetails.getPhoneNumber(), message);
+		O2Response response = o2ClientService.makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), currentPaymentDetails.getPhoneNumber(), message,
+				paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId());
 		
 		pendingPayment.setInternalTxId(internalTxId);
 		pendingPayment.setExternalTxId(response.getExternalTxId());

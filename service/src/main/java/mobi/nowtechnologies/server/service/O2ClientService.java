@@ -19,5 +19,5 @@ public interface O2ClientService {
 	
 	boolean sendFreeSms(String phoneNumber, String message);
 
-	O2Response makePremiumSMSRequest(int userId, String internalTxId, BigDecimal subCost, String o2PhoneNumber, String message);
+	O2Response makePremiumSMSRequest(int userId, String internalTxId, BigDecimal subCost, String o2PhoneNumber, String message, String contentCategory, String contentType, String contentDescription, String subMerchantId);
 }
