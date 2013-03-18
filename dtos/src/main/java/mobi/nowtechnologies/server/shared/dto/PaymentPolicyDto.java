@@ -52,28 +52,12 @@ public class PaymentPolicyDto {
         setCurrencyISO(policy.getCurrencyISO());
     }
 
-    public boolean isO2FiveWeekPsmsSubscription(){
-        return subweeks.equals(5) && isO2PsmsSubscribtion();
-    }
-
-    public boolean isO2OneWeekPsmsSubscription(){
-        return subweeks.equals(1) && isO2PsmsSubscribtion();
-    }
-
-    private boolean isO2PsmsSubscribtion() {
-        return isPsmsPolicy() && isO2Operator();
-    }
-
     private boolean isPsmsPolicy() {
         return paymentType.equalsIgnoreCase("");
     }
 
     private boolean isO2Operator() {
         return "O2 UK".equals(operatorName);
-    }
-
-    public boolean isO2TwoWeekPsmsSubscription(){
-        return subweeks.equals(2) && isO2PsmsSubscribtion();
     }
 
     public short getId() {
@@ -148,14 +132,6 @@ public class PaymentPolicyDto {
         this.currencyISO = currencyISO;
     }
 
-    public boolean isO2BusinessPolicy() {
-        return isO2Operator() && (isPayPalPolicy() || isCreditCardPolicy());
-    }
-
-    public boolean isNonO2Policy() {
-        return isO2Operator() && (isPayPalPolicy() || isCreditCardPolicy() || isInAppPolicy());
-    }
-
     private boolean isInAppPolicy() {
         return true;
     }
@@ -166,9 +142,5 @@ public class PaymentPolicyDto {
 
     private boolean isPayPalPolicy() {
         return true;
-    }
-
-    public boolean isO2ConsumerPolicy() {
-        return isO2OneWeekPsmsSubscription()|| isO2TwoWeekPsmsSubscription() || isO2FiveWeekPsmsSubscription();
     }
 }

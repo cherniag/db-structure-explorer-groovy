@@ -31,6 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -117,6 +119,12 @@ public class PaymentDetailsService {
 		return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user, community);
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void createO2PsmsDetails(User user, Integer integer) {
+
+
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PayPalPaymentDetails createPayPalPamentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);
@@ -157,8 +165,8 @@ public class PaymentDetailsService {
 	}
 
     @Transactional
-    public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment, int operator) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment, operator);
+    public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);
         return mergePaymentPolicies(user, paymentPolicies);
     }
 
@@ -209,7 +217,7 @@ public class PaymentDetailsService {
 	}
 
 	public static PaymentDetails getPaymentDetails(final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		Validate.notNull(paymentType, "The parameter paymentType is null");
+		notNull(paymentType, "The parameter paymentType is null");
 		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",paymentType, token );
 
 		PaymentDetails paymentDetails;
@@ -245,27 +253,27 @@ public class PaymentDetailsService {
 	}
 
 	public static PaymentDetails populatePaymentDetails(PaymentDetails paymentDetails, final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		Validate.notNull(paymentType, "The parameter paymentType is null");
+		notNull(paymentType, "The parameter paymentType is null");
 		LOGGER.debug("input parameters paymentDetails, paymentType, token, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
 						paymentDetails, paymentType, token, operator, phoneNumber);
 
 		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {
 			SagePayCreditCardPaymentDetails creditCardPaymentDetails = (SagePayCreditCardPaymentDetails) paymentDetails;
 
-            Validate.notNull(token, "The parameter token is null");
+            notNull(token, "The parameter token is null");
 			creditCardPaymentDetails.setVPSTxId(token);
 		} else if (paymentType.equals(UserRegInfo.PaymentType.PREMIUM_USER)) {
 			MigPaymentDetails premiumSmsPaymentDetails = (MigPaymentDetails) paymentDetails;
 
-            Validate.notNull(operator, "The parameter operator is null");
-            Validate.notNull(phoneNumber, "The parameter phoneNumber is null");
+            notNull(operator, "The parameter operator is null");
+            notNull(phoneNumber, "The parameter phoneNumber is null");
 
 			premiumSmsPaymentDetails.setMigPhoneNumber(operator.getMigName() + "." + phoneNumber);
 
 		} else if (paymentType.equals(UserRegInfo.PaymentType.PAY_PAL)) {
 			PayPalPaymentDetails payPalPaymentDetails = (PayPalPaymentDetails) paymentDetails;
 
-            Validate.notNull(token, "The parameter token is null");
+            notNull(token, "The parameter token is null");
 			payPalPaymentDetails.setBillingAgreementTxId(token);
 
 		} else
@@ -440,17 +448,10 @@ public class PaymentDetailsService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-		
-		if (user == null)
-			throw new NullPointerException("The parameter user is null");
-		
+
+        notNull(user, "The parameter user is null");
 		user = userService.setToZeroSmsAccordingToLawAttributes(user);
-		
-		if (user.getDeactivatedGraceCreditSeconds() == 0) {
-			user.setDeactivatedGraceCreditSeconds(user.getUsedGraceDurationSeconds());
-			userService.updateUser(user);
-		}
-		
+
 		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		
 		if(currentPaymentDetails!=null){
@@ -479,4 +480,5 @@ public class PaymentDetailsService {
     public void setO2PaymentService(O2PaymentService o2PaymentService) {
 		this.o2PaymentService = o2PaymentService;
 	}
+
 }

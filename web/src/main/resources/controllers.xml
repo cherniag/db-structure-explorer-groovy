@@ -68,6 +68,11 @@
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.web.controller.PaymentsO2PsmsController">
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+    </bean>
+
+
     <bean class="mobi.nowtechnologies.server.web.controller.UnsubscribeController">
         <property name="userService" ref="service.UserService"/>
     </bean>
