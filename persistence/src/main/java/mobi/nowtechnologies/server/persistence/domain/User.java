@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -13,7 +13,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -33,10 +32,10 @@ import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
-@Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
+@Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = {"deviceUID", "userGroup"}))
 @NamedQueries({
         @NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
-                hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
+                hints = {@QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")}),
         @NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
         @NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
         @NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -194,7 +193,7 @@ public class User implements Serializable {
     @JoinColumn(name = "potentialPromotion_i", nullable = true)
     private Promotion potentialPromotion;
 
-    @Column(name="potentialPromotion_i", insertable=false, updatable=false)
+    @Column(name = "potentialPromotion_i", insertable = false, updatable = false)
     private Byte potentialPromotionId;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -230,38 +229,38 @@ public class User implements Serializable {
 
     private long lastSuccesfullPaymentSmsSendingTimestampMillis;
 
-	@Column(precision=12, scale=2, nullable=false)
+    @Column(precision = 12, scale = 2, nullable = false)
     private BigDecimal amountOfMoneyToUserNotification;
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     private Long freeTrialStartedTimestampMillis;
 
     @Lob
-    @Column(name="base64_encoded_app_store_receipt")
+    @Column(name = "base64_encoded_app_store_receipt")
     private String base64EncodedAppStoreReceipt;
 
-    @Column(name="app_store_original_transaction_id")
+    @Column(name = "app_store_original_transaction_id")
     private String appStoreOriginalTransactionId;
 
-    @Column(name="last_subscribed_payment_system")
+    @Column(name = "last_subscribed_payment_system")
     private String lastSubscribedPaymentSystem;
 
-    @Column(name="last_payment_try_in_cycle_millis", columnDefinition="BIGINT default 0")
+    @Column(name = "last_payment_try_in_cycle_millis", columnDefinition = "BIGINT default 0")
     private long lastPaymentTryInCycleMillis;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
     private SegmentType segment;
 
-    @Column(name="deactivated_grace_credit_millis", columnDefinition="BIGINT default 0")
+    @Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")
     private long deactivatedGraceCreditMillis;
-    
-    @Column(name="last_before48_sms_millis", columnDefinition="BIGINT default 0")
+
+    @Column(name = "last_before48_sms_millis", columnDefinition = "BIGINT default 0")
     private long lastBefore48SmsMillis;
-    
+
     //@ManyToOne(fetch = FetchType.LAZY)
-	//@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract", insertable=false, updatable=false),
-	//		@JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false, updatable=false) })
+    //@JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract", insertable=false, updatable=false),
+    //		@JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false, updatable=false) })
     private transient GracePeriod gracePeriod;
 
     public User() {
@@ -285,15 +284,15 @@ public class User implements Serializable {
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
     }
 
-    public boolean isIOsNonO2ItunesSubscribedUser(){
-        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribed();
+    public boolean isIOsNonO2ItunesSubscribedUser() {
+        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
     }
 
     public boolean isSubscribedByITunes() {
         return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION);
     }
 
-    public boolean isIOSDevice(){
+    public boolean isIOSDevice() {
         return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
     }
 
@@ -330,7 +329,7 @@ public class User implements Serializable {
     }
 
     public boolean isO2Consumer() {
-        return  isO2User() && CONSUMER.equals(segment);
+        return isO2User() && CONSUMER.equals(segment);
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
@@ -621,7 +620,7 @@ public class User implements Serializable {
 
     public void setCurrentPaymentDetails(PaymentDetails currentPaymentDetails) {
         this.currentPaymentDetails = currentPaymentDetails;
-        if (currentPaymentDetails!=null)
+        if (currentPaymentDetails != null)
             currentPaymentDetailsId = currentPaymentDetails.getI();
     }
 
@@ -755,7 +754,7 @@ public class User implements Serializable {
 
     public void setPotentialPromotion(Promotion potentialPromotion) {
         this.potentialPromotion = potentialPromotion;
-        if(potentialPromotion!=null)
+        if (potentialPromotion != null)
             potentialPromotionId = potentialPromotion.getI();
     }
 
@@ -784,30 +783,30 @@ public class User implements Serializable {
         if (potentialPromoCodePromotion != null)
             potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
     }
-    
-	public long getGraceDurationMillis() {
-		final long graceDurationMillis;
-		if (gracePeriod != null) {
-			graceDurationMillis = gracePeriod.getDurationMillis();
-		} else {
-			graceDurationMillis = 0;
-		}
 
-		return graceDurationMillis;
-	}
-    
+    public long getGraceDurationMillis() {
+        final long graceDurationMillis;
+        if (gracePeriod != null) {
+            graceDurationMillis = gracePeriod.getDurationMillis();
+        } else {
+            graceDurationMillis = 0;
+        }
+
+        return graceDurationMillis;
+    }
+
     public int getGraceDurationSeconds() {
-		final int graceDurationSeconds = (int) (getGraceDurationMillis() / 1000);
-		return graceDurationSeconds;
-	}
+        final int graceDurationSeconds = (int) (getGraceDurationMillis() / 1000);
+        return graceDurationSeconds;
+    }
 
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
+    public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
         Chart chart = userGroup.getChart();
         News news = userGroup.getNews();
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
 
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-        boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated())||(lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+        boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated()) || (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
         String oldPaymentType = getOldPaymentType(currentPaymentDetails);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -824,7 +823,7 @@ public class User implements Serializable {
             accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
 
         final int usedGraceDurationSeconds = getUsedGraceDurationSeconds();
-        
+
         accountCheckDTO.setGraceCreditSeconds(usedGraceDurationSeconds);
         accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
         accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
@@ -858,7 +857,7 @@ public class User implements Serializable {
 
         accountCheckDTO.setActivation(getActivationStatus());
 
-        if(appStoreProductIds!=null){
+        if (appStoreProductIds != null) {
             StringBuilder temp = new StringBuilder();
             for (String appStoreProductId : appStoreProductIds) {
                 if (appStoreProductId != null) {
@@ -873,18 +872,18 @@ public class User implements Serializable {
         return accountCheckDTO;
     }
 
-	private int getActualGraceDurationSeconds() {
-		final int actualGraceDurationSeconds;
-		if (deactivatedGraceCreditMillis != 0) {
-			actualGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
-		}else{
-			actualGraceDurationSeconds = getGraceDurationSeconds();
-		}
-		return actualGraceDurationSeconds;
-	}
+    private int getActualGraceDurationSeconds() {
+        final int actualGraceDurationSeconds;
+        if (deactivatedGraceCreditMillis != 0) {
+            actualGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
+        } else {
+            actualGraceDurationSeconds = getGraceDurationSeconds();
+        }
+        return actualGraceDurationSeconds;
+    }
 
     private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-        if(news == null) return;
+        if (news == null) return;
         accountCheckDTO.setNewsTimestamp(news.getTimestamp());
         accountCheckDTO.setNewsItems(news.getNumEntries());
     }
@@ -894,7 +893,7 @@ public class User implements Serializable {
         if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
             return "ITUNES_SUBSCRIPTION";
-        }else if (null == paymentDetails)
+        } else if (null == paymentDetails)
             return "UNKNOWN";
         if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
             return "creditCard";
@@ -902,8 +901,8 @@ public class User implements Serializable {
             return "PAY_PAL";
         } else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "PSMS";
-        }else if (PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())){
-        	return "O2_PSMS";
+        } else if (PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
+            return "O2_PSMS";
         }
         return "UNKNOWN";
     }
@@ -982,25 +981,25 @@ public class User implements Serializable {
         return accountDto;
     }
 
-	public int getUsedGraceDurationSeconds() {
-		final int usedGraceDurationSeconds;
-		if (UserStatus.LIMITED.equals(status.getName())) {
+    public int getUsedGraceDurationSeconds() {
+        final int usedGraceDurationSeconds;
+        if (UserStatus.LIMITED.equals(status.getName())) {
             usedGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
         } else {
-			int delta = Utils.getEpochSeconds() - nextSubPayment;
-			if (delta < 0 || lastSubscribedPaymentSystem == null) {
-				usedGraceDurationSeconds = 0;
-			} else {
-				final int graceDurationSeconds = getGraceDurationSeconds();
-				if(delta < graceDurationSeconds){
-					usedGraceDurationSeconds = delta;
-				}else{
-					usedGraceDurationSeconds = graceDurationSeconds;
-				}
-			}
+            int delta = Utils.getEpochSeconds() - nextSubPayment;
+            if (delta < 0 || lastSubscribedPaymentSystem == null) {
+                usedGraceDurationSeconds = 0;
+            } else {
+                final int graceDurationSeconds = getGraceDurationSeconds();
+                if (delta < graceDurationSeconds) {
+                    usedGraceDurationSeconds = delta;
+                } else {
+                    usedGraceDurationSeconds = graceDurationSeconds;
+                }
+            }
         }
-		return usedGraceDurationSeconds;
-	}
+        return usedGraceDurationSeconds;
+    }
 
     public ContactUsDto toContactUsDto() {
         ContactUsDto contactUsDto = new ContactUsDto();
@@ -1096,16 +1095,16 @@ public class User implements Serializable {
     }
 
     public void setLastPaymentTryInCycleMillis(long lastPaymentTryInCycleMillis) {
-    	this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleMillis;
+        this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleMillis;
     }
 
     public void setLastPaymentTryInCycleSeconds(int lastPaymentTryInCycleSeconds) {
-		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleSeconds * 1000L;
-	}
+        this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleSeconds * 1000L;
+    }
 
-	public int getLastPaymentTryInCycleSeconds() {
-		return (int) (lastPaymentTryInCycleMillis / 1000);
-	}
+    public int getLastPaymentTryInCycleSeconds() {
+        return (int) (lastPaymentTryInCycleMillis / 1000);
+    }
 
 
     public long getDeactivatedGraceCreditMillis() {
@@ -1115,32 +1114,32 @@ public class User implements Serializable {
     public void setDeactivatedGraceCreditMillis(long deactivatedGraceCreditMillis) {
         this.deactivatedGraceCreditMillis = deactivatedGraceCreditMillis;
     }
-    
-	public int getDeactivatedGraceCreditSeconds() {
-		return (int) (deactivatedGraceCreditMillis / 1000L);
-	}
 
-	public void setDeactivatedGraceCreditSeconds(int deactivatedGraceCreditSeconds) {
-		this.deactivatedGraceCreditMillis = deactivatedGraceCreditSeconds * 1000L;
-	}
+    public int getDeactivatedGraceCreditSeconds() {
+        return (int) (deactivatedGraceCreditMillis / 1000L);
+    }
+
+    public void setDeactivatedGraceCreditSeconds(int deactivatedGraceCreditSeconds) {
+        this.deactivatedGraceCreditMillis = deactivatedGraceCreditSeconds * 1000L;
+    }
 
     public long getLastBefore48SmsMillis() {
-		return lastBefore48SmsMillis;
-	}
+        return lastBefore48SmsMillis;
+    }
 
-	public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
-		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
-	}
+    public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
+        this.lastBefore48SmsMillis = lastBefore48SmsMillis;
+    }
 
-	public GracePeriod getGracePeriod() {
-		return gracePeriod;
-	}
+    public GracePeriod getGracePeriod() {
+        return gracePeriod;
+    }
 
-	public void setGracePeriod(GracePeriod gracePeriod) {
-		this.gracePeriod = gracePeriod;
-	}
+    public void setGracePeriod(GracePeriod gracePeriod) {
+        this.gracePeriod = gracePeriod;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
@@ -1202,38 +1201,33 @@ public class User implements Serializable {
 
     /**
      * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
+     *
      * @return
      */
     public boolean isOnFreeTrial() {
-        return null!=this.freeTrialExpiredMillis && this.freeTrialExpiredMillis>System.currentTimeMillis();
+        return null != this.freeTrialExpiredMillis && this.freeTrialExpiredMillis > System.currentTimeMillis();
     }
 
     public boolean isLimited() {
         return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
     }
 
-    public boolean isSubscribed(){
+    public boolean isSubscribedStatus() {
         return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
     }
 
-    public boolean isLimitedAfterOverdue() {
-        boolean wasOnGrace = new DateTime(getNextSubPaymentAsDate()).plus(getGraceDurationMillis()).isBeforeNow();
-        return isLimited() && wasOnGrace;
+    public boolean isSubscribed(){
+        return isSubscribedStatus()
+                && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
+                && new DateTime(freeTrialExpiredMillis).isAfterNow();
     }
 
     public boolean isUnsubscribedWithFullAccess() {
         return !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
-    public boolean isOverdue() {
-        DateTime nextSubPayment = new DateTime(getNextSubPaymentAsDate());
-        boolean onGrace = nextSubPayment.plus(getGraceDurationMillis()).isAfterNow();
-        boolean nextSubPaymentInPast = nextSubPayment.isBeforeNow();
-        return isSubscribed() && onGrace && nextSubPaymentInPast;
-    }
-
     private Date getNextSubPaymentAsDate() {
-        return new Date(((long)getNextSubPayment()) * 1000L);
+        return new Date(((long) getNextSubPayment()) * 1000L);
     }
 
     public boolean isSubscribedViaInApp() {
@@ -1241,7 +1235,9 @@ public class User implements Serializable {
     }
 
     public boolean isTrialExpired() {
-        return new DateTime(freeTrialExpiredMillis).isBeforeNow();
+        return new DateTime(freeTrialExpiredMillis).isBeforeNow()
+                && new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
+                && org.apache.commons.lang.StringUtils.isNotEmpty(lastSubscribedPaymentSystem);
     }
 
     public String getProvider() {
@@ -1259,6 +1255,7 @@ public class User implements Serializable {
     public void setContract(Contract contract) {
         this.contract = contract;
     }
+
     public void setSegment(SegmentType segment) {
         this.segment = segment;
     }

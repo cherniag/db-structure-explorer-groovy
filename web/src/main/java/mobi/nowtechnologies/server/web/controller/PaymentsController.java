@@ -9,9 +9,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -126,10 +123,6 @@ public class PaymentsController extends CommonController {
             messageCode = "pays.page.note.account.freetrial";
         else if (user.isSubscribed())
             messageCode = "pays.page.note.account.subscribed";
-        else if (user.isLimitedAfterOverdue())
-            messageCode = "pays.page.note.account.overdue_limited";
-        else if (user.isOverdue())
-            messageCode = "pays.page.note.account.overdue";
         else if (user.isSubscribedViaInApp())
             messageCode = "pays.page.note.account.subscribed_via_inapp";
         else if (user.isTrialExpired())
@@ -141,7 +134,7 @@ public class PaymentsController extends CommonController {
     }
 
     private String message(Locale locale, String messageCode) {
-        return messageSource.getMessage(messageCode, null, locale);
+        return messageSource.getMessage(messageCode, null, "",  locale);
     }
 
     @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)

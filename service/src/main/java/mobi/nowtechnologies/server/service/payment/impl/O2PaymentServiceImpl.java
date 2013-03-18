@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
@@ -117,7 +116,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		int graceDurationSeconds = user.getGraceDurationSeconds();
 		
 		boolean mustTheAttemptsOfPaymentContinue = false;
-		if (user.isSubscribed() && user.getLastPaymentTryInCycleSeconds() < (user.getNextSubPayment() + graceDurationSeconds)) {
+		if (user.isSubscribedStatus() && user.getLastPaymentTryInCycleSeconds() < (user.getNextSubPayment() + graceDurationSeconds)) {
 			mustTheAttemptsOfPaymentContinue = true;
 		}
 		LOGGER.debug("Output parameter mustTheAttemptsOfPaymentContinue=[{}]", mustTheAttemptsOfPaymentContinue);
