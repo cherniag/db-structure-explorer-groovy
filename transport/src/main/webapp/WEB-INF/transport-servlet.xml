@@ -357,7 +357,7 @@
         <property name="triggers">
             <list>
                 <ref bean="jobTrigger.updateO2User"/>
-                <!--<ref bean="before48hPSMSPaymentTrigger"/>-->
+                <ref bean="before48hPSMSPaymentTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
