@@ -262,22 +262,38 @@ public class UserServiceIT {
 		return isExpectedNotO2User;
 	}
 
+//	private boolean isExpectedO2User(User user) {
+//		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+//		final long lastPaymentTryMillis = user.getLastPaymentTryInCycleMillis();
+//		final int nextSubPayment = user.getNextSubPayment();
+//		final int dayAfterNextSubPaymentSeconds = nextSubPayment + DAY_SECONDS;
+//		final int twoDayAfterNextSubPaymentSeconds = nextSubPayment + TWO_DAY_SECONDS;
+//
+//		final int currentTimeSeconds = EPOCH_SECONDS;
+//
+//		boolean isExpectedO2User = "consumer".equals(user.getSegment())
+//				&& !PaymentDetailsStatus.AWAITING.equals(currentPaymentDetails.getLastPaymentStatus())
+//				&& "PAYG".equals(user.getContract())
+//				&& currentPaymentDetails.isActivated()
+//				&& user.getLastDeviceLogin() != 0
+//				&& (user.getStatus().getName().equals(UserStatusDao.LIMITED) || ((lastPaymentTryMillis <= nextSubPayment * 1000L && currentTimeSeconds >= nextSubPayment)
+//						|| (lastPaymentTryMillis >= nextSubPayment * 1000L && lastPaymentTryMillis <= dayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds > dayAfterNextSubPaymentSeconds) || (lastPaymentTryMillis >= twoDayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds >= twoDayAfterNextSubPaymentSeconds)));
+//		return isExpectedO2User;
+//	}
+	
 	private boolean isExpectedO2User(User user) {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		final long lastPaymentTryMillis = user.getLastPaymentTryInCycleMillis();
 		final int nextSubPayment = user.getNextSubPayment();
-		final int dayAfterNextSubPaymentSeconds = nextSubPayment + DAY_SECONDS;
-		final int twoDayAfterNextSubPaymentSeconds = nextSubPayment + TWO_DAY_SECONDS;
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
-		boolean isExpectedO2User = "consumer".equals(user.getSegment())
-				&& !PaymentDetailsStatus.AWAITING.equals(currentPaymentDetails.getLastPaymentStatus())
-				&& "PAYG".equals(user.getContract())
+		boolean isExpectedO2User = SegmentType.CONSUMER.equals(user.getSegment())
+				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
+				&& Contract.PAYG.equals(user.getContract())
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
-				&& (user.getStatus().getName().equals(UserStatusDao.LIMITED) || ((lastPaymentTryMillis <= nextSubPayment * 1000L && currentTimeSeconds >= nextSubPayment)
-						|| (lastPaymentTryMillis >= nextSubPayment * 1000L && lastPaymentTryMillis <= dayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds > dayAfterNextSubPaymentSeconds) || (lastPaymentTryMillis >= twoDayAfterNextSubPaymentSeconds * 1000L && currentTimeSeconds >= twoDayAfterNextSubPaymentSeconds)));
+				&& currentPaymentDetails.getPaymentType().equals(PaymentDetails.O2_PSMS_TYPE)
+				&& nextSubPayment <= currentTimeSeconds;
 		return isExpectedO2User;
 	}
 
