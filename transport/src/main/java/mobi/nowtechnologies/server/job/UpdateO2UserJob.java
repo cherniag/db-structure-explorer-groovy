@@ -88,8 +88,8 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
         SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
         u.setSegment(profile.getSegmentType());
         u.setProvider(profile.getOperator());
-        userRepository.save(u);
         makeUserLog(u, UserLogStatus.SUCCESS, null);
+        userRepository.save(u);
     }
 
     private void makeUserLog(User u, UserLogStatus status, String description) {
@@ -112,6 +112,6 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     }
 
     public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
+        this.endpoint = endpoint.trim();
     }
 }
