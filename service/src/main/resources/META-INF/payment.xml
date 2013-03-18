@@ -87,7 +87,7 @@
 	</bean>
 	
 	<bean id="service.o2PaymentService" class="mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl">
-		<property name="retriesOnError" value="0" />
+		<property name="retriesOnError" value="${o2.retriesOnError}" />
 		<property name="expireMillis" value="${o2.pendingExpireMillis}" />
 		<property name="entityService" ref="service.EntityService" />
 		<property name="messageSource" ref="serviceMessageSource" />
