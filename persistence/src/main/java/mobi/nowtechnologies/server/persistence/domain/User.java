@@ -1223,7 +1223,8 @@ public class User implements Serializable {
     }
 
     public boolean isUnsubscribedWithFullAccess() {
-        return !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
+        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+        return currentPaymentDetails != null && !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     private Date getNextSubPaymentAsDate() {
