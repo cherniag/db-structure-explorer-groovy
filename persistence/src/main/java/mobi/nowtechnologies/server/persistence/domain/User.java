@@ -1196,6 +1196,7 @@ public class User implements Serializable {
                 .add("deviceString", deviceString)
                 .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
                 .add("activationStatus", activationStatus)
+                .add("segment", segment)
                 .add("provider", provider)
                 .add("contract", contract).toString();
     }
