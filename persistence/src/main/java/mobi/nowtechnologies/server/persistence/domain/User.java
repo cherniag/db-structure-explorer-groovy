@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
@@ -1205,11 +1206,13 @@ public class User implements Serializable {
      * @return
      */
     public boolean isOnFreeTrial() {
-        return null != this.freeTrialExpiredMillis && this.freeTrialExpiredMillis > System.currentTimeMillis();
+        return new DateTime(getFreeTrialExpiredMillis()).isAfterNow()
+                && isEmpty(getLastSubscribedPaymentSystem());
     }
 
     public boolean isLimited() {
-        return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
+        return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
+                || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow() && !isActivePaymentDetails());
     }
 
     public boolean isSubscribedStatus() {
@@ -1219,8 +1222,8 @@ public class User implements Serializable {
     public boolean isSubscribed(){
         return isSubscribedStatus()
                 && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-                && org.apache.commons.lang.StringUtils.isNotEmpty(lastSubscribedPaymentSystem)
-                && isActivePaymentDetails();
+                && org.apache.commons.lang.StringUtils.isNotEmpty(getLastSubscribedPaymentSystem())
+                && (isSubscribedViaInApp() || isActivePaymentDetails());
     }
 
     public boolean isActivePaymentDetails(){
@@ -1237,7 +1240,8 @@ public class User implements Serializable {
     }
 
     public boolean isSubscribedViaInApp() {
-        return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && isSubscribed();
+        return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
+                new DateTime(getNextSubPayment()).isAfterNow();
     }
 
     public boolean isTrialExpired() {
