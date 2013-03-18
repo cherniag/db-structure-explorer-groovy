@@ -58,17 +58,9 @@
 					<c:set var="method_name" value="psms" />
 					<s:message code='pays.select.payby.psms' var="payment_label" />
 				</c:if>
-                <c:if test="${paymentPolicy.o2OneWeekPsmsSubscription}">
+                <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="psms" />
-                    <s:message code='pays.select.payby.psms.week1' var="payment_label" />
-                </c:if>
-                <c:if test="${paymentPolicy.o2TwoWeekPsmsSubscription}">
-                    <c:set var="method_name" value="psms" />
-                    <s:message code='pays.select.payby.psms.week2' var="payment_label" />
-                </c:if>
-                <c:if test="${paymentPolicy.o2FiveWeekPsmsSubscription}">
-                    <c:set var="method_name" value="psms" />
-                    <s:message code='pays.select.payby.psms.week5' var="payment_label" />
+                    <c:set var="payment_label" value="${paymentPolicy.subcost}&#163; for ${paymentPolicy.subweeks} week"/>
                 </c:if>
 				<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
 					<c:set var="method_name" value="iTunesSubscription" />

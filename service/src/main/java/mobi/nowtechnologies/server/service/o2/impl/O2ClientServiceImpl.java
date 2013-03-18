@@ -167,9 +167,9 @@ public class O2ClientServiceImpl implements O2ClientService {
 		BillSubscriber billSubscriber = new BillSubscriber();
 
 		billSubscriber.setMsisdn(o2PhoneNumber);
-		billSubscriber.setSubMerchantId("O2 Tracks");
+		billSubscriber.setSubMerchantId(subMerchantId);
 		billSubscriber.setPriceGross(subCostPences);
-		billSubscriber.setPriceNet(null);
+		billSubscriber.setPriceNet(BigInteger.valueOf(0));
 		billSubscriber.setDebitCredit("DEBIT");
 		billSubscriber.setContentCategory(contentCategory);
 		billSubscriber.setContentType(contentType);
