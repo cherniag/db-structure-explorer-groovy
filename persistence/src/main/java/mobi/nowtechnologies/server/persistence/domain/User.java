@@ -1208,7 +1208,8 @@ public class User implements Serializable {
      */
     public boolean isOnFreeTrial() {
         return new DateTime(getFreeTrialExpiredMillis()).isAfterNow()
-                && isEmpty(getLastSubscribedPaymentSystem());
+                && isEmpty(getLastSubscribedPaymentSystem())
+                && getCurrentPaymentDetails() == null;
     }
 
     public boolean isLimited() {
