@@ -5,7 +5,6 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
@@ -13,13 +12,13 @@ import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.domain.Sort.Direction;
 
 public class Before48hPSMSPaymentJob {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hPSMSPaymentJob.class);
 	
-	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000);
+	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000, new Sort(Direction.ASC, "nextSubPayment"));
 
 	private UserService userService;
 
