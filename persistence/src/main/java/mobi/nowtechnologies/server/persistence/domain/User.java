@@ -1238,7 +1238,7 @@ public class User implements Serializable {
     public boolean isTrialExpired() {
         return new DateTime(freeTrialExpiredMillis).isBeforeNow()
                 && new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
-                && org.apache.commons.lang.StringUtils.isNotEmpty(lastSubscribedPaymentSystem);
+                && org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
     }
 
     public String getProvider() {
