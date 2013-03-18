@@ -78,6 +78,18 @@ public class PaymentPolicy {
 	@Column(columnDefinition = "char(255)")
 	private Contract contract;
 	
+	@Column(name="content_category")
+	private String contentCategory;
+	
+	@Column(name="content_type")
+	private String contentType;
+	
+	@Column(name="sub_merchant_id")
+	private String subMerchantId;
+	
+	@Column(name="content_description")
+	private String contentDescription;
+	
 
 	public void setId(short id) {
 		this.id = id;
@@ -212,12 +224,44 @@ public class PaymentPolicy {
 		this.contract = contract;
 	}
 
+	public String getContentCategory() {
+		return contentCategory;
+	}
+
+	public void setContentCategory(String contentCategory) {
+		this.contentCategory = contentCategory;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getSubMerchantId() {
+		return subMerchantId;
+	}
+
+	public void setSubMerchantId(String subMerchantId) {
+		this.subMerchantId = subMerchantId;
+	}
+
+	public String getContentDescription() {
+		return contentDescription;
+	}
+
+	public void setContentDescription(String contentDescription) {
+		this.contentDescription = contentDescription;
+	}
+
 	@Override
 	public String toString() {
 		return "PaymentPolicy [communityId=" + communityId + ", id=" + id
 				+ ", paymentType=" + paymentType + ", shortCode=" + shortCode
 				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", appStoreProductId=" + appStoreProductId + ", availableInStore=" + availableInStore + ", segment=" + segment + ", contract="
-				+ contract + "]";
+				+ contract + ", contentType=" + contentType + ", contentCategory=" + contentCategory  + ", contentDescription=" + contentDescription + ", subMerchantId=" + subMerchantId + "]";
 	}
 
 	public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
