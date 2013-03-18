@@ -80,30 +80,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"where " +
 			"user.id=:id")
 	int updateFields(@Param("lastSuccesfullPaymentSmsSendingTimestampMillis") long lastSuccesfullPaymentSmsSendingTimestampMillis, @Param("id") int id);
-
-	
-//	@Query(value="select u from User u " +
-//			"join u.currentPaymentDetails pd " +
-//			"join u.userGroup ug " +
-//			"join ug.community c " +
-//			"join u.status s " +
-//			"where " +
-//			"(c.rewriteUrlParameter!='o2' " +
-//			"and u.subBalance=0 " +
-//			"and (pd.lastPaymentStatus='NONE' " +
-//			"or pd.lastPaymentStatus='SUCCESSFUL')) " +
-//			"or (c.rewriteUrlParameter='o2' " +
-//			"and (u.provider='o2' " +
-//			"and u.segment='consumer' " +
-//			"and u.contract='PAYG' " +
-//			"and TYPE(pd) = O2PSMSPaymentDetails " +
-//			"and pd.lastPaymentStatus<>'AWAITING' "+
-//			"and (s.name='LIMITED' or ((u.nextSubPayment<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000) or  (u.nextSubPayment+86400<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000+86400000 and u.lastPaymentTryInCycleMillis>=u.nextSubPayment*1000) or (u.nextSubPayment+172800<=?1 and u.lastPaymentTryInCycleMillis<=u.nextSubPayment*1000+172800000)  ))) " +
-//			"or (u.provider<>'o2' and u.nextSubPayment<=?1+86400 " +
-//			"and (pd.lastPaymentStatus='NONE' " +
-//			"or pd.lastPaymentStatus='SUCCESSFUL'))) " +
-//			"and pd.activated=true " +
-//			"and u.lastDeviceLogin!=0")
 	
 	@Query(value = "select u from User u "+
 			"join u.currentPaymentDetails pd "+
