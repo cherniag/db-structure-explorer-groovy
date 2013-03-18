@@ -1126,7 +1126,7 @@ public class UserService {
 			}
 		}
 		
-		user = payOffDebt(user, payment);
+		//user = payOffDebt(user, payment);
 
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that

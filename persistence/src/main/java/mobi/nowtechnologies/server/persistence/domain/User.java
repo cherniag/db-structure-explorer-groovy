@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
@@ -249,7 +250,7 @@ public class User implements Serializable {
     private long lastPaymentTryInCycleMillis;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(255)")
+    @Column(columnDefinition = "char")
     private SegmentType segment;
 
     @Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")
@@ -1195,6 +1196,7 @@ public class User implements Serializable {
                 .add("deviceString", deviceString)
                 .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
                 .add("activationStatus", activationStatus)
+                .add("segment", segment)
                 .add("provider", provider)
                 .add("contract", contract).toString();
     }
@@ -1205,11 +1207,16 @@ public class User implements Serializable {
      * @return
      */
     public boolean isOnFreeTrial() {
-        return null != this.freeTrialExpiredMillis && this.freeTrialExpiredMillis > System.currentTimeMillis();
+        return new DateTime(getFreeTrialExpiredMillis()).isAfterNow()
+                && isEmpty(getLastSubscribedPaymentSystem())
+                && getCurrentPaymentDetails() == null;
     }
 
     public boolean isLimited() {
-        return this.status != null && UserStatus.LIMITED.equals(this.status.getName());
+        return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
+                || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
+                && getLastSubscribedPaymentSystem() != null
+                && !isActivePaymentDetails());
     }
 
     public boolean isSubscribedStatus() {
@@ -1219,12 +1226,16 @@ public class User implements Serializable {
     public boolean isSubscribed(){
         return isSubscribedStatus()
                 && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-                && new DateTime(freeTrialExpiredMillis).isAfterNow();
+                && isActivePaymentDetails();
+    }
+
+    public boolean isActivePaymentDetails(){
+        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+        return currentPaymentDetails != null && currentPaymentDetails.isActivated();
     }
 
     public boolean isUnsubscribedWithFullAccess() {
-        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-        return currentPaymentDetails != null && !currentPaymentDetails.isActivated() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
+        return !isActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     private Date getNextSubPaymentAsDate() {
@@ -1232,7 +1243,8 @@ public class User implements Serializable {
     }
 
     public boolean isSubscribedViaInApp() {
-        return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && isSubscribed();
+        return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
+                new DateTime(getNextSubPayment()).isAfterNow();
     }
 
     public boolean isTrialExpired() {
