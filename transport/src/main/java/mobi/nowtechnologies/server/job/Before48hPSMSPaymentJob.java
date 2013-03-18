@@ -10,19 +10,24 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
 import org.apache.log4j.MDC;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public class Before48hPSMSPaymentJob {
+public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJob {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Before48hPSMSPaymentJob.class);
 	
 	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000, new Sort(Direction.ASC, "nextSubPayment"));
 
 	private UserService userService;
 
-    public void execute() {
+	@Override
+    public void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("[START] Before 48h Expire PSMS Payment job...");

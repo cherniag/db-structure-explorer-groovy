@@ -40,7 +40,7 @@ public class Before48hExpirePSMSPaymentJobTest {
 
 		when(mockUserService.findBefore48hExpireUsers(anyInt(), any(Pageable.class))).thenReturn(Collections.singletonList(user));
 		
-		fixture.execute();
+		fixture.executeInternal(null);
 
 		verify(mockUserService, times(1)).findBefore48hExpireUsers(anyInt(), any(Pageable.class));
 	}
