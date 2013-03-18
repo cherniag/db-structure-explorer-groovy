@@ -155,7 +155,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	@Query("select u from User u " +
 			"where u.status=10 " +
 			"and u.nextSubPayment<?1")
-	List<User> getListOfUsersForWeeklyUpdate(long epochSeconds, Pageable pageable);
+	List<User> getListOfUsersForWeeklyUpdate(int epochSeconds, Pageable pageable);
 
 	@Modifying
 	@Query(value="update User user " +
