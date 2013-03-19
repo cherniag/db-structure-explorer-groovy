@@ -44,7 +44,7 @@
 				<div class="clr"></div>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input class="button" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
+					<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
 					<span class="rightButtonArrow">
 					&nbsp;
 					</span>

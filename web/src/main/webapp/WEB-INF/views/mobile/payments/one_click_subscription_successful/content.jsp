@@ -26,7 +26,7 @@
 		<div class="contentButton formButton rad10 rel" >
 		
 
-			<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
+			<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
 			<span class="rightButtonArrow">
 				&nbsp;
 			</span>

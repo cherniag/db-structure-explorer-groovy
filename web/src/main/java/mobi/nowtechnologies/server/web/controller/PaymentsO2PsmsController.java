@@ -26,7 +26,11 @@ public class PaymentsO2PsmsController extends CommonController {
 
     @RequestMapping(value = {"/payments/o2psms.html"}, method = RequestMethod.GET)
     public ModelAndView createO2PaymentDetails(@RequestParam("policyId") Short policyId){
-        return new ModelAndView("payments/o2psms").addObject("policyId", policyId);
+        PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
+        return new ModelAndView("payments/o2psms")
+                .addObject("policyId", policyId)
+                .addObject("subcost", policy.getSubcost())
+                .addObject("suweeks", policy.getSubweeks());
     }
 
     @RequestMapping(value = {"/payments/o2psms_confirm.html"}, method = RequestMethod.GET)
