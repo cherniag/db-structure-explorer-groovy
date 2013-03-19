@@ -250,7 +250,7 @@ public class User implements Serializable {
     private long lastPaymentTryInCycleMillis;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char")
+    @Column(name = "segment", columnDefinition = "char(255)")
     private SegmentType segment;
 
     @Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")

@@ -218,7 +218,7 @@
 			</div>
 			<!--button-->
 			<div class="contentButton formButton rad5 rel" >
-				<input type="submit" class="button2" value="<s:message code='pay.cc.form.submit.next' />" />
+				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
 				<span class="rightButtonArrow">
 					&nbsp;
 				</span>

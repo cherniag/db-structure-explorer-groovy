@@ -1347,9 +1347,9 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public User getUser(String email, String communityUrl) {
-		LOGGER.debug("input parameters email, communityUrl: [{}], [{}]", email, communityUrl);
-		User user = userDao.findOne(email, communityUrl);
+	public User getUser(String userName, String communityUrl) {
+		LOGGER.debug("input parameters email, communityUrl: [{}], [{}]", userName, communityUrl);
+		User user = userRepository.findOne(userName, communityUrl);
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
 	}

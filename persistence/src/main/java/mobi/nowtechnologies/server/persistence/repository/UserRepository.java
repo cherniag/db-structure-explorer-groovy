@@ -147,4 +147,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             " and user.id not in " +
             " (select userLog.userId from UserLog userLog where  userLog.last_update > ?1)")
     List<User> findUsersForUpdate(long afterDate, Pageable pagable);
+
+    @Query(value = "select u from User u " +
+            " join u.userGroup ug " +
+            " join ug.community c " +
+            "  where c.rewriteUrlParameter = ?2" +
+            " and u.userName = ?1 ")
+    User findOne(String userName, String communityUrl);
 }

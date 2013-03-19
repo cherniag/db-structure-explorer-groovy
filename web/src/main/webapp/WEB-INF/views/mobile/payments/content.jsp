@@ -59,7 +59,7 @@
 					<s:message code='pays.select.payby.psms' var="payment_label" />
 				</c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
-                    <c:set var="method_name" value="psms" />
+                    <c:set var="method_name" value="o2psms" />
                     <c:set var="payment_label" value="${paymentPolicy.subcost}&#163; for ${paymentPolicy.subweeks} week"/>
                 </c:if>
 				<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
@@ -68,7 +68,7 @@
 				</c:if>
 				
 				<div class="rel">
-					<input class="button2" title="payments/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+					<input class="button-turquoise" title="payments/${method_name}.html?policyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
 									
 					<span class="rightButtonArrow">
 						&nbsp;
@@ -81,7 +81,7 @@
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="contentButton contentButtonGrey formButton rel formButtonGrey" >
-				<input class="button2" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+				<input class="button-turquoise" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
 				<span class="rightButtonArrowBlack">
 					&nbsp;
 				</span>

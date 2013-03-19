@@ -29,14 +29,14 @@
 					</s:hasBindErrors>
 					<!--button -->
 					<div class="contentButton formButton rad5 rel" >
-						<input class="button2" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
+						<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
 						<span class="leftButtonArrow">
 							&nbsp;
 						</span>
 					</div>
 					<!--button -->
 					<div class="contentButton contentButtonGrey formButton formButtonGrey rad5 rel" >
-						<input type="submit" class="button2" value="<s:message code='unsub.page.form.submit' />" />
+						<input type="submit" class="button-turquoise" value="<s:message code='unsub.page.form.submit' />" />
 						<span class="rightButtonArrowBlack">
 							&nbsp;
 						</span>
@@ -48,7 +48,7 @@
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
 				<div class="contentButton formButton rad5 rel" >
-					<input class="button2" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
+					<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
 					<span class="rightButtonArrowBlack">
 						&nbsp;
 					</span>
