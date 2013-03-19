@@ -68,8 +68,14 @@
 				</c:if>
 				
 				<div class="rel">
-					<input class="button-turquoise" title="payments/${method_name}.html?policyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
-									
+                    <c:choose>
+                        <c:when test="${nonIOSDevice && paymentPolicy.paymentType == 'iTunesSubscription'}">
+
+                        </c:when>
+                        <c:otherwise>
+                            <input class="button-turquoise" title="payments/${method_name}.html?policyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                        </c:otherwise>
+                    </c:choose>
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>

@@ -6,7 +6,7 @@
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button3"><s:message code='m.page.main.menu.back' /></a>
+		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
 	</div>
 </div>
 <div class="container">

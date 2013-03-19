@@ -513,7 +513,7 @@ form .formButton  {
 	overflow: hidden;
 }
 
-.button3{
+.button-small {
     height: 32px;
     border-radius: 5px;
     background-image: linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
