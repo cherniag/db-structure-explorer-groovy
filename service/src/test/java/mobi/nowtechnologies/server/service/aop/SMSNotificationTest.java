@@ -17,6 +17,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -254,6 +255,21 @@ public class SMSNotificationTest {
 			throws Exception {
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
 		fixture.setAvailableCommunities("community3, community2, community1");
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
+		
+		fixture.sendLowBalanceWarning(user);
+		
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendLowBalanceWarning_NotPAYGContract_Failure()
+			throws Exception {
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		user.setContract(Contract.PAYM);
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
 		
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		

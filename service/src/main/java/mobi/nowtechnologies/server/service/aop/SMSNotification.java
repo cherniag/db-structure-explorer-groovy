@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -122,14 +123,15 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, String))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
 		try{
 			LogUtils.putClassNameMDC(this.getClass());
 			
 			Object object = joinPoint.proceed();
-			User user = (User) joinPoint.getArgs()[0];
+			Integer userId = (Integer) joinPoint.getArgs()[0];
 			try{
+				User user = userService.findById(userId);
 				sendUnsubscribeAfterSMS(user);
 			}catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
@@ -217,7 +219,7 @@ public class SMSNotification {
 	}
 	
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		if(user == null || user.getCurrentPaymentDetails() == null)
+		if(user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG)
 			return;
 		
 		sendSMSWithUrl(user, "sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), null);

@@ -62,4 +62,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
      	<property name="realObject" ref="service.UserService"/>
   	</bean>
 
+	<bean id="service.SpyEntityService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.EntityService"/>
+  	</bean>
+
 </beans>

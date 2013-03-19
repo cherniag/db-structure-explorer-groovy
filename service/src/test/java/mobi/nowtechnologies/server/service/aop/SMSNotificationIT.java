@@ -5,11 +5,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.WeeklyUpdateService;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
+import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,6 +44,10 @@ public class SMSNotificationIT {
 	private UserService userService;
 	
 	@Autowired
+	@Qualifier("service.SpyEntityService")
+	private EntityService entityService;
+	
+	@Autowired
 	@Qualifier("service.SpyPaymentDetailsService")
 	private PaymentDetailsService paymentDetailsService;
 	
@@ -67,6 +70,7 @@ public class SMSNotificationIT {
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSendUnsubscribeAfterSMS_Success()
 			throws Exception {		
@@ -74,10 +78,14 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
 		Mockito.doReturn(null).when(userService).unsubscribeUser(any(User.class), anyString());
+		Mockito.doReturn(user).when(entityService).findById(any(Class.class), any(Object.class));
 		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
-		userService.unsubscribeUser(user, "fd");
+		UnsubscribeDto unsubscribeDto = new UnsubscribeDto();
+		unsubscribeDto.setReason("");
+		
+		userService.unsubscribeUser(user.getId(), unsubscribeDto);
 		
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}
