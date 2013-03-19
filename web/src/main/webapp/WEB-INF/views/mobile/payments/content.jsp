@@ -32,7 +32,7 @@
 			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
 			<div class="contentButton formButton rad5 rel" >
 				<form action="payments/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />
+					<input class="button-small" type="submit" value="<s:message code='pays.activate.submit' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>
