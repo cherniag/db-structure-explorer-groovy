@@ -1229,13 +1229,18 @@ public class User implements Serializable {
                 && isActivePaymentDetails();
     }
 
+    public boolean isNotActivePaymentDetails(){
+        PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+        return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
+    }
+
     public boolean isActivePaymentDetails(){
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
         return currentPaymentDetails != null && currentPaymentDetails.isActivated();
     }
 
     public boolean isUnsubscribedWithFullAccess() {
-        return !isActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
+        return isNotActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     private Date getNextSubPaymentAsDate() {
@@ -1244,7 +1249,7 @@ public class User implements Serializable {
 
     public boolean isSubscribedViaInApp() {
         return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
-                new DateTime(getNextSubPayment()).isAfterNow();
+                new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     public boolean isTrialExpired() {

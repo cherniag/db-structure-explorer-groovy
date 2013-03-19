@@ -16,7 +16,7 @@
         <p><s:message code="pays.page.options.note.o2psms"/></p>
 
         <div class="rel">
-            <input class="button-turquoise" type="submit" value="Yes" />
+            <input class="button-turquoise" title="payments/o2psms_confirm.html?policyId=${policyId}" onClick="location.href=this.title" value="Yes" />
             <input class="button-grey" title="payments.html" type="button" onClick="location.href=this.title" value="Cansel" />
         </div>
     </div>
