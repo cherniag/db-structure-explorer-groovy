@@ -98,7 +98,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 
 	@Override
 	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
-		// TODO Auto-generated method stub
 		LOGGER.info("Commiting o2Psms payment details for user {} ...", user.getUserName());
 		
 		O2PSMSPaymentDetails o2PSMSPaymentDetails = new O2PSMSPaymentDetails();
@@ -107,7 +106,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		o2PSMSPaymentDetails.setMadeRetries(0);
 		o2PSMSPaymentDetails.setRetriesOnError(getRetriesOnError());
 		o2PSMSPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
-		//o2PSMSPaymentDetails.setActivated(activated);
+		o2PSMSPaymentDetails.setActivated(true);
 		
 		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 		
@@ -126,6 +125,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		LOGGER.info("Creating o2Psms payment details...");
 		
 		O2PSMSPaymentDetails o2PSMSPaymentDetails = commitPaymnetDetails(user, paymentPolicy);
+		LOGGER.debug("Output parameter o2PSMSPaymentDetails=[{}]", o2PSMSPaymentDetails);
 		return o2PSMSPaymentDetails;
 	}
 

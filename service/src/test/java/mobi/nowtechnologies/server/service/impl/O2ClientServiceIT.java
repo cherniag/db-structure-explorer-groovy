@@ -1,8 +1,14 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.math.BigDecimal;
+
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,5 +37,27 @@ public class O2ClientServiceIT {
 		
 		// Asserts
 		
+	}
+	
+	@Test
+	public void testMakePremiumSMSRequest_Successful() throws Exception {
+		// Preparations for test	
+		String subMerchantId = "O2 Tracks";
+		String contentDescription = "O2 tracks subscription";
+		String contentType = "other";
+		String contentCategory = "";
+		String message = "hello, you made subscription";
+		String o2PhoneNumber = "447702059016";
+		BigDecimal subCost = new BigDecimal(100);
+		String internalTxId = "internalTxId";
+		int userId = 1;
+		boolean smsNotify = true;
+		
+		// Invocation of test method
+		O2Response result = o2ClientService.makePremiumSMSRequest(userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription , subMerchantId, smsNotify  );
+		
+		// Asserts
+		assertNotNull(result);
+		assertEquals(true, result.isSuccessful());
 	}
 }
