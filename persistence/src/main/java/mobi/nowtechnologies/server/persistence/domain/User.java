@@ -1249,7 +1249,7 @@ public class User implements Serializable {
 
     public boolean isSubscribedViaInApp() {
         return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
-                new DateTime(getNextSubPayment()).isAfterNow();
+                new DateTime(getNextSubPaymentAsDate()).isAfterNow();
     }
 
     public boolean isTrialExpired() {
