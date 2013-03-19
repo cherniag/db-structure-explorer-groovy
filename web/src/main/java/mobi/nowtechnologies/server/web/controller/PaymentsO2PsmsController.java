@@ -37,8 +37,9 @@ public class PaymentsO2PsmsController extends CommonController {
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
         O2PSMSPaymentDetails details = paymentService.commitPaymnetDetails(user, policy);
-
+        user.setCurrentPaymentDetails(details);
         paymentDetailsService.update(details);
+        userRepository.save(user);
 
         return new ModelAndView("redirect:/payments.html");
     }

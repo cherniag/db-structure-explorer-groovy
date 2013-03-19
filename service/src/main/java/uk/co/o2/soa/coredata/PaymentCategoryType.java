@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 public enum PaymentCategoryType {
 
     @XmlEnumValue("Prepay")
-    PREPAY("Prepay"),
+    PREPAY("Prepay"),  //PAYG
     @XmlEnumValue("Postpay")
-    POSTPAY("Postpay"),
+    POSTPAY("Postpay"),      //PAYM
     @XmlEnumValue("Unknown")
-    UNKNOWN("Unknown");
+    UNKNOWN("Unknown");   //PAYG
     private final String value;
 
     PaymentCategoryType(String v) {

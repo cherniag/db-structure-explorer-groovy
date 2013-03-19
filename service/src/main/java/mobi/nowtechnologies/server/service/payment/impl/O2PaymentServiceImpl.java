@@ -109,7 +109,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		o2PSMSPaymentDetails.setActivated(true);
 		
 		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-		
+
 		user.setCurrentPaymentDetails(o2PSMSPaymentDetails);
 		o2PSMSPaymentDetails.setOwner(user);
 

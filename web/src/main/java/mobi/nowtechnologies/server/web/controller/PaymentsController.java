@@ -80,7 +80,7 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetails getPaymentDetails(User user) {
-        return  (user.isNonO2User())? paymentDetailsService.getPaymentDetails(user): null;
+        return  paymentDetailsService.getPaymentDetails(user);
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
