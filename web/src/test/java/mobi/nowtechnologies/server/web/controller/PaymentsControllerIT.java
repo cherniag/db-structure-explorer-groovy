@@ -70,7 +70,7 @@ public class PaymentsControllerIT extends TestCase {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	@Test
-	public void testGetManagePaymentsPage_NonO2User_Successful()
+	public void testGetManagePaymentsPage_nonO2User_Successful()
 			throws Exception {
 		String communityUrl = "o2";
 		

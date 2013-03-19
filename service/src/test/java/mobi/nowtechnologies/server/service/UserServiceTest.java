@@ -1491,7 +1491,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testIsNonO2User_NonO2User_Success() throws Exception{
+	public void testIsnonO2User_nonO2User_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1501,12 +1501,12 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("provider");
 		
-		boolean isNonO2User = userServiceSpy.isNonO2User(user);
-		assertTrue(isNonO2User);
+		boolean isnonO2User = userServiceSpy.isnonO2User(user);
+		assertTrue(isnonO2User);
 	}
 	
 	@Test
-	public void testIsNonO2User_O2User_Success() throws Exception{
+	public void testIsnonO2User_O2User_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1516,12 +1516,12 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
 		
-		boolean isNonO2User = userServiceSpy.isNonO2User(user);
-		assertFalse(isNonO2User);
+		boolean isnonO2User = userServiceSpy.isnonO2User(user);
+		assertFalse(isnonO2User);
 	}
 	
 	@Test
-	public void testIsNonO2User_UserFromNotO2Community_Success() throws Exception{
+	public void testIsnonO2User_UserFromNotO2Community_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1531,29 +1531,29 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setProvider(null);
 		
-		boolean isNonO2User = userServiceSpy.isNonO2User(user);
-		assertFalse(isNonO2User);
+		boolean isnonO2User = userServiceSpy.isnonO2User(user);
+		assertFalse(isnonO2User);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testIsNonO2User_UserIsNull_Failure() throws Exception{
+	public void testIsnonO2User_UserIsNull_Failure() throws Exception{
 		final User user = null;
 		
-		userServiceSpy.isNonO2User(user);
+		userServiceSpy.isnonO2User(user);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testIsNonO2User_UserGroupIsNull_Failure() throws Exception{
+	public void testIsnonO2User_UserGroupIsNull_Failure() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = null;
 		
 		user.setUserGroup(userGroup);
 		
-		userServiceSpy.isNonO2User(user);
+		userServiceSpy.isnonO2User(user);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testIsNonO2User_CommunityIsNull_Failure() throws Exception{
+	public void testIsnonO2User_CommunityIsNull_Failure() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = null;
@@ -1561,12 +1561,12 @@ public class UserServiceTest {
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		
-		userServiceSpy.isNonO2User(user);
+		userServiceSpy.isnonO2User(user);
 	}
 	
 	@Test(expected=NullPointerException.class)
     @Ignore //TODO review
-	public void testIsNonO2User_RewriteUrlParameterIsO2AndProviderIsNull_Failure() throws Exception{
+	public void testIsnonO2User_RewriteUrlParameterIsO2AndProviderIsNull_Failure() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1576,11 +1576,11 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setProvider(null);
 		
-		userServiceSpy.isNonO2User(user);
+		userServiceSpy.isnonO2User(user);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testIsNonO2User_RewriteUrlParameterIsNull_Failure() throws Exception{
+	public void testIsnonO2User_RewriteUrlParameterIsNull_Failure() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1590,11 +1590,11 @@ public class UserServiceTest {
 		user.setUserGroup(userGroup);
 		user.setProvider(null);
 		
-		userServiceSpy.isNonO2User(user);
+		userServiceSpy.isnonO2User(user);
 	}
 	
 	@Test
-	public void testProcessPaymentSubBalanceCommand_NonO2User_Success() throws Exception{
+	public void testProcessPaymentSubBalanceCommand_nonO2User_Success() throws Exception{
 		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
 		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
@@ -2080,7 +2080,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testIsIOsNonO2ItunesSubscribedUser_LIMITED_Success() throws Exception{
+	public void testIsIOsnonO2ItunesSubscribedUser_LIMITED_Success() throws Exception{
 		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
@@ -2097,13 +2097,13 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsNonO2ItunesSubscribedUser = user.isIOsNonO2ItunesSubscribedUser();
+		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsnonO2ItunesSubscribedUser();
 		
-		assertFalse(isIOsNonO2ItunesSubscribedUser);
+		assertFalse(isIOsnonO2ItunesSubscribedUser);
 	}
 	
 	@Test
-	public void testIsIOsNonO2ItunesSubscribedUser_SUBSCRIBED_Success() throws Exception{
+	public void testIsIOsnonO2ItunesSubscribedUser_SUBSCRIBED_Success() throws Exception{
 		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
@@ -2122,9 +2122,9 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsNonO2ItunesSubscribedUser = user.isIOsNonO2ItunesSubscribedUser();
+		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsnonO2ItunesSubscribedUser();
 		
-		assertTrue(isIOsNonO2ItunesSubscribedUser);
+		assertTrue(isIOsnonO2ItunesSubscribedUser);
 	}
 	
 	@Test
