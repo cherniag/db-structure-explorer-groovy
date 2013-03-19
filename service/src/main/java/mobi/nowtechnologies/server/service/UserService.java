@@ -1097,7 +1097,7 @@ public class UserService {
 
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 
-		boolean isNonO2User = isNonO2User(user);
+		boolean isnonO2User = isnonO2User(user);
 		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
 
 		boolean wasInLimitedStatus = UserStatusDao.LIMITED.equals(user.getStatus().getName());
@@ -1108,13 +1108,13 @@ public class UserService {
 			} else {
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 			}
-		} else if (!isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+		} else if (!isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
 			// Update next sub payment time
 			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
-		} else if (isNonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+		} else if (isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
 		} else {
 			user.setNextSubPayment(payment.getNextSubPayment());
@@ -1132,7 +1132,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if (!isNonO2User && !(isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))) {
+			if (!isnonO2User && !(isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE))) {
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
@@ -1170,16 +1170,16 @@ public class UserService {
 		return user;
 	}
 
-	public boolean isNonO2User(User user) {
+	public boolean isnonO2User(User user) {
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-		boolean isNonO2User = false;
+		boolean isnonO2User = false;
 		if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(user.getProvider()))) {
-			isNonO2User = true;
+			isnonO2User = true;
 		}
 
-		return isNonO2User;
+		return isnonO2User;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

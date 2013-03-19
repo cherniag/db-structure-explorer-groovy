@@ -70,7 +70,7 @@ public class PaymentsController extends CommonController {
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
         List<PaymentPolicyDto> paymentPolicy;
-        if(user.isNonO2User())
+        if(user.isnonO2User())
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         else
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
@@ -80,11 +80,11 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetails getPaymentDetails(User user) {
-        return  (user.isNonO2User())? paymentDetailsService.getPaymentDetails(user): null;
+        return  (user.isnonO2User())? paymentDetailsService.getPaymentDetails(user): null;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if (!user.isIOsNonO2ItunesSubscribedUser()) {
+        if (!user.isIOsnonO2ItunesSubscribedUser()) {
             return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
         }
         return null;
@@ -98,7 +98,7 @@ public class PaymentsController extends CommonController {
 
             paymentsNoteMsg = getFirstSutableMessage(locale, code_1, code_2, PAYMENTS_NOTE_MSG_CODE);
         } else {
-            if (user.isIOsNonO2ItunesSubscribedUser())
+            if (user.isIOsnonO2ItunesSubscribedUser())
                 paymentsNoteMsg = message(locale, "pays.page.h1.options.note.not.o2.inapp.subs");
             else
                 paymentsNoteMsg = message(locale, PAYMENTS_NOTE_MSG_CODE);
