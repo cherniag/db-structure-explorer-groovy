@@ -100,24 +100,25 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
 		LOGGER.info("Commiting o2Psms payment details for user {} ...", user.getUserName());
 		
-		O2PSMSPaymentDetails o2PSMSPaymentDetails = new O2PSMSPaymentDetails();
-		o2PSMSPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-		o2PSMSPaymentDetails.setPaymentPolicy(paymentPolicy);
-		o2PSMSPaymentDetails.setMadeRetries(0);
-		o2PSMSPaymentDetails.setRetriesOnError(getRetriesOnError());
-		o2PSMSPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
-		o2PSMSPaymentDetails.setActivated(true);
+		O2PSMSPaymentDetails details = new O2PSMSPaymentDetails();
+		details.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+		details.setPaymentPolicy(paymentPolicy);
+		details.setMadeRetries(0);
+        details.setPhoneNumber(user.getMobile());
+		details.setRetriesOnError(getRetriesOnError());
+		details.setCreationTimestampMillis(Utils.getEpochMillis());
+		details.setActivated(true);
 		
 		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 
-		user.setCurrentPaymentDetails(o2PSMSPaymentDetails);
-		o2PSMSPaymentDetails.setOwner(user);
+		user.setCurrentPaymentDetails(details);
+		details.setOwner(user);
 
-		o2PSMSPaymentDetails = (O2PSMSPaymentDetails) getPaymentDetailsRepository().save(o2PSMSPaymentDetails);
+		details = (O2PSMSPaymentDetails) getPaymentDetailsRepository().save(details);
 		
 		LOGGER.info("Done creation of o2Psms payment details for user {}", user.getUserName());
 		
-		return o2PSMSPaymentDetails;
+		return details;
 	}
 
 	@Override

@@ -32,7 +32,7 @@
 			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
 			<div class="contentButton formButton rad5 rel" >
 				<form action="payments/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />
+					<input class="button-small" type="submit" value="<s:message code='pays.activate.submit' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>
@@ -68,8 +68,20 @@
 				</c:if>
 				
 				<div class="rel">
-					<input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
-									
+                    <c:choose>
+                        <c:when test="${nonIOSDevice && paymentPolicy.paymentType == 'iTunesSubscription'}">
+
+                        </c:when>
+                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'
+                        && paymentDetails.activated
+                        && activePolicy.subcost == paymentPolicy.subcost
+                        && activePolicy.subweeks == paymentPolicy.subweeks }">
+                            <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                         </c:when>
+                        <c:otherwise>
+                            <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                        </c:otherwise>
+                    </c:choose>
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>

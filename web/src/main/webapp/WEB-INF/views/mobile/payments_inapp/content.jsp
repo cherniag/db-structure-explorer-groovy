@@ -7,7 +7,7 @@
 	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="account.html" class="button buttonSmall accounts"><s:message code='page.main.menu.my.account' /></a>
+		<a href="account.html" class="button-small"><s:message code='page.main.menu.my.account' /></a>
 	</div>			
 </div>
 <div class="container">
@@ -30,7 +30,7 @@
             </p>
 			<div class="contentButton formButton rad5 rel" >
 				<form action="payments_inapp/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />
+					<input class="button-small" type="submit" value="<s:message code='pays.activate.submit' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>
@@ -91,7 +91,7 @@
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="contentButton contentButtonGrey formButton rad5 rel formButtonGrey" >
-				<input class="button buttonSmall accounts" title="payments_inapp/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+				<input class="button-small" title="payments_inapp/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
 				<span class="rightButtonArrowBlack">
 					&nbsp;
 				</span>

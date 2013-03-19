@@ -695,7 +695,10 @@ public class UserService {
 	public User unsubscribeUser(int userId, UnsubscribeDto dto) {
 		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
 		User user = entityService.findById(User.class, userId);
-		final String reason = dto.getReason();
+		String reason = dto.getReason();
+		if (reason == null || reason.isEmpty()) {
+			reason = "Unsubscribed by user manually via web portal";
+		}
 		user = unsubscribeUser(user, reason);
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;

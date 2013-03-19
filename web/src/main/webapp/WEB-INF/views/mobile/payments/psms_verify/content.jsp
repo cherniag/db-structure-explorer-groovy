@@ -7,7 +7,7 @@
 	<c:if test="${null==result && result!='successful'}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
+		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
 	</div>
 	</c:if> 
 </div>
@@ -44,7 +44,7 @@
 				<div class="clr"></div>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input class="button" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
+					<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
 					<span class="rightButtonArrow">
 					&nbsp;
 					</span>

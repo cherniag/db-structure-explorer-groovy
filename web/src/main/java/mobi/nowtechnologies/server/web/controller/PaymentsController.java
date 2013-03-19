@@ -53,21 +53,24 @@ public class PaymentsController extends CommonController {
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
 
-        ModelAndView modelAndView = new ModelAndView(viewName);
+        ModelAndView mav = new ModelAndView(viewName);
 
         List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator());
-        modelAndView.addObject("paymentPolicies", paymentPolicies);
+        mav.addObject("paymentPolicies", paymentPolicies);
 
-        modelAndView.addObject("paymentDetails", getPaymentDetails(user));
+        mav.addObject("nonIOSDevice", !user.isIOSDevice());
+        PaymentDetails paymentDetails = getPaymentDetails(user);
+        mav.addObject("paymentDetails", paymentDetails);
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
-        modelAndView.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
-        modelAndView.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
-        modelAndView.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
+        mav.addObject("activePolicy", paymentDetails.getPaymentPolicy());
+        mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
+        mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
+        mav.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
-        modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
+        mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
 
-        return modelAndView;
+        return mav;
     }
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
