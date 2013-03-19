@@ -7,9 +7,11 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -18,6 +20,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -122,14 +126,15 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, String))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
 		try{
 			LogUtils.putClassNameMDC(this.getClass());
 			
 			Object object = joinPoint.proceed();
-			User user = (User) joinPoint.getArgs()[0];
+			Integer userId = (Integer) joinPoint.getArgs()[0];
 			try{
+				User user = userService.findById(userId);
 				sendUnsubscribeAfterSMS(user);
 			}catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
@@ -199,37 +204,38 @@ public class SMSNotification {
 		if(user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
 			return;
 			
-		sendSMSWithUrl(user, "sms.limited.status.text.for."+user.getProvider()+"."+user.getContract(), paymentsUrl);
+		sendSMSWithUrl(user, "sms.limited.status.text.for."+user.getProvider()+"."+user.getContract(), new String[]{paymentsUrl});
 	}
 	
 	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
 		if(user == null || user.getCurrentPaymentDetails() == null)
 			return;
 				
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), unsubscribeUrl);
+		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), new String[]{unsubscribeUrl});
 	}
 	
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
 		if(user == null || user.getCurrentPaymentDetails() == null)
 			return;
+		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment()*1000L).toDateMidnight()).getDays();
 		
-		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract(), null);
+		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract(), new String[]{paymentsUrl, days.toString()});
 	}
 	
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		if(user == null || user.getCurrentPaymentDetails() == null)
+		if(user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG || user.getSegment() != SegmentType.CONSUMER)
 			return;
 		
 		sendSMSWithUrl(user, "sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), null);
 	}
 	
-	protected void sendSMSWithUrl(User user, String msgCode, String baseUrl) throws UnsupportedEncodingException{
+	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException{
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		if(!availableCommunities.contains(communityUrl))
 			return;
 		
-		String[] args = null;
+		String baseUrl = msgArgs != null ? msgArgs[0] : null;
 		if (baseUrl != null) {			
 			String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
 			String url =  baseUrl + "?community="+communityUrl+"&"+rememberMeTokenCookieName+"=" + rememberMeToken;
@@ -243,11 +249,12 @@ public class SMSNotification {
 				LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
 			}
 			
-			args = new String[]{url};
+			msgArgs[0] = url;
 		}
 		
-		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, args, null);
+		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, null);
+		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
 		
-		migService.makeFreeSMSRequest(user.getMobile(), message);
+		migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
 }

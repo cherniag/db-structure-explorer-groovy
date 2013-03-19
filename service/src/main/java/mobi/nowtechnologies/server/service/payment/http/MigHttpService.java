@@ -24,11 +24,22 @@ public class MigHttpService extends PaymentHttpService {
 	
 	public MigResponse makeFreeSMSRequest(String numbers, String message) {
 		List<NameValuePair> nameValuePairs = request.createFreeSMSRequest(numbers, message).build();
-		LOGGER.info("Mig request for free sms {}", nameValuePairs);
-		Response response = httpService.sendHttpPost(freeSMSURL, nameValuePairs, null);
-		LOGGER.info("Mig response for free sms {}", response);
-		return new MigResponse(response);
+		return makeMigRequest(nameValuePairs, freeSMSURL);
 	}
+	
+    public MigResponse makeFreeSMSRequest(String numbers, String message, String title){
+        List<NameValuePair> nameValuePairs = request.createFreeSMSRequest(numbers, message, title).build();
+        return makeMigRequest(nameValuePairs, freeSMSURL);
+    }
+
+    private MigResponse makeMigRequest(List<NameValuePair> nameValuePairs, String url) {
+        LOGGER.info("Mig request for free sms {}", nameValuePairs);
+        Response response = httpService.sendHttpPost(url, nameValuePairs, null);
+        LOGGER.info("Mig response for free sms {}", response);
+        return new MigResponse(response);
+    }
+	
+	
 	
 	public MigResponse makePremiumSMSRequest(String messageId, String oadc, String numbers, String message ) {
 		List<NameValuePair> nameValuePairs = request.createPremiumSMSRequest(messageId, oadc, numbers, message, timeToLiveMin.toString()).build();
