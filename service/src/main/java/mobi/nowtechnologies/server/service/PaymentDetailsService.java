@@ -119,12 +119,6 @@ public class PaymentDetailsService {
 		return (SagePayCreditCardPaymentDetails) createPaymentDetails(pdto, user, community);
 	}
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void createO2PsmsDetails(User user, Integer integer) {
-
-
-    }
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PayPalPaymentDetails createPayPalPamentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);

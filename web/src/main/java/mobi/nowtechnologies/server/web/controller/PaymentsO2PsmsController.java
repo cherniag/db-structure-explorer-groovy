@@ -1,9 +1,12 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,29 +14,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.tags.Param;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Controller
 public class PaymentsO2PsmsController extends CommonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
     private PaymentDetailsService paymentDetailsService;
+    private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
+    private O2PaymentServiceImpl paymentService;
 
     @RequestMapping(value = {"/payments/o2psms.html"}, method = RequestMethod.GET)
-    public ModelAndView getO2PsmsConfirmationPage(@RequestParam("policyId") Integer policyId){
-        LOG.info("Create o2psms payment details by paymentPolicy.id="+policyId);
+    public ModelAndView createO2PaymentDetails(@RequestParam("policyId") Short policyId){
+        return new ModelAndView("payments/o2psms").addObject("policyId", policyId);
+    }
+
+    @RequestMapping(value = {"/payments/o2psms_confirm.html"}, method = RequestMethod.GET)
+    public ModelAndView getO2PsmsConfirmationPage(@RequestParam("policyId") Short policyId) {
+        LOG.info("Create o2psms payment details by paymentPolicy.id=" + policyId);
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
-        paymentDetailsService.createO2PsmsDetails(user, checkNotNull(policyId));
-        System.out.println("Create o2psms payment details.");
+        PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        return new ModelAndView("payments/o2psms");
+        O2PSMSPaymentDetails details = paymentService.commitPaymnetDetails(user, policy);
+
+        paymentDetailsService.update(details);
+
+        return new ModelAndView("redirect:/payments.html");
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
         this.paymentDetailsService = paymentDetailsService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
+        this.paymentPolicyRepository = paymentPolicyRepository;
+    }
+
+    public void setPaymentService(O2PaymentServiceImpl paymentService) {
+        this.paymentService = paymentService;
     }
 }
