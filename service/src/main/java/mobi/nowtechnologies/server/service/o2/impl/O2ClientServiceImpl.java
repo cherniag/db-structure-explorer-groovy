@@ -165,8 +165,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 		final BigInteger subCostPences = subCost.multiply(MULTIPLICAND_100).toBigInteger();
 
 		BillSubscriber billSubscriber = new BillSubscriber();
+		
+		final String formatedO2PhoneNumber = o2PhoneNumber.replace("+", ""); 
 
-		billSubscriber.setMsisdn(o2PhoneNumber);
+		billSubscriber.setMsisdn(formatedO2PhoneNumber);
 		billSubscriber.setSubMerchantId(subMerchantId);
 		billSubscriber.setPriceGross(subCostPences);
 		billSubscriber.setPriceNet(BigInteger.ZERO);
