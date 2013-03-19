@@ -30,6 +30,15 @@ public class MigRequest extends AbstractPaymentRequest<MigRequest> {
 			.addParam(MigRequestParam.BODY, message);
 	}
 	
+	public MigRequest createFreeSMSRequest(String numbers, String message, String title) {
+        return new MigRequest()
+                .addParam(MigRequestParam.OADC, title)
+                .addParam(MigRequestParam.OADCTYPE, OADCTYPE_FREE)
+                .addParam(MigRequestParam.MESSAGEID, Utils.getBigRandomInt().toString())
+                .addParam(MigRequestParam.NUMBERS, numbers)
+                .addParam(MigRequestParam.BODY, message);
+    }
+	
 	public MigRequest createPremiumSMSRequest(String messageId, String oadc, String numbers, String message, String timeToLive) {
 		return new MigRequest()
 			.addParam(MigRequestParam.OADC, oadc)

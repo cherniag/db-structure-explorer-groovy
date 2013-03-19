@@ -2114,7 +2114,7 @@ public class UserServiceTest {
 		user.setStatus(subscribedUserStatus);
 		user.setDeviceType(iosDeviceType);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-        user.setProvider("non-o2");
+        user.setProvider("nonO2");
 		
 		PowerMockito.mockStatic(DeviceTypeDao.class);
 		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
