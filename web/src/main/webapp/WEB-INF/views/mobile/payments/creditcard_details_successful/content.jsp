@@ -17,7 +17,7 @@
 		<div class="addSmallSpace"></div>		
 		<!--button-->
 		<div class="contentButton formButton rad10 rel" >
-			<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.inapp' />" />
+			<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.inapp' />" />
 			<span class="rightButtonArrow">
 				&nbsp;
 			</span>

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
 
@@ -115,5 +116,10 @@ public class SubscriberProfileType {
         return SegmentType.CONSUMER.equals(getSegment()) ?
                 mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER :
                 mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+    }
+
+    public Contract getCotract() {
+        return PaymentCategoryType.POSTPAY.equals(getPaymentCategory()) ?
+                Contract.PAYM : Contract.PAYG;
     }
 }

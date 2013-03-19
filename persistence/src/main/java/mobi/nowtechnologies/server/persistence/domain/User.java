@@ -285,8 +285,8 @@ public class User implements Serializable {
         setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
     }
 
-    public boolean isIOsNonO2ItunesSubscribedUser() {
-        return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
+    public boolean isIOsnonO2ItunesSubscribedUser() {
+        return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
     }
 
     public boolean isSubscribedByITunes() {
@@ -306,7 +306,7 @@ public class User implements Serializable {
         return details != null && details.isActivated();
     }
 
-    public boolean isNonO2User() {
+    public boolean isnonO2User() {
         Community community = this.userGroup.getCommunity();
         String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 

@@ -87,7 +87,7 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     private void updateUser(User u) throws GetSubscriberProfileFault {
         SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
         u.setSegment(profile.getSegmentType());
-        u.setProvider(profile.getOperator());
+        u.setContract(profile.getCotract());
         makeUserLog(u, UserLogStatus.SUCCESS, null);
         userRepository.save(u);
     }
