@@ -57,8 +57,10 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPolicies", paymentPolicies);
 
         mav.addObject("nonIOSDevice", !user.isIOSDevice());
-        mav.addObject("paymentDetails", getPaymentDetails(user));
+        PaymentDetails paymentDetails = getPaymentDetails(user);
+        mav.addObject("paymentDetails", paymentDetails);
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
+        mav.addObject("activePolicy", paymentDetails.getPaymentPolicy());
         mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
