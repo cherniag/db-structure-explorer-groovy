@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.o2.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import javax.xml.transform.dom.DOMSource;
 
@@ -20,8 +21,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
-import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
+import uk.co.o2.soa.chargecustomerdata.*;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
@@ -180,7 +180,22 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setPromotionCode(null);
 
 		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
-		BillSubscriberResponse billSubscriberResponse = webServiceGateway.sendAndReceive(SUBSCRIBER_ENDPOINT, billSubscriber);
+		//BillSubscriberResponse billSubscriberResponse = webServiceGateway.sendAndReceive(SUBSCRIBER_ENDPOINT, billSubscriber);
+		BillSubscriberResponse billSubscriberResponse = new BillSubscriberResponse();
+		ServiceResult serviceResult= new ServiceResult();
+		serviceResult.setResultCode("779");
+		serviceResult.setResultDescription("Successful");
+		serviceResult.setSagTransactionId("sagTransactionId_1");
+		serviceResult.setApplicationReference(internalTxId);
+		Map resultData = new Map(){{
+			item = new ArrayList<MapEntry>();
+			MapEntry mapEntry = new MapEntry();
+			mapEntry.setKey("71");
+			mapEntry.setValue(o2PhoneNumber);
+			item.add(mapEntry);
+		}};
+		serviceResult.setResultData(resultData );
+		billSubscriberResponse.setResult(serviceResult);
 
 		O2Response o2Response = O2Response.valueOf(billSubscriberResponse);
 
