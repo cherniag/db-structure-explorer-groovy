@@ -19,18 +19,20 @@ import org.springframework.web.servlet.ModelAndView;
 public class PaymentsO2PsmsController extends CommonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
+    
+    
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
     private O2PaymentServiceImpl paymentService;
 
     @RequestMapping(value = {"/payments/o2psms.html"}, method = RequestMethod.GET)
-    public ModelAndView createO2PaymentDetails(@RequestParam("policyId") Short policyId){
-        return new ModelAndView("payments/o2psms").addObject("policyId", policyId);
+    public ModelAndView createO2PaymentDetails(@RequestParam("") Short policyId){
+        return new ModelAndView("payments/o2psms").addObject(PaymentsController.POLICY_REQ_PARAM, policyId);
     }
 
     @RequestMapping(value = {"/payments/o2psms_confirm.html"}, method = RequestMethod.GET)
-    public ModelAndView getO2PsmsConfirmationPage(@RequestParam("policyId") Short policyId) {
+    public ModelAndView getO2PsmsConfirmationPage(@RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId) {
         LOG.info("Create o2psms payment details by paymentPolicy.id=" + policyId);
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());

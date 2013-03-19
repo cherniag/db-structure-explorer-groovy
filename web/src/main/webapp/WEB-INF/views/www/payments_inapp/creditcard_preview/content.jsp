@@ -18,6 +18,7 @@
 			<div class="wholePart">						
 				<div class="details phoneRightBg">
 					<form:form modelAttribute="creditCardDto" method="post">
+							<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 							<h2><s:message code="pay.cc.form.title" /></h2>
 							<div class="holderDetails summary"> 
 								<p class="narrow"><s:message code="pay.cc.preview.form.description" /></p>

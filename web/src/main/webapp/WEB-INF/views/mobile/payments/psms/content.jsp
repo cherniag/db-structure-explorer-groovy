@@ -15,6 +15,7 @@
 		<p><s:message code="pay.psms.form.description" /></p>
 		<div class="addSmallSpace"></div>
 		<form:form modelAttribute="pSmsDto" method="post">
+			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<div class="oneField">
 				<label><s:message code="pay.psms.form.mobile.number" /></label>
 				<form:input path="phone" />

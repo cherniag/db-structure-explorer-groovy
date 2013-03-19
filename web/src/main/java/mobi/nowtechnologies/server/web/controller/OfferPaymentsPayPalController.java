@@ -44,6 +44,7 @@ public class OfferPaymentsPayPalController extends CommonController {
 
 	public static final String REQUEST_PARAM_PAYPAL = "result";
 	private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
+	private static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPoliceId";
 
 	public static final String SUCCESSFUL_RESULT = "successful";
 	public static final String FAIL_RESULT = "fail";
@@ -52,7 +53,9 @@ public class OfferPaymentsPayPalController extends CommonController {
 	private OfferService offerService;
 
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
-	public ModelAndView getPayPalPage(@PathVariable(OfferDto.OFFER_ID) Integer offerId, HttpServletRequest request, @ModelAttribute(PayPalDto.NAME) PayPalDto dto,
+	public ModelAndView getPayPalPage(@PathVariable(OfferDto.OFFER_ID) Integer offerId, HttpServletRequest request, 
+			@RequestParam(value = REQUEST_PARAM_PAYPAL_PAYMENT_POLICY, required = true) Integer paymentPolicyId,
+			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
 		OfferDto offer = offerService.getOfferDto(offerId);
 		StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(PAGE_PAYMENTS_PAYPAL_CALLBACK.replaceFirst("\\{offerId\\}", offerId.toString()));

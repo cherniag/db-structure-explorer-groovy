@@ -79,7 +79,7 @@
 				</c:choose>
 				
 				<div class="contentButton formButton rad5 rel" style="display:${to_display}">
-					<input class="button" title="payments_inapp/${method_name}.html" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+					<input class="button" title="payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>

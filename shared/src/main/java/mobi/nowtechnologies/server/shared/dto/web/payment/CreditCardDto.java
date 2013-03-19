@@ -19,6 +19,8 @@ public class CreditCardDto {
 	
 	public static enum Action {EDIT, PREVIEW}
 	
+	private Integer paymentPolicyId;
+	
 	@NotNull
 	private CreditCardType cardType;
 	@NotEmpty
@@ -205,6 +207,14 @@ public class CreditCardDto {
 		this.action = action;
 	}
 	
+	public Integer getPaymentPolicyId() {
+		return paymentPolicyId;
+	}
+
+	public void setPaymentPolicyId(Integer paymentPolicyId) {
+		this.paymentPolicyId = paymentPolicyId;
+	}
+
 	public static PaymentDetailsDto toPaymentDetails(CreditCardDto dto) {
 		PaymentDetailsDto result = new PaymentDetailsDto();
 			result.setBillingAddress(dto.getHolderAddress()+dto.getHolderAddress2());
@@ -219,6 +229,7 @@ public class CreditCardDto {
 			result.setCardNumber(dto.getCardNumber());
 			result.setCardStartDate(toMMYY(dto.getStartDateMonth(), dto.getStartDateYear()));
 			result.setCardType(dto.getCardType().toString());
+			result.setPaymentPolicyId(dto.getPaymentPolicyId());
 			result.setDescription("Subcription via Credt Card");
 			result.setPaymentType("creditCard");
 		return result;

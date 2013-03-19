@@ -14,6 +14,7 @@
 				<div class="details phoneRightBg">
 					<h2><s:message code="pay.cc.form.title" /></h2>
 					<form:form modelAttribute="creditCardDto" method="post">
+					<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 					<div class="payDetails">
 						<h3><s:message code="pay.cc.form.description" 
 						    	arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"

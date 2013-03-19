@@ -39,6 +39,7 @@ public class PaymentsPayPalController extends CommonController {
 
 	public static final String REQUEST_PARAM_PAYPAL = "result";
 	private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
+	private static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPoliceId";
 	
 	public static final String SUCCESSFUL_RESULT = "successful";
 	public static final String FAIL_RESULT = "fail";
@@ -48,16 +49,17 @@ public class PaymentsPayPalController extends CommonController {
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
 	public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
 			@RequestParam(value = REQUEST_PARAM_PAYPAL_TOKEN, required = false) String token,
+			@RequestParam(value = REQUEST_PARAM_PAYPAL_PAYMENT_POLICY, required = true) Integer paymentPolicyId,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
 		ModelAndView modelAndModel = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PAYPAL);
 
 		if (StringUtils.hasText(result)) {
 			if (StringUtils.hasText(token)) {
-				paymentDetailsService.commitPayPalPaymentDetails(token, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+				paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
 			}
 			modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
 		}else{
-			PaymentPolicyDto paymentPolicy = paymentDetailsService.getPayPalPaymentPolicy(communityUrl.getValue());
+			PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(paymentPolicyId);
 			modelAndModel.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 		}
 
@@ -65,12 +67,15 @@ public class PaymentsPayPalController extends CommonController {
 	}
 
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
-	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, @ModelAttribute(PayPalDto.NAME) PayPalDto dto,
+	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, 
+			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPayPalPaymentPolicy(communityUrl.getValue());
+		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(dto.getPaymentPolicyId());
 		dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[]{paymentPolicy.getSubweeks(), paymentPolicy.getSubcost()}, locale));
 		StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT)
-				.append(START_PARAM_DELIM).append(REQUEST_PARAM_PAYPAL).append("=");
+				.append(START_PARAM_DELIM)
+				.append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId())
+				.append(REQUEST_PARAM_PAYPAL).append("=");
 		dto.setFailUrl(callbackUrl+FAIL_RESULT);
 		dto.setSuccessUrl(callbackUrl+SUCCESSFUL_RESULT);
 		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPamentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());

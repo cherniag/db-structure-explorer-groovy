@@ -15,6 +15,7 @@
 				<div class="details smsBox">
 					<h2><s:message code="pay.psms.form.title" /></h2>
 					<form:form modelAttribute="pSmsDto" method="post">
+						<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 						<div class="payDetails">
 							<p><s:message code="pay.psms.form.description" /></p>
 							<div class="oneLine">

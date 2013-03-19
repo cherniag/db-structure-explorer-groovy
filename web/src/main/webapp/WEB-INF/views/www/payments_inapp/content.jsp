@@ -34,7 +34,7 @@
 										</c:if>
 										
 										<div class="oneMethodBox rel">
-											<a href="payments_inapp/${method_name}.html" class="rel ${method_color}">
+											<a href="payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" class="rel ${method_color}">
 												<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icons/${method_name}_method.png" alt="">
 												<span class="price abs"><s:message code="pays.select.currency" /><fmt:parseNumber integerOnly="true" value="${paymentPolicy.subcost}"/><br />
 													<span style="">${paymentPolicy.subweeks} <s:message code="pays.select.weeks" /></span>

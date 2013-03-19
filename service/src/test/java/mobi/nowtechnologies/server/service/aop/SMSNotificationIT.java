@@ -112,11 +112,11 @@ public class SMSNotificationIT {
 		User user = UserFactory.createUser(new PayPalPaymentDetails(), null);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
-		Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyString(), anyInt());
+		Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyInt());
 		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
-		paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", "O2", user.getId());
+		paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", anyInt(), user.getId());
 		
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString());
 	}

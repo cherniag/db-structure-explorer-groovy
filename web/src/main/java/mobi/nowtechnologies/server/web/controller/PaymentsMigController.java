@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.VerifyDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -21,15 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
@@ -55,10 +48,15 @@ public class PaymentsMigController extends CommonController {
 	}
 
 	@RequestMapping(value = PAGE_PAYMENTS_PSMS, method = RequestMethod.GET)
-	public ModelAndView getMigPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+	public ModelAndView getMigPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, 
+			@RequestParam(PaymentsController.POLICY_REQ_PARAM) Integer policyId,
+			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(policyId);
+		
 		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
 		modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
 		modelAndView.addObject("operators", paymentDetailsService.getAvailableOperators(communityUrl.getValue(), "PSMS"));
+		modelAndView.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 
 		return modelAndView;
 	}

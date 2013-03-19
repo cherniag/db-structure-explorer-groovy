@@ -50,6 +50,11 @@ public class PaymentPolicyService {
 		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicy);
 		return paymentPolicy;
 	}
+	
+	public PaymentPolicy getPaymentPolicy(Integer id){
+		
+		return paymentPolicyRepository.findOne(id.shortValue());
+	}
 
 	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, byte communityId){
 		Validate.notNull(paymentType, "The parameter paymentType is null");

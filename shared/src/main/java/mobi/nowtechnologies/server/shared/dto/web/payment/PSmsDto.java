@@ -15,6 +15,7 @@ public class PSmsDto {
 	private String phone;
 	@NotNull
 	private Integer operator;
+	private Integer paymentPolicyId;
 	
 	public PSmsDto() {
 	}
@@ -41,11 +42,20 @@ public class PSmsDto {
 		this.operator = operator;
 	}
 
+	public Integer getPaymentPolicyId() {
+		return paymentPolicyId;
+	}
+
+	public void setPaymentPolicyId(Integer paymentPolicyId) {
+		this.paymentPolicyId = paymentPolicyId;
+	}
+
 	public static PaymentDetailsDto toPaymentDetails(PSmsDto dto) {
 		PaymentDetailsDto pdto = new PaymentDetailsDto();
 			pdto.setPaymentType("PSMS");
 			pdto.setPhoneNumber(dto.getPhone());
 			pdto.setOperator(dto.getOperator());
+			pdto.setPaymentPolicyId(dto.getPaymentPolicyId());
 		return pdto;
 	}
 }

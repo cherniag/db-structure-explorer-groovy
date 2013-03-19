@@ -30,6 +30,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @Controller
 public class PaymentsController extends CommonController {
     private static final String PAYMENTS_NOTE_MSG_CODE = "pays.page.h1.options.note";
+    
+    public static final String POLICY_REQ_PARAM = "paymentPolicyId";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentsController.class);
 

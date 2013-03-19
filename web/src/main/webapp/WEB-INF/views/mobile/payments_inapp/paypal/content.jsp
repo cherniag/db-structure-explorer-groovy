@@ -29,6 +29,7 @@
 		</c:when>
 		<c:otherwise>		
 			<form:form modelAttribute="payPalDto" method="post">
+				<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 				<h1><s:message code="pay.paypal.form.title" /></h1>
 				<div class="payDetails">
 					<p><s:message code="pay.paypal.form.description" 

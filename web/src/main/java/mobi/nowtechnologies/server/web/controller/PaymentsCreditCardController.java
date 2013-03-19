@@ -23,14 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -54,8 +47,10 @@ public class PaymentsCreditCardController extends CommonController {
 	}
 
 	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.GET)
-	public ModelAndView getCreditCardPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPayPalPaymentPolicy(communityUrl.getValue());
+	public ModelAndView getCreditCardPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, 
+			@RequestParam(PaymentsController.POLICY_REQ_PARAM) Integer policyId,
+			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(policyId);
 
 		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_CREDITCARD);
 		modelAndView.addObject(CreditCardDto.NAME, new CreditCardDto());
@@ -68,9 +63,10 @@ public class PaymentsCreditCardController extends CommonController {
 	}
 
 	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.POST)
-	public ModelAndView postCreditCardPaymentsPreview(@PathVariable("scopePrefix") String scopePrefix, @Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
+	public ModelAndView postCreditCardPaymentsPreview(@PathVariable("scopePrefix") String scopePrefix,
+			@Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPayPalPaymentPolicy(communityUrl.getValue());
+		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(creditCardDto.getPaymentPolicyId());
 		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addAllObjects(CreditCardDto.staticData);

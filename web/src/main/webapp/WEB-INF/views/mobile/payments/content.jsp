@@ -68,7 +68,7 @@
 				</c:if>
 				
 				<div class="rel">
-					<input class="button-turquoise" title="payments/${method_name}.html?policyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+					<input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
 									
 					<span class="rightButtonArrow">
 						&nbsp;

@@ -69,7 +69,7 @@ public class PaymentDetailsService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getOperator(), dto.getPaymentType(), community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());
 		Promotion promotion = user.getPotentialPromotion();
 		PromotionPaymentPolicy promotionPaymentPolicy = null;
 		if (null != promotion) {
@@ -128,10 +128,9 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, String communityUrl, int userId) throws ServiceException {
+	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, int userId) throws ServiceException {
 		User user = userService.findById(userId);
-		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), PaymentType.PAY_PAL, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPoliceId);
 		return payPalPaymentService.commitPaymentDetails(token, user, paymentPolicy, true);
 	}
 
@@ -187,16 +186,10 @@ public class PaymentDetailsService {
 		return result;
 	}
 	
-	public PaymentPolicyDto getPaymentPolicy(String paymentType, String communityUrl)
+	public PaymentPolicyDto getPaymentPolicy(Integer paymentPolicyId)
 	{
-		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
 		return paymentPolicyService.getPaymentPolicy(paymentPolicy, null);
-	}
-	
-	public PaymentPolicyDto getPayPalPaymentPolicy(String communityUrl)
-	{
-		return getPaymentPolicy(PaymentType.PAY_PAL, communityUrl);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)

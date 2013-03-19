@@ -13,6 +13,7 @@
 				<div class="details">
 					<h2><s:message code="pay.paypal.form.title" /></h2>
 					<form:form modelAttribute="payPalDto" method="post">
+						<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 						<div class="payDetails">
 							<h3><s:message code="pay.paypal.form.description"
 								arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"

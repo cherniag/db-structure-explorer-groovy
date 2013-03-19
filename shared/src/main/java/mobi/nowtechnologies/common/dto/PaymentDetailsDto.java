@@ -4,6 +4,7 @@ package mobi.nowtechnologies.common.dto;
 
 public class PaymentDetailsDto {
 	
+	private Integer paymentPolicyId;
 	private String paymentType;
 	private String amount;
 	private String currency;
@@ -187,5 +188,11 @@ public class PaymentDetailsDto {
 	}
 	public void setOfferId(int offerId) {
 		this.offerId = offerId;
+	}
+	public Integer getPaymentPolicyId() {
+		return paymentPolicyId;
+	}
+	public void setPaymentPolicyId(Integer paymentPolicyId) {
+		this.paymentPolicyId = paymentPolicyId;
 	}
 }

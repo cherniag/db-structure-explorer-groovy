@@ -6,6 +6,8 @@ public class PayPalDto {
 	
 	public static final String NAME = "payPalDto";
 	
+	private Integer paymentPolicyId;
+	
 	private String billingAgreementDescription;
 	
 	private String successUrl;
@@ -29,6 +31,7 @@ public class PayPalDto {
 			pdto.setBillingAgreementDescription(dto.getBillingAgreementDescription());
 			pdto.setSuccessUrl(dto.getSuccessUrl());
 			pdto.setFailUrl(dto.getFailUrl());
+			pdto.setPaymentPolicyId(dto.getPaymentPolicyId());
 		return pdto;
 	}
 
@@ -46,5 +49,13 @@ public class PayPalDto {
 
 	public void setFailUrl(String failUrl) {
 		this.failUrl = failUrl;
+	}
+
+	public Integer getPaymentPolicyId() {
+		return paymentPolicyId;
+	}
+
+	public void setPaymentPolicyId(Integer paymentPoliceId) {
+		this.paymentPolicyId = paymentPoliceId;
 	}
 }

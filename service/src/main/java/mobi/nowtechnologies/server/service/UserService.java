@@ -598,42 +598,6 @@ public class UserService {
 		entityService.saveEntity(payment);
 	}
 
-	public Payment validateCreditCard(int userId, UserRegInfo userRegInfo) {
-		if (userRegInfo == null)
-			throw new ServiceException("userRegInfo is null");
-
-		LOGGER.debug("input parameters userId, userRegInfo: [{}], [{}]",
-				new Object[] { userId, userRegInfo });
-
-		byte communityId = CommunityDao.getMapAsNames().get(userRegInfo.getCommunityName()).getId();
-		String paymentType = userRegInfo.getPaymentType();
-
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(0, paymentType, communityId);
-
-		BigDecimal amount = paymentPolicy.getSubcost();
-		try {
-			Payment pendingPayment = paymentService.createPendingPayment(userId, userRegInfo.getEmail(), userRegInfo.getCommunityName(), 0,
-					UserRegInfoServer.PaymentType.CREDIT_CARD);
-			String vendorTxCode = "DFRD" + getBigRandomInt();
-			pendingPayment.setTxType(TxType.DEFERRED.getCode());
-			pendingPayment.setInternalTxCode(vendorTxCode);
-			pendingPayment.setSubweeks(paymentPolicy.getSubweeks());
-			// entityService.saveEntity(pendingPayment);
-			Payment payment = sagePayService.makeDeferredPayment(userRegInfo, amount, paymentPolicy.getSubweeks(),
-					CURRENCY_GBP, "Authenticate user card", vendorTxCode);
-			// entityService.removeEntity(Payment.class, pendingPayment.getI());
-
-			LOGGER.debug("Output parameter payment=[{}]", payment);
-			return payment;
-		} catch (SagePayException e) {
-			LOGGER.error(e.getMessage(), e);
-			Payment payment = e.getFailedPayment();
-			payment.setUserUID(userId);
-			entityService.saveEntity(payment);
-			throw e;
-		}
-	}
-
 	private void validateCountry(String appVersion, String countryCode) {
 		if (appVersion == null)
 			throw new ServiceException("The parameter appVersion is null");
