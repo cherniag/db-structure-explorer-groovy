@@ -83,6 +83,7 @@ hr.addBothSpaces {
 	display: block;
 }
 h1 {
+    margin: 0;
 	font-size: 1.4em;		
 	color: #1d3150;
 }
@@ -146,9 +147,14 @@ form {
 .clr {
 	clear: both;
 }
-/*layout*/
-/*header*/
+
+p.centered {
+    text-align: center;
+}
+
 .header {
+    text-align: center;
+    height: 47px;
     background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
@@ -162,22 +168,20 @@ form {
         color-stop(0.24, rgb(0,0,97)),
         color-stop(0.62, rgb(0,0,87))
     );
-
-    height: 71px;
 }		
 .logo {
-	display: block;
-	top: 17px;
-	left: 14px;	
-	position: absolute;	
+	display: inline-block;
+    padding-top: 10px;
+    position: relative;
 }
 .logo img {
-	height: 32px;
+	height: 27px;
+    width: 175px;
 }
 
 .container {
 	background-color: #003399;
-	padding: 17px;
+	padding: 10px;
 }
 
 .banner-pane img{
@@ -186,19 +190,18 @@ form {
 }
 
 .banner-pane{
-
-    background-image: linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
-    background-image: -o-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,204,204) 24%, rgb(1,189,189) 62%);
+    background-image: linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
+    background-image: -o-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
+    background-image: -moz-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
+    background-image: -webkit-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
+    background-image: -ms-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
 
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.24, rgb(0,204,204)),
-        color-stop(0.62, rgb(1,189,189))
+        color-stop(0.1, rgb(1,189,189)),
+        color-stop(0.55, rgb(0,204,204))
     );
     border-radius: 5px;
     min-height: 41px;
@@ -210,14 +213,16 @@ form {
     line-height: 1.4em;
     color: #fff;
 }
-.container > div {
-    margin-bottom: 17px;;
-}
 
 .content {
-	padding: 15px;
+	padding: 15px 10px;
 	background-color: #ffffff;
     border-radius: 5px;
+}
+
+.slected_option{
+    color: #003399;
+    font-weight: bold;
 }
 .getAppContent {
 	border: none;
@@ -278,13 +283,11 @@ form {
 	background: transparent url(../imgs/blackberry.png) no-repeat left bottom;	
 }
 
-/*text content*/
 .text {
 	padding-bottom: 12px;
 }
 a.button, button {
-	height: 32px;	
-	font-weight: bold;
+	height: 32px;
 	color: #ffffff;
 	line-height: 29px;
 	text-decoration: none;
@@ -296,8 +299,7 @@ a.button, button {
 
 a.button {
 	background: #142847 url(../imgs/bgs/button.png) repeat-x 0 center;	
-	height: 30px!important;	
-	font-weight: bold;
+	height: 30px!important;
 	color: #ffffff;
 	line-height: 30px!important;
 	text-decoration: none;
@@ -313,11 +315,7 @@ input.accounts{
 	line-height: 25px;
 	border: 1px solid #000000;
 }
-.buttonBox  {
-	float: right;
-	margin: 18px 17px 13px 0;
-	position: relative; 
-}
+
 .buttonBox .button {
 	font-size: 14px;
 }
@@ -405,11 +403,7 @@ input.accounts{
 	text-align: center;
 	line-height: 1em;
 	font-size: 0.8em;
-	padding-top: 10px;
-}
-
-.copyright img {
-	padding-top: 30px;	
+    margin-top: 15px;;
 }
 
 .addSpace {	
@@ -439,7 +433,6 @@ input.accounts{
 	display: block;
 	font-size: 14px;		
 	text-decoration: none;
-	font-weight: bold;
 	margin: 0px;
 }
 .facebookLoginButton {
@@ -488,10 +481,28 @@ form .formButton  {
 	position: absolute;
 	top: 15px;
 	right: 15px;
-	width: 8px;
-	height: 10px;
-	background: transparent url(../imgs/bgs/arrow_button.png) no-repeat;
-	background-size: 8px 10px;	
+	width: 25px;
+	height: 25px;
+	background: transparent url(../imgs/radio_button_on.png) no-repeat;
+	background-size: 25px 25px;
+}
+
+.button-off{
+    background: transparent url(../imgs/radio_button_off.png) no-repeat;
+}
+
+.button-off, .button-on{
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    background-size: 25px 25px;
+}
+
+.button-on{
+    background: transparent url(../imgs/radio_button_on.png) no-repeat;
 }
 
 .leftButtonArrow {
@@ -512,9 +523,21 @@ form .formButton  {
 	white-space: nowrap;
 	overflow: hidden;
 }
+.button-left{
+    float: left;
+    margin: 10px 0 13px 10px;
+    position: relative;
+}
+.button-right  {
+    float: right;
+    margin: 10px 10px 13px 0;
+    position: relative;
+}
 
 .button-small {
-    height: 32px;
+    padding: 0 10px 0 10px;
+    height: 28px;
+    line-height: 31px;
     border-radius: 5px;
     background-image: linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
@@ -530,14 +553,12 @@ form .formButton  {
         color-stop(0.62, rgb(0,46,145))
     );
 
-    line-height: 29px;
 
-    padding: 0 10px 0 20px;
     display: inline-block;
     text-align: center;
-    font-weight: bold;
     color: #ffffff;
     text-decoration: none;
+    font-size: 0.8em;
     font-family: Helvetica, Arial, sans-serif;
 }
 
@@ -547,9 +568,8 @@ form .formButton  {
 
     border-radius: 5px;
     border-width: 0;
-
+    font-weight: lighter;
     text-align: center;
-    font-weight: bold;
     color: #ffffff;
     text-decoration: none;
     font-family: Helvetica, Arial, sans-serif;
@@ -557,37 +577,83 @@ form .formButton  {
 }
 
 .button-disabled{
-    background-color: #000066;
-}
-
-.button-grey{
-    color: #4d4d4d;
-    background-image: linear-gradient(bottom, rgb(180,180,181) 8%, rgb(232,233,233) 51%);
-    background-image: -o-linear-gradient(bottom, rgb(180,180,181) 8%, rgb(232,233,233) 51%);
-    background-image: -moz-linear-gradient(bottom, rgb(180,180,181) 8%, rgb(232,233,233) 51%);
-    background-image: -webkit-linear-gradient(bottom, rgb(180,180,181) 8%, rgb(232,233,233) 51%);
-    background-image: -ms-linear-gradient(bottom, rgb(180,180,181) 8%, rgb(232,233,233) 51%);
+    background-image: linear-gradient(bottom, rgb(0,0,102) 0%);
+    background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,0,102) 0%);
+    background-image: -ms-linear-gradient(bottom, rgb(0,0,102) 0%);
 
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.08, rgb(180,180,181)),
-        color-stop(0.51, rgb(232,233,233))
+        color-stop(0, rgb(0,0,102))
+    );
+}
+
+.button-grey{
+    color: #4d4d4d;
+    background-image: linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(200,200,201)),
+        color-stop(0.8, rgb(232,233,233))
+    );
+    border: 1px solid #bfbfc0;
+}
+
+.button-grey:active{
+    background-image: linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(232,233,233)),
+        color-stop(0.8, rgb(200,200,201))
+    );
+}
+.button-turquoise:active{
+    background-image: linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(19,153,231)),
+        color-stop(0.8, rgb(9,68,103))
     );
 }
 
 .button-turquoise {
-    background-image: linear-gradient(bottom, rgb(9, 68, 103) 2%, rgb(19, 153, 231) 51%);
-    background-image: -o-linear-gradient(bottom, rgb(9, 68, 103) 2%, rgb(19, 153, 231) 51%);
-    background-image: -moz-linear-gradient(bottom, rgb(9, 68, 103) 2%, rgb(19, 153, 231) 51%);
-    background-image: -webkit-linear-gradient(bottom, rgb(9, 68, 103) 2%, rgb(19, 153, 231) 51%);
-    background-image: -ms-linear-gradient(bottom, rgb(9, 68, 103) 2%, rgb(19, 153, 231) 51%);
+    background-image: linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
 
     background-image: -webkit-gradient(
-        linear, left bottom, left top,
-        color-stop(0.02, rgb(9, 68, 103)),
-        color-stop(0.51, rgb(19, 153, 231)));
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(9,68,103)),
+        color-stop(0.8, rgb(19,153,231))
+    );
 }
 
 .button1 {
