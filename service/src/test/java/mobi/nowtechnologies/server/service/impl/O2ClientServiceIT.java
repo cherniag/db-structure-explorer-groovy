@@ -28,30 +28,40 @@ public class O2ClientServiceIT {
 	private O2ClientService o2ClientService;
 	
 	@Test
-	public void sendFreeSms_Successful() throws Exception {
-		// Preparations for test
+	public void testMakePremiumSMSRequest_Failure() throws Exception {
+		// Preparations for test	
+		String subMerchantId = "O2 Tracks";
+		String contentDescription = "Description of content";
+		String contentType = "mqbed_tracks_3107054";
+		String contentCategory = "other";
+		String message = "";
+		String o2PhoneNumber = "447511182660";
+		BigDecimal subCost = new BigDecimal(1);
+		String internalTxId = "";
+		int userId = 1;
+		boolean smsNotify = false;
 		
-			
 		// Invocation of test method
-		boolean result = o2ClientService.sendFreeSms("","");
+		O2Response result = o2ClientService.makePremiumSMSRequest(userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription , subMerchantId, smsNotify  );
 		
 		// Asserts
-		
+		assertNotNull(result);
+		assertEquals(false, result.isSuccessful());
 	}
 	
 	@Test
 	public void testMakePremiumSMSRequest_Successful() throws Exception {
 		// Preparations for test	
 		String subMerchantId = "O2 Tracks";
-		String contentDescription = "O2 tracks subscription";
-		String contentType = "other";
-		String contentCategory = "";
-		String message = "hello, you made subscription";
-		String o2PhoneNumber = "447702059016";
-		BigDecimal subCost = new BigDecimal(100);
-		String internalTxId = "internalTxId";
+		String contentDescription = "Description of content";
+		String contentType = "mqbed_tracks_3107054";
+		String contentCategory = "other";
+		String message = "";
+		String o2PhoneNumber = "447511182663";
+		BigDecimal subCost = new BigDecimal(1);
+		String internalTxId = "";
 		int userId = 1;
-		boolean smsNotify = true;
+		boolean smsNotify = false;
 		
 		// Invocation of test method
 		O2Response result = o2ClientService.makePremiumSMSRequest(userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription , subMerchantId, smsNotify  );

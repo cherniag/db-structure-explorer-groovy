@@ -2,10 +2,7 @@
 package uk.co.o2.soa.chargecustomerdata;
 
 import java.math.BigInteger;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -40,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+@XmlRootElement(name = "billSubscriber", namespace="http://soa.o2.co.uk/chargecustomerdata_1")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "billSubscriber", propOrder = {
     "msisdn",
