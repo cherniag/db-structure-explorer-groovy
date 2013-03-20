@@ -79,14 +79,13 @@
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
                             <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <span class="button-on"/>
                          </c:when>
                         <c:otherwise>
                             <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <span class="button-off"/>
                         </c:otherwise>
                     </c:choose>
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
 				</div>
 				
 			</c:forEach>
@@ -94,11 +93,8 @@
 		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
-			<div class="contentButton contentButtonGrey formButton rel formButtonGrey" >
+			<div class="rel" >
 				<input class="button-turquoise" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
-				<span class="rightButtonArrowBlack">
-					&nbsp;
-				</span>
 			</div>
 		</c:if>
 		
