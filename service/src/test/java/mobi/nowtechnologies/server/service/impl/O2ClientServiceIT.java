@@ -56,8 +56,8 @@ public class O2ClientServiceIT {
 		String contentDescription = "Description of content";
 		String contentType = "mqbed_tracks_3107054";
 		String contentCategory = "other";
-		String message = "";
-		String o2PhoneNumber = "447511182663";
+		String message = "gfgfg";
+		String o2PhoneNumber = "447511182664";
 		BigDecimal subCost = new BigDecimal(1);
 		String internalTxId = "";
 		int userId = 1;
