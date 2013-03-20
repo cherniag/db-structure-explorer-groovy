@@ -255,6 +255,7 @@ public class SMSNotification {
 		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, null);
 		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
 		
-		migService.makeFreeSMSRequest(user.getMobile(), message, title);
+		if(!message.isEmpty())
+			migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
 }

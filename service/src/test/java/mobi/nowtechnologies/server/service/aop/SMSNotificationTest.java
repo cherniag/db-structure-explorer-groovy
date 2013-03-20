@@ -104,6 +104,34 @@ public class SMSNotificationTest {
 	}
 	
 	@Test
+	public void testSendLimitedStatusSMS_EmptyMsg_Failure()
+			throws Exception {
+		String msg = "";
+		String title = "O2";
+		String paymentsUrl = "https://chartsnow.mobi/web/payments.html";
+		String tinyUrlService = "http://tinyurl.com/api-create.php";
+		User user = UserFactory.createUser();
+		user.getStatus().setName(UserStatus.LIMITED.name());
+		user.setUserName("+447989326753");
+		user.setToken("8875de694fdc1e69f582672f0ab97a6c");
+		Community community = user.getUserGroup().getCommunity();
+		community.setRewriteUrlParameter("o2");
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		fixture.setPaymentsUrl(paymentsUrl);
+		fixture.setTinyUrlService(tinyUrlService);
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(Object[].class), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendLimitedStatusSMS(user);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
+	
+	@Test
 	public void testSendLimitedStatusSMS_WithBadTinyServiceUrl_Success()
 		throws Exception {
 		String msg = "message1";
@@ -210,6 +238,34 @@ public class SMSNotificationTest {
 	}
 	
 	@Test
+	public void testSendUnsubscribePotentialSMS_EmptyMsg_Failure()
+			throws Exception {
+		String msg = "";
+		String title = "O2";
+		String unsubscribeUrl = "http://musicqubed.com/web/payments/unsubscribe.html";
+		String tinyUrlService = "bad url";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		fixture.setUnsubscribeUrl(unsubscribeUrl);
+		fixture.setTinyUrlService(tinyUrlService);
+		String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
+		
+		String url =  unsubscribeUrl + "?community="+community.getRewriteUrlParameter()+"&_REMEMBER_ME=" + rememberMeToken;
+		String[] args = {url};
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(String[].class), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendUnsubscribePotentialSMS(user);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
+	
+	@Test
 	public void testSendUnsubscribeAfterSMS_NotCurrentPaymentDetails_Failure()
 		throws Exception {
 		User user = UserFactory.createUser(null, new BigDecimal(0));
@@ -253,6 +309,27 @@ public class SMSNotificationTest {
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_EmptyMsg_Failure()
+			throws Exception {
+		String msg = "";
+		String title = "O2";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		user.setNextSubPayment((int)(System.currentTimeMillis()/1000+4*24*60*60));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendUnsubscribeAfterSMS(user);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
 	
 	@Test
@@ -308,6 +385,26 @@ public class SMSNotificationTest {
 		fixture.sendLowBalanceWarning(user);
 		
 		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendLowBalanceWarning_EmptyMsg_Failure()
+			throws Exception {
+		String msg = "";
+		String title = "O2";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendLowBalanceWarning(user);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
 	
 	@Test

@@ -180,25 +180,21 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setContentCategory(contentCategory);
 		billSubscriber.setContentType(contentType);
 		billSubscriber.setContentDescription(contentDescription);
-		billSubscriber.setApplicationReference(internalTxId);
+		billSubscriber.setApplicationReference("");
 		billSubscriber.setSmsNotify(smsNotify);
 		billSubscriber.setSmsMessage(message);
 		billSubscriber.setPromotionCode("");
 
 		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
 		
-		Object billSubscriberResponse = null;
+		Object response = null;
 		try{			
-			billSubscriberResponse = webServiceGateway.sendAndReceive(CHARGE_CUSTOMER_ENDPOINT, billSubscriber);
-		}catch(SoapFaultClientException e){
-			SoapFault faultMsg = e.getSoapFault();
-			SOAFaultType soaFaultType = new SOAFaultType();
-			soaFaultType.setFaultDescription(faultMsg.getFaultStringOrReason());
-			soaFaultType.setSOAFaultCode(faultMsg.getFaultCode().toString());
-			billSubscriberResponse = new BillSubscriberFault(e.getMessage(), soaFaultType);
+			response = webServiceGateway.sendAndReceive(CHARGE_CUSTOMER_ENDPOINT, billSubscriber);
+		}catch(SoapFaultException e){
+			response = new BillSubscriberFault(e.getMessage(), (SOAFaultType)e.getSoapFaultObject());
 		}
 
-		O2Response o2Response = O2Response.valueOf(billSubscriberResponse);
+		O2Response o2Response = O2Response.valueOf(response);
 
 		LOGGER.debug("Output parameter o2Response=[{}]", o2Response);
 		return o2Response;

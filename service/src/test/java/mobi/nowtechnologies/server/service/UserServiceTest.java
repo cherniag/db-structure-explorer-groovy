@@ -1887,7 +1887,7 @@ public class UserServiceTest {
 				User passedUser = (User)invocation.getArguments()[0];
 				
 				assertEquals(2, passedUser.getSubBalance());
-				assertEquals(oldNextSubPayment + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
+				assertEquals(currentTimeSeconds + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(currentTimeMillis, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
@@ -2197,7 +2197,7 @@ public class UserServiceTest {
 				User passedUser = (User)invocation.getArguments()[0];
 				
 				assertEquals(2, passedUser.getSubBalance());
-				assertEquals(oldNextSubPayment+submittedPayment.getSubweeks()*Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
+				assertEquals(currentTimeSeconds+submittedPayment.getSubweeks()*Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(currentTimeSeconds, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
