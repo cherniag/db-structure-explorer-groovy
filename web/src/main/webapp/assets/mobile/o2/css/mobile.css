@@ -200,15 +200,46 @@ p.centered {
 	padding: 10px;
 }
 
-.banner-pane img{
-    max-height: 100px;
-    max-width:  100px;
+.pane-red span{
+    padding-left: 30px;
 }
 
-.banner-pane{
+.pane-red img{
+    display: block;
+    position: absolute;
+    top: 11px;
+    max-height: 20px;
+    max-width:  20px;
+}
+
+.banner-pane img, {
+    max-height: 50px;
+    max-width:  50px;
+}
+
+.pane-red, .banner-pane{
     padding: 10px 10px 12px 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+}
+
+.pane-red{
+    background-image: linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+    background-image: -o-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+    background-image: -moz-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+    background-image: -webkit-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+    background-image: -ms-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.28, rgb(183,1,1)),
+        color-stop(0.64, rgb(153,0,0))
+    );
+}
+
+.banner-pane{
     background-image: linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
     background-image: -o-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
     background-image: -moz-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
@@ -224,7 +255,7 @@ p.centered {
     );
 }
 
-.banner-pane span {
+.pane-red span, .banner-pane span{
     text-align: center;
     font-weight: bold;
     font-size: 16px;

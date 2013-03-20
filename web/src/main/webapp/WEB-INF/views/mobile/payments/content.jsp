@@ -3,13 +3,16 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="header">
-<div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
 </div>
 <div class="container">
-    <c:set var="accountBannerON">
-        <s:message code="pays.page.note.account.on"/>
-    </c:set>
+    <c:if test="${onFreeTrial}">
+        <div class="pane-red rel">
+            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
+            <span class="alert-text"><s:message code="pays.subscription.alert.text" /></span>
+        </div>
+    </c:if>
+    <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
     <c:if test="${accountBannerON eq 'true'}">
         <div class="banner-pane">
             <c:if test="${not empty paymentAccountBanner}">
