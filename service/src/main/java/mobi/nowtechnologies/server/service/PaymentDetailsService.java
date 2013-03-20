@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static mobi.nowtechnologies.server.shared.Utils.isNull;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -159,6 +160,8 @@ public class PaymentDetailsService {
 
     @Transactional
     public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
+        if(isNull(segment))
+            segment = SegmentType.BUSINESS;
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);
         return mergePaymentPolicies(user, paymentPolicies);
     }

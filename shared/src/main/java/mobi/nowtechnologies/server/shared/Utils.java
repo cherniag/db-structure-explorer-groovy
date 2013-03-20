@@ -200,4 +200,8 @@ public class Utils {
             return s;
         return s.substring(0,i);
     }
+
+    public static <T> boolean  isNull(T o) {
+        return o == null ? true : false;
+    }
 }
