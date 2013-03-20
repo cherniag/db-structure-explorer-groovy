@@ -16,7 +16,7 @@
         <p><s:message code="pays.page.options.note.o2psms" arguments="${subcost}, ${suweeks}"/></p>
 
         <div class="rel">
-            <input class="button-turquoise" title="payments/o2psms_confirm.html?paymentPolicyId=${paymetPolicyId}" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
+            <input class="button-turquoise" title="payments/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
             <input class="button-grey" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
         </div>
     </div>
