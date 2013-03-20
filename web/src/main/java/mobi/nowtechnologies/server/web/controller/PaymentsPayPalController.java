@@ -39,7 +39,7 @@ public class PaymentsPayPalController extends CommonController {
 
 	public static final String REQUEST_PARAM_PAYPAL = "result";
 	private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
-	private static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPoliceId";
+	private static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPolicyId";
 	
 	public static final String SUCCESSFUL_RESULT = "successful";
 	public static final String FAIL_RESULT = "fail";
