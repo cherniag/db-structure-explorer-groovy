@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -59,10 +60,11 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPolicies", paymentPolicies);
 
         mav.addObject("nonIOSDevice", !user.isIOSDevice());
-        PaymentDetails paymentDetails = getPaymentDetails(user);
+        PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
         mav.addObject("paymentDetails", paymentDetails);
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
-        mav.addObject("activePolicy", paymentDetails != null ? paymentDetails.getPaymentPolicy() : null);
+        PaymentPolicy activePolicy = paymentDetails != null ? paymentDetails.getPaymentPolicy() : null;
+        mav.addObject("activePolicy", activePolicy);
         mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
@@ -82,10 +84,6 @@ public class PaymentsController extends CommonController {
         if(isEmpty(paymentPolicy))
             return Collections.emptyList();
         return paymentPolicy;
-    }
-
-    private PaymentDetails getPaymentDetails(User user) {
-        return  paymentDetailsService.getPaymentDetails(user);
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
