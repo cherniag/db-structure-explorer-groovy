@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
 	<div class="content">
@@ -22,9 +22,7 @@
 		
 
 			<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
-			<span class="rightButtonArrow">
-				&nbsp;
-			</span>
+            <span class="button-arrow"/>
 		</div>
 	</div>
 </div>

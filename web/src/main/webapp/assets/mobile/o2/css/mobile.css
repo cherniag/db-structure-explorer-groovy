@@ -64,6 +64,8 @@ a {
 	 font-weight: bold;
 }
 hr {
+    height: 1px;
+    border: none;
 	background-color: #cccccc;
     margin: 5px 0 10px 0;
 }
