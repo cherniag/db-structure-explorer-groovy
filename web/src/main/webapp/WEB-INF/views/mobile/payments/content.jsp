@@ -72,7 +72,9 @@
                         <c:when test="${nonIOSDevice && paymentPolicy.paymentType == 'iTunesSubscription'}">
 
                         </c:when>
-                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'
+                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'                        
+                        && paymentDetails != null
+                        && activePolicy != null
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">

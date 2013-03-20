@@ -62,7 +62,7 @@ public class PaymentsController extends CommonController {
         PaymentDetails paymentDetails = getPaymentDetails(user);
         mav.addObject("paymentDetails", paymentDetails);
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
-        mav.addObject("activePolicy", paymentDetails.getPaymentPolicy());
+        mav.addObject("activePolicy", paymentDetails != null ? paymentDetails.getPaymentPolicy() : null);
         mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
