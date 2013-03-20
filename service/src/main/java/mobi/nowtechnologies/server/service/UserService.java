@@ -1071,11 +1071,7 @@ public class UserService {
 
 		final boolean isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes = (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)) || (user.isO2Business() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION));
 		if (isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes) {
-			if (!wasInLimitedStatus) {
-				user.setNextSubPayment(user.getNextSubPayment() + subweeks * Utils.WEEK_SECONDS);
-			} else {
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
-			}
+			user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 		} else if (!isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
