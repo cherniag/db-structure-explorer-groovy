@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.o2.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 import javax.xml.transform.dom.DOMSource;
 
@@ -20,8 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import uk.co.o2.soa.chargecustomerdata.*;
+import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
+import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
+import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
@@ -33,6 +36,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";
 	public final static String GET_USER_DETAILS_REQ = "/user/carrier/o2/details/";
 	public final static String SUBSCRIBER_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/Subscriber_2_0";
+	public final static String CHARGE_CUSTOMER_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/ChargeCustomer_1_0";
 	public final static String SEND_MESSAGE_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/SendMessage_1_1";
 
 	private String serverO2Url;
@@ -171,7 +175,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setMsisdn(formatedO2PhoneNumber);
 		billSubscriber.setSubMerchantId(subMerchantId);
 		billSubscriber.setPriceGross(subCostPences);
-		billSubscriber.setPriceNet(BigInteger.ZERO);
+		billSubscriber.setPriceNet(MULTIPLICAND_100.toBigInteger());
 		billSubscriber.setDebitCredit("DEBIT");
 		billSubscriber.setContentCategory(contentCategory);
 		billSubscriber.setContentType(contentType);
@@ -179,25 +183,20 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setApplicationReference(internalTxId);
 		billSubscriber.setSmsNotify(smsNotify);
 		billSubscriber.setSmsMessage(message);
-		billSubscriber.setPromotionCode(null);
+		billSubscriber.setPromotionCode("");
 
 		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
-		//BillSubscriberResponse billSubscriberResponse = webServiceGateway.sendAndReceive(SUBSCRIBER_ENDPOINT, billSubscriber);
-		BillSubscriberResponse billSubscriberResponse = new BillSubscriberResponse();
-		ServiceResult serviceResult= new ServiceResult();
-		serviceResult.setResultCode("779");
-		serviceResult.setResultDescription("Successful");
-		serviceResult.setSagTransactionId("sagTransactionId_1");
-		serviceResult.setApplicationReference(internalTxId);
-		Map resultData = new Map(){{
-			item = new ArrayList<MapEntry>();
-			MapEntry mapEntry = new MapEntry();
-			mapEntry.setKey("71");
-			mapEntry.setValue(o2PhoneNumber);
-			item.add(mapEntry);
-		}};
-		serviceResult.setResultData(resultData );
-		billSubscriberResponse.setResult(serviceResult);
+		
+		Object billSubscriberResponse = null;
+		try{			
+			billSubscriberResponse = webServiceGateway.sendAndReceive(CHARGE_CUSTOMER_ENDPOINT, billSubscriber);
+		}catch(SoapFaultClientException e){
+			SoapFault faultMsg = e.getSoapFault();
+			SOAFaultType soaFaultType = new SOAFaultType();
+			soaFaultType.setFaultDescription(faultMsg.getFaultStringOrReason());
+			soaFaultType.setSOAFaultCode(faultMsg.getFaultCode().toString());
+			billSubscriberResponse = new BillSubscriberFault(e.getMessage(), soaFaultType);
+		}
 
 		O2Response o2Response = O2Response.valueOf(billSubscriberResponse);
 

@@ -4,11 +4,17 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+import org.springframework.ws.support.MarshallingUtils;
 
 public class WebServiceGateway extends WebServiceGatewaySupport {
+	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
 	private WebServiceMessageCallback defaultWebServiceMessageHandler;
 
@@ -26,7 +32,7 @@ public class WebServiceGateway extends WebServiceGatewaySupport {
 
 	@SuppressWarnings("unchecked")
 	public <T> T sendAndReceive(String endpoint, Object requestPayload) {
-		JAXBElement<T> element = (JAXBElement<T>)getWebServiceTemplate().marshalSendAndReceive(endpoint, requestPayload, defaultWebServiceMessageHandler);
-		return element.getValue();
+			JAXBElement<T> element = (JAXBElement<T>)getWebServiceTemplate().marshalSendAndReceive(endpoint, requestPayload, defaultWebServiceMessageHandler);
+			return element.getValue();
 	}
 }
