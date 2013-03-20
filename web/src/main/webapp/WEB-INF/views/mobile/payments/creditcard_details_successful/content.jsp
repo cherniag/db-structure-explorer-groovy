@@ -4,10 +4,6 @@
 <div class="header">
 <div class="gradient_border">&#160;</div>
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-	<%--<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="account.html" class="button buttonTop"><s:message code="page.main.menu.my.account" /></a>
-	</div>--%>
 </div>
 <div class="container">
 	<div class="content">
