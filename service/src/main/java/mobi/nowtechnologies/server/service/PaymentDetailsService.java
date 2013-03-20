@@ -193,11 +193,6 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public PaymentDetails getPaymentDetails(User user) {
-		return user.getCurrentPaymentDetails();
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public PaymentDetails getPendingPaymentDetails(int userId) {
 		User user = userService.findById(userId);
 		return user.getPendingPaymentDetails();
