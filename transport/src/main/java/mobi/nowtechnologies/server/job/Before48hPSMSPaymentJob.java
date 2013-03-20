@@ -59,6 +59,9 @@ public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJo
 	}
 
 	private void set(JobExecutionContext context) {
+		if(context == null || context.getMergedJobDataMap() == null)
+			return;
+			
 		JobDataMap jobDataMap = context.getMergedJobDataMap();
 		try {
 			userService = (UserService)jobDataMap.get("userService");
