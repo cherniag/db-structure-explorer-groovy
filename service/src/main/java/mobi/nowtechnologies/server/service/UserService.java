@@ -1096,7 +1096,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if (!isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+			if (!isnonO2User && !isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
