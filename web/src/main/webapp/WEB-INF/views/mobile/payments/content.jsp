@@ -81,7 +81,7 @@
                             <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                          </c:when>
                         <c:otherwise>
-                            <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                         </c:otherwise>
                     </c:choose>
 					<span class="rightButtonArrow">
