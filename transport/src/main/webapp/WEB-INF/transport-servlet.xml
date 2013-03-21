@@ -319,11 +319,6 @@
 	<!-- Before 48H O2 PSMS Payment task -->
 	<bean id="before48hPSMSPaymentJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="mobi.nowtechnologies.server.job.Before48hPSMSPaymentJob" />
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="userService" value-ref="service.UserService"/>
-            </map>
-        </property>
 	</bean>
 	
 	<bean id="before48hPSMSPaymentTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">

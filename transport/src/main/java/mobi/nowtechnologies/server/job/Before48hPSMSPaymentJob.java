@@ -10,7 +10,9 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
 import org.apache.log4j.MDC;
-import org.quartz.*;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -22,13 +24,15 @@ public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJo
 	
 	private static final Pageable PAGEABLE_FOR_BEFORE_48H_PAYMENT_JOB = new PageRequest(0, 1000, new Sort(Direction.ASC, "nextSubPayment"));
 
-	protected UserService userService;
+	protected static transient UserService userService;
+	
+	public Before48hPSMSPaymentJob(){
+		userService = (UserService) SpringContext.getBean("service.UserService");
+	}
 
 	@Override
     public void executeInternal(JobExecutionContext context) throws JobExecutionException {
-		try {
-			set(context);
-			
+		try {			
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("[START] Before 48h Expire PSMS Payment job...");
 			
@@ -55,19 +59,6 @@ public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJo
 			LOGGER.error("Error while Before 48h Expire PSMS Payment job. {}", e);
 		} finally {
 			LogUtils.removeClassNameMDC();
-		}
-	}
-
-	private void set(JobExecutionContext context) {
-		if(context == null || context.getMergedJobDataMap() == null)
-			return;
-			
-		JobDataMap jobDataMap = context.getMergedJobDataMap();
-		try {
-			if(userService == null)
-				userService = (UserService)jobDataMap.get("userService");
-		} catch (Exception e) {
-			LOGGER.warn(e.getMessage());
 		}
 	}
 }

@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -432,5 +433,6 @@ public class SMSNotificationTest {
 		fixture.setMessageSource(mockMessageSource);
 		fixture.setRememberMeTokenCookieName("_REMEMBER_ME");
 		fixture.setRememberMeServices(rememberMeServices);
+        when(mockMessageSource.getMessage(anyString(), anyString(), (Object[])anyObject(), anyString(), any(Locale.class))).thenReturn("");
 	}
 }

@@ -1,19 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
 
 public class UserFactory
@@ -53,6 +48,7 @@ public class UserFactory
 		paymentStatus.setId(2);
 		
 		DeviceType deviceType = new DeviceType();
+		deviceType.setName("IOS");
 		deviceType.setI((byte)5);
 		
 		Community community = CommunityFactory.createCommunity();
