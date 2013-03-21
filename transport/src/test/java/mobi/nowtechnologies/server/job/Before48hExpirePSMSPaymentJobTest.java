@@ -49,6 +49,6 @@ public class Before48hExpirePSMSPaymentJobTest {
 	public void setUp()
 		throws Exception {
 		fixture = new Before48hPSMSPaymentJob();
-		fixture.userService = mockUserService;
+		Before48hPSMSPaymentJob.userService = mockUserService;
 	}
 }
