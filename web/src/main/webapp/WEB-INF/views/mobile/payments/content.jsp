@@ -6,20 +6,25 @@
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
 </div>
 <div class="container">
-    <c:if test="${trialExpired}">
-        <div class="pane-red rel">
-            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
-            <span class="alert-text"><s:message code="pays.subscription.alert.text" /></span>
-        </div>
-    </c:if>
     <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
     <c:if test="${accountBannerON eq 'true'}">
-        <div class="banner-pane">
-            <c:if test="${not empty paymentAccountBanner}">
-                <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
-            </c:if>
-            <span>${paymentAccountNotes}</span>
-        </div>
+        <c:choose>
+            <c:when test="${trialExpiredOrLimited}">
+                <div class="pane-red rel">
+                    <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
+                    <span class="alert-text">${paymentAccountNotes}</span>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="banner-pane">
+                    <c:if test="${not empty paymentAccountBanner}">
+                        <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
+                    </c:if>
+                    <span>${paymentAccountNotes}</span>
+                </div>
+            </c:otherwise>
+        </c:choose>
+
     </c:if>
 	<div class="content">
 		
