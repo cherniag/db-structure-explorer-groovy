@@ -2,12 +2,9 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
-<div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-	</div>
+    <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
+   <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
 	<div class="content">
@@ -218,11 +215,9 @@
 				<!--end one record in profile-->										
 			</div>
 			<!--button-->
-			<div class="contentButton formButton rad5 rel" >
+			<div class="rel" >
 				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
-				<span class="rightButtonArrow">
-					&nbsp;
-				</span>
+                <span class="button-arrow"/>
 			</div>		
 		</form:form>
 	</div>

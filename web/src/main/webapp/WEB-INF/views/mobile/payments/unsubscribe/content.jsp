@@ -3,13 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
-	<c:if test="${result == null}">
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-	</div>
-	</c:if>
+    <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+    <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">		
 	<div class="content">
@@ -28,18 +24,12 @@
 							</div>
 					</s:hasBindErrors>
 					<!--button -->
-					<div class="contentButton formButton rad5 rel" >
+					<div class="rel" >
 						<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
-						<span class="leftButtonArrow">
-							&nbsp;
-						</span>
 					</div>
 					<!--button -->
-					<div class="contentButton contentButtonGrey formButton formButtonGrey rad5 rel" >
-						<input type="submit" class="button-turquoise" value="<s:message code='unsub.page.form.submit' />" />
-						<span class="rightButtonArrowBlack">
-							&nbsp;
-						</span>
+					<div class="rel" >
+						<input type="submit" class="button-grey" value="<s:message code='unsub.page.form.submit' />" />
 					</div>
 				</form:form>
 			</c:when>
@@ -47,11 +37,9 @@
 				<h1><s:message code="unsub.page.header" /></h1>
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
-				<div class="contentButton formButton rad5 rel" >
+				<div class="rel" >
 					<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
-					<span class="rightButtonArrowBlack">
-						&nbsp;
-					</span>
+					<span class="button-arrow"/>
 				</div>
 			</c:otherwise>
 		</c:choose>

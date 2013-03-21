@@ -3,13 +3,16 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="header">
-<div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
 </div>
 <div class="container">
-    <c:set var="accountBannerON">
-        <s:message code="pays.page.note.account.on"/>
-    </c:set>
+    <c:if test="${trialExpired}">
+        <div class="pane-red rel">
+            <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
+            <span class="alert-text"><s:message code="pays.subscription.alert.text" /></span>
+        </div>
+    </c:if>
+    <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
     <c:if test="${accountBannerON eq 'true'}">
         <div class="banner-pane">
             <c:if test="${not empty paymentAccountBanner}">
@@ -43,7 +46,7 @@
 		
 		<h1><s:message code="pays.page.h1.options" /></h1>
 		<p>${paymentPoliciesNote}</p>
-		
+		<hr />
 		<div class="setOfButtons">
 			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
 				<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
@@ -81,9 +84,13 @@
                             <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                             <span class="button-on"/>
                          </c:when>
-                        <c:otherwise>
+                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
                             <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                             <span class="button-off"/>
+                        </c:when>
+                        <c:otherwise>
+                            <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <span class="button-arrow"/>
                         </c:otherwise>
                     </c:choose>
 				</div>
@@ -91,12 +98,11 @@
 			</c:forEach>
 		</div>
 		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
-			<hr />
-			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="rel" >
-				<input class="button-turquoise" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+                <div class="cross-text"><span>  <s:message code="pays.deactivate.header" />  </span>  </div>
+                <input class="button-grey" title="payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
 			</div>
 		</c:if>
-		
-	</div>
+
+    </div>
 </div>

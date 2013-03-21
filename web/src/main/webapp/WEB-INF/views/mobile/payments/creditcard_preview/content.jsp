@@ -2,14 +2,12 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div id="mainContent">
-<div class="gradient_border">&#160;</div>
 	<form:form modelAttribute="creditCardDto" method="post">
 	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 	<div class="header">
-		<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
-		<div class="buttonBox">
-		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-		</div>				
+        <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+        <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
+       <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 	</div>
 	<div class="container">
 		<div class="content">
@@ -116,9 +114,7 @@
 				
 				<div class="contentButton formButton rad5 rel" id="actionButtons" >
 					<input type="button" class="button-turquoise" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
+                    <span class="button-arrow"/>
 				</div>
 			
 				<div id="ajaxLoading" style="display:none">

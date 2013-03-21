@@ -64,10 +64,25 @@ a {
 	 font-weight: bold;
 }
 hr {
-	background-color: #ffffff; 
-	height: 1px; 
-	margin: 18px;
-	border: 0 none;
+    height: 1px;
+    border: none;
+	background-color: #cccccc;
+    margin: 5px 0 10px 0;
+}
+
+.cross-text{
+    height: 1px;
+    background-color: #cccccc;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.cross-text span {
+    padding:0 0.5em;
+    font-weight: bold;
+    background-color: white;
+    position: relative;
+    color: #ccc;;
+    top: -0.5em;
 }
 
 hr.addSpace2 {
@@ -83,7 +98,7 @@ hr.addBothSpaces {
 	display: block;
 }
 h1 {
-    margin: 0;
+    margin: 0 0 3px 0;
 	font-size: 1.4em;		
 	color: #1d3150;
 }
@@ -111,7 +126,9 @@ select {
 }
 p  {
 	font-size: 1.1em;
+    margin: 0 0 5px 0;
 }
+
 .content p {
 	font-size: 16px;		
 	line-height: 1.4em;
@@ -184,9 +201,43 @@ p.centered {
 	padding: 10px;
 }
 
-.banner-pane img{
-    max-height: 100px;
-    max-width:  100px;
+.pane-red span{
+    padding-left: 35px;
+}
+
+.pane-red img{
+    display: block;
+    position: absolute;
+    top: 9px;
+    max-height: 25px;
+    max-width:  25px;
+}
+
+.banner-pane img, {
+    max-height: 50px;
+    max-width:  50px;
+}
+
+.pane-red, .banner-pane{
+    padding: 10px 10px 12px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.pane-red{
+    background-image: linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -o-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -moz-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -webkit-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -ms-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(153,0,0)),
+        color-stop(0.87, rgb(183,1,1))
+    );
 }
 
 .banner-pane{
@@ -203,12 +254,11 @@ p.centered {
         color-stop(0.1, rgb(1,189,189)),
         color-stop(0.55, rgb(0,204,204))
     );
-    border-radius: 5px;
-    min-height: 41px;
 }
 
-.banner-pane span {
-    margin: 7px 21px;
+.pane-red span, .banner-pane span{
+    text-align: center;
+    font-weight: bold;
     font-size: 16px;
     line-height: 1.4em;
     color: #fff;
@@ -403,7 +453,7 @@ input.accounts{
 	text-align: center;
 	line-height: 1em;
 	font-size: 0.8em;
-    margin-top: 15px;;
+    margin: 15px 0;
 }
 
 .addSpace {	
@@ -483,15 +533,11 @@ form .formButton  {
 	right: 15px;
 	width: 25px;
 	height: 25px;
-	background: transparent url(../imgs/radio_button_on.png) no-repeat;
+	background: transparent url(../imgs/arrow_grey.png) no-repeat;
 	background-size: 25px 25px;
 }
 
-.button-off{
-    background: transparent url(../imgs/radio_button_off.png) no-repeat;
-}
-
-.button-off, .button-on{
+.button-off, .button-on, .button-arrow{
     display: block;
     position: absolute;
     top: 8px;
@@ -499,6 +545,17 @@ form .formButton  {
     width: 25px;
     height: 25px;
     background-size: 25px 25px;
+}
+
+.button-arrow{
+    background: transparent url(../imgs/arrow_right.png) no-repeat;
+    top: 12px;
+    right: 0;
+    background-size: 10px 13px;
+}
+
+.button-off{
+    background: transparent url(../imgs/radio_button_off.png) no-repeat;
 }
 
 .button-on{
@@ -536,24 +593,11 @@ form .formButton  {
 
 .button-small {
     padding: 0 10px 0 10px;
-    height: 28px;
-    line-height: 31px;
-    border-radius: 5px;
-    background-image: linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
-    background-image: -o-linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,39,130) 24%, rgb(0,46,145) 62%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.24, rgb(0,39,130)),
-        color-stop(0.62, rgb(0,46,145))
-    );
-
-
+    height: 27px;
+    line-height: 29px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    background-color: #003399;
     display: inline-block;
     text-align: center;
     color: #ffffff;
@@ -565,7 +609,6 @@ form .formButton  {
 .button1, .button-turquoise, .button-grey, .button-disabled{
     width: 100%;
     height: 41px;
-
     border-radius: 5px;
     border-width: 0;
     font-weight: lighter;
@@ -577,6 +620,7 @@ form .formButton  {
 }
 
 .button-disabled{
+    opacity: 1;
     background-image: linear-gradient(bottom, rgb(0,0,102) 0%);
     background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%);
     background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%);
@@ -960,6 +1004,8 @@ div.inputAreaBox  {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    margin: 3px 0 10px 0;
+    border: 1px solid #ccc;
 }
 .oneField  textarea , textarea {
     font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif;
