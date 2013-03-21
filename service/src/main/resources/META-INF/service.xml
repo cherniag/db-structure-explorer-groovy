@@ -341,6 +341,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
+		
+		<property name="subscriberEndpoint" value="${o2.service.endpoint.subscriber_2_0}" />
+		<property name="chargeCustomerEndpoint" value="${o2.service.endpoint.sendmessage_1_1}" />
+		<property name="sendMessageEndpoint" value="${o2.service.endpoint.sendmessage_1_1}" />
 	</bean>
 
 	<bean id="security.nowTechUserDetailsService" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper" />
