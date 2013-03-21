@@ -273,10 +273,12 @@ public class SMSNotification {
 	}
 
 	public boolean rejectDevice(User user, String code) {
-		String devices = messageSource.getMessage(null, code, null, null, null);
+		Community community = user.getUserGroup().getCommunity();  
+	  	String communityUrl = community.getRewriteUrlParameter();  
+	  	String devices = messageSource.getMessage(communityUrl, code, null, null, null); 
 		for (String device : devices.split(",")) {
 			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
-				LOGGER.warn("SMS will not send. See " + code);
+				LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
 				return true;
 			}
 		}
