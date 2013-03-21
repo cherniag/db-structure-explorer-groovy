@@ -272,7 +272,7 @@ public class SMSNotification {
 			migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
 
-	private boolean rejectDevice(User user, String code) {
+	public boolean rejectDevice(User user, String code) {
 		String devices = messageSource.getMessage(null, code, null, null, null);
 		for (String device : devices.split(",")) {
 			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
