@@ -215,7 +215,7 @@
 				<!--end one record in profile-->										
 			</div>
 			<!--button-->
-			<div class="contentButton formButton rad5 rel" >
+			<div class="rel" >
 				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
                 <span class="button-arrow"/>
 			</div>		

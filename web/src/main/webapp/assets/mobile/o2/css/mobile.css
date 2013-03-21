@@ -81,6 +81,7 @@ hr {
     font-weight: bold;
     background-color: white;
     position: relative;
+    color: #ccc;;
     top: -0.5em;
 }
 
@@ -97,7 +98,7 @@ hr.addBothSpaces {
 	display: block;
 }
 h1 {
-    margin: 0;
+    margin: 0 0 3px 0;
 	font-size: 1.4em;		
 	color: #1d3150;
 }
@@ -1003,6 +1004,8 @@ div.inputAreaBox  {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    margin: 3px 0 10px 0;
+    border: 1px solid #ccc;
 }
 .oneField  textarea , textarea {
     font-size: 0.8em; font-family:  Helvetica, Arial, sans-serif;

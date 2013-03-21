@@ -26,12 +26,10 @@
 					<!--button -->
 					<div class="rel" >
 						<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
-						<span class="button-arrow" />
 					</div>
 					<!--button -->
 					<div class="rel" >
-						<input type="submit" class="button-turquoise" value="<s:message code='unsub.page.form.submit' />" />
-						<span class="button-arrow"/>
+						<input type="submit" class="button-grey" value="<s:message code='unsub.page.form.submit' />" />
 					</div>
 				</form:form>
 			</c:when>
