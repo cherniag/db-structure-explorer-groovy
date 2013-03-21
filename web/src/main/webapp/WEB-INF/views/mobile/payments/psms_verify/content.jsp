@@ -3,13 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-	<c:if test="${null==result && result!='successful'}">
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-	</div>
-	</c:if> 
+    <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
+    <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
 	<div class="content">
@@ -60,10 +56,8 @@
 				<form:hidden path="operator"/>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input id="resendSms" class="button" type="button" value="<s:message code='pay.psms.verify.resend' />">
-					<span class="rightButtonArrow">
-					&nbsp;
-					</span>
+					<input id="resendSms" class="button-turquoise" type="button" value="<s:message code='pay.psms.verify.resend' />">
+					<span class="button-arrow"/>
 				</div>
 				
 				<div id="ajaxLoading" style="display:none;">
