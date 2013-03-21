@@ -6,7 +6,7 @@
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
 </div>
 <div class="container">
-    <c:if test="${onFreeTrial}">
+    <c:if test="${trialExpired}">
         <div class="pane-red rel">
             <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
             <span class="alert-text"><s:message code="pays.subscription.alert.text" /></span>

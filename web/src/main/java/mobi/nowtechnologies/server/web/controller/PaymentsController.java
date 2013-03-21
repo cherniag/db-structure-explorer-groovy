@@ -60,7 +60,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPolicies", paymentPolicies);
 
         mav.addObject("nonIOSDevice", !user.isIOSDevice())
-        .addObject("onFreeTrial", user.isOnFreeTrial());
+        .addObject("trialExpired", user.isTrialExpired());
         PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
         mav.addObject("paymentDetails", paymentDetails);
         String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
