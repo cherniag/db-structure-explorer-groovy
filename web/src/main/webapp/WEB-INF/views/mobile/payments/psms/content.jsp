@@ -40,9 +40,7 @@
 			
 			<div class="contentButton formButton rad5 rel">
 				<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.form.submit' />" />
-				<span class="rightButtonArrow">
-					&nbsp;
-				</span>
+				<span class="button-arrow"/>
 			</div>
 			
 			<c:choose>

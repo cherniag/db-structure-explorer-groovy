@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>
+	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>
 	<%--<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
 		<a href="account.html" class="button buttonTop"><s:message code="page.main.menu.my.account" /></a>
@@ -16,11 +16,9 @@
 		<div class="clr"></div>				
 		<div class="addSmallSpace"></div>		
 		<!--button-->
-		<div class="contentButton formButton rad10 rel" >
+		<div class="rel" >
 			<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button' />" />
-			<span class="rightButtonArrow">
-				&nbsp;
-			</span>
+			<span class="button-arrow"/>
 		</div>
 	</div>
 </div>
