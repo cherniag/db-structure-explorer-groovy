@@ -30,29 +30,29 @@ import org.springframework.web.client.RestTemplate;
 
 @Aspect
 public class SMSNotification {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SMSNotification.class);
-	
+
 	private MigHttpService migService;
 
 	private CommunityResourceBundleMessageSource messageSource;
-		
+
 	private UserService userService;
-	
+
 	private List<String> availableCommunities = Collections.emptyList();
-	
+
 	private String paymentsUrl;
-	
+
 	private String unsubscribeUrl;
-	
+
 	private String tinyUrlService;
-	
+
 	private String rememberMeTokenCookieName;
-	
+
 	private NowTechTokenBasedRememberMeServices rememberMeServices;
-	
+
 	private RestTemplate restTemplate = new RestTemplate();
-	
+
 	public String getRememberMeTokenCookieName() {
 		return rememberMeTokenCookieName;
 	}
@@ -78,9 +78,9 @@ public class SMSNotification {
 	}
 
 	public void setAvailableCommunities(String availableCommunities) {
-		if(availableCommunities == null)
+		if (availableCommunities == null)
 			return;
-			
+
 		String delims = "[ ,]+";
 		this.availableCommunities = Arrays.asList(availableCommunities.split(delims));
 	}
@@ -99,163 +99,188 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms after user was set to limited status
+	 * 
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.saveWeeklyPayment(*))")
 	public Object saveWeeklyPayment(ProceedingJoinPoint joinPoint) throws Throwable {
-		try{
+		try {
 			LogUtils.putClassNameMDC(this.getClass());
-			
+
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
-			try{
+			try {
 				if (user.getPaymentDetailsList().isEmpty())
 					sendLimitedStatusSMS(user);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return object;
-		}finally{
+		} finally {
 			LogUtils.removeClassNameMDC();
 		}
 	}
-	
+
 	/**
 	 * Sending sms after user unsubscribe
+	 * 
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
-		try{
+		try {
 			LogUtils.putClassNameMDC(this.getClass());
-			
+
 			Object object = joinPoint.proceed();
 			Integer userId = (Integer) joinPoint.getArgs()[0];
-			try{
+			try {
 				User user = userService.findById(userId);
 				sendUnsubscribeAfterSMS(user);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return object;
-		}finally{
+		} finally {
 			LogUtils.removeClassNameMDC();
 		}
 	}
-	
+
 	/**
 	 * Sending sms before 48 h expire subscription
+	 * 
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.updateLastBefore48SmsMillis(..))")
 	public Object updateLastBefore48SmsMillis(ProceedingJoinPoint joinPoint) throws Throwable {
-		try{
+		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			Object object = joinPoint.proceed();
-			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
-			try{
+			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
+			try {
 				User user = userService.findById(userId);
 				sendLowBalanceWarning(user);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return object;
-		}finally{
+		} finally {
 			LogUtils.removeClassNameMDC();
 		}
 	}
-	
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
-	protected void createdCreditCardPaymentDetails() {}
-	
+	protected void createdCreditCardPaymentDetails() {
+	}
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitPayPalPaymentDetails(..))")
-	protected void createdPayPalPaymentDetails() {}
+	protected void createdPayPalPaymentDetails() {
+	}
 
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(..))")
-	protected void createdMigPaymentDetails() {}
-	
+	protected void createdMigPaymentDetails() {
+	}
+
 	/**
 	 * Sending sms after user was subscribed with some payment details
+	 * 
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
 	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
-		try{
+		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			Object object = joinPoint.proceed();
-			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length-1];
-			try{
+			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
+			try {
 				User user = userService.findById(userId);
 				sendUnsubscribePotentialSMS(user);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return object;
-		}finally{
+		} finally {
 			LogUtils.removeClassNameMDC();
 		}
 	}
-	
+
 	protected void sendLimitedStatusSMS(User user) throws UnsupportedEncodingException {
-		if(user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
+		if (user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
 			return;
-			
-		sendSMSWithUrl(user, "sms.limited.status.text.for."+user.getProvider()+"."+user.getContract(), new String[]{paymentsUrl});
+		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
+			return;
+		sendSMSWithUrl(user, "sms.limited.status.text.for." + user.getProvider() + "." + user.getContract(), new String[] { paymentsUrl });
 	}
-	
+
 	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
-		if(user == null || user.getCurrentPaymentDetails() == null)
+		if (user == null || user.getCurrentPaymentDetails() == null)
 			return;
-				
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract(), new String[]{unsubscribeUrl});
+		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
+			return;
+		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for." + user.getProvider() + "." + user.getContract(), new String[] { unsubscribeUrl });
 	}
-	
+
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
-		if(user == null || user.getCurrentPaymentDetails() == null)
+		if (user == null || user.getCurrentPaymentDetails() == null)
 			return;
-		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment()*1000L).toDateMidnight()).getDays();
-		
-		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract(), new String[]{paymentsUrl, days.toString()});
+		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
+		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
+			return;
+		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for." + user.getProvider() + "." + user.getContract(), new String[] { paymentsUrl, days.toString() });
 	}
-	
+
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		if(user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG || user.getSegment() != SegmentType.CONSUMER)
+		if (user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG || user.getSegment() != SegmentType.CONSUMER)
 			return;
-		
-		sendSMSWithUrl(user, "sms.lowBalance.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), null);
+		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
+			return;
+		sendSMSWithUrl(user, "sms.lowBalance.text.for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract(), null);
 	}
-	
-	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException{
+
+	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
-		if(!availableCommunities.contains(communityUrl))
+		if (rejectDevice(user, "sms.notification.not.for.device.type"))
 			return;
-		
+		if (!availableCommunities.contains(communityUrl))
+			return;
+
 		String baseUrl = msgArgs != null ? msgArgs[0] : null;
-		if (baseUrl != null) {			
+		if (baseUrl != null) {
 			String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-			String url =  baseUrl + "?community="+communityUrl+"&"+rememberMeTokenCookieName+"=" + rememberMeToken;
-			
+			String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+
 			MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 			request.add("url", url);
-			
-			try{
-				url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();			
-			}catch(Exception e){
+
+			try {
+				url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
+			} catch (Exception e) {
 				LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
 			}
-			
+
 			msgArgs[0] = url;
 		}
-		
+
 		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, "", null);
 		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-		
-		if(!message.isEmpty())
+
+		if (!message.isEmpty())
 			migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
+
+	private boolean rejectDevice(User user, String code) {
+		String devices = messageSource.getMessage(null, code, null, null, null);
+		for (String device : devices.split(",")) {
+			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
+				LOGGER.warn("SMS will not send. See " + code);
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
