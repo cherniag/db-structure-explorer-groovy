@@ -24,18 +24,14 @@
 							</div>
 					</s:hasBindErrors>
 					<!--button -->
-					<div class="contentButton formButton rad5 rel" >
+					<div class="rel" >
 						<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
-						<span class="leftButtonArrow">
-							&nbsp;
-						</span>
+						<span class="button-arrow" />
 					</div>
 					<!--button -->
-					<div class="contentButton contentButtonGrey formButton formButtonGrey rad5 rel" >
+					<div class="rel" >
 						<input type="submit" class="button-turquoise" value="<s:message code='unsub.page.form.submit' />" />
-						<span class="rightButtonArrowBlack">
-							&nbsp;
-						</span>
+						<span class="button-arrow"/>
 					</div>
 				</form:form>
 			</c:when>
