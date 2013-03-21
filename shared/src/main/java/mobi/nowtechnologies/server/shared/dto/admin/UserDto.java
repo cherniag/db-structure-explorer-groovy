@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import org.joda.time.DateTime;
@@ -7,6 +8,8 @@ import org.joda.time.DateTime;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.Utils.truncatedToSeconds;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -680,8 +683,8 @@ public class UserDto {
 				+ ", ipAddress=" + ipAddress + ", canContact=" + canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + "]";
 	}
 
-    public UserDto withNextSubPayment(long nextSubPayment) {
-        this.nextSubPayment = new Date(nextSubPayment);
+    public UserDto withNextSubPayment(Date nextSubPayment) {
+        this.nextSubPayment = nextSubPayment;
         return this;
     }
 
@@ -689,8 +692,12 @@ public class UserDto {
         return freeTrialExpiredMillis;
     }
 
-    public UserDto withFreeTrialExpiredMillis(int time) {
-        this.freeTrialExpiredMillis = time;
+    public Date getFreeTrialExpiredAsDate() {
+        return new Date(freeTrialExpiredMillis*1000L);
+    }
+
+    public UserDto withFreeTrialExpiredMillis(Date time) {
+        this.freeTrialExpiredMillis = truncatedToSeconds(time);
         return this;
     }
 

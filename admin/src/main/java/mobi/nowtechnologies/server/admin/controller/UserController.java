@@ -4,11 +4,14 @@ import mobi.nowtechnologies.server.admin.validator.UserDtoValidator;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.apache.http.HttpStatus;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -111,10 +114,11 @@ public class UserController extends AbstractCommonController {
 	}
 
     public UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
-        long oldNextSubPayment = (long)user.getNextSubPayment() * 1000;
-        long newNextSubPayment = userDto.getNextSubPayment().getTime();
-        if(oldNextSubPayment != newNextSubPayment && user.isOnFreeTrial())
-            userDto.withFreeTrialExpiredMillis((int)(newNextSubPayment/1000));
+        Date oldNextSubPayment = user.getNextSubPaymentAsDate();
+        Date newNextSubPayment = userDto.getNextSubPayment();
+
+        if(Utils.datesNotEquals(oldNextSubPayment, newNextSubPayment) && user.isOnFreeTrial())
+            userDto.withFreeTrialExpiredMillis(newNextSubPayment);
         return userDto;
     }
 

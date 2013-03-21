@@ -44,7 +44,7 @@ public class UserTest {
 	@Test
 	public void isOnFreeTrial_false_when_freeTrialExpiredMillis_Eq_Null() {
 		User user = new User();
-			user.setFreeTrialExpiredMillis(null);
+			user.setFreeTrialExpiredMillis((Long)null);
 		assertEquals(false, user.isOnFreeTrial());
 	}
 	

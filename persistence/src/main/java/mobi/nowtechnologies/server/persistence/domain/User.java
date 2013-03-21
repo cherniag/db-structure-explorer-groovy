@@ -521,6 +521,10 @@ public class User implements Serializable {
 		return this.nextSubPayment;
 	}
 
+    public Date getNextSubPaymentAsDate() {
+        return new Date(this.nextSubPayment*1000);
+    }
+
 	public void setNextSubPayment(int nextSubPayment) {
 		this.nextSubPayment = nextSubPayment;
 	}
@@ -1065,6 +1069,15 @@ public class User implements Serializable {
 		this.freeTrialExpiredMillis = freeTrialExpiredMillis;
 	}
 
+    public void setFreeTrialExpiredMillis(Date freeTrialExpiredMillis) {
+        this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
+    }
+
+    public User withFreeTrialExpiredMillis(Date freeTrialExpiredMillis) {
+        this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
+        return this;
+    }
+
 	public Long getFreeTrialStartedTimestampMillis() {
 		return freeTrialStartedTimestampMillis;
 	}
@@ -1256,10 +1269,6 @@ public class User implements Serializable {
 		return isNotActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
 	}
 
-	private Date getNextSubPaymentAsDate() {
-		return new Date(((long) getNextSubPayment()) * 1000L);
-	}
-
 	public boolean isSubscribedViaInApp() {
 		return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
 				new DateTime(getNextSubPaymentAsDate()).isAfterNow();
@@ -1294,4 +1303,9 @@ public class User implements Serializable {
 	public SegmentType getSegment() {
 		return segment;
 	}
+	
+	public User withNextSubPayment(Date time) {
+        this.nextSubPayment = Utils.truncatedToSeconds(time);
+        return this;
+    }
 }
