@@ -4,11 +4,14 @@ import mobi.nowtechnologies.server.admin.validator.UserDtoValidator;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.apache.http.HttpStatus;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -96,7 +99,10 @@ public class UserController extends AbstractCommonController {
 
 		final ModelAndView modelAndView;
 		if (!bindingResult.hasErrors()) {
-			User user = userService.updateUser(userDto);
+            User user = userService.findById(userDto.getId());
+            userDto = updateFreeTrialExpiredTime(userDto, user);
+
+            user = userService.updateUser(userDto);
 			modelAndView = new ModelAndView("redirect:/users?q=" + user.getUserName());
 		} else {
 			modelAndView = getEditUserModelAndView(userDto);
@@ -107,7 +113,16 @@ public class UserController extends AbstractCommonController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/users/{userId}/changePassword", method = RequestMethod.PUT)
+    public UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
+        Date oldNextSubPayment = user.getNextSubPaymentAsDate();
+        Date newNextSubPayment = userDto.getNextSubPayment();
+
+        if(Utils.datesNotEquals(oldNextSubPayment, newNextSubPayment) && user.isOnFreeTrial())
+            userDto.withFreeTrialExpiredMillis(newNextSubPayment);
+        return userDto;
+    }
+
+    @RequestMapping(value = "/users/{userId}/changePassword", method = RequestMethod.PUT)
 	public ModelAndView changePassword(@PathVariable("userId") Integer userId, @RequestParam("password") String password) {
 		LOGGER.debug("input parameters password: [{}]", new Object[] { password });
 

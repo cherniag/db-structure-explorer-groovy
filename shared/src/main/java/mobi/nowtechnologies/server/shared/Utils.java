@@ -26,6 +26,10 @@ public class Utils {
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
 
+    public static int truncatedToSeconds(Date date){
+        return (int)(date.getTime()/1000);
+    }
+
 	public static String getRandomString(int length) {
 		Random rand = new Random(System.currentTimeMillis());
 		StringBuffer sb = new StringBuffer();
@@ -188,6 +192,9 @@ public class Utils {
 		//f701af8d07e5c95d3f5cf3bd9a62344d
 	}
 
+	public static boolean datesNotEquals(Date oldTime, Date newTimet) {
+        return newTimet.getTime() != oldTime.getTime();
+    }
 
     public static <T> String toStringIfNull(T obj) {
         if(obj == null)
