@@ -29,10 +29,10 @@
 				<div class="nameCell"><s:message code='account.page.leftPart.credits' /></div>
 				<div class="bold pink">
 					${accountDto.subBalance} <s:message code="pays.select.weeks" />
-					<a href="payments_inapp.html"><s:message code='account.page.leftPart.link.upgrade' /></a>
+					<%--<a href="payments_inapp.html"><s:message code='account.page.leftPart.link.upgrade' /></a>--%>
 				</div>					
 			</div>	
-			<!--buttons -->
+			<%--<!--buttons -->
 			<div class="setOfButtons">
 				<div class="contentButton formButton rad5 rel" >
 					<input class="button-turquoise" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.payments' />" />
@@ -58,7 +58,7 @@
 						</span>
 					</div>
 				</c:if>
-			</div>
+			</div>--%>
 		</form:form>
 	</div>
 </div>

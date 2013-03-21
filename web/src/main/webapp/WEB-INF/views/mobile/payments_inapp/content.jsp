@@ -41,7 +41,7 @@
 		
 		<h1><s:message code="pays.page.h1.options" /></h1>
 		<p>${paymentPoliciesNote}</p>
-		
+
 		<div class="setOfButtons">
 			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
 				<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
@@ -59,14 +59,6 @@
                 <c:if test="${paymentPolicy.o2OneWeekPsmsSubscription}">
                     <c:set var="method_name" value="psms" />
                     <s:message code='pays.select.payby.psms.week1' var="payment_label" />
-                </c:if>
-                <c:if test="${paymentPolicy.o2TwoWeekPsmsSubscription}">
-                    <c:set var="method_name" value="psms" />
-                    <s:message code='pays.select.payby.psms.week2' var="payment_label" />
-                </c:if>
-                <c:if test="${paymentPolicy.o2FiveWeekPsmsSubscription}">
-                    <c:set var="method_name" value="psms" />
-                    <s:message code='pays.select.payby.psms.week5' var="payment_label" />
                 </c:if>
 
 				<c:choose>
