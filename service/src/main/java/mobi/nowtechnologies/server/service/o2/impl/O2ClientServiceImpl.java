@@ -19,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.ws.soap.SoapFault;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
@@ -35,9 +33,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";
 	public final static String GET_USER_DETAILS_REQ = "/user/carrier/o2/details/";
-	public final static String SUBSCRIBER_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/Subscriber_2_0";
-	public final static String CHARGE_CUSTOMER_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/ChargeCustomer_1_0";
-	public final static String SEND_MESSAGE_ENDPOINT = "https://sdpapi.ref.o2.co.uk/services/SendMessage_1_1";
+	
+	private String subscriberEndpoint;
+	private String chargeCustomerEndpoint;
+	private String sendMessageEndpoint;
 
 	private String serverO2Url;
 
@@ -57,6 +56,18 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	public void init() {
 		restTemplate = new RestTemplate();
+	}
+
+	public void setSubscriberEndpoint(String subscriberEndpoint) {
+		this.subscriberEndpoint = subscriberEndpoint;
+	}
+
+	public void setChargeCustomerEndpoint(String chargeCustomerEndpoint) {
+		this.chargeCustomerEndpoint = chargeCustomerEndpoint;
+	}
+
+	public void setSendMessageEndpoint(String sendMessageEndpoint) {
+		this.sendMessageEndpoint = sendMessageEndpoint;
 	}
 
 	public void setServerO2Url(String serverO2Url) {
@@ -154,7 +165,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 		GetSubscriberProfile getSubscriberProfile = new GetSubscriberProfile();
 		getSubscriberProfile.setSubscriberID("447702059016");
 
-		GetSubscriberProfileResponse profileResponse = webServiceGateway.sendAndReceive(SUBSCRIBER_ENDPOINT, getSubscriberProfile);
+		GetSubscriberProfileResponse profileResponse = webServiceGateway.sendAndReceive(subscriberEndpoint, getSubscriberProfile);
 
 		return profileResponse != null && profileResponse.getSubscriberProfile() != null;
 	}
@@ -189,7 +200,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 		
 		Object response = null;
 		try{			
-			response = webServiceGateway.sendAndReceive(CHARGE_CUSTOMER_ENDPOINT, billSubscriber);
+			response = webServiceGateway.sendAndReceive(chargeCustomerEndpoint, billSubscriber);
 		}catch(SoapFaultException e){
 			response = new BillSubscriberFault(e.getMessage(), (SOAFaultType)e.getSoapFaultObject());
 		}

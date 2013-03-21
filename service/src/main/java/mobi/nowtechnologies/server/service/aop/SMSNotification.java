@@ -252,7 +252,7 @@ public class SMSNotification {
 			msgArgs[0] = url;
 		}
 		
-		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, null);
+		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, "", null);
 		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
 		
 		if(!message.isEmpty())
