@@ -96,7 +96,10 @@ public class UserController extends AbstractCommonController {
 
 		final ModelAndView modelAndView;
 		if (!bindingResult.hasErrors()) {
-			User user = userService.updateUser(userDto);
+            User user = userService.findById(userDto.getId());
+            userDto = updateFreeTrialExpiredTime(userDto, user);
+
+            user = userService.updateUser(userDto);
 			modelAndView = new ModelAndView("redirect:/users?q=" + user.getUserName());
 		} else {
 			modelAndView = getEditUserModelAndView(userDto);
@@ -107,7 +110,15 @@ public class UserController extends AbstractCommonController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/users/{userId}/changePassword", method = RequestMethod.PUT)
+    public UserDto updateFreeTrialExpiredTime(UserDto userDto, User user) {
+        long oldNextSubPayment = (long)user.getNextSubPayment() * 1000;
+        long newNextSubPayment = userDto.getNextSubPayment().getTime();
+        if(oldNextSubPayment != newNextSubPayment && user.isOnFreeTrial())
+            userDto.withFreeTrialExpiredMillis((int)(newNextSubPayment/1000));
+        return userDto;
+    }
+
+    @RequestMapping(value = "/users/{userId}/changePassword", method = RequestMethod.PUT)
 	public ModelAndView changePassword(@PathVariable("userId") Integer userId, @RequestParam("password") String password) {
 		LOGGER.debug("input parameters password: [{}]", new Object[] { password });
 

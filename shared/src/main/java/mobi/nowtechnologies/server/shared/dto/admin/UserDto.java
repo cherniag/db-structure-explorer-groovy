@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -132,8 +133,9 @@ public class UserDto {
 	private Byte potentialPromotionId;
 
 	private Date lastSuccesfullPaymentSmsSendingTimestamp;
-	
-	public UserDto(Integer id, String address1, String address2, boolean canContact, String city, String code, int country, String device, String deviceString,
+    private int freeTrialExpiredMillis;
+
+    public UserDto(Integer id, String address1, String address2, boolean canContact, String city, String code, int country, String device, String deviceString,
 			byte deviceTypeId, String deviceModel, String deviceType, String displayName, String firstName, byte freeBalance, String ipAddress,
 			Date lastDeviceLogin, String lastName, int lastPaymentTx, Date lastWebLogin, String mobile, Date nextSubPayment, String postcode, String sessionID,
 			byte userStatusId, UserStatus userStatus, int subBalance, String tempToken, String title, String token, byte userGroupId, String userGroup,
@@ -677,5 +679,19 @@ public class UserDto {
 				+ country + ", city=" + city + ", title=" + title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", ipAddress=" + ipAddress + ", canContact=" + canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + "]";
 	}
+
+    public UserDto withNextSubPayment(long nextSubPayment) {
+        this.nextSubPayment = new Date(nextSubPayment);
+        return this;
+    }
+
+    public int getFreeTrialExpiredMillis() {
+        return freeTrialExpiredMillis;
+    }
+
+    public UserDto withFreeTrialExpiredMillis(int time) {
+        this.freeTrialExpiredMillis = time;
+        return this;
+    }
 
 }
