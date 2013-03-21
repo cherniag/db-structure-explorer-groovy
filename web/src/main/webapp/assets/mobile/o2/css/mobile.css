@@ -201,15 +201,15 @@ p.centered {
 }
 
 .pane-red span{
-    padding-left: 30px;
+    padding-left: 35px;
 }
 
 .pane-red img{
     display: block;
     position: absolute;
-    top: 11px;
-    max-height: 20px;
-    max-width:  20px;
+    top: 9px;
+    max-height: 25px;
+    max-width:  25px;
 }
 
 .banner-pane img, {
@@ -224,18 +224,18 @@ p.centered {
 }
 
 .pane-red{
-    background-image: linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
-    background-image: -o-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
-    background-image: -moz-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
-    background-image: -webkit-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
-    background-image: -ms-linear-gradient(bottom, rgb(183,1,1) 28%, rgb(153,0,0) 64%);
+    background-image: linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -o-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -moz-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -webkit-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
+    background-image: -ms-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
 
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.28, rgb(183,1,1)),
-        color-stop(0.64, rgb(153,0,0))
+        color-stop(0, rgb(153,0,0)),
+        color-stop(0.87, rgb(183,1,1))
     );
 }
 
