@@ -23,6 +23,7 @@ public class UserAsmTest {
 		userDto.setDisplayName("Display Name");
 		userDto.setSubBalance(0);
 		userDto.setNextSubPayment(new Date());
+		userDto.withFreeTrialExpiredMillis(userDto.getNextSubPayment());
 		userDto.setUserType(UserType.NORMAL);
 		userDto.setPaymentEnabled(true);
 
