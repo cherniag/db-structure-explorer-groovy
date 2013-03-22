@@ -395,7 +395,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.O2WebServiceMessageHandler" class="mobi.nowtechnologies.server.service.o2.impl.O2WebServiceMessageHandler">
 		<property name="username" value="${o2.service.security.token.username}"/>
 		<property name="password" value="${o2.service.security.token.password}"/>        
-		<property name="soaConsumerTransactionID" value="${o2.service.security.token.ConsumerTransactionID}"/>        
+		<property name="soaConsumerTransactionID" value="${o2.service.security.costumerTransactionId}"/>        
 	</bean>
 
 	<task:annotation-driven />

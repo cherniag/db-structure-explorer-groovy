@@ -27,7 +27,8 @@ public class Before48hPSMSPaymentJob extends QuartzJobBean implements StatefulJo
 	protected static transient UserService userService;
 	
 	public Before48hPSMSPaymentJob(){
-		userService = (UserService) SpringContext.getBean("service.UserService");
+		if(userService == null)
+			userService = (UserService) SpringContext.getBean("service.UserService");
 	}
 
 	@Override

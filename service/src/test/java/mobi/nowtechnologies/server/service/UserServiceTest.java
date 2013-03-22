@@ -610,8 +610,8 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	@Test(expected = ServiceException.class)
-	public void testUpdateUser_NextSubPaymentIsMoreThanOriginal_Failure() throws Exception {
+	@Test
+	public void testUpdateUser_NextSubPaymentIsLessThanOriginal_Successful() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
 		final int originalSubBalance = 2;
@@ -648,7 +648,7 @@ public class UserServiceTest {
 		userServiceSpy.updateUser(userDto);
 
 		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(mockAccountLogService, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 

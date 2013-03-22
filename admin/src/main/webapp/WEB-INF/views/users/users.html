@@ -101,6 +101,7 @@
 								</div>	
 								
 								<div class="subpayment_user">
+									<input id="nextSubPaymentOriginal" name="nextSubPaymentOriginal" th:value="${userDto.nextSubPayment!=null ? userDto.nextSubPayment.getTime() : 0}" type="hidden"/>
 									<input id="datepicker" th:value="${userDto.nextSubPayment!=null ? #dates.format(userDto.nextSubPayment, '__#{users.management.page.usersTable.user.nextSubPayment.format}__') : ''}" name="nextSubPayment" th:placeholder="${userDto.nextSubPayment!=null ? #dates.format(userDto.nextSubPayment, '__#{users.management.page.usersTable.user.nextSubPayment.format}__') : ''}" type="text"/>
 								</div>
 								
@@ -285,25 +286,31 @@
 	var checkFieldsCorrectly = /*[[#{users.management.page.validation.errors}]]*/ "Please fill all fields correctly";    
 	var successMsg = /*[[#{users.management.page.validation.passwordSuccessfullyUpdated}]]*/ "User password was successfully updated";
 	var cantUpdateUserPasword = /*[[#{users.management.page.validation.passwordNotUpdated}]]*/ "Countn't update user password!";
+	var warnNextSubPaymentWillReduced= /*[[#{users.management.page.validation.nextSubPaymentWillReduced}]]*/ "NextSubPayment will be reduced! Do you want it?";
 	
 	$("button.button-user-submit").click(function(){
 		var formToSubmit = $(this).parents("form")[0];
-		
-		
-		$.ajax({
-		   type: $(formToSubmit).attr('method'),
-		   url: $(formToSubmit).attr('action'),
-		   data: $(formToSubmit).serialize(),
-		   success: function(){
-		      alert(userDetailsSuccessfullyUpdated);
-		      if ($("input[name='paymentEnabled']:checked").val() == 'false') {
-		    	  $(".payment_enabled span.true").css("display","none");
-		      }
-		   },
-		   error: function(jqXHR, textStatus, errorThrown) {
-			   alert(checkFieldsCorrectly);
-		   }
-		});
+		var nextSubPaymentOriginal = $(formToSubmit).find("input#nextSubPaymentOriginal").val();
+ 		var nextSubPayment = $(formToSubmit).find("input#datepicker").val();
+
+ 		nextSubPayment = nextSubPayment ? Date.parseString(nextSubPayment, "yyyy-MM-dd HH:mm:ss").getTime() : 0; 	
+ 				
+		if (nextSubPayment >= nextSubPaymentOriginal || confirm(warnNextSubPaymentWillReduced)) { 
+			$.ajax({
+			   type: $(formToSubmit).attr('method'),
+			   url: $(formToSubmit).attr('action'),
+			   data: $(formToSubmit).serialize(),
+			   success: function(){
+			      alert(userDetailsSuccessfullyUpdated);
+			      if ($("input[name='paymentEnabled']:checked").val() == 'false') {
+			    	  $(".payment_enabled span.true").css("display","none");
+			      }
+			   },
+			   error: function(jqXHR, textStatus, errorThrown) {
+				   alert(checkFieldsCorrectly);
+			   }
+			});
+		}
 	});
 	$("button.button-change-password").click(function(){
 		var formToSubmit = $(this).parents("form");
@@ -365,7 +372,7 @@
 		$('#datepicker').datepicker({
 		    constrainInput: false,
 		    dateFormat: "yy-mm-dd 00:00:00",
-		    minDate: 0
+		    //minDate: 0
 		});
 	});
 /*]]>*/</script>

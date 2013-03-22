@@ -1757,10 +1757,6 @@ public class UserService {
 		Date originalNextSubPayment = Utils.getDateFromInt(user.getNextSubPayment());
 		final int originalSubBalance = user.getSubBalance();
 
-		if (userDto.getNextSubPayment().before(originalNextSubPayment)) {
-			throw new ServiceException("users.management.edit.page.nextSubPaymentCannotBeRedused.error", "The user nextSubPayment cannot be reduced, only extended");
-		}
-
 		if (userDto.getNextSubPayment().after(originalNextSubPayment)) {
 			if (user.isOnFreeTrial()) {
 				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
