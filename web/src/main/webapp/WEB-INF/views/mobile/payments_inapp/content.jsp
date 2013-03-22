@@ -68,7 +68,7 @@
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="o2psms" />
-                    <c:set var="payment_label" value="${paymentPolicy.subcost}&#163; for ${paymentPolicy.subweeks} week"/>
+                    <c:set var="payment_label" value="<b>&#163;${paymentPolicy.subcost}</b> for ${paymentPolicy.subweeks} week"/>
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                     <c:set var="method_name" value="iTunesSubscription" />
@@ -80,17 +80,21 @@
                         <c:when test="${nonIOSDevice && paymentPolicy.paymentType == 'iTunesSubscription'}">
 
                         </c:when>
-                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'                        
+                        <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                         && paymentDetails != null
                         && activePolicy != null
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                            <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <a class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" onClick="location.href=this.title" >
+                                ${payment_label}
+                            </a>
                             <span class="button-on"/>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
-                            <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                            <a class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
+                                ${payment_label}
+                            </a>
                             <span class="button-off"/>
                         </c:when>
                         <c:otherwise>

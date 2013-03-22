@@ -12,7 +12,7 @@
         <h1><s:message code="pays.page.options.note.o2psms.title"/></h1>
         <p class="centered"><s:message code="pays.page.options.note.o2psms" arguments="${subcost}, ${suweeks}"/></p>
 
-        <div class="rel">
+        <div class="rel" style="margin-top: 20px">
             <input class="button-turquoise" title="payments/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
             <input class="button-grey" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
         </div>
