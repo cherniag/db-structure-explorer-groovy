@@ -117,7 +117,7 @@ public class UserController extends AbstractCommonController {
         Date oldNextSubPayment = user.getNextSubPaymentAsDate();
         Date newNextSubPayment = userDto.getNextSubPayment();
 
-        if(Utils.datesNotEquals(oldNextSubPayment, newNextSubPayment) && user.isOnFreeTrial())
+        if(Utils.datesNotEquals(oldNextSubPayment, newNextSubPayment) && !user.wasSubscribed())
             userDto.withFreeTrialExpiredMillis(newNextSubPayment);
         return userDto;
     }

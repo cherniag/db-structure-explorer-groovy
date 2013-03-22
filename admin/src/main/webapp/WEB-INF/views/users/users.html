@@ -290,8 +290,11 @@
 	
 	$("button.button-user-submit").click(function(){
 		var formToSubmit = $(this).parents("form")[0];
-		var nextSubPaymentOriginal = $(formToSubmit).find("input#nextSubPaymentOriginal").val();
- 		var nextSubPayment = $(formToSubmit).find("input#datepicker").val();
+		
+		var nextSubPaymentOriginalItem = $(formToSubmit).find("input#nextSubPaymentOriginal");
+ 		var nextSubPaymentItem = $(formToSubmit).find("input#datepicker");
+		var nextSubPaymentOriginal = nextSubPaymentOriginalItem.val();
+ 		var nextSubPayment = nextSubPaymentItem.val();
 
  		nextSubPayment = nextSubPayment ? Date.parseString(nextSubPayment, "yyyy-MM-dd HH:mm:ss").getTime() : 0; 	
  				
@@ -305,6 +308,7 @@
 			      if ($("input[name='paymentEnabled']:checked").val() == 'false') {
 			    	  $(".payment_enabled span.true").css("display","none");
 			      }
+			      nextSubPaymentOriginalItem.val(nextSubPayment);
 			   },
 			   error: function(jqXHR, textStatus, errorThrown) {
 				   alert(checkFieldsCorrectly);

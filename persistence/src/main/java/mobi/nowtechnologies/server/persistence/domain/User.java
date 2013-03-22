@@ -1237,6 +1237,11 @@ public class User implements Serializable {
 				&& isEmpty(getLastSubscribedPaymentSystem())
 				&& getCurrentPaymentDetails() == null;
 	}
+	
+	public boolean wasSubscribed() {
+		return !isEmpty(getLastSubscribedPaymentSystem())
+				|| getCurrentPaymentDetails() != null;
+	}
 
 	public boolean isLimited() {
 		return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
