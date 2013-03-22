@@ -522,7 +522,7 @@ public class User implements Serializable {
 	}
 
     public Date getNextSubPaymentAsDate() {
-        return new Date(this.nextSubPayment*1000);
+        return new Date((long)this.nextSubPayment*1000L);
     }
 
 	public void setNextSubPayment(int nextSubPayment) {
