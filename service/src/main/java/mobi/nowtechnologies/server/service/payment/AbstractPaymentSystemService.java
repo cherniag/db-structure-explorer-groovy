@@ -53,6 +53,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		if (!response.isSuccessful() && HttpServletResponse.SC_OK==response.getHttpStatus()) {
 			status = PaymentDetailsStatus.ERROR;
 			submittedPayment.setDescriptionError(response.getDescriptionError());
+			paymentDetails.setDescriptionError(response.getDescriptionError());
 			
 			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError()) {
 				paymentDetails.setActivated(false);

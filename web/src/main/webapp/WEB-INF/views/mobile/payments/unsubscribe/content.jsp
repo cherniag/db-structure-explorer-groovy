@@ -12,24 +12,18 @@
 		<c:choose>
 			<c:when test="${result == null||result == 'fail'}">
 				<h1><s:message code="unsub.page.header" /></h1>
-				<p><s:message code="unsub.page.description" /></p>
+				<p class="centered"><s:message code="unsub.page.description" /></p>
 				
 				<form:form modelAttribute="unsubscribeDto" method="post">							
-					<div class="oneField">
-						<form:textarea path="reason"/>
-					</div>
+
 					<s:hasBindErrors name="unsubscribeDto">
 							<div class="note" id="note">
 								<form:errors path="reason" />
 							</div>
 					</s:hasBindErrors>
-					<!--button -->
-					<div class="rel" >
-						<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
-					</div>
-					<!--button -->
-					<div class="rel" >
-						<input type="submit" class="button-grey" value="<s:message code='unsub.page.form.submit' />" />
+					<div class="rel" style="margin-top: 20px;">
+						<input type="submit" class="button-turquoise" value="<s:message code='unsub.page.form.submit' />" />
+						<input class="button-grey" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
 					</div>
 				</form:form>
 			</c:when>
