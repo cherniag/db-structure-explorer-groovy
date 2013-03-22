@@ -12,7 +12,7 @@
 		<c:choose>
 			<c:when test="${result == null||result == 'fail'}">
 				<h1><s:message code="unsub.page.header" /></h1>
-				<p><s:message code="unsub.page.description" /></p>
+				<p class="centered"><s:message code="unsub.page.description" /></p>
 				
 				<form:form modelAttribute="unsubscribeDto" method="post">							
 
