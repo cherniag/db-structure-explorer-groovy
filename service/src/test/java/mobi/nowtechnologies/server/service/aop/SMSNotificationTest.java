@@ -421,6 +421,126 @@ public class SMSNotificationTest {
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
+	
+	@Test
+	public void testSendPaymentFailSMS_MadeRetriesNotEqualsCountRetries_Failure()
+			throws Exception {
+		User user = UserFactory.createUser(null, new BigDecimal(0));
+		PaymentDetails paymentDetails = new PayPalPaymentDetails();
+		paymentDetails.setRetriesOnError(3);
+		paymentDetails.setMadeRetries(1);
+		PendingPayment pendingPayment = new PendingPayment();
+		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
+		pendingPayment.setUser(user);
+		pendingPayment.setPaymentDetails(paymentDetails);
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
+		
+		fixture.sendPaymentFailSMS(pendingPayment);
+		
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendPaymentFailSMS_NotAvailableCommunity_Failure()
+			throws Exception {
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		fixture.setAvailableCommunities("community3, community2, community1");
+		PaymentDetails paymentDetails = new PayPalPaymentDetails();
+		paymentDetails.setRetriesOnError(3);
+		paymentDetails.setMadeRetries(3);
+		PendingPayment pendingPayment = new PendingPayment();
+		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
+		pendingPayment.setUser(user);
+		pendingPayment.setPaymentDetails(paymentDetails);
+		
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
+		
+		fixture.sendPaymentFailSMS(pendingPayment);
+		
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+	}
+	
+	@Test
+	public void testSendPaymentFailSMS_EmptyMsg_Failure()
+			throws Exception {
+		String msg = "";
+		String title = "O2";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		PaymentDetails paymentDetails = new PayPalPaymentDetails();
+		paymentDetails.setRetriesOnError(3);
+		paymentDetails.setMadeRetries(3);
+		PendingPayment pendingPayment = new PendingPayment();
+		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
+		pendingPayment.setUser(user);
+		pendingPayment.setPaymentDetails(paymentDetails);
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.0h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendPaymentFailSMS(pendingPayment);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.0h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
+	
+	@Test
+	public void testSendPaymentFailSMS_0h_Success()
+			throws Exception {
+		String msg = "message1";
+		String title = "O2";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		PaymentDetails paymentDetails = new PayPalPaymentDetails();
+		paymentDetails.setRetriesOnError(3);
+		paymentDetails.setMadeRetries(3);
+		PendingPayment pendingPayment = new PendingPayment();
+		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
+		pendingPayment.setUser(user);
+		pendingPayment.setPaymentDetails(paymentDetails);
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.0h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendPaymentFailSMS(pendingPayment);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.0h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
+	
+	@Test
+	public void testSendPaymentFailSMS_24h_Success()
+			throws Exception {
+		String msg = "message1";
+		String title = "O2";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		Community community = user.getUserGroup().getCommunity();
+		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
+		PaymentDetails paymentDetails = new PayPalPaymentDetails();
+		paymentDetails.setRetriesOnError(3);
+		paymentDetails.setMadeRetries(3);
+		PendingPayment pendingPayment = new PendingPayment();
+		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L-22*60*60*1000);
+		pendingPayment.setUser(user);
+		pendingPayment.setPaymentDetails(paymentDetails);
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.24h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
+		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		
+		fixture.sendPaymentFailSMS(pendingPayment);
+		
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.24h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
+		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+	}
 
 	@SuppressWarnings("deprecation")
 	@Before

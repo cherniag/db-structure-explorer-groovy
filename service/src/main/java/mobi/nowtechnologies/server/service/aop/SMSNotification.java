@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
@@ -96,6 +95,42 @@ public class SMSNotification {
 	public void setTinyUrlService(String tinyUrlService) {
 		this.tinyUrlService = tinyUrlService;
 	}
+	
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
+	protected void startCreditCardPayment() {
+	}
+
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl.startPayment(..))")
+	protected void startPayPalPayment() {
+	}
+
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.startPayment(..))")
+	protected void startO2PSMSPayment() {
+	}
+	
+	/**
+	 * Sending sms after any payment system has spent all retries with failures
+	 * 
+	 * @param joinPoint
+	 * @throws Throwable
+	 */
+	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment()")
+	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			LogUtils.putClassNameMDC(this.getClass());
+
+			Object object = joinPoint.proceed();
+			PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
+			try {
+				sendPaymentFailSMS(pendingPayment);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		} finally {
+			LogUtils.removeClassNameMDC();
+		}
+	}
 
 	/**
 	 * Sending sms after user was set to limited status
@@ -111,8 +146,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try {
-				if (user.getPaymentDetailsList().isEmpty())
-					sendLimitedStatusSMS(user);
+				sendLimitedStatusSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -208,7 +242,7 @@ public class SMSNotification {
 	}
 
 	protected void sendLimitedStatusSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()))
+		if (user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()) || !user.getPaymentDetailsList().isEmpty())
 			return;
 		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
 			return;
@@ -238,6 +272,19 @@ public class SMSNotification {
 		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
 			return;
 		sendSMSWithUrl(user, "sms.lowBalance.text.for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract(), null);
+	}
+	
+	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
+		User user = pendingPayment.getUser();
+		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+		if (user == null || paymentDetails.getMadeRetries() != paymentDetails.getRetriesOnError())
+			return;
+		
+		int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
+		if (rejectDevice(user, "sms.notification.paymentFail.at."+hoursBefore+"h.not.for.device.type"))
+			return;
+		
+		sendSMSWithUrl(user, "sms.paymentFail.at."+hoursBefore+"h.text.for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract(), new String[] { paymentsUrl });
 	}
 
 	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {

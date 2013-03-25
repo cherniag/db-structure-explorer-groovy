@@ -1284,6 +1284,10 @@ public class User implements Serializable {
 				&& new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
 				&& org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
 	}
+	
+	public boolean isBeforeExpiration(long timestamp, int hours){
+		return nextSubPayment <= timestamp/1000 + hours * 60 * 60;
+	}
 
 	public String getProvider() {
 		return provider;
