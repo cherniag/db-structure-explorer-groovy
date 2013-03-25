@@ -1237,7 +1237,7 @@ public class User implements Serializable {
 				&& isEmpty(getLastSubscribedPaymentSystem())
 				&& getCurrentPaymentDetails() == null;
 	}
-	
+
 	public boolean wasSubscribed() {
 		return !isEmpty(getLastSubscribedPaymentSystem())
 				|| getCurrentPaymentDetails() != null;

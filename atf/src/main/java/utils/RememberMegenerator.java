@@ -1,5 +1,6 @@
 package utils;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.util.DigestUtils;
@@ -15,8 +16,8 @@ public class RememberMegenerator {
 
     public static void main(String[] args) {
         try {
-            String username = args[0];
-            String userToken = args[1];
+            String username = CharMatcher.isNot('\'').retainFrom(args[0]);
+            String userToken = CharMatcher.isNot('\'').retainFrom(args[1]);
             String expiredMillis = getExpiredMillis(args);
             String signature = makeTokenSignature(username, Long.parseLong(expiredMillis), userToken);
 
