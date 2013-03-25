@@ -610,8 +610,8 @@ public class UserServiceTest {
 	 * 
 	 * @generatedBy CodePro at 20.08.12 18:31
 	 */
-	@Test
-	public void testUpdateUser_NextSubPaymentIsLessThanOriginal_Successful() throws Exception {
+	@Test(expected = ServiceException.class)
+	public void testUpdateUser_NextSubPaymentIsMoreThanOriginal_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
 		final int originalSubBalance = 2;

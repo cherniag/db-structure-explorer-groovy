@@ -41,7 +41,7 @@ public class UserControllerTest {
         //then
         assertEquals(0, result.getFreeTrialExpiredMillis());
     }
-    
+
     @Test
     public void givenUserWithNotNullLastPaymentSystem_whenUpdateFreeTrialExpiredTime_willDoesNotChangeFreeTrialExpiredFieldToTheSameTime() {
         Long time = System.currentTimeMillis() + 60*1000;
@@ -56,7 +56,7 @@ public class UserControllerTest {
         //then
         assertEquals(0, result.getFreeTrialExpiredMillis());
     }
-    
+
     @Test
     public void givenUserWithNotNullCurrentPaymentDetails_whenUpdateFreeTrialExpiredTime_willDoesNotChangeFreeTrialExpiredFieldToTheSameTime() {
         Long time = System.currentTimeMillis() + 60*1000;

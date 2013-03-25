@@ -170,6 +170,12 @@ p.centered {
     text-align: center;
 }
 
+img.centered{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .header {
     text-align: center;
     height: 47px;
@@ -457,7 +463,7 @@ input.accounts{
 	text-align: center;
 	line-height: 1em;
 	font-size: 0.8em;
-    margin: 15px 0;
+    margin: 10px 0;
 }
 
 .addSpace {	
