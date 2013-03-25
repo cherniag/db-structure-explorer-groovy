@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -35,6 +36,36 @@ public class UserControllerTest {
 
         User user = new User().withNextSubPayment(date);
         UserDto userDto = new UserDto().withNextSubPayment(date);
+        //when
+        UserDto result = new UserController().updateFreeTrialExpiredTime(userDto, user);
+        //then
+        assertEquals(0, result.getFreeTrialExpiredMillis());
+    }
+    
+    @Test
+    public void givenUserWithNotNullLastPaymentSystem_whenUpdateFreeTrialExpiredTime_willDoesNotChangeFreeTrialExpiredFieldToTheSameTime() {
+        Long time = System.currentTimeMillis() + 60*1000;
+        Date date = new Date(time);
+        Date futureDate = new Date(time + 1000);
+
+        User user = new User().withNextSubPayment(date);
+        user.setLastSubscribedPaymentSystem("paypal");
+        UserDto userDto = new UserDto().withNextSubPayment(futureDate);
+        //when
+        UserDto result = new UserController().updateFreeTrialExpiredTime(userDto, user);
+        //then
+        assertEquals(0, result.getFreeTrialExpiredMillis());
+    }
+    
+    @Test
+    public void givenUserWithNotNullCurrentPaymentDetails_whenUpdateFreeTrialExpiredTime_willDoesNotChangeFreeTrialExpiredFieldToTheSameTime() {
+        Long time = System.currentTimeMillis() + 60*1000;
+        Date date = new Date(time);
+        Date futureDate = new Date(time + 1000);
+
+        User user = new User().withNextSubPayment(date);
+        user.setCurrentPaymentDetails(new PayPalPaymentDetails());
+        UserDto userDto = new UserDto().withNextSubPayment(futureDate);
         //when
         UserDto result = new UserController().updateFreeTrialExpiredTime(userDto, user);
         //then

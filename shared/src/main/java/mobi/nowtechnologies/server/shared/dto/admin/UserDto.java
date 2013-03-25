@@ -383,7 +383,7 @@ public class UserDto {
 	}
 
 	public void setNextSubPayment(Date nextSubPayment) {
-		this.nextSubPayment = nextSubPayment;
+		this.nextSubPayment = new Date(Utils.truncatedToSeconds(nextSubPayment)*1000L);
 	}
 
 	public String getPostcode() {
@@ -684,7 +684,7 @@ public class UserDto {
 	}
 
     public UserDto withNextSubPayment(Date nextSubPayment) {
-        this.nextSubPayment = nextSubPayment;
+        setNextSubPayment(nextSubPayment);
         return this;
     }
 
