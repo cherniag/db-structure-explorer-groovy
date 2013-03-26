@@ -58,11 +58,11 @@
 
                 <div class="rel">
                     <c:choose>
-                        <c:when test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
-                               <c:if test="${!isO2User}">
-                                   <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
-                                   <span class="button-arrow"/>
-                               </c:if>
+                        <c:when test="${isIOSDevice}">
+                            <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
+                                <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                <span class="button-arrow"/>
+                            </c:if>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                         && paymentDetails != null
