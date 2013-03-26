@@ -36,7 +36,7 @@ public abstract class CommonController {
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	protected View view;
-	private CommunityResourceBundleMessageSource messageSource;
+	protected CommunityResourceBundleMessageSource messageSource;
 	protected Jaxb2Marshaller jaxb2Marshaller;
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;

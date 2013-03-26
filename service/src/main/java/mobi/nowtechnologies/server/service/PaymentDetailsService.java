@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
@@ -21,6 +22,7 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,8 @@ public class PaymentDetailsService {
 
     private PaymentPolicyRepository paymentPolicyRepository;
     private PaymentPolicyDao paymentPolicyDao;
+    
+    private PaymentDetailsRepository paymentDetailsRepository;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
@@ -270,9 +274,9 @@ public class PaymentDetailsService {
 		return paymentDetails;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<MigPaymentDetails> findMigPaymentDetails(String migOperator, String phoneNumber) {
-		return paymentDetailsDao.findMigPaymentDetails(migOperator.concat(".").concat(phoneNumber));
+	@Transactional(readOnly = true)
+	public List<PaymentDetails> findPaymentDetails(String operatorName, String phoneNumber) {
+		return paymentDetailsRepository.findPaymentDetails(operatorName, phoneNumber);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -464,6 +468,10 @@ public class PaymentDetailsService {
     
     public void setO2PaymentService(O2PaymentService o2PaymentService) {
 		this.o2PaymentService = o2PaymentService;
+	}
+    
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+		this.paymentDetailsRepository = paymentDetailsRepository;
 	}
 
 }

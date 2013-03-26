@@ -676,19 +676,26 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void unsubscribeUser(String phoneNumber, String operatorMigName) {
-		List<MigPaymentDetails> migPaymentDetails = paymentDetailsService.findMigPaymentDetails(operatorMigName, phoneNumber);
-		LOGGER.info("Trying to unsubscribe {} user(s) having {} as mobile number", migPaymentDetails.size(), phoneNumber);
-		for (MigPaymentDetails migPaymentDetail : migPaymentDetails) {
-			final User owner = migPaymentDetail.getOwner();
-			if(owner!=null && migPaymentDetail.equals(owner.getCurrentPaymentDetails())){
-				unsubscribeUser(owner, "STOP sms");
+	public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
+		LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
+		
+		List<PaymentDetails> paymentDetails = paymentDetailsService.findPaymentDetails(operatorName, phoneNumber);
+		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
+		final String reason = "STOP sms";
+		for (PaymentDetails paymentDetail : paymentDetails) {
+			final User owner = paymentDetail.getOwner();
+			if(owner!=null && paymentDetail.equals(owner.getCurrentPaymentDetails())){
+				unsubscribeUser(owner, reason);
 			}
-			migPaymentDetail.setActivated(false);
-			migPaymentDetail.setDisableTimestampMillis(System.currentTimeMillis());
-			entityService.updateEntity(migPaymentDetail);
-			LOGGER.info("Mig phone number {} was successfuly unsubscribed", migPaymentDetail.getMigPhoneNumber());
+			paymentDetail.setActivated(false);
+			paymentDetail.setDescriptionError(reason);
+			paymentDetail.setDisableTimestampMillis(System.currentTimeMillis());
+			entityService.updateEntity(paymentDetail);
+			LOGGER.info("Phone number [{}] was successfuly unsubscribed", phoneNumber);
 		}
+		
+		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
+		return paymentDetails;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
