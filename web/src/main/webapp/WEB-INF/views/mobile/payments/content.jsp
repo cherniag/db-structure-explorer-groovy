@@ -43,25 +43,6 @@
             </c:if>
             <div class="content">
 
-                <c:if test="${paymentDetailsByPaymentDto!=null&&paymentDetailsByPaymentDto.activated==false}">
-                    <h1><s:message code="pays.subscription.header" /></h1>
-                    <p>
-                        <c:set var="paymentType">
-                            <s:message code="${paymentDetailsByPaymentDto.paymentType}"/>
-                        </c:set>
-                        <c:set var="currencyISO">
-                            <s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
-                        </c:set>
-                        <s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
-                    <div class="contentButton formButton rad5 rel" >
-                        <form action="payments/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-                            <input class="button-small" type="submit" value="<s:message code='pays.activate.submit' />" />
-                            <span class="button-arrow"/>
-                        </form>
-                    </div>
-                    <hr />
-                </c:if>
-
                 <h1><s:message code="pays.page.h1.options" /></h1>
                 <p>${paymentPoliciesNote}</p>
                 <hr />
@@ -90,8 +71,8 @@
 
                         <div class="rel">
                             <c:choose>
-                                <c:when test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
-                                    <c:if test="${nonIOSDevice && !isO2User}">
+                                <c:when test="${isIOSDevice}">
+                                    <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                         <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                         <span class="button-arrow"/>
                                     </c:if>
