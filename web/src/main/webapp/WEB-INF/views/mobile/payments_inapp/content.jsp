@@ -30,25 +30,6 @@
     </c:if>
     <div class="content">
 
-        <c:if test="${paymentDetailsByPaymentDto!=null&&paymentDetailsByPaymentDto.activated==false}">
-            <h1><s:message code="pays.subscription.header" /></h1>
-            <p>
-                <c:set var="paymentType">
-                    <s:message code="${paymentDetailsByPaymentDto.paymentType}"/>
-                </c:set>
-                <c:set var="currencyISO">
-                    <s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
-                </c:set>
-                <s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
-            <div class="contentButton formButton rad5 rel" >
-                <form action="payments/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
-                    <input class="button-small" type="submit" value="<s:message code='pays.activate.submit' />" />
-                    <span class="button-arrow"/>
-                </form>
-            </div>
-            <hr />
-        </c:if>
-
         <h1><s:message code="pays.page.h1.options" /></h1>
         <p>${paymentPoliciesNote}</p>
         <hr />
@@ -68,7 +49,7 @@
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="o2psms" />
-                    <c:set var="payment_label" value="<b>&#163;${paymentPolicy.subcost}</b> for ${paymentPolicy.subweeks} week"/>
+                    <s:message var="payment_label" code="web.portal.o2psms.label" arguments="${paymentPolicy.subcost}, ${paymentPolicy.subweeks}"/>
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                     <c:set var="method_name" value="iTunesSubscription" />
@@ -77,8 +58,11 @@
 
                 <div class="rel">
                     <c:choose>
-                        <c:when test="${nonIOSDevice && paymentPolicy.paymentType == 'iTunesSubscription'}">
-
+                        <c:when test="${isIOSDevice}">
+                            <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
+                                <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                <span class="button-arrow"/>
+                            </c:if>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                         && paymentDetails != null
@@ -98,12 +82,16 @@
                             <span class="button-off"/>
                         </c:when>
                         <c:otherwise>
-                            <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
                                 <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
-                            </c:if>
                         </c:otherwise>
                     </c:choose>
+                    <c:if test="${!isO2User}">
+                            <img class="centered" style="width: 100px; height: 15px; margin-top: 15px; margin-bottom: 15px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/image_secure_payment.png"/>
+                            <hr/>
+                            <img class="centered" style="width: 100%; margin-top: 10px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/banner_payment.png"/>
+                            <hr/>
+                    </c:if>
                 </div>
 
             </c:forEach>

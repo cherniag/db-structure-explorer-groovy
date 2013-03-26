@@ -65,5 +65,17 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<bean id="service.SpyEntityService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.EntityService"/>
   	</bean>
+  	
+	<bean id="service.SpySagePayPaymentService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.sagePayPaymentService"/>
+  	</bean>
+  	
+	<bean id="service.SpyPayPalPaymentService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.payPalPaymentService"/>
+  	</bean>
+  	
+	<bean id="service.SpyO2PaymentService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+     	<property name="realObject" ref="service.o2PaymentService"/>
+  	</bean>
 
 </beans>

@@ -1237,7 +1237,7 @@ public class User implements Serializable {
 				&& isEmpty(getLastSubscribedPaymentSystem())
 				&& getCurrentPaymentDetails() == null;
 	}
-	
+
 	public boolean wasSubscribed() {
 		return !isEmpty(getLastSubscribedPaymentSystem())
 				|| getCurrentPaymentDetails() != null;
@@ -1283,6 +1283,10 @@ public class User implements Serializable {
 		return new DateTime(freeTrialExpiredMillis).isBeforeNow()
 				&& new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
 				&& org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
+	}
+	
+	public boolean isBeforeExpiration(long timestamp, int hours){
+		return nextSubPayment <= timestamp/1000 + hours * 60 * 60;
 	}
 
 	public String getProvider() {
