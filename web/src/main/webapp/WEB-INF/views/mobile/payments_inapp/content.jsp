@@ -49,7 +49,7 @@
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="o2psms" />
-                    <c:set var="payment_label" value="<b>&#163;${paymentPolicy.subcost}</b> for ${paymentPolicy.subweeks} week"/>
+                    <s:message var="payment_label" code="web.portal.o2psms.label" arguments="${paymentPolicy.subcost}, ${paymentPolicy.subweeks}"/>
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                     <c:set var="method_name" value="iTunesSubscription" />
