@@ -58,7 +58,7 @@
 
                 <div class="rel">
                     <c:choose>
-                        <c:when test="${isIOSDevice}">
+                        <c:when test="${isIOSDevice  && !isO2User}">
                             <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                 <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
