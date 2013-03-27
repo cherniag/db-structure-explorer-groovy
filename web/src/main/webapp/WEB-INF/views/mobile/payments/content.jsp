@@ -100,12 +100,6 @@
                         </div>
 
                     </c:forEach>
-                    <div>
-                        <img class="centered" style="width: 100px; height: 15px; margin-top: 15px; margin-bottom: 15px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/image_secure_payment.png"/>
-                        <hr/>
-                        <img class="centered" style="width: 100%; margin-top: 10px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/banner_payment.png"/>
-                        <hr/>
-                    </div>
                 </div>
                 <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
                     <div class="rel" >
