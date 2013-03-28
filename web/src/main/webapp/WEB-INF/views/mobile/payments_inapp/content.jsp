@@ -70,7 +70,7 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                            <a class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" onClick="location.href=this.title" >
+                            <a class="button-disabled" disabled="true">
                                 ${payment_label}
                             </a>
                             <span class="button-on"/>
