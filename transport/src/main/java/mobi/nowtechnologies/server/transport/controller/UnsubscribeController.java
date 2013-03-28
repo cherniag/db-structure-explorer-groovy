@@ -92,7 +92,7 @@ public class UnsubscribeController extends CommonController{
 	    List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
 	    
 		if (paymentDetailsList.isEmpty()) {
-			throw new ServiceException("Couldn't find user with phone number (MSISDN) : [" + phoneNumber + "] and operator name (NETWORK): [" + operatorName + "] payment details");
+			throw new ServiceException("Couldn't find user with phone number (MSISDN) : [" + phoneNumber + "] and operator name (NETWORK): [" + operatorName + "] in activated payment details");
 		}
 
 	    String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
