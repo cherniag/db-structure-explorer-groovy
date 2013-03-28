@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,11 +75,17 @@ public class UnsubscribeController extends CommonController{
 	   
 	    String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 	    String phoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
+	    if (phoneNumber.isEmpty()){
+	    	throw new ServiceException("Couldn't parse phone number (MSISDN)");
+	    }
 	    
 	    characterStream = new StringReader(body);
 	    source = new InputSource(characterStream);
 	    String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 	    String operatorName = receivedOperatorName.replaceAll("\\*", "");
+	    if (operatorName.isEmpty()){
+	    	throw new ServiceException("Couldn't parse operator name (NETWORK)");
+	    }
 	    
 	    userService.unsubscribeUser(phoneNumber, operatorName);
 	    
