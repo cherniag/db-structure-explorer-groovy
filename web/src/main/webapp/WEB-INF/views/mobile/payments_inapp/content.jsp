@@ -58,7 +58,7 @@
 
                 <div class="rel">
                     <c:choose>
-                        <c:when test="${isIOSDevice}">
+                        <c:when test="${isIOSDevice  && !isO2User}">
                             <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                 <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
@@ -70,7 +70,7 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                            <a class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" onClick="location.href=this.title" >
+                            <a class="button-disabled" disabled="true">
                                 ${payment_label}
                             </a>
                             <span class="button-on"/>

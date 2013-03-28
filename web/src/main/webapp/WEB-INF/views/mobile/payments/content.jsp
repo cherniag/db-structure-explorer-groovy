@@ -83,7 +83,7 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                                    <input class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                    <input class="button-disabled" disabled="true" type="button" value="<s:message code="${payment_label}" />" />
                                     <span class="button-on"/>
                                 </c:when>
                                 <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
