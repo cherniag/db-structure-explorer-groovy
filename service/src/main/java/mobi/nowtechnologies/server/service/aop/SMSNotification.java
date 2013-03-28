@@ -231,7 +231,7 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails() || createdO2PsmsPaymentDetails()")
+	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
@@ -239,6 +239,22 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
+				sendUnsubscribePotentialSMS(user);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		} finally {
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	@Around("createdO2PsmsPaymentDetails()")
+	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			LogUtils.putClassNameMDC(this.getClass());
+			Object object = joinPoint.proceed();
+			User user = (User) joinPoint.getArgs()[0];
+			try {
 				sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
