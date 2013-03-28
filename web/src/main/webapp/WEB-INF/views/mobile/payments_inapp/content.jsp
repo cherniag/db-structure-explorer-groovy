@@ -72,14 +72,14 @@
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
                             <a class="button-disabled" disabled="true">
                                 ${payment_label}
+                            	<span class="button-on"/>
                             </a>
-                            <span class="button-on"/>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
                             <a class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
                                 ${payment_label}
+                                <span class="button-off"/>
                             </a>
-                            <span class="button-off"/>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
