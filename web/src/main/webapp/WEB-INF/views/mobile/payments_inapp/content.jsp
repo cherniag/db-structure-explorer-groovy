@@ -49,7 +49,7 @@
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="o2psms" />
-                    <c:set var="payment_label" value="<b>&#163;${paymentPolicy.subcost}</b> for ${paymentPolicy.subweeks} week"/>
+                    <s:message code='pays.select.payby.o2psms.${paymentPolicy.subweeks}weeks.${paymentPolicy.subcost}subcost' var="payment_label" />
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                     <c:set var="method_name" value="iTunesSubscription" />
@@ -72,14 +72,14 @@
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
                             <a class="button-disabled" disabled="true">
                                 ${payment_label}
+                            	<span class="button-on"/>
                             </a>
-                            <span class="button-on"/>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
                             <a class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
                                 ${payment_label}
+                                <span class="button-off"/>
                             </a>
-                            <span class="button-off"/>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
