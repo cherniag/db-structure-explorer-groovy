@@ -679,7 +679,7 @@ public class UserService {
 	public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
 		LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 		
-		List<PaymentDetails> paymentDetails = paymentDetailsService.findPaymentDetails(operatorName, phoneNumber);
+		List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
 		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
 		final String reason = "STOP sms";
 		for (PaymentDetails paymentDetail : paymentDetails) {

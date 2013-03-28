@@ -275,8 +275,8 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<PaymentDetails> findPaymentDetails(String operatorName, String phoneNumber) {
-		return paymentDetailsRepository.findPaymentDetails(operatorName, phoneNumber);
+	public List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber) {
+		return paymentDetailsRepository.findActivatedPaymentDetails(operatorName, phoneNumber);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

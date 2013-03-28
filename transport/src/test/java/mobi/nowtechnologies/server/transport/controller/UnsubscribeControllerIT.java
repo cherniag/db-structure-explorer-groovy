@@ -22,7 +22,10 @@ import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
@@ -79,6 +82,9 @@ public class UnsubscribeControllerIT {
 
 	@Autowired
 	private PaymentDetailsRepository paymentDetailsRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	protected CommunityResourceBundleMessageSource messageSource;
@@ -205,14 +211,23 @@ public class UnsubscribeControllerIT {
 		this.testContextManager.prepareTestInstance(this);
 
 		if (count==0){
+			User user = UserFactory.createUser();
+			
+			user = userRepository.save(user);
+			
 			o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 			o2psmsPaymentDetails.setActivated(true);
 			o2psmsPaymentDetails.setCreationTimestampMillis(0L);
 			o2psmsPaymentDetails.setDisableTimestampMillis(0L);
 			o2psmsPaymentDetails.setMadeRetries(0);
 			o2psmsPaymentDetails.setRetriesOnError(0);
+			o2psmsPaymentDetails.setOwner(user);
 	
 			o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
+			
+			user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+			
+			user = userRepository.save(user);
 		}
 	}
 
@@ -271,18 +286,13 @@ public class UnsubscribeControllerIT {
 		String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 		String operatorName = receivedOperatorName.replaceAll("\\*", "");
 
-		List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findPaymentDetails(operatorName, o2PsmsPhoneNumber);
+		PaymentDetails actualPaymentDetails = paymentDetailsRepository.findOne(o2psmsPaymentDetails.getI());
 
-		assertNotNull(paymentDetailsList);
+		assertNotNull(actualPaymentDetails);
 
-		assertEquals(1, paymentDetailsList.size());
-
-		final PaymentDetails paymentDetails = paymentDetailsList.get(0);
-
-		assertEquals(o2psmsPaymentDetails.getI(), paymentDetails.getI());
-		assertEquals(false, paymentDetails.isActivated());
-		assertEquals("STOP sms", paymentDetails.getDescriptionError());
-		assertTrue(beforeUnsubscribeMillis <= paymentDetails.getDisableTimestampMillis() && paymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
+		assertEquals(false, actualPaymentDetails.isActivated());
+		assertEquals("STOP sms", actualPaymentDetails.getDescriptionError());
+		assertTrue(beforeUnsubscribeMillis <= actualPaymentDetails.getDisableTimestampMillis() && actualPaymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
 
 	}
 

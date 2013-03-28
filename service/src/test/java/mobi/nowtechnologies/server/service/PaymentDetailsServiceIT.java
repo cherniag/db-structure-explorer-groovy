@@ -37,7 +37,7 @@ public class PaymentDetailsServiceIT {
 	private EntityService entityService;
 
 	@Test
-	public void test_findPaymentDetails_Success() {
+	public void test_findActivatedPaymentDetails_Success() {
 		final String phoneNumber = "00447585927651";
 		final String migOperator = "MIG00VU";
 
@@ -64,7 +64,7 @@ public class PaymentDetailsServiceIT {
 
 		entityService.saveEntity(o2PSMSPaymentDetails);
 
-		List<PaymentDetails> paymentDetailsList = paymentDetailsService.findPaymentDetails(migOperator, phoneNumber);
+		List<PaymentDetails> paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails(migOperator, phoneNumber);
 
 		assertNotNull(paymentDetailsList);
 
@@ -72,7 +72,7 @@ public class PaymentDetailsServiceIT {
 			
 		assertEquals(migPaymentDetails.getI(), paymentDetailsList.get(0).getI());
 		
-		paymentDetailsList = paymentDetailsService.findPaymentDetails("o2", phoneNumber);
+		paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails("o2", phoneNumber);
 
 		assertNotNull(paymentDetailsList);
 

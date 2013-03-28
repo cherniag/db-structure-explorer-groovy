@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.service.aop;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
@@ -176,6 +178,30 @@ public class SMSNotification {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return object;
+		} finally {
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(String, String))")
+	public Object unsubscribeUserOnStopMessage(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			LogUtils.putClassNameMDC(this.getClass());
+
+			List<PaymentDetails> paymentDetailsList = (List<PaymentDetails>) joinPoint.proceed();
+			Set<User> users = new HashSet<User>();
+			for (PaymentDetails paymentDetails : paymentDetailsList) {
+				try {
+					User user = paymentDetails.getOwner();
+					if (!users.contains(user)) {
+						sendUnsubscribeAfterSMS(user);
+						users.add(user);
+					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+			return paymentDetailsList;
 		} finally {
 			LogUtils.removeClassNameMDC();
 		}
