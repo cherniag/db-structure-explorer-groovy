@@ -221,7 +221,17 @@ form {
 	padding-bottom: 12px;
 }
 
-a.button,input.button,button {
+.button-right{
+    visibility:hidden;
+}
+
+.button-small{
+    float: right;
+    margin: 10px 10px 13px 0;
+    position: relative;
+}
+
+a.button,input.button,button, .button-small, .button-turquoise {
 	background: #f451b2 url(../imgs/bgs/button.png) repeat-x 0 center;
 	/*changes*/
 	height: 29px;
@@ -344,7 +354,7 @@ input.accounts {
 }
 
 /*buttons*/
-.contentButton {
+.contentButton , .button-turquoise{
 	margin: 17px;
 	box-shadow: 1px 2px 1px #bdbdbd;
 	-moz-box-shadow: 1px 2px 1px #bdbdbd;
@@ -355,7 +365,7 @@ input.accounts {
 	margin-left: 20px;
 }
 
-.contentButton a,.contentButton input,.contentButton button {
+.contentButton a,.contentButton input,.contentButton button, .button-turquoise{
 	color: #ffffff;
 	display: block;
 	font-family: 'DroidSansRegular', Helvetica, Arial, sans-serif;
@@ -389,7 +399,7 @@ input.accounts {
 	
 }
 
-.formButton,.formButton input {
+.formButton,.formButton input, .button-turquoise {
 	height: 41px !important;
 	border: none none none none;
 	box-shadow: 1px 2px 1px #bdbdbd;
@@ -398,24 +408,24 @@ input.accounts {
 	text-shadow: 0px -1px 1px #000000;
 }
 
-.formButton input {
+.formButton input,  .button-turquoise{
 	background: #00aeef url(../imgs/bgs/button_form.png) repeat-x 0px center
 		!important;
 	display: block;
 }
 
-.formDetails .formButton .button {
+.formDetails .formButton .button , .button-turquoise{
 	font-size: 1.2em;
 }
 
-.formButton input.button,.formButton input.button {
+.formButton input.button,.formButton input.button, .button-turquoise{
 	box-shadow: none;
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	width: 100%;
 }
 
-.formButton input,.formButton button {
+.formButton input,.formButton button, .button-turquoise{
 	border: none;
 	cursor: pointer;
 }
@@ -425,7 +435,7 @@ input.accounts {
 	margin-top: 27px;
 }
 
-.setOfButtons .formButton {
+.setOfButtons .formButton, .button-turquoise {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -456,7 +466,7 @@ form .formButton {
 		0px 0px;
 }
 
-.formButton  a,.shortButton a {
+.formButton  a,.shortButton a, .button-turquoise{
 	text-align: center;
 	height: 41px;
 	line-height: 41px;

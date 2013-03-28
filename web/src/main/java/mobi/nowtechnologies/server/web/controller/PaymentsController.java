@@ -175,6 +175,8 @@ public class PaymentsController extends CommonController {
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
     public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
         LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
+        if(!"o2".equals(communityUrl))
+            return getManagePaymentsPage("payments/samsung", communityUrl, locale);
         return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
     }
 
