@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,6 +12,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 
@@ -87,8 +89,12 @@ public class UnsubscribeController extends CommonController{
 	    	throw new ServiceException("Couldn't parse operator name (NETWORK)");
 	    }
 	    
-	    userService.unsubscribeUser(phoneNumber, operatorName);
+	    List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
 	    
+		if (paymentDetailsList.isEmpty()) {
+			throw new ServiceException("Couldn't find user with phone number (MSISDN) : [" + phoneNumber + "] and operator name (NETWORK): [" + operatorName + "] payment details");
+		}
+
 	    String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
 	    
 	    LOGGER.debug("Output parameter message=[{}]", message);
