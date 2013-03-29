@@ -3,6 +3,6 @@
 <div class="footer">					
 	<div class="copyright">
 		<s:message code="m.footer.copyright" />
-		<img style="width: 100px; height: 24px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/footer_non_O2.png" alt="" />
+		<img style="width: 100px; height: 24px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/footer.png" alt="" />
 	</div>
 </div> 

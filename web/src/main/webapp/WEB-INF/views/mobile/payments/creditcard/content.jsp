@@ -218,7 +218,7 @@
 			<div class="rel" >
 				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
                 <span class="button-arrow"/>
-			</div>		
+			</div>
 		</form:form>
 	</div>
 </div>
