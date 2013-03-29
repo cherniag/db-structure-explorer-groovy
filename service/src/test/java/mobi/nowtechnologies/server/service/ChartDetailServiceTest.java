@@ -398,7 +398,7 @@ public class ChartDetailServiceTest {
 		User user = null;
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 	}
 
 	/**
@@ -416,7 +416,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(new UserGroup());
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 	}
 
 	/**
@@ -437,7 +437,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(userGroup);
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 	}
 
 	/**
@@ -472,7 +472,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -524,7 +524,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -575,7 +575,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTreeAndUpdateDrm(user, chartId);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
 
 		assertNotNull(actualChartDetails);
 		assertTrue(actualChartDetails.isEmpty());

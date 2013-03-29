@@ -86,8 +86,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"join u.userGroup ug "+
 			"join ug.community c "+
 			"where "+
-			"((c.rewriteUrlParameter!='o2' and u.subBalance=0) " +
-			"or (c.rewriteUrlParameter='o2' and ( (u.provider<>'o2' and (u.nextSubPayment<=?1+86400)) or (u.provider='o2' and u.nextSubPayment<=?1 and ((u.segment='CONSUMER' and TYPE(pd) = O2PSMSPaymentDetails) or u.segment='BUSINESS') )  ) )) "+
+			"((c.rewriteUrlParameter!='o2' and u.subBalance=0 and u.nextSubPayment<=?1) " +
+			"or (c.rewriteUrlParameter='o2' and u.nextSubPayment<=(?1+86400) and ( u.provider<>'o2' or (u.provider='o2' and ((u.segment='CONSUMER' and TYPE(pd) = O2PSMSPaymentDetails) or u.segment='BUSINESS') )  ) )) "+
 			"and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') "+
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")

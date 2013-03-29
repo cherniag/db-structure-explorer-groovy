@@ -60,7 +60,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> findChartDetailTreeAndUpdateDrm(User user, byte chartId) {
+	public List<ChartDetail> findChartDetailTree(User user, byte chartId, boolean createDrmIfNotExists) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -77,12 +77,7 @@ public class ChartDetailService {
 		if (drmType == null)
 			throw new ServiceException("The parameter drmType is null");
 
-		byte drmValue = drmPolicy.getDrmValue();
-
 		LOGGER.debug("input parameters user, chartId: [{}], [{}]", user, chartId);
-
-		int userId = user.getId();
-		List<Drm> drms = drmService.findDrmAndDrmTypeTree(userId);
 
 		Date choosedPublishTime = new Date();
 		long choosedPublishTimeMillis = choosedPublishTime.getTime();
@@ -97,28 +92,9 @@ public class ChartDetailService {
 			for (ChartDetail chartDetail : chartDetails) {
 				Media media = chartDetail.getMedia();
 
-				Drm drmForCurrentUser = null;
+				Drm drmForCurrentUser = drmService.findDrmByUserAndMedia(user, media, drmPolicy, createDrmIfNotExists);
 
-				for (Drm drm : drms) {
-					if (drm.getMediaId() == media.getI()) {
-						drmForCurrentUser = drm;
-						break;
-					}
-				}
-
-				if (drmForCurrentUser == null) {
-					drmForCurrentUser = new Drm();
-
-					drmForCurrentUser.setMedia(media);
-					drmForCurrentUser.setUser(user);
-					drmForCurrentUser.setDrmType(drmType);
-					drmForCurrentUser.setDrmValue(drmValue);
-
-					entityService.saveEntity(drmForCurrentUser);
-				}
-				List<Drm> drmsForCurrentUserAndMedia = new LinkedList<Drm>();
-				drmsForCurrentUserAndMedia.add(drmForCurrentUser);
-				media.setDrms(drmsForCurrentUserAndMedia);
+				media.setDrms(Collections.singletonList(drmForCurrentUser));
 			}
 		}
 

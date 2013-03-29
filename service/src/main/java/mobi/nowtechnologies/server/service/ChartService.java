@@ -58,7 +58,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Object[] processGetChartCommand(User user, String communityName) {
+	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (communityName == null)
@@ -76,7 +76,7 @@ public class ChartService {
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
 		for (Chart chart : charts) {			
-			chartDetails.addAll(chartDetailService.findChartDetailTreeAndUpdateDrm(user, chart.getI()));
+			chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getI(), createDrmIfNotExists));
 			playlistDtos.add(ChartAsm.toPlaylistDto(chart));
 		}
 
