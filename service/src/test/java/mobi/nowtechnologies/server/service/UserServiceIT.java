@@ -234,8 +234,9 @@ public class UserServiceIT {
 	}
 
 	private boolean isExpectedNotO2CommunityUser(User user) {
+		final int currentTimeSeconds = EPOCH_SECONDS;
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		boolean isExpectedNotO2CommunityUser = user.getSubBalance() == 0 && user.getLastDeviceLogin() != 0 && currentPaymentDetails != null && currentPaymentDetails.isActivated()
+		boolean isExpectedNotO2CommunityUser = user.getSubBalance() == 0 && user.getLastDeviceLogin() != 0 && currentPaymentDetails != null && currentPaymentDetails.isActivated() && user.getNextSubPayment()<=currentTimeSeconds
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()));
 		return isExpectedNotO2CommunityUser;
 	}
@@ -287,7 +288,7 @@ public class UserServiceIT {
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
-				&& nextSubPayment <= currentTimeSeconds;
+				&& nextSubPayment <= currentTimeSeconds + DAY_SECONDS;
 		
 		return isExpectedO2BussinessUser;
 	}
@@ -304,7 +305,7 @@ public class UserServiceIT {
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
 				&& currentPaymentDetails.getPaymentType().equals(PaymentDetails.O2_PSMS_TYPE)
-				&& nextSubPayment <= currentTimeSeconds;
+				&& nextSubPayment <= currentTimeSeconds + DAY_SECONDS;
 		return isExpectedO2User;
 	}
 
