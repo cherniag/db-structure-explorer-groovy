@@ -33,7 +33,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	
 	private O2ClientService o2ClientService;
 	private CommunityResourceBundleMessageSource messageSource;
-	private UserService userService;
 	
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -46,10 +45,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	@Override
 	public PaymentSystemResponse getExpiredResponse() {
 		return O2Response.failO2Response("O2 pending payment has been expired");
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
 	}
 
 	@Override
