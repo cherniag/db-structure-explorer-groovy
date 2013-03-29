@@ -17,8 +17,15 @@
 		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
 	</bean>
 	
+	<bean id="service.AbstractPaymentSystemService" abstract="true">
+		<property name="userService" ref="service.UserService" />
+		<property name="entityService" ref="service.EntityService" />
+		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+	</bean>
+	
 	<!-- SagePay Service -->
-	<bean id="service.sagePayPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl">
+	<bean id="service.sagePayPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="httpService">
 			<bean class="mobi.nowtechnologies.server.service.payment.http.SagePayHttpService">
 				<property name="deferUrl" value="${sagepay.deferUrl}" />
@@ -30,11 +37,9 @@
 				</property>
 			</bean>
 		</property>
-		<property name="entityService" ref="service.EntityService" />
+		
 		<property name="retriesOnError" value="${sagepay.retriesOnError}" />
 		<property name="expireMillis" value="${sagepay.pendingExpireMillis}" />
-		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 	</bean>
 	
 	<!-- PayPal Service -->
@@ -49,11 +54,10 @@
 		<property name="cancelURL" value="${paypal.cancelURL}" />
 	</bean>
 	
-	<bean id="service.payPalPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl">
+	<bean id="service.payPalPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="redirectURL" value="${paypal.redirectURL}" />
 		<property name="retriesOnError" value="${paypal.retriesOnError}" />
 		<property name="expireMillis" value="${paypal.pendingExpireMillis}" />
-		<property name="entityService"  ref="service.EntityService" />
 		<property name="httpService">
 			<bean class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
 				<property name="apiUrl" value="${paypal.apiUrl}" />
@@ -61,8 +65,6 @@
 				<property name="request" ref="request.payPalRequest" />
 			</bean>
 		</property>
-		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 	</bean>
 	
 	<!-- Mig Service -->
@@ -76,25 +78,18 @@
 		</property>
 		<property name="timeToLiveMin" value="${mig.timeToLiveMin}" />
 	</bean>
-	<bean id="service.migPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl">
+	<bean id="service.migPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="retriesOnError" value="${mig.retriesOnError}" />
 		<property name="expireMillis" value="${mig.pendingExpireMillis}" />
-		<property name="entityService" ref="service.EntityService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="httpService" ref="service.migHttpService" />
-		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
 	</bean>
 	
-	<bean id="service.o2PaymentService" class="mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl">
+	<bean id="service.o2PaymentService" class="mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl" parent="service.AbstractPaymentSystemService">
 		<property name="retriesOnError" value="${o2.retriesOnError}" />
 		<property name="expireMillis" value="${o2.pendingExpireMillis}" />
-		<property name="entityService" ref="service.EntityService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
-		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
-		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
-		<property name="userService" ref="service.UserService" />
 	</bean>
 	
 	
