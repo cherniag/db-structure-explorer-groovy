@@ -65,7 +65,7 @@ public class GetChartController extends CommonController{
 			User user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
-			Object[] objects = chartService.processGetChartCommand(user, communityName);
+			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
 			objects[1] = converToOldVersion((ChartDto)objects[1]);
 			
 			for (Object object : objects) {
@@ -123,7 +123,7 @@ public class GetChartController extends CommonController{
 			User user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
-			Object[] objects = chartService.processGetChartCommand(user, communityName);
+			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
 			objects[1] = converToOldVersion((ChartDto)objects[1]);
 			
 			proccessRememberMeToken(objects);
@@ -151,7 +151,7 @@ public class GetChartController extends CommonController{
 		
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
-		Object[] objects = chartService.processGetChartCommand(user, community);
+		Object[] objects = chartService.processGetChartCommand(user, community, true);
 		objects[1] = converToOldVersion((ChartDto)objects[1]);
 		
 		proccessRememberMeToken(objects);
@@ -174,7 +174,7 @@ public class GetChartController extends CommonController{
 		
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
-		Object[] objects = chartService.processGetChartCommand(user, community);
+		Object[] objects = chartService.processGetChartCommand(user, community, false);
 		
 		proccessRememberMeToken(objects);
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));

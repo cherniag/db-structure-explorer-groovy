@@ -19,7 +19,6 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -120,12 +119,12 @@ public class ChartServiceTest {
 		ChartDetail otherChartDetail = getChartDetailInstance(0, 3, media, otherChart);
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Arrays.asList(basicChart, topChart, otherChart));
-		when(mockChartDetailService.findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)1))).thenReturn(Arrays.asList(basicChartDetail));
-		when(mockChartDetailService.findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)2))).thenReturn(Arrays.asList(topChartDetail));
-		when(mockChartDetailService.findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)3))).thenReturn(Arrays.asList(otherChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)1), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)2), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)3), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
-		Object[] result = fixture.processGetChartCommand(testUser, communityName);
+		Object[] result = fixture.processGetChartCommand(testUser, communityName, true);
 
 		assertNotNull(result);
 		
@@ -159,9 +158,9 @@ public class ChartServiceTest {
 		assertEquals(otherChart.getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
 		verify(mockChartRepository).getByCommunityName(anyString());
-		verify(mockChartDetailService).findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)1));
-		verify(mockChartDetailService).findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)2));
-		verify(mockChartDetailService).findChartDetailTreeAndUpdateDrm(any(User.class), eq((byte)3));
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)1), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)2), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)3), anyBoolean());
 	}
 	
 	@Test
