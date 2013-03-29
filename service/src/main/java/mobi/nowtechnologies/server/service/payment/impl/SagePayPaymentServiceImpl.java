@@ -103,19 +103,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 					, pendingPayment.getAmount());
 		}
 
-		if (!response.isSagePaySuccessful()) {
-			LOGGER.warn("payment details will be deactivated cause sagepay payment failed with response {}", response);
-			paymentDetails.setActivated(false);
-			paymentDetails.setDisableTimestampMillis(System.currentTimeMillis());
-			paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-			paymentDetails.setDescriptionError(response.getMessage());
-			getPaymentDetailsRepository().save(paymentDetails);
-			entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
-			return;
-		}
-
 		pendingPayment.setExternalTxId(response.getVPSTxId());
-		entityService.updateEntity(pendingPayment);
 
 		LOGGER.info("SagePay responsed {} for pending payment {}.", response, pendingPayment.getI());
 		commitPayment(pendingPayment, response);

@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
@@ -38,6 +39,8 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	
 	private PaymentDetailsRepository paymentDetailsRepository;
 	
+	private UserService userService;
+	
 	@Transactional(propagation=Propagation.REQUIRED)
 	@Override
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
@@ -45,23 +48,28 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
 		
 		final User user = pendingPayment.getUser();
-		user.setLastPaymentTryInCycleMillis(Utils.getEpochMillis());
+		final int epochSeconds = Utils.getEpochSeconds();
+		user.setLastPaymentTryInCycleSeconds(epochSeconds);
 		
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		
-		PaymentDetailsStatus status = PaymentDetailsStatus.SUCCESSFUL;
-		if (!response.isSuccessful() && HttpServletResponse.SC_OK==response.getHttpStatus()) {
+		final PaymentDetailsStatus status;
+		if (!response.isSuccessful() && HttpServletResponse.SC_OK == response.getHttpStatus()) {
 			status = PaymentDetailsStatus.ERROR;
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
-			
-			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError()) {
-				paymentDetails.setActivated(false);
+
+			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
+				userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
 			}
-			
-			if (submittedPayment.getExternalTxId() == null) {
-				submittedPayment.setExternalTxId("");
-			}
+		} else if (response.isSuccessful()) {
+			status = PaymentDetailsStatus.SUCCESSFUL;
+		} else {
+			status = PaymentDetailsStatus.ERROR;
+		}
+
+		if (submittedPayment.getExternalTxId() == null) {
+			submittedPayment.setExternalTxId("");
 		}
 		
 		// Store submitted payment
@@ -121,5 +129,9 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	
 	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
 		this.paymentDetailsService = paymentDetailsService;
+	}
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 }
