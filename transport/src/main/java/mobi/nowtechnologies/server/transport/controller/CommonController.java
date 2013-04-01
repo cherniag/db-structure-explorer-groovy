@@ -181,8 +181,8 @@ public abstract class CommonController {
 			Locale locale = httpServletRequest.getLocale();
 			String commnityUri = getCommunityUrl(httpServletRequest);
 			String localizedMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
-			errorMessage = getErrorMessage(localizedMessage, localizedMessage, null);
-			message = localizedMessage;
+			message = serviceException.getLocalizedMessage();
+			errorMessage = getErrorMessage(localizedMessage, message, null);
 			LOGGER.error(message);
 		} else
 			throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
