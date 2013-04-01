@@ -42,6 +42,10 @@ import org.xml.sax.SAXException;
 @Controller
 public class UnsubscribeController extends CommonController{
 		
+	private static final String UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR = "unsubscribe.mrs.unparsablexml.operator";
+
+	private static final String UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE = "unsubscribe.mrs.unparsablexml.phone";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UnsubscribeController.class);
 
 	private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
@@ -52,8 +56,8 @@ public class UnsubscribeController extends CommonController{
 		XPathFactory xPathFactory = XPathFactory.newInstance();
 	    XPath xPath = xPathFactory.newXPath();
 	    try {
-			PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[contains(name,'MSISDN') or contains(name,'*MSISDN*') or contains(key,'MSISDN') or contains(key,'*MSISDN*')]/value");
-			OPERATOR_XPATHEXPRESSION = xPath.compile("//member[contains(name,'NETWORK') or contains(name,'*NETWORK*') or contains(key,'NETWORK') or contains(key,'*NETWORK*')]/value");
+			PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[name='MSISDN' or name='*MSISDN*' or key='MSISDN' or key='*MSISDN*']/value");
+			OPERATOR_XPATHEXPRESSION = xPath.compile("//member[name='NETWORK' or name='*NETWORK*' or key='NETWORK' or key='*NETWORK*']/value");
 		} catch (XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -87,7 +91,7 @@ public class UnsubscribeController extends CommonController{
 	    String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 	    String phoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
 	    if (phoneNumber.isEmpty()){
-	    	throw new ServiceException("Couldn't parse phone number (MSISDN)");
+	    	throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE, "Couldn't parse phone number (MSISDN)");
 	    }
 	    
 	    characterStream = new StringReader(body);
@@ -95,7 +99,7 @@ public class UnsubscribeController extends CommonController{
 	    String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 	    String operatorName = receivedOperatorName.replaceAll("\\*", "");
 	    if (operatorName.isEmpty()){
-	    	throw new ServiceException("Couldn't parse operator name (NETWORK)");
+	    	throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR, "Couldn't parse operator name (NETWORK)");
 	    }
 	    
 	    List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
@@ -114,8 +118,11 @@ public class UnsubscribeController extends CommonController{
 	public ModelAndView handleException(ServiceException serviceException, HttpServletRequest httpServletRequest, HttpServletResponse response) {	
 		ModelAndView modelAndView = super.handleException(serviceException, httpServletRequest, response);
 		
-		if (NO_PAYMENT_DETAILS_FOUND_MESSAGE_CODE.equals(serviceException.getErrorCodeForMessageLocalization())){
+		final String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
+		if (NO_PAYMENT_DETAILS_FOUND_MESSAGE_CODE.equals(errorCodeForMessageLocalization)) {
 			response.setStatus(HttpStatus.NOT_FOUND.value());
+		} else if (UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE.equals(errorCodeForMessageLocalization) || UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR.equals(errorCodeForMessageLocalization)) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
 		}
 		
 		return modelAndView;
