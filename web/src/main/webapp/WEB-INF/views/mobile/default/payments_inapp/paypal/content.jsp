@@ -7,7 +7,7 @@
 	<c:if test="${result==null||result=='fail'}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>			
 	</div>				
 	</c:if>
 </div>
@@ -29,7 +29,6 @@
 		</c:when>
 		<c:otherwise>		
 			<form:form modelAttribute="payPalDto" method="post">
-				<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 				<h1><s:message code="pay.paypal.form.title" /></h1>
 				<div class="payDetails">
 					<p><s:message code="pay.paypal.form.description" 

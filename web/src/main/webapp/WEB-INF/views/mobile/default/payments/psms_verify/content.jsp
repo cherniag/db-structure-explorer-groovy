@@ -3,9 +3,13 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-    <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
-    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
-    <a href="payments_inapp.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+	<c:if test="${null==result && result!='successful'}">
+	<div class="buttonBox">
+		<span class="arrow">&nbsp;</span>
+		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
+	</div>
+	</c:if> 
 </div>
 <div class="container">
 	<div class="content">
@@ -40,7 +44,7 @@
 				<div class="clr"></div>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
+					<input class="button" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
 					<span class="rightButtonArrow">
 					&nbsp;
 					</span>
@@ -56,8 +60,10 @@
 				<form:hidden path="operator"/>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input id="resendSms" class="button-turquoise" type="button" value="<s:message code='pay.psms.verify.resend' />">
-					<span class="button-arrow"/>
+					<input id="resendSms" class="button" type="button" value="<s:message code='pay.psms.verify.resend' />">
+					<span class="rightButtonArrow">
+					&nbsp;
+					</span>
 				</div>
 				
 				<div id="ajaxLoading" style="display:none;">

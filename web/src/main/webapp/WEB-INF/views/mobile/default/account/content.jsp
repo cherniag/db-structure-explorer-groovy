@@ -29,13 +29,13 @@
 				<div class="nameCell"><s:message code='account.page.leftPart.credits' /></div>
 				<div class="bold pink">
 					${accountDto.subBalance} <s:message code="pays.select.weeks" />
-					<a href="payments.html"><s:message code='account.page.leftPart.link.upgrade' /></a>
+					<a href="payments_inapp.html"><s:message code='account.page.leftPart.link.upgrade' /></a>
 				</div>					
 			</div>	
 			<!--buttons -->
 			<div class="setOfButtons">
 				<div class="contentButton formButton rad5 rel" >
-					<input class="button-turquoise" title="payments.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.payments' />" />
+					<input class="button" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.payments' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>
@@ -43,7 +43,7 @@
 				<s:message code='account.page.rightPart.submit' var="account_page_rightPart_submit" />
 				<c:if test="${not empty account_page_rightPart_submit}">
 					<div class="contentButton formButton rad5 rel" >
-						<input class="button-turquoise" title="change_account.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.rightPart.submit' />" />
+						<input class="button accounts" title="change_account.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.rightPart.submit' />" />
 						<span class="rightButtonArrow">
 							&nbsp;
 						</span>
@@ -52,7 +52,7 @@
 				<s:message code='account.page.menu.getApp' var="account_page_menu_getApp" />
 				<c:if test="${not empty account_page_menu_getApp}">
 					<div class="contentButton formButton rad5 rel" >
-						<input class="button-turquoise" title="getapp.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.getApp' />" />
+						<input class="button accounts" title="getapp.html" type="button" onClick="location.href=this.title" value="<s:message code='account.page.menu.getApp' />" />
 						<span class="rightButtonArrow">
 							&nbsp;
 						</span>

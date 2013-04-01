@@ -3,16 +3,15 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>
+	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>	
 	</div>				
 </div>
 <div class="container">
 	<div class="content">
 		<form:form modelAttribute="creditCardDto" method="post">
-			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<h1><s:message code="pay.cc.form.title" /></h1>
 			<div class="payDetails">
 				<p><s:message code="pay.cc.form.description"
@@ -212,9 +211,11 @@
 				<!--end one record in profile-->										
 			</div>
 			<!--button-->
-			<div class="rel" >
+			<div class="contentButton formButton rad5 rel" >
 				<input type="submit" class="button" value="<s:message code='pay.cc.form.submit.next' />" />
-				<span class="button-arrow"/>
+				<span class="rightButtonArrow">
+					&nbsp;
+				</span>
 			</div>		
 		</form:form>
 	</div>

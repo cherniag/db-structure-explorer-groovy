@@ -4,8 +4,10 @@
 <div class="header">
 <div class="gradient_border">&#160;</div>
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
-	<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-
+	<div class="buttonBox">
+		<span class="arrow">&nbsp;</span>
+		<a href="payments.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>				
+	</div>				
 </div>
 <div class="container">		
 	<div class="content">
@@ -13,7 +15,6 @@
 		<p><s:message code="pay.psms.form.description" /></p>
 		<div class="addSmallSpace"></div>
 		<form:form modelAttribute="pSmsDto" method="post">
-			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<div class="oneField">
 				<label><s:message code="pay.psms.form.mobile.number" /></label>
 				<form:input path="phone" />
@@ -37,8 +38,10 @@
 			</div>
 			
 			<div class="contentButton formButton rad5 rel">
-				<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.form.submit' />" />
-				<span class="button-arrow"/>
+				<input class="button" type="submit" value="<s:message code='pay.psms.form.submit' />" />
+				<span class="rightButtonArrow">
+					&nbsp;
+				</span>
 			</div>
 			
 			<c:choose>

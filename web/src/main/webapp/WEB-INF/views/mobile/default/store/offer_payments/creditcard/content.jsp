@@ -6,7 +6,7 @@
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<input class="button-small" title="offers/${OFFER_DTO.id}/payments.html" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />
+		<input class="button buttonSmall accounts" title="offers/${OFFER_DTO.id}/payments.html" type="button" onClick="location.href=this.title" value="<s:message code='m.page.main.menu.back' />" />	
 	</div>				
 </div>
 <div class="container">

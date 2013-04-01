@@ -6,7 +6,7 @@
 	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>				
 	</div>				
 </div>
 <div class="container">		
@@ -15,7 +15,6 @@
 		<p><s:message code="pay.psms.form.description" /></p>
 		<div class="addSmallSpace"></div>
 		<form:form modelAttribute="pSmsDto" method="post">
-			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<div class="oneField">
 				<label><s:message code="pay.psms.form.mobile.number" /></label>
 				<form:input path="phone" />

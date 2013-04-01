@@ -78,7 +78,9 @@
 			<div class="clr"></div>
 			<div class="contentButton formButton rad5 rel" >
 				<input class="button" type="submit" value="<s:message code='change_account.page.changeAccountForm.button.save' />" />
-				<span class="button-arrow"/>
+				<span class="rightButtonArrow">
+					&nbsp;
+				</span>
 			</div>
 			
 		</form:form>

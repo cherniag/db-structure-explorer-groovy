@@ -7,7 +7,7 @@
 	<c:if test="${result == null}">
 	<div class="buttonBox">
 		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
+		<a href="payments_inapp.html" class="button buttonSmall accounts"><s:message code='m.page.main.menu.back' /></a>					
 	</div>
 	</c:if>
 </div>
@@ -48,7 +48,7 @@
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
 				<div class="contentButton formButton rad5 rel" >
-					<input class="button-small" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back' />" />
+					<input class="button buttonSmall accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back' />" />
 					<span class="rightButtonArrow">
 						&nbsp;
 					</span>
