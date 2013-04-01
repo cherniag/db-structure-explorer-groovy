@@ -12,6 +12,7 @@
 <div class="container">
 	<div class="content">
 		<form:form modelAttribute="creditCardDto" method="post">
+			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<input type="hidden" name="offerId" value="${offerId}"/>
 			<h1><s:message code="pay.cc.form.title" /></h1>
 			<div class="payDetails">

@@ -3,6 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div id="mainContent">
 	<form:form modelAttribute="creditCardDto" method="post">
+	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 	<div class="header">
 	<div class="gradient_border">&#160;</div>
 		<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	

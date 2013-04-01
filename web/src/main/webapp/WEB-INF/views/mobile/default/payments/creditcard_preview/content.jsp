@@ -4,6 +4,7 @@
 <div id="mainContent">
 <div class="gradient_border">&#160;</div>
 	<form:form modelAttribute="creditCardDto" method="post">
+	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 	<div class="header">
 		<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 		<div class="buttonBox">
