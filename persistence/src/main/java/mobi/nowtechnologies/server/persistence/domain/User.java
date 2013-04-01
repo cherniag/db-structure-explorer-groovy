@@ -55,7 +55,7 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-	public static enum Fields {
+    public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -1253,6 +1253,16 @@ public class User implements Serializable {
 	public boolean isSubscribedStatus() {
 		return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
 	}
+
+    public boolean isNonO2Community() {
+        Community community = this.userGroup.getCommunity();
+        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+
+        if (!"o2".equalsIgnoreCase(communityUrl))
+            return true;
+
+        return false;
+    }
 
 	public boolean isSubscribed() {
 		return isSubscribedStatus()
