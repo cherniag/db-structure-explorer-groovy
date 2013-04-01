@@ -174,6 +174,8 @@ public class PaymentDetailsService {
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
             Promotion potentialPromotion = user.getPotentialPromotion();
             if (null != potentialPromotion) {
+            	user = userService.findById(user.getId());
+            	potentialPromotion = user.getPotentialPromotion();
 				List<PromotionPaymentPolicy> promotionPaymentPolicies = potentialPromotion.getPromotionPaymentPolicies();
 				boolean inList = false;
 				for (PromotionPaymentPolicy promotionPolicy : promotionPaymentPolicies) {
