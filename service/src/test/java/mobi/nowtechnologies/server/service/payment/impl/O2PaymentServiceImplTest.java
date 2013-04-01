@@ -269,9 +269,7 @@ public class O2PaymentServiceImplTest {
 	}
 	
 	@Test
-	public void testStartPayment_FailureO2ResponseAndMedeRetriesEqRetriesOnErrorAndNextSubPaymentInThePast_Success() throws Exception{
-		final int epochSeconds = 55555;
-
+	public void testStartPayment_FailureO2ResponseAndMedeRetriesEqRetriesOnError_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -283,7 +281,6 @@ public class O2PaymentServiceImplTest {
 		o2psmsPaymentDetails.setMadeRetries(Integer.MAX_VALUE);
 		o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
 		o2psmsPaymentDetails.setActivated(true);
-		o2psmsPaymentDetails.setOwner(user);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -291,9 +288,9 @@ public class O2PaymentServiceImplTest {
 		user.setProvider("o2");
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(epochSeconds - 50*60*60);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment()-10);
+		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		
@@ -310,7 +307,6 @@ public class O2PaymentServiceImplTest {
 
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(Utils.getBigRandomInt()).thenReturn(internalTxId);
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
 		
 		final String externalTxId = String.valueOf(Integer.MIN_VALUE);
 		final O2Response o2Response = O2Response.failO2Response("");
@@ -341,6 +337,7 @@ public class O2PaymentServiceImplTest {
 				O2PSMSPaymentDetails o2psmsPaymentDetails = (O2PSMSPaymentDetails) invocation.getArguments()[0];
 				
 				assertEquals(PaymentDetailsStatus.ERROR, o2psmsPaymentDetails.getLastPaymentStatus());
+				assertFalse(o2psmsPaymentDetails.isActivated());
 				
 				return o2psmsPaymentDetails;
 			}
@@ -384,8 +381,6 @@ public class O2PaymentServiceImplTest {
 		
 		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(matcher ));
 
-		Mockito.when(userServiceMock.unsubscribeUser(user, o2Response.getDescriptionError())).thenReturn(user);
-
 		o2PaymentServiceImplSpy.startPayment(pendingPayment);
 		
 		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
@@ -396,7 +391,6 @@ public class O2PaymentServiceImplTest {
 		Mockito.verify(mockEntityService, times(1)).updateEntity(pendingPayment);
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(matcher));
-		Mockito.verify(userServiceMock, times(1)).unsubscribeUser(user, o2Response.getDescriptionError());
 		
 	}
 	
