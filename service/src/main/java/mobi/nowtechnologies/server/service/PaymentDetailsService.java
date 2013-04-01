@@ -160,6 +160,9 @@ public class PaymentDetailsService {
 
     @Transactional
     public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
+        if(user.isNonO2Community()){
+            return mergePaymentPolicies(user, paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community));
+        }
         if(isNull(segment))
             segment = SegmentType.BUSINESS;
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);

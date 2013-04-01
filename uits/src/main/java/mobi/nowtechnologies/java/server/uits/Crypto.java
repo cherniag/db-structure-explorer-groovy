@@ -57,36 +57,7 @@ public class Crypto {
 
 		// Encrypt digest
 		try {
-		  
-		     
 		    Security.addProvider(new BouncyCastleProvider());
-		     /*
-
-			System.out.println("Signing "+data+" "+data.length()+" with "+signAlgo +" "+hashAlgo);
-			MessageDigest messageDigest = MessageDigest.getInstance(hashAlgo);
-			byte[] digest = messageDigest.digest((data).getBytes());
-			System.out.println("digest "+Base64.encodeToString(digest, false));
-			Provider pro = new BouncyCastleProvider();
-			Iterator<Entry<Object,Object>> it = pro.entrySet().iterator();
-			while (it.hasNext()) {
-				System.out.println("Entry "+it.next());
-			}
-			Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPPadding", new BouncyCastleProvider());
-			cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-			cipher.update(digest);
-			byte[] cipherText = cipher.doFinal();
-			System.out.println("Signature: " + Base64.encodeToString(cipherText, false));
-			Cipher cipher2 = Cipher.getInstance("RSA", new BouncyCastleProvider());
-			cipher2.init(Cipher.ENCRYPT_MODE, privateKey);
-			cipher2.update(digest);
-			byte[] cipherText2 = cipher2.doFinal();
-			System.out.println("Signature: " + Base64.encodeToString(cipherText2, false));
-			Cipher cipher3 = Cipher.getInstance("RSA/ECB/PKCS1Padding", new BouncyCastleProvider());
-			cipher3.init(Cipher.ENCRYPT_MODE, privateKey);
-			cipher3.update(digest);
-			byte[] cipherText3 = cipher3.doFinal();
-			System.out.println("Signature: " + Base64.encodeToString(cipherText3, false));
-			*/
 			Signature sig = Signature.getInstance("SHA256WITHRSAENCRYPTION");
 			sig.initSign(privateKey);
 			sig.update(data.getBytes());
