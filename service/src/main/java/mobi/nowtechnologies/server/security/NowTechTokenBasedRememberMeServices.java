@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.security;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,8 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 	private static final Logger LOGGER = LoggerFactory.getLogger(NowTechTokenBasedRememberMeServices.class);
 	
 	private AuthenticationSuccessHandler successfulHander;
+
+    private final long EXPIRY_TIME_2_YEARS = new DateTime().plusYears(2).getMillis();
 	
 	public NowTechTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
 		super(key, userDetailsService);
@@ -115,14 +118,12 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 	 */
 	public String getRememberMeToken(String userName, String password) {
 		LOGGER.debug("input parameters userName, password: [{}], [{}]", new String[]{userName, password});
-		
-		long expiryTime = System.currentTimeMillis()+1000L* getTokenValiditySeconds();
-		
+
 		String encodedUserName = getEncodedUserName(userName);
 		
-		String tokenSignature = makeTokenSignature(expiryTime, encodedUserName, password);
+		String tokenSignature = makeTokenSignature(EXPIRY_TIME_2_YEARS, encodedUserName, password);
 		
-		String rememberMeToken = encodeCookie(new String[] {encodedUserName, Long.toString(expiryTime), tokenSignature});
+		String rememberMeToken = encodeCookie(new String[] {encodedUserName, Long.toString(EXPIRY_TIME_2_YEARS), tokenSignature});
 		
 		LOGGER.debug("Remember me auth token was generated {}", rememberMeToken);
 		return rememberMeToken;

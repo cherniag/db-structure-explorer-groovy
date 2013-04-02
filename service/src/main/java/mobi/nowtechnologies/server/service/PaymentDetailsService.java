@@ -162,8 +162,11 @@ public class PaymentDetailsService {
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
+        if(user.isNonO2Community()){
+            return mergePaymentPolicies(user, paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community));
+        }
         if(isNull(segment))
             segment = SegmentType.BUSINESS;
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);
@@ -175,6 +178,8 @@ public class PaymentDetailsService {
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
             Promotion potentialPromotion = user.getPotentialPromotion();
             if (null != potentialPromotion) {
+            	user = userService.findById(user.getId());
+            	potentialPromotion = user.getPotentialPromotion();
 				List<PromotionPaymentPolicy> promotionPaymentPolicies = potentialPromotion.getPromotionPaymentPolicies();
 				boolean inList = false;
 				for (PromotionPaymentPolicy promotionPolicy : promotionPaymentPolicies) {
