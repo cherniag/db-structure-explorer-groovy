@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 /**
@@ -80,11 +81,9 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 				System.arraycopy(cookieTokens, 0, cookieTokens, 0, 3);
 			}
 			processAutoLoginCookie = super.processAutoLoginCookie(cookieTokens, request, response);
-		} catch (InvalidCookieException e) {
-			LOGGER.error("Invalid cookie while making auto login {}", e);
-			throw new InvalidCookieException(e.getMessage());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			throw new InvalidCookieException(e.getMessage());
 		}
 		return processAutoLoginCookie;
 	}
