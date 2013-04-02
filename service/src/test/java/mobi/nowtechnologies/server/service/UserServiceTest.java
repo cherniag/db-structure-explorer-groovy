@@ -1793,7 +1793,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		final int currentTimeSeconds = Integer.MIN_VALUE;
+		final int currentTimeSeconds = oldNextSubPayment  + 25;
 		final long currentTimeMillis = currentTimeSeconds*1000L;
 
 		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
@@ -1877,7 +1877,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		final int currentTimeSeconds = Integer.MIN_VALUE;
+		final int currentTimeSeconds = oldNextSubPayment  + 25;
 		final long currentTimeMillis = currentTimeSeconds*1000L;
 
 		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
@@ -1888,6 +1888,90 @@ public class UserServiceTest {
 				
 				assertEquals(2, passedUser.getSubBalance());
 				assertEquals(currentTimeSeconds + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(currentTimeMillis, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(migSmsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		Mockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+	}
+	
+	@Test
+	public void testProcessPaymentSubBalanceCommand_O2BussinesSubscribedUserAndCurrentTimeLessThanoNextSubPayment_Success() throws Exception{
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
+		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
+		
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		final int oldNextSubPayment = 2;
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("o2");
+		user.setSubBalance(2);
+		user.setStatus(subscribedUserStatus);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+		user.setNextSubPayment(oldNextSubPayment);
+		user.setSegment(SegmentType.BUSINESS);
+		
+		final SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(migSmsType);
+		submittedPayment.setSubweeks(5);
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		final int currentTimeSeconds = oldNextSubPayment-5;
+		final long currentTimeMillis = currentTimeSeconds*1000L;
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[0];
+				
+				assertEquals(2, passedUser.getSubBalance());
+				assertEquals(oldNextSubPayment + submittedPayment.getSubweeks() * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(currentTimeMillis, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
@@ -2364,95 +2448,4 @@ public class UserServiceTest {
 	private void mockMakeFreeSMSRequest(final MigPaymentDetails currentMigPaymentDetails, String message, MigResponse migResponse) {
 		Mockito.when(mockMigHttpService.makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), message)).thenReturn(migResponse);
 	}
-	
-//	@Test
-//	public void testGetGraceDurationSeconds_Seconds(){
-//		
-//		final Integer graceDurationSeconds = Integer.MAX_VALUE;
-//		
-//		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
-//		o2psmsPaymentDetails.setActivated(true);
-//
-//		final User user = UserFactory.createUser();
-//		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-//		final Community community = CommunityFactory.createCommunity();
-//		
-//		community.setRewriteUrlParameter("o2");
-//		userGroup.setCommunity(community);
-//		user.setUserGroup(userGroup);
-//		user.setProvider("o2");
-//		user.setSegment(CONSUMER);
-//		user.setContract(Contract.PAYG);
-//		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-//		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-//		user.setLastPaymentTryMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-//		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-//		
-//		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
-//		
-//		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
-//		
-//		assertEquals(graceDurationSeconds, actualGraceDurationSeconds);
-//		
-//		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
-//		
-//	}
-//	
-//	@Test
-//	public void testGetGraceDurationSeconds_graceDurationSecondsIsNull_Seconds(){
-//		
-//		final Integer graceDurationSeconds = null;
-//		
-//		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
-//
-//		final User user = UserFactory.createUser();
-//		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-//		final Community community = CommunityFactory.createCommunity();
-//		
-//		community.setRewriteUrlParameter("o2");
-//		userGroup.setCommunity(community);
-//		user.setUserGroup(userGroup);
-//		user.setProvider("o2");
-//		user.setSegment(CONSUMER);
-//		user.setContract(Contract.PAYG);
-//		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-//		
-//		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
-//		
-//		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
-//		
-//		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
-//		
-//		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
-//		
-//	}
-//	
-//	@Test
-//	public void testGetGraceDurationSeconds_graceDurationSecondsIsNotParsable_Seconds(){
-//		
-//		final String graceDurationSeconds = "graceDurationSeconds";
-//
-//		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
-//		
-//		final User user = UserFactory.createUser();
-//		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-//		final Community community = CommunityFactory.createCommunity();
-//		
-//		community.setRewriteUrlParameter("o2");
-//		userGroup.setCommunity(community);
-//		user.setUserGroup(userGroup);
-//		user.setProvider("o2");
-//		user.setSegment(CONSUMER);
-//		user.setContract(Contract.PAYG);
-//		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-//		
-//		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(graceDurationSeconds+"");
-//		
-//		Integer actualGraceDurationSeconds = userServiceSpy.getGraceDurationSeconds(user);
-//		
-//		assertEquals(Integer.valueOf(0), actualGraceDurationSeconds);
-//		
-//		Mockito.verify(mockCommunityResourceBundleMessageSource).getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null);
-//		
-//	}
 }
