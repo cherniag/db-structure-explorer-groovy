@@ -1,30 +1,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
 <div class="header">
-<div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>
-	<c:if test="${result==null||result=='fail'}">
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-	</div>				
-	</c:if>
+    <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
 	<div class="content">
 	<c:choose>
 		<c:when test="${result!=null&&result!='fail'}">
 			<h1><s:message code='pay.paypal.dialog.successful.title' /></h1>
-			<p><s:message code='pay.paypal.dialog.successful.body' /></p>
+			<p><s:message code='pay.paypal.dialog.successful.body.inapp' /></p>
 			<div class="clr"></div>				
 			<div class="addSmallSpace"></div>		
 			<!--button-->
 			<div class="contentButton formButton rad10 rel" >
-				<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button' />" />
-				<span class="rightButtonArrow">
-					&nbsp;
-				</span>
+				<input class="button accounts" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.inapp' />" />
+				<span class="button-arrow"/>
 			</div>
 		</c:when>
 		<c:otherwise>		
@@ -32,7 +25,7 @@
 				<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 				<h1><s:message code="pay.paypal.form.title" /></h1>
 				<div class="payDetails">
-					<p><s:message code="pay.paypal.form.description" 
+					<p><s:message code="pay.paypal.form.description"
 								arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"
        							htmlEscape="false"
        							argumentSeparator=";"/>
