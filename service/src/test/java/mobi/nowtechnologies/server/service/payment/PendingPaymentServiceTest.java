@@ -49,7 +49,7 @@ public class PendingPaymentServiceTest {
 	@Test
 	public void createPendingPaymentsForRetries_Successful() {
 		List<User> users = Arrays.asList(createUser(), createUser(), createUser());
-			Mockito.when(paymentDao.getUsersForRetryPayment()).thenReturn(users);
+			Mockito.when(userService.getUsersForRetryPayment()).thenReturn(users);
 		List<PendingPayment> paymentsForRetries = service.createRetryPayments();
 		
 		Assert.assertNotNull(paymentsForRetries);

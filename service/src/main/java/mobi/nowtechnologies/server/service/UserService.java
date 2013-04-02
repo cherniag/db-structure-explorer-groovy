@@ -2042,4 +2042,13 @@ public class UserService {
 	
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
 	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsersForRetryPayment() {
+		
+		List<User> usersForRetryPayment = userRepository.getUsersForRetryPayment(Utils.getEpochSeconds());
+		
+		LOGGER.debug("Output parameter usersForRetryPayment=[{}]", usersForRetryPayment);
+		return usersForRetryPayment;
+	}
 }

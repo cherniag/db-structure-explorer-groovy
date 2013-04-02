@@ -88,20 +88,6 @@ public class PaymentDao extends JpaDaoSupport {
 		if (payPalPayments.isEmpty()) return null;
 		return  payPalPayments.get(0);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
-	public List<User> getUsersForRetryPayment() {
-		return getJpaTemplate().execute(new JpaCallback<List<User>>() {
-			@Override
-			public List<User> doInJpa(EntityManager em) throws PersistenceException {
-				em.clear();
-				Query queryObject = em.createNamedQuery(User.NQ_GET_USERS_FOR_RETRY_PAYMENT);
-				getJpaTemplate().prepareQuery(queryObject);
-				return queryObject.getResultList();
-			}
-		});
-	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public PendingPayment savePendingPayment(PendingPayment pendingPayment) {

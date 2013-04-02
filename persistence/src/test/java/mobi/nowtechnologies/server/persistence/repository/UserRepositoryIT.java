@@ -7,12 +7,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +40,7 @@ public class UserRepositoryIT {
 	private static final int HOUR_SECONDS = 60 * 60;
 	private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
 	private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
+	private static final byte o2CommunityId = 7;
 
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
@@ -245,5 +249,108 @@ public class UserRepositoryIT {
 //		assertEquals(testUser.getId(), user.getId());
 //		assertEquals(newLastBefore48SmsMillis, user.getLastBefore48SmsMillis());
 		
+	}
+	
+	@Test
+	public void testgetUsersForRetryPayment_MadeRetriesNotEqRetriesOnError_Success() throws Exception {
+		
+		int epochSeconds = Utils.getEpochSeconds();
+		
+		User testUser = UserFactory.createUser();
+		testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
+		testUser.setLastDeviceLogin(epochSeconds);
+
+		testUser = userRepository.save(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		currentO2PaymentDetails.setMadeRetries(0);
+		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+		currentO2PaymentDetails.setRetriesOnError(3);
+
+		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
+		
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+
+		testUser = userRepository.save(testUser);
+		
+		List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+		
+		assertNotNull(actualUsers);
+		assertEquals(1, actualUsers.size());
+		assertEquals(testUser.getId(), actualUsers.get(0).getId());
+
+	}
+	
+	@Test
+	public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndNextSubPaymentInTheFutureAndMadeRetriesEqRetriesOnError_Success() throws Exception {
+		
+		int epochSeconds = Utils.getEpochSeconds();
+		
+		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+		
+		User testUser = UserFactory.createUser();
+		testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
+		testUser.setLastDeviceLogin(epochSeconds);
+		testUser.setUserGroup(o2UserGroup);
+
+		testUser = userRepository.save(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		currentO2PaymentDetails.setMadeRetries(3);
+		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+		currentO2PaymentDetails.setRetriesOnError(3);
+
+		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
+		
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+
+		testUser = userRepository.save(testUser);
+		
+		List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+		
+		assertNotNull(actualUsers);
+		assertEquals(0, actualUsers.size());
+	}
+	
+	@Test
+	public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndActivatePaymentDetailsAndNextSubPaymentInThePastAndMadeRetriesEqRetriesOnError_Success() throws Exception {
+		
+		int epochSeconds = Utils.getEpochSeconds();
+		
+		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+		
+		User testUser = UserFactory.createUser();
+		testUser.setNextSubPayment(epochSeconds);
+		testUser.setLastDeviceLogin(epochSeconds);
+		testUser.setUserGroup(o2UserGroup);
+
+		testUser = userRepository.save(testUser);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		currentO2PaymentDetails.setMadeRetries(3);
+		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+		currentO2PaymentDetails.setRetriesOnError(3);
+
+		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
+		
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+
+		testUser = userRepository.save(testUser);
+		
+		List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+		
+		assertNotNull(actualUsers);
+		assertEquals(1, actualUsers.size());
+		assertEquals(testUser.getId(), actualUsers.get(0).getId());
+
 	}
 }

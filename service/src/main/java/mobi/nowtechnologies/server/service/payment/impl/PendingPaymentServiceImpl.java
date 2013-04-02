@@ -65,7 +65,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 	@Override
 	public List<PendingPayment> createRetryPayments() {
 		LOGGER.info("Start creating retry-pending payments...");
-		List<User> usersForRetryPayment = paymentDao.getUsersForRetryPayment();
+		List<User> usersForRetryPayment = userService.getUsersForRetryPayment();
 		LOGGER.debug("{} users were selected for retry payment", usersForRetryPayment.size());
 		List<PendingPayment> retryPayments = new LinkedList<PendingPayment>();
 		for (User user : usersForRetryPayment) {

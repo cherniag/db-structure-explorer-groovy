@@ -2424,6 +2424,23 @@ public class UserServiceTest {
 		userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId); 
 	}
 
+	@Test
+	public void testFetUsersForRetryPayment() {
+		
+		final int currentTimeSeconds = Integer.MAX_VALUE;
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		
+		List<User> expectedUsers = Collections.<User>emptyList(); 
+		
+		Mockito.when(mockUserRepository.getUsersForRetryPayment(currentTimeSeconds)).thenReturn(expectedUsers);
+		
+		List<User> users = userServiceSpy.getUsersForRetryPayment();
+		
+		assertNotNull(users);
+		assertEquals(expectedUsers, users);
+	}
+
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
 		final ArgumentMatcher<Object[]> matcher = new ArgumentMatcher<Object[]>() {
 			@Override
