@@ -71,9 +71,14 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 		for (User user : usersForRetryPayment) {
 			PendingPayment pendingPayment = createPendingPayment(user, PaymentDetailsType.RETRY);
 			retryPayments.add(pendingPayment);
+			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 			// While creating a pending payment we update last payment status for user to AWAITING 
-			user.getCurrentPaymentDetails().setLastPaymentStatus(PaymentDetailsStatus.AWAITING);
-			user.getCurrentPaymentDetails().incrementRetries();
+			currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.AWAITING);
+			if (currentPaymentDetails.getMadeRetries()==currentPaymentDetails.getRetriesOnError()){
+				currentPaymentDetails.setMadeRetries(1);
+			}else{
+				currentPaymentDetails.incrementRetries();
+			}
 			userService.updateUser(user);
 		}
 		return retryPayments;
