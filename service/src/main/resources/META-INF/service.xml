@@ -97,6 +97,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="chartDetailService" ref="service.ChartDetailService" />
+		<property name="drmRepository" ref="drmRepository" />
 	</bean>
 
 	<bean id="service.AccountLogService" class="mobi.nowtechnologies.server.service.AccountLogService">

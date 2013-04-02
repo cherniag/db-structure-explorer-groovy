@@ -110,13 +110,17 @@ public class SMSNotification {
 	protected void startO2PSMSPayment() {
 	}
 	
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
+	protected void startMigPayment() {
+	}
+	
 	/**
 	 * Sending sms after any payment system has spent all retries with failures
 	 * 
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment()")
+	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
@@ -242,6 +246,10 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(..))")
 	protected void createdMigPaymentDetails() {
 	}
+	
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymnetDetails(..))")
+	protected void createdO2PsmsPaymentDetails() {
+	}
 
 	/**
 	 * Sending sms after user was subscribed with some payment details
@@ -257,6 +265,22 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
+				sendUnsubscribePotentialSMS(user);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		} finally {
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	@Around("createdO2PsmsPaymentDetails()")
+	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			LogUtils.putClassNameMDC(this.getClass());
+			Object object = joinPoint.proceed();
+			User user = (User) joinPoint.getArgs()[0];
+			try {
 				sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);

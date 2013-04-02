@@ -49,7 +49,7 @@
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
                     <c:set var="method_name" value="o2psms" />
-                    <s:message var="payment_label" code="web.portal.o2psms.label" arguments="${paymentPolicy.subcost}, ${paymentPolicy.subweeks}"/>
+                    <s:message code='pays.select.payby.o2psms.${paymentPolicy.subweeks}weeks.${paymentPolicy.subcost}subcost' var="payment_label" />
                 </c:if>
                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                     <c:set var="method_name" value="iTunesSubscription" />
@@ -58,7 +58,7 @@
 
                 <div class="rel">
                     <c:choose>
-                        <c:when test="${isIOSDevice}">
+                        <c:when test="${isIOSDevice  && !isO2User}">
                             <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                 <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
@@ -70,31 +70,32 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                            <a class="button-disabled" disabled="true" title="payments/${method_name}.html?paymentPolicyId==${paymentPolicy.id}" onClick="location.href=this.title" >
+                            <a class="button-disabled" disabled="true">
                                 ${payment_label}
+                            	<span class="button-on"/>
                             </a>
-                            <span class="button-on"/>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
                             <a class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
                                 ${payment_label}
+                                <span class="button-off"/>
                             </a>
-                            <span class="button-off"/>
                         </c:when>
                         <c:otherwise>
+                            <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
                                 <input class="button-turquoise" title="payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
+                            </c:if>
                         </c:otherwise>
                     </c:choose>
+                </div>
+            </c:forEach>
                     <c:if test="${!isO2User}">
                             <img class="centered" style="width: 100px; height: 15px; margin-top: 15px; margin-bottom: 15px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/image_secure_payment.png"/>
                             <hr/>
                             <img class="centered" style="width: 100%; margin-top: 10px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/banner_payment.png"/>
                             <hr/>
                     </c:if>
-                </div>
-
-            </c:forEach>
         </div>
         <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
             <div class="rel" >
