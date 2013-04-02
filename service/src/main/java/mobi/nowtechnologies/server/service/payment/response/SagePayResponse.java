@@ -15,6 +15,9 @@ public class SagePayResponse extends PaymentSystemResponse {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SagePayResponse.class);
 	
 	private Properties properties;
+	
+	@Deprecated 
+	// TODO replace by isSuccessful
 	private boolean sagePaySuccessful = false;
 	
 	public static final String RESPONSE_MATCHED_VALUE = "MATCHED";
@@ -47,7 +50,7 @@ public class SagePayResponse extends PaymentSystemResponse {
 			if (httpStatus != HttpStatus.SC_OK) {
 				descriptionError = message;
 			} else if (!MessageResponseStatus.OK.toString().equals(status)) {
-				isSuccessful = true;
+				isSuccessful = false;
 				String errorMessage = properties.getProperty(MessageResponseParam.StatusDetail.toString());
 				descriptionError = StringUtils.hasText(errorMessage)?errorMessage:message;
 			} else {
@@ -60,6 +63,7 @@ public class SagePayResponse extends PaymentSystemResponse {
 		}		
 	}
 
+	@Deprecated
 	public boolean isSagePaySuccessful() {
 		return sagePaySuccessful;
 	}
