@@ -187,6 +187,7 @@ public class SMSNotification {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(String, String))")
 	public Object unsubscribeUserOnStopMessage(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
@@ -304,7 +305,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text.for." + user.getProvider() + "." + user.getContract(), new String[] { unsubscribeUrl });
+		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.potential.text"), new String[] { unsubscribeUrl });
 	}
 
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
@@ -313,7 +314,7 @@ public class SMSNotification {
 		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
 		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.after.text.for." + user.getProvider() + "." + user.getContract(), new String[] { paymentsUrl, days.toString() });
+		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.after.text"), new String[] { paymentsUrl, days.toString() });
 	}
 
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
@@ -321,7 +322,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, "sms.lowBalance.text.for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract(), null);
+		sendSMSWithUrl(user, getMessageCode(user, "sms.lowBalance.text"), null);
 	}
 	
 	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
@@ -334,7 +335,7 @@ public class SMSNotification {
 		if (rejectDevice(user, "sms.notification.paymentFail.at."+hoursBefore+"h.not.for.device.type"))
 			return;
 		
-		sendSMSWithUrl(user, "sms.paymentFail.at."+hoursBefore+"h.text.for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract(), new String[] { paymentsUrl });
+		sendSMSWithUrl(user, getMessageCode(user, "sms.paymentFail.at."+hoursBefore+"h.text"), new String[] { paymentsUrl });
 	}
 
 	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
@@ -369,7 +370,7 @@ public class SMSNotification {
 			migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
 
-	public boolean rejectDevice(User user, String code) {
+	protected boolean rejectDevice(User user, String code) {
 		Community community = user.getUserGroup().getCommunity();  
 	  	String communityUrl = community.getRewriteUrlParameter();  
 	  	String devices = messageSource.getMessage(communityUrl, code, null, null, null); 
@@ -382,4 +383,17 @@ public class SMSNotification {
 		return false;
 	}
 
+	protected String getMessageCode(User user, String msgCodeBase){
+		if(user.getProvider() != null){
+			msgCodeBase += ".for."+user.getProvider();
+			if(user.getSegment() != null){
+				msgCodeBase += "."+user.getSegment();
+				if(user.getContract() != null){
+					msgCodeBase += "."+user.getContract();
+				}
+			}
+		}
+		
+		return msgCodeBase;
+	}
 }
