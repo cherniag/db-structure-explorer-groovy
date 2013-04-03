@@ -137,7 +137,7 @@
 		$("#ajaxLoading").show();
 		$("#errorBoxContainer").hide();
 		$.ajax({
-			url:"payments_inapp/creditcard_details.html",
+			url:"payments/creditcard_details.html",
 			type:"post",
 			data: $("form#creditCardDto").serialize(),
 			success: function(data) {
