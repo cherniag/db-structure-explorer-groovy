@@ -1,10 +1,8 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -87,13 +85,13 @@ public class SMSNotificationTest {
 		fixture.setPaymentsUrl(paymentsUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.CONSUMER.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendLimitedStatusSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -115,13 +113,13 @@ public class SMSNotificationTest {
 		fixture.setPaymentsUrl(paymentsUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.CONSUMER.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendLimitedStatusSMS(user);
 		
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -144,13 +142,13 @@ public class SMSNotificationTest {
 		String url =  paymentsUrl + "?_REMEMBER_ME=" + rememberMeToken+"&community="+community.getRewriteUrlParameter();
 		String[] args = {url};
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for.o2.CONSUMER.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 
 		fixture.sendLimitedStatusSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.limited.status.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -193,13 +191,13 @@ public class SMSNotificationTest {
 		fixture.setUnsubscribeUrl(unsubscribeUrl);
 		fixture.setTinyUrlService(tinyUrlService);
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.CONSUMER.PAYG"), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendUnsubscribePotentialSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -221,13 +219,13 @@ public class SMSNotificationTest {
 		String url =  unsubscribeUrl + "?community="+community.getRewriteUrlParameter()+"&_REMEMBER_ME=" + rememberMeToken;
 		String[] args = {url};
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.CONSUMER.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 
 		fixture.sendUnsubscribePotentialSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -249,13 +247,13 @@ public class SMSNotificationTest {
 		String url =  unsubscribeUrl + "?community="+community.getRewriteUrlParameter()+"&_REMEMBER_ME=" + rememberMeToken;
 		String[] args = {url};
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for.o2.CONSUMER.PAYG"), any(String[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendUnsubscribePotentialSMS(user);
 		
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.potential.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(String[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -295,13 +293,13 @@ public class SMSNotificationTest {
 		Community community = user.getUserGroup().getCommunity();
 		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendUnsubscribeAfterSMS(user);
 
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -316,13 +314,13 @@ public class SMSNotificationTest {
 		Community community = user.getUserGroup().getCommunity();
 		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
 		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 		
 		fixture.sendUnsubscribeAfterSMS(user);
 		
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.unsubscribe.after.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(0)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
@@ -516,30 +514,50 @@ public class SMSNotificationTest {
 	}
 	
 	@Test
-	public void testSendPaymentFailSMS_24h_Success()
+	public void testGetMessageCode_ProviderNull_Success()
 			throws Exception {
 		String msg = "message1";
-		String title = "O2";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
-		Community community = user.getUserGroup().getCommunity();
-		fixture.setAvailableCommunities("community3, community2, community1, "+community.getRewriteUrlParameter());
-		PaymentDetails paymentDetails = new PayPalPaymentDetails();
-		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
-		PendingPayment pendingPayment = new PendingPayment();
-		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L-22*60*60*1000);
-		pendingPayment.setUser(user);
-		pendingPayment.setPaymentDetails(paymentDetails);
+		user.setProvider(null);
 		
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.24h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null))).thenReturn(msg);
-		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null))).thenReturn(title);
-		doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		String result = fixture.getMessageCode(user, msg);
 		
-		fixture.sendPaymentFailSMS(pendingPayment);
+		assertEquals(msg, result);
+	}
+	
+	@Test
+	public void testGetMessageCode_SegmentNull_Success()
+			throws Exception {
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		user.setSegment(null);
 		
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.paymentFail.at.24h.text.for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract()), any(Object[].class), eq(""), eq((Locale)null));
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
-		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
+		String result = fixture.getMessageCode(user, msg);
+		
+		assertEquals(msg+".for."+user.getProvider(), result);
+	}
+	
+	@Test
+	public void testGetMessageCode_ContractNull_Success()
+			throws Exception {
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		user.setContract(null);
+		
+		String result = fixture.getMessageCode(user, msg);
+		
+		assertEquals(msg+".for."+user.getProvider()+"."+user.getSegment(), result);
+	}
+	
+	@Test
+	public void testGetMessageCode_NotNullProviderSegmentContract_Success()
+			throws Exception {
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		
+		String result = fixture.getMessageCode(user, msg);
+		
+		assertEquals(msg+".for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), result);
 	}
 
 	@SuppressWarnings("deprecation")
