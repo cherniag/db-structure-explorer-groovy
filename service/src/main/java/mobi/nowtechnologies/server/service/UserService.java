@@ -1077,16 +1077,21 @@ public class UserService {
 		boolean wasInLimitedStatus = UserStatusDao.LIMITED.equals(user.getStatus().getName());
 
 		final boolean isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes = (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)) || (user.isO2Business() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION));
+		final int oldNextSubPayment = user.getNextSubPayment();
 		if (isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes) {
-			user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+			if (Utils.getEpochSeconds() > oldNextSubPayment){
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+			}else{
+				user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
+			}
 		} else if (!isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 			// Update user balance
 			user.setSubBalance(user.getSubBalance() + subweeks);
 
 			// Update next sub payment time
-			user.setNextSubPayment(Utils.getNewNextSubPayment(user.getNextSubPayment()));
+			user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
 		} else if (isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(user.getNextSubPayment()));
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
 		} else {
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
@@ -2036,5 +2041,14 @@ public class UserService {
 	public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
 	
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsersForRetryPayment() {
+		
+		List<User> usersForRetryPayment = userRepository.getUsersForRetryPayment(Utils.getEpochSeconds());
+		
+		LOGGER.debug("Output parameter usersForRetryPayment=[{}]", usersForRetryPayment);
+		return usersForRetryPayment;
 	}
 }
