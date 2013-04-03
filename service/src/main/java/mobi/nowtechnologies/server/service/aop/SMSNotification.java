@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,7 +97,7 @@ public class SMSNotification {
 	public void setTinyUrlService(String tinyUrlService) {
 		this.tinyUrlService = tinyUrlService;
 	}
-	
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
 	protected void startCreditCardPayment() {
 	}
@@ -107,11 +109,11 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.startPayment(..))")
 	protected void startO2PSMSPayment() {
 	}
-	
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
 	protected void startMigPayment() {
 	}
-	
+
 	/**
 	 * Sending sms after any payment system has spent all retries with failures
 	 * 
@@ -220,7 +222,7 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(..))")
 	protected void createdMigPaymentDetails() {
 	}
-	
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymnetDetails(..))")
 	protected void createdO2PsmsPaymentDetails() {
 	}
@@ -248,6 +250,7 @@ public class SMSNotification {
 			LogUtils.removeClassNameMDC();
 		}
 	}
+
 	@Around("createdO2PsmsPaymentDetails()")
 	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
@@ -270,7 +273,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.limited.status.text"), new String[] { paymentsUrl });
+		sendSMSWithUrl(user, "sms.limited.status.text", new String[] { paymentsUrl });
 	}
 
 	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
@@ -278,7 +281,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.potential.text"), new String[] { unsubscribeUrl });
+		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] { unsubscribeUrl });
 	}
 
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
@@ -287,7 +290,7 @@ public class SMSNotification {
 		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
 		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.after.text"), new String[] { paymentsUrl, days.toString() });
+		sendSMSWithUrl(user, "sms.unsubscribe.after.text", new String[] { paymentsUrl, days.toString() });
 	}
 
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
@@ -295,20 +298,20 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.lowBalance.text"), null);
+		sendSMSWithUrl(user, "sms.lowBalance.text", null);
 	}
-	
+
 	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
 		User user = pendingPayment.getUser();
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		if (user == null || paymentDetails.getMadeRetries() != paymentDetails.getRetriesOnError())
 			return;
-		
+
 		int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-		if (rejectDevice(user, "sms.notification.paymentFail.at."+hoursBefore+"h.not.for.device.type"))
+		if (rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type"))
 			return;
-		
-		sendSMSWithUrl(user, getMessageCode(user, "sms.paymentFail.at."+hoursBefore+"h.text"), new String[] { paymentsUrl });
+
+		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
 	}
 
 	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
@@ -336,7 +339,7 @@ public class SMSNotification {
 			msgArgs[0] = url;
 		}
 
-		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, "", null);
+		String message = getMessage(user, community, msgCode, msgArgs);
 		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
 
 		if (!message.isEmpty())
@@ -344,9 +347,9 @@ public class SMSNotification {
 	}
 
 	protected boolean rejectDevice(User user, String code) {
-		Community community = user.getUserGroup().getCommunity();  
-	  	String communityUrl = community.getRewriteUrlParameter();  
-	  	String devices = messageSource.getMessage(communityUrl, code, null, null, null); 
+		Community community = user.getUserGroup().getCommunity();
+		String communityUrl = community.getRewriteUrlParameter();
+		String devices = messageSource.getMessage(communityUrl, code, null, null, null);
 		for (String device : devices.split(",")) {
 			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
 				LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
@@ -356,17 +359,27 @@ public class SMSNotification {
 		return false;
 	}
 
-	protected String getMessageCode(User user, String msgCodeBase){
-		if(user.getProvider() != null){
-			msgCodeBase += ".for."+user.getProvider();
-			if(user.getSegment() != null){
-				msgCodeBase += "."+user.getSegment();
-				if(user.getContract() != null){
-					msgCodeBase += "."+user.getContract();
+	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+		String[] codes = new String[4];
+		codes[0] = msgCodeBase;
+		if (user.getProvider() != null) {
+			codes[1] = msgCodeBase + ".for." + user.getProvider();
+			if (user.getSegment() != null) {
+				codes[2] = codes[1] + "." + user.getSegment();
+				if (user.getContract() != null) {
+					codes[3] = codes[2] + "." + user.getContract();
 				}
 			}
 		}
-		
-		return msgCodeBase;
+
+		for (int i = codes.length-1; i >= 0; i--) {
+			if(codes[i] != null){				
+				String msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
+				if (isNotEmpty(msg))
+					return msg;
+			}
+		}
+
+		return "";
 	}
 }

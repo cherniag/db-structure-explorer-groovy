@@ -42,7 +42,7 @@
             </c:if>
             <div class="content">
 
-                <h1><s:message code="pays.page.h1.options" /></h1>
+                <h1>${paymentPoliciesHeader}</h1>
                 <p>${paymentPoliciesNote}</p>
                 <hr />
                 <div class="setOfButtons">
