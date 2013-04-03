@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.O2ClientService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
 /**
  * ApplyInitPromoConroller
@@ -25,6 +27,7 @@ public class ApplyInitPromoController extends CommonController {
 
     private UserService userService;
     private O2ClientService o2ClientService;
+    private UpdateO2UserTask updateO2UserTask;
 
     public void setO2ClientService(O2ClientService o2ClientService) {
         this.o2ClientService = o2ClientService;
@@ -32,6 +35,10 @@ public class ApplyInitPromoController extends CommonController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setUpdateO2UserTask(UpdateO2UserTask updateO2UserTask) {
+        this.updateO2UserTask = updateO2UserTask;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
@@ -73,6 +80,7 @@ public class ApplyInitPromoController extends CommonController {
     	
 	        final Object[] objects = new Object[]{accountCheckDTO};
 	        proccessRememberMeToken(objects);
+            updateO2UserTask.handleUserUpdate(user);
 	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }
         throw new UserCredentialsException("Bad user credentials");

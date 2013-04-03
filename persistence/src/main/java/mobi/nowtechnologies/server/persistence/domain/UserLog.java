@@ -22,7 +22,7 @@ public class UserLog {
     private long last_update;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char")
+    @Column(columnDefinition = "char(255)")
     private UserLogStatus status;
 
     private String description;

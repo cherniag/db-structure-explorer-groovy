@@ -31,33 +31,23 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserJob.class);
 
     private transient UserRepository userRepository;
-    private transient UserLogRepository userLogRepository;
-    private transient SubscriberService subscriberService;
-    private transient SubscriberPortDecorator port;
-    private String username;
-    private String password;
-    private String endpoint;
+    private transient UpdateO2UserTask task;
 
     public UpdateO2UserJob() {
         userRepository = (UserRepository) SpringContext.getBean("userRepository");
-        userLogRepository = (UserLogRepository) SpringContext.getBean("userLogRepository");
-        subscriberService = (SubscriberService) SpringContext.getBean("saop.subscriberService");
-        port = subscriberService.getSubscriberPortDecorator();
-        port.setHandler(new SOAPLoggingHandler());
+        task = (UpdateO2UserTask) SpringContext.getBean("job.UpdateO2UserTask");
     }
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         LOG.info("starting ...");
         try {
-            port.setEndpoint(endpoint);
-            port.setHandler(new SecurityHandler(username, password));
 
             List<User> users = selectUsersForUpdate();
 
             if (isNotEmpty(users))
                 for (User u : users)
-                    handleUserUpdate(u);
+                    task.handleUserUpdate(u);
         } catch (Throwable t) {
             LOG.error("Job ended with error.", t);
         } finally {
@@ -71,47 +61,4 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
         return users;
     }
 
-    @Transactional
-    public void handleUserUpdate(User u) {
-        try {
-            updateUser(u);
-        } catch (GetSubscriberProfileFault e) {
-            makeUserLog(u, UserLogStatus.O2_FAIL, e.getFaultInfo().toString());
-        } catch (Throwable t) {
-            makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
-        } finally {
-            LOG.info("Finished update user[{}]", u.getMobile());
-        }
-    }
-
-    private void updateUser(User u) throws GetSubscriberProfileFault {
-        SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
-        u.setSegment(profile.getSegmentType());
-        u.setContract(profile.getCotract());
-        makeUserLog(u, UserLogStatus.SUCCESS, null);
-        userRepository.save(u);
-    }
-
-    private void makeUserLog(User u, UserLogStatus status, String description) {
-        UserLog oldLog = userLogRepository.findByUser(u.getId());
-        UserLog userLog = new UserLog(oldLog, u.getId(), status, description);
-
-        userLogRepository.save(userLog);
-        if (UserLogStatus.SUCCESS == status)
-            LOG.info("User[{}] segment[{}] updated.", u.getMobile(), u.getSegment());
-        else
-            LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, description);
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint.trim();
-    }
 }
