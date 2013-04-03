@@ -168,6 +168,8 @@ public class SMSNotificationIT {
 		SagePayResponse response = new SagePayResponse(successfulResponse);
 		
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
+		user.setSegment(null);
+		user.setProvider("non-o2");
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setReleased(true);
