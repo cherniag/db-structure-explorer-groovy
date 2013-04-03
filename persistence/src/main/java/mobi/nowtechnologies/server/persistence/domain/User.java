@@ -1,6 +1,21 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
@@ -12,31 +27,17 @@ import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
-		@NamedQuery(name = User.NQ_GET_USERS_FOR_RETRY_PAYMENT, query = "select u from User u join u.currentPaymentDetails as pd where (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') and pd.madeRetries!=pd.retriesOnError and pd.activated=true and u.lastDeviceLogin!=0",
-				hints = { @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") }),
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -55,7 +56,7 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-	public static enum Fields {
+    public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -312,7 +313,7 @@ public class User implements Serializable {
 		Community community = this.userGroup.getCommunity();
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-		if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(this.provider)))
+		if (!"o2".equals(this.provider))
 			return true;
 
 		return false;
@@ -823,7 +824,8 @@ public class User implements Serializable {
 		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
 
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated()) || (lastSubscribedPaymentSystem != null
+		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated() && (currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) || currentPaymentDetails
+				.getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
 				&& lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
 		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
@@ -1253,6 +1255,16 @@ public class User implements Serializable {
 	public boolean isSubscribedStatus() {
 		return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
 	}
+
+    public boolean isNonO2Community() {
+        Community community = this.userGroup.getCommunity();
+        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+
+        if (!"o2".equalsIgnoreCase(communityUrl))
+            return true;
+
+        return false;
+    }
 
 	public boolean isSubscribed() {
 		return isSubscribedStatus()

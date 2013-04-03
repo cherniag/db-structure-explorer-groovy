@@ -1,9 +1,13 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.Utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +15,6 @@ import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -87,20 +86,6 @@ public class PaymentDao extends JpaDaoSupport {
 		
 		if (payPalPayments.isEmpty()) return null;
 		return  payPalPayments.get(0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
-	public List<User> getUsersForRetryPayment() {
-		return getJpaTemplate().execute(new JpaCallback<List<User>>() {
-			@Override
-			public List<User> doInJpa(EntityManager em) throws PersistenceException {
-				em.clear();
-				Query queryObject = em.createNamedQuery(User.NQ_GET_USERS_FOR_RETRY_PAYMENT);
-				getJpaTemplate().prepareQuery(queryObject);
-				return queryObject.getResultList();
-			}
-		});
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)

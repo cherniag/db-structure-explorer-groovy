@@ -94,6 +94,18 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
 	List<User> getUsersForPendingPayment(int epochSeconds);
 	
+    @Query(value="select u from User u "
+    		+ "join u.currentPaymentDetails pd "
+    		+ "join u.userGroup ug "
+			+ "join ug.community c "
+    		+ "where "
+    		+ "(pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
+    		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1) "
+    		+ "and pd.activated=true "
+    		+ "and u.lastDeviceLogin!=0")
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+	List<User> getUsersForRetryPayment(int epochSeconds);
+	
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +
 			"join ug.community c " +
