@@ -963,7 +963,7 @@
 		<repository>
 			<id>archiva.snapshots</id>
 			<name>Archiva Managed Internal Repository</name>
-			<url>dav:http://nexus.musicqubed.com/repository/snapshots/</url>
+			<url>dav:http://nexus.musicqubed.com/content/repositories/snapshots/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
