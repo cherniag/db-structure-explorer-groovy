@@ -951,7 +951,7 @@
 		<repository>
 			<id>archiva.internal</id>
 			<name>Archiva Managed Internal Repository</name>
-			<url>dav:http://panda.dev.now-technologies.mobi:8030/nexus/repository/internal/</url>
+			<url>dav:http://nexus.musicqubed.com/repository/internal/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -963,7 +963,7 @@
 		<repository>
 			<id>archiva.snapshots</id>
 			<name>Archiva Managed Internal Repository</name>
-			<url>dav:http://panda.dev.now-technologies.mobi:8030/nexus/repository/snapshots/</url>
+			<url>dav:http://nexus.musicqubed.com/content/repositories/snapshots/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -977,7 +977,7 @@
 		<repository>
 			<id>panda.third.party.repo</id>
 			<name>Panda Third Party Repository</name>
-			<url>dav:http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/thirdparty/</url>
+			<url>dav:http://nexus.musicqubed.com/content/repositories/thirdparty/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -991,7 +991,7 @@
 		<repository>
 			<id>spring-milestone</id>
 			<name>Panda Spring Maven MILESTONE Repository</name>
-			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/spring-milestone/</url>
+			<url>http://nexus.musicqubed.com/content/repositories/spring-milestone/</url>
 		</repository>
 
 		<repository>
@@ -1002,7 +1002,7 @@
 
 		<repository>
 			<id>libs-snapshot</id>
-			<url>http://panda.dev.now-technologies.mobi:8030/nexus/content/repositories/libs-snapshot/</url>
+			<url>http://nexus.musicqubed.com/content/repositories/libs-snapshot/</url>
 		</repository>
 
 	</repositories>
