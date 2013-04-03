@@ -297,7 +297,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, "sms.limited.status.text.for." + user.getProvider() + "." + user.getContract(), new String[] { paymentsUrl });
+		sendSMSWithUrl(user, getMessageCode(user, "sms.limited.status.text"), new String[] { paymentsUrl });
 	}
 
 	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
