@@ -30,7 +30,7 @@
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
 				<div class="rel" >
-					<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
+					<input class="button-turquoise" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
 					<span class="button-arrow"/>
 				</div>
 			</c:otherwise>
