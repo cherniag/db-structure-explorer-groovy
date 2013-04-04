@@ -10,6 +10,6 @@ public interface UserLogRepository extends JpaRepository<UserLog, Integer> {
 
     @Query(value = "select userLog from UserLog userLog " +
             " where userLog.userId = ?1 " +
-            " having min(userLog.last_update) = userLog.last_update")
+            " and min(userLog.last_update) = userLog.last_update")
     UserLog findByUser(int id);
 }
