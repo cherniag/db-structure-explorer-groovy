@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,7 +82,7 @@ public class ApplyInitPromoController extends CommonController {
 	        final Object[] objects = new Object[]{accountCheckDTO};
 	        proccessRememberMeToken(objects);
 	        
-	        user = !user.getDeviceUID().equals(accountCheckDTO.getDeviceUID()) ? mobileUser : user;
+	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
             updateO2UserTask.handleUserUpdate(user);
 	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }
