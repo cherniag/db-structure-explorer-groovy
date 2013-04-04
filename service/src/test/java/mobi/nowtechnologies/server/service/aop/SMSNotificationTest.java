@@ -512,41 +512,68 @@ public class SMSNotificationTest {
 		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq("sms.title"), any(Object[].class), eq((Locale)null));
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), eq(msg), eq(title));
 	}
-	
+
 	@Test
 	public void testGetMessageCode_ProviderNull_Success()
 			throws Exception {
 		String msg = "message1";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
 		user.setProvider(null);
-		
-		String result = fixture.getMessageCode(user, msg);
-		
+		Community community = user.getUserGroup().getCommunity();
+		String msgCode = "message1Code";
+
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg);
+
+		String result = fixture.getMessage(user, community, msgCode, new String[0]);
+
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null));
+
 		assertEquals(msg, result);
 	}
-	
+
 	@Test
 	public void testGetMessageCode_SegmentNull_Success()
 			throws Exception {
 		String msg = "message1";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
 		user.setSegment(null);
-		
-		String result = fixture.getMessageCode(user, msg);
-		
-		assertEquals(msg+".for."+user.getProvider(), result);
+
+		Community community = user.getUserGroup().getCommunity();
+		String msgCode = "message1Code";
+
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg + 1);
+
+		String result = fixture.getMessage(user, community, msgCode, new String[0]);
+
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+
+		assertEquals(msg + 1, result);
 	}
-	
+
 	@Test
 	public void testGetMessageCode_ContractNull_Success()
 			throws Exception {
 		String msg = "message1";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
 		user.setContract(null);
-		
-		String result = fixture.getMessageCode(user, msg);
-		
-		assertEquals(msg+".for."+user.getProvider()+"."+user.getSegment(), result);
+
+		Community community = user.getUserGroup().getCommunity();
+		String msgCode = "message1Code";
+
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg + 1);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null)))
+				.thenReturn(msg + 2);
+
+		String result = fixture.getMessage(user, community, msgCode, new String[0]);
+
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
+
+		assertEquals(msg + 2, result);
 	}
 	
 	@Test
@@ -554,10 +581,25 @@ public class SMSNotificationTest {
 			throws Exception {
 		String msg = "message1";
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
-		
-		String result = fixture.getMessageCode(user, msg);
-		
-		assertEquals(msg+".for."+user.getProvider()+"."+user.getSegment()+"."+user.getContract(), result);
+
+		Community community = user.getUserGroup().getCommunity();
+		String msgCode = "message1Code";
+
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg + 1);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null)))
+				.thenReturn(msg + 2);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 3);
+
+		String result = fixture.getMessage(user, community, msgCode, new String[0]);
+
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()), any(Object[].class), eq(""), eq((Locale) null));
+
+		assertEquals(msg + 3, result);
 	}
 
 	@SuppressWarnings("deprecation")

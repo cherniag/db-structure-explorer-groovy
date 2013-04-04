@@ -24,6 +24,12 @@ public class SubscriberPortDecorator implements SubscriberPort {
         this.port = port;
     }
 
+    public SubscriberPortDecorator(SubscriberService service, String endpoint, String username, String password){
+        this.port = service.getSubscriberPort();
+        this.setHandler(new SOAPLoggingHandler());
+        this.setEndpoint(endpoint);
+        this.setHandler(new SecurityHandler(username, password));
+    }
 
     @Override
     public SubscriberProfileType getSubscriberProfile(String subscriberID) throws GetSubscriberProfileFault {

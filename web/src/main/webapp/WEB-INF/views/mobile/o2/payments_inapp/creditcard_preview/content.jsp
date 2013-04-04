@@ -5,12 +5,8 @@
 	<form:form modelAttribute="creditCardDto" method="post">
 	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 	<div class="header">
-	<div class="gradient_border">&#160;</div>
-		<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_inapp.png" alt="" /></a>	
-		<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-		</div>				
+        <a href="payments_inapp/creditcard.html?paymentPolicyId=${paymentPolicy.id}" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+        <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 	</div>
 	<div class="container">
 		<div class="content">
@@ -114,12 +110,12 @@
 					<div class="clr"></div>
 				</div>
 				<div class="addSmallSpace"></div>
+				
 				<div class="contentButton formButton rad5 rel" id="actionButtons" >
-					<input type="button" class="button" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
+					<input type="button" class="button-turquoise" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
+                    <span class="button-arrow"/>
 				</div>
+			
 				<div id="ajaxLoading" style="display:none">
 					<div class="oneLine">
 						<img alt="" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />/imgs/ajax-loader.gif" />
@@ -129,7 +125,9 @@
 				<div class="note" id="errorBoxContainer" style="display:none; margin: 20px; margin-top: 0px;"></div>
 		</div>
 	</div>
+	
 	</form:form>
+	
 </div>
 <s:message code="pay.cc.form.error.nonetwork" var="noNetworkErrorMessage" />
 <script type="text/javascript">

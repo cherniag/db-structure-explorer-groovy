@@ -1603,7 +1603,7 @@ public class UserService {
 		Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
 		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
 
-		if (null == user) {
+		if (null == user || user.getActivationStatus() == ActivationStatus.ACTIVATED) {
 			user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
 		}
 

@@ -1,11 +1,7 @@
 package mobi.nowtechnologies.server.service.aop;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
@@ -17,6 +13,7 @@ import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -297,7 +294,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.limited.status.text"), new String[] { paymentsUrl });
+		sendSMSWithUrl(user, "sms.limited.status.text", new String[] { paymentsUrl });
 	}
 
 	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
@@ -305,7 +302,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.potential.text"), new String[] { unsubscribeUrl });
+		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] { unsubscribeUrl });
 	}
 
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
@@ -314,7 +311,7 @@ public class SMSNotification {
 		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
 		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.unsubscribe.after.text"), new String[] { paymentsUrl, days.toString() });
+		sendSMSWithUrl(user, "sms.unsubscribe.after.text", new String[] { paymentsUrl, days.toString() });
 	}
 
 	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
@@ -322,7 +319,7 @@ public class SMSNotification {
 			return;
 		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
 			return;
-		sendSMSWithUrl(user, getMessageCode(user, "sms.lowBalance.text"), null);
+		sendSMSWithUrl(user, "sms.lowBalance.text", null);
 	}
 	
 	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
@@ -335,7 +332,7 @@ public class SMSNotification {
 		if (rejectDevice(user, "sms.notification.paymentFail.at."+hoursBefore+"h.not.for.device.type"))
 			return;
 		
-		sendSMSWithUrl(user, getMessageCode(user, "sms.paymentFail.at."+hoursBefore+"h.text"), new String[] { paymentsUrl });
+		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
 	}
 
 	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
@@ -363,7 +360,7 @@ public class SMSNotification {
 			msgArgs[0] = url;
 		}
 
-		String message = messageSource.getMessage(community.getRewriteUrlParameter(), msgCode, msgArgs, "", null);
+		String message = getMessage(user, community, msgCode, msgArgs);
 		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
 
 		if (!message.isEmpty())
@@ -383,17 +380,27 @@ public class SMSNotification {
 		return false;
 	}
 
-	protected String getMessageCode(User user, String msgCodeBase){
-		if(user.getProvider() != null){
-			msgCodeBase += ".for."+user.getProvider();
-			if(user.getSegment() != null){
-				msgCodeBase += "."+user.getSegment();
-				if(user.getContract() != null){
-					msgCodeBase += "."+user.getContract();
+	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+		String[] codes = new String[4];
+		codes[0] = msgCodeBase;
+		if (user.getProvider() != null) {
+			codes[1] = msgCodeBase + ".for." + user.getProvider();
+			if (user.getSegment() != null) {
+				codes[2] = codes[1] + "." + user.getSegment();
+				if (user.getContract() != null) {
+					codes[3] = codes[2] + "." + user.getContract();
 				}
 			}
 		}
-		
-		return msgCodeBase;
+
+		for (int i = codes.length-1; i >= 0; i--) {
+			if(codes[i] != null){				
+				String msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
+				if (StringUtils.isNotEmpty(msg))
+					return msg;
+			}
+		}
+
+		return "";
 	}
 }

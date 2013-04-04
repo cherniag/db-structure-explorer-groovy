@@ -2,16 +2,13 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
-<div class="gradient_border">&#160;</div>
-	<a href="" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></a>
-	<div class="buttonBox">
-		<span class="arrow">&nbsp;</span>
-		<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
-	</div>				
+    <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
 	<div class="content">
 		<form:form modelAttribute="creditCardDto" method="post">
+			<input type="hidden" name="offerId" value="${offerId}"/>
 			<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 			<h1><s:message code="pay.cc.form.title" /></h1>
 			<div class="payDetails">
@@ -49,12 +46,14 @@
 							</div>
 						</s:hasBindErrors>	
 					</div>
+					
 					<div class="helper"></div>
-				</div>						
+				</div>
+									
 				<div class="clr"></div>
 				
 				<div class="oneInputLine">
-					<div class="nameCell"><form:label path="issueNumber"><s:message code="pay.cc.form.issue.number" /></form:label></div>
+					<div class="nameCell doubleLines"><form:label path="issueNumber"><s:message code="pay.cc.form.issue.number" /></form:label></div>
 					<div class="valueCell shortInput">
 						<form:input path="issueNumber"/>
 					</div>
@@ -70,6 +69,7 @@
 					</div>
 					<div class="helper"></div>
 				</div>
+				
 				<div class="clr"></div>
 				
 				<div class="oneInputLine">
@@ -84,7 +84,8 @@
 						</s:hasBindErrors>
 					</div>
 					<div class="helper"></div>
-				</div>		
+				</div>
+						
 				<div class="clr"></div>	
 				
 				<div class="oneInputLine">
@@ -99,6 +100,7 @@
 					</div>
 					<div class="helper"></div>
 				</div>
+				
 				<div class="clr"></div>
 				<!--end one record in profile-->			
 			</div>
@@ -125,7 +127,7 @@
 						</s:hasBindErrors>	
 					</div>
 					<div class="helper"></div>
-				</div>						
+				</div>
 				<div class="clr"></div>
 				
 				<div class="oneInputLine">
@@ -189,7 +191,7 @@
 						</s:hasBindErrors>
 					</div>
 					<div class="helper"></div>
-				</div>						
+				</div>
 				<div class="clr"></div>
 				
 				<div class="oneInputLine">
@@ -207,15 +209,15 @@
 					</div>
 					<div class="helper"></div>
 				</div>
-				<form:hidden path="action" />						
+				<form:hidden path="action" />
 				<div class="clr"></div>
 				<!--end one record in profile-->										
 			</div>
 			<!--button-->
 			<div class="rel" >
-				<input type="submit" class="button" value="<s:message code='pay.cc.form.submit.next' />" />
-				<span class="button-arrow"/>
-			</div>		
+				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
+                <span class="button-arrow"/>
+			</div>
 		</form:form>
 	</div>
 </div>
