@@ -7,7 +7,7 @@
 	<div class="header">
         <a href="payments/creditcard.html?paymentPolicyId=${paymentPolicy.id}" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
         <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
-       <a href="payments_inapp.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+       <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 	</div>
 	<div class="container">
 		<div class="content">
@@ -137,7 +137,7 @@
 		$("#ajaxLoading").show();
 		$("#errorBoxContainer").hide();
 		$.ajax({
-			url:"payments_inapp/creditcard_details.html",
+			url:"payments/creditcard_details.html",
 			type:"post",
 			data: $("form#creditCardDto").serialize(),
 			success: function(data) {

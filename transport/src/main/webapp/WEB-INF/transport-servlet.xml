@@ -329,13 +329,11 @@
     <!-- Update O2 User Status Job -->
     <bean id="job.updateO2User" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="mobi.nowtechnologies.server.job.UpdateO2UserJob" />
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="username" value="${o2.service.security.token.username}"/>
-                <entry key="password" value="${o2.service.security.token.password}"/>
-                <entry key="endpoint" value="${o2.service.endpoint.subscriber_2_0}"/>
-            </map>
-        </property>
+    </bean>
+    <bean id="job.UpdateO2UserTask" class="mobi.nowtechnologies.server.job.UpdateO2UserTask">
+        <property name="port" ref="soap.SubscriberPortDecorator"/>
+        <property name="userLogRepository" ref="userLogRepository"/>
+        <property name="userRepository" ref="userRepository" />
     </bean>
     <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="job.updateO2User" />

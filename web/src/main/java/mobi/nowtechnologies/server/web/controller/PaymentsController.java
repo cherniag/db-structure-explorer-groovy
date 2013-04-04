@@ -31,6 +31,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @Controller
 public class PaymentsController extends CommonController {
     private static final String PAYMENTS_NOTE_MSG_CODE = "pays.page.h1.options.note";
+    private static final String PAYMENTS_HEADER_MSG_CODE = "pays.page.h1.options";
     
     public static final String POLICY_REQ_PARAM = "paymentPolicyId";
 
@@ -70,7 +71,8 @@ public class PaymentsController extends CommonController {
         mav.addObject("activePolicy", activePolicy);
         mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
-        mav.addObject("paymentPoliciesNote", paymentsNoteMessage(locale, user));
+        mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
+        mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -96,27 +98,38 @@ public class PaymentsController extends CommonController {
         return null;
     }
 
-    private String paymentsNoteMessage(Locale locale, User user) {
+    private String paymentsMessage(Locale locale, User user, String msgCodeBase) {
         String paymentsNoteMsg;
         if (user.isO2User()) {
-            String code_1 = PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider() + "." + user.getContract();
-            String code_2 = PAYMENTS_NOTE_MSG_CODE + "." + user.getProvider();
+        	String[] codes = new String[4];
+    		codes[3] = msgCodeBase;
+    		if (user.getProvider() != null) {
+    			codes[2] = msgCodeBase + "." + user.getProvider();
+    			if (user.getSegment() != null) {
+    				codes[1] = codes[2] + "." + user.getSegment();
+    				if (user.getContract() != null) {
+    					codes[0] = codes[1] + "." + user.getContract();
+    				}
+    			}
+    		}
 
-            paymentsNoteMsg = getFirstSutableMessage(locale, code_1, code_2, PAYMENTS_NOTE_MSG_CODE);
+            paymentsNoteMsg = getFirstSutableMessage(locale, codes);
         } else {
             if (user.isIOsnonO2ItunesSubscribedUser())
-                paymentsNoteMsg = message(locale, "pays.page.h1.options.note.not.o2.inapp.subs");
+                paymentsNoteMsg = message(locale, msgCodeBase+".not.o2.inapp.subs");
             else
-                paymentsNoteMsg = message(locale, PAYMENTS_NOTE_MSG_CODE);
+                paymentsNoteMsg = message(locale, msgCodeBase);
         }
         return paymentsNoteMsg;
     }
 
     private String getFirstSutableMessage(Locale locale, String... codes) {
         for (String code : codes) {
-            String msg = messageSource.getMessage(code, null, "", locale);
-            if (isNotEmpty(msg))
-                return msg;
+        	if(code != null){        		
+        		String msg = messageSource.getMessage(code, null, "", locale);
+        		if (isNotEmpty(msg))
+        			return msg;
+        	}
         }
         return "";
     }

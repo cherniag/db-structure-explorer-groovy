@@ -122,10 +122,7 @@
 		<definition name="payments/unsubscribe" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/unsubscribe/content.jsp"/>
 		</definition>
-        <definition name="payments/samsung" extends="payments" preparer="web.CommunityViewPreparer">
-            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/samsung.jsp"/>
-        </definition>
-		
+				
   <definition name="payments_inapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
@@ -154,6 +151,9 @@
 		<definition name="payments_inapp/psms" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/psms/content.jsp"/>
 		</definition>
+		<definition name="payments_inapp/o2psms" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/o2psms/content.jsp"/>
+        </definition>
 		<definition name="payments_inapp/psms_verify" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/psms_verify/content.jsp"/>
 		</definition>
