@@ -10,10 +10,9 @@
     <div class="content">
         <h1><s:message code="pays.page.options.note.o2psms.title"/></h1>
         <p class="centered"><s:message code="pays.page.options.note.o2psms" arguments="${subcost}, ${suweeks}"/></p>
-
         <div class="rel" style="margin-top: 20px">
-            <input class="button-turquoise" title="payments_inapp/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
-            <input class="button-grey" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
+            <input class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
+            <input class="button-grey" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
         </div>
     </div>
 </div>
