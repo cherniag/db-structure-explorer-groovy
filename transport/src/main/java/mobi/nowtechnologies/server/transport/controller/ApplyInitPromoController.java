@@ -80,6 +80,8 @@ public class ApplyInitPromoController extends CommonController {
     	
 	        final Object[] objects = new Object[]{accountCheckDTO};
 	        proccessRememberMeToken(objects);
+	        
+	        user = !user.getDeviceUID().equals(accountCheckDTO.getDeviceUID()) ? mobileUser : user;
             updateO2UserTask.handleUserUpdate(user);
 	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }
