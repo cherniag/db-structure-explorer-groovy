@@ -29,11 +29,9 @@
 				<h1><s:message code="unsub.page.header" /></h1>
 				<p><s:message code="unsub.page.description.unsubscribed" /></p>
 				<div class="addSpace"></div>			
-				<div class="contentButton formButton rad5 rel" >
-					<input class="button buttonSmall accounts" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
-					<span class="rightButtonArrow">
-						&nbsp;
-					</span>
+				<div class="rel" >
+					<input class="button-turquoise" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
+					<span class="button-arrow"/>
 				</div>
 			</c:otherwise>
 		</c:choose>
