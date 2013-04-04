@@ -46,13 +46,16 @@
                 <p>${paymentPoliciesNote}</p>
                 <hr />
                 <div class="setOfButtons">
+                	<c:set var="hasPaymentBaner" value="false" />
                     <c:forEach var="paymentPolicy" items="${paymentPolicies}">
                         <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
                             <c:set var="method_name" value="creditcard" />
+                            <c:set var="hasPaymentBaner" value="true" />
                             <s:message code='pays.select.payby.creditcard' var="payment_label" />
                         </c:if>
                         <c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
                             <c:set var="method_name" value="paypal" />
+                            <c:set var="hasPaymentBaner" value="true" />
                             <s:message code='pays.select.payby.paypal' var="payment_label" />
                         </c:if>
                         <c:if test="${paymentPolicy.paymentType == 'PSMS'}">
@@ -99,6 +102,12 @@
                         </div>
 
                     </c:forEach>
+                    		<c:if test="${hasPaymentBaner}">
+                            	<img class="centered" style="width: 100px; height: 15px; margin-top: 15px; margin-bottom: 15px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/image_secure_payment.png"/>
+                            	<hr/>
+                            	<img class="centered" style="width: 100%; margin-top: 10px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/banner_payment.png"/>
+                           		<hr/>
+                    		</c:if>
                 </div>
                 <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
                     <div class="rel" >
