@@ -3,9 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="header">
-    <a href="payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <a href="${pageContext.request.contextPath}/payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
-    <a href="account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+    <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
 	<div class="content">
@@ -17,7 +17,7 @@
 			<div class="addSmallSpace"></div>		
 			<!--button-->
 			<div class="contentButton formButton rad10 rel" >
-				<input class="button accounts" title="account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.inapp' />" />
+				<input class="button accounts" title="${pageContext.request.contextPath}/account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.inapp' />" />
 				<span class="button-arrow"/>
 			</div>
 		</c:when>

@@ -131,7 +131,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			DOMSource response = restTemplate.postForObject(serverO2Url + VALIDATE_PHONE_REQ, request, DOMSource.class);
 			return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
 		} catch (Exception e) {
-			LOGGER.error("Error of the number validation", e);
+			LOGGER.error("Error of the number validation "+ phoneNumber, e);
 			throw new InvalidPhoneNumberException();
 		}
 	}
@@ -147,7 +147,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getNextSibling()
 					.getFirstChild().getNodeValue());
 		} catch (Exception e) {
-			LOGGER.error("Error of the number validation", e);
+			LOGGER.error("Error of the number validation "+ phoneNumber, e);
 			throw new ExternalServiceException("602", "O2 server cannot be reached");
 		}
 	}

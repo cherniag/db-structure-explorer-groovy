@@ -4,7 +4,7 @@
 <div class="header">
 <div class="gradient_border">&#160;</div>
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
-	<a href="payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
+	<a href="${pageContext.request.contextPath}/payments_inapp.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
 
 </div>
 <div class="container">		

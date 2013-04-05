@@ -71,14 +71,14 @@
                             </a>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
-                            <a class="button-turquoise" title="payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
+                            <a class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" >
                                 ${payment_label}
                                 <span class="button-off"/>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
-                                <input class="button-turquoise" title="payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                <input class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
                             </c:if>
                         </c:otherwise>
@@ -95,7 +95,7 @@
         <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
             <div class="rel" >
                 <div class="cross-text"><span>  <s:message code="pays.deactivate.header" />  </span>  </div>
-                <input class="button-grey" title="payments_inapp/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+                <input class="button-grey" title="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
             </div>
         </c:if>
 

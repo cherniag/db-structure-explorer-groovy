@@ -20,7 +20,7 @@
 		<!--button-->
 		<div class="rel" >
 		
-			<input class="button-turquoise" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
+			<input class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
             <span class="button-arrow"/>
 		</div>
 	</div>

@@ -5,7 +5,7 @@
 	<form:form modelAttribute="creditCardDto" method="post">
 	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 	<div class="header">
-        <a href="payments_inapp/creditcard.html?paymentPolicyId=${paymentPolicy.id}" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+        <a href="${pageContext.request.contextPath}/payments_inapp/creditcard.html?paymentPolicyId=${paymentPolicy.id}" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
         <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 	</div>
 	<div class="container">
@@ -136,7 +136,7 @@
 		$("#ajaxLoading").show();
 		$("#errorBoxContainer").hide();
 		$.ajax({
-			url:"payments_inapp/creditcard_details.html",
+			url:"${pageContext.request.contextPath}/payments_inapp/creditcard_details.html",
 			type:"post",
 			data: $("form#creditCardDto").serialize(),
 			success: function(data) {

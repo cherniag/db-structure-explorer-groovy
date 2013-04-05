@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
 <div class="gradient_border">&#160;</div>
-    <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <a href="${pageContext.request.contextPath}/payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
@@ -15,7 +15,7 @@
 			<div class="addSmallSpace"></div>
 			<!--button -->
 			<div class="contentButton formButton rad5 rel">
-				<input class="button accounts" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.psms.verify.dialog.success.button.inapp' />" />
+				<input class="button accounts" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.psms.verify.dialog.success.button.inapp' />" />
 				<span class="rightButtonArrow">
 					&nbsp;
 				</span>
@@ -70,7 +70,7 @@
 					$("#resendInfoBlock").hide();
 					$("#ajaxLoading").show();
 					$.ajax({
-						url:"payments_inapp/pin.html",
+						url:"${pageContext.request.contextPath}/payments_inapp/pin.html",
 						type:"post",
 						data: $("form#pSmsDto").serialize()
 					}).done(function(e) {

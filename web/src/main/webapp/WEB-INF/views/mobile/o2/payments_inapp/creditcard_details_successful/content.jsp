@@ -2,7 +2,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <div class="header">
-    <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
+    <a href="${pageContext.request.contextPath}/payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
@@ -13,7 +13,7 @@
 		<div class="addSmallSpace"></div>		
 		<!--button-->
 		<div class="rel" >
-			<input class="button-turquoise" title="payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.inapp' />" />
+			<input class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.inapp' />" />
             <span class="button-arrow"/>
 		</div>
 	</div>
