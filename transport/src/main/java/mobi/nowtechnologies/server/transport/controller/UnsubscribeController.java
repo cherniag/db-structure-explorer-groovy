@@ -80,7 +80,9 @@ public class UnsubscribeController extends CommonController{
 			"/{community:.+}/{apiVersion:[3-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
 			"/{community:.+}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription"})
 	public @ResponseBody String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
-		LOGGER.debug("input parameters body, community: [{}], [{}]", body, community);
+		try{
+			LOGGER.info("command processing started");
+			LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
 		
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 	    domFactory.setNamespaceAware(true); // never forget this!
@@ -104,14 +106,18 @@ public class UnsubscribeController extends CommonController{
 	    
 	    List<PaymentDetails> paymentDetailsList = userService.unsubscribeUser(phoneNumber, operatorName);
 	    
+		    String message;
 		if (paymentDetailsList.isEmpty()) {
-			throw new ServiceException(NO_PAYMENT_DETAILS_FOUND_MESSAGE_CODE, "Couldn't find user with phone number (MSISDN) : [" + phoneNumber + "] and operator name (NETWORK): [" + operatorName + "] in activated payment details");
+				message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
+			}else{
+				message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
 		}
 
-	    String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
-	    
-	    LOGGER.debug("Output parameter message=[{}]", message);
+		    LOGGER.info("Output parameter message=[{}]", message);
 	    return message;
+		}finally{
+			LOGGER.info("command processing finished");
+		}
 	}
 	
 	@ExceptionHandler(ServiceException.class)
