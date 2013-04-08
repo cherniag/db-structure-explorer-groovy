@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header">
+<div class="header pie">
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 </div>
 <div class="container">
@@ -20,7 +20,7 @@
 		<!--button-->
 		<div class="rel" >
 		
-			<input class="button-turquoise" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
+			<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='one.click.subscription.dialog.successful.button.inapp'/>" />
             <span class="button-arrow"/>
 		</div>
 	</div>

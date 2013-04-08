@@ -109,6 +109,12 @@ function onStart() {
 		$("#cookeiAlertMessage").hide('slow');
 		setCookie (COOKIE_ALERT_NAME, "true", "Mon, 06-Jan-2020 00:00:00 GMT", "/");
 	});
+	
+	if (window.PIE) {
+   		$('.pie').each(function() {
+        	PIE.attach(this);
+    	});
+	}
 }
 
 $(document).ready(function() {

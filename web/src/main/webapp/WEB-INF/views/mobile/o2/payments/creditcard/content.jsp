@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header">
+<div class="header pie">
     <a href="${pageContext.request.contextPath}/payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
    <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
@@ -216,7 +216,7 @@
 			</div>
 			<!--button-->
 			<div class="rel" >
-				<input type="submit" class="button-turquoise" value="<s:message code='pay.cc.form.submit.next' />" />
+				<input type="submit" class="button-turquoise pie" value="<s:message code='pay.cc.form.submit.next' />" />
                 <span class="button-arrow"/>
 			</div>
 		</form:form>

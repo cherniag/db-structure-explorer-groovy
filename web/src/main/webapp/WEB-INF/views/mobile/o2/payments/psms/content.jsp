@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header">
+<div class="header pie">
 <div class="gradient_border">&#160;</div>
 	<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 	<a href="${pageContext.request.contextPath}/payments.html" class="button-small"><s:message code='m.page.main.menu.back' /></a>
@@ -36,7 +36,7 @@
 			</div>
 			
 			<div class="contentButton formButton rad5 rel">
-				<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.form.submit' />" />
+				<input class="button-turquoise pie" type="submit" value="<s:message code='pay.psms.form.submit' />" />
 				<span class="button-arrow"/>
 			</div>
 			

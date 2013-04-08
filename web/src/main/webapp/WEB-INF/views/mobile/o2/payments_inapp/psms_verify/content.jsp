@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header">
+<div class="header pie">
 <div class="gradient_border">&#160;</div>
     <a href="${pageContext.request.contextPath}/payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
@@ -39,7 +39,7 @@
 				<div class="clr"></div>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input class="button-turquoise" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
+					<input class="button-turquoise pie" type="submit" value="<s:message code='pay.psms.verify.submit' />" />
 					<span class="rightButtonArrow">
 					&nbsp;
 					</span>
@@ -55,7 +55,7 @@
 				<form:hidden path="operator"/>
 				
 				<div class="contentButton formButton rad5 rel">
-					<input id="resendSms" class="button-turquoise" type="button" value="<s:message code='pay.psms.verify.resend' />">
+					<input id="resendSms" class="button-turquoise pie" type="button" value="<s:message code='pay.psms.verify.resend' />">
 					<span class="button-arrow"/>
 				</div>
 				

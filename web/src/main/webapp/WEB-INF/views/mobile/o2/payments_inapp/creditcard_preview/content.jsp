@@ -4,7 +4,7 @@
 <div id="mainContent">
 	<form:form modelAttribute="creditCardDto" method="post">
 	<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
-	<div class="header">
+	<div class="header pie">
         <a href="${pageContext.request.contextPath}/payments_inapp/creditcard.html?paymentPolicyId=${paymentPolicy.id}" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
         <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
 	</div>
@@ -112,7 +112,7 @@
 				<div class="addSmallSpace"></div>
 				
 				<div class="contentButton formButton rad5 rel" id="actionButtons" >
-					<input type="button" class="button-turquoise" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
+					<input type="button" class="button-turquoise pie" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
                     <span class="button-arrow"/>
 				</div>
 			
