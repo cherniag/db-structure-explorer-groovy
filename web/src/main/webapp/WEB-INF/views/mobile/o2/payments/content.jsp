@@ -7,19 +7,6 @@
     <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
-    <c:choose>
-        <c:when test="${isO2User}">
-            <!--
-            this section should be removed
-            or whole file replaced by payments_inapp
-            -->
-            <div class="content">
-                <h1><s:message code="pays.page.h1.options" /></h1>
-                <p><s:message code="pays.page.h1.options.note.o2" /></p>
-            </div>
-        </c:when>
-        <c:otherwise>
-
             <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
             <c:if test="${accountBannerON eq 'true'}">
                 <c:choose>
@@ -73,7 +60,7 @@
 
                         <div class="rel">
                             <c:choose>
-                                <c:when test="${isIOSDevice}">
+                                <c:when test="${isIOSDevice && !isO2User}">
                                     <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                         <input class="button-turquoise" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                         <span class="button-arrow"/>
@@ -117,6 +104,4 @@
                 </c:if>
 
             </div>
-        </c:otherwise>
-    </c:choose>
 </div>
