@@ -100,7 +100,7 @@
                 <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
                     <div class="rel" >
                         <div class="cross-text"><span>  <s:message code="pays.deactivate.header" />  </span>  </div>
-                        <input class="button-grey" title="${pageContext.request.contextPath}/payments/unsubscribe.html" type="button" onClick="location.href=this.title" value="<s:message code='pays.deactivate.submit' />" />
+                        <a class="button-grey" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
                     </div>
                 </c:if>
 

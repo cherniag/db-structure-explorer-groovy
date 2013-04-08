@@ -67,7 +67,13 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 				paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify);
 		
 		pendingPayment.setInternalTxId(internalTxId);
-		pendingPayment.setExternalTxId(response.getExternalTxId());
+		
+		final String externalTxId = response.getExternalTxId();
+		if (externalTxId!=null){
+			pendingPayment.setExternalTxId(externalTxId);
+		}else{
+			pendingPayment.setExternalTxId("");
+		}
 			entityService.updateEntity(pendingPayment);
 		LOGGER.info("Sent request to O2 with pending payment [{}]. [{}]", pendingPayment.getI(), response);
 		if (!response.isSuccessful()) {
