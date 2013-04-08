@@ -7,6 +7,7 @@
     <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
+
             <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
             <c:if test="${accountBannerON eq 'true'}">
                 <c:choose>

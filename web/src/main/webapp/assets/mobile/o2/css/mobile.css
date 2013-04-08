@@ -179,6 +179,7 @@ img.centered{
 .header {
     text-align: center;
     height: 47px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002E8A', endColorstr='#00153F'); /* for IE */
     background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
@@ -633,16 +634,17 @@ form .formButton  {
 
 .button-disabled{
     opacity: 1;
-    background-image: linear-gradient(bottom, rgb(0,0,102) 0%);
-    background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,0,102) 0%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,0,102) 0%);
+    background-image: linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
+    background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
+    background-image: -ms-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
 
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
+        color-stop(0, rgb(0,0,102)),
         color-stop(0, rgb(0,0,102))
     );
 }
@@ -681,6 +683,8 @@ form .formButton  {
     );
 }
 .button-turquoise:active{
+	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#094467', endColorstr='#1399E7'); /* for IE */
     background-image: linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
     background-image: -o-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
     background-image: -moz-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
@@ -698,6 +702,8 @@ form .formButton  {
 
 .button-turquoise {
     font-weight: bold;
+    
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1399E7', endColorstr='#094467'); /* for IE */
     background-image: linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
     background-image: -o-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
     background-image: -moz-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
@@ -714,6 +720,8 @@ form .formButton  {
 }
 
 .button1 {
+	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002E8A', endColorstr='#00153F'); /* for IE */
     background-image: linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,138) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,138) 62%);
     background-image: -moz-linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,138) 62%);
