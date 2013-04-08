@@ -318,6 +318,13 @@ public class User implements Serializable {
 
 		return false;
 	}
+	
+	public boolean isO2CommunityUser(){
+		Community community = userGroup.getCommunity();
+		String rewriteUrlParameter = community.getRewriteUrlParameter();
+		boolean isO2CommunityUser = rewriteUrlParameter.equalsIgnoreCase("o2");
+		return isO2CommunityUser;
+	}
 
 	public boolean isO2PAYGConsumer() {
 		return isO2Consumer() && Contract.PAYG.equals(contract);

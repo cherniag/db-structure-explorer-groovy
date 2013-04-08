@@ -1071,28 +1071,10 @@ public class UserService {
 
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 
-		boolean isnonO2User = isnonO2User(user);
-		final boolean isO2PAYGConsumer = user.isO2PAYGConsumer();
-
 		boolean wasInLimitedStatus = UserStatusDao.LIMITED.equals(user.getStatus().getName());
 
-		final boolean isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes = (isO2PAYGConsumer && paymentSystem.equals(PaymentDetails.O2_PSMS_TYPE)) || (user.isO2Business() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION));
 		final int oldNextSubPayment = user.getNextSubPayment();
-		if (isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes) {
-			if (Utils.getEpochSeconds() > oldNextSubPayment){
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
-			}else{
-				user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
-			}
-		} else if (!isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
-			// Update user balance
-			user.setSubBalance(user.getSubBalance() + subweeks);
-
-			// Update next sub payment time
-			user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
-		} else if (isnonO2User && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
-		} else {
+		if (paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1100,15 +1082,21 @@ public class UserService {
 			if (freeTrialExpiredMillis != null && freeTrialExpiredMillis > epochMillis) {
 				user.setFreeTrialExpiredMillis(epochMillis);
 			}
+		}else if (user.isO2CommunityUser()) {
+			if (Utils.getEpochSeconds() > oldNextSubPayment){
+				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+			}else{
+				user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
+			}
+		} else {
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
 		}
-		
-		//user = payOffDebt(user, payment);
 
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if (!isnonO2User && !isO2PAYGConsumerO2PSMSOrO2BussinesNotITunes && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+			if (!user.isO2CommunityUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE));
 			}
