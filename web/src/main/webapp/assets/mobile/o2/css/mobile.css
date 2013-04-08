@@ -179,7 +179,7 @@ img.centered{
 .header {
     text-align: center;
     height: 47px;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002E8A', endColorstr='#00153F'); /* for IE */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000057', endColorstr='#000061'); /* for IE */
     background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
     background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
@@ -236,6 +236,7 @@ img.centered{
 }
 
 .pane-red{
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B70101', endColorstr='#990000'); /* for IE */
     background-image: linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
     background-image: -o-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
     background-image: -moz-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
@@ -252,6 +253,7 @@ img.centered{
 }
 
 .banner-pane{
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CCCC', endColorstr='#01BDBD'); /* for IE */
     background-image: linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
     background-image: -o-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
     background-image: -moz-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
@@ -634,11 +636,13 @@ form .formButton  {
 
 .button-disabled{
     opacity: 1;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000066', endColorstr='#000066'); /*for IE*/
     background-image: linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
     background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
     background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
     background-image: -webkit-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
     background-image: -ms-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
+    -pie-background: linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
 
     background-image: -webkit-gradient(
         linear,
@@ -651,6 +655,7 @@ form .formButton  {
 
 .button-grey{
     color: #4d4d4d;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E8E9E9', endColorstr='#C8C8C9'); /* for IE */
     background-image: linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
     background-image: -o-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
     background-image: -moz-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
@@ -668,6 +673,7 @@ form .formButton  {
 }
 
 .button-grey:active{
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#C8C8C9', endColorstr='#E8E9E9'); /* for IE */
     background-image: linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
     background-image: -o-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
     background-image: -moz-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
