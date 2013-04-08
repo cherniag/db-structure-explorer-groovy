@@ -1082,14 +1082,19 @@ public class UserService {
 			if (freeTrialExpiredMillis != null && freeTrialExpiredMillis > epochMillis) {
 				user.setFreeTrialExpiredMillis(epochMillis);
 			}
-		}else if (user.isO2CommunityUser()) {
+		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
+			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
+		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 			}else{
 				user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
 			}
 		} else {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
+			user.setSubBalance(user.getSubBalance() + subweeks);
+
+			// Update next sub payment time
+			user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
 		}
 
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), TransactionType.CARD_TOP_UP));

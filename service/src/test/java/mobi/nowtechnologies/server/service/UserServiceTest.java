@@ -1673,6 +1673,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_O2LimitedUser_Success() throws Exception{
+		final int oldNextSubPayment = 0;
 		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
 		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
@@ -1695,6 +1696,7 @@ public class UserServiceTest {
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+		user.setNextSubPayment(oldNextSubPayment);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
@@ -1713,14 +1715,15 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
+		final int passedSubweeks = 5;
 		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
 				User passedUser = (User)invocation.getArguments()[0];
 				
-				assertEquals(6, passedUser.getSubBalance());
-				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(2, passedUser.getSubBalance());
+				assertEquals(oldNextSubPayment + passedSubweeks * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
@@ -1739,9 +1742,9 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
-		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(0)).saveEntity(cardTopUpAccountLog);
 		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
 	}
@@ -2012,20 +2015,24 @@ public class UserServiceTest {
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
+		final int oldSubBalance = 2;
+		final int oldNextSubPayment=0;
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSubBalance(2);
+		user.setSubBalance(oldSubBalance);
 		user.setStatus(eulaUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setNextSubPayment(oldNextSubPayment);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
@@ -2037,6 +2044,8 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+		
+		final int passedSubweeks = 5;
 
 		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -2044,8 +2053,8 @@ public class UserServiceTest {
 			public User answer(InvocationOnMock invocation) throws Throwable {
 				User passedUser = (User)invocation.getArguments()[0];
 				
-				assertEquals(6, passedUser.getSubBalance());
-				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(oldSubBalance, passedUser.getSubBalance());
+				assertEquals(oldNextSubPayment + passedSubweeks * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
 			
@@ -2064,10 +2073,11 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
-		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
 	}
 	
@@ -2085,22 +2095,26 @@ public class UserServiceTest {
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
+		final int oldSubBalance = 2;
+		final int nextSubPayment = 1;
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider("o2");
-		user.setSubBalance(2);
+		user.setSubBalance(oldSubBalance);
 		user.setStatus(subscribedUserStatus);
 		user.setLastSubscribedPaymentSystem(migSmsType);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+		user.setNextSubPayment(nextSubPayment);
 		
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
@@ -2112,6 +2126,8 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+		
+		final int passedSubweeks = 5;
 
 		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
 
@@ -2119,8 +2135,8 @@ public class UserServiceTest {
 			public User answer(InvocationOnMock invocation) throws Throwable {
 				User passedUser = (User)invocation.getArguments()[0];
 				
-				assertEquals(7, passedUser.getSubBalance());
-				assertEquals(Integer.MIN_VALUE, passedUser.getNextSubPayment());
+				assertEquals(oldSubBalance, passedUser.getSubBalance());
+				assertEquals(nextSubPayment + passedSubweeks * Utils.WEEK_SECONDS, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(Long.MAX_VALUE, passedUser.getLastSuccessfulPaymentTimeMillis());
 				
@@ -2139,7 +2155,7 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
-		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
+		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
 		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
 		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
@@ -2439,6 +2455,93 @@ public class UserServiceTest {
 		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsnonO2ItunesSubscribedUser();
 		
 		assertFalse(isIOsnonO2ItunesSubscribedUser);
+	}
+	
+	@Test
+	public void test_isNonO2UserSubscribeByO2_PSMS_Success() throws Exception{
+		final Integer graceDurationSeconds = 2*Utils.WEEK_SECONDS;
+		final int monthlyNextSubPayment = 0;
+		final int currentTimeSeconds = monthlyNextSubPayment;
+		final long currentTimeMillis = currentTimeSeconds*1000L;
+		final String base64EncodedAppStoreReceipt = "base64EncodedAppStoreReceipt";
+		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
+		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
+		final String paymentDetailsType = PaymentDetails.O2_PSMS_TYPE;
+		
+		final User user = UserFactory.createUser();
+		final UserGroup userGroup = UserGroupFactory.createUserGroup();
+		final Community community = CommunityFactory.createCommunity();
+
+		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		
+		community.setRewriteUrlParameter("o2");
+		userGroup.setCommunity(community);
+		user.setUserGroup(userGroup);
+		user.setProvider("non-o2");
+		user.setSubBalance(2);
+		user.setStatus(subscribedUserStatus);
+		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+		user.setAppStoreOriginalTransactionId(appStoreOriginalTransactionId);
+		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+		user.setSegment(CONSUMER);
+		user.setContract(Contract.PAYM);
+		final int oldNextSubPayment = currentTimeSeconds-graceDurationSeconds/2;
+		user.setNextSubPayment(oldNextSubPayment);
+		
+		final SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+		submittedPayment.setPaymentSystem(paymentDetailsType);
+		submittedPayment.setSubweeks(5);
+		
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		
+		PowerMockito.mockStatic(UserStatusDao.class);
+		
+		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
+		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
+
+		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User passedUser = (User)invocation.getArguments()[monthlyNextSubPayment];
+				
+				assertEquals(2, passedUser.getSubBalance());
+				assertEquals(monthlyNextSubPayment, passedUser.getNextSubPayment());
+				assertEquals(subscribedUserStatus, passedUser.getStatus());
+				assertEquals(currentTimeSeconds, passedUser.getLastSuccessfulPaymentTimeMillis());
+				
+				assertEquals(base64EncodedAppStoreReceipt, passedUser.getBase64EncodedAppStoreReceipt());
+				assertEquals(appStoreOriginalTransactionId, passedUser.getAppStoreOriginalTransactionId());
+				assertEquals(paymentDetailsType, passedUser.getLastSubscribedPaymentSystem());
+				assertEquals(Long.MAX_VALUE, passedUser.getFreeTrialExpiredMillis().longValue());
+				
+				return passedUser;
+			}
+		});
+		
+		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.when(Utils.getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
+		PowerMockito.when(Utils.getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(monthlyNextSubPayment);
+		
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		Mockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
+		
+		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		
+		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+		
+		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(mockEntityService, times(monthlyNextSubPayment)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
 	}
 	
 	@Test
