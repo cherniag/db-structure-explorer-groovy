@@ -13,7 +13,7 @@
 		<div class="addSmallSpace"></div>		
 		<!--button-->
 		<div class="rel" >
-			<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.inapp' />" />
+			<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.cc.dialog.successful.button.payments' />" />
             <span class="button-arrow"/>
 		</div>
 	</div>
