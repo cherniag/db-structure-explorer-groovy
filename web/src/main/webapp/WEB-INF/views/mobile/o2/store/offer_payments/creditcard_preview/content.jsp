@@ -4,7 +4,7 @@
 <div id="mainContent">
 	<form:form modelAttribute="creditCardDto" method="post">
 	<input type="hidden" name="offerId" value="${OFFER_DTO.id}"/>
-	<div class="header">
+	<div class="header pie">
 	<div class="gradient_border">&#160;</div>
 		<span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>	
 		<div class="buttonBox">

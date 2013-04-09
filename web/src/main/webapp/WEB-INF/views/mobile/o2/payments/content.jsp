@@ -2,9 +2,9 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="header">
+<div class="header pie">
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
-    <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+    <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right pie"><s:message code='m.page.main.menu.close' /></a>
 </div>
 <div class="container">
 
@@ -12,13 +12,13 @@
             <c:if test="${accountBannerON eq 'true'}">
                 <c:choose>
                     <c:when test="${trialExpiredOrLimited}">
-                        <div class="pane-red rel">
+                        <div class="pane-red rel pie">
                             <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
                             <span class="alert-text">${paymentAccountNotes}</span>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="banner-pane">
+                        <div class="banner-pane pie">
                             <c:if test="${not empty paymentAccountBanner}">
                                 <img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}'/>${paymentAccountBanner}" align="middle"/>
                             </c:if>
@@ -63,7 +63,7 @@
                             <c:choose>
                                 <c:when test="${isIOSDevice && !isO2User}">
                                     <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
-                                        <input class="button-turquoise" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                        <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                         <span class="button-arrow"/>
                                     </c:if>
                                 </c:when>
@@ -73,16 +73,16 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                                    <input class="button-disabled" disabled="true" type="button" value="<s:message code="${payment_label}" />" />
+                                    <input class="button-disabled pie" disabled="true" type="button" value="<s:message code="${payment_label}" />" />
                                     <span class="button-on"/>
                                 </c:when>
                                 <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
-                                    <input class="button-turquoise" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                    <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                     <span class="button-off"/>
                                 </c:when>
                                 <c:otherwise>
                                     <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
-                                        <input class="button-turquoise" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
+                                        <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
                                         <span class="button-arrow"/>
                                     </c:if>
                                 </c:otherwise>
@@ -100,7 +100,7 @@
                 <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
                     <div class="rel" >
                         <div class="cross-text"><span>  <s:message code="pays.deactivate.header" />  </span>  </div>
-                        <a class="button-grey" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
+                        <a class="button-grey pie" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
                     </div>
                 </c:if>
 

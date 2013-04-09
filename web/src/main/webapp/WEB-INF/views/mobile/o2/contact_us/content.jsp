@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 	
-<div class="header">
+<div class="header pie">
 <div class="gradient_border">&#160;</div>
 	<a href="" class="logo"><img
 			src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"
