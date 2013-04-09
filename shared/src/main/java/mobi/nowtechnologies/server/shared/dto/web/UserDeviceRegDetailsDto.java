@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
+import com.google.common.base.Objects;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -87,8 +88,13 @@ public class UserDeviceRegDetailsDto {
 
 	@Override
 	public String toString() {
-		return "UserDeviceRegDetailsDto [deviceUID=" + deviceUID + ", deviceType=" + deviceType + "apiVersion=" + apiVersion + ", appVersion=" + appVersion
-				+ ", communityRedirectUrl=" + communityName + ", ipAddress=" + ipAddress + "]";
+        return Objects.toStringHelper(this)
+                .add("deviceUID", deviceUID)
+                .add("deviceType", deviceType)
+                .add("apiVersion", apiVersion)
+                .add("community", communityName)
+                .add("IP", ipAddress)
+                .toString();
 	}
 
 }

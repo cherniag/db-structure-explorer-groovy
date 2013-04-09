@@ -71,17 +71,31 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community) {
+        try {
+            LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
+            return handleApplyO2Promotion(communityName, userName, token, community);
+        }catch (UserCredentialsException ce){
+            LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
+            throw ce;
+        }catch (RuntimeException re){
+            LOGGER.error("APPLY_INIT_PROMO error [{}] for user[{}] in community[{}] otac_token[{}]",re.getMessage(), userName, community, token);
+            throw re;
+        }finally {
+           LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
+        }
+    }
 
+    private ModelAndView handleApplyO2Promotion(String communityName, String userName, String token, String community) {
         User user = userService.findByNameAndCommunity(userName, communityName);
         User mobileUser = null;
         if (null != user) {
         	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
-        	
+
         	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
-    	
+
 	        final Object[] objects = new Object[]{accountCheckDTO};
 	        proccessRememberMeToken(objects);
-	        
+
 	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
             updateO2UserTask.handleUserUpdate(user);
 	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));

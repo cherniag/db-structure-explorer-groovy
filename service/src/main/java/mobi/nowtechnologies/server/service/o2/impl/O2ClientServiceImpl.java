@@ -18,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import org.w3c.dom.DOMException;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
 import uk.co.o2.soa.coredata.SOAFaultType;
@@ -123,20 +125,33 @@ public class O2ClientServiceImpl implements O2ClientService {
 	@Override
 	public String validatePhoneNumber(String phoneNumber) {
 		String serverO2Url = getServerO2Url(phoneNumber);
+        String url = serverO2Url + VALIDATE_PHONE_REQ;
 
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 		request.add("phone_number", phoneNumber);
-
-		try {
-			DOMSource response = restTemplate.postForObject(serverO2Url + VALIDATE_PHONE_REQ, request, DOMSource.class);
-			return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
-		} catch (Exception e) {
-			LOGGER.error("Error of the number validation "+ phoneNumber, e);
-			throw new InvalidPhoneNumberException();
-		}
+        return handleValidatePhoneNumber(phoneNumber, url, request);
 	}
 
-	@Override
+    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+        LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
+        try {
+            DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
+            return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
+        } catch (RestClientException e) {
+            LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
+            throw new InvalidPhoneNumberException();
+        } catch (DOMException e) {
+            LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
+            throw new InvalidPhoneNumberException();
+        } catch (Exception e) {
+            LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
+            throw new InvalidPhoneNumberException();
+        } finally {
+            LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", phoneNumber);
+        }
+    }
+
+    @Override
 	public O2UserDetails getUserDetails(String token, String phoneNumber) {
 		String serverO2Url = getServerO2Url(phoneNumber);
 

@@ -20,15 +20,6 @@ public class PhoneNumberController extends CommonController {
 		
 	private UserService userService;
 	
-	/**
-	 * Initiate activation of users phone number. As the result of this command user should get an SMS with pin to verify his phone number.
-	 * 
-	 * @param userName
-	 * @param userToken
-	 * @param timestamp
-	 * 
-	 * @return activation phone number info.
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER"})
 	public ModelAndView activatePhoneNumber(
 			@RequestParam(value = "PHONE", required = false) String phone,
@@ -36,7 +27,7 @@ public class PhoneNumberController extends CommonController {
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@PathVariable("community") String community) {
-		LOGGER.info("command processing started");
+		LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 		try {
 			User user = userService.checkCredentials(userName, userToken, timestamp, community);
 
@@ -47,7 +38,7 @@ public class PhoneNumberController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
 
 		} finally {
-			LOGGER.info("command processing finished");
+            LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
 	}
 	

@@ -3,6 +3,8 @@ package mobi.nowtechnologies.server.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.math.BigDecimal;
@@ -1585,7 +1587,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
-		LOGGER.debug("input parameters userDeviceRegDetailsDto: [{}]", userDeviceRegDetailsDto);
+		LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
 
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
@@ -1620,11 +1622,11 @@ public class UserService {
 
 		}
 
-		user.setActivationStatus(ActivationStatus.REGISTERED);
+		user.setActivationStatus(REGISTERED);
 		userRepository.save(user);
-
+        LOGGER.info("REGISTER_USER user[{}] changed activation_status to[{}]", user.getUserName(), REGISTERED);
 		AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
-		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
+		LOGGER.debug("REGISTER_USER Output parameter [{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
 
@@ -1646,7 +1648,7 @@ public class UserService {
 		user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
 
 		user.setFirstDeviceLoginMillis(System.currentTimeMillis());
-		user.setActivationStatus(ActivationStatus.REGISTERED);
+		user.setActivationStatus(REGISTERED);
 
 		entityService.saveEntity(user);
 		return user;
@@ -1921,13 +1923,13 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User activatePhoneNumber(User user, String phone) {
 
-		String msisdn = o2ClientService.validatePhoneNumber(phone != null ? phone : user.getMobile());
+        String phoneNumber = phone != null ? phone : user.getMobile();
+        String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
 
 		user.setMobile(msisdn);
-		user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
-
+		user.setActivationStatus(ENTERED_NUMBER);
 		userRepository.save(user);
-
+        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
 		return user;
 	}
 
@@ -1947,7 +1949,7 @@ public class UserService {
 				user = mobileUser;
 			}
 		} else {
-			if (user.getActivationStatus() == ActivationStatus.ENTERED_NUMBER) {
+			if (user.getActivationStatus() == ENTERED_NUMBER) {
 				Promotion promotion = null;
 
 				if (o2ClientService.isO2User(o2UserDetails))
