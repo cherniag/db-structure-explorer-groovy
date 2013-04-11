@@ -23,7 +23,7 @@
 								</option>
 							</select>
 						</div>
-						<!-- is Oline -->
+						<!-- is Online -->
 						<div class="controls">
 							<label class="checkbox">
 								<input type="checkbox" th:field="*{activated}" />
@@ -65,7 +65,7 @@
 						</div>  
 					</div>
 					<div class="span8">
-					<input type="hidden" th:field="*{publishTime}" required="required" th:value="${today}" />
+					<input type="hidden" name="publishTime" required = "required" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd HH:mm:ss.SSS')}" />
 						<div class="filtersSelect">
 							<label><strong>Message Headline:</strong></label>
 							<div class="control-group">

@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
 
@@ -61,7 +62,11 @@ public class NewsAsm {
 		newsDetailDto.setBody(message.getBody());
 		
 		newsDetailDto.setId(message.getId());
-		newsDetailDto.setI(message.getPosition());
+		if (MessageType.NEWS.equals(message.getMessageType())) {
+			newsDetailDto.setI(message.getPosition());
+		}else{
+			newsDetailDto.setI(message.getId());
+		}
 		newsDetailDto.setMessageFrequence(message.getFrequence());
 		newsDetailDto.setMessageType(message.getMessageType());
 		newsDetailDto.setTimestampMilis(message.getPublishTimeMillis());
