@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ O2ClientServiceImpl.class})
-public class O2ClientServiceImplTest {
+public class O2ClientServiceImplIT {
 	private O2ClientServiceImpl fixture;
 	
 	private O2ClientServiceImpl fixture2;
