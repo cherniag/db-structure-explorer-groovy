@@ -3,6 +3,8 @@
  */
 package mobi.nowtechnologies.server.service;
 
+import org.apache.commons.lang.StringUtils;
+
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
 import mobi.nowtechnologies.server.persistence.repository.NotPromotedDeviceRepository;
@@ -17,6 +19,7 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
  * 
  */
 public class DeviceService {
+	private final static String DEFAULT_PROMO_PHONE_MSG_CODE = "promoted.device.phones"; 
 	
 	private NotPromotedDeviceRepository notPromotedDeviceRepository;
 	private PromotedDeviceRepository promotedDeviceRepository;
@@ -54,9 +57,26 @@ public class DeviceService {
 		return false;
 	}
 	
-	public boolean isPromotedDevicePhone(Community community, String phoneNumber) {
+	public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {
 		if (null!=phoneNumber) {
-			String promotedDevicePhones = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "promoted.device.phones", null, null);
+			
+			String[] msgCodes = new String[3];
+			msgCodes[0] = DEFAULT_PROMO_PHONE_MSG_CODE;
+			msgCodes[1] = community.getRewriteUrlParameter().toLowerCase()+"."+msgCodes[0];
+			msgCodes[2] = promoCode != null ? community.getRewriteUrlParameter().toLowerCase()+"."+promoCode+"."+msgCodes[0] : null;
+			
+			String promotedDevicePhones = "";
+			
+			for (int i = msgCodes.length-1; i >= 0; i--) {
+				if(msgCodes[i] != null){				
+					String msg = messageSource.getMessage(community.getRewriteUrlParameter(), msgCodes[i], null, "", null);
+					if (StringUtils.isNotEmpty(msg)){						
+						promotedDevicePhones = msg;
+						break;
+					}
+				}
+			}
+			
 			return (promotedDevicePhones.indexOf(phoneNumber)!=-1)?true:false;
 		}
 		return false;

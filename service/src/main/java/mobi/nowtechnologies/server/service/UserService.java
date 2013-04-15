@@ -2,19 +2,13 @@ package mobi.nowtechnologies.server.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.Utils.getBigRandomInt;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
@@ -24,37 +18,11 @@ import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentDao.TxType;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.GracePeriod;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.persistence.domain.Payment;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.SetPassword;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer;
+import mobi.nowtechnologies.server.persistence.dao.*;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
-import mobi.nowtechnologies.server.service.exception.SagePayException;
-import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -66,14 +34,9 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.web.*;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.TransactionType;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
@@ -495,6 +458,27 @@ public class UserService {
 	// return communityName.equals(userDao
 	// .getCommunityNameByUserGroup(userGroup));
 	// }
+	
+	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
+		Promotion promotion = null;
+
+		String communityUri = community.getRewriteUrlParameter().toLowerCase();
+		String staffCode = messageSource.getMessage(communityUri, "o2.staff.promotionCode", null, null);
+		String storeCode = messageSource.getMessage(communityUri, "o2.store.promotionCode", null, null);
+		
+		if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
+			promotion = setPotentialPromo(community, user, staffCode);
+		else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
+			promotion = setPotentialPromo(community, user, storeCode);
+		else if (o2ClientService.isO2User(o2UserDetails))
+			promotion = setPotentialPromo(community.getName(), user, "promotionCode");
+		else
+			promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
+		
+		applyPromotionByPromoCode(user, promotion);
+		
+		return true;
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
@@ -1660,7 +1644,7 @@ public class UserService {
 		boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
 		return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
 	}
-
+	
 	public Promotion setPotentialPromo(String communityName, User user, String promotionCode) {
 		Community community = communityService.getCommunityByName(communityName);
 		String communityUri = community.getRewriteUrlParameter().toLowerCase();
@@ -1668,7 +1652,7 @@ public class UserService {
 		return setPotentialPromo(community, user, code);
 	}
 
-	private Promotion setPotentialPromo(Community community, User user, String code) {
+	protected Promotion setPotentialPromo(Community community, User user, String code) {
 		if (code != null) {
 			Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
 			user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
@@ -1940,7 +1924,7 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String community) {
+	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 		if (null != mobileUser) {
@@ -1950,14 +1934,9 @@ public class UserService {
 			}
 		} else {
 			if (user.getActivationStatus() == ENTERED_NUMBER) {
-				Promotion promotion = null;
-
-				if (o2ClientService.isO2User(o2UserDetails))
-					promotion = setPotentialPromo(community, user, "promotionCode");
-				else
-					promotion = setPotentialPromo(community, user, "defaultPromotionCode");
-				applyPromotionByPromoCode(user, promotion);
-				hasPromo = true;
+				Community community = communityService.getCommunityByName(communityName);
+				
+				hasPromo = applyO2PotentialPromo(o2UserDetails, user, community);
 			}
 		}
 		user.setContract(Contract.valueOf(o2UserDetails.getTariff()));

@@ -88,7 +88,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	public String getServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByName("o2");
 
-		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
+		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
 				? this.promotedServerO2Url
 				: this.serverO2Url;
 
@@ -99,7 +99,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	public String getRedeemServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByName("o2");
 
-		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber)
+		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
 				? this.redeemPromotedServerO2Url
 				: this.redeemServerO2Url;
 
