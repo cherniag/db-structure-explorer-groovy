@@ -484,8 +484,10 @@ public class UserService {
 	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
 		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
 		if (promotion != null) {
-
-			int nextSubPayment = Utils.getEpochSeconds() + promotion.getFreeWeeks() * Utils.WEEK_SECONDS;
+			int curTime = Utils.getEpochSeconds();
+			int freeWeeks = promotion.getFreeWeeks() == 0 ? (curTime - promotion.getEndDate())/(7*24*60*60) : promotion.getFreeWeeks();
+			
+			int nextSubPayment = curTime + freeWeeks * Utils.WEEK_SECONDS;
 			user.setNextSubPayment(nextSubPayment);
 			user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 
@@ -498,12 +500,12 @@ public class UserService {
 
 			promotion.setNumUsers(promotion.getNumUsers() + 1);
 			promotion = entityService.updateEntity(promotion);
-			AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + promotion.getFreeWeeks()),
+			AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
 					TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED);
 			accountLog.setPromoCode(promoCode.getCode());
 			entityService.saveEntity(accountLog);
-			for (byte i = 1; i <= promotion.getFreeWeeks(); i++) {
-				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + promotion.getFreeWeeks() - i),
+			for (byte i = 1; i <= freeWeeks; i++) {
+				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
 						TransactionType.SUBSCRIPTION_CHARGE));
 			}
 			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
