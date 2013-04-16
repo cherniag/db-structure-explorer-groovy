@@ -42,7 +42,7 @@ public class SingUpDeviceController extends CommonController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/SIGN_UP_DEVICE")
 	public ModelAndView signUpDevice(HttpServletRequest request, @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME)UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
-		LOGGER.info("command processing started");
+        LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
 		try {
 			if (result.hasErrors()){
 				List<ObjectError>  objectErrors = result.getAllErrors();
@@ -65,7 +65,7 @@ public class SingUpDeviceController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 			
 		} finally {
-			LOGGER.info("command processing finished");
+            LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class SingUpDeviceController extends CommonController {
 			"*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
 	public ModelAndView signUpDevice_V3GT(HttpServletRequest request,
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
-		LOGGER.info("command processing started");
+        LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
 		try {
 			if (result.hasErrors()) {
 				List<ObjectError> objectErrors = result.getAllErrors();
@@ -94,7 +94,7 @@ public class SingUpDeviceController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 
 		} finally {
-			LOGGER.info("command processing finished");
+            LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
 	
@@ -102,33 +102,42 @@ public class SingUpDeviceController extends CommonController {
 	public ModelAndView signUpDevice_O2(HttpServletRequest request,
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
 			@PathVariable("community") String community) {
-		LOGGER.info("command processing started");
+		LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]",userDeviceDetailsDto, community);
 		try {
-			if (result.hasErrors()) {
-				List<ObjectError> objectErrors = result.getAllErrors();
-
-				for (ObjectError objectError : objectErrors) {
-					throw ValidationException.getInstance(objectError.getDefaultMessage());
-				}
-			}
-
-			String remoteAddr = Utils.getIpFromRequest(request);
-			userDeviceDetailsDto.setIpAddress(remoteAddr);
-			userDeviceDetailsDto.setCOMMUNITY_NAME(community);
-
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
-
-			final Object[] objects = new Object[] { accountCheckDTO };
-			proccessRememberMeToken(objects);
-			
-			return new ModelAndView(view, Response.class.toString(), new Response(objects));
-
+            return handlesSignUpDevice(request, userDeviceDetailsDto, result, community);
+        }catch (ValidationException ve){
+            LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]",ve.getMessage(), userDeviceDetailsDto, community);
+            throw ve;
+        }catch (RuntimeException re){
+            LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]",re.getMessage(), userDeviceDetailsDto, community);
+            throw re;
 		} finally {
-			LOGGER.info("command processing finished");
+            LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]",userDeviceDetailsDto, community);
 		}
 	}
 
-	public void setCommunityService(CommunityService communityService) {
+    private ModelAndView handlesSignUpDevice(HttpServletRequest request, UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result, String community) {
+        if (result.hasErrors()) {
+            List<ObjectError> objectErrors = result.getAllErrors();
+
+            for (ObjectError objectError : objectErrors) {
+                throw ValidationException.getInstance(objectError.getDefaultMessage());
+            }
+        }
+
+        String remoteAddr = Utils.getIpFromRequest(request);
+        userDeviceDetailsDto.setIpAddress(remoteAddr);
+        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
+
+        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
+
+        final Object[] objects = new Object[] { accountCheckDTO };
+        proccessRememberMeToken(objects);
+
+        return new ModelAndView(view, Response.class.toString(), new Response(objects));
+    }
+
+    public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}
 	

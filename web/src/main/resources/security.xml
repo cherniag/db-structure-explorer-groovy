@@ -23,6 +23,7 @@
 
         <sec:http-basic />
 
+        <sec:custom-filter after="FIRST" ref="filter.slowRequestFilter"/>
         <sec:custom-filter before="FIRST" ref="communityResolverFilter" />
         <sec:custom-filter before="FORM_LOGIN_FILTER" ref="facebookAuthenticationFilter" />
 
@@ -126,4 +127,5 @@
     <bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
         <property name="nowTechTokenBasedRememberMeServices"  ref="nowTechBasedRememberMeServices"/>
     </bean>
+    <bean id="filter.slowRequestFilter" class="mobi.nowtechnologies.server.shared.web.filter.SlowRequestFilter"/>
 </beans>
