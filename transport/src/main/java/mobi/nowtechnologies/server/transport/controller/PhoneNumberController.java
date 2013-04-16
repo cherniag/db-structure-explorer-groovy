@@ -6,7 +6,10 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -26,18 +29,27 @@ public class PhoneNumberController extends CommonController {
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
-			@PathVariable("community") String community) {
+			@PathVariable("community") String community) throws Exception {
 		LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
+		
+		boolean isFailed = false;
+		User user = null; 
 		try {
-			User user = userService.checkCredentials(userName, userToken, timestamp, community);
+			user = userService.checkCredentials(userName, userToken, timestamp, community);
 
 			user = userService.activatePhoneNumber(user, phone);
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
-
+		}catch(Exception e){
+			isFailed = true;
+			logProfileDate(null, phone, user, e);
+			throw e;
 		} finally {
+			if (!isFailed){
+				logProfileDate(null, phone, user, null);
+			}
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
 	}
