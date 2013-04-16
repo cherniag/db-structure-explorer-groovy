@@ -41,7 +41,7 @@ public class MessageDto {
 
 	private MessageType messageType;
 
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
 	private Date publishTime;
 	
 	private Set<FilterDto> filterDtos;
