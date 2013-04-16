@@ -35,3 +35,14 @@ alter table tb_users add column last_before48_sms_millis BIGINT default 0;
    description varchar(255),
    primary key (id)
  );
+
+ -- IMP-1193 add new white list for staff and store promo 
+insert into tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label) values ("staff Promotion", 0, 0, 1356342067, unix_timestamp('2014-01-01'), true, 0, 0, 10, 'PromoCode', false, 'staff');
+insert into tb_promoCode (code, promotionId) 
+select p.label, p.i
+from tb_promotions p where p.label = 'staff';
+
+insert into tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label) values ("store Promotion", 0, 0, 1356342067, 1606780800, true, 52, 0, 10, 'PromoCode', false, 'store');
+insert into tb_promoCode (code, promotionId) 
+select p.label, p.i
+from tb_promotions p where p.label = 'store';
