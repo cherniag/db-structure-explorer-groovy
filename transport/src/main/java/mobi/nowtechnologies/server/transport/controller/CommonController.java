@@ -260,7 +260,7 @@ public abstract class CommonController {
 		return rememberMeToken;
 	}
 	
-	public void logProfileDate(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
+	public void logProfileDate(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
 		String result = "success";
 		String errorMessage = null;
 		if (exception != null) {
@@ -321,10 +321,13 @@ public abstract class CommonController {
 			deviceModelFromRequest = userDeviceRegDetailsDto.getDeviceModel();
 			deviceTypeFromRequest = userDeviceRegDetailsDto.getDeviceType();
 			deviceUIDFromRequest = userDeviceRegDetailsDto.getDeviceUID();
+			if (communityFromRequest==null){
+				communityFromRequest = userDeviceRegDetailsDto.getCommunityName();
+			}
 		}
 		
-		PROFILE_LOGGER.info("deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
-				new Object[] {deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
+		PROFILE_LOGGER.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
+				new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
 						executionTimeMillis, errorMessage });
 	}
 	
