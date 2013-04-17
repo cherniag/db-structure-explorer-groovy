@@ -13,15 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
@@ -2610,6 +2602,218 @@ public class UserServiceTest {
 		
 		assertNotNull(users);
 		assertEquals(expectedUsers, users);
+	}
+	
+	@Test
+	public void testApplyO2PotentialPromo_StaffPromotion_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
+		when(mockO2ClientService.isO2User(any(O2UserDetails.class))).thenReturn(true);
+		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+		
+		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
+		
+		assertEquals(true, result);
+		
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
+		verify(mockDeviceService, times(0)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
+		verify(mockO2ClientService, times(0)).isO2User(any(O2UserDetails.class));
+		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
+		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), anyString());
+		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+	}
+	
+	@Test
+	public void testApplyO2PotentialPromo_StorePromotion_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
+		when(mockO2ClientService.isO2User(any(O2UserDetails.class))).thenReturn(true);
+		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+		
+		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
+		
+		assertEquals(true, result);
+		
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
+		verify(mockO2ClientService, times(0)).isO2User(any(O2UserDetails.class));
+		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
+		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+	}
+	
+	@Test
+	public void testApplyO2PotentialPromo_O2UserPromotion_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
+		when(mockO2ClientService.isO2User(any(O2UserDetails.class))).thenReturn(true);
+		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+		
+		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
+		
+		assertEquals(true, result);
+		
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
+		verify(mockO2ClientService, times(1)).isO2User(any(O2UserDetails.class));
+		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+	}
+	
+	@Test
+	public void testApplyO2PotentialPromo_DefaultPromotion_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
+		when(mockCommunityResourceBundleMessageSource.getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
+		when(mockO2ClientService.isO2User(any(O2UserDetails.class))).thenReturn(false);
+		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+		
+		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
+		
+		assertEquals(true, result);
+		
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(anyString(), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
+		verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
+		verify(mockO2ClientService, times(1)).isO2User(any(O2UserDetails.class));
+		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
+		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class));
+	}
+	
+	@Test
+	public void testApplyPromotionByPromoCode_ToSomeDate_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2013, 0, 1);
+		PromoCode promoCode = new PromoCode();
+		promoCode.setCode("staff");
+		final Promotion promotion = new Promotion();
+		promotion.setPromoCode(promoCode);
+		promotion.setEndDate((int)(calendar.getTimeInMillis()/1000));
+		
+		when(mockEntityService.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User user = (User)invocation.getArguments()[0];
+				if(user != null)
+					assertEquals(promotion.getEndDate(), user.getNextSubPayment());
+				
+				return user;
+			}
+		});
+		when(mockEntityService.updateEntity(eq(promotion))).thenReturn(promotion);
+		when(mockEntityService.saveEntity(any(AccountLog.class))).thenReturn(null);
+		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
+		
+		userServiceSpy.applyPromotionByPromoCode(user, promotion);
+				
+		verify(mockEntityService, times(1)).updateEntity(eq(promotion));
+		verify(mockEntityService, times(1)).updateEntity(eq(user));
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
+	}
+	
+	@Test
+	public void testApplyPromotionByPromoCode_OnSomeWeeks_Success() {
+		O2UserDetails o2UserDetails = new O2UserDetails();
+		o2UserDetails.setOperator("o2");
+		o2UserDetails.setTariff("payg");
+		
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2013, 0, 1);
+		PromoCode promoCode = new PromoCode();
+		promoCode.setCode("store");
+		final Promotion promotion = new Promotion();
+		promotion.setPromoCode(promoCode);
+		promotion.setFreeWeeks((byte)52);
+		
+		when(mockEntityService.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+			@Override
+			public User answer(InvocationOnMock invocation) throws Throwable {
+				User user = (User)invocation.getArguments()[0];
+				if(user != null)
+					assertEquals(Utils.getEpochSeconds() + 52 * Utils.WEEK_SECONDS, user.getNextSubPayment());
+				
+				return user;
+			}
+		});
+		when(mockEntityService.updateEntity(eq(promotion))).thenReturn(promotion);
+		when(mockEntityService.saveEntity(any(AccountLog.class))).thenReturn(null);
+		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
+		
+		userServiceSpy.applyPromotionByPromoCode(user, promotion);
+		
+		verify(mockEntityService, times(1)).updateEntity(eq(promotion));
+		verify(mockEntityService, times(1)).updateEntity(eq(user));
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
