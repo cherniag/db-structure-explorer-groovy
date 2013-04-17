@@ -478,8 +478,8 @@ public class UserService {
 		if (promotion != null) {
 			int curTime = Utils.getEpochSeconds();
 			int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
+			int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTime + freeWeeks * Utils.WEEK_SECONDS;
 			
-			int nextSubPayment = curTime + freeWeeks * Utils.WEEK_SECONDS;
 			user.setNextSubPayment(nextSubPayment);
 			user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 
