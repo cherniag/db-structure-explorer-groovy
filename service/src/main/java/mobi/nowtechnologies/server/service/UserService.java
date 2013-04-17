@@ -477,7 +477,7 @@ public class UserService {
 		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
 		if (promotion != null) {
 			int curTime = Utils.getEpochSeconds();
-			int freeWeeks = promotion.getFreeWeeks() == 0 ? (curTime - promotion.getEndDate())/(7*24*60*60) : promotion.getFreeWeeks();
+			int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
 			
 			int nextSubPayment = curTime + freeWeeks * Utils.WEEK_SECONDS;
 			user.setNextSubPayment(nextSubPayment);
