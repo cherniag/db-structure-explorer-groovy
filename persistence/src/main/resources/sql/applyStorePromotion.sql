@@ -5,7 +5,16 @@ insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u
 update tb_users u 
 join tb_promotions p on p.label = 'store' and p.userGroup = 10 
 join phoneNumbers pn on pn.phoneNumber = u.userName 
-set u.potentialPromoCodePromotion_i = null, u.nextSubPayment = unix_timestamp() + p.freeWeeks*7*24*60*60, u.freeTrialExpiredMillis = u.nextSubPayment*1000, u.status=10, u.freeTrialStartedTimestampMillis=unix_timestamp()*1000;
+set u.potentialPromoCodePromotion_i = null, 
+u.nextSubPayment = unix_timestamp() + p.freeWeeks*7*24*60*60,
+u.freeTrialExpiredMillis = (
+CASE 
+WHEN u.freeTrialExpiredMillis = u.nextSubPayment THEN unix_timestamp()*1000 + p.freeWeeks*7*24*60*60*1000
+ELSE u.freeTrialExpiredMillis
+END
+), 
+u.status=10, 
+u.freeTrialStartedTimestampMillis=unix_timestamp()*1000;
 
 update tb_promotions p
 join (select count(pn.phoneNumber) as c from phoneNumbers pn) pc
