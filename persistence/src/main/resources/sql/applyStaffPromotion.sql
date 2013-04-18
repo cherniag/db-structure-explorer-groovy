@@ -30,6 +30,6 @@ p.freeWeeks,
 unix_timestamp()
 FROM tb_users u 
 join tb_promotions p on p.label = 'staff' and p.userGroup = 10 
-join phoneNumbers pn on pn.phoneNumber = u.userName
+join phoneNumbers pn on pn.phoneNumber = u.userName;
 
 drop table phoneNumbers;
