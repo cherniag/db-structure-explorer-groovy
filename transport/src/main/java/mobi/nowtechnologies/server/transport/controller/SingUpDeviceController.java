@@ -41,8 +41,10 @@ public class SingUpDeviceController extends CommonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/SIGN_UP_DEVICE")
-	public ModelAndView signUpDevice(HttpServletRequest request, @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME)UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+	public ModelAndView signUpDevice(HttpServletRequest request, @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME)UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) throws Exception {
         LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
+        User user = null;
+        boolean isFailed = false;
 		try {
 			if (result.hasErrors()){
 				List<ObjectError>  objectErrors = result.getAllErrors();
@@ -56,15 +58,21 @@ public class SingUpDeviceController extends CommonController {
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
 			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
-			User user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
 			final Object[] objects = new Object[]{accountCheckDTO};
 			proccessRememberMeToken(objects);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
-			
+		}catch(Exception e){
+			isFailed = true;
+			logProfileDate(null, userDeviceDetailsDto, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed){
+				logProfileDate(null, userDeviceDetailsDto, null, user, null);
+			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
@@ -72,8 +80,11 @@ public class SingUpDeviceController extends CommonController {
 	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
 			"*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"})
 	public ModelAndView signUpDevice_V3GT(HttpServletRequest request,
-			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) throws Exception {
         LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
+        
+        User user = null;
+        boolean isFailed = false;
 		try {
 			if (result.hasErrors()) {
 				List<ObjectError> objectErrors = result.getAllErrors();
@@ -87,13 +98,20 @@ public class SingUpDeviceController extends CommonController {
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
 			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
+			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
-
+		}catch(Exception e){
+			isFailed = true;
+			logProfileDate(null, userDeviceDetailsDto, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed){
+				logProfileDate(null, userDeviceDetailsDto, null, user, null);
+			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
@@ -103,39 +121,46 @@ public class SingUpDeviceController extends CommonController {
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
 			@PathVariable("community") String community) {
 		LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]",userDeviceDetailsDto, community);
+		
+		User user = null;
+	    boolean isFailed = false;
 		try {
-            return handlesSignUpDevice(request, userDeviceDetailsDto, result, community);
+			 if (result.hasErrors()) {
+		            List<ObjectError> objectErrors = result.getAllErrors();
+
+		            for (ObjectError objectError : objectErrors) {
+		                throw ValidationException.getInstance(objectError.getDefaultMessage());
+		            }
+		        }
+
+		        String remoteAddr = Utils.getIpFromRequest(request);
+		        userDeviceDetailsDto.setIpAddress(remoteAddr);
+		        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
+
+		        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
+		        user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+
+		        final Object[] objects = new Object[] { accountCheckDTO };
+		        proccessRememberMeToken(objects);
+
+		        return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (ValidationException ve){
+        	isFailed = true;
+			logProfileDate(community, userDeviceDetailsDto, null, user, ve);
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]",ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
         }catch (RuntimeException re){
+        	isFailed = true;
+			logProfileDate(community, userDeviceDetailsDto, null, user, re);
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]",re.getMessage(), userDeviceDetailsDto, community);
             throw re;
 		} finally {
+			if (!isFailed){
+				logProfileDate(community, userDeviceDetailsDto, null, user, null);
+			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]",userDeviceDetailsDto, community);
 		}
 	}
-
-    private ModelAndView handlesSignUpDevice(HttpServletRequest request, UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result, String community) {
-        if (result.hasErrors()) {
-            List<ObjectError> objectErrors = result.getAllErrors();
-
-            for (ObjectError objectError : objectErrors) {
-                throw ValidationException.getInstance(objectError.getDefaultMessage());
-            }
-        }
-
-        String remoteAddr = Utils.getIpFromRequest(request);
-        userDeviceDetailsDto.setIpAddress(remoteAddr);
-        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
-
-        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
-
-        final Object[] objects = new Object[] { accountCheckDTO };
-        proccessRememberMeToken(objects);
-
-        return new ModelAndView(view, Response.class.toString(), new Response(objects));
-    }
 
     public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
