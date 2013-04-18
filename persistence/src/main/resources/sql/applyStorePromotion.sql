@@ -1,6 +1,6 @@
 create temporary table phoneNumbers(phoneNumber varchar(255));
 
-insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u.userName in ('+447852365884', '+447779836075' , '+447836509560'); --some numbers which should be applied promotions 
+insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u.userName in ('+44##########', '+44##########' , '+44##########'); --some list numbers which should be applied promotions 
 
 update tb_users u 
 join tb_promotions p on p.label = 'store' and p.userGroup = 10 
