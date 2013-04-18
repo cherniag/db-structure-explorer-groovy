@@ -9,7 +9,7 @@ set u.potentialPromoCodePromotion_i = null,
 u.nextSubPayment = unix_timestamp() + p.freeWeeks*7*24*60*60,
 u.freeTrialExpiredMillis = (
 CASE 
-WHEN u.freeTrialExpiredMillis = u.nextSubPayment THEN unix_timestamp()*1000 + p.freeWeeks*7*24*60*60*1000
+WHEN u.freeTrialExpiredMillis = u.nextSubPayment*1000 THEN unix_timestamp()*1000 + p.freeWeeks*7*24*60*60*1000
 ELSE u.freeTrialExpiredMillis
 END
 ), 
