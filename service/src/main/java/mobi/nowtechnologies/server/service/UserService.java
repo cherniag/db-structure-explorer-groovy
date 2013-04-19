@@ -462,7 +462,14 @@ public class UserService {
 	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
 		Promotion promotion = null;
 
-		if (o2ClientService.isO2User(o2UserDetails))
+		String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
+		String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
+		
+		if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
+			promotion = setPotentialPromo(community, user, staffCode);
+		else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
+			promotion = setPotentialPromo(community, user, storeCode);
+		else if (o2ClientService.isO2User(o2UserDetails))
 			promotion = setPotentialPromo(community.getName(), user, "promotionCode");
 		else
 			promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
