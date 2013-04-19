@@ -73,18 +73,22 @@
                         && paymentDetails.activated
                         && activePolicy.subcost == paymentPolicy.subcost
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
-                                    <input class="button-disabled pie" disabled="true" type="button" value="<s:message code="${payment_label}" />" />
-                                    <span class="button-on"/>
+                                    <a class="button-disabled pie" disabled="true">
+                                		${payment_label}
+                            			<span class="button-on"/>
+                            		</a>
                                 </c:when>
                                 <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
-                                    <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
-                                    <span class="button-off"/>
+                                    <a class="button-turquoise pie" href="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
+                                		${payment_label}
+                                		<span class="button-off"/>
+                            		</a>
                                 </c:when>
                                 <c:otherwise>
                                     <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
-                                        <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="<s:message code="${payment_label}" />" />
-                                        <span class="button-arrow"/>
-                                    </c:if>
+                                		<input class="button-turquoise pie" href="${pageContext.request.contextPath}/payments/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" value="<s:message code="${payment_label}" />" />
+                                		<span class="button-arrow"/>
+                            		</c:if>
                                 </c:otherwise>
                             </c:choose>
                         </div>
