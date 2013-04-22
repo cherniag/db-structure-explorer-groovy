@@ -1,5 +1,3 @@
-insert into tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label) values ("staff Promotion", 0, 0, 1356342067, unix_timestamp('2014-01-01'), true, 0, 0, 10, 'PromoCode', false, 'staff')
-
 create temporary table phoneNumbers(phoneNumber varchar(255));
 
 insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u.userName in ('+447852365884', '+447779836075' , '+447836509560'); --some numbers which should be applied promotions 

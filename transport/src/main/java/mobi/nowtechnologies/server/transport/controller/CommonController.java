@@ -2,14 +2,23 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.error.ThrottlingException;
+import mobi.nowtechnologies.server.interceptor.LoggerInterceptor;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +29,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Locale;
 
 /**
@@ -33,6 +43,7 @@ public abstract class CommonController {
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 
+	protected final Logger PROFILE_LOGGER = LoggerFactory.getLogger("PROFILE_LOGGER");
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	protected View view;
@@ -247,6 +258,77 @@ public abstract class CommonController {
 		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
+	}
+	
+	public void logProfileDate(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
+		String result = "success";
+		String errorMessage = null;
+		if (exception != null) {
+			result = "fail";
+			errorMessage = exception.getMessage();
+			if (errorMessage == null) {
+				if (exception instanceof ServiceException) {
+					ServiceException serviceException = (ServiceException) exception;
+
+					ServerMessage serverMessage = serviceException.getServerMessage();
+					String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
+					if (serverMessage != null) {
+						String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
+						errorMessage = localizedMessage;
+					} else {
+						errorMessage = errorCodeForMessageLocalization;
+					}
+
+				}
+			}
+		}
+
+		String newUserName = null;
+		String newDeviceUID = null;
+		String newDeviceModel = null;
+		String newDeviceType = null;
+		String newMobile = null;
+		String newCommunityRewriteUri = null;
+		if (user != null) {
+			newUserName = user.getUserName();
+			newDeviceUID = user.getDeviceUID();
+			newDeviceModel = user.getDeviceModel();
+			newMobile = user.getMobile();
+			UserGroup userGroup = user.getUserGroup();
+			if (userGroup!=null){
+				final Community community = userGroup.getCommunity();
+				if (community!=null){
+					newCommunityRewriteUri = community.getRewriteUrlParameter();
+				}
+			}
+			final DeviceType userDeviceType = user.getDeviceType();
+			if (userDeviceType != null) {
+				newDeviceType = userDeviceType.getName();
+			}
+		}
+
+		Long startTimeMillis = LogUtils.getStartTimeMillis();
+		Long executionTimeMillis = null;
+		if (startTimeMillis != null) {
+			final long epochMillis = Utils.getEpochMillis();
+			executionTimeMillis = epochMillis - startTimeMillis;
+		}
+
+		String deviceModelFromRequest = null;
+		String deviceTypeFromRequest = null;
+		String deviceUIDFromRequest = null;
+		if (userDeviceRegDetailsDto!=null){
+			deviceModelFromRequest = userDeviceRegDetailsDto.getDeviceModel();
+			deviceTypeFromRequest = userDeviceRegDetailsDto.getDeviceType();
+			deviceUIDFromRequest = userDeviceRegDetailsDto.getDeviceUID();
+			if (communityFromRequest==null){
+				communityFromRequest = userDeviceRegDetailsDto.getCommunityName();
+			}
+		}
+		
+		PROFILE_LOGGER.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
+				new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
+						executionTimeMillis, errorMessage });
 	}
 	
 }

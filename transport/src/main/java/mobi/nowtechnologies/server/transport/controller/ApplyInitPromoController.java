@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
 /**
@@ -47,18 +48,27 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp) {
+            @RequestParam("TIMESTAMP") String timestamp) throws Exception {
 
         LOGGER.info("command processing started");
-        try {
-            User user = userService.findByNameAndCommunity(userName, communityName);
+        boolean isFailed = false;
+		User user = null; 
+		try {
+            user = userService.findByNameAndCommunity(userName, communityName);
 
             AccountCheckDTO accountCheckDTO = userService.applyInitialPromotion(user);
             final Object[] objects = new Object[]{accountCheckDTO};
             proccessRememberMeToken(objects);
 
             return new ModelAndView(view, Response.class.toString(), new Response(objects));
-        } finally {
+		}catch(Exception e){
+			isFailed = true;
+			logProfileDate(communityName, null, null, user, e);
+			throw e;
+		} finally {
+			if (!isFailed){
+				logProfileDate(communityName, null, null, user, null);
+			}
             LOGGER.info("command processing finished");
         }
     }
@@ -71,36 +81,42 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community) {
+    	
+    	boolean isFailed = false;
+ 		User user = null; 
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
-            return handleApplyO2Promotion(communityName, userName, token, community);
+            user = userService.findByNameAndCommunity(userName, communityName);
+            User mobileUser = null;
+            if (null != user) {
+            	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
+
+            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
+
+    	        final Object[] objects = new Object[]{accountCheckDTO};
+    	        proccessRememberMeToken(objects);
+
+    	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
+                updateO2UserTask.handleUserUpdate(user);
+    	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+            }
+            throw new UserCredentialsException("Bad user credentials");
         }catch (UserCredentialsException ce){
+        	isFailed = true;
+			logProfileDate(community, null, null, user, ce);
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
             throw ce;
         }catch (RuntimeException re){
+        	isFailed = true;
+			logProfileDate(community, null, null, user, re);
             LOGGER.error("APPLY_INIT_PROMO error [{}] for user[{}] in community[{}] otac_token[{}]",re.getMessage(), userName, community, token);
             throw re;
         }finally {
+        	if (!isFailed){
+				logProfileDate(community, null, null, user, null);
+			}
            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }
-    }
-
-    private ModelAndView handleApplyO2Promotion(String communityName, String userName, String token, String community) {
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        User mobileUser = null;
-        if (null != user) {
-        	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
-
-        	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
-
-	        final Object[] objects = new Object[]{accountCheckDTO};
-	        proccessRememberMeToken(objects);
-
-	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
-            updateO2UserTask.handleUserUpdate(user);
-	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
-        }
-        throw new UserCredentialsException("Bad user credentials");
     }
 
 }
