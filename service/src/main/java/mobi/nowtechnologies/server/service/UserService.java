@@ -39,6 +39,7 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 
 import org.apache.commons.lang.Validate;
@@ -1929,7 +1930,7 @@ public class UserService {
 				user = mobileUser;
 			}
 		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER) {
+			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
 				Community community = communityService.getCommunityByName(communityName);
 				
 				hasPromo = applyO2PotentialPromo(o2UserDetails, user, community);

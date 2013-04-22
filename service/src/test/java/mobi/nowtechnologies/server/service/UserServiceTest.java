@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
+import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
@@ -53,6 +55,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,6 +71,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -79,7 +84,7 @@ import org.springframework.data.domain.Pageable;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class })
+@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class })
 public class UserServiceTest {
 	
 	public static final String O2_PAYG_CONSUMER_GRACE_DURATION_CODE = ("o2.provider."+SegmentType.CONSUMER+".segment."+Contract.PAYG+".contract."+PaymentDetails.O2_PSMS_TYPE+".payment.grace.duration.seconds").toLowerCase();
@@ -2695,6 +2700,7 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
 		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
 		verify(userServiceSpy, times(1)).updateUser(userByDeviceUID);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(userByDeviceUID.getId(), null, null, null);
 	}
 	
 	@Test
@@ -2773,6 +2779,97 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
 		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
 		verify(userServiceSpy, times(1)).updateUser(userByDeviceUID);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(userByDeviceUID.getId(), null, null, null);
+	}
+	
+	@Test
+	public void applyInitPromoO2_EmailAsUserName_Success() {
+		User user = UserFactory.createUser();
+		user.setActivationStatus(ENTERED_NUMBER);
+		user.setUserName("g@g.gg");
+		
+		User mobileUser = null;
+		String otac = "otac";
+		String communityName = "o2";
+		Community community = CommunityFactory.createCommunity();
+		
+		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
+		o2UserDetails.setTariff(Contract.PAYG.name());
+		
+		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
+		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(userRepositoryMock.save(user)).thenReturn(user);
+		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
+		
+		boolean hasPromo = false;
+		doReturn(hasPromo).when(userServiceSpy).applyO2PotentialPromo(o2UserDetails, user, community);
+		
+		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+		
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName);
+		
+		assertNotNull(actualAccountCheckDTO);
+		assertEquals(accountCheckDTO, actualAccountCheckDTO);
+		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
+		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		
+		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
+		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+		assertEquals(user.getMobile(), user.getUserName());
+		
+		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
+		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(communityServiceMock, times(0)).getCommunityByName(communityName);
+		verify(userRepositoryMock, times(1)).save(user);
+		verify(userServiceSpy,times(0) ).applyO2PotentialPromo(o2UserDetails, user, community);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+	}
+	
+	@Test
+	public void applyInitPromoO2_NotEmailAsUserName_Success() {
+		User user = UserFactory.createUser();
+		user.setActivationStatus(ENTERED_NUMBER);
+		user.setUserName("+380913008066");
+		
+		User mobileUser = null;
+		String otac = "otac";
+		String communityName = "o2";
+		Community community = CommunityFactory.createCommunity();
+		
+		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
+		o2UserDetails.setTariff(Contract.PAYG.name());
+		
+		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
+		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(userRepositoryMock.save(user)).thenReturn(user);
+		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
+		
+		boolean hasPromo = false;
+		doReturn(hasPromo).when(userServiceSpy).applyO2PotentialPromo(o2UserDetails, user, community);
+		
+		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+		
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName);
+		
+		assertNotNull(actualAccountCheckDTO);
+		assertEquals(accountCheckDTO, actualAccountCheckDTO);
+		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
+		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		
+		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
+		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+		assertEquals(user.getMobile(), user.getUserName());
+		
+		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
+		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
+		verify(userRepositoryMock, times(1)).save(user);
+		verify(userServiceSpy,times(1) ).applyO2PotentialPromo(o2UserDetails, user, community);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
