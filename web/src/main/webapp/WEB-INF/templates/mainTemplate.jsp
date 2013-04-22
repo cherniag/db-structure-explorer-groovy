@@ -43,6 +43,10 @@
 		</c:otherwise>
 	</c:choose>
 	<s:message code="page.google.analytics.include" />
+	
+	<!--[if IE]>
+		<script type="text/javascript" src="assets/scripts/PIE.js"></script>
+	<![endif]-->
 	<script src="assets/scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
 	<script src="assets/scripts/jquery.simplemodal.1.4.2.min.js" type="text/javascript"></script>
 	<script src="assets/scripts/main.js" type="text/javascript"></script>

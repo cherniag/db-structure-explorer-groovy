@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.log;
 
+import mobi.nowtechnologies.server.shared.Utils;
+
 import org.apache.log4j.MDC;
 
 public class LogUtils {
@@ -11,6 +13,7 @@ public class LogUtils {
 	public static final String LOG_COMMUNITY = "community";
 	public static final String LOG_USER_ID = "userId";
 	public static final String LOG_REMOTE_ADDR = "remoteAddr";
+	public static final String LOG_START_TIME_MILLIS = "startTimeMillis";
 	
 	public static final void putGlobalMDC(String userName, String community, String commandName, Class<?> c, String remoteAddr) {
 		if (userName!=null) MDC.put(LOG_USER_NAME, userName);
@@ -18,6 +21,9 @@ public class LogUtils {
   		if (c!=null) MDC.put(LOG_CLASS, c);
   		if (commandName!=null) MDC.put(LOG_COMMAND, commandName);
   		MDC.put(LOG_REMOTE_ADDR, remoteAddr);
+  		
+  		final long startTimeMillis = Utils.getEpochMillis();
+  		MDC.put(LOG_START_TIME_MILLIS, startTimeMillis);
 	}
 	
 	public static final void removeGlobalMDC() {
@@ -62,5 +68,13 @@ public class LogUtils {
 	public static void removeSpecificMDC() {
 		if (MDC.get(LOG_USER_NAME) != null) MDC.remove(LOG_USER_NAME);
 		if (MDC.get(LOG_COMMUNITY) != null) MDC.remove(LOG_COMMUNITY);
+	}
+	
+	public static Long getStartTimeMillis() {
+		return (Long) MDC.get(LOG_START_TIME_MILLIS);
+	}
+	
+	public static  void removeStartTimeMillisMDC() {
+		if (MDC.get(LOG_START_TIME_MILLIS) != null) MDC.remove(LOG_START_TIME_MILLIS);
 	}
 }

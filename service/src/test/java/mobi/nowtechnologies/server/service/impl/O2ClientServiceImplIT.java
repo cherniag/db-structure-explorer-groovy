@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ O2ClientServiceImpl.class})
-public class O2ClientServiceImplTest {
+public class O2ClientServiceImplIT {
 	private O2ClientServiceImpl fixture;
 	
 	private O2ClientServiceImpl fixture2;
@@ -65,7 +65,7 @@ public class O2ClientServiceImplTest {
 		root.appendChild(user);
 		response.setNode(root);
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(false);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
@@ -94,7 +94,7 @@ public class O2ClientServiceImplTest {
 		root.appendChild(user);
 		response.setNode(root);
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
@@ -112,7 +112,7 @@ public class O2ClientServiceImplTest {
 		
 		String phoneNumber = "0787011fff1111";
 
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
 		
 		fixture.validatePhoneNumber(phoneNumber);
@@ -123,7 +123,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("o2", userDetails.getOperator());
@@ -135,7 +135,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "11111111-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -147,7 +147,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "22222222-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("o2", userDetails.getOperator());
@@ -159,7 +159,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "33333333-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -171,7 +171,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "44444444-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("o2", userDetails.getOperator());
@@ -183,7 +183,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "55555555-c768-4fe7-bb56-a5e0c722cd44";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
 		assertEquals("non-o2", userDetails.getOperator());
@@ -195,7 +195,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "6666fasdffwqe";
 		
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		fixture.getUserDetails(otac_auth_code, phoneNumber);
 	}
@@ -222,26 +222,26 @@ public class O2ClientServiceImplTest {
 	public void testGetRedeemServerO2Url_Promoted_Success() throws Exception{
 		final User user = UserFactory.createUser();
 				
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(true);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		String result = fixture.getRedeemServerO2Url(user.getMobile());
 	
 		assertEquals("https://uat.mqapi.com", result);
 		
-		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString());
+		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
 	}
 	
 	@Test
 	public void testGetRedeemServerO2Url_NotPromoted_Success() throws Exception{
 		final User user = UserFactory.createUser();
 				
-		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString())).thenReturn(false);
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
 		
 		String result = fixture.getRedeemServerO2Url(user.getMobile());
 	
 		assertEquals("https://identity.o2.co.uk", result);
 		
-		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString());
+		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
 	}
 	
 	@Before
