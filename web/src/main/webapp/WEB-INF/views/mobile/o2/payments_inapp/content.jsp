@@ -78,7 +78,7 @@
                         </c:when>
                         <c:otherwise>
                             <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
-                                <input class="button-turquoise pie" href="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" value="<s:message code="${payment_label}" />" />
+                                <input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" onClick="location.href=this.title" type="button" value="<s:message code="${payment_label}" />" />
                                 <span class="button-arrow"/>
                             </c:if>
                         </c:otherwise>
