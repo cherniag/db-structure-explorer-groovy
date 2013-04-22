@@ -1,5 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.*;
+
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
@@ -9,16 +16,11 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "tb_paymentPolicy")
 @NamedQueries(value = { @NamedQuery(name = PaymentPolicy.GET_OPERATORS_LIST, query = "select paymentPolicy.operator from PaymentPolicy paymentPolicy where paymentPolicy.communityId=?1 and paymentPolicy.paymentType=?2"),
 		@NamedQuery(name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
+@Access(AccessType.FIELD)
 public class PaymentPolicy {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
@@ -69,6 +71,9 @@ public class PaymentPolicy {
 	
 	@Column(name="app_store_product_id")
 	private String appStoreProductId;
+	
+	@Transient
+	private ProviderType providerType;
 	
 	@Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -256,12 +261,33 @@ public class PaymentPolicy {
 		this.contentDescription = contentDescription;
 	}
 
+	public ProviderType getProviderAsEnum() {
+		return providerType;
+	}
+
+	public void setProviderAsEnum(ProviderType providerType) {
+		this.providerType = providerType;
+	}
+	
+	@Access(AccessType.PROPERTY)
+	@Column(name="provider", columnDefinition = "char(255)")
+	public String getProvider() {
+		return  providerType != null ? providerType.toString() : null;
+	}
+	
+	public void setProvider(String provider) {
+		for(ProviderType providerType : ProviderType.values()){
+			if(providerType.toString().equals(provider))
+				this.providerType = providerType;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "PaymentPolicy [communityId=" + communityId + ", id=" + id
-				+ ", paymentType=" + paymentType + ", shortCode=" + shortCode
-				+ ", subcost=" + subcost + ", subweeks=" + subweeks + ", appStoreProductId=" + appStoreProductId + ", availableInStore=" + availableInStore + ", segment=" + segment + ", contract="
-				+ contract + ", contentType=" + contentType + ", contentCategory=" + contentCategory  + ", contentDescription=" + contentDescription + ", subMerchantId=" + subMerchantId + "]";
+		return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
+				+ ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
+				+ ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", contentCategory=" + contentCategory
+				+ ", contentType=" + contentType + ", subMerchantId=" + subMerchantId + ", contentDescription=" + contentDescription + "]";
 	}
 
 	public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {

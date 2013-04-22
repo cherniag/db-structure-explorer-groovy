@@ -83,11 +83,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	
 	@Query(value = "select u from User u "+
 			"join u.currentPaymentDetails pd "+
+			"join pd.paymentPolicy pp "+
 			"join u.userGroup ug "+
 			"join ug.community c "+
 			"where "+
 			"((c.rewriteUrlParameter!='o2' and u.subBalance=0 and u.nextSubPayment<=?1) " +
-			"or (c.rewriteUrlParameter='o2' and u.nextSubPayment<=(?1+86400) and ( u.provider<>'o2' or (u.provider='o2' and ((u.segment='CONSUMER' and TYPE(pd) = O2PSMSPaymentDetails) or u.segment='BUSINESS') )  ) )) "+
+			"or (c.rewriteUrlParameter='o2' and u.nextSubPayment<=(?1+86400) and ( pp.provider<>'o2' or (pp.provider='o2' and ((pp.segment='CONSUMER' and TYPE(pd) = O2PSMSPaymentDetails) or pp.segment='BUSINESS') )  ) )) "+
 			"and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') "+
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")
