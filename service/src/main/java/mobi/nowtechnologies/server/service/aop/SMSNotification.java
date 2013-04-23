@@ -184,6 +184,25 @@ public class SMSNotification {
 		}
 	}
 	
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, mobi.nowtechnologies.server.shared.dto.web.payment.String))")
+	public Object unsubscribeUserByUser(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			LogUtils.putClassNameMDC(this.getClass());
+			
+			Object object = joinPoint.proceed();
+			User user = (User) joinPoint.getArgs()[0];
+			
+			try {
+				sendUnsubscribeAfterSMS(user);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return object;
+		} finally {
+			LogUtils.removeClassNameMDC();
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(String, String))")
 	public Object unsubscribeUserOnStopMessage(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -379,21 +398,45 @@ public class SMSNotification {
 		}
 		return false;
 	}
-
-	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-		String[] codes = new String[4];
-		codes[0] = msgCodeBase;
-		if (user.getProvider() != null) {
-			codes[1] = msgCodeBase + ".for." + user.getProvider();
-			if (user.getSegment() != null) {
-				codes[2] = codes[1] + "." + user.getSegment();
-				if (user.getContract() != null) {
-					codes[3] = codes[2] + "." + user.getContract();
+	
+	protected void addBeforeMessageExt(User user, String[] codes, int i){
+		PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated() ? user.getCurrentPaymentDetails().getPaymentPolicy() : null;
+		if(paymentPolicy != null && paymentPolicy.getProvider() != null 
+				&& (!StringUtils.equals(paymentPolicy.getProvider(), user.getProvider()) 
+						|| (paymentPolicy.getSegment() != null && paymentPolicy.getSegment() != user.getSegment())
+						|| (paymentPolicy.getContract() != null && paymentPolicy.getContract() != user.getContract())
+					)){				
+			codes[i++] = codes[i-2] + ".before." + paymentPolicy.getProvider();
+			if (paymentPolicy.getSegment() != null 
+					&& (paymentPolicy.getSegment() != user.getSegment()
+							|| (paymentPolicy.getContract() != null && paymentPolicy.getContract() != user.getContract())
+						)) {
+				codes[i++] = codes[i-2] + "." + paymentPolicy.getSegment();
+				if (paymentPolicy.getContract() != null 
+					&& paymentPolicy.getContract() != user.getContract()) {
+					codes[i++] = codes[i-2] + "." + paymentPolicy.getContract();
 				}
 			}
 		}
+	}
 
-		for (int i = codes.length-1; i >= 0; i--) {
+	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+		String[] codes = new String[7];
+		int i = 0;
+		codes[i++] = msgCodeBase;
+		if (user.getProvider() != null) {
+			codes[i++] = codes[i-2] + ".for." + user.getProvider();
+			if (user.getSegment() != null) {
+				codes[i++] = codes[i-2] + "." + user.getSegment();
+				if (user.getContract() != null) {
+					codes[i++] = codes[i-2] + "." + user.getContract();
+				}
+			}
+			
+			addBeforeMessageExt(user, codes, i);
+		}
+
+		for (i--; i >= 0; i--) {
 			if(codes[i] != null){				
 				String msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
 				if (StringUtils.isNotEmpty(msg))

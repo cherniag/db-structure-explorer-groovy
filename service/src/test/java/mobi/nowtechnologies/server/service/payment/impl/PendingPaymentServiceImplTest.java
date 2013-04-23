@@ -2,8 +2,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -41,7 +40,7 @@ public class PendingPaymentServiceImplTest {
 	@Before
 	public void startup() {
 		Map<String, PaymentSystemService> paymentSystems = new HashMap<String, PaymentSystemService>();
-		paymentSystems.put("creditCard", new SagePayPaymentServiceImpl());
+		paymentSystems.put("sagePayCreditCard", new SagePayPaymentServiceImpl());
 		paymentSystems.put("o2Psms", new O2PaymentServiceImpl());
 
 		PendingPaymentServiceImpl serviceImpl = spy(new PendingPaymentServiceImpl());
@@ -73,8 +72,8 @@ public class PendingPaymentServiceImplTest {
 				PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
 				PaymentPolicyDto paymentPolicyDto = new PaymentPolicyDto();
 				paymentPolicyDto.setSubcost(paymentPolicy.getSubcost());
-				paymentPolicyDto.setSubweeks(paymentPolicy.getSubweeks());
-				paymentPolicyDto.set(paymentPolicy.getCurrencyISO());
+				paymentPolicyDto.setSubweeks((int)paymentPolicy.getSubweeks());
+				paymentPolicyDto.setCurrencyISO(paymentPolicy.getCurrencyISO());
 				
 				return paymentPolicyDto;
 			}
@@ -105,6 +104,8 @@ public class PendingPaymentServiceImplTest {
 
 		Assert.assertNotNull(createPendingPayments);
 		Assert.assertEquals(users.size() - 1, createPendingPayments.size());
+		
+		verify(userService, times(1)).unsubscribeUser(any(User.class), anyString());
 	}
 
 	@Test
@@ -141,6 +142,7 @@ public class PendingPaymentServiceImplTest {
 		paymentPolicy.setSubweeks((byte) 10);
 		currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentPaymentDetails.setLastPaymentStatus(status);
+		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.addPaymentDetails(currentPaymentDetails);
 		user.setSubBalance(subBalance);
 		return user;
@@ -161,6 +163,7 @@ public class PendingPaymentServiceImplTest {
 		currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentPaymentDetails.setLastPaymentStatus(status);
 		user.addPaymentDetails(currentPaymentDetails);
+		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setProvider(invalid ? "non-o2" : "o2");
 		user.setSegment(SegmentType.BUSINESS);
 		return user;
