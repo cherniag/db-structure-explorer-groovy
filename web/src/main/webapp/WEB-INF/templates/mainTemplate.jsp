@@ -4,6 +4,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
 
@@ -28,7 +29,14 @@
 		<c:when test="${requestScope.isMobileRequest}">
     		<meta name="viewport" content="width=device-width, target-densitydpi=160, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 			<meta name="MobileOptimized" content="640"/>
-			<link rel="stylesheet" type="text/css" href="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />css/mobile.css" />
+			<c:choose>
+				<c:when test="${fn:contains(header['User-Agent'],'MSIE')}">
+					<link rel="stylesheet" type="text/css" href="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />css/mobile-ie.css" />
+				</c:when>
+				<c:otherwise>
+					<link rel="stylesheet" type="text/css" href="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />css/mobile.css" />
+				</c:otherwise>
+			</c:choose>
 		</c:when>
 		<c:otherwise>
 			<link rel="stylesheet" type="text/css" href="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />css/960.css" /> 
