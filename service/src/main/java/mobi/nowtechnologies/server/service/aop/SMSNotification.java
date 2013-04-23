@@ -399,7 +399,7 @@ public class SMSNotification {
 		return false;
 	}
 	
-	protected void addBeforeMessageExt(User user, String[] codes, int i){
+	protected int addBeforeMessageExt(User user, String[] codes, int i){
 		PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated() ? user.getCurrentPaymentDetails().getPaymentPolicy() : null;
 		if(paymentPolicy != null && paymentPolicy.getProvider() != null 
 				&& (!StringUtils.equals(paymentPolicy.getProvider(), user.getProvider()) 
@@ -418,6 +418,8 @@ public class SMSNotification {
 				}
 			}
 		}
+		
+		return i;
 	}
 
 	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
@@ -433,7 +435,7 @@ public class SMSNotification {
 				}
 			}
 			
-			addBeforeMessageExt(user, codes, i);
+			i = addBeforeMessageExt(user, codes, i);
 		}
 
 		for (i--; i >= 0; i--) {
