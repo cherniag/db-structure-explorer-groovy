@@ -1481,9 +1481,7 @@ public class UserService {
 			mergeUser(user, userByDeviceUID);
 		} else {
 			user = userByDeviceUID;
-			if (!user.isO2CommunityUser()){
-				user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
-			}
+			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
 			user.setFacebookId(userCredentions.getId());
 			user.setFirstUserLoginMillis(Utils.getEpochMillis());
 
