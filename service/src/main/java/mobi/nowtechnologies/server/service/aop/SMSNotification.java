@@ -184,7 +184,7 @@ public class SMSNotification {
 		}
 	}
 	
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, mobi.nowtechnologies.server.shared.dto.web.payment.String))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, String))")
 	public Object unsubscribeUserByUser(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
