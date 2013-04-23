@@ -695,6 +695,8 @@ public class SMSNotificationTest {
 		.thenReturn(msg + 3);
 		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()), any(Object[].class), eq(""), eq((Locale) null)))
 		.thenReturn(msg + 4);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 5);
 		
 		String result = fixture.getMessage(user, community, msgCode, new String[0]);
 		
@@ -702,9 +704,52 @@ public class SMSNotificationTest {
 		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
 		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
 		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()), any(Object[].class), eq(""), eq((Locale) null));
-		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
 		
-		assertEquals(msg + 4, result);
+		assertEquals(msg + 5, result);
+	}
+	
+	@Test
+	public void testGetMessageCode_NotNullProviderSegmentContract_AndBeforeSameProviderAndSameConsumerAndNotSameContract_Success()
+			throws Exception {
+		PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+		paymentPolicy.setProvider("o2");
+		paymentPolicy.setSegment(SegmentType.CONSUMER);
+		paymentPolicy.setContract(Contract.PAYM);
+		
+		String msg = "message1";
+		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), new BigDecimal(0));
+		user.getCurrentPaymentDetails().setActivated(false);
+		user.getCurrentPaymentDetails().setPaymentPolicy(paymentPolicy);
+		
+		Community community = user.getUserGroup().getCommunity();
+		String msgCode = "message1Code";
+		
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(msg + 1);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 2);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 3);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 4);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 5);
+		when(mockMessageSource.getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()+"."+paymentPolicy.getContract()), any(Object[].class), eq(""), eq((Locale) null)))
+		.thenReturn(msg + 6);
+		
+		String result = fixture.getMessage(user, community, msgCode, new String[0]);
+		
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(0)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()), any(Object[].class), eq(""), eq((Locale) null));
+		verify(mockMessageSource, times(1)).getMessage(eq(community.getRewriteUrlParameter()), eq(msgCode + ".for." + user.getProvider() + "." + user.getSegment()+ "." + user.getContract()+".before."+paymentPolicy.getProvider()+"."+paymentPolicy.getSegment()+"."+paymentPolicy.getContract()), any(Object[].class), eq(""), eq((Locale) null));
+		
+		assertEquals(msg + 6, result);
 	}
 
 	@SuppressWarnings("deprecation")
