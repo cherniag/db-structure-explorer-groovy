@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
+import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
@@ -26,6 +28,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
@@ -34,6 +37,9 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTOFactory;
+import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDtoFactory;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDtoFactory;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
@@ -41,6 +47,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,6 +63,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -67,7 +76,7 @@ import org.springframework.data.domain.Pageable;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class })
+@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class })
 public class UserServiceTest {
 	
 	public static final String O2_PAYG_CONSUMER_GRACE_DURATION_CODE = ("o2.provider."+SegmentType.CONSUMER+".segment."+Contract.PAYG+".contract."+PaymentDetails.O2_PSMS_TYPE+".payment.grace.duration.seconds").toLowerCase();
@@ -76,17 +85,19 @@ public class UserServiceTest {
 	private static final String SMS_SUCCESFULL_PAYMENT_TEXT_MESSAGE_CODE = "sms.succesfullPayment.text";
 	private static final String UNSUBSCRIBED_BY_ADMIN = "Unsubscribed by admin";
 	private UserService userServiceSpy;
-	private UserRepository mockUserRepository;
-	private UserDao mockUserDao;
-	private EntityService mockEntityService;
-	private AccountLogService mockAccountLogService;
-	private CommunityResourceBundleMessageSource mockCommunityResourceBundleMessageSource;
-	private MigHttpService mockMigHttpService;
-	private PaymentDetailsService mockPaymentDetailsService;
-	private CommunityService mockCommunityService;
-	private CountryService mockCountryService;
-	private O2ClientService mockO2ClientService;
-	private DeviceService mockDeviceService;
+	private UserRepository userRepositoryMock;
+	private UserDao userDaoMock;
+	private EntityService entityServiceMock;
+	private AccountLogService accountLogServiceMock;
+	private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
+	private MigHttpService migHttpServiceMock;
+	private PaymentDetailsService paymentDetailsServiceMock;
+	private CommunityService communityServiceMock;
+	private CountryService countryServiceMock;
+	private O2ClientService o2ClientServiceMock;
+	private DeviceService deviceServiceMock;
+	private FacebookService facebookServiceMock;
+	private ITunesService iTunesServiceMock;
 
 	/**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -103,15 +114,15 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 		String storedToken = Utils.createStoredToken(user.getUserName(), password);
 
-		Mockito.when(mockEntityService.findById(User.class, user.getId())).thenReturn(user);
-		PowerMockito.when(mockUserRepository.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenReturn(1);
+		Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
+		PowerMockito.when(userRepositoryMock.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenReturn(1);
 
 		User result = userServiceSpy.changePassword(user.getId(), password);
 
 		assertNotNull(result);
 		assertEquals(result, user);
 
-		verify(mockUserRepository, times(1)).updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()));
+		verify(userRepositoryMock, times(1)).updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()));
 	}
 
 	/**
@@ -129,8 +140,8 @@ public class UserServiceTest {
 		User user = UserFactory.createUser();
 		String storedToken = Utils.createStoredToken(user.getUserName(), password);
 
-		Mockito.when(mockEntityService.findById(User.class, user.getId())).thenReturn(user);
-		PowerMockito.when(mockUserRepository.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenThrow(new Exception());
+		Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
+		PowerMockito.when(userRepositoryMock.updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()))).thenThrow(new Exception());
 
 		userServiceSpy.changePassword(user.getId(), password);
 	}
@@ -149,7 +160,7 @@ public class UserServiceTest {
 
 		List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
 
-		PowerMockito.when(mockUserRepository.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenReturn(mockedUserCollection);
+		PowerMockito.when(userRepositoryMock.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenReturn(mockedUserCollection);
 
 		Collection<User> result = userServiceSpy.findUsers(searchWords, communityURL);
 
@@ -201,7 +212,7 @@ public class UserServiceTest {
 
 		List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
 
-		PowerMockito.when(mockUserRepository.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenThrow(new RuntimeException());
+		PowerMockito.when(userRepositoryMock.findUser(Mockito.eq(communityURL), Mockito.eq("%" + searchWords + "%"))).thenThrow(new RuntimeException());
 
 		Collection<User> result = userServiceSpy.findUsers(searchWords, communityURL);
 
@@ -249,13 +260,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -268,8 +279,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
-		Mockito.verify(mockAccountLogService).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
+		Mockito.verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -309,13 +320,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -328,8 +339,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -370,13 +381,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -389,8 +400,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -432,13 +443,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -451,8 +462,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -493,13 +504,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -512,8 +523,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -553,13 +564,13 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -572,8 +583,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 		assertEquals(userDto.getPaymentEnabled(), actualUser.isPaymentEnabled());
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -611,18 +622,18 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -652,18 +663,18 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -705,18 +716,18 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(mockAccountLogService.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		Mockito.verify(mockAccountLogService, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
+		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -737,9 +748,9 @@ public class UserServiceTest {
 		final UserStatus mockedUserStatus = new UserStatus();
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenThrow(new RuntimeException());
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenThrow(new RuntimeException());
 
 		userServiceSpy.updateUser(userDto);
 	}
@@ -757,7 +768,7 @@ public class UserServiceTest {
 
 		User mockedUser = UserFactory.createUser();
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenReturn(mockedUser);
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenThrow(new RuntimeException());
 
 		userServiceSpy.updateUser(userDto);
@@ -774,7 +785,7 @@ public class UserServiceTest {
 	public void testUpdateUser_UserRepository_findOne_RuntimeException_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
-		PowerMockito.when(mockUserRepository.findOne(userDto.getId())).thenThrow(new RuntimeException());
+		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenThrow(new RuntimeException());
 
 		userServiceSpy.updateUser(userDto);
 	}
@@ -805,59 +816,60 @@ public class UserServiceTest {
 	public void setUp() throws Exception {
 		userServiceSpy = Mockito.spy(new UserService());
 
-		SagePayService mockSagePayService = PowerMockito.mock(SagePayService.class);
-		PaymentPolicyService mockPaymentPolicyService = PowerMockito.mock(PaymentPolicyService.class);
-		mockCountryService = PowerMockito.mock(CountryService.class);
-		mockCommunityResourceBundleMessageSource = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
-		DeviceTypeService mockDeviceTypeService = PowerMockito.mock(DeviceTypeService.class);
-		mockUserRepository = PowerMockito.mock(UserRepository.class);
-		CountryByIpService mockCountryByIpService = PowerMockito.mock(CountryByIpService.class);
-		OfferService mockOfferService = PowerMockito.mock(OfferService.class);
-		mockPaymentDetailsService = PowerMockito.mock(PaymentDetailsService.class);
-		UserDeviceDetailsService mockUserDeviceDetailsService = PowerMockito.mock(UserDeviceDetailsService.class);
-		PromotionService mockPromotionService = PowerMockito.mock(PromotionService.class);
-		mockUserDao = PowerMockito.mock(UserDao.class);
-		CountryAppVersionService mocCountryAppVersionService = PowerMockito.mock(CountryAppVersionService.class);
-		mockEntityService = PowerMockito.mock(EntityService.class);
-		MigPaymentService mockMigPaymentService = PowerMockito.mock(MigPaymentService.class);
-		DrmService mockDrmService = PowerMockito.mock(DrmService.class);
-		FacebookService mockFacebookService = PowerMockito.mock(FacebookService.class);
-		mockCommunityService = PowerMockito.mock(CommunityService.class);
-		mockDeviceService = PowerMockito.mock(DeviceService.class);
-		mockMigHttpService = PowerMockito.mock(MigHttpService.class);
-		PaymentService mockPaymentService = PowerMockito.mock(PaymentService.class);
-		mockAccountLogService = PowerMockito.mock(AccountLogService.class);
-		mockO2ClientService = PowerMockito.mock(O2ClientService.class);
-		mockUserRepository = PowerMockito.mock(UserRepository.class);
-		MailService mockMailService = PowerMockito.mock(MailService.class);
+		SagePayService sagePayServiceMock = PowerMockito.mock(SagePayService.class);
+		PaymentPolicyService paymentPolicyServiceMock = PowerMockito.mock(PaymentPolicyService.class);
+		countryServiceMock = PowerMockito.mock(CountryService.class);
+		communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
+		DeviceTypeService deviceTypeServiceMock = PowerMockito.mock(DeviceTypeService.class);
+		userRepositoryMock = PowerMockito.mock(UserRepository.class);
+		CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
+		OfferService offerServiceMock = PowerMockito.mock(OfferService.class);
+		paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
+		UserDeviceDetailsService userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
+		PromotionService promotionServiceMock = PowerMockito.mock(PromotionService.class);
+		userDaoMock = PowerMockito.mock(UserDao.class);
+		CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
+		entityServiceMock = PowerMockito.mock(EntityService.class);
+		MigPaymentService migPaymentServiceMock = PowerMockito.mock(MigPaymentService.class);
+		DrmService drmServiceMock = PowerMockito.mock(DrmService.class);
+		facebookServiceMock = PowerMockito.mock(FacebookService.class);
+		communityServiceMock = PowerMockito.mock(CommunityService.class);
+		deviceServiceMock = PowerMockito.mock(DeviceService.class);
+		migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
+		PaymentService paymentServiceMock = PowerMockito.mock(PaymentService.class);
+		accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
+		o2ClientServiceMock = PowerMockito.mock(O2ClientService.class);
+		MailService mailServiceMock = PowerMockito.mock(MailService.class);
+		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
 
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
+		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 		
-		userServiceSpy.setSagePayService(mockSagePayService);
-		userServiceSpy.setPaymentPolicyService(mockPaymentPolicyService);
-		userServiceSpy.setCountryService(mockCountryService);
-		userServiceSpy.setMessageSource(mockCommunityResourceBundleMessageSource);
-		userServiceSpy.setDeviceTypeService(mockDeviceTypeService);
-		userServiceSpy.setUserRepository(mockUserRepository);
-		userServiceSpy.setCountryByIpService(mockCountryByIpService);
-		userServiceSpy.setOfferService(mockOfferService);
-		userServiceSpy.setPaymentDetailsService(mockPaymentDetailsService);
-		userServiceSpy.setUserDeviceDetailsService(mockUserDeviceDetailsService);
-		userServiceSpy.setPromotionService(mockPromotionService);
-		userServiceSpy.setUserDao(mockUserDao);
-		userServiceSpy.setCountryAppVersionService(mocCountryAppVersionService);
-		userServiceSpy.setEntityService(mockEntityService);
-		userServiceSpy.setMigPaymentService(mockMigPaymentService);
-		userServiceSpy.setDrmService(mockDrmService);
-		userServiceSpy.setFacebookService(mockFacebookService);
-		userServiceSpy.setCommunityService(mockCommunityService);
-		userServiceSpy.setDeviceService(mockDeviceService);
-		userServiceSpy.setMigHttpService(mockMigHttpService);
-		userServiceSpy.setPaymentService(mockPaymentService);
-		userServiceSpy.setAccountLogService(mockAccountLogService);
-		userServiceSpy.setMailService(mockMailService);
-		userServiceSpy.setO2ClientService(mockO2ClientService);
-		userServiceSpy.setUserRepository(mockUserRepository);
+		userServiceSpy.setSagePayService(sagePayServiceMock);
+		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
+		userServiceSpy.setCountryService(countryServiceMock);
+		userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
+		userServiceSpy.setDeviceTypeService(deviceTypeServiceMock);
+		userServiceSpy.setUserRepository(userRepositoryMock);
+		userServiceSpy.setCountryByIpService(countryByIpServiceMock);
+		userServiceSpy.setOfferService(offerServiceMock);
+		userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
+		userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
+		userServiceSpy.setPromotionService(promotionServiceMock);
+		userServiceSpy.setUserDao(userDaoMock);
+		userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
+		userServiceSpy.setEntityService(entityServiceMock);
+		userServiceSpy.setMigPaymentService(migPaymentServiceMock);
+		userServiceSpy.setDrmService(drmServiceMock);
+		userServiceSpy.setFacebookService(facebookServiceMock);
+		userServiceSpy.setCommunityService(communityServiceMock);
+		userServiceSpy.setDeviceService(deviceServiceMock);
+		userServiceSpy.setMigHttpService(migHttpServiceMock);
+		userServiceSpy.setPaymentService(paymentServiceMock);
+		userServiceSpy.setAccountLogService(accountLogServiceMock);
+		userServiceSpy.setMailService(mailServiceMock);
+		userServiceSpy.setO2ClientService(o2ClientServiceMock);
+		userServiceSpy.setUserRepository(userRepositoryMock);
+		userServiceSpy.setiTunesService(iTunesServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -876,7 +888,7 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
 		Mockito.when(
-				mockUserRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
+				userRepositoryMock.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
 						deltaSuccesfullPaymentSmsSendingTimestampMillis)).thenReturn(users);
 
 		List<User> actualUsers = userServiceSpy.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification,
@@ -899,12 +911,12 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
 		Mockito.when(
-				mockUserRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
+				userRepositoryMock.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
 						deltaSuccesfullPaymentSmsSendingTimestampMillis)).thenReturn(users);
 
 		userServiceSpy.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis);
 
-		Mockito.verify(mockUserRepository, times(0)).findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
+		Mockito.verify(userRepositoryMock, times(0)).findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
 				deltaSuccesfullPaymentSmsSendingTimestampMillis);
 		PowerMockito.verifyStatic(times(0));
 		Utils.getEpochMillis();
@@ -924,12 +936,12 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
 		Mockito.when(
-				mockUserRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
+				userRepositoryMock.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
 						deltaSuccesfullPaymentSmsSendingTimestampMillis)).thenReturn(users);
 
 		userServiceSpy.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis);
 
-		Mockito.verify(mockUserRepository, times(0)).findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
+		Mockito.verify(userRepositoryMock, times(0)).findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, epochMillis,
 				deltaSuccesfullPaymentSmsSendingTimestampMillis);
 		PowerMockito.verifyStatic(times(0));
 		Utils.getEpochMillis();
@@ -945,7 +957,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		Mockito.when(mockUserRepository.updateFields(BigDecimal.ZERO, epochMillis, user.getId())).thenReturn(1);
+		Mockito.when(userRepositoryMock.updateFields(BigDecimal.ZERO, epochMillis, user.getId())).thenReturn(1);
 
 		User actualUser = userServiceSpy.resetSmsAccordingToLawAttributes(user);
 
@@ -953,7 +965,7 @@ public class UserServiceTest {
 		assertEquals(BigDecimal.ZERO, actualUser.getAmountOfMoneyToUserNotification());
 		assertEquals(epochMillis, actualUser.getLastSuccesfullPaymentSmsSendingTimestampMillis());
 
-		Mockito.verify(mockUserRepository).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
+		Mockito.verify(userRepositoryMock).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -966,7 +978,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		Mockito.when(mockUserRepository.updateFields(BigDecimal.ZERO, epochMillis, user.getId())).thenReturn(0);
+		Mockito.when(userRepositoryMock.updateFields(BigDecimal.ZERO, epochMillis, user.getId())).thenReturn(0);
 
 		User actualUser = userServiceSpy.resetSmsAccordingToLawAttributes(user);
 
@@ -974,7 +986,7 @@ public class UserServiceTest {
 		assertEquals(BigDecimal.ZERO, actualUser.getAmountOfMoneyToUserNotification());
 		assertEquals(epochMillis, actualUser.getLastSuccesfullPaymentSmsSendingTimestampMillis());
 
-		Mockito.verify(mockUserRepository).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
+		Mockito.verify(userRepositoryMock).updateFields(BigDecimal.ZERO, epochMillis, user.getId());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -982,11 +994,11 @@ public class UserServiceTest {
 	public void testResetSmsAccordingToLawAttributes_UserIsNull_Failure() {
 		User user = null;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenReturn(user);
+		Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
 
 		userServiceSpy.resetSmsAccordingToLawAttributes(user);
 
-		Mockito.verify(mockEntityService, times(0)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(0)).updateEntity(user);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1000,7 +1012,7 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setAmount(BigDecimal.TEN);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenReturn(user);
+		Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
 
 		User actualUser = userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
@@ -1017,11 +1029,11 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setAmount(BigDecimal.TEN);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenReturn(user);
+		Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
 
 		userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
-		Mockito.verify(mockEntityService, times(0)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(0)).updateEntity(user);
 
 	}
 
@@ -1035,11 +1047,11 @@ public class UserServiceTest {
 
 		SubmittedPayment submittedPayment = null;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenReturn(user);
+		Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
 
 		userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
-		Mockito.verify(mockEntityService, times(0)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(0)).updateEntity(user);
 
 	}
 
@@ -1054,13 +1066,13 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
-		PowerMockito.when(mockEntityService.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
 
 		userServiceSpy.unsubscribeUser(mockedUser, reason);
 
-		Mockito.verify(mockEntityService, times(0)).updateEntity(mockedUser);
-		Mockito.verify(mockEntityService, times(0)).updateEntity(mockedCurrentPaymentDetails);
+		Mockito.verify(entityServiceMock, times(0)).updateEntity(mockedUser);
+		Mockito.verify(entityServiceMock, times(0)).updateEntity(mockedCurrentPaymentDetails);
 	}
 
 	@Test()
@@ -1076,9 +1088,9 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
-		PowerMockito.when(mockEntityService.updateEntity(mockedUser)).thenReturn(mockedUser);
-		PowerMockito.when(mockEntityService.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
-		PowerMockito.when(mockPaymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(entityServiceMock.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
+		PowerMockito.when(paymentDetailsServiceMock.deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.unsubscribeUser(mockedUser, reason);
 
@@ -1091,9 +1103,9 @@ public class UserServiceTest {
 		assertFalse(actualCurrentPaymentDetails.isActivated());
 		// assertEquals(reason, actualCurrentPaymentDetails.getDescriptionError());
 
-		Mockito.verify(mockEntityService).updateEntity(mockedUser);
+		Mockito.verify(entityServiceMock).updateEntity(mockedUser);
 		// Mockito.verify(mockEntityService).updateEntity(mockedCurrentPaymentDetails);
-		Mockito.verify(mockPaymentDetailsService).deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason);
+		Mockito.verify(paymentDetailsServiceMock).deactivateCurrentPaymentDetailsIfOneExist(mockedUser, reason);
 
 	}
 
@@ -1123,14 +1135,14 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 
 		Mockito.when(Utils.getEpochMillis()).thenReturn(epochMillis);
-		Mockito.when(mockUserRepository.updateFields(epochMillis, user.getId())).thenReturn(1);
+		Mockito.when(userRepositoryMock.updateFields(epochMillis, user.getId())).thenReturn(1);
 
 		Future<Boolean> futureMigResponse = userServiceSpy.makeSuccesfullPaymentFreeSMSRequest(user);
 
 		assertNotNull(futureMigResponse);
 		assertTrue(futureMigResponse.get());
 
-		Mockito.verify(mockMigHttpService).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
+		Mockito.verify(migHttpServiceMock).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
 	}
 
 	@Test(expected = ServiceCheckedException.class)
@@ -1158,7 +1170,7 @@ public class UserServiceTest {
 
 		userServiceSpy.makeSuccesfullPaymentFreeSMSRequest(user);
 
-		Mockito.verify(mockMigHttpService).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
+		Mockito.verify(migHttpServiceMock).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
 	}
 
 	private Object[] testRegisterUser(final String storedToken, String communityName, final String deviceUID
@@ -1193,15 +1205,15 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserGroupDao.class);
 		PowerMockito.mockStatic(OperatorDao.class);
 
-		Mockito.doReturn(user).when(mockEntityService).saveEntity(any(User.class));
+		Mockito.doReturn(user).when(entityServiceMock).saveEntity(any(User.class));
 		Mockito.when(Utils.createStoredToken(anyString(), anyString())).thenReturn(storedToken);
 		Mockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(deviceTypeMap);
 		Mockito.when(DeviceTypeDao.getNoneDeviceType()).thenReturn(noneDeviceType);
 		Mockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(userGroupMap);
 		Mockito.when(OperatorDao.getMapAsIds()).thenReturn(operatorMap);
 		Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
-		Mockito.when(mockCommunityService.getCommunityByName(anyString())).thenReturn(community);
-		Mockito.when(mockCountryService.findIdByFullName(anyString())).thenReturn(countryId);
+		Mockito.when(communityServiceMock.getCommunityByName(anyString())).thenReturn(community);
+		Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
 		doAnswer(new Answer<AccountCheckDTO>() {
 			@Override
 			public AccountCheckDTO answer(InvocationOnMock invocation) throws Throwable {
@@ -1352,9 +1364,9 @@ public class UserServiceTest {
 		assertEquals(accountCheckDTO.getStatus(), UserStatusDao.LIMITED);
 		assertEquals(accountCheckDTO.getActivation(), ActivationStatus.REGISTERED);
 
-		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
-		verify(mockCountryService, times(1)).findIdByFullName(anyString());
-		verify(mockEntityService, times(1)).saveEntity(any(User.class));
+		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
+		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
+		verify(entityServiceMock, times(1)).saveEntity(any(User.class));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(1));
 		Utils.createStoredToken(anyString(), anyString());
@@ -1406,9 +1418,9 @@ public class UserServiceTest {
 		assertEquals(accountCheckDTO.getUserToken(), user.getToken());
 		assertEquals(accountCheckDTO.getUserName(), user.getUserName());
 
-		verify(mockCommunityService, times(1)).getCommunityByName(anyString());
-		verify(mockCountryService, times(0)).findIdByFullName(anyString());
-		verify(mockEntityService, times(0)).saveEntity(any(User.class));
+		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
+		verify(countryServiceMock, times(0)).findIdByFullName(anyString());
+		verify(entityServiceMock, times(0)).saveEntity(any(User.class));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(0));
 		Utils.createStoredToken(anyString(), anyString());
@@ -1427,7 +1439,7 @@ public class UserServiceTest {
 		final String phone = "07870111111";
 		final User user = UserFactory.createUser();
 
-		Mockito.when(mockO2ClientService.validatePhoneNumber(anyString())).thenReturn("+447870111111");
+		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn("+447870111111");
 
 		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
 
@@ -1435,8 +1447,8 @@ public class UserServiceTest {
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
 		assertEquals("+447870111111", userResult.getMobile());
 
-		verify(mockUserRepository, times(1)).save(any(User.class));
-		verify(mockO2ClientService, times(1)).validatePhoneNumber(anyString());
+		verify(userRepositoryMock, times(1)).save(any(User.class));
+		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
 	}
 	
 	@Test()
@@ -1444,7 +1456,7 @@ public class UserServiceTest {
 		final String phone = null;
 		final User user = UserFactory.createUser();
 
-		Mockito.when(mockO2ClientService.validatePhoneNumber(anyString())).thenAnswer(new Answer<String>() {
+		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<String>() {
 			@Override
 			public String answer(InvocationOnMock invocation) throws Throwable {
 				String phone = (String)invocation.getArguments()[0];
@@ -1460,8 +1472,8 @@ public class UserServiceTest {
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
 		assertEquals("+447870111111", userResult.getMobile());
 
-		verify(mockUserRepository, times(1)).save(any(User.class));
-		verify(mockO2ClientService, times(1)).validatePhoneNumber(anyString());
+		verify(userRepositoryMock, times(1)).save(any(User.class));
+		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
 	}
 	
 	@Test
@@ -1600,11 +1612,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -1612,7 +1624,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1640,9 +1652,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, Integer.MAX_VALUE, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -1677,11 +1689,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -1690,7 +1702,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
 		final int passedSubweeks = 5;
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1718,9 +1730,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(0)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -1758,11 +1770,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -1773,7 +1785,7 @@ public class UserServiceTest {
 		final int currentTimeSeconds = oldNextSubPayment  + 25;
 		final long currentTimeMillis = currentTimeSeconds*1000L;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1802,9 +1814,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -1842,11 +1854,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -1857,7 +1869,7 @@ public class UserServiceTest {
 		final int currentTimeSeconds = oldNextSubPayment  + 25;
 		final long currentTimeMillis = currentTimeSeconds*1000L;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1886,9 +1898,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -1926,11 +1938,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -1941,7 +1953,7 @@ public class UserServiceTest {
 		final int currentTimeSeconds = oldNextSubPayment-5;
 		final long currentTimeMillis = currentTimeSeconds*1000L;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -1970,9 +1982,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -2007,11 +2019,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2021,7 +2033,7 @@ public class UserServiceTest {
 		
 		final int passedSubweeks = 5;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2050,9 +2062,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -2089,11 +2101,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2103,7 +2115,7 @@ public class UserServiceTest {
 		
 		final int passedSubweeks = 5;
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2131,9 +2143,9 @@ public class UserServiceTest {
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, passedSubweeks, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -2166,11 +2178,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2178,7 +2190,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2204,14 +2216,14 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
-		Mockito.when(mockUserRepository.payOffDebt(Integer.MIN_VALUE, 0, user.getId())).thenReturn(0);
+		Mockito.when(userRepositoryMock.payOffDebt(Integer.MIN_VALUE, 0, user.getId())).thenReturn(0);
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(1)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
-		Mockito.verify(mockUserRepository, times(0)).payOffDebt(Integer.MIN_VALUE, 0, user.getId());
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
+		Mockito.verify(userRepositoryMock, times(0)).payOffDebt(Integer.MIN_VALUE, 0, user.getId());
 	}
 	
 	@Test
@@ -2252,11 +2264,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2264,7 +2276,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2291,13 +2303,13 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -2338,11 +2350,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2350,7 +2362,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2377,13 +2389,13 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(0)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(0)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -2399,13 +2411,13 @@ public class UserServiceTest {
 		String redeemServerO2Url = "identity.o2.co.uk"; 
 		final User user = UserFactory.createUser();
 		
-		when(mockO2ClientService.getRedeemServerO2Url(eq(user.getMobile()))).thenReturn(redeemServerO2Url);
+		when(o2ClientServiceMock.getRedeemServerO2Url(eq(user.getMobile()))).thenReturn(redeemServerO2Url);
 		
 		String result = userServiceSpy.getRedeemServerO2Url(user);
 	
 		assertEquals(redeemServerO2Url, result);
 		
-		Mockito.verify(mockO2ClientService, times(1)).getRedeemServerO2Url(eq(user.getMobile()));
+		Mockito.verify(o2ClientServiceMock, times(1)).getRedeemServerO2Url(eq(user.getMobile()));
 	}
 	
 	@Test
@@ -2470,11 +2482,11 @@ public class UserServiceTest {
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
-		Mockito.when(mockEntityService.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
 		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
-		Mockito.when(mockEntityService.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
+		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
 		
@@ -2482,7 +2494,7 @@ public class UserServiceTest {
 		PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 		PowerMockito.when(UserStatusDao.getEulaUserStatus()).thenReturn(eulaUserStatus);
 
-		Mockito.when(mockEntityService.updateEntity(user)).thenAnswer(new Answer<User>() {
+		Mockito.when(entityServiceMock.updateEntity(user)).thenAnswer(new Answer<User>() {
 
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2509,13 +2521,13 @@ public class UserServiceTest {
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
 		
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
+		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", "o2.payment.psms.grace.duration.seconds", null, null)).thenReturn(graceDurationSeconds+"");
 		
 		userServiceSpy.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 		
-		Mockito.verify(mockEntityService, times(1)).saveEntity(cardTopUpAccountLog);
-		Mockito.verify(mockEntityService, times(monthlyNextSubPayment)).saveEntity(subscriptionChargeAccountLog);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(user);
+		Mockito.verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
+		Mockito.verify(entityServiceMock, times(monthlyNextSubPayment)).saveEntity(subscriptionChargeAccountLog);
+		Mockito.verify(entityServiceMock, times(1)).updateEntity(user);
 	}
 	
 	@Test
@@ -2555,7 +2567,7 @@ public class UserServiceTest {
 		users.add(user2);
 
 
-		Mockito.when(mockUserRepository.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
+		Mockito.when(userRepositoryMock.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId)).thenReturn(users);
 		
 		List<User> actualUsers = userServiceSpy.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 		
@@ -2564,7 +2576,7 @@ public class UserServiceTest {
 		assertTrue(users.contains(user));
 		assertTrue(users.contains(user2));
 		
-		Mockito.verify(mockUserRepository, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+		Mockito.verify(userRepositoryMock, times(1)).findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
 	}
 
 	@Test(expected=NullPointerException.class)
@@ -2596,12 +2608,181 @@ public class UserServiceTest {
 		
 		List<User> expectedUsers = Collections.<User>emptyList(); 
 		
-		Mockito.when(mockUserRepository.getUsersForRetryPayment(currentTimeSeconds)).thenReturn(expectedUsers);
+		Mockito.when(userRepositoryMock.getUsersForRetryPayment(currentTimeSeconds)).thenReturn(expectedUsers);
 		
 		List<User> users = userServiceSpy.getUsersForRetryPayment();
 		
 		assertNotNull(users);
 		assertEquals(expectedUsers, users);
+	}
+	
+	@Test
+	public void testUpdateUserFacebookDetails_NotO2Community_Success() {
+		UserFacebookDetailsDto userFacebookDetailsDto = UserFacebookDetailsDtoFactory.createUserFacebookDetailsDto();
+		
+		Community community = CommunityFactory.createCommunity();
+		community.setRewriteUrlParameter("not-o2");
+		
+		DrmType drmType = DrmTypeFactory.createDrmType();
+		DrmPolicy drmPolicy = DrmPolicyFactory.createDrmPolicy();
+		drmPolicy.setDrmType(drmType);
+		Chart chart = ChartFactory.createChart();
+		
+		UserGroup userGroup = UserGroupFactory.createUserGroup();
+		userGroup.setCommunity(community);
+		userGroup.setChart(chart);
+		userGroup.setDrmPolicy(drmPolicy);
+		
+		final String passedCommunityName = userFacebookDetailsDto.getCommunityName();
+		final String deviceUID = userFacebookDetailsDto.getDeviceUID();
+		final String storedToken = userFacebookDetailsDto.getStoredToken();
+		
+		when(communityServiceMock.getCommunityByName(userFacebookDetailsDto.getCommunityName())).thenReturn(community);
+		
+		UserCredentions userCredentions = UserCredentionsFactory.createUserCredentions();
+		userCredentions.setEmail("email");
+		userCredentions.setId("id");
+		
+		when(facebookServiceMock.getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken())).thenReturn(userCredentions);
+		
+		final String oldUserName = "phoneNumber";
+		final String communityRedirectUrl = community.getRewriteUrlParameter();
+		
+		User userByDeviceUID = UserFactory.createUser();
+		userByDeviceUID.setToken(storedToken);
+		userByDeviceUID.setUserGroup(userGroup);
+		userByDeviceUID.setUserName(oldUserName);
+		userByDeviceUID.setFacebookId(null);
+		userByDeviceUID.setFirstUserLoginMillis(null);
+		
+		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		
+		User userByFacebookId = UserFactory.createUser();
+		userByFacebookId.setId(userByDeviceUID.getId());
+		
+		doReturn(userByFacebookId).when(userServiceSpy).findByFacebookId(userCredentions.getId(), passedCommunityName);
+		doReturn(userByDeviceUID).when(userServiceSpy).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
+		doReturn(userByDeviceUID).when(userServiceSpy).mergeUser(userByDeviceUID, userByFacebookId);
+		doReturn(userByDeviceUID).when(userServiceSpy).updateUser(userByDeviceUID);
+		
+		final Long currentTimeMillis = Long.MAX_VALUE;
+		PowerMockito.mockStatic(Utils.class);
+		when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
+		
+		when(userDaoMock.findUserById(userByDeviceUID.getId())).thenReturn(userByDeviceUID);
+		
+		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+				
+		
+		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(userByDeviceUID.getId(), null, null, null);
+		
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.updateUserFacebookDetails(userFacebookDetailsDto);
+		
+		assertNotNull(actualAccountCheckDTO);
+		assertEquals(accountCheckDTO, actualAccountCheckDTO);
+		
+		assertEquals(userCredentions.getEmail(), userByDeviceUID.getUserName());
+		assertEquals(userCredentions.getId(), userByDeviceUID.getFacebookId());
+		assertEquals(currentTimeMillis, userByDeviceUID.getFirstUserLoginMillis());
+		
+		verify(communityServiceMock, times(1)).getCommunityByName(userFacebookDetailsDto.getCommunityName());
+		verify(facebookServiceMock, times(1)).getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken());
+		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		verify(userServiceSpy, times(1)).findByFacebookId(userCredentions.getId(), passedCommunityName);
+		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
+		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
+		verify(userServiceSpy, times(1)).updateUser(userByDeviceUID);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(userByDeviceUID.getId(), null, null, null);
+	}
+	
+	@Test
+	public void applyInitPromoO2_EmailAsUserName_Success() {
+		User user = UserFactory.createUser();
+		user.setActivationStatus(ENTERED_NUMBER);
+		user.setUserName("g@g.gg");
+		
+		User mobileUser = null;
+		String otac = "otac";
+		String communityName = "o2";
+		Community community = CommunityFactory.createCommunity();
+		
+		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
+		o2UserDetails.setTariff(Contract.PAYG.name());
+		
+		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
+		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(userRepositoryMock.save(user)).thenReturn(user);
+		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
+		
+		boolean hasPromo = false;
+		doReturn(hasPromo).when(userServiceSpy).applyO2PotentialPromo(o2UserDetails, user, community);
+		
+		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+		
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName);
+		
+		assertNotNull(actualAccountCheckDTO);
+		assertEquals(accountCheckDTO, actualAccountCheckDTO);
+		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
+		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		
+		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
+		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+		assertEquals(user.getMobile(), user.getUserName());
+		
+		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
+		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(communityServiceMock, times(0)).getCommunityByName(communityName);
+		verify(userRepositoryMock, times(1)).save(user);
+		verify(userServiceSpy,times(0) ).applyO2PotentialPromo(o2UserDetails, user, community);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+	}
+	
+	@Test
+	public void applyInitPromoO2_NotEmailAsUserName_Success() {
+		User user = UserFactory.createUser();
+		user.setActivationStatus(ENTERED_NUMBER);
+		user.setUserName("+380913008066");
+		
+		User mobileUser = null;
+		String otac = "otac";
+		String communityName = "o2";
+		Community community = CommunityFactory.createCommunity();
+		
+		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
+		o2UserDetails.setTariff(Contract.PAYG.name());
+		
+		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
+		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(userRepositoryMock.save(user)).thenReturn(user);
+		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
+		
+		boolean hasPromo = false;
+		doReturn(hasPromo).when(userServiceSpy).applyO2PotentialPromo(o2UserDetails, user, community);
+		
+		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+		
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName);
+		
+		assertNotNull(actualAccountCheckDTO);
+		assertEquals(accountCheckDTO, actualAccountCheckDTO);
+		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
+		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		
+		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
+		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+		assertEquals(user.getMobile(), user.getUserName());
+		
+		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
+		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
+		verify(userRepositoryMock, times(1)).save(user);
+		verify(userServiceSpy,times(1) ).applyO2PotentialPromo(o2UserDetails, user, community);
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 	}
 	
 	@Test
@@ -2832,12 +3013,12 @@ public class UserServiceTest {
 		};
 
 		Mockito.when(
-				mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq(upperCaseCommunityURL), Mockito.eq(messageCode), Mockito
+				communityResourceBundleMessageSourceMock.getMessage(Mockito.eq(upperCaseCommunityURL), Mockito.eq(messageCode), Mockito
 						.argThat(matcher), Mockito.any(Locale.class))).thenReturn(message);
 
 	}
 
 	private void mockMakeFreeSMSRequest(final MigPaymentDetails currentMigPaymentDetails, String message, MigResponse migResponse) {
-		Mockito.when(mockMigHttpService.makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), message)).thenReturn(migResponse);
+		Mockito.when(migHttpServiceMock.makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), message)).thenReturn(migResponse);
 	}
 }
