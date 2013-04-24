@@ -553,7 +553,7 @@ form .formButton  {
 	background-size: 25px 25px;
 }
 
-.button-off, .button-on, .button-arrow{
+.button-off, .button-on, .button-arrow, .alert-button-close{
     display: block;
     position: absolute;
     top: 8px;
@@ -572,6 +572,15 @@ form .formButton  {
 
 .button-off{
     background: transparent url(../imgs/radio_button_off.png) no-repeat;
+}
+
+.alert-button-close{
+    background: transparent url(../imgs/icon_close_banner.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
 }
 
 .button-on{
