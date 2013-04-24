@@ -14,7 +14,7 @@
             <c:if test="${error_msg != error_code}">
     			<div class="pane-red rel pie">
                 	<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
-                    <span class="alert-text">${error_msg}</span>
+                    <span class="alert-text-close">${error_msg}</span>
                     <span class="alert-button-close"/>
                 </div>
             </c:if>
