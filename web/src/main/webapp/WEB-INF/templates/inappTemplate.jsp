@@ -54,6 +54,7 @@
 	<tiles:insertAttribute name="headSection" />
 </head>
 <body>
+	<s:message code="page.google.analytics.include" />
 	<div class="page">
 		
 		<div class="cookie_conteiner">

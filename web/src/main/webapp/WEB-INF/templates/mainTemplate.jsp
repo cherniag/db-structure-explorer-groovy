@@ -42,7 +42,6 @@
 			
 		</c:otherwise>
 	</c:choose>
-	<s:message code="page.google.analytics.include" />
 	
 	<!--[if IE]>
 		<script type="text/javascript" src="assets/scripts/PIE.js"></script>
@@ -53,6 +52,7 @@
 	<tiles:insertAttribute name="headSection" />
 </head>
 <body>
+	<s:message code="page.google.analytics.include" />
 	<div class="page">
 		
 		<div class="cookie_conteiner">
