@@ -574,6 +574,36 @@ form .formButton  {
     background: transparent url(../imgs/radio_button_off.png) no-repeat;
 }
 
+.alert-button-close{
+	display: block;
+    position: absolute;
+	width: 16px;
+    height: 16px;
+    background: transparent url(../imgs/icon_close_banner.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
+/* 	position: relative; */
+	top:50%;
+	right: 0;
+	margin-top:-8px;
+	padding-left: 0px;
+}
+
+.pane-red .alert-button-close{
+	padding-left: 10px;
+}
+
+.pane-red .alert-text-close{
+	width: 90%;
+	padding-left: 0px;
+	text-indent: 35px;
+	text-align: left;
+	display: inline-block;
+}
+
 .button-on{
     background: transparent url(../imgs/radio_button_on.png) no-repeat;
 }

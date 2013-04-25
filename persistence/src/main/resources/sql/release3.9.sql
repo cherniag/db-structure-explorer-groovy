@@ -6,3 +6,6 @@ alter table tb_paymentPolicy add column provider char(255);
 
 update tb_paymentPolicy pp set pp.provider = 'non-o2' where pp.segment is null and pp.communityID = 10
 update tb_paymentPolicy pp set pp.provider = 'o2' where pp.segment is not null and pp.communityID = 10
+
+ -- IMP-1261 [MOBILE WEB] Error Messaging
+alter table tb_paymentDetails add column errorCode varchar(255);
