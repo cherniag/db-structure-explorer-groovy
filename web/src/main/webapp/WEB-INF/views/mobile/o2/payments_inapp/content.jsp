@@ -7,7 +7,7 @@
 </div>
 <div class="container">
     <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
-    <c:set var="error_code" value="payment.${paymentDetails.getPaymentType()}.error.msg.${paymentDetails.errorCode}" />
+    <c:set var="error_code" value="payment.${paymentDetails.paymentType}.error.msg.${paymentDetails.errorCode}" />
     <s:message code='${error_code}' var="error_msg" />
     <c:if test="${error_msg != error_code}">
     	<div class="pane-red rel pie">
