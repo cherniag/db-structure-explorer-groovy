@@ -7,12 +7,17 @@ import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.UserLog;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
+import mobi.nowtechnologies.server.shared.Utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +35,13 @@ import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
+	private static final String VALIDATE_PHONE_NUMBER_DESC = "validate_phonenumber";
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	public final static String VALIDATE_PHONE_REQ = "/user/carrier/o2/authorise/";
 	public final static String GET_USER_DETAILS_REQ = "/user/carrier/o2/details/";
-	
+
 	private String subscriberEndpoint;
 	private String chargeCustomerEndpoint;
 	private String sendMessageEndpoint;
@@ -56,8 +62,16 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	private WebServiceGateway webServiceGateway;
 
+	private UserLogRepository userLogRepository;
+	
+	private Integer limitValidatePhoneNumber;
+
 	public void init() {
 		restTemplate = new RestTemplate();
+	}
+	
+	public void setLimitValidatePhoneNumber(Integer limitValidatePhoneNumber) {
+		this.limitValidatePhoneNumber = limitValidatePhoneNumber;
 	}
 
 	public void setSubscriberEndpoint(String subscriberEndpoint) {
@@ -70,6 +84,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	public void setSendMessageEndpoint(String sendMessageEndpoint) {
 		this.sendMessageEndpoint = sendMessageEndpoint;
+	}
+
+	public void setUserLogRepository(UserLogRepository userLogRepository) {
+		this.userLogRepository = userLogRepository;
 	}
 
 	public void setServerO2Url(String serverO2Url) {
@@ -125,33 +143,50 @@ public class O2ClientServiceImpl implements O2ClientService {
 	@Override
 	public String validatePhoneNumber(String phoneNumber) {
 		String serverO2Url = getServerO2Url(phoneNumber);
-        String url = serverO2Url + VALIDATE_PHONE_REQ;
+		String url = serverO2Url + VALIDATE_PHONE_REQ;
 
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 		request.add("phone_number", phoneNumber);
-        return handleValidatePhoneNumber(phoneNumber, url, request);
+
+		String result = handleValidatePhoneNumber(phoneNumber, url, request);
+
+		return result;
 	}
 
-    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
-        LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
-        try {
-            DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
-            return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
-        } catch (RestClientException e) {
-            LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
-            throw new InvalidPhoneNumberException();
-        } catch (DOMException e) {
-            LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
-            throw new InvalidPhoneNumberException();
-        } catch (Exception e) {
-            LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
-            throw new InvalidPhoneNumberException();
-        } finally {
-            LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", phoneNumber);
-        }
-    }
+	private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
+		
+		Long curDay = new Long(Utils.getEpochDays());
+		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumber, VALIDATE_PHONE_NUMBER_DESC, curDay);
+		if(countPerDay >= limitValidatePhoneNumber){
+			throw new LimitPhoneNumberValidationException();
+		}
+		
+		try {
+			DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
+			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
+			
+			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.SUCCESS, VALIDATE_PHONE_NUMBER_DESC));
+			
+			return result;
+		} catch (RestClientException e) {
+			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.O2_FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
+			throw new InvalidPhoneNumberException();
+		} catch (DOMException e) {
+			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
+			throw new InvalidPhoneNumberException();
+		} catch (Exception e) {
+			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
+			throw new InvalidPhoneNumberException();
+		} finally {
+			LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", phoneNumber);
+		}
+	}
 
-    @Override
+	@Override
 	public O2UserDetails getUserDetails(String token, String phoneNumber) {
 		String serverO2Url = getServerO2Url(phoneNumber);
 
@@ -162,7 +197,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getNextSibling()
 					.getFirstChild().getNodeValue());
 		} catch (Exception e) {
-			LOGGER.error("Error of the number validation "+ phoneNumber, e);
+			LOGGER.error("Error of the number validation " + phoneNumber, e);
 			throw new ExternalServiceException("602", "O2 server cannot be reached");
 		}
 	}
@@ -195,8 +230,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 		final BigInteger subCostPences = subCost.multiply(MULTIPLICAND_100).toBigInteger();
 
 		BillSubscriber billSubscriber = new BillSubscriber();
-		
-		final String formatedO2PhoneNumber = o2PhoneNumber.replace("+", ""); 
+
+		final String formatedO2PhoneNumber = o2PhoneNumber.replace("+", "");
 
 		billSubscriber.setMsisdn(formatedO2PhoneNumber);
 		billSubscriber.setSubMerchantId(subMerchantId);
@@ -212,12 +247,12 @@ public class O2ClientServiceImpl implements O2ClientService {
 		billSubscriber.setPromotionCode("");
 
 		LOGGER.info("Sent request to O2 with pending payment with internalTxId: [{}]", internalTxId);
-		
+
 		Object response = null;
-		try{			
+		try {
 			response = webServiceGateway.sendAndReceive(chargeCustomerEndpoint, billSubscriber);
-		}catch(SoapFaultException e){
-			response = new BillSubscriberFault(e.getMessage(), (SOAFaultType)e.getSoapFaultObject());
+		} catch (SoapFaultException e) {
+			response = new BillSubscriberFault(e.getMessage(), (SOAFaultType) e.getSoapFaultObject());
 		}
 
 		O2Response o2Response = O2Response.valueOf(response);

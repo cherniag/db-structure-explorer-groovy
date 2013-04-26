@@ -25,6 +25,7 @@ public class Utils {
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
+	public static final int DAY_MILLISECONDS = 86400000;
 
     public static int truncatedToSeconds(Date date){
         return (int)(date.getTime()/1000);
@@ -73,6 +74,10 @@ public class Utils {
 
 	public static int getEpochSeconds() {
 		return (int) (System.currentTimeMillis() / MILLISECONDS_IN_SECOND);
+	}
+	
+	public static int getEpochDays() {
+		return (int) (System.currentTimeMillis() / DAY_MILLISECONDS);
 	}
 
 	public static long getEpochMillis() {

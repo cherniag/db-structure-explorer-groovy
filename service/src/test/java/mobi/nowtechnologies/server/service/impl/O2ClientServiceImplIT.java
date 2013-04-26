@@ -2,20 +2,22 @@ package mobi.nowtechnologies.server.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl;
 
 import org.apache.xerces.dom.DocumentImpl;
@@ -26,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.omg.PortableServer.POAPackage.InvalidPolicyHelper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.web.client.RestTemplate;
@@ -45,6 +48,9 @@ public class O2ClientServiceImplIT {
 	
 	@Mock
 	private DeviceService mockDeviceService;
+	
+	@Mock
+	private UserLogRepository mockUserLogRepository;
 	
 
 	@SuppressWarnings("unchecked")
@@ -96,6 +102,8 @@ public class O2ClientServiceImplIT {
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
 		
@@ -103,19 +111,57 @@ public class O2ClientServiceImplIT {
 
 		assertNotNull(result);
 		assertEquals(expectedPhoneNumber, result);
+		
+		verify(mockUserLogRepository).save(any(UserLog.class));
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Test(expected = InvalidPhoneNumberException.class)
-	public void testValidatePhoneNumber_Failure()
+	@Test
+	public void testValidatePhoneNumber_InvalidPhoneNumber_Failure()
 			throws Exception {
 		
 		String phoneNumber = "0787011fff1111";
 
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
-		fixture.validatePhoneNumber(phoneNumber);
+		try {			
+			fixture.validatePhoneNumber(phoneNumber);
+			fail();
+		} catch (Exception e) {
+			if(!(e instanceof InvalidPhoneNumberException))
+				fail();
+		}
+		
+		verify(mockUserLogRepository, times(1)).save(any(UserLog.class));
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testValidatePhoneNumber_LimitPhoneNumber_Failure()
+			throws Exception {
+		
+		String phoneNumber = "0787011fff1111";
+		
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
+		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(10L);
+		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
+		
+		try {			
+			fixture.validatePhoneNumber(phoneNumber);
+			fail();
+		} catch (Exception e) {
+			if(!(e instanceof LimitPhoneNumberValidationException))
+				fail();
+		}
+		
+		verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
 	}
 	
 	@Test
@@ -259,6 +305,8 @@ public class O2ClientServiceImplIT {
 		fixture.setRedeemServerO2Url("https://identity.o2.co.uk");
 		fixture.setPromotedServerO2Url("https://uat.mqapi.com");
 		fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
+		fixture.setUserLogRepository(mockUserLogRepository);
+		fixture.setLimitValidatePhoneNumber(9);
 		
 		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
 		fixture.init();

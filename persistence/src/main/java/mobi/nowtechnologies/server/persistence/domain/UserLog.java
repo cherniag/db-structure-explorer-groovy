@@ -18,6 +18,9 @@ public class UserLog {
 
     @Column(name = "user_id")
     private Integer userId;
+    
+    @Column(columnDefinition = "char(25)")
+    private String phoneNumber;
 
     private long last_update;
 
@@ -37,6 +40,13 @@ public class UserLog {
         this.status = status;
         this.description = Utils.substring(description, 255);
     }
+    
+    public UserLog(String phoneNumber, UserLogStatus status, String description) {
+    	this.phoneNumber = phoneNumber;
+    	this.last_update = System.currentTimeMillis();
+    	this.status = status;
+    	this.description = Utils.substring(description, 255);
+    }
 
     public Integer getId() {
         return id;
@@ -49,8 +59,28 @@ public class UserLog {
     public DateTime getLastUpdate() {
         return new DateTime(last_update);
     }
+    
+    public void setLastUpdateMillis(long last_update) {
+		this.last_update = last_update;
+	}
 
-    public UserLogStatus getStatus() {
+	public long getLastUpdateMillis() {
+		return last_update;
+	}
+
+	public void setLast_update(long last_update) {
+		this.last_update = last_update;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public UserLogStatus getStatus() {
         return status;
     }
 
