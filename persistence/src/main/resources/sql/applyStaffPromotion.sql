@@ -1,11 +1,20 @@
 create temporary table phoneNumbers(phoneNumber varchar(255));
 
-insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u.userName in ('+447852365884', '+447779836075' , '+447836509560'); --some numbers which should be applied promotions 
+insert into phoneNumbers (phoneNumber) SELECT u.userName FROM tb_users u where u.userName in ('+44##########', '+44##########' , '+44##########'); --some list numbers which should be applied promotions 
 
 update tb_users u 
 join tb_promotions p on p.label = 'staff' and p.userGroup = 10 
 join phoneNumbers pn on pn.phoneNumber = u.userName 
-set u.potentialPromoCodePromotion_i = null, u.nextSubPayment = unix_timestamp() + p.freeWeeks*7*24*60*60, u.freeTrialExpiredMillis = u.nextSubPayment*1000, u.status=10, u.freeTrialStartedTimestampMillis=unix_timestamp()*1000;
+set u.potentialPromoCodePromotion_i = null, 
+u.nextSubPayment = p.endDate,
+u.freeTrialExpiredMillis = (
+CASE 
+WHEN u.freeTrialExpiredMillis = u.nextSubPayment*1000 THEN p.endDate*1000
+ELSE u.freeTrialExpiredMillis
+END
+), 
+u.status=10, 
+u.freeTrialStartedTimestampMillis=unix_timestamp()*1000;
 
 update tb_promotions p
 join (select count(pn.phoneNumber) as c from phoneNumbers pn) pc
@@ -21,6 +30,6 @@ p.freeWeeks,
 unix_timestamp()
 FROM tb_users u 
 join tb_promotions p on p.label = 'staff' and p.userGroup = 10 
-join phoneNumbers pn on pn.phoneNumber = u.userName
+join phoneNumbers pn on pn.phoneNumber = u.userName;
 
 drop table phoneNumbers;

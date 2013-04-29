@@ -196,7 +196,7 @@ public class EntityController extends CommonController {
 		return (AccountCheckDTO) resp.getObject()[0];
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "**/ACC_CHECK" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
 	public ModelAndView accountCheckWithXtifyToken(
 			HttpServletRequest httpServletRequest,
 			@RequestParam("APP_VERSION") String appVersion,
