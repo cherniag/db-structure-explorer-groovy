@@ -159,6 +159,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 		Long curDay = new Long(Utils.getEpochDays());
 		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumber, VALIDATE_PHONE_NUMBER_DESC, curDay);
 		if(countPerDay >= limitValidatePhoneNumber){
+			LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
 			throw new LimitPhoneNumberValidationException();
 		}
 		
