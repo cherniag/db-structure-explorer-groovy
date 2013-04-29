@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
@@ -50,7 +50,6 @@
 			
 		</c:otherwise>
 	</c:choose>
-	<s:message code="page.google.analytics.include" />
 	
 	<!--[if IE]>
 		<script type="text/javascript" src="assets/scripts/PIE.js"></script>
@@ -61,6 +60,7 @@
 	<tiles:insertAttribute name="headSection" />
 </head>
 <body>
+	<s:message code="page.google.analytics.include" />
 	<div class="page">
 		
 		<div class="cookie_conteiner">
