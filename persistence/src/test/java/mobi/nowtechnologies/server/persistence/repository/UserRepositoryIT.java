@@ -9,11 +9,7 @@ import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
@@ -21,9 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +45,9 @@ public class UserRepositoryIT {
 	
 	@Resource(name = "paymentDetailsRepository")
 	private PaymentDetailsRepository paymentDetailsRepository;
+
+	@Resource(name = "paymentPolicyRepository")
+	private PaymentPolicyRepository paymentPolicyRepository;
 
 	@Test
 	@Rollback
@@ -352,5 +353,44 @@ public class UserRepositoryIT {
 		assertEquals(1, actualUsers.size());
 		assertEquals(testUser.getId(), actualUsers.get(0).getId());
 
+	}
+	
+	@Test
+	public void testGetUsersForPendingPayment_O2_O2_CONSUMER_PSMS_Success() throws Exception {
+		
+		int epochSeconds = Utils.getEpochSeconds();
+		
+		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+		
+		User testUser = UserFactory.createUser();
+		testUser.setNextSubPayment(epochSeconds);
+		testUser.setLastDeviceLogin(epochSeconds);
+		testUser.setUserGroup(o2UserGroup);
+		
+		testUser = userRepository.save(testUser);
+		
+		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne((short)228);
+		
+		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		
+		currentO2PaymentDetails.setActivated(true);
+		currentO2PaymentDetails.setOwner(testUser);
+		currentO2PaymentDetails.setMadeRetries(0);
+		currentO2PaymentDetails.setPaymentPolicy(paymentPolicy);
+		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+		currentO2PaymentDetails.setRetriesOnError(3);
+		
+		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
+		
+		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
+		
+		testUser = userRepository.save(testUser);
+		
+		List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds);
+		
+		assertNotNull(actualUsers);
+		assertEquals(2, actualUsers.size());
+		assertEquals(testUser.getId(), actualUsers.get(1).getId());
+		
 	}
 }

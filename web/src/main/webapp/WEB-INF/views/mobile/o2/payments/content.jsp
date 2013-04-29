@@ -9,6 +9,15 @@
 <div class="container">
 
             <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
+            <c:set var="error_code" value="payment.${paymentDetails.paymentType}.error.msg.${paymentDetails.errorCode}" />
+            <s:message code='${error_code}' var="error_msg" />
+            <c:if test="${error_msg != error_code && error_msg != ''}">
+    			<div class="pane-red rel pie">
+                	<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icon_banner_alert.png"/>
+                    <span class="alert-text-close">${error_msg}</span>
+                    <span class="alert-button-close"/>
+                </div>
+            </c:if>
             <c:if test="${accountBannerON eq 'true'}">
                 <c:choose>
                     <c:when test="${trialExpiredOrLimited}">

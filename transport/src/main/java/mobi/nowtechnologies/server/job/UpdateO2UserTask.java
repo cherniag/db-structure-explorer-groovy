@@ -36,6 +36,7 @@ public class UpdateO2UserTask {
 
     private void updateUser(User u) throws GetSubscriberProfileFault {
         SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
+        u.setProvider(profile.getProvider().toString());
         u.setSegment(profile.getSegmentType());
         u.setContract(profile.getCotract());
         makeUserLog(u, UserLogStatus.SUCCESS, null);
