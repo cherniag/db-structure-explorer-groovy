@@ -167,7 +167,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
 			
-			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.SUCCESS, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(result, UserLogStatus.SUCCESS, VALIDATE_PHONE_NUMBER_DESC));
 			
 			return result;
 		} catch (RestClientException e) {
