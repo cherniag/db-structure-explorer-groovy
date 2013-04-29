@@ -1,14 +1,10 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.xmlConfigSetup;
-
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +15,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.ModelAndView;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
