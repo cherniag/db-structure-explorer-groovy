@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1565,6 +1566,43 @@ public class ChartDetailServiceTest {
 		Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
 		Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
 		
+	}
+	
+	@Test()
+	public void testFindNearestLatestPublishTimeMillis_Success(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = 1343806800000L;
+		
+		Long expectedNearestLatestPublishDate = Long.MAX_VALUE;
+		when(mockChartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community)).thenReturn(expectedNearestLatestPublishDate);
+
+		Long nearestLatestPublishDate = fixtureChartDetailService.findNearestLatestPublishTimeMillis(community, choosedPublishTimeMillis);
+			
+		assertNotNull(nearestLatestPublishDate);
+		assertEquals(expectedNearestLatestPublishDate, nearestLatestPublishDate);
+	}
+	
+	@Test()
+	public void testFindNearestLatestPublishTimeMillis_NoChartDetails_Success(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = 1343806800000L;
+		
+		Long expectedNearestLatestPublishDate = null;
+		when(mockChartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community)).thenReturn(expectedNearestLatestPublishDate);
+
+		Long nearestLatestPublishDate = fixtureChartDetailService.findNearestLatestPublishTimeMillis(community, choosedPublishTimeMillis);
+			
+		assertNull(nearestLatestPublishDate);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFindNearestLatestPublishTimeMillis_NoChartDetails_Fail(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = 1343806800000L;
+		
+		when(mockChartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community)).thenThrow(new NullPointerException());
+
+		fixtureChartDetailService.findNearestLatestPublishTimeMillis(community, choosedPublishTimeMillis);
 	}
 
 	/**

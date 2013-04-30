@@ -8,11 +8,16 @@ import javapns.notification.PushedNotification;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
+import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.UserIPhoneDetailsService;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -23,12 +28,18 @@ import java.util.*;
 public class NotificationJob {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationJob.class);
 
-	private UserIPhoneDetailsService userIPhoneDetailsService;
-	private Community community;
-	private int numberOfThreads;
-	private Resource keystore;
-	private String password;
-	private boolean production;
+	protected ChartDetailService chartDetailService;
+	protected UserIPhoneDetailsService userIPhoneDetailsService;
+	protected Community community;
+	protected int numberOfThreads;
+	protected Resource keystore;
+	protected String password;
+	protected boolean production;
+	protected int userIPhoneDetailsListFetchSize; 
+	
+	public void setChartDetailService(ChartDetailService chartDetailService) {
+		this.chartDetailService = chartDetailService;
+	}
 
 	public void setNumberOfThreads(int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
@@ -49,31 +60,32 @@ public class NotificationJob {
 	public void setUserIPhoneDetailsService(UserIPhoneDetailsService userIPhoneDetailsService) {
 		this.userIPhoneDetailsService = userIPhoneDetailsService;
 	}
+	
+	public void setUserIPhoneDetailsListFetchSize(int userIPhoneDetailsListFetchSize) {
+		this.userIPhoneDetailsListFetchSize = userIPhoneDetailsListFetchSize;
+	}
 
 	public void setCommunityName(String communityName) {
 		if (communityName == null)
 			throw new NullPointerException("The parameter communityName is null");
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 
-		this.community = CommunityDao.getMapAsNames().get(communityName);
+		this.community = CommunityDao.getCommunity(communityName);
 		if (community == null)
 			throw new NullPointerException("The parameter community is null");
 	}
 
-	// public int prepareToWork() {
-	// LOGGER.debug("input parameters : [{}]", new Object[] {});
-	// int updatedRowsCount =
-	// userIPhoneDetailsService.updateUserIPhoneDetailsForPushNotification(community);
-	// LOGGER.debug("Output parameter updatedRowsCount=[{}]", updatedRowsCount);
-	// return updatedRowsCount;
-	// }
-
-	@SuppressWarnings("unchecked")
 	public List<PushedNotification> execute() {
 		try {
 			LogUtils.putClassNameMDC(this.getClass());
 			LOGGER.info("[START] Notification job starting...");
-			List<UserIPhoneDetails> userIPhoneDetailsList = userIPhoneDetailsService.getUserIPhoneDetailsListForPushNotification(community);
+			
+			final long epochMillis = Utils.getEpochMillis();
+			Long nearestLatestPublishTimeMillis = chartDetailService.findNearestLatestPublishTimeMillis(community, epochMillis);
+			
+			Pageable pageable = new PageRequest(0, userIPhoneDetailsListFetchSize);
+			
+			List<UserIPhoneDetails> userIPhoneDetailsList = userIPhoneDetailsService.getUserIPhoneDetailsListForPushNotification(community, nearestLatestPublishTimeMillis, pageable);
 
 			Map<String, UserIPhoneDetails> userIPhoneDetailsMap = new LinkedHashMap<String, UserIPhoneDetails>();
 			List<PayloadPerDevice> payloadDevicePairs = new Vector<PayloadPerDevice>();
@@ -90,8 +102,8 @@ public class NotificationJob {
 				}
 			}
 
-			List<PushedNotification> pushedNotifications = Collections.EMPTY_LIST;
-			if (!payloadDevicePairs.isEmpty()){
+			List<PushedNotification> pushedNotifications = Collections.<PushedNotification> emptyList();
+			if (!payloadDevicePairs.isEmpty()) {
 				try {
 					pushedNotifications = Push.payloads(keystore.getInputStream(), password, production,
 							numberOfThreads, payloadDevicePairs);
@@ -110,7 +122,7 @@ public class NotificationJob {
 							UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsMap
 									.get(device.getToken());
 							userIPhoneDetailsService
-									.markUserIPhoneDetailsAsProcessed(userIPhoneDetails);
+									.markUserIPhoneDetailsAsProcessed(userIPhoneDetails, nearestLatestPublishTimeMillis);
 						} catch (Exception e) {
 							LOGGER.error(e.getMessage(), e);
 						}

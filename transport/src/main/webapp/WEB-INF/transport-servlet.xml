@@ -208,6 +208,7 @@
 		<property name="production" value="${notificationJob.production}" />
 		<property name="communityName" value="Now Music" />
 		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
+		<property name="userIPhoneDetailsListFetchSize" value="${notificationJob.userIPhoneDetailsListFetchSize}" />
 	</bean>
 
 
@@ -230,6 +231,7 @@
 		<property name="production" value="${notificationJob.production}" />
 		<property name="communityName" value="o2" />
 		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
+		<property name="userIPhoneDetailsListFetchSize" value="${notificationJob.userIPhoneDetailsListFetchSize}" />
 	</bean>
 
 	<bean id="transport.notificationO2QuartzJobDetail"

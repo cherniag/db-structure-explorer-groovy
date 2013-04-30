@@ -35,6 +35,9 @@ public abstract class UserDeviceDetails {
 	private int nbUpdates;
 
 	private int status;
+	
+	@Column(name = "last_push_of_content_update_millis")
+	private long lastPushOfContentUpdateMillis;
 
 	public User getUser() {
 		return user;
@@ -90,9 +93,17 @@ public abstract class UserDeviceDetails {
 		return userGroupId;
 	}
 
+	public long getLastPushOfContentUpdateMillis() {
+		return lastPushOfContentUpdateMillis;
+	}
+
+	public void setLastPushOfContentUpdateMillis(long lastPushOfContentUpdateMillis) {
+		this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
+	}
+
 	@Override
 	public String toString() {
-		return "id=" + id + ", nbUpdates=" + nbUpdates + ", status=" + status + ", token=" + token + ", userGroupId=" + userGroupId
+		return "id=" + id + ", lastPushOfContentUpdateMillis="+lastPushOfContentUpdateMillis + ", nbUpdates=" + nbUpdates + ", status=" + status + ", token=" + token + ", userGroupId=" + userGroupId
 				+ ", userId=" + userId;
 	}
 }

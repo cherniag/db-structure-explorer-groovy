@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -61,4 +63,13 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 			"chartDetail.publishTimeMillis=:oldPublishTimeMillis " +
 			"and chartDetail.chart.i=:chartId")
 	int updateChartItems(@Param("newPublishTimeMillis") long newPublishTimeMillis, @Param("oldPublishTimeMillis") long oldPublishTimeMillis, @Param("chartId") byte chartId);
+
+	@Query(value="select max(chartDetail.publishTimeMillis) "
+			+ "from ChartDetail chartDetail "
+			+ "join chartDetail.chart chart "
+			+ "join chart.communities communities "
+			+ "where "
+			+ "communities=?2 "
+			+ "and chartDetail.publishTimeMillis<=?1")
+	Long findNearestLatestPublishDate(long choosedPublishTimeMillis, Community community);
 }
