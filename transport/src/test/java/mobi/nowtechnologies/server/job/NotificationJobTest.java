@@ -163,6 +163,34 @@ public class NotificationJobTest {
 		assertEquals(userIPhoneDetailsService, notificationJobFixture.userIPhoneDetailsService);
 
 	}
+	
+	@Test
+	public void testsetUserIPhoneDetailsListFetchSize_Success()
+			throws Exception {
+		int userIPhoneDetailsListFetchSize = Integer.MAX_VALUE;
+		
+		notificationJobFixture.setUserIPhoneDetailsListFetchSize(userIPhoneDetailsListFetchSize );
+		
+		assertEquals(userIPhoneDetailsListFetchSize, notificationJobFixture.userIPhoneDetailsListFetchSize);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testsetUserIPhoneDetailsListFetchSize_userIPhoneDetailsListFetchSizeIs0_Fail()
+			throws Exception {
+		int userIPhoneDetailsListFetchSize = 0;
+		
+		notificationJobFixture.setUserIPhoneDetailsListFetchSize(userIPhoneDetailsListFetchSize );
+		
+		assertEquals(userIPhoneDetailsListFetchSize, notificationJobFixture.userIPhoneDetailsListFetchSize);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testsetUserIPhoneDetailsListFetchSize_userIPhoneDetailsListFetchSizeLessThanZero_Fail()
+			throws Exception {
+		int userIPhoneDetailsListFetchSize = Integer.MIN_VALUE;
+		
+		notificationJobFixture.setUserIPhoneDetailsListFetchSize(userIPhoneDetailsListFetchSize );
+	}
 
 	@Test
 	public void testExecute_Success()
@@ -187,6 +215,7 @@ public class NotificationJobTest {
 		notificationJobFixture.setNumberOfThreads(numberOfThreads);
 		notificationJobFixture.setPassword(password);
 		notificationJobFixture.setProduction(production);
+		notificationJobFixture.setUserIPhoneDetailsListFetchSize(Integer.MAX_VALUE);
 
 		long epochMillis = Long.MAX_VALUE;
 
@@ -199,10 +228,8 @@ public class NotificationJobTest {
 
 		final int userIPhoneDetailsListSize = 4;
 		List<UserIPhoneDetails> userIPhoneDetailsList = UserIPhoneDetailsFactory.createUserIPhoneDetailsList(userIPhoneDetailsListSize);
-		
-		Pageable pageable = mock(Pageable.class);
 
-		when(userIPhoneDetailsServiceMock.getUserIPhoneDetailsListForPushNotification(community, nearestLatestPublishTimeMillis, pageable)).thenReturn(userIPhoneDetailsList);
+		when(userIPhoneDetailsServiceMock.getUserIPhoneDetailsListForPushNotification(eq(community), eq(nearestLatestPublishTimeMillis), any(Pageable.class))).thenReturn(userIPhoneDetailsList);
 
 		mockStatic(Push.class);
 
@@ -245,7 +272,7 @@ public class NotificationJobTest {
 		notificationJobFixture.execute();
 
 		verify(chartDetailServiceMock, times(1)).findNearestLatestPublishTimeMillis(community, epochMillis);
-		verify(userIPhoneDetailsServiceMock, times(1)).getUserIPhoneDetailsListForPushNotification(community, nearestLatestPublishTimeMillis, pageable);
+		verify(userIPhoneDetailsServiceMock, times(1)).getUserIPhoneDetailsListForPushNotification(eq(community), eq(nearestLatestPublishTimeMillis), any(Pageable.class));
 
 		for (int i = 0; i < successfulPushedNotificationsSize; i++) {
 			final UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsList.get(i);
