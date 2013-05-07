@@ -35,7 +35,9 @@ public class NotificationJob {
 	protected Resource keystore;
 	protected String password;
 	protected boolean production;
-	protected int userIPhoneDetailsListFetchSize; 
+	protected int userIPhoneDetailsListFetchSize;
+
+	private Pageable pageable; 
 	
 	public void setChartDetailService(ChartDetailService chartDetailService) {
 		this.chartDetailService = chartDetailService;
@@ -62,7 +64,12 @@ public class NotificationJob {
 	}
 	
 	public void setUserIPhoneDetailsListFetchSize(int userIPhoneDetailsListFetchSize) {
+		if (userIPhoneDetailsListFetchSize<=0)
+			throw new IllegalArgumentException("The userIPhoneDetailsListFetchSize must not be less than or equal to zero!");
+		
 		this.userIPhoneDetailsListFetchSize = userIPhoneDetailsListFetchSize;
+		
+		pageable = new PageRequest(0, userIPhoneDetailsListFetchSize);
 	}
 
 	public void setCommunityName(String communityName) {
@@ -83,8 +90,6 @@ public class NotificationJob {
 			final long epochMillis = Utils.getEpochMillis();
 			Long nearestLatestPublishTimeMillis = chartDetailService.findNearestLatestPublishTimeMillis(community, epochMillis);
 			
-			Pageable pageable = new PageRequest(0, userIPhoneDetailsListFetchSize);
-			
 			List<UserIPhoneDetails> userIPhoneDetailsList = userIPhoneDetailsService.getUserIPhoneDetailsListForPushNotification(community, nearestLatestPublishTimeMillis, pageable);
 
 			Map<String, UserIPhoneDetails> userIPhoneDetailsMap = new LinkedHashMap<String, UserIPhoneDetails>();
@@ -92,7 +97,7 @@ public class NotificationJob {
 			for (UserIPhoneDetails userIPhoneDetails : userIPhoneDetailsList) {
 				try {
 					PushNotificationPayload pushNotificationPayload = PushNotificationPayload.complex();
-					pushNotificationPayload.addBadge(userIPhoneDetails.getNbUpdates());
+					pushNotificationPayload.addBadge(1);
 					String deviceToken = userIPhoneDetails.getToken();
 					PayloadPerDevice payloadPerDevice = new PayloadPerDevice(pushNotificationPayload, deviceToken);
 					payloadDevicePairs.add(payloadPerDevice);
