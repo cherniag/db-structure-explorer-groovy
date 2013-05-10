@@ -115,6 +115,10 @@ function onStart() {
         	PIE.attach(this);
     	});
 	}
+	
+	$('.alert-button-close').click(function() {
+    	$(this).parent().hide();
+	});
 }
 
 $(document).ready(function() {

@@ -4,6 +4,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
 <!DOCTYPE html>
 
@@ -62,6 +63,7 @@
 	<tiles:insertAttribute name="headSection" />
 </head>
 <body>
+	<s:message code="page.google.analytics.include" />
 	<div class="page">
 		
 		<div class="cookie_conteiner">
