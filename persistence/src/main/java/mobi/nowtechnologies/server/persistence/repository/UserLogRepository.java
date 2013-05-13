@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserLogRepository extends JpaRepository<UserLog, Integer> {
 
     @Query(value = "select userLog from UserLog userLog " +
-            " where userLog.userId = ?1 " +
-            " group by userLog.userId " +
+            " where userLog.user.id = ?1 " +
+            " group by userLog.user " +
             " having min(userLog.last_update) = userLog.last_update")
     UserLog findByUser(int id);
     
     //day in millis date = millis_date/1000/60/60/24
     @Query(value = "select count(userLog) from UserLog userLog " +
-    		" where userLog.phoneNumber = ?1 and abs(userLog.last_update/86400000 - ?3) < 1 and userLog.description = ?2")
-    Long countByPhoneNumberAndDay(String phoneNumber, String description, long dayOfDate);
+    		" where userLog.phoneNumber = ?1 and abs(userLog.last_update/86400000 - ?3) < 1 and userLog.type = ?2")
+    Long countByPhoneNumberAndDay(String phoneNumber, UserLogType userLogType, long dayOfDate);
 }

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -16,8 +17,9 @@ public class UserLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+    private User user;
     
     @Column(columnDefinition = "char(25)")
     private String phoneNumber;
@@ -27,23 +29,29 @@ public class UserLog {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
     private UserLogStatus status;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(25)")
+    private UserLogType type;
 
     private String description;
 
     public UserLog(){/* 4hibernate*/}
 
-    public UserLog(UserLog oldLog, Integer userId, UserLogStatus status, String description) {
+    public UserLog(UserLog oldLog, User user, UserLogStatus status, UserLogType userLogType, String description) {
         if(oldLog != null)
             id = oldLog.getId();
-        this.userId = userId;
+        this.user = user;
+        this.type = userLogType;
         this.last_update = System.currentTimeMillis();
         this.status = status;
         this.description = Utils.substring(description, 255);
     }
     
-    public UserLog(String phoneNumber, UserLogStatus status, String description) {
+    public UserLog(String phoneNumber, UserLogStatus status, UserLogType userLogType, String description) {
     	this.phoneNumber = phoneNumber;
     	this.last_update = System.currentTimeMillis();
+    	this.type = userLogType;
     	this.status = status;
     	this.description = Utils.substring(description, 255);
     }
@@ -53,7 +61,7 @@ public class UserLog {
     }
 
     public Integer getUserId() {
-        return userId;
+        return user != null ? user.getId() : null;
     }
 
     public DateTime getLastUpdate() {
@@ -68,16 +76,16 @@ public class UserLog {
 		return last_update;
 	}
 
-	public void setLast_update(long last_update) {
-		this.last_update = last_update;
-	}
-
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public UserLogType getType() {
+		return type;
 	}
 
 	public UserLogStatus getStatus() {
@@ -87,7 +95,7 @@ public class UserLog {
     @Override
     public String toString(){
         return Objects.toStringHelper(this)
-                .add("userId", userId)
+                .add("userId", getUserId())
                 .add("last_update", last_update)
                 .add("status", status)
                 .toString();
