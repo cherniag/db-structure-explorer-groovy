@@ -272,6 +272,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
+		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
@@ -333,6 +334,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
 		<property name="userService" ref="service.UserService" />
+		<property name="smsNotification" ref="smsNotificationAspect" />
 	</bean>
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl">
@@ -400,7 +402,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="soaConsumerTransactionID" value="${o2.service.security.costumerTransactionId}"/>        
 	</bean>
 
-	<task:annotation-driven />
+	<task:annotation-driven executor="service.Executor"/>
+	<task:executor id="service.Executor" pool-size="20"/>
 
 	<import resource="payment.xml" />
 

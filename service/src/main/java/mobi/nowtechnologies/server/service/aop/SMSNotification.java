@@ -6,6 +6,7 @@ import java.util.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -30,6 +31,8 @@ import org.springframework.web.client.RestTemplate;
 public class SMSNotification {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SMSNotification.class);
+	
+	private UserNotificationService userNotificationService;
 
 	private MigHttpService migService;
 
@@ -50,6 +53,10 @@ public class SMSNotification {
 	private NowTechTokenBasedRememberMeServices rememberMeServices;
 
 	private RestTemplate restTemplate = new RestTemplate();
+	
+	public void setUserNotificationService(UserNotificationService userNotificationService) {
+		this.userNotificationService = userNotificationService;
+	}
 
 	public String getRememberMeTokenCookieName() {
 		return rememberMeTokenCookieName;
@@ -85,6 +92,10 @@ public class SMSNotification {
 
 	public void setPaymentsUrl(String paymentsUrl) {
 		this.paymentsUrl = paymentsUrl;
+	}
+	
+	public String getPaymentsUrl() {
+		return paymentsUrl;
 	}
 
 	public void setUnsubscribeUrl(String unsubscribeUrl) {
@@ -167,21 +178,15 @@ public class SMSNotification {
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
+		Object object = joinPoint.proceed();
+		Integer userId = (Integer) joinPoint.getArgs()[0];
 		try {
-			LogUtils.putClassNameMDC(this.getClass());
-
-			Object object = joinPoint.proceed();
-			Integer userId = (Integer) joinPoint.getArgs()[0];
-			try {
-				User user = userService.findById(userId);
-				sendUnsubscribeAfterSMS(user);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return object;
-		} finally {
-			LogUtils.removeClassNameMDC();
+			User user = userService.findById(userId);
+			userNotificationService.sendUnsubscribeAfterSMS(user);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		return object;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -335,7 +340,7 @@ public class SMSNotification {
 		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
 	}
 
-	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
+	public void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		if (rejectDevice(user, "sms.notification.not.for.device.type"))
@@ -367,7 +372,7 @@ public class SMSNotification {
 			migService.makeFreeSMSRequest(user.getMobile(), message, title);
 	}
 
-	protected boolean rejectDevice(User user, String code) {
+	public boolean rejectDevice(User user, String code) {
 		Community community = user.getUserGroup().getCommunity();  
 	  	String communityUrl = community.getRewriteUrlParameter();  
 	  	String devices = messageSource.getMessage(communityUrl, code, null, null, null); 
