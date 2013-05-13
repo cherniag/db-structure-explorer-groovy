@@ -16,6 +16,23 @@ $.fn.descendantOf = function(element) {
 };
 //---------------------------------------------------//
 $(function() {
+	//--------------Chart Details Bar----------------//
+	var showChartUpdateTab = function(){
+		var tabName = $(this).attr('name');
+		
+		var hiddableEls = "#chartDetailsForm, #mediaSearchContainer, #basket, #chartItemsTable";
+		var itemListEls = "#mediaSearchContainer, #basket, #chartItemsTable";
+		var detailsEls = "#chartDetailsForm";
+		
+		var showEls = tabName == 'item_list' ? itemListEls : detailsEls;
+		
+		$(hiddableEls).hide();
+		$(showEls).show();	
+	};
+	
+	$('#chartUpdateBar li.active').each(showChartUpdateTab);
+	
+	$('#chartUpdateBar li').click(showChartUpdateTab);
 	//-----------------Date picker-------------------//
 	$('input[id$=Datepicker]').datepicker({
 		dateFormat: "yy-mm-dd",

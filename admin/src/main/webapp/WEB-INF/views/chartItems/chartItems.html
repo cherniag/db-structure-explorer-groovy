@@ -185,11 +185,13 @@
 	</select>
 	<textarea id="infoTextAreaTpl" rows="4" class="input-xlarge" maxlength="200" style="width: 95%; height: 80%; font-size: 11px; display:none;" ></textarea>
 	
+	<form id="changeChartDateTimeForm" method="get">
+		<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
+	</form>
+	
 	<div class="container" id="chartItemsTable" style="width: 1500px;">
-		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
-		<form id="changeChartDateTimeForm" method="get">
-			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
-		</form>
+<!-- 		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1> -->
+		
 		<div class="newsListWide">
 		
 			<ul class="table">
