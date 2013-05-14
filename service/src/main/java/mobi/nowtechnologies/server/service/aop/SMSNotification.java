@@ -1,32 +1,22 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Aspect
 public class SMSNotification {
@@ -35,80 +25,14 @@ public class SMSNotification {
 	
 	private UserNotificationService userNotificationService;
 
-	private MigHttpService migService;
-
-	private CommunityResourceBundleMessageSource messageSource;
-
 	private UserService userService;
 
-	private List<String> availableCommunities = Collections.emptyList();
-
-	private String paymentsUrl;
-
-	private String unsubscribeUrl;
-
-	private String tinyUrlService;
-
-	private String rememberMeTokenCookieName;
-
-	private NowTechTokenBasedRememberMeServices rememberMeServices;
-
-	private RestTemplate restTemplate = new RestTemplate();
-	
 	public void setUserNotificationService(UserNotificationService userNotificationService) {
 		this.userNotificationService = userNotificationService;
 	}
 
-	public String getRememberMeTokenCookieName() {
-		return rememberMeTokenCookieName;
-	}
-
-	public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
-		this.rememberMeTokenCookieName = rememberMeTokenCookieName;
-	}
-
-	public void setMigService(MigHttpService migService) {
-		this.migService = migService;
-	}
-
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	public void setRememberMeServices(NowTechTokenBasedRememberMeServices rememberMeServices) {
-		this.rememberMeServices = rememberMeServices;
-	}
-
-	public void setAvailableCommunities(String availableCommunities) {
-		if (availableCommunities == null)
-			return;
-
-		String delims = "[ ,]+";
-		this.availableCommunities = Arrays.asList(availableCommunities.split(delims));
-	}
-
-	public void setPaymentsUrl(String paymentsUrl) {
-		this.paymentsUrl = paymentsUrl;
-	}
-	
-	public String getPaymentsUrl() {
-		return paymentsUrl;
-	}
-
-	public void setUnsubscribeUrl(String unsubscribeUrl) {
-		this.unsubscribeUrl = unsubscribeUrl;
-	}
-	
-	public String getUnsubscribeUrl() {
-		return unsubscribeUrl;
-	}
-
-	public void setTinyUrlService(String tinyUrlService) {
-		this.tinyUrlService = tinyUrlService;
 	}
 	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
@@ -141,7 +65,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
 			try {
-				sendPaymentFailSMS(pendingPayment);
+				userNotificationService.sendPaymentFailSMS(pendingPayment);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -206,7 +130,7 @@ public class SMSNotification {
 				try {
 					User user = paymentDetails.getOwner();
 					if (!users.contains(user)) {
-						sendUnsubscribeAfterSMS(user);
+						userNotificationService.sendUnsubscribeAfterSMS(user);
 						users.add(user);
 					}
 				} catch (Exception e) {
@@ -233,7 +157,7 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
-				sendLowBalanceWarning(user);
+				userNotificationService.sendLowBalanceWarning(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -297,125 +221,5 @@ public class SMSNotification {
 		} finally {
 			LogUtils.removeClassNameMDC();
 		}
-	}
-
-	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null)
-			return;
-		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
-		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.after.text", new String[] { paymentsUrl, days.toString() });
-	}
-
-	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG || user.getSegment() != SegmentType.CONSUMER)
-			return;
-		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.lowBalance.text", null);
-	}
-	
-	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
-		User user = pendingPayment.getUser();
-		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-		if (user == null || paymentDetails.getMadeRetries() != paymentDetails.getRetriesOnError())
-			return;
-		
-		int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-		if (rejectDevice(user, "sms.notification.paymentFail.at."+hoursBefore+"h.not.for.device.type"))
-			return;
-		
-		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
-	}
-
-	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
-		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
-		
-		Community community = user.getUserGroup().getCommunity();
-		String communityUrl = community.getRewriteUrlParameter();
-
-		boolean wasSmsSentSuccessfully = false;
-
-		if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
-
-			if (availableCommunities.contains(communityUrl)) {
-
-				String baseUrl = msgArgs != null ? msgArgs[0] : null;
-				if (baseUrl != null) {
-					String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-					String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
-
-					MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-					request.add("url", url);
-
-					try {
-						url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
-					} catch (Exception e) {
-						LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
-					}
-
-					msgArgs[0] = url;
-				}
-
-				String message = getMessage(user, community, msgCode, msgArgs);
-				String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-
-				if (!message.isEmpty()) {
-					MigResponse migResponse = migService.makeFreeSMSRequest(user.getMobile(), message, title);
-					if (migResponse.isSuccessful()){
-						wasSmsSentSuccessfully = true;
-					}else{
-						LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", migResponse);
-					}
-				}else{
-					LOGGER.info("The sms wasn't sent cause empty sms text message");
-				}
-			} else {
-				LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
-			}
-		} else {
-			LOGGER.info("The sms wasn't sent cause rejecting");
-		}
-		
-		LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-		return wasSmsSentSuccessfully;
-	}
-
-	public boolean rejectDevice(User user, String code) {
-		Community community = user.getUserGroup().getCommunity();  
-	  	String communityUrl = community.getRewriteUrlParameter();  
-	  	String devices = messageSource.getMessage(communityUrl, code, null, null, null); 
-		for (String device : devices.split(",")) {
-			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
-				LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-		String[] codes = new String[4];
-		codes[0] = msgCodeBase;
-		if (user.getProvider() != null) {
-			codes[1] = msgCodeBase + ".for." + user.getProvider();
-			if (user.getSegment() != null) {
-				codes[2] = codes[1] + "." + user.getSegment();
-				if (user.getContract() != null) {
-					codes[3] = codes[2] + "." + user.getContract();
-				}
-			}
-		}
-
-		for (int i = codes.length-1; i >= 0; i--) {
-			if(codes[i] != null){				
-				String msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-				if (StringUtils.isNotEmpty(msg))
-					return msg;
-			}
-		}
-
-		return "";
 	}
 }

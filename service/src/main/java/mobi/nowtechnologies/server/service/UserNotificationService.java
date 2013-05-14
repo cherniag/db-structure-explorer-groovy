@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
 import java.io.UnsupportedEncodingException;
@@ -18,4 +19,8 @@ public interface UserNotificationService {
 	Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException;
 
 	Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException;
+
+	Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException;
+
+	Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException;
 }

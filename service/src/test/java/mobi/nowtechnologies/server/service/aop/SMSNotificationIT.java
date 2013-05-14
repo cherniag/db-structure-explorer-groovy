@@ -8,10 +8,12 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.util.Locale;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
@@ -86,6 +88,9 @@ public class SMSNotificationIT {
 	private MigHttpService mockMigService;
 	
 	private UserService mockUserService;
+	
+	@Resource(name="service.UserNotificationService")
+	private UserNotificationServiceImpl userNotificationServiceImpl;
 	
 	private CommunityResourceBundleMessageSource mockMessageSource;
 	
@@ -281,7 +286,7 @@ public class SMSNotificationIT {
 		mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
 		mockO2ClientService = mock(O2ClientService.class);
 		
-		fixture.setMigService(mockMigService);
+		userNotificationServiceImpl.setMigService(mockMigService);
 		fixture.setUserService(mockUserService);
 		
 		payPalPaymentService.setEntityService(entityService);
