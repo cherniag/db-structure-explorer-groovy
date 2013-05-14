@@ -337,12 +337,19 @@
 		</div>
 	</div>
 	<script th:inline="javascript">/*<![CDATA[*/
+	var filesURL = /*[[@{__${chartFilesURL}__/}]]*/ 'url';			                                                                 
+	var chart = {};
+	chart.id = /*[[${chart.id}]]*/ '1';
+	chart.name = /*[[${chart.name}]]*/ 'name';
+	chart.subtitle = /*[[${chart.subtitle}]]*/ 'subtitle';
+	chart.imageFileName = /*[[${chart.imageFileName}]]*/ 'imageFileName';
+	
 	var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';  
 	var $samePrevPositionError = /*[[#{chartItems.error.samePrevPosition}]]*/ 'Chart Item with same previous position already exists!';  
 	var $dateformat = /*[[#{chartItems.publishDate.format}]]*/ 'dd/MM/yyyy hh:mm:ss';  
 	var $mediaImgAlt = /*[[#{chartItems.page.mediasTable.media.img.alt}]]*/ 'Media image';
 	var $mediaImgBaseUrl = /*[[@{__${filesURL}__}]]*/ '###';
-	var $chartId = /*[[${chartId}]]*/ '1';
+	var $chartId = /*[[${chart.id}]]*/ '1';
 	var $selectedPublishDateTime = /*[[${urlDate}]]*/ '2012-09-05_02:45:00';
 	var $draggableProperties = { 
 			connectToSortable: "ul[id*=Sortable]",
@@ -761,6 +768,7 @@
 			data: data,
 			dataType: "json",
 			success: function(data) {
+				onSaveChart();
 				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00';
 			}
 		}).fail(function(data, x, e) {
