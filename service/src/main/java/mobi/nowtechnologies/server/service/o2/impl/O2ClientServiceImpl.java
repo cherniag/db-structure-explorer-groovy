@@ -165,7 +165,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			throw new LimitPhoneNumberValidationException();
 		}else{
 			userLog = userLogRepository.findByPhoneNumber(phoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
-			userLog = curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
+			userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
 		}
 		
 		try {
