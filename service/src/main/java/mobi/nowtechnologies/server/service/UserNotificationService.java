@@ -16,4 +16,6 @@ public interface UserNotificationService {
 	Future<Boolean> sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException;
 
 	Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException;
+
+	Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException;
 }

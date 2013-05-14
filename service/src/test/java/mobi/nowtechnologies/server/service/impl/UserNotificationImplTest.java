@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import java.util.Collections;
 import java.util.concurrent.Future;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -24,6 +25,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.UserStatusFactory;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.aop.SMSNotification;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -49,9 +52,9 @@ import org.springframework.scheduling.annotation.AsyncResult;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Utils.class })
 public class UserNotificationImplTest {
-	private UserService mockUserService;
-	private UserNotificationServiceImpl fixtureUserNotificationImpl;
-	private SMSNotification smsNotification;
+	private UserService userServiceMock;
+	private UserNotificationServiceImpl userNotificationImplFixture;
+	private SMSNotification smsNotificationMock;
 
 	/**
 	 * Run the UserNotificationImpl() constructor test.
@@ -84,16 +87,16 @@ public class UserNotificationImplTest {
 
 		Future<Boolean> futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(mockUserService.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
+		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
-		Future<Boolean> result = fixtureUserNotificationImpl.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplFixture.notifyUserAboutSuccesfullPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.TRUE, result.get());
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(mockUserService).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
 	/**
@@ -111,11 +114,11 @@ public class UserNotificationImplTest {
 
 		Future<Boolean> futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(mockUserService.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
+		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
-		fixtureUserNotificationImpl.notifyUserAboutSuccesfullPayment(user);
+		userNotificationImplFixture.notifyUserAboutSuccesfullPayment(user);
 
-		Mockito.verify(mockUserService, times(0)).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock, times(0)).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
 	/**
@@ -133,16 +136,16 @@ public class UserNotificationImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
 
-		Mockito.when(mockUserService.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new RuntimeException());
+		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new RuntimeException());
 
-		Future<Boolean> result = fixtureUserNotificationImpl.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplFixture.notifyUserAboutSuccesfullPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.FALSE, result.get());
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(mockUserService).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
 	/**
@@ -160,16 +163,16 @@ public class UserNotificationImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
 
-		Mockito.when(mockUserService.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new ServiceCheckedException(null, null, null));
+		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new ServiceCheckedException(null, null, null));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplFixture.notifyUserAboutSuccesfullPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.FALSE, result.get());
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(mockUserService).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
 	@Test
@@ -193,9 +196,9 @@ public class UserNotificationImplTest {
 		mockStatic(Utils.class);
 		when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		when(smsNotification.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getPaymentsUrl()).thenReturn(paymentUrl);
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -216,17 +219,75 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribeAfterSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
-		verify(smsNotification, times(1)).getPaymentsUrl();
-		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendUnsubscribeAfterSMS_wasSmsSentSuccessfullyIsFalse_Failure() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setCurrentPaymentDetails(paymentDetails);
+
+		final String paymentUrl = "";
+		Long epochMillis = 0L;
+
+		mockStatic(Utils.class);
+		when(Utils.getEpochMillis()).thenReturn(epochMillis);
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(2, args.length);
+				
+				String pUrl = (String) args[0];
+				String days = (String) args[1];
+				
+				assertEquals(paymentUrl, pUrl);
+				assertEquals("0", days);
+				
+				return true;
+			}
+		};
+		
+		doReturn(false).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
@@ -251,9 +312,9 @@ public class UserNotificationImplTest {
 		mockStatic(Utils.class);
 		when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		when(smsNotification.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(true);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(true);
 
-		when(smsNotification.getPaymentsUrl()).thenReturn(paymentUrl);
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -274,17 +335,17 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribeAfterSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getPaymentsUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
@@ -307,9 +368,9 @@ public class UserNotificationImplTest {
 		mockStatic(Utils.class);
 		when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		when(smsNotification.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getPaymentsUrl()).thenReturn(paymentUrl);
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -330,17 +391,17 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribeAfterSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getPaymentsUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
@@ -356,9 +417,9 @@ public class UserNotificationImplTest {
 		mockStatic(Utils.class);
 		when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		when(smsNotification.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getPaymentsUrl()).thenReturn(paymentUrl);
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -379,17 +440,17 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribeAfterSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getPaymentsUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
@@ -414,9 +475,9 @@ public class UserNotificationImplTest {
 		mockStatic(Utils.class);
 		when(Utils.getEpochMillis()).thenReturn(epochMillis);
 
-		when(smsNotification.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getPaymentsUrl()).thenReturn(paymentUrl);
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -437,17 +498,17 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doThrow(new Exception()).when(smsNotification).sendSMSWithUrl(eq(user),
+		doThrow(new Exception()).when(smsNotificationMock).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribeAfterSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribeAfterSMS(user);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
-		verify(smsNotification, times(1)).getPaymentsUrl();
-		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
@@ -468,9 +529,9 @@ public class UserNotificationImplTest {
 
 		final String unsubscribeUrl = "";
 
-		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -489,18 +550,70 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
-		verify(smsNotification, times(1)).getUnsubscribeUrl();
-		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendUnsubscribePotentialSMS_wasSmsSentSuccessfullyIsFalse_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setCurrentPaymentDetails(paymentDetails);
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(false).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 	}
 	
 	@Test
@@ -520,9 +633,9 @@ public class UserNotificationImplTest {
 
 		final String unsubscribeUrl = "";
 
-		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(true);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(true);
 
-		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -541,22 +654,22 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getUnsubscribeUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testSendUnsubscribePotentialSMS_NoPaymentDetails__Failure() throws Exception {
+	public void testSendUnsubscribePotentialSMS_NoPaymentDetails_Failure() throws Exception {
 		int nextSubPayment = 100;
 
 		String deviceTypeName = "ANDROID";
@@ -570,9 +683,9 @@ public class UserNotificationImplTest {
 
 		final String unsubscribeUrl = "";
 
-		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -591,18 +704,18 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getUnsubscribeUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -613,9 +726,9 @@ public class UserNotificationImplTest {
 
 		final String unsubscribeUrl = "";
 
-		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -634,18 +747,18 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
 
-		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
-		verify(smsNotification, times(0)).getUnsubscribeUrl();
-		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 	}
 	
 	@Test(expected=Exception.class)
@@ -665,9 +778,9 @@ public class UserNotificationImplTest {
 
 		final String unsubscribeUrl = "";
 
-		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
 
-		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+		when(smsNotificationMock.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
 
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 		
@@ -686,20 +799,382 @@ public class UserNotificationImplTest {
 			}
 		};
 		
-		doThrow(new Exception()).when(smsNotification).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		doThrow(new Exception()).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 
-		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+		Future<Boolean> result = userNotificationImplFixture.sendUnsubscribePotentialSMS(user);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
 
-		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
-		verify(smsNotification, times(1)).getUnsubscribeUrl();
-		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
-				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getUnsubscribeUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text." + deviceTypeName), argThat(matcher));
 	}
 	
+	@Test
+	public void testSendSmsOnFreeTrialExpired_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(limitedUserStatus);
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text."+deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(true, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text."+deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendSmsOnFreeTrialExpired_Subscribed_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(subscribedUserStatus);
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text."+deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text."+deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendSmsOnFreeTrialExpired_wasSmsSentSuccessfullyIsFalse_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(limitedUserStatus);
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(false).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendSmsOnFreeTrialExpired_rejectedDevice_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(limitedUserStatus);
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(true);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test()
+	public void testSendSmsOnFreeTrialExpired_WithPaymentDetails_Failure() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(limitedUserStatus);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>singletonList(paymentDetails));
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testSendSmsOnFreeTrialExpired_UserIsNull_Failure() throws Exception {
+		String deviceTypeName = "ANDROID";
+		
+		User user = null;
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doReturn(true).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotificationMock, times(0)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(0)).getPaymentsUrl();
+		verify(smsNotificationMock, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test(expected=Exception.class)
+	public void testSendSmsOnFreeTrialExpired_Failure() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+		user.setStatus(limitedUserStatus);
+
+		user.setPaymentDetailsList(Collections.<PaymentDetails>emptyList());
+
+		final String paymentUrl = "";
+
+		when(smsNotificationMock.rejectDevice(user, "sms.notification.limited.not.for.device.type")).thenReturn(false);
+
+		when(smsNotificationMock.getPaymentsUrl()).thenReturn(paymentUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String pUrl = (String) args[0];
+				
+				assertEquals(paymentUrl, pUrl);
+				
+				return true;
+			}
+		};
+		
+		doThrow(new Exception()).when(smsNotificationMock).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = userNotificationImplFixture.sendSmsOnFreeTrialExpired(user);
+
+		assertNotNull(result);
+		assertEquals(true, result.get());
+
+		verify(smsNotificationMock, times(1)).rejectDevice(user, "sms.notification.limited.not.for.device.type");
+		verify(smsNotificationMock, times(1)).getPaymentsUrl();
+		verify(smsNotificationMock, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.freeTrialExpired.text." + deviceTypeName), argThat(matcher));
+	}
 	
 
 	/**
@@ -713,13 +1188,13 @@ public class UserNotificationImplTest {
 	@Before
 	public void setUp()
 			throws Exception {
-		fixtureUserNotificationImpl = new UserNotificationServiceImpl();
+		userNotificationImplFixture = new UserNotificationServiceImpl();
 
-		mockUserService = Mockito.mock(UserService.class);
-		smsNotification = mock(SMSNotification.class);
+		userServiceMock = Mockito.mock(UserService.class);
+		smsNotificationMock = mock(SMSNotification.class);
 
-		fixtureUserNotificationImpl.setUserService(mockUserService);
-		fixtureUserNotificationImpl.setSmsNotification(smsNotification);
+		userNotificationImplFixture.setUserService(userServiceMock);
+		userNotificationImplFixture.setSmsNotification(smsNotificationMock);
 
 	}
 }

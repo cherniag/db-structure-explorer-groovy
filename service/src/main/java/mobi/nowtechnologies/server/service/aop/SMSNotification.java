@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
@@ -164,7 +165,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try {
-				sendLimitedStatusSMS(user);
+				userNotificationService.sendSmsOnFreeTrialExpired(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -298,14 +299,6 @@ public class SMSNotification {
 		}
 	}
 
-	protected void sendLimitedStatusSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()) || !user.getPaymentDetailsList().isEmpty())
-			return;
-		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.limited.status.text", new String[] { paymentsUrl });
-	}
-
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
 		if (user == null || user.getCurrentPaymentDetails() == null)
 			return;
@@ -336,36 +329,57 @@ public class SMSNotification {
 		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
 	}
 
-	public void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
+	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
+		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
+		
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
-		if (rejectDevice(user, "sms.notification.not.for.device.type"))
-			return;
-		if (!availableCommunities.contains(communityUrl))
-			return;
 
-		String baseUrl = msgArgs != null ? msgArgs[0] : null;
-		if (baseUrl != null) {
-			String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-			String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+		boolean wasSmsSentSuccessfully = false;
 
-			MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-			request.add("url", url);
+		if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
 
-			try {
-				url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
-			} catch (Exception e) {
-				LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
+			if (availableCommunities.contains(communityUrl)) {
+
+				String baseUrl = msgArgs != null ? msgArgs[0] : null;
+				if (baseUrl != null) {
+					String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
+					String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+
+					MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+					request.add("url", url);
+
+					try {
+						url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
+					} catch (Exception e) {
+						LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
+					}
+
+					msgArgs[0] = url;
+				}
+
+				String message = getMessage(user, community, msgCode, msgArgs);
+				String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
+
+				if (!message.isEmpty()) {
+					MigResponse migResponse = migService.makeFreeSMSRequest(user.getMobile(), message, title);
+					if (migResponse.isSuccessful()){
+						wasSmsSentSuccessfully = true;
+					}else{
+						LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", migResponse);
+					}
+				}else{
+					LOGGER.info("The sms wasn't sent cause empty sms text message");
+				}
+			} else {
+				LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
 			}
-
-			msgArgs[0] = url;
+		} else {
+			LOGGER.info("The sms wasn't sent cause rejecting");
 		}
-
-		String message = getMessage(user, community, msgCode, msgArgs);
-		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-
-		if (!message.isEmpty())
-			migService.makeFreeSMSRequest(user.getMobile(), message, title);
+		
+		LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
+		return wasSmsSentSuccessfully;
 	}
 
 	public boolean rejectDevice(User user, String code) {
