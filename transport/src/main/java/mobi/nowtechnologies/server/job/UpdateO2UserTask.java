@@ -44,7 +44,7 @@ public class UpdateO2UserTask {
     }
 
     private void makeUserLog(User u, UserLogStatus status, String description) {
-        UserLog oldLog = userLogRepository.findByUser(u.getId());
+        UserLog oldLog = userLogRepository.findByUser(u.getId(), UserLogType.UPDATE_O2_USER);
         UserLog userLog = new UserLog(oldLog, u, status, UserLogType.UPDATE_O2_USER, description);
 
         userLogRepository.save(userLog);

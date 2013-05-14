@@ -9,10 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserLogRepository extends JpaRepository<UserLog, Integer> {
 
     @Query(value = "select userLog from UserLog userLog " +
-            " where userLog.user.id = ?1 " +
+            " where userLog.user.id = ?1 and userLog.type = ?2" +
             " group by userLog.user " +
             " having min(userLog.last_update) = userLog.last_update")
-    UserLog findByUser(int id);
+    UserLog findByUser(int id, UserLogType userLogType);
+
+    @Query(value = "select userLog from UserLog userLog " +
+    		" where userLog.phoneNumber = ?1 and userLog.type = ?2" +
+    		" group by userLog.phoneNumber " +
+    		" having min(userLog.last_update) = userLog.last_update")
+    UserLog findByPhoneNumber(String phoneNumber, UserLogType userLogType);
     
     //day in millis date = millis_date/1000/60/60/24
     @Query(value = "select count(userLog) from UserLog userLog " +

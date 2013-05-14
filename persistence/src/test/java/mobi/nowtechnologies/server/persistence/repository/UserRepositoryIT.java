@@ -377,12 +377,21 @@ public class UserRepositoryIT {
         userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
         userLog.setLastUpdateMillis(epochSeconds+24*60*60*1000L);
         userLogRepository.save(userLog);
+        userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds-24*60*60*1000L);
+        userLogRepository.save(userLog);
 		
+        User testUser3 = UserFactory.createUser();
+		testUser3.setUserGroup(o2UserGroup);
+		testUser3 = userRepository.save(testUser3);
+		
+        userLog = new UserLog(null, testUser3, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(0);
+        userLogRepository.save(userLog);
+        
 		List<User> actualUsers = userRepository.findUsersForUpdate(epochSeconds, new PageRequest(0, 1000));
 		
 		assertNotNull(actualUsers);
-		assertEquals(1, actualUsers.size());
-		assertEquals(testUser.getId(), actualUsers.get(0).getId());
-		
+		assertEquals(2, actualUsers.size());		
 	}
 }

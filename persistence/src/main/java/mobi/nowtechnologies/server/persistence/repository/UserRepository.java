@@ -153,10 +153,10 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
 
     @Query(value = "select user from UserLog ul " +
-    		" right join ul.user user" +
+    		" join ul.user user " +
             " join user.userGroup ug " +
             " join ug.community c with c.rewriteUrlParameter = 'o2'" +
-            " where user.provider = 'o2' and ul.type = 'UPDATE_O2_USER' and ul.last_update < ?1")
+            " where user.provider = 'o2' and ul.type = 'UPDATE_O2_USER' and  ul.last_update < ?1")
     List<User> findUsersForUpdate(long afterDate, Pageable pagable);
 
     @Query(value = "select u from User u " +

@@ -38,22 +38,23 @@ public class UserLog {
 
     public UserLog(){/* 4hibernate*/}
 
-    public UserLog(UserLog oldLog, User user, UserLogStatus status, UserLogType userLogType, String description) {
+    protected UserLog(UserLog oldLog, UserLogStatus status, UserLogType userLogType, String description) {
         if(oldLog != null)
             id = oldLog.getId();
-        this.user = user;
         this.type = userLogType;
         this.last_update = System.currentTimeMillis();
         this.status = status;
         this.description = Utils.substring(description, 255);
     }
     
-    public UserLog(String phoneNumber, UserLogStatus status, UserLogType userLogType, String description) {
+    public UserLog(UserLog oldLog, String phoneNumber, UserLogStatus status, UserLogType userLogType, String description) {
+    	this(oldLog, status, userLogType, description);
     	this.phoneNumber = phoneNumber;
-    	this.last_update = System.currentTimeMillis();
-    	this.type = userLogType;
-    	this.status = status;
-    	this.description = Utils.substring(description, 255);
+    }
+    
+    public UserLog(UserLog oldLog, User user, UserLogStatus status, UserLogType userLogType, String description) {
+    	this(oldLog, status, userLogType, description);
+    	this.user = user;
     }
 
     public Integer getId() {

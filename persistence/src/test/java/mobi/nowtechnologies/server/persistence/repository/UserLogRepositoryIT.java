@@ -36,11 +36,11 @@ public class UserLogRepositoryIT {
 		String description = "validate_phonenumber";
 		UserLogType userLogType = UserLogType.VALIDATE_PHONE_NUMBER;
 		
-		UserLog userLog1 = new UserLog(phoneNumber, UserLogStatus.O2_FAIL, userLogType, description);
-		UserLog userLog2 = new UserLog(phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
-		UserLog userLog3 = new UserLog(phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
+		UserLog userLog1 = new UserLog(null, phoneNumber, UserLogStatus.O2_FAIL, userLogType, description);
+		UserLog userLog2 = new UserLog(null, phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
+		UserLog userLog3 = new UserLog(null, phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
 		userLog3.setLastUpdateMillis(userLog3.getLastUpdateMillis()-48*60*60*1000);
-		UserLog userLog4 = new UserLog(phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
+		UserLog userLog4 = new UserLog(null, phoneNumber, UserLogStatus.SUCCESS, userLogType, description);		
 		userLog4.setLastUpdateMillis(userLog4.getLastUpdateMillis()+48*60*60*1000);
 		
 		userLogRepository.save(userLog1);
