@@ -59,7 +59,7 @@ public class UserNotificationImplTest {
 	 * @generatedBy CodePro at 04.09.12 13:21
 	 */
 	@Test
-	public void testUserNotificationImpl_1()
+	public void testUserNotificationImpl_Constructor_Success()
 			throws Exception {
 		UserNotificationServiceImpl result = new UserNotificationServiceImpl();
 		assertNotNull(result);
@@ -288,8 +288,8 @@ public class UserNotificationImplTest {
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
-	@Test
-	public void testSendUnsubscribeAfterSMS_NoPaymentDetails_Success() throws Exception {
+	@Test(expected=NullPointerException.class)
+	public void testSendUnsubscribeAfterSMS_NoPaymentDetails_Failure() throws Exception {
 		int nextSubPayment = 100;
 
 		String deviceTypeName = "ANDROID";
@@ -344,8 +344,8 @@ public class UserNotificationImplTest {
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
 	
-	@Test
-	public void testSendUnsubscribeAfterSMS_UserIsNull_Success() throws Exception {
+	@Test(expected=NullPointerException.class)
+	public void testSendUnsubscribeAfterSMS_UserIsNull_Failure() throws Exception {
 		String deviceTypeName = "ANDROID";
 		
 		User user = null;
@@ -450,6 +450,257 @@ public class UserNotificationImplTest {
 		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text." + deviceTypeName), argThat(matcher));
 	}
+	
+	@Test
+	public void testSendUnsubscribePotentialSMS_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setCurrentPaymentDetails(paymentDetails);
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(true, result.get());
+
+		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotification, times(1)).getUnsubscribeUrl();
+		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test
+	public void testSendUnsubscribePotentialSMS_rejectedDevice_Success() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setCurrentPaymentDetails(paymentDetails);
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(true);
+
+		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotification, times(0)).getUnsubscribeUrl();
+		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testSendUnsubscribePotentialSMS_NoPaymentDetails__Failure() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		user.setCurrentPaymentDetails(null);
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotification, times(0)).getUnsubscribeUrl();
+		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testSendUnsubscribePotentialSMS_UserIsNull_Failure() throws Exception {
+		String deviceTypeName = "ANDROID";
+		
+		User user = null;
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doNothing().when(smsNotification).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(false, result.get());
+
+		verify(smsNotification, times(0)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotification, times(0)).getUnsubscribeUrl();
+		verify(smsNotification, times(0)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+	}
+	
+	@Test(expected=Exception.class)
+	public void testSendUnsubscribePotentialSMS_Failure() throws Exception {
+		int nextSubPayment = 100;
+
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+
+		User user = UserFactory.createUser();
+		user.setNextSubPayment(nextSubPayment);
+		user.setDeviceType(androidDeviceType);
+
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+
+		user.setCurrentPaymentDetails(paymentDetails);
+
+		final String unsubscribeUrl = "";
+
+		when(smsNotification.rejectDevice(user, "sms.notification.subscribed.not.for.device.type")).thenReturn(false);
+
+		when(smsNotification.getUnsubscribeUrl()).thenReturn(unsubscribeUrl);
+
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+		
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+				
+				assertEquals(1, args.length);
+				
+				String unsUrl = (String) args[0];
+				
+				assertEquals(unsubscribeUrl, unsUrl);
+				
+				return true;
+			}
+		};
+		
+		doThrow(new Exception()).when(smsNotification).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+
+		Future<Boolean> result = fixtureUserNotificationImpl.sendUnsubscribePotentialSMS(user);
+
+		assertNotNull(result);
+		assertEquals(true, result.get());
+
+		verify(smsNotification, times(1)).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
+		verify(smsNotification, times(1)).getUnsubscribeUrl();
+		verify(smsNotification, times(1)).sendSMSWithUrl(eq(user),
+				eq("sms.unsubscribe.potential.text" + deviceTypeName), argThat(matcher));
+	}
+	
+	
 
 	/**
 	 * Perform pre-test initialization.

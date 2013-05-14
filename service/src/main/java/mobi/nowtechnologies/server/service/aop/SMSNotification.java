@@ -101,6 +101,10 @@ public class SMSNotification {
 	public void setUnsubscribeUrl(String unsubscribeUrl) {
 		this.unsubscribeUrl = unsubscribeUrl;
 	}
+	
+	public String getUnsubscribeUrl() {
+		return unsubscribeUrl;
+	}
 
 	public void setTinyUrlService(String tinyUrlService) {
 		this.tinyUrlService = tinyUrlService;
@@ -268,7 +272,7 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
-				sendUnsubscribePotentialSMS(user);
+				userNotificationService.sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -284,7 +288,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try {
-				sendUnsubscribePotentialSMS(user);
+				userNotificationService.sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -300,14 +304,6 @@ public class SMSNotification {
 		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
 			return;
 		sendSMSWithUrl(user, "sms.limited.status.text", new String[] { paymentsUrl });
-	}
-
-	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null)
-			return;
-		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] { unsubscribeUrl });
 	}
 
 	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
