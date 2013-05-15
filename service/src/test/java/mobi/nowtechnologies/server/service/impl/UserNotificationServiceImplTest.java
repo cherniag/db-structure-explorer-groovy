@@ -2857,7 +2857,7 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setTinyUrlService(tinyUrlService );
 
 		doReturn(true).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.not.for.device.type");
-		doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(user.getUserName(), user.getToken());
+		doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(any(String.class), any(String.class));
 		
 		ResponseEntity responseEntiytMock = mock(ResponseEntity.class);
 		doReturn(url).when(responseEntiytMock).getBody();
@@ -2885,19 +2885,19 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(any(String.class), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
 		assertFalse(wasSmsSentSuccessfully);
 		
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
-		verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
+		verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(any(String.class), any(String.class));
 		verify(responseEntiytMock, times(0)).getBody();
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(any(String.class), message, title);
 	}
 	
 	@Test(expected=NullPointerException.class)

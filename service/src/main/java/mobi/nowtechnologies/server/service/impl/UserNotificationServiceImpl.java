@@ -357,8 +357,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 		
-		if (msgArgs == null)
-			throw new NullPointerException("The parameter msgArgs is null");
+		if (msgCode == null)
+			throw new NullPointerException("The parameter msgCode is null");
 
 		final UserGroup userGroup = user.getUserGroup();
 		Community community = userGroup.getCommunity();
