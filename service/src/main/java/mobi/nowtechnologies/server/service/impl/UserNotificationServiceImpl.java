@@ -67,7 +67,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		this.userService = userService;
 	}
 
-	public void setMigService(MigHttpService migService) {
+	public void setMigHttpService(MigHttpService migService) {
 		this.migService = migService;
 	}
 
@@ -108,6 +108,10 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 	public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
 		this.rememberMeTokenCookieName = rememberMeTokenCookieName;
+	}
+	
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
 	}
 
 	@Async
@@ -352,8 +356,12 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
+		
+		if (msgArgs == null)
+			throw new NullPointerException("The parameter msgArgs is null");
 
-		Community community = user.getUserGroup().getCommunity();
+		final UserGroup userGroup = user.getUserGroup();
+		Community community = userGroup.getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 
 		boolean wasSmsSentSuccessfully = false;
@@ -404,8 +412,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 	}
 
 	public boolean rejectDevice(User user, String code) {
-		LOGGER.debug("input parameters user, code: [{}], [{}]", user, code);
-
 		Community community = user.getUserGroup().getCommunity();
 		String communityUrl = community.getRewriteUrlParameter();
 		String devices = messageSource.getMessage(communityUrl, code, null, null, null);
@@ -420,6 +426,9 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
 		LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
+		
+		if (msgCodeBase == null)
+			throw new NullPointerException("The parameter msgCodeBase is null");
 
 		String msg = null;
 

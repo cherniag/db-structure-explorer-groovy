@@ -286,7 +286,7 @@ public class SMSNotificationIT {
 		mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
 		mockO2ClientService = mock(O2ClientService.class);
 		
-		userNotificationServiceImpl.setMigService(mockMigService);
+		userNotificationServiceImpl.setMigHttpService(mockMigService);
 		fixture.setUserService(mockUserService);
 		
 		payPalPaymentService.setEntityService(entityService);
