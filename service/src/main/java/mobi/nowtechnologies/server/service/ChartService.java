@@ -4,6 +4,7 @@ import java.util.*;
 
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -29,6 +30,7 @@ public class ChartService {
 	private UserService userService;
 	private ChartDetailService chartDetailService;
 	private ChartRepository chartRepository;
+	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private CloudFileService cloudFileService;
@@ -37,6 +39,10 @@ public class ChartService {
 		this.cloudFileService = cloudFileService;
 	}
 	
+	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
+		this.chartDetailRepository = chartDetailRepository;
+	}
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -71,12 +77,12 @@ public class ChartService {
 
 		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
-		List<Chart> charts = getChartsByCommunity(null, communityName);
+		List<ChartDetail> charts = getChartsByCommunity(null, communityName);
 
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-		for (Chart chart : charts) {			
-			chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getI(), createDrmIfNotExists));
+		for (ChartDetail chart : charts) {			
+			chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists));
 			playlistDtos.add(ChartAsm.toPlaylistDto(chart));
 		}
 
@@ -201,7 +207,7 @@ public class ChartService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Chart> getChartsByCommunity(String communityURL, String communityName) {
+	public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName) {
 		LOGGER.debug("input parameters communityURL, communityName: [{}] [{}]", new Object[] { communityURL });
 
 		List<Chart> charts = Collections.emptyList();
@@ -210,8 +216,36 @@ public class ChartService {
 		else if(communityName != null)
 			charts = chartRepository.getByCommunityName(communityName);
 		
+		List<ChartDetail> chartDetails = getChartDetails(charts, new Date());
+		
 		LOGGER.info("Output parameter charts=[{}]", charts);
-		return charts;
+		return chartDetails;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime) {
+		LOGGER.debug("input parameters charts: [{}]", new Object[] { charts });
+		
+		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+		long choosedPublishTimeMillis = selectedPublishDateTime.getTime();
+		
+		for(Chart chart : charts){
+			ChartDetail chartDetail = null;
+			
+			Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chart.getI());
+			if (nearestLatestPublishTimeMillis != null)
+				chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), nearestLatestPublishTimeMillis);
+			
+			if(chartDetail == null){
+				chartDetail = new ChartDetail();
+				chartDetail.setChart(chart);
+			}
+			
+			chartDetails.add(chartDetail);
+		}
+		
+		LOGGER.info("Output parameter charts=[{}]", chartDetails);
+		return chartDetails;
 	}
 	
 	@Transactional(readOnly = true)
@@ -270,18 +304,18 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Chart updateChart(Chart chart, MultipartFile imageFile) {
-		LOGGER.debug("input updateChart(Chart chart) [{}]", chart);
+	public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
+		LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
-		if(chart != null){			
-			int updated = chartRepository.updateFields(chart.getI(), chart.getName(), chart.getSubtitle(), chart.getImageFileName());
+		if(chartDetail != null){			
+			chartDetail = chartDetailRepository.save(chartDetail);
 			
-			if (updated > 0 && null != imageFile && !imageFile.isEmpty())
-				cloudFileService.uploadFile(imageFile, chart.getImageFileName());
+			if (null != imageFile && !imageFile.isEmpty())
+				cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
 		}
 		
-		LOGGER.debug("Output updateChart(Chart chart)", chart);
+		LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
 		
-		return chart;
+		return chartDetail;
 	}
 }

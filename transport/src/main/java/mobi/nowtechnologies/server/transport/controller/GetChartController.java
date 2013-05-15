@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.server.error.ThrottlingException;
@@ -10,17 +13,13 @@ import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
-import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
-import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
 import org.apache.log4j.MDC;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -198,10 +197,21 @@ public class GetChartController extends CommonController{
 	}
 	
 	public ChartDto converToOldVersion(ChartDto chartDto){
+		PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
+		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
+		for (int i = 0; i < playlistDtos.length; i++) {
+			if(playlistDtos[i].getType() == ChartType.FOURTH_CHART){
+				removedPlaylistIds.add(playlistDtos[i].getId());
+				playlistDtos[i] = null;
+			}
+		}
+		
 		ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
 		
 		for (int i = 0; i < tracks.length; i++) {
-			if(tracks[i].getChannel() != null)
+			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
+				tracks[i] = null;
+			else if(tracks[i].getChannel() != null)
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 		}
 		

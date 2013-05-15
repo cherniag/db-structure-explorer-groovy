@@ -58,6 +58,7 @@
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItems"/>

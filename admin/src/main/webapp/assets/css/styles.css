@@ -1,5 +1,11 @@
 .table_width, .nav_width, .edit_width { width: 50%; margin: 10px;}
 
+.iframe {
+	display: none;
+	wight: 1px;
+	height: 1px;
+}
+
 .table_margin {
 	margin-top: 10px;
 }
@@ -814,4 +820,8 @@ table.hor-minimalist-a td {
 .ads_table {
 	border-bottom: 1px solid #DDDDDD!important;
 	border-top: none!important;
+}
+
+.nav-pills > li > a {
+    color: #0088CC;
 }

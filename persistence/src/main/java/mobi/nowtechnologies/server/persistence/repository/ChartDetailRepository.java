@@ -53,6 +53,10 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	List<ChartDetail> findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
+	@Query("select chartDetail from ChartDetail chartDetail where chartDetail.media is null and chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
+	ChartDetail findChartWithDetailsByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
+			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
+	
 	@Modifying
 	@Query(value="update ChartDetail chartDetail " +
 			"set " +

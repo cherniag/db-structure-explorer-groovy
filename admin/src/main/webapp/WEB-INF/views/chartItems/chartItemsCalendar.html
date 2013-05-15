@@ -7,13 +7,6 @@
 			<div th:substituteby="tpl::navbar"></div>
 			<div class="container">
 			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
-			<form id="addNew" style="padding-left: 25px;">
-					<ul class="nav nav-pills table_margin">
-						<li class="active">
-							<a href="#" th:text="#{chartItems.page.button.chart.edit}" onclick="showChartEditDialog();">Edit Chart</a>
-						</li>
-					</ul>
-			</form>
 			
 				<div class="pageWindow simplePopup" id="popupNotificationError">
 					<div class="pageWindowContent simpleTextPopup">

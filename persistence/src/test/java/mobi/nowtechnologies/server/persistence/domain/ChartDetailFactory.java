@@ -1,0 +1,24 @@
+package mobi.nowtechnologies.server.persistence.domain;
+
+
+
+public class ChartDetailFactory
+ {
+	private ChartDetailFactory() {
+	}
+
+
+	public static ChartDetail createChartDetail() {
+		Chart chart = ChartFactory.createChart();
+		ChartDetail chartDetail = new ChartDetail();
+		chartDetail.setChart(chart);
+		chartDetail.setSubtitle("subtitle");
+		chartDetail.setTitle("title");
+		chartDetail.setInfo("desc");
+		chartDetail.setPosition((byte)1);
+		chartDetail.setImageFileName("imageFilename");
+		chartDetail.setImageTitle("imageTitle");
+		
+		return chartDetail;
+	}
+}
