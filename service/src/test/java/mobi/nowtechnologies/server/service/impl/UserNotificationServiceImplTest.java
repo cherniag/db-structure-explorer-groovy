@@ -62,7 +62,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Utils.class, UserNotificationServiceImpl.class })
-public class UserNotificationImplTest {
+public class UserNotificationServiceImplTest {
 	private UserService userServiceMock;
 	private UserNotificationServiceImpl userNotificationImplSpy;
 	private SMSNotification smsNotificationMock;
