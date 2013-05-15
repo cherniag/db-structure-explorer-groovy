@@ -2885,7 +2885,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(any(String.class), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(any(String.class), eq(message), eq(title));
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2897,7 +2897,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(any(String.class), message, title);
+		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(any(String.class), eq(message), eq(title));
 	}
 	
 	@Test(expected=NullPointerException.class)
