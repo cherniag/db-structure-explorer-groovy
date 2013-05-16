@@ -11,9 +11,7 @@ import java.util.*;
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -113,11 +111,13 @@ public class ChartItemControllerTest extends TestCase {
 		chart.setType(ChartType.BASIC_CHART);
 		Date selectedPublishDateTime = new Date();
 		String filesUrl = "";
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
 		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
 		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
 		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
@@ -127,7 +127,6 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
-		ModelAndViewAssert.assertModelAttributeValue(result, "chartId", chartId);
 		
 		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
@@ -152,10 +151,12 @@ public class ChartItemControllerTest extends TestCase {
 		chart.setType(ChartType.HOT_TRACKS);
 		Date selectedPublishDateTime = new Date();
 		String filesUrl = "";
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
 		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
 		when(chartService.getChartById(anyByte())).thenReturn(chart);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
@@ -166,7 +167,6 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
-		ModelAndViewAssert.assertModelAttributeValue(result, "chartId", chartId);
 		
 		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
@@ -191,6 +191,8 @@ public class ChartItemControllerTest extends TestCase {
 		chart.setType(ChartType.OTHER_CHART);
 		Date selectedPublishDateTime = new Date();
 		String filesUrl = "";
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
@@ -205,7 +207,6 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
-		ModelAndViewAssert.assertModelAttributeValue(result, "chartId", chartId);
 		
 		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
@@ -225,7 +226,9 @@ public class ChartItemControllerTest extends TestCase {
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
 		Byte chartId = new Byte((byte) 1);
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		
+		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
 		doThrow(ServiceException.getInstance("")).when(chartDetailService).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
 
 		fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);

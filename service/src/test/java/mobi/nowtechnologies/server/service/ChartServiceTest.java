@@ -187,18 +187,24 @@ public class ChartServiceTest {
 	public void testUpdateChart_Success()
 		throws Exception {		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+		ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
+		chartDetail1.setI(chartDetail.getI());
+		chartDetail1.setVersion(5);
 		MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 		
+		when(mockChartDetailRepository.findOne(eq(chartDetail.getI()))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
 		when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString())).thenReturn(true);
 		
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
 		assertNotNull(result);
+		assertEquals(chartDetail1.getVersion(), result.getVersion());
 		assertEquals(chartDetail.getTitle(), result.getTitle());
 		assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
 		assertEquals(chartDetail.getImageFileName(), result.getImageFileName());
 		
+		verify(mockChartDetailRepository, times(1)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
 		verify(mockCloudFileService, times(1)).uploadFile(any(MultipartFile.class), anyString());
 	}
@@ -207,6 +213,7 @@ public class ChartServiceTest {
 	public void testUpdateChart_FileNull_Success()
 		throws Exception {		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+		chartDetail.setI(null);
 		MultipartFile imageFile = new MockMultipartFile("file", "".getBytes());
 		
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
@@ -219,6 +226,7 @@ public class ChartServiceTest {
 		assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
 		assertEquals(chartDetail.getImageFileName(), result.getImageFileName());
 		
+		verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
 		verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
 	}
@@ -227,6 +235,7 @@ public class ChartServiceTest {
 	public void testUpdateChart_FileEmpty_Success()
 		throws Exception {		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+		chartDetail.setI(null);
 		MultipartFile imageFile = null;
 		
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
@@ -239,6 +248,7 @@ public class ChartServiceTest {
 		assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
 		assertEquals(chartDetail.getImageFileName(), result.getImageFileName());
 		
+		verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
 		verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
 	}
