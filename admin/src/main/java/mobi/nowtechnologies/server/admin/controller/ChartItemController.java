@@ -90,7 +90,7 @@ public class ChartItemController extends AbstractCommonController{
 		LOGGER.debug("input parameters request getChartItemsPage(selectedPublishDateTime, chartId): [{}], [{}]", new Object[] { selectedPublishDateTime, chartId });
 		
 		Chart chart = chartService.getChartById(chartId);
-		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime).get(0);
+		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, true).get(0);
 		List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDateTime, changePosition);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
 		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);

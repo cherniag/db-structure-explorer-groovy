@@ -6,6 +6,8 @@ alter table tb_chartDetail add column image_filename varchar(255);
 alter table tb_chartDetail add column image_title varchar(255);
 alter table tb_chartDetail add column subtitle char(50);
 alter table tb_chartDetail add column title char(50);
+alter table tb_chartDetail modify column chgPosition int null;
+alter table tb_chartDetail modify column prevPosition tinyint null;
 
 alter table tb_charts drop column subtitle;
 alter table tb_charts drop column image_filename;

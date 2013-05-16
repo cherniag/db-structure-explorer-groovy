@@ -216,25 +216,37 @@ public class ChartService {
 		else if(communityName != null)
 			charts = chartRepository.getByCommunityName(communityName);
 		
-		List<ChartDetail> chartDetails = getChartDetails(charts, new Date());
+		List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
 		
 		LOGGER.info("Output parameter charts=[{}]", charts);
 		return chartDetails;
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime) {
+	public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
 		LOGGER.debug("input parameters charts: [{}]", new Object[] { charts });
 		
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
-		long choosedPublishTimeMillis = selectedPublishDateTime.getTime();
+		
+		if(charts == null)
+			return chartDetails;
+		
+		long choosedPublishTimeMillis = selectedPublishDateTime != null ? selectedPublishDateTime.getTime() : new Date().getTime();
 		
 		for(Chart chart : charts){
 			ChartDetail chartDetail = null;
 			
-			Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chart.getI());
-			if (nearestLatestPublishTimeMillis != null)
-				chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), nearestLatestPublishTimeMillis);
+			chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), choosedPublishTimeMillis);
+			if(chartDetail == null){
+				Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chart.getI());
+				if (nearestLatestPublishTimeMillis != null){
+					chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), nearestLatestPublishTimeMillis);
+					if(clone && chartDetail!=null){						
+						chartDetail = ChartDetail.newInstance(chartDetail);
+						chartDetail.setPublishTimeMillis(choosedPublishTimeMillis);
+					}
+				}	
+			}
 			
 			if(chartDetail == null){
 				chartDetail = new ChartDetail();
@@ -307,7 +319,12 @@ public class ChartService {
 	public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
 		LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
-		if(chartDetail != null){			
+		if(chartDetail != null){
+			if(chartDetail.getI() != null){
+				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
+				chartDetail.setVersion(createdOne.getVersion());
+			}
+			
 			chartDetail = chartDetailRepository.save(chartDetail);
 			
 			if (null != imageFile && !imageFile.isEmpty())

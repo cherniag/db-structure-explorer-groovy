@@ -11,6 +11,7 @@ public class ChartDetailFactory
 	public static ChartDetail createChartDetail() {
 		Chart chart = ChartFactory.createChart();
 		ChartDetail chartDetail = new ChartDetail();
+		chartDetail.setI((int)(Math.random()*100));
 		chartDetail.setChart(chart);
 		chartDetail.setSubtitle("subtitle");
 		chartDetail.setTitle("title");

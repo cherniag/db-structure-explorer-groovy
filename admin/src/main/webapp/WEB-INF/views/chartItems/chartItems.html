@@ -239,7 +239,7 @@
 					<form id="addNew">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
-								<a href="#" th:text="#{chartItems.page.button.save}" onclick="onSaveChartItems()">Save</a>
+								<a href="#" th:text="#{chartItems.page.button.save}" onclick="onSaveChartItems(); return 0;">Save</a>
 							</li>
 						</ul>
 					</form>
@@ -341,6 +341,7 @@
 		</div>
 	</div>
 	<script th:inline="javascript">/*<![CDATA[*/	
+	var $saving = false;                                          
 	var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';  
 	var $samePrevPositionError = /*[[#{chartItems.error.samePrevPosition}]]*/ 'Chart Item with same previous position already exists!';  
 	var $dateformat = /*[[#{chartItems.publishDate.format}]]*/ 'dd/MM/yyyy hh:mm:ss';  
@@ -755,21 +756,28 @@
 	}
 	
 	function onSaveChartItems(){
+		if($saving)
+			return;
+		
+		$saving = true;
 		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
 		var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
 		
-		$.ajax({
-			url : url,
-			type : "post",
-			contentType: "application/json; charset=utf-8",
-			data: data,
-			dataType: "json",
-			success: function(data) {
-				onSaveChart();
-			}
-		}).fail(function(data, x, e) {
-			alert("Can't save chart item list");
-		});
+		
+			saved = true;
+			$.ajax({
+				url : url,
+				type : "post",
+				contentType: "application/json; charset=utf-8",
+				data: data,
+				dataType: "json",
+				success: function(data) {
+					onSaveChart();
+				}
+			}).fail(function(data, x, e) {
+				$saving = false;
+				alert("Can't save chart item list");
+			});
 	}
 	
 	function chartItemsFromUl(ul){

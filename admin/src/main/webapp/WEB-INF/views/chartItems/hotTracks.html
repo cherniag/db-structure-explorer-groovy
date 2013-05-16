@@ -342,6 +342,7 @@
 		</div>
 	</div>
 	<script th:inline="javascript">/*<![CDATA[*/
+	var $saving = false;
 	var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';  
 	var $samePrevPositionError = /*[[#{chartItems.error.samePrevPosition}]]*/ 'Chart Item with same previous position already exists!';  
 	var $dateformat = /*[[#{chartItems.publishDate.format}]]*/ 'dd/MM/yyyy hh:mm:ss';  
@@ -751,6 +752,10 @@
 	}
 	
 	function onSaveChartItems(){
+		if($saving)
+			return;
+		
+		$saving = true;
 		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
 		var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
 		
@@ -764,6 +769,7 @@
 				onSaveChart();
 			}
 		}).fail(function(data, x, e) {
+			$saving = false;
 			alert("Can't save chart item list");
 		});
 	}

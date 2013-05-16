@@ -138,7 +138,7 @@ public class ChartController extends AbstractCommonController {
 			selectedPublishDateTime = new Date();
 
 		Chart chart = chartService.getChartById(chartId);
-		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime).get(0);
+		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, false).get(0);
 		List<ChartDetail> chartItems = chartService.getActualChartItems(chartId, selectedPublishDateTime);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartItems);
 		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
@@ -184,29 +184,6 @@ public class ChartController extends AbstractCommonController {
 		modelAndView.addObject("filesURL", filesURL);
 		modelAndView.addObject("chartId", chartId);
 
-		return modelAndView;
-	}
-
-	/**
-	 * Updating chart items positions for selected date
-	 * 
-	 * @param request
-	 * @param chartItemPositionDto
-	 *            - chart items positions
-	 * @param selectedPublishDateTime
-	 *            - selected date and time for which we update chart items positions
-	 * @return
-	 */
-	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
-	public ModelAndView updateChartItemsPositions(HttpServletRequest request,
-			@ModelAttribute(ChartItemPositionDto.CHART_ITEMS_POSITIONS_DTO) ChartItemPositionDto chartItemPositionDto,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
-
-		LOGGER.debug("input parameters request, chartItemPositionDto, selectedPublishDateTime, chartId: [{}], [{}], [{}], [{}]", new Object[] { request,
-				chartItemPositionDto, selectedPublishDateTime, chartId });
-
-		chartService.updateChartItemsPositions(chartItemPositionDto);
-		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId + "/" + dateTimeFormat.format(selectedPublishDateTime));
 		return modelAndView;
 	}
 	

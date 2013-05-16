@@ -141,7 +141,7 @@ public class ChartDetailService {
 
 		final List<ChartDetail> chartDetails;
 		if (nearestLatestPublishTimeMillis != null)
-			chartDetails = chartDetailRepository.getActualChartDetails(chartId, nearestLatestPublishTimeMillis);
+			chartDetails = chartDetailRepository.getActualChartItems(chartId, nearestLatestPublishTimeMillis);
 		else
 			chartDetails = Collections.EMPTY_LIST;
 
@@ -469,7 +469,7 @@ public class ChartDetailService {
 	public boolean deleteChartItems(byte chartId, long selectedPublishDateTime) {
 		LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
-		List<ChartDetail> chartDetails = chartDetailRepository.getActualChartDetails(chartId, selectedPublishDateTime);
+		List<ChartDetail> chartDetails = chartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime);
 
 		chartDetailRepository.delete(chartDetails);
 		boolean success = true;

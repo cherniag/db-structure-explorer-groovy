@@ -45,7 +45,7 @@ public class ChartDetail {
 	private Chart chart;
 
 	@Column(name = "media", insertable = false, updatable = false)
-	private int mediaId;
+	private Integer mediaId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "media")
@@ -57,10 +57,10 @@ public class ChartDetail {
 
 	private byte position;
 
-	private byte prevPosition;
+	private Byte prevPosition;
 
 	@Column(name = "chgPosition", insertable = false, updatable = false)
-	private int chgPositionId;
+	private Integer chgPositionId;
 
 	@Enumerated(EnumType.ORDINAL)
 	private ChgPosition chgPosition;
@@ -73,10 +73,10 @@ public class ChartDetail {
 	@Column(name = "image_title")
 	private String imageTitle;
 
-	@Column(name = "subtitle", columnDefinition = "char(50)", nullable = false)
+	@Column(name = "title", columnDefinition = "char(50)", nullable = true)
 	private String title;
 
-	@Column(name = "subtitle", columnDefinition = "char(50)", nullable = false)
+	@Column(name = "subtitle", columnDefinition = "char(50)", nullable = true)
 	private String subtitle;
 
 	private long publishTimeMillis;
@@ -114,7 +114,7 @@ public class ChartDetail {
 
 	public void setMedia(Media media) {
 		this.media = media;
-		mediaId = media.getI() != null ? media.getI() : 0;
+		mediaId = media.getI() != null ? media.getI() : null;
 	}
 
 	public String getImageFileName() {
@@ -161,11 +161,11 @@ public class ChartDetail {
 		return mediaId;
 	}
 
-	public byte getPrevPosition() {
+	public Byte getPrevPosition() {
 		return prevPosition;
 	}
 
-	public void setPrevPosition(byte prevPosition) {
+	public void setPrevPosition(Byte prevPosition) {
 		this.prevPosition = prevPosition;
 	}
 
@@ -177,7 +177,7 @@ public class ChartDetail {
 		this.chgPosition = chgPosition;
 	}
 
-	public int getChgPositionId() {
+	public Integer getChgPositionId() {
 		return chgPositionId;
 	}
 
@@ -365,9 +365,14 @@ public class ChartDetail {
 		newChartDetail.setChart(chartDetail.getChart());
 		newChartDetail.setChgPosition(chartDetail.getChgPosition());
 		newChartDetail.setInfo(chartDetail.getInfo());
-		newChartDetail.setMedia(chartDetail.getMedia());
+		if(chartDetail.getMedia() != null)
+			newChartDetail.setMedia(chartDetail.getMedia());
 		newChartDetail.setPosition(chartDetail.getPosition());
 		newChartDetail.setPrevPosition(chartDetail.getPrevPosition());
+		newChartDetail.setTitle(chartDetail.getTitle());
+		newChartDetail.setSubtitle(chartDetail.getSubtitle());
+		newChartDetail.setImageFileName(chartDetail.getImageFileName());
+		newChartDetail.setImageTitle(chartDetail.getImageTitle());
 		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
 
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
