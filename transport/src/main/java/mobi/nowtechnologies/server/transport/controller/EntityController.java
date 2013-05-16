@@ -1,10 +1,37 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.StringUtils.hasText;
+
+import java.io.StringReader;
+import java.lang.Thread.State;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
+import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DeviceUserDataService;
+import mobi.nowtechnologies.server.service.DrmService;
+import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
+import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.service.PromotionService;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDetailsDtoValidator;
@@ -18,30 +45,22 @@ import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
-import java.lang.Thread.State;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * EntityController
@@ -175,18 +194,51 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
 			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-			@PathVariable("community") String community) {
-		ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
-				timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt);
+			@PathVariable("community") String community) throws Exception {
 
-		User user = userService.findByNameAndCommunity(userName, community);
-		AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
+		User user = null;
+		boolean isFailed = false;
+		try {
+			LOGGER.info("command proccessing started");
+			
+			if (iphoneToken != null)
+				pushNotificationToken = iphoneToken;
+			
+			if (org.springframework.util.StringUtils.hasText(deviceUID))
+				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
+			else
+				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-		ActivationStatus activationStatus = user.getActivationStatus();
-		accountCheckDTO.setActivation(activationStatus);
-		accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+			logAboutSuccessfullAccountCheck();
 
-		return mav;
+			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
+					pushNotificationToken, deviceType, transactionReceipt);
+			final Object[] objects = new Object[] { accountCheckDTO };
+			proccessRememberMeToken(objects);
+
+			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
+			
+			if (isNotBlank(xtifyToken)) {
+				user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+			}
+
+			user = userService.findByNameAndCommunity(userName, community);
+			
+			ActivationStatus activationStatus = user.getActivationStatus();
+			accountCheckDTO.setActivation(activationStatus);
+			accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+
+			return mav;
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
+		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
+			LOGGER.info("command processing finished");
+		}
 	}
 
 	public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
@@ -210,56 +262,53 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) {
+			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) throws Exception {
 
-		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, transactionReceipt);
-		if (isNotBlank(xtifyToken)) {
-			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
-		}
-
-		return mav;
-	}
-
-	public ModelAndView accountCheck(
-			HttpServletRequest httpServletRequest,
-			String appVersion,
-			String communityName,
-			String apiVersion,
-			String userName,
-			String userToken,
-			String timestamp,
-			String deviceType,
-			String deviceUID,
-			String pushNotificationToken,
-			String iphoneToken,
-			String transactionReceipt) {
+		User user = null;
+		boolean isFailed = false;
 		try {
-			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);
-
+			LOGGER.info("command proccessing started");
+			
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
-
-			User user = null;
+			
 			if (org.springframework.util.StringUtils.hasText(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-			MDC.put("ACC_CHECK", "");
-			try {
-				LOGGER.info("The login was successful");
-			} finally {
-				MDC.remove("ACC_CHECK");
-			}
+			logAboutSuccessfullAccountCheck();
 
 			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType, transactionReceipt);
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
+			
+			if (isNotBlank(xtifyToken)) {
+				user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+			}
+
+			return mav;
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
+		}
+	}
+
+	private void logAboutSuccessfullAccountCheck() {
+		MDC.put("ACC_CHECK", "");
+		try {
+			LOGGER.info("The login was successful");
+		} finally {
+			MDC.remove("ACC_CHECK");
 		}
 	}
 

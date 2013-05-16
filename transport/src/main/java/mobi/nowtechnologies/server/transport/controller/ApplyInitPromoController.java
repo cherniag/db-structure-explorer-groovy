@@ -63,11 +63,11 @@ public class ApplyInitPromoController extends CommonController {
             return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
 			isFailed = true;
-			logProfileDate(communityName, null, null, user, e);
+			logProfileData(communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed){
-				logProfileDate(communityName, null, null, user, null);
+				logProfileData(communityName, null, null, user, null);
 			}
             LOGGER.info("command processing finished");
         }
@@ -103,17 +103,17 @@ public class ApplyInitPromoController extends CommonController {
             throw new UserCredentialsException("Bad user credentials");
         }catch (UserCredentialsException ce){
         	isFailed = true;
-			logProfileDate(community, null, null, user, ce);
+			logProfileData(community, null, null, user, ce);
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
             throw ce;
         }catch (RuntimeException re){
         	isFailed = true;
-			logProfileDate(community, null, null, user, re);
+			logProfileData(community, null, null, user, re);
             LOGGER.error("APPLY_INIT_PROMO error [{}] for user[{}] in community[{}] otac_token[{}]",re.getMessage(), userName, community, token);
             throw re;
         }finally {
         	if (!isFailed){
-				logProfileDate(community, null, null, user, null);
+				logProfileData(community, null, null, user, null);
 			}
            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }

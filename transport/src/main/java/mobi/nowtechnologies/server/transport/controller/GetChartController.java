@@ -31,13 +31,14 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  */
 @Controller
-public class GetChartController extends CommonController{
+public class GetChartController extends CommonController {
 
 	private UserService userService;
 	private ChartService chartService;
 	private ThrottlingService throttlingService;
 
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART", "*/{apiVersion:3\\.4\\.0}/GET_CHART"})
+	@RequestMapping(method = RequestMethod.POST, value = { "/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART",
+			"*/{apiVersion:3\\.4\\.0}/GET_CHART" })
 	public ModelAndView getChart(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -45,7 +46,9 @@ public class GetChartController extends CommonController{
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -62,19 +65,19 @@ public class GetChartController extends CommonController{
 				throw new NullPointerException("The argument aTimestamp is null");
 
 			String ip = Utils.getIpFromRequest(request);
-			User user = userService.checkCredentials(userName, userToken,
+			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
-			objects[1] = converToOldVersion((ChartDto)objects[1]);
-			
+			objects[1] = converToOldVersion((ChartDto) objects[1]);
+
 			for (Object object : objects) {
 				if (object instanceof ChartDto) {
 					ChartDto chartDto = (ChartDto) object;
-					
+
 					ChartDetailDto[] chartDetailDtos = chartDto.getChartDetailDtos();
 					for (ChartDetailDto chartDetailDto : chartDetailDtos) {
-						if (chartDetailDto instanceof BonusChartDetailDto){
+						if (chartDetailDto instanceof BonusChartDetailDto) {
 							BonusChartDetailDto bonusChartDetailDto = (BonusChartDetailDto) chartDetailDto;
 
 							final String songTitle = bonusChartDetailDto.getTitle();
@@ -91,12 +94,20 @@ public class GetChartController extends CommonController{
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}}/GET_CHART", "*/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "*/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}}/GET_CHART"})
+
+	@RequestMapping(method = RequestMethod.POST, value = { "/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}}/GET_CHART",
+			"*/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}\\.[1-9]{1,3}}/GET_CHART", "*/{apiVersion:[3-9]{1,2}\\.[4-5][0-9]{0,2}}/GET_CHART" })
 	public ModelAndView getChart_WithChanelSplintered(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -104,7 +115,9 @@ public class GetChartController extends CommonController{
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -120,22 +133,29 @@ public class GetChartController extends CommonController{
 			if (null == timestamp)
 				throw new NullPointerException("The argument aTimestamp is null");
 
-			User user = userService.checkCredentials(userName, userToken,
+			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
-			objects[1] = converToOldVersion((ChartDto)objects[1]);
-			
+			objects[1] = converToOldVersion((ChartDto) objects[1]);
+
 			proccessRememberMeToken(objects);
-			
+
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/3.6/GET_CHART", "*/{community:o2}/3.6/GET_CHART"})
+
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6/GET_CHART", "*/{community:o2}/3.6/GET_CHART" })
 	public ModelAndView getChart_O2(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -145,20 +165,33 @@ public class GetChartController extends CommonController{
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-			@PathVariable("community") String community) {
-		
+			@PathVariable("community") String community) throws Exception {
+		User user = null;
+		boolean isFailed = false;
+		try {
+			LOGGER.info("command proccessing started");
 			throttling(request, userName, deviceUID, community);
-		
-		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-		
-		Object[] objects = chartService.processGetChartCommand(user, community, true);
-		objects[1] = converToOldVersion((ChartDto)objects[1]);
-		
-		proccessRememberMeToken(objects);
-		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+
+			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+
+			Object[] objects = chartService.processGetChartCommand(user, community, true);
+			objects[1] = converToOldVersion((ChartDto) objects[1]);
+
+			proccessRememberMeToken(objects);
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
+		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
+			LOGGER.info("command processing finished");
+		}
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART"})
+
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART" })
 	public ModelAndView getChart_O2_v3d7(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -168,24 +201,36 @@ public class GetChartController extends CommonController{
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-			@PathVariable("community") String community) {
+			@PathVariable("community") String community) throws Exception {
+		User user = null;
+		boolean isFailed = false;
+		try {
+			LOGGER.info("command proccessing started");
+			throttling(request, userName, deviceUID, community);
 
-		throttling(request, userName, deviceUID, community);
-		
-		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-		
-		Object[] objects = chartService.processGetChartCommand(user, community, false);
-		
-		proccessRememberMeToken(objects);
-		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+
+			Object[] objects = chartService.processGetChartCommand(user, community, false);
+
+			proccessRememberMeToken(objects);
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
+		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
+			LOGGER.info("command processing finished");
+		}
 	}
-	
 
 	protected void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {
 		try {
 			LogUtils.putClassNameMDC(ThrottlingServiceImpl.class);
 			MDC.put("device", deviceUID);
-			if(throttlingService.handle(request, userName, community)) {
+			if (throttlingService.handle(request, userName, community)) {
 				LOGGER.info("accepting");
 			} else {
 				LOGGER.info("throttling");
@@ -196,18 +241,18 @@ public class GetChartController extends CommonController{
 			MDC.remove("device");
 		}
 	}
-	
-	public ChartDto converToOldVersion(ChartDto chartDto){
+
+	public ChartDto converToOldVersion(ChartDto chartDto) {
 		ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
-		
+
 		for (int i = 0; i < tracks.length; i++) {
-			if(tracks[i].getChannel() != null)
+			if (tracks[i].getChannel() != null)
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 		}
-		
+
 		return chartDto;
 	}
-	
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -215,7 +260,7 @@ public class GetChartController extends CommonController{
 	public void setChartService(ChartService chartService) {
 		this.chartService = chartService;
 	}
-	
+
 	public void setThrottlingService(ThrottlingService throttlingService) {
 		this.throttlingService = throttlingService;
 	}

@@ -260,7 +260,7 @@ public abstract class CommonController {
 		return rememberMeToken;
 	}
 	
-	public void logProfileDate(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
+	public void logProfileData(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
 		String result = "success";
 		String errorMessage = null;
 		if (exception != null) {
@@ -283,6 +283,7 @@ public abstract class CommonController {
 			}
 		}
 
+		Integer newUserId = null;
 		String newUserName = null;
 		String newDeviceUID = null;
 		String newDeviceModel = null;
@@ -290,6 +291,7 @@ public abstract class CommonController {
 		String newMobile = null;
 		String newCommunityRewriteUri = null;
 		if (user != null) {
+			newUserId = user.getId();
 			newUserName = user.getUserName();
 			newDeviceUID = user.getDeviceUID();
 			newDeviceModel = user.getDeviceModel();
@@ -326,8 +328,8 @@ public abstract class CommonController {
 			}
 		}
 		
-		PROFILE_LOGGER.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
-				new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
+		PROFILE_LOGGER.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserId={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
+				new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
 						executionTimeMillis, errorMessage });
 	}
 	

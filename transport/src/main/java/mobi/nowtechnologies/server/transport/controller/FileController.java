@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.service.UserService;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
@@ -57,16 +59,17 @@ public class FileController extends CommonController {
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(value = "RESOLUTION", required = false) String resolution,
 			final HttpServletRequest request,
-			HttpServletResponse response) {
-		LOGGER.info("command proccessing for [{}] user, [{}] community", userName, communityName);
+			HttpServletResponse response) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
+			LOGGER.info("command proccessing started");
 			if (userName == null)
 				throw new NullPointerException("The parameter userName is null");
 			if (communityName == null)
 				throw new NullPointerException("The parameter communityName is null");
 			
-			@SuppressWarnings("deprecation")
-			User user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+			user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 			final File file = fileService.getFile(mediaId, FileType
 					.valueOf(fileType), resolution, user);
 			final String contentType = getContentType(file.getName());
@@ -97,8 +100,15 @@ public class FileController extends CommonController {
 					return contentType;
 				}
 			}, "EMPTY", new Object());
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
 		} finally {
-			LOGGER.info("GET_FILE command processing finished");
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
+			LOGGER.info("command processing finished");
 		}
 	}
 
