@@ -51,7 +51,7 @@ public class SMSNotificationIT {
 	public PowerMockRule rule = new PowerMockRule();
 
 	@Autowired
-	private SMSNotification fixture;
+	private SMSNotification smsNotificationFixture;
 	
 	@Autowired
 	@Qualifier("service.WeeklyUpdateService")
@@ -89,8 +89,7 @@ public class SMSNotificationIT {
 	
 	private UserService mockUserService;
 	
-	@Resource(name="service.UserNotificationService")
-	private UserNotificationServiceImpl userNotificationServiceImpl;
+	private UserNotificationService userNotificationServiceMock;
 	
 	private CommunityResourceBundleMessageSource mockMessageSource;
 	
@@ -286,8 +285,10 @@ public class SMSNotificationIT {
 		mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
 		mockO2ClientService = mock(O2ClientService.class);
 		
-		userNotificationServiceImpl.setMigHttpService(mockMigService);
-		fixture.setUserService(mockUserService);
+		userNotificationServiceMock = mock(UserNotificationService.class);
+		
+		smsNotificationFixture.setUserService(mockUserService);
+		smsNotificationFixture.setUserNotificationService(userNotificationServiceMock);
 		
 		payPalPaymentService.setEntityService(entityService);
 		payPalPaymentService.setHttpService(mockPaypalHttpService);
