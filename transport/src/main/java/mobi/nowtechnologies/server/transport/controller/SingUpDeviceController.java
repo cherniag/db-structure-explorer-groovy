@@ -68,11 +68,11 @@ public class SingUpDeviceController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
 			isFailed = true;
-			logProfileDate(null, userDeviceDetailsDto, null, user, e);
+			logProfileData(null, userDeviceDetailsDto, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed){
-				logProfileDate(null, userDeviceDetailsDto, null, user, null);
+				logProfileData(null, userDeviceDetailsDto, null, user, null);
 			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
@@ -107,11 +107,11 @@ public class SingUpDeviceController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
 			isFailed = true;
-			logProfileDate(null, userDeviceDetailsDto, null, user, e);
+			logProfileData(null, userDeviceDetailsDto, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed){
-				logProfileDate(null, userDeviceDetailsDto, null, user, null);
+				logProfileData(null, userDeviceDetailsDto, null, user, null);
 			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
@@ -153,17 +153,17 @@ public class SingUpDeviceController extends CommonController {
 		        return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (ValidationException ve){
         	isFailed = true;
-			logProfileDate(community, userDeviceDetailsDto, null, user, ve);
+			logProfileData(community, userDeviceDetailsDto, null, user, ve);
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]",ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
         }catch (RuntimeException re){
         	isFailed = true;
-			logProfileDate(community, userDeviceDetailsDto, null, user, re);
+			logProfileData(community, userDeviceDetailsDto, null, user, re);
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]",re.getMessage(), userDeviceDetailsDto, community);
             throw re;
 		} finally {
 			if (!isFailed){
-				logProfileDate(community, userDeviceDetailsDto, null, user, null);
+				logProfileData(community, userDeviceDetailsDto, null, user, null);
 			}
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]",userDeviceDetailsDto, community);
 		}

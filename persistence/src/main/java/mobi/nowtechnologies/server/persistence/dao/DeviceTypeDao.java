@@ -3,10 +3,14 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
+
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,8 @@ import java.util.Map;
  *
  */
 public class DeviceTypeDao {
+	public static final String USER_RESULT_MAP_KEY = "user";
+	public static final String DEVICE_SET_RESULT_MAP_KEY = "deviceSet";
 	public static final String IOS = "IOS";
 	public static final String NONE = "NONE";
 	public static final String ANDROID = "ANDROID";
@@ -94,12 +100,15 @@ public class DeviceTypeDao {
 		return iOSDeviceType;
 	}
 
-	public static DeviceSet setDevice(int userId, String deviceType,
+	//TODO Add Transaction, refactoring
+	public static Map<String, Object> setDevice(int userId, String deviceType,
 			String deviceUID) {
 		if (null == deviceType)
 			throw new PersistenceException("The parameter deviceType is null");
 		if (null == deviceUID)
 			throw new PersistenceException("The parameter deviceUID is null");
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>(2);
 
 		DeviceSet deviceSet = new DeviceSet();
 		User user = entityDao.findById(User.class, userId);
@@ -110,7 +119,11 @@ public class DeviceTypeDao {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
 			deviceSet.setStatus(DeviceSet.Status.FAIL);
-			return deviceSet;
+			
+			resultMap.put(DEVICE_SET_RESULT_MAP_KEY, deviceSet);
+			resultMap.put(USER_RESULT_MAP_KEY, user);
+			
+			return resultMap;
 		}
 
 		DeviceType deviceType2 = DEVICE_TYPE_MAP_ID_AS_KEY_AND_DEVICE_TYPE_VALUE.get(deviceTypeId);
@@ -121,8 +134,13 @@ public class DeviceTypeDao {
 		if (deviceType.equals(DeviceTypeDao.IOS))
 			user.setDeviceModel(deviceType);
 		entityDao.updateEntity(user);
+		
 		deviceSet.setStatus(DeviceSet.Status.OK);
-		return deviceSet;
+		
+		resultMap.put(DEVICE_SET_RESULT_MAP_KEY, deviceSet);
+		resultMap.put(USER_RESULT_MAP_KEY, user);
+		
+		return resultMap;
 	}
 	
 	public static byte findIdByName(String name) {

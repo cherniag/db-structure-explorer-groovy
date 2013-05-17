@@ -20,7 +20,7 @@ public class DeviceUserDataService {
 		return deviceUserDataRepository.findByXtifyToken(token);
 	}
 
-	public void saveXtifyToken(String xtifyToken, String userName, String communityName, String deviceUID) {
+	public User saveXtifyToken(String xtifyToken, String userName, String communityName, String deviceUID) {
 		User user = userService.findByNameAndCommunity(userName, communityName);
 		Community community = communityService.getCommunityByName(communityName);
         String communityUrl = community.getRewriteUrlParameter();
@@ -28,6 +28,7 @@ public class DeviceUserDataService {
 
         DeviceUserData data = fillDeviceUserData(xtifyToken, deviceUID, communityUrl, userId);
         save(data);
+        return user;
     }
 
     private DeviceUserData fillDeviceUserData(String xtifyToken, String deviceUID, String communityUrl, int userId) {

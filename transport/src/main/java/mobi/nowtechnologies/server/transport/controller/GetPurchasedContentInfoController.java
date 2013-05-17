@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DrmService;
 import mobi.nowtechnologies.server.service.UserService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +40,9 @@ public class GetPurchasedContentInfoController extends CommonController {
 				@RequestParam("API_VERSION") String apiVersion,
 				@RequestParam("USER_NAME") String userName,
 				@RequestParam("USER_TOKEN") String userToken,
-				@RequestParam("TIMESTAMP") String timestamp) {
+				@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -55,7 +58,7 @@ public class GetPurchasedContentInfoController extends CommonController {
 			if (null == timestamp)
 				throw new NullPointerException("The argument aTimestamp is null");
 
-			User user = userService.checkCredentials(userName, userToken,
+			user = userService.checkCredentials(userName, userToken,
 						timestamp, communityName);
 
 			Object[] objects = drmService.getPurchasedContentInfo(user, communityName);
@@ -63,7 +66,14 @@ public class GetPurchasedContentInfoController extends CommonController {
 
 			return new ModelAndView(view, Response.class.toString(), new Response(
 						objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(communityName, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(communityName, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}
