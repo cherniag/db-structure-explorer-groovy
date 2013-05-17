@@ -31,7 +31,7 @@ public class ChartDto {
 	@Length(min = 1, max = 50)
 	private String subtitle;
 
-	@FileSize(min = 1, max = 30720)
+	@FileSize(min = 1, max = 50000)
 	private MultipartFile file;
 
 	private String imageFileName;
