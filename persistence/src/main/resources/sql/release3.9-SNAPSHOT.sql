@@ -8,6 +8,7 @@ alter table tb_chartDetail add column subtitle char(50);
 alter table tb_chartDetail add column title char(50);
 alter table tb_chartDetail modify column chgPosition int null;
 alter table tb_chartDetail modify column prevPosition tinyint null;
+alter table tb_chartDetail modify column media integer unsigned null;
 
 alter table tb_charts drop column subtitle;
 alter table tb_charts drop column image_filename;
