@@ -154,7 +154,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6\\.[8-9]/GET_CHART", "*/{community:o2}/3.6/GET_CHART" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.6/GET_CHART", "*/{community:o2}/3.6/GET_CHART" })
 	public ModelAndView getChart_O2(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -190,7 +190,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.7\\.[8-9]/GET_CHART", "*/{community:o2}/3.7/GET_CHART" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.7/GET_CHART", "*/{community:o2}/3.7/GET_CHART" })
 	public ModelAndView getChart_O2_v3d7(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -292,7 +292,7 @@ public class GetChartController extends CommonController{
 		for (int i = 0; i < tracks.length; i++) {
 			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
 				tracks[i] = null;
-			else if(tracks[i].getChannel() != null && version.contains("3.7"))
+			else if(tracks[i].getChannel() != null && !version.contains("3.7"))
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 		}
 		
