@@ -792,7 +792,9 @@ public class EntityController extends CommonController {
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/SIGN_UP", "**/SIGN_UP" })
 	public void signUp(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
-			BindingResult result) {
+			BindingResult result) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		LOGGER.info("command processing started");
 		try {
 			if (result.hasErrors()) {
@@ -807,8 +809,15 @@ public class EntityController extends CommonController {
 
 			userRegDetailsDto.setIpAddress(remoteAddr);
 
-			userService.registerUser(userRegDetailsDto);
+			user = userService.registerUser(userRegDetailsDto);
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}
