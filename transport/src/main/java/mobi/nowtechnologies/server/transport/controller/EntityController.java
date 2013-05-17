@@ -816,38 +816,13 @@ public class EntityController extends CommonController {
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(userRegDetailsDto.getCommunityName(), null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_FACEBOOK_DETAILS", "**/UPDATE_USER_FACEBOOK_DETAILS" })
-	public ModelAndView updateUserFacebookDetails(HttpServletRequest request, @Valid @ModelAttribute(UserFacebookDetailsDto.NAME) UserFacebookDetailsDto userFacebookDetailsDto, BindingResult result) {
-		try {
-			LOGGER.info("command processing started");
-			if (result.hasErrors()) {
-				List<ObjectError> objectErrors = result.getAllErrors();
-
-				for (ObjectError objectError : objectErrors) {
-					throw ValidationException.getInstance(objectError.getDefaultMessage());
-				}
-			}
-
-			String remoteAddr = Utils.getIpFromRequest(request);
-			userFacebookDetailsDto.setIpAddress(remoteAddr);
-
-			AccountCheckDTO accountCheckDTO = userService.updateUserFacebookDetails(userFacebookDetailsDto);
-
-			final Object[] objects = new Object[] { accountCheckDTO };
-			proccessRememberMeToken(objects);
-
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
-
-		} finally {
-			LOGGER.info("command processing finished");
-		}
-	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_DETAILS", "**/UPDATE_USER_DETAILS" })
 	public ModelAndView updateUserDetails(HttpServletRequest request, @Valid @ModelAttribute(UserDetailsDto.NAME) UserDetailsDto userDetailsDto, BindingResult result) {
