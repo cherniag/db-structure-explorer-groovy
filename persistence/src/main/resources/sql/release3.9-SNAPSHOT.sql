@@ -12,6 +12,23 @@ alter table tb_chartDetail modify column prevPosition tinyint null;
 alter table tb_charts drop column subtitle;
 alter table tb_charts drop column image_filename;
 
- --delete media constraint on chartDetail
+insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type)
+select
+'Fourth Chart',
+ch.numTracks,
+ch.genre,
+ch.timestamp,
+ch.numBonusTracks,
+'FOURTH_CHART'
+from tb_charts ch
+where ch.type='BASIC_CHART';
 
+insert into community_charts (chart_id, community_id)
+select
+ch.i,
+cc.community_id
+from tb_charts ch
+join tb_charts ch1 on ch1.timestamp = ch.timestamp and ch1.type = 'BASIC_CHART'
+join community_charts cc on cc.chart_id = ch1.i
+where ch.type = 'FOURTH_CHART';
 
