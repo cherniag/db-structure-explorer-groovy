@@ -373,7 +373,9 @@ public class EntityController extends CommonController {
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -394,14 +396,21 @@ public class EntityController extends CommonController {
 						"The argument timestamp is null");
 			LOGGER.info("command after USER_NAME parameter validation on null");
 
-			User user = userService.checkCredentials(userName, userToken,
+			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 			Object[] objects = drmService.processBuyTrackCommand(user, isrc,
 					communityName);
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(objects));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(communityName, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(communityName, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}
