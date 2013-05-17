@@ -184,12 +184,18 @@
 			</option>
 	</select>
 	<textarea id="infoTextAreaTpl" rows="4" class="input-xlarge" maxlength="200" style="width: 95%; height: 80%; font-size: 11px; display:none;" ></textarea>
-	
-	<div class="container" id="chartItemsTable" style="width: 1500px;">
-		<h1 class="head" th:text="#{chartItems.page.head.headline}">Chart Items</h1>
+		
+	<div class="container" id="chartItemsTable" style="width: 1500px;">	
+		<br/>
+		<br/>
 		<form id="changeChartDateTimeForm" method="get">
 			<p style="margin-bottom: 25px;"> <span th:text="#{chartItems.page.chartItemsTable.changeDate.text}">Date:</span> <input type="text" id="datepicker_dateChange" class="datepicker_dateChange" style="margin-bottom: 0px;" /> <span th:text="#{chartItems.page.chartItemsTable.changeTime.text}">Time:</span> <input type="text" id="timepicker_timeChange" class="timepicker_timeChange" style="margin-bottom: 0px;" /></p>
 		</form>
+		
+		<ul th:substituteby="tpl::chartUpdateBar"></ul>
+	
+		<div th:substituteby="tpl::chartDetailsForm"></div>
+		
 		<div class="newsListWide">
 		
 			<ul class="table">
@@ -233,14 +239,14 @@
 					<form id="addNew">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
-								<a href="#" th:text="#{chartItems.page.button.save}" onclick="onSaveChartItems()">Save</a>
+								<a href="#" th:text="#{chartItems.page.button.save}" onclick="onSaveChartItems(); return 0;">Save</a>
 							</li>
 						</ul>
 					</form>
 					<form id="updatePositionsForm" class="del_btn">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
-								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chartId}__/(selectedPublishDateTime=${cancelUrlDate})}">Cancel</a>
+								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chart.id}__/(selectedPublishDateTime=${cancelUrlDate})}">Cancel</a>
 							</li>
 						</ul>
 					</form>
@@ -272,7 +278,7 @@
 						</ul>
 					</div>
 				</div>
-				<div>
+				<div id="mediaSearchContainer">
 					<h1 class="head" th:text="#{chartItems.page.mediasTable.title}">Media List</h1>
 					<form id="mediaSearchForm" class="wellWithoutBorder">
 						<input type="text" id="q" name="q" class="q" style="margin-bottom: 0!important;"/>
@@ -334,13 +340,14 @@
 			</div>
 		</div>
 	</div>
-	<script th:inline="javascript">/*<![CDATA[*/
+	<script th:inline="javascript">/*<![CDATA[*/	
+	var $saving = false;                                          
 	var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';  
 	var $samePrevPositionError = /*[[#{chartItems.error.samePrevPosition}]]*/ 'Chart Item with same previous position already exists!';  
 	var $dateformat = /*[[#{chartItems.publishDate.format}]]*/ 'dd/MM/yyyy hh:mm:ss';  
 	var $mediaImgAlt = /*[[#{chartItems.page.mediasTable.media.img.alt}]]*/ 'Media image';
 	var $mediaImgBaseUrl = /*[[@{__${filesURL}__}]]*/ '###';
-	var $chartId = /*[[${chartId}]]*/ '1';
+	var $chartId = /*[[${chart.id}]]*/ '1';
 	var $selectedPublishDateTime = /*[[${urlDate}]]*/ '2012-09-05_02:45:00';
 	var $draggableProperties = { 
 			connectToSortable: "ul[id*=Sortable]",
@@ -381,7 +388,7 @@
 	function updateChartDateTime(newDateTime) {
 		
 		
-		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/2012-09-25_02:45:00';
+		var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__/}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/2012-09-25_02:45:00';
 		url+=newDateTime;
 		
 		$.ajax({
@@ -391,7 +398,7 @@
 				
 			},
 			success : function(data) {
-				var urlToRedirect = /*[[@{/chartsNEW/__${chartId}__/}]]*/ '2012-09-25_02:45:00';
+				var urlToRedirect = /*[[@{/chartsNEW/__${chart.id}__/}]]*/ '2012-09-25_02:45:00';
 				location.href = urlToRedirect+newDateTime;
 			},
 			error : function() {
@@ -445,7 +452,7 @@
 		
 		// Search media
 		$("#searchButton").click(function(e) {
-			var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
+			var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
 			$('#searchResult .loading-container').show();
 			$('#mediaList').empty();
 			$.ajax({
@@ -749,21 +756,28 @@
 	}
 	
 	function onSaveChartItems(){
-		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
-		var url = /*[[@{/chartsNEW/__${chartId}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
+		if($saving)
+			return;
 		
-		$.ajax({
-			url : url,
-			type : "post",
-			contentType: "application/json; charset=utf-8",
-			data: data,
-			dataType: "json",
-			success: function(data) {
-				window.location = /*[[@{/charts/__${chartId}__/(selectedPublishDateTime=${urlDate})}]]*/ '/jadmin/charts/3?selectedPublishDateTime=2012-09-05_00:00:00';
-			}
-		}).fail(function(data, x, e) {
-			alert("Can't save chart item list");
-		});
+		$saving = true;
+		var data = chartItemsFromUl($( "#chartItemsSortable, #chartItemsBasketSortable" ));
+		var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00.json';
+		
+		
+			saved = true;
+			$.ajax({
+				url : url,
+				type : "post",
+				contentType: "application/json; charset=utf-8",
+				data: data,
+				dataType: "json",
+				success: function(data) {
+					onSaveChart();
+				}
+			}).fail(function(data, x, e) {
+				$saving = false;
+				alert("Can't save chart item list");
+			});
 	}
 	
 	function chartItemsFromUl(ul){

@@ -42,9 +42,9 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 
         SOAPMessage message = smc.getMessage();
         try {
-            System.out.println(toString(message));
+            LOG.trace(toString(message));
         } catch (Exception e) {
-            System.out.println("Exception in SOAPLoggingHandler: " + e);
+            LOG.trace("Exception in SOAPLoggingHandler: " + e);
         }
     }
 
@@ -54,7 +54,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
             message.writeTo(out);
             return out.toString();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOG.debug(e.getMessage());
         }
         return String.valueOf(message);
     }

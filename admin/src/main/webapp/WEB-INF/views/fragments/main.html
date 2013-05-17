@@ -1,122 +1,168 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-	<head th:fragment="head">
-		<title></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="" />
-		<meta name="author" content="" />
-		<link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
-		<link rel="stylesheet" th:href="@{/assets/css/bootstrap-responsive.css}" />
-		<link rel="stylesheet" th:href="@{/assets/css/bootstrap-combobox.css}" />
-		<link rel="stylesheet" th:href="@{/assets/css/styles.css}" />
-		<link rel="stylesheet" th:href="@{/assets/css/ui-lightness/jquery-ui-1.8.21.custom.css}" />
-		<link rel="stylesheet" th:href="@{/assets/css/jquery.ui.timepicker.css}" />
-		
-		<style type="text/css">
-			section {
-				padding-top:60px;
-			}
-		</style>
-		
-		<script type="text/javascript" th:src="@{/assets/js/jquery-1.7.2.min.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.21.custom.min.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/bootstrap.min.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/bootstrap-dropdown.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/jquery.ui.timepicker.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/tiny_mce/tiny_mce.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/main.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/date.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/bootstrap-tooltip.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/bootstrap-affix.js}"></script>
-		<script type="text/javascript" th:src="@{/assets/js/bootstrap-combobox.js}"></script>
+<head th:fragment="head">
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap-responsive.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap-combobox.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/styles.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/ui-lightness/jquery-ui-1.8.21.custom.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/jquery.ui.timepicker.css}" />
+
+<style type="text/css">
+section {
+	padding-top: 60px;
+}
+</style>
+
+<script type="text/javascript" th:src="@{/assets/js/jquery-1.7.2.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.21.custom.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/bootstrap-dropdown.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery.ui.timepicker.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/tiny_mce/tiny_mce.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/main.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/chart_update.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/date.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/bootstrap-tooltip.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/bootstrap-affix.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/bootstrap-combobox.js}"></script>
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-transition.js}"></script> -->
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-modal.js}"></script> -->
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/jquery.simplemodal.1.4.2.min.js}"></script> -->
-		<script th:inline="javascript">/*<![CDATA[*/
-			$(function() {
-				var url = /*[[@{'/charts/list.json'}]]*/ '/jadmin/charts/list.json';
-				$.ajax({
-					url:url, 
-					contentType:'application/json',
-					success: function(data){
-						for (i in data.CHART_DTO_LIST)  {
-							$("ul#dropdownCharts").append('<li><a>'+data.CHART_DTO_LIST[i].name+'</a></li>'); 
-							var $chartId = data.CHART_DTO_LIST[i].id;
-							var $w = location.protocol+'//'+location.host;
-							var $url = /*[[@{'/charts/'}]]*/ '/jadmin/charts/';
-							var $li = $("ul#dropdownCharts li a").attr("href", $w+$url+$chartId);
-							$li.appendTo($("ul#dropdownCharts"))
-						}
-					}
-				});
-				$('.dropdown-toggle').dropdown()
-			});
-		/*]]>*/</script>
-	</head>
-	<body>
-		<div th:fragment="navbar" class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<div class="nav-collapse collapse">
-						<a th:href="@{/}" class="brand">MusicQubed Admin Console</a>
-						<ul class="nav" th:object="${#httpServletRequest}">
-							<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
-							<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
-							<li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#"  th:text="#{navbar.users}">Users</a></li>
-							<li th:class="*{pathInfo}=='news' or *{pathInfo}=='/news/' or *{pathInfo}=='/news/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/news}">News</a></li>
-							<li th:class="*{pathInfo}=='/messages' or *{pathInfo}=='/messages/' or *{pathInfo}=='/messages/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/messages}">Messages</a></li>
-							<li th:class="*{pathInfo}=='/ads' or *{pathInfo}=='/ads/' or *{pathInfo}=='/ads/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/ads}">Ads</a></li>
-							<li th:class="*{pathInfo}=='/offers' or *{pathInfo}=='/offers/new' or *{pathInfo}=='/offers/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/offers}">Store</a></li>
-							
-							<!-- <li th:class="*{pathInfo}=='/chartItems' or *{pathInfo}=='/chartItems/new' or *{pathInfo}=='/chartItems/__' ? 'active'" th:if="*{userPrincipal}">
+<script th:inline="javascript">
+	/*         */
+	$(function() {
+		var url = /*[[@{'/charts/list.json'}]]*/'/jadmin/charts/list.json';
+		$.ajax({
+			url : url,
+			contentType : 'application/json',
+			success : function(data) {
+				for (i in data.CHART_DTO_LIST) {
+					$("ul#dropdownCharts").append(
+							'<li><a>' + data.CHART_DTO_LIST[i].name
+									+ '</a></li>');
+					var $chartId = data.CHART_DTO_LIST[i].id;
+					var $w = location.protocol + '//' + location.host;
+					var $url = /*[[@{'/charts/'}]]*/'/jadmin/charts/';
+					var $li = $("ul#dropdownCharts li a").attr("href",
+							$w + $url + $chartId);
+					$li.appendTo($("ul#dropdownCharts"))
+				}
+			}
+		});
+		$('.dropdown-toggle').dropdown()
+	});
+	/*   */
+</script>
+</head>
+<body>
+	<div th:fragment="navbar" class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<div class="nav-collapse collapse">
+					<a th:href="@{/}" class="brand">MusicQubed Admin Console</a>
+					<ul class="nav" th:object="${#httpServletRequest}">
+						<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
+						<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
+						<li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#" th:text="#{navbar.users}">Users</a></li>
+						<li th:class="*{pathInfo}=='news' or *{pathInfo}=='/news/' or *{pathInfo}=='/news/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/news}">News</a></li>
+						<li th:class="*{pathInfo}=='/messages' or *{pathInfo}=='/messages/' or *{pathInfo}=='/messages/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/messages}">Messages</a></li>
+						<li th:class="*{pathInfo}=='/ads' or *{pathInfo}=='/ads/' or *{pathInfo}=='/ads/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/ads}">Ads</a></li>
+						<li th:class="*{pathInfo}=='/offers' or *{pathInfo}=='/offers/new' or *{pathInfo}=='/offers/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/offers}">Store</a></li>
+
+						<!-- <li th:class="*{pathInfo}=='/chartItems' or *{pathInfo}=='/chartItems/new' or *{pathInfo}=='/chartItems/__' ? 'active'" th:if="*{userPrincipal}">
 								<a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#"  th:text="#{navbar.chart}">Chart <b class="caret"></b></a>
 							</li> -->
-							<li class="dropdown" th:if="*{userPrincipal}">
-			                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Chart<b class="caret"></b></a>
-			                    <ul class="dropdown-menu" id="dropdownCharts">
-			                      
-			                    </ul>
-			                  </li>
-							<li th:class="*{pathInfo}=='/tracks' or *{pathInfo}=='/tracks/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/tracks/list}">Tracks</a></li>
-<!--							<li th:class="*{pathInfo}=='/policies'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/policies}">Payment Policies</a></li>-->
-							
-							<li class="divider-vertical"></li>
-							<li class="pull-right" th:if="*{userPrincipal}"><p class="navbar-text" th:utext="*{userPrincipal.name + '&nbsp;'}">Hello user</p></li>
-							
-							<li class="pull-right" th:if="*{userPrincipal}">
-								<form class="navbar-form pull-right">
-									<select class="span2" th:title="@{/(community='')}" onChange="location.href=this.title+this.value">
-										<option th:each="commnity : ${communities}" th:value="${commnity.url}" th:text="${commnity.url}" th:selected="${commnity.active}?'selected'" />
-									</select>
-								</form>
-							</li>
-							
-							<li class="pull-right" th:if="*{userPrincipal}"><a th:href="@{/signout}">Sign out</a></li>
-						</ul>
-					</div>
+						<li class="dropdown" th:if="*{userPrincipal}"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Chart<b class="caret"></b></a>
+							<ul class="dropdown-menu" id="dropdownCharts">
+
+							</ul></li>
+						<li th:class="*{pathInfo}=='/tracks' or *{pathInfo}=='/tracks/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/tracks/list}">Tracks</a></li>
+						<!--							<li th:class="*{pathInfo}=='/policies'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/policies}">Payment Policies</a></li>-->
+
+						<li class="divider-vertical"></li>
+						<li class="pull-right" th:if="*{userPrincipal}"><p class="navbar-text" th:utext="*{userPrincipal.name + '&nbsp;'}">Hello user</p></li>
+
+						<li class="pull-right" th:if="*{userPrincipal}">
+							<form class="navbar-form pull-right">
+								<select class="span2" th:title="@{/(community='')}" onChange="location.href=this.title+this.value">
+									<option th:each="commnity : ${communities}" th:value="${commnity.url}" th:text="${commnity.url}" th:selected="${commnity.active}?'selected'" />
+								</select>
+							</form>
+						</li>
+
+						<li class="pull-right" th:if="*{userPrincipal}"><a th:href="@{/signout}">Sign out</a></li>
+					</ul>
 				</div>
 			</div>
 		</div>
-    	
-    	<div th:fragment="paginationBar" th:if="${PAGE_LIST_DTO != null}" id="paginationBar" class="pagination pagination-centered" th:with="n=5">
-    			<ul th:with="startPage=${PAGE_LIST_DTO.page-(n-n/2-1) > 1 and PAGE_LIST_DTO.total >= n ? (PAGE_LIST_DTO.page+n/2 > PAGE_LIST_DTO.total ? PAGE_LIST_DTO.total-(n-1) : PAGE_LIST_DTO.page-(n-n/2-1)) : 1}">
-    				<li th:if="${PAGE_LIST_DTO.total > 0} and ${PAGE_LIST_DTO.page > 1}"><a href="#" th:name="${PAGE_LIST_DTO.page-1}">&lt;&lt;</a></li>
-    				<li th:if="${PAGE_LIST_DTO.total >= startPage}" th:class="${PAGE_LIST_DTO.page}==${startPage} ? 'active'"><a href="#" th:name="${startPage}" th:text="${startPage}">1</a></li>
-					<li th:if="${PAGE_LIST_DTO.total >= startPage+1}" th:class="${PAGE_LIST_DTO.page}==${startPage+1} ? 'active'"><a href="#" th:name="${startPage+1}" th:text="${startPage+1}">2</a></li>
-					<li th:if="${PAGE_LIST_DTO.total >= startPage+2}" th:class="${PAGE_LIST_DTO.page}==${startPage+2} ? 'active'"><a href="#" th:name="${startPage+2}" th:text="${startPage+2}">3</a></li>
-					<li th:if="${PAGE_LIST_DTO.total >= startPage+3}" th:class="${PAGE_LIST_DTO.page}==${startPage+3} ? 'active'"><a href="#" th:name="${startPage+3}" th:text="${startPage+3}">4</a></li>
-					<li th:if="${PAGE_LIST_DTO.total >= startPage+4}" th:class="${PAGE_LIST_DTO.page}==${startPage+4} ? 'active'"><a href="#" th:name="${startPage+4}" th:text="${startPage+4}">5</a></li>
-					<li th:if="${PAGE_LIST_DTO.total > 0} and ${PAGE_LIST_DTO.total > PAGE_LIST_DTO.page}"><a href="#" th:name="${PAGE_LIST_DTO.page+1}">&gt;&gt;</a></li>
-    			</ul>
-    		</div>
-		
-		<footer th:fragment="footer">
-			<div class="row-fluid show-grid">
-				<div class="span12">
-					Copyright &copy; 2012 <a href="http://www.musicqubed.com/">www.MusicQubed.com</a> ltd. all rights reserved
+	</div>
+
+	<div th:fragment="paginationBar" th:if="${PAGE_LIST_DTO != null}" id="paginationBar" class="pagination pagination-centered" th:with="n=5">
+		<ul
+			th:with="startPage=${PAGE_LIST_DTO.page-(n-n/2-1) > 1 and PAGE_LIST_DTO.total >= n ? (PAGE_LIST_DTO.page+n/2 > PAGE_LIST_DTO.total ? PAGE_LIST_DTO.total-(n-1) : PAGE_LIST_DTO.page-(n-n/2-1)) : 1}">
+			<li th:if="${PAGE_LIST_DTO.total > 0} and ${PAGE_LIST_DTO.page > 1}"><a href="#" th:name="${PAGE_LIST_DTO.page-1}">&lt;&lt;</a></li>
+			<li th:if="${PAGE_LIST_DTO.total >= startPage}" th:class="${PAGE_LIST_DTO.page}==${startPage} ? 'active'"><a href="#" th:name="${startPage}" th:text="${startPage}">1</a></li>
+			<li th:if="${PAGE_LIST_DTO.total >= startPage+1}" th:class="${PAGE_LIST_DTO.page}==${startPage+1} ? 'active'"><a href="#" th:name="${startPage+1}" th:text="${startPage+1}">2</a></li>
+			<li th:if="${PAGE_LIST_DTO.total >= startPage+2}" th:class="${PAGE_LIST_DTO.page}==${startPage+2} ? 'active'"><a href="#" th:name="${startPage+2}" th:text="${startPage+2}">3</a></li>
+			<li th:if="${PAGE_LIST_DTO.total >= startPage+3}" th:class="${PAGE_LIST_DTO.page}==${startPage+3} ? 'active'"><a href="#" th:name="${startPage+3}" th:text="${startPage+3}">4</a></li>
+			<li th:if="${PAGE_LIST_DTO.total >= startPage+4}" th:class="${PAGE_LIST_DTO.page}==${startPage+4} ? 'active'"><a href="#" th:name="${startPage+4}" th:text="${startPage+4}">5</a></li>
+			<li th:if="${PAGE_LIST_DTO.total > 0} and ${PAGE_LIST_DTO.total > PAGE_LIST_DTO.page}"><a href="#" th:name="${PAGE_LIST_DTO.page+1}">&gt;&gt;</a></li>
+		</ul>
+	</div>
+
+	<ul th:fragment="chartUpdateBar" class="nav nav-pills" id="chartUpdateBar">
+		<li name="itemList" class="active"><a th:text="#{chartItems.page.chart.tab.itemList}" href="#">Item List</a></li>
+		<li name="details"><a th:text="#{chartItems.page.chart.tab.details}" href="#">Details</a></li>
+	</ul>
+
+	<div th:fragment="chartDetailsForm" id="chartDetailsForm">
+		<form id="chart-edit-form" action="#" th:action="@{/charts/__${chart.id}__/__${urlDate}__}" method="post" enctype="multipart/form-data" accept-charset="UTF-8" style="width:900px">
+			<div class="control-group">
+				<input type="hidden" name="id" /> 
+				<input type="hidden" name="chartDetailId" /> 
+				<input type="hidden" name="imageFileName" />
+				<div class="filtersSelect">
+					<div id="selectImageDiv">
+						<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.image}">Select Image:</strong></label> <img class="addedImage" src="###" width="240" height="180" /> 
+						<br />
+						<br /> 
+						<input id="file" name="file" type="file" accept="image" />
+					</div>
 				</div>
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.position}">Position:</strong></label> <input type="number" class="quantity" maxlength="2" min="0" max="99" name="position" style="width: 98%;" />
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="50" name="name" style="width: 98%;" />
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.subtitle}">Subtitle:</strong></label> <input type="text" maxlength="50" name="subtitle" style="width: 98%;" />
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.image.title}">Image title:</strong></label> <input type="text" maxlength="50" name="imageTitle" style="width: 98%;" />
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.description}">Description:</strong></label> <input type="text" maxlength="50" name="description" style="width: 98%;" />
 			</div>
-		</footer>
-	</body>
+		</form>
+		<iframe class="iframe" src="#" id="iframeTarget" name="iframeTarget"></iframe>
+		<script th:inline="javascript">/*<![CDATA[*/
+				var filesURL = /*[[@{__${chartFilesURL}__/}]]*/ 'url';			                                                                 
+				var chart = {};
+				chart.id = /*[[${chart.id}]]*/ '1';
+				chart.name = /*[[${chart.name}]]*/ 'name';
+				chart.position = /*[[${chart.position}]]*/ '0';
+				chart.subtitle = /*[[${chart.subtitle}]]*/ 'subtitle';
+				chart.imageTitle = /*[[${chart.imageTitle}]]*/ 'imageTitle';
+				chart.description = /*[[${chart.description}]]*/ 'description';
+				chart.imageFileName = /*[[${chart.imageFileName}]]*/ 'imageFileName';
+				chart.chartDetailId = /*[[${chart.chartDetailId}]]*/ '1';
+		/*]]>*/</script>
+	</div>
+
+	<footer th:fragment="footer">
+		<div class="row-fluid show-grid">
+			<div class="span12">
+				Copyright &copy; 2012 <a href="http://www.musicqubed.com/">www.MusicQubed.com</a> ltd. all rights reserved
+			</div>
+		</div>
+	</footer>
+</body>
 </html>

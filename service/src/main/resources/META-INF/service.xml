@@ -132,6 +132,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="chartRepository" ref="chartRepository" />
+		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>

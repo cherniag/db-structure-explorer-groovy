@@ -1,22 +1,22 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.enums.ChartType;
+
 /**
- * @author Titov Mykhaylo (titov)
+ * 
+ * @author Alexander Kolpakov (akolpakov)
  *
  */
 public class ChartFactory
- {
+{
+	private ChartFactory() {
+	}
 
 	public static Chart createChart() {
-		final Chart chart = new Chart();
-		
-		chart.setI(Byte.MIN_VALUE);
-		chart.setImageFileName("imageFileName");
-		chart.setName("name");
-		chart.setNumBonusTracks(Byte.MIN_VALUE);
-		chart.setNumTracks(Byte.MIN_VALUE);
-		chart.setSubtitle("subtitle");
-		chart.setTimestamp(Integer.MIN_VALUE);
+		Chart chart = new Chart();
+		chart.setI(new Byte((byte) 1));
+		chart.setType(ChartType.BASIC_CHART);
+		chart.setGenre(new Genre());
 		
 		return chart;
 	}

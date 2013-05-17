@@ -40,7 +40,7 @@
 	</logger>
 	-->
 	
-	<!-- Hibernate Logger
+	<!-- Hibernate Logger-->
 	<logger name="net.sf.hibernate.cfg">
 		<level value="INFO"></level>
 		<appender-ref ref="admin-RollingFileAppender" />
@@ -57,7 +57,7 @@
 		<level value="TRACE"></level>
 		<appender-ref ref="admin-RollingFileAppender" />
 	</logger>
-	-->
+	
 	
 	<!-- Musicqubed Logger -->
 	<logger name="mobi.nowtechnologies.server.service">

@@ -48,6 +48,7 @@
 				<entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
 				<entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
 				<entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
+				<entry key ="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
 			</map>
 		</property>	
 	</bean>
@@ -58,11 +59,13 @@
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
+		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItems"/>
 				<entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
 				<entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
+				<entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
 			</map>
 		</property>		    
 	</bean>

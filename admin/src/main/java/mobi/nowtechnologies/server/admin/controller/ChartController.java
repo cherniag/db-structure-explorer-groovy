@@ -87,7 +87,7 @@ public class ChartController extends AbstractCommonController {
 		LOGGER.debug("input parameters request [{}]", new Object[] { request });
 
 		String communityURL = RequestUtils.getCommunityURL();
-		List<Chart> charts = chartService.getChartsByCommunity(communityURL, null);
+		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null);
 		List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
 
 		ModelAndView modelAndView = new ModelAndView("charts/charts");
@@ -102,15 +102,17 @@ public class ChartController extends AbstractCommonController {
 	 * @param chartId id of chart
 	 * @return redirect to the chart calender page
 	 */
-	@RequestMapping(value = "/charts/{chartId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
 	public ModelAndView updateChart(
 			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
-			@PathVariable("chartId") Byte chartId) {
+			@PathVariable("chartId") Byte chartId,
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime) {
 
 		LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
 
-		Chart chart = ChartAsm.toChart(chartDto);
-		chartService.updateChart(chart, chartDto.getFile());
+		ChartDetail chartDetail = ChartAsm.toChart(chartDto);
+		chartDetail.setPublishTimeMillis(selectedPublishDateTime.getTime());
+		chartService.updateChart(chartDetail, chartDto.getFile());
 
 		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
 
@@ -136,9 +138,10 @@ public class ChartController extends AbstractCommonController {
 			selectedPublishDateTime = new Date();
 
 		Chart chart = chartService.getChartById(chartId);
-		List<ChartDetail> chartDetails = chartService.getActualChartItems(chartId, selectedPublishDateTime);
-		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
-		ChartDto chartDto = ChartAsm.toChartDto(chart);
+		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, false).get(0);
+		List<ChartDetail> chartItems = chartService.getActualChartItems(chartId, selectedPublishDateTime);
+		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartItems);
+		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
 
 		final String selectedPublishDateString;
 		if (chartItemDtos.isEmpty()) {
@@ -181,29 +184,6 @@ public class ChartController extends AbstractCommonController {
 		modelAndView.addObject("filesURL", filesURL);
 		modelAndView.addObject("chartId", chartId);
 
-		return modelAndView;
-	}
-
-	/**
-	 * Updating chart items positions for selected date
-	 * 
-	 * @param request
-	 * @param chartItemPositionDto
-	 *            - chart items positions
-	 * @param selectedPublishDateTime
-	 *            - selected date and time for which we update chart items positions
-	 * @return
-	 */
-	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
-	public ModelAndView updateChartItemsPositions(HttpServletRequest request,
-			@ModelAttribute(ChartItemPositionDto.CHART_ITEMS_POSITIONS_DTO) ChartItemPositionDto chartItemPositionDto,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
-
-		LOGGER.debug("input parameters request, chartItemPositionDto, selectedPublishDateTime, chartId: [{}], [{}], [{}], [{}]", new Object[] { request,
-				chartItemPositionDto, selectedPublishDateTime, chartId });
-
-		chartService.updateChartItemsPositions(chartItemPositionDto);
-		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId + "/" + dateTimeFormat.format(selectedPublishDateTime));
 		return modelAndView;
 	}
 	

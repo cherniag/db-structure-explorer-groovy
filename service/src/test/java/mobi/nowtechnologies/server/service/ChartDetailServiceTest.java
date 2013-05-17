@@ -1,5 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.*;
+
+import java.util.*;
+
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -10,6 +19,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +29,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Mockito.*;
 
 /**
  * The class <code>ChartDetailServiceTest</code> contains tests for the class
@@ -118,7 +122,7 @@ public class ChartDetailServiceTest {
 			assertEquals(originalChartDetail.getInfo(), clonedChartDetail.getInfo());
 			assertEquals(originalChartDetail.getMedia(), clonedChartDetail.getMedia());
 			assertEquals(originalChartDetail.getPosition(), clonedChartDetail.getPosition());
-			assertEquals(originalChartDetail.getPosition(), clonedChartDetail.getPrevPosition());
+			assertEquals(originalChartDetail.getPosition(), clonedChartDetail.getPrevPosition().byteValue());
 			assertEquals(choosedPublishTimeMillis, clonedChartDetail.getPublishTimeMillis());
 		}
 
@@ -597,7 +601,7 @@ public class ChartDetailServiceTest {
 		List<ChartDetail> originalChartDetails = getChartDetails(0L);
 
 		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
-		Mockito.when(mockChartDetailRepository.getActualChartDetails(Mockito.eq(chartId), Mockito.eq(nearestLatestPublishTimeMillis))).thenReturn(
+		Mockito.when(mockChartDetailRepository.getActualChartItems(Mockito.eq(chartId), Mockito.eq(nearestLatestPublishTimeMillis))).thenReturn(
 				originalChartDetails);
 
 		List<ChartDetail> actualChartDetails = fixtureChartDetailService.getActualChartItems(chartId, selectedPublishDate);
@@ -1210,7 +1214,7 @@ public class ChartDetailServiceTest {
 		assertEquals(chartItemDto.getInfo(), actualChartDetail.getInfo());
 		assertEquals(chartItemDto.getMediaDto().getId().intValue(), actualChartDetail.getMediaId());
 		assertEquals(expectedPosition, actualChartDetail.getPosition());
-		assertEquals(expectedPrevPosition, actualChartDetail.getPrevPosition());
+		assertEquals(expectedPrevPosition, actualChartDetail.getPrevPosition().byteValue());
 		assertEquals(chartItemDto.getPublishTime().getTime(), actualChartDetail.getPublishTimeMillis());
 		assertEquals(chartDetailId, actualChartDetail.getI());
 	}
@@ -1471,7 +1475,7 @@ public class ChartDetailServiceTest {
 		
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
 		
-		Mockito.when(mockChartDetailRepository.getActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
+		Mockito.when(mockChartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
 		
 		Mockito.doNothing().when(mockChartDetailRepository).delete(originalChartDetails);
 						
@@ -1488,7 +1492,7 @@ public class ChartDetailServiceTest {
 		
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
 		
-		Mockito.when(mockChartDetailRepository.getActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
+		Mockito.when(mockChartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime)).thenReturn(originalChartDetails);
 		Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).delete(originalChartDetails);
 						
 		fixtureChartDetailService.deleteChartItems(chartId, selectedPublishDateTime);
@@ -1500,7 +1504,7 @@ public class ChartDetailServiceTest {
 		Byte chartId = 1;
 		long selectedPublishDateTime=0;
 		
-		Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).getActualChartDetails(chartId, selectedPublishDateTime);
+		Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).getAllActualChartDetails(chartId, selectedPublishDateTime);
 						
 		fixtureChartDetailService.deleteChartItems(chartId, selectedPublishDateTime);
 	}
