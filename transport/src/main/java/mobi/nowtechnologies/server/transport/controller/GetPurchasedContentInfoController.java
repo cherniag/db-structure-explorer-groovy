@@ -68,11 +68,11 @@ public class GetPurchasedContentInfoController extends CommonController {
 						objects));
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(communityName, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
