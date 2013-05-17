@@ -96,11 +96,11 @@ public class GetChartController extends CommonController {
 					objects));
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(communityName, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
@@ -145,11 +145,11 @@ public class GetChartController extends CommonController {
 					objects));
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(communityName, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
@@ -181,11 +181,11 @@ public class GetChartController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(communityName, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
@@ -216,11 +216,11 @@ public class GetChartController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(community, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(community, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
