@@ -463,7 +463,9 @@ public class EntityController extends CommonController {
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		boolean isFailed = false;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -494,12 +496,24 @@ public class EntityController extends CommonController {
 			// devices
 			deviceType = (deviceType.equals(DeviceTypeDao.ANDROID.concat(",").concat(DeviceTypeDao.ANDROID))) ? DeviceTypeDao.ANDROID : deviceType;
 
-			User user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-			DeviceSet deviceSet = deviceService.setDevice(user.getId(),
-					deviceType, deviceUID);
+			user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+			
+			Map<String, Object> resultMap = deviceService.setDevice(user.getId(),
+					deviceType, deviceUID); 
+			
+			DeviceSet deviceSet = (DeviceSet) resultMap.get(DeviceTypeDao.DEVICE_SET_RESULT_MAP_KEY);
+			user = (User) resultMap.get(DeviceTypeDao.USER_RESULT_MAP_KEY);
+			
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(new DeviceSet[] { deviceSet }));
+		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(communityName, null, null, user, e);
+			throw e;
 		} finally {
+			if (!isFailed) {
+				logProfileData(communityName, null, null, user, null);
+			}
 			LOGGER.info("command processing finished");
 		}
 	}

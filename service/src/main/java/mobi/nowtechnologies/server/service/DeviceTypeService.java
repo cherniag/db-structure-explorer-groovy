@@ -26,7 +26,7 @@ public class DeviceTypeService {
 		return DeviceTypeDao.getDeviceTypeMapWhitNameAsKey();
 	}
 
-	public static DeviceSet setDevice(int userId, String deviceType, String deviceUID) {
+	public static Map<String, Object> setDevice(int userId, String deviceType, String deviceUID) {
 		if (null == deviceType)
 			throw new ServiceException("The parameter deviceType is null");
 		if (null == deviceUID)

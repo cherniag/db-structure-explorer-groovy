@@ -3,6 +3,8 @@
  */
 package mobi.nowtechnologies.server.service;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -32,7 +34,7 @@ public class DeviceService {
 			throw new Exception("The promoted Device Repository is null");
 	}
 	
-	public DeviceSet setDevice(int userId, String deviceType,
+	public Map<String, Object> setDevice(int userId, String deviceType,
 			String deviceUID) {
 		if (null == deviceType)
 			throw new ServiceException("The parameter deviceType is null");
