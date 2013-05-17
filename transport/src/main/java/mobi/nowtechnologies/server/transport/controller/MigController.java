@@ -1,7 +1,10 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.net.URLDecoder;
 
 /**
@@ -21,7 +25,7 @@ import java.net.URLDecoder;
  * 
  */
 @Controller
-public class MigController {
+public class MigController extends ProfileController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MigController.class);
 	
 	private static final String STOP = "Stop";
@@ -47,6 +51,8 @@ public class MigController {
 			HttpServletRequest request) {
 		LOGGER.info("[START] MIG query string is [{}]",request.getQueryString());
 		LOGGER.info("DRListener command processing started. MESSAGEID=[{}], STATUSTYPE=[{}], GUID=[{}], STATUS=[{}]", new String[] {messageId, statusType, guid, status });
+		User user = null;
+		boolean isFailed = false;
 		try {
 			if (messageId == null)
 				throw new NullPointerException("The parameter messageId is null");
@@ -55,10 +61,18 @@ public class MigController {
 			if (StringUtils.hasText(description))
 				decodeDescription = URLDecoder.decode(description, "UTF-8");
 			
-			migPaymentService.commitPayment(messageId, status, decodeDescription);
+			SubmittedPayment submittedPayment = migPaymentService.commitPayment(messageId, status, decodeDescription);
+			if(submittedPayment!=null){
+				user = submittedPayment.getUser();
+			}
 		} catch (Exception e) {
+			isFailed = true;
+			logProfileData(null, null, null, user, e);
 			LOGGER.error("error processing DRListener command", e);
 		} finally {
+			if (!isFailed) {
+				logProfileData(null, null, null, user, null);
+			}
 			LOGGER.info("[DONE] invoking DRListener command");
 		}
 	}

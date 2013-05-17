@@ -39,11 +39,10 @@ import java.util.Locale;
  * @author Alexander Kollpakov (akolpakov)
  * 
  */
-public abstract class CommonController {
+public abstract class CommonController extends ProfileController{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 
-	protected final Logger PROFILE_LOGGER = LoggerFactory.getLogger("PROFILE_LOGGER");
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	protected View view;
@@ -258,79 +257,6 @@ public abstract class CommonController {
 		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
-	}
-	
-	public void logProfileData(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
-		String result = "success";
-		String errorMessage = null;
-		if (exception != null) {
-			result = "fail";
-			errorMessage = exception.getMessage();
-			if (errorMessage == null) {
-				if (exception instanceof ServiceException) {
-					ServiceException serviceException = (ServiceException) exception;
-
-					ServerMessage serverMessage = serviceException.getServerMessage();
-					String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
-					if (serverMessage != null) {
-						String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
-						errorMessage = localizedMessage;
-					} else {
-						errorMessage = errorCodeForMessageLocalization;
-					}
-
-				}
-			}
-		}
-
-		Integer newUserId = null;
-		String newUserName = null;
-		String newDeviceUID = null;
-		String newDeviceModel = null;
-		String newDeviceType = null;
-		String newMobile = null;
-		String newCommunityRewriteUri = null;
-		if (user != null) {
-			newUserId = user.getId();
-			newUserName = user.getUserName();
-			newDeviceUID = user.getDeviceUID();
-			newDeviceModel = user.getDeviceModel();
-			newMobile = user.getMobile();
-			UserGroup userGroup = user.getUserGroup();
-			if (userGroup!=null){
-				final Community community = userGroup.getCommunity();
-				if (community!=null){
-					newCommunityRewriteUri = community.getRewriteUrlParameter();
-				}
-			}
-			final DeviceType userDeviceType = user.getDeviceType();
-			if (userDeviceType != null) {
-				newDeviceType = userDeviceType.getName();
-			}
-		}
-
-		Long startTimeMillis = LogUtils.getStartTimeMillis();
-		Long executionTimeMillis = null;
-		if (startTimeMillis != null) {
-			final long epochMillis = Utils.getEpochMillis();
-			executionTimeMillis = epochMillis - startTimeMillis;
-		}
-
-		String deviceModelFromRequest = null;
-		String deviceTypeFromRequest = null;
-		String deviceUIDFromRequest = null;
-		if (userDeviceRegDetailsDto!=null){
-			deviceModelFromRequest = userDeviceRegDetailsDto.getDeviceModel();
-			deviceTypeFromRequest = userDeviceRegDetailsDto.getDeviceType();
-			deviceUIDFromRequest = userDeviceRegDetailsDto.getDeviceUID();
-			if (communityFromRequest==null){
-				communityFromRequest = userDeviceRegDetailsDto.getCommunityName();
-			}
-		}
-		
-		PROFILE_LOGGER.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserId={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
-				new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
-						executionTimeMillis, errorMessage });
 	}
 	
 }
