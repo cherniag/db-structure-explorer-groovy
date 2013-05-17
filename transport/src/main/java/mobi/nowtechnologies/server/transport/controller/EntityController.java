@@ -812,7 +812,7 @@ public class EntityController extends CommonController {
 			user = userService.registerUser(userRegDetailsDto);
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(userRegDetailsDto.getCommunityName(), null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
