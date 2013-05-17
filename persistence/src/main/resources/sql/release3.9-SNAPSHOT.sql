@@ -33,3 +33,7 @@ join tb_charts ch1 on ch1.timestamp = ch.timestamp and ch1.type = 'BASIC_CHART'
 join community_charts cc on cc.chart_id = ch1.i
 where ch.type = 'FOURTH_CHART';
 
+ -- IMP-1365 O2 Tracks - Pop Up needed for too many download attempts in 24 hours
+alter table user_logs add column phoneNumber char(25);
+alter table user_logs add column type char(25) default 'UPDATE_O2_USER';
+
