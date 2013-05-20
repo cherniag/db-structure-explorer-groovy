@@ -69,7 +69,6 @@ public class ChartController extends AbstractCommonController {
 	public void initChartItemBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, "channel", new StringTrimmerEditor(" ",true));
 		binder.setValidator(new ChartItemDtoValidator());	
-		binder.setValidator(new ChartDtoValidator());	
 	}
 
 	@InitBinder( {ChartDto.CHART_DTO })

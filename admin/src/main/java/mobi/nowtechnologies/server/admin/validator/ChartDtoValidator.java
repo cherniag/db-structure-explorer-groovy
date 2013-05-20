@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 
@@ -10,6 +11,8 @@ import org.springframework.validation.Errors;
  *
  */
 public class ChartDtoValidator extends BaseValidator {
+	
+	private ChartService chartService;
 
 	@Override
 	public boolean customValidate(Object target, Errors errors) {
@@ -21,4 +24,7 @@ public class ChartDtoValidator extends BaseValidator {
 		return ChartDto.class.isAssignableFrom(clazz);
 	}
 
+	public void setChartService(ChartService chartService) {
+		this.chartService = chartService;
+	}
 }
