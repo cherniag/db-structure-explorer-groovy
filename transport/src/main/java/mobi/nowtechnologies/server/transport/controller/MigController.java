@@ -69,11 +69,11 @@ public class MigController extends ProfileController {
 			}
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(null, null, null, null, user, e);
 			LOGGER.error("error processing DRListener command", e);
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(null, null, null, null, user, null);
 			}
 			LOGGER.info("[DONE] invoking DRListener command");
 		}
@@ -100,11 +100,11 @@ public class MigController extends ProfileController {
 			}
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			logProfileData(null, null, null, null, user, e);
 			LOGGER.error("error processing MOLISTENER command", e);
 		} finally {
 			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+				logProfileData(null, null, null, null, user, null);
 			}
 			LOGGER.info("[DONE] invoking MOListener command");
 		}

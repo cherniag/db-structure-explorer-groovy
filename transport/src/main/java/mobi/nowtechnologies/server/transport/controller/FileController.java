@@ -102,11 +102,11 @@ public class FileController extends CommonController {
 			}, "EMPTY", new Object());
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(communityName, null, null, user, e);
+			logProfileData(null, communityName, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(communityName, null, null, user, null);
+				logProfileData(null, communityName, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}

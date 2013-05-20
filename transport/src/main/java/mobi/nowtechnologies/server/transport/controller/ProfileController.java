@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileController {
 	protected final Logger PROFILE_LOGGER = LoggerFactory.getLogger("PROFILE_LOGGER");
 	
-	public void logProfileData(String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
+	public void logProfileData(String deviceUIDFromRequest, String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
 		String result = "success";
 		String errorMessage = null;
 		if (exception != null) {
@@ -78,7 +78,6 @@ public class ProfileController {
 
 		String deviceModelFromRequest = null;
 		String deviceTypeFromRequest = null;
-		String deviceUIDFromRequest = null;
 		if (userDeviceRegDetailsDto!=null){
 			deviceModelFromRequest = userDeviceRegDetailsDto.getDeviceModel();
 			deviceTypeFromRequest = userDeviceRegDetailsDto.getDeviceType();

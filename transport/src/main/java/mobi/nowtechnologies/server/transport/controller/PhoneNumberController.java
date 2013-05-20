@@ -44,11 +44,11 @@ public class PhoneNumberController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
 		}catch(Exception e){
 			isFailed = true;
-			logProfileData(community, null, phone, user, e);
+			logProfileData(null, community, null, phone, user, e);
 			throw e;
 		} finally {
 			if (!isFailed){
-				logProfileData(community, null, phone, user, null);
+				logProfileData(null, community, null, phone, user, null);
 			}
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}

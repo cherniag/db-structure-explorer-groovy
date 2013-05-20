@@ -124,11 +124,11 @@ public class UnsubscribeController extends CommonController {
 			return message;
 		} catch (Exception e) {
 			isFailed = true;
-			logProfileData(community, null, null, user, e);
+			logProfileData(null, community, null, null, user, e);
 			throw e;
 		} finally {
 			if (!isFailed) {
-				logProfileData(community, null, null, user, null);
+				logProfileData(null, community, null, null, user, null);
 			}
 			LOGGER.info("command processing finished");
 		}
