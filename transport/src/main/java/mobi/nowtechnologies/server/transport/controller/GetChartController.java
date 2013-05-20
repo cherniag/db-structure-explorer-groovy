@@ -65,8 +65,8 @@ public class GetChartController extends CommonController{
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
-			objects[1] = converToOldVersion((ChartDto)objects[1]);
-			
+			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+
 			for (Object object : objects) {
 				if (object instanceof ChartDto) {
 					ChartDto chartDto = (ChartDto) object;
@@ -123,8 +123,8 @@ public class GetChartController extends CommonController{
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
-			objects[1] = converToOldVersion((ChartDto)objects[1]);
-			
+			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+
 			proccessRememberMeToken(objects);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(
@@ -151,13 +151,13 @@ public class GetChartController extends CommonController{
 		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 		
 		Object[] objects = chartService.processGetChartCommand(user, community, true);
-		objects[1] = converToOldVersion((ChartDto)objects[1]);
+		objects[1] = converToOldVersion((ChartDto)objects[1], apiVersion);
 		
 		proccessRememberMeToken(objects);
 		return new ModelAndView(view, Response.class.toString(), new Response(objects));
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[7-9]{1,3}}/GET_CHART"})
+		@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.7\\.[8-9]/GET_CHART", "*/{community:o2}/3.7/GET_CHART" })
 	public ModelAndView getChart_O2_v3d7(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -167,16 +167,47 @@ public class GetChartController extends CommonController{
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-			@PathVariable("community") String community) {
+			@PathVariable("community") String community) throws Exception {
+		try {
+			LOGGER.info("command proccessing started");
+			throttling(request, userName, deviceUID, community);
 
-		throttling(request, userName, deviceUID, community);
-		
-		User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-		
-		Object[] objects = chartService.processGetChartCommand(user, community, false);
-		
-		proccessRememberMeToken(objects);
-		return new ModelAndView(view, Response.class.toString(), new Response(objects));
+			User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+
+			Object[] objects = chartService.processGetChartCommand(user, community, false);
+			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+
+			proccessRememberMeToken(objects);
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		} finally {
+			LOGGER.info("command processing finished");
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[8-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[8-9]{1,3}}/GET_CHART" })
+	public ModelAndView getChart_O2_v3d8(
+			HttpServletRequest request,
+			@RequestParam("APP_VERSION") String appVersion,
+			@RequestParam("COMMUNITY_NAME") String communityName,
+			@RequestParam("API_VERSION") String apiVersion,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+			@PathVariable("community") String community) throws Exception {
+		try {
+			LOGGER.info("command proccessing started");
+			throttling(request, userName, deviceUID, community);
+
+			User user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+
+			Object[] objects = chartService.processGetChartCommand(user, community, false);
+
+			proccessRememberMeToken(objects);
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		} finally {
+			LOGGER.info("command processing finished");
+		}
 	}
 	
 
@@ -195,8 +226,8 @@ public class GetChartController extends CommonController{
 			MDC.remove("device");
 		}
 	}
-	
-	public ChartDto converToOldVersion(ChartDto chartDto){
+
+	public ChartDto converToOldVersion(ChartDto chartDto, String version) {
 		PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
 		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
 		for (int i = 0; i < playlistDtos.length; i++) {
@@ -211,7 +242,7 @@ public class GetChartController extends CommonController{
 		for (int i = 0; i < tracks.length; i++) {
 			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
 				tracks[i] = null;
-			else if(tracks[i].getChannel() != null)
+			else if(tracks[i].getChannel() != null && version.contains("3.7"))
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 		}
 		
