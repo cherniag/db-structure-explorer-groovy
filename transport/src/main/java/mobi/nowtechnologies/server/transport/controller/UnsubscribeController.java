@@ -83,6 +83,7 @@ public class UnsubscribeController extends CommonController {
 	String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {
 		User user = null;
 		Exception ex = null;
+		boolean hasNoSuchActivatedPaymentDetails = false;
 		try {
 			LOGGER.info("command processing started");
 			LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
@@ -104,6 +105,7 @@ public class UnsubscribeController extends CommonController {
 			String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 			String operatorName = receivedOperatorName.replaceAll("\\*", "");
 			if (operatorName.isEmpty()) {
+				hasNoSuchActivatedPaymentDetails = true;
 				throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR, "Couldn't parse operator name (NETWORK)");
 			}
 
@@ -126,6 +128,9 @@ public class UnsubscribeController extends CommonController {
 			ex = e;
 			throw e;
 		} finally {
+			if (hasNoSuchActivatedPaymentDetails){
+				ex = new Exception("No such activated payment details");
+			}
 			logProfileData(null, community, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
