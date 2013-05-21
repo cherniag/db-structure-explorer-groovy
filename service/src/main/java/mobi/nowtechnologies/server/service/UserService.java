@@ -38,6 +38,7 @@ import mobi.nowtechnologies.server.shared.dto.web.*;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 
@@ -232,6 +233,8 @@ public class UserService {
 		User user = findByNameAndCommunity(userName, communityName);
 
 		if (user != null) {
+			LogUtils.putSpecificMDC(userName, user.getMobile(), user.getId());
+			
 			String localUserToken = Utils.createTimestampToken(user.getToken(), timestamp);
 			String deviceUserToken = Utils.createTimestampToken(user.getTempToken(), timestamp);
 			if (localUserToken.equalsIgnoreCase(userToken) || deviceUserToken.equalsIgnoreCase(userToken)) {

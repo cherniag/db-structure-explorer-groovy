@@ -66,6 +66,11 @@ public class UserDetailsImpl implements UserDetails, SecurityContextDetails {
 	public int getUserId() {
 		return user.getId();
 	}
+	
+	@Override
+	public String getUserMobile(){
+		return user.getMobile();
+	}
 
 	@Override
 	public List<GrantedAuthority> getUserAuthorities() {

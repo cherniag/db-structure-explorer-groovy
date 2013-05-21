@@ -4,6 +4,20 @@
 <!--Web log config file-->
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="web-profile-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/web-profile.csv" />
+		<param name="encoding" value="UTF-8" />
+		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+			<param name="fileNamePattern" value="${catalina.base}/logs/profile-web_%d{yyyy-ww}.gz" />
+		</rollingPolicy>
+		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+			<!--The " ut " will be replace on current "unix time" value-->
+			<param name="ConversionPattern"
+				value="time=%-24d{ISO8601}; commandName=%X{command}; USER_NAMEfromRequest=%X{userName}; communityName=%X{community}; remoteAddr=%X{remoteAddr}; %m%n" />
+		</layout>
+	</appender>
+
 	<appender name="web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
 		<param name="File" value="${catalina.base}/logs/web.log" />
 		<param name="encoding" value="UTF-8" />
@@ -148,6 +162,11 @@
 				<appender-ref ref="stdout"/>
 				<appender-ref ref="stderr"/>
 		 -->
+	</logger>
+	
+	<logger name="PROFILE_LOGGER">
+		<level value="INFO" />
+		<appender-ref ref="web-profile-RollingFileAppender" />
 	</logger>
 	
 	<root>

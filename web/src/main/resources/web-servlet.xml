@@ -93,7 +93,9 @@
             </bean>
         </mvc:interceptor>
 
-        <bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" />
+        <bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor">
+        	 <property name="userService" ref="service.UserService"/>
+        </bean>
     </mvc:interceptors>
 
     <import resource="controllers.xml" />
