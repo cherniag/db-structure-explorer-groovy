@@ -56,7 +56,7 @@ public class ChartDtoValidatorTest{
 		chartDetail1.setPosition((byte)1);
 		ChartDetail chartDetail2 = ChartDetailFactory.createChartDetail();
 		chartDetail2.getChart().setI((byte)2);
-		chartDetail1.setPosition((byte)3);
+		chartDetail2.setPosition((byte)3);
 		
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPosition((byte)1);

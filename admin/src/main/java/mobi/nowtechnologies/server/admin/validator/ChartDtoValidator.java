@@ -23,7 +23,7 @@ public class ChartDtoValidator extends BaseValidator {
 	public boolean customValidate(Object target, Errors errors) {
 		ChartDto chartDto = (ChartDto) target;
 		
-		if(chartDto.getChartType().equals(ChartType.FOURTH_CHART) && chartDto.getPosition() != 0){
+		if(ChartType.FOURTH_CHART.equals(chartDto.getChartType()) && chartDto.getPosition() != 0){
 			errors.rejectValue("position", "chart.position.error.invalidPositionForFourthChart", "The position for Fourth playlist should be only zero");
 		}
 		
