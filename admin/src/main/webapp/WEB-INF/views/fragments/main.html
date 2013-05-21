@@ -36,6 +36,7 @@ section {
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/jquery.simplemodal.1.4.2.min.js}"></script> -->
 <script th:inline="javascript">
 	/*         */
+	var chart;
 	var chartList = [];
 	$(function() {
 		var url = /*[[@{'/charts/list.json'}]]*/'/jadmin/charts/list.json';
@@ -44,6 +45,9 @@ section {
 			contentType : 'application/json',
 			success : function(data) {
 				chartList = data.CHART_DTO_LIST;
+				if(chart)
+					onCreateChartEditForm();
+					
 				for (i in data.CHART_DTO_LIST) {
 					$("ul#dropdownCharts").append(
 							'<li><a>' + data.CHART_DTO_LIST[i].name
@@ -168,7 +172,7 @@ section {
 		<iframe class="iframe" src="#" id="iframeTarget" name="iframeTarget"></iframe>
 		<script th:inline="javascript">/*<![CDATA[*/
 				var filesURL = /*[[@{__${chartFilesURL}__/}]]*/ 'url';			                                                                 
-				var chart = {};
+				chart = {};
 				chart.id = /*[[${chart.id}]]*/ '1';
 				chart.name = /*[[${chart.name}]]*/ 'name';
 				chart.position = /*[[${chart.position}]]*/ '0';

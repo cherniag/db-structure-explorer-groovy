@@ -37,12 +37,8 @@ public class ChartDto {
 
 	private String imageFileName;
 
-	@NotNull
-	@Length(min = 1, max = 50)
 	private String imageTitle = "Default";
 	
-	@NotNull
-	@Length(min = 1, max = 50)
 	private String description = "Default";
 	
 	private ChartType chartType;
