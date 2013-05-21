@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.aop;
 
 import java.util.List;
 
+import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
@@ -48,7 +49,7 @@ public class ProfileLoggingAspect {
 			profilePostService(args, beforeExecutionTimeMillis, postServiceResponseObject, throwable);
 		}
 	}
-	
+
 	@Around("execution(* mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway.sendAndReceive(..))")
 	public Object aroundWebServiceGateway_sendAndReceiveMethod(ProceedingJoinPoint joinPoint) throws Throwable {
 		Throwable throwable = null;
@@ -74,13 +75,13 @@ public class ProfileLoggingAspect {
 			profileWebServiceGateway(args, beforeExecutionTimeMillis, responseObject, throwable);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void profileWebServiceGateway(Object[] args, long beforeExecutionTimeMillis, Object responseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
-				String body =(String) args[1];
+				String body = (String) args[1];
 
 				long afterExecutionTimeMillis = Utils.getEpochMillis();
 				long executionDurationMillis = afterExecutionTimeMillis - beforeExecutionTimeMillis;
@@ -108,10 +109,20 @@ public class ProfileLoggingAspect {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
-				List<NameValuePair> nameValuePairs = (List<NameValuePair>) args[1];		
+				List<NameValuePair> nameValuePairs = (List<NameValuePair>) args[1];
 				String body = (String) args[2];
-				
-				//nameValuePairs.remove(o);
+
+				for (int i = 0; i < nameValuePairs.size(); i++) {
+					NameValuePair nameValuePair = nameValuePairs.get(i);
+					final String name = nameValuePair.getName();
+					if (!name.equals(SageRequestParam.TxType) && !name.equals(SageRequestParam.VendorTxCode) && !name.equals(SageRequestParam.Amount) && !name.equals(SageRequestParam.Currency)
+							&& !name.equals(SageRequestParam.Description) && !name.equals(SageRequestParam.Vendor) && !name.equals(SageRequestParam.VPSProtocol)
+							&& !name.equals(SageRequestParam.VendorTxCode) && !name.equals(SageRequestParam.VPSTxId) && !name.equals(SageRequestParam.TxAuthNo)
+							&& !name.equals(SageRequestParam.ReleaseAmount) && !name.equals(SageRequestParam.RelatedVPSTxId) && !name.equals(SageRequestParam.RelatedVendorTxCode)
+							&& !name.equals(SageRequestParam.RelatedTxAuthNo)) {
+						nameValuePairs.remove(nameValuePair);
+					}
+				}
 
 				long afterExecutionTimeMillis = Utils.getEpochMillis();
 				long executionDurationMillis = afterExecutionTimeMillis - beforeExecutionTimeMillis;
