@@ -34,7 +34,7 @@ join community_charts cc on cc.chart_id = ch1.i
 where ch.type = 'FOURTH_CHART';
 
  -- for remove provious chart updates
-delete from tb_chartDetail where media is not null;
+delete from tb_chartDetail where media is null;
 insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
 select
 ch.i,
