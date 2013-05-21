@@ -92,7 +92,7 @@ public class ProfileController {
 			}
 
 			PROFILE_LOGGER
-					.info("communityFromRequest={}; deviceModelFromRequest={}; deviceTypeFromRequest={}; deviceUIDFromRequest={}; PHONEFromRequest={}; newUserId={}; newUserName={}; newCommunityRewriteUri={}; newMobile={}; newDeviceUID={}; newDeviceModel={}; newDeviceType={}; result={}; executionTimeMillis={}; errorMessage={}",
+					.info("communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
 							new Object[] { communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri,
 									newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
 									executionTimeMillis, errorMessage });
