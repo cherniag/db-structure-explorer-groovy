@@ -324,7 +324,7 @@ public class ChartServiceTest {
 		Long nearestLatestDate = new Date().getTime()-100000;
 		Date choosenDate = new Date();
 		
-		when(mockChartDetailRepository.findNearestLatestPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
+		when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate))).thenReturn(chartDetail2);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate))).thenReturn(chartDetail3);
@@ -343,7 +343,7 @@ public class ChartServiceTest {
 		assertEquals(chartDetail2.getTitle(), result.get(1).getTitle());
 		assertEquals(chartDetail3.getTitle(), result.get(2).getTitle());
 		
-		verify(mockChartDetailRepository, times(3)).findNearestLatestPublishDate(anyLong(), anyByte());
+		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate));
@@ -365,7 +365,7 @@ public class ChartServiceTest {
 		Long nearestLatestDate = new Date().getTime()-100000;
 		Date choosenDate = new Date();
 		
-		when(mockChartDetailRepository.findNearestLatestPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
+		when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate))).thenReturn(chartDetail2);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate))).thenReturn(chartDetail3);
@@ -384,7 +384,7 @@ public class ChartServiceTest {
 		assertEquals(chartDetail2.getTitle(), result.get(1).getTitle());
 		assertEquals(chartDetail3.getTitle(), result.get(2).getTitle());
 		
-		verify(mockChartDetailRepository, times(3)).findNearestLatestPublishDate(anyLong(), anyByte());
+		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate));
@@ -406,7 +406,7 @@ public class ChartServiceTest {
 		Long nearestLatestDate = null;
 		Date choosenDate = new Date();
 		
-		when(mockChartDetailRepository.findNearestLatestPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
+		when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyByte())).thenReturn(nearestLatestDate);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate))).thenReturn(chartDetail1);
@@ -422,7 +422,7 @@ public class ChartServiceTest {
 		assertEquals(null, result.get(1).getTitle());
 		assertEquals(null, result.get(2).getTitle());
 		
-		verify(mockChartDetailRepository, times(3)).findNearestLatestPublishDate(anyLong(), anyByte());
+		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate));
 		verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate));
