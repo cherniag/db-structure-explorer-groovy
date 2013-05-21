@@ -86,10 +86,12 @@ public class MigController extends ProfileController {
 		LOGGER.info("[START] MOLISTENER command processing started");
 		User user = null;
 		Exception ex = null;
+		boolean hasNoSuchActivatedPaymentDetails = false;
 		try {
 			if (STOP.equalsIgnoreCase(action)) {
 				List<PaymentDetails> paymentDetails = userService.unsubscribeUser(mobile, operatorMigName);
-				if (paymentDetails != null && !paymentDetails.isEmpty() && paymentDetails.get(0) != null) {
+				hasNoSuchActivatedPaymentDetails = paymentDetails.isEmpty();
+				if (paymentDetails != null && !hasNoSuchActivatedPaymentDetails && paymentDetails.get(0) != null) {
 					user = paymentDetails.get(0).getOwner();
 				}
 			} else {
@@ -99,6 +101,9 @@ public class MigController extends ProfileController {
 			ex = e;
 			LOGGER.error("error processing MOLISTENER command", e);
 		} finally {
+			if (hasNoSuchActivatedPaymentDetails){
+				ex = new Exception("No such activated payment details");
+			}
 			logProfileData(null, null, null, null, user, ex);
 			LOGGER.info("[DONE] invoking MOListener command");
 		}
