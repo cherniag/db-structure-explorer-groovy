@@ -178,7 +178,7 @@ public class EntityController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
 			HttpServletRequest httpServletRequest,
@@ -197,7 +197,7 @@ public class EntityController extends CommonController {
 			@PathVariable("community") String community) throws Exception {
 
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			
@@ -230,13 +230,10 @@ public class EntityController extends CommonController {
 
 			return mav;
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(community, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(community, null, null, user, null);
-			}
+			logProfileData(deviceUID, community, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -265,7 +262,7 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) throws Exception {
 
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			
@@ -292,13 +289,10 @@ public class EntityController extends CommonController {
 
 			return mav;
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(communityName, null, null, user, null);
-			}
+			logProfileData(deviceUID, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -375,7 +369,7 @@ public class EntityController extends CommonController {
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -404,13 +398,10 @@ public class EntityController extends CommonController {
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(objects));
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(communityName, null, null, user, null);
-			}
+			logProfileData(null, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -465,7 +456,7 @@ public class EntityController extends CommonController {
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -507,13 +498,10 @@ public class EntityController extends CommonController {
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(new DeviceSet[] { deviceSet }));
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(communityName, null, null, user, null);
-			}
+			logProfileData(deviceUID, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -817,7 +805,7 @@ public class EntityController extends CommonController {
 	public void signUp(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
 			BindingResult result) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		LOGGER.info("command processing started");
 		try {
 			if (result.hasErrors()) {
@@ -834,13 +822,10 @@ public class EntityController extends CommonController {
 
 			user = userService.registerUser(userRegDetailsDto);
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(userRegDetailsDto.getCommunityName(), null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(userRegDetailsDto.getCommunityName(), null, null, user, null);
-			}
+			logProfileData(null, userRegDetailsDto.getCommunityName(), null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -848,7 +833,7 @@ public class EntityController extends CommonController {
 	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_FACEBOOK_DETAILS", "**/UPDATE_USER_FACEBOOK_DETAILS" })
 	public ModelAndView updateUserFacebookDetails(HttpServletRequest request, @Valid @ModelAttribute(UserFacebookDetailsDto.NAME) UserFacebookDetailsDto userFacebookDetailsDto, BindingResult result) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command processing started");
 			if (result.hasErrors()) {
@@ -869,13 +854,10 @@ public class EntityController extends CommonController {
 
 			return new ModelAndView(view, MODEL_NAME, new Response(objects));
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(userFacebookDetailsDto.getCommunityName(), null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(userFacebookDetailsDto.getCommunityName(), null, null, user, null);
-			}
+			logProfileData(userFacebookDetailsDto.getDeviceUID(), userFacebookDetailsDto.getCommunityName(), null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}

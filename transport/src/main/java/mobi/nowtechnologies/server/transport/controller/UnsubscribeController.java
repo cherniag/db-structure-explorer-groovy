@@ -82,7 +82,8 @@ public class UnsubscribeController extends CommonController {
 	public @ResponseBody
 	String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
+		boolean hasNoSuchActivatedPaymentDetails = false;
 		try {
 			LOGGER.info("command processing started");
 			LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
@@ -111,6 +112,7 @@ public class UnsubscribeController extends CommonController {
 
 			String message;
 			if (paymentDetailsList.isEmpty()) {
+				hasNoSuchActivatedPaymentDetails = true;
 				message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
 			} else {
 				final PaymentDetails paymentDetails = paymentDetailsList.get(0);
@@ -123,13 +125,13 @@ public class UnsubscribeController extends CommonController {
 			LOGGER.info("Output parameter message=[{}]", message);
 			return message;
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(community, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(community, null, null, user, null);
+			if (hasNoSuchActivatedPaymentDetails){
+				ex = new Exception("No such activated payment details");
 			}
+			logProfileData(null, community, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}

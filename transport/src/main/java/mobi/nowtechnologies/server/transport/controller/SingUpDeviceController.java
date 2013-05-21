@@ -45,7 +45,7 @@ public class SingUpDeviceController extends CommonController {
 	public ModelAndView signUpDevice(HttpServletRequest request, @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME)UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) throws Exception {
         LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
         User user = null;
-        boolean isFailed = false;
+        Exception ex = null;
 		try {
 			if (result.hasErrors()){
 				List<ObjectError>  objectErrors = result.getAllErrors();
@@ -67,13 +67,10 @@ public class SingUpDeviceController extends CommonController {
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
-			isFailed = true;
-			logProfileData(null, userDeviceDetailsDto, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed){
-				logProfileData(null, userDeviceDetailsDto, null, user, null);
-			}
+			logProfileData(null, null, userDeviceDetailsDto, null, user, ex);
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
@@ -85,7 +82,7 @@ public class SingUpDeviceController extends CommonController {
         LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
         
         User user = null;
-        boolean isFailed = false;
+        Exception ex = null;
 		try {
 			if (result.hasErrors()) {
 				List<ObjectError> objectErrors = result.getAllErrors();
@@ -106,13 +103,10 @@ public class SingUpDeviceController extends CommonController {
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
-			isFailed = true;
-			logProfileData(null, userDeviceDetailsDto, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed){
-				logProfileData(null, userDeviceDetailsDto, null, user, null);
-			}
+			logProfileData(null, null, userDeviceDetailsDto, null, user, ex);
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}]",userDeviceDetailsDto);
 		}
 	}
@@ -130,7 +124,7 @@ public class SingUpDeviceController extends CommonController {
 		LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]",userDeviceDetailsDto, community);
 		
 		User user = null;
-	    boolean isFailed = false;
+	    Exception ex = null;
 		try {
 			 if (result.hasErrors()) {
 		            List<ObjectError> objectErrors = result.getAllErrors();
@@ -152,19 +146,15 @@ public class SingUpDeviceController extends CommonController {
 
 		        return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (ValidationException ve){
-        	isFailed = true;
-			logProfileData(community, userDeviceDetailsDto, null, user, ve);
+        	ex = ve;
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]",ve.getMessage(), userDeviceDetailsDto, community);
             throw ve;
         }catch (RuntimeException re){
-        	isFailed = true;
-			logProfileData(community, userDeviceDetailsDto, null, user, re);
+        	ex = re;
             LOGGER.error("SIGN_UP_DEVICE error [{}] for [{}] community[{}]",re.getMessage(), userDeviceDetailsDto, community);
             throw re;
 		} finally {
-			if (!isFailed){
-				logProfileData(community, userDeviceDetailsDto, null, user, null);
-			}
+			logProfileData(null, community, userDeviceDetailsDto, null, user, ex);
             LOGGER.info("SIGN_UP_DEVICE Finished for [{}] community[{}]",userDeviceDetailsDto, community);
 		}
 	}

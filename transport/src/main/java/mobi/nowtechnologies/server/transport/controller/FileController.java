@@ -61,7 +61,7 @@ public class FileController extends CommonController {
 			final HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -101,13 +101,10 @@ public class FileController extends CommonController {
 				}
 			}, "EMPTY", new Object());
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(communityName, null, null, user, null);
-			}
+			logProfileData(null, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}

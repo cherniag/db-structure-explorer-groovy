@@ -54,7 +54,7 @@ public class MigController extends ProfileController {
 		LOGGER.info("[START] MIG query string is [{}]", request.getQueryString());
 		LOGGER.info("DRListener command processing started. MESSAGEID=[{}], STATUSTYPE=[{}], GUID=[{}], STATUS=[{}]", new String[] { messageId, statusType, guid, status });
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			if (messageId == null)
 				throw new NullPointerException("The parameter messageId is null");
@@ -68,13 +68,10 @@ public class MigController extends ProfileController {
 				user = submittedPayment.getUser();
 			}
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			ex = e;
 			LOGGER.error("error processing DRListener command", e);
 		} finally {
-			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
-			}
+			logProfileData(null, null, null, null, user, ex);
 			LOGGER.info("[DONE] invoking DRListener command");
 		}
 	}
@@ -88,24 +85,26 @@ public class MigController extends ProfileController {
 		// Only 1 case when we get this request from MIG - stop service
 		LOGGER.info("[START] MOLISTENER command processing started");
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
+		boolean hasNoSuchActivatedPaymentDetails = false;
 		try {
 			if (STOP.equalsIgnoreCase(action)) {
 				List<PaymentDetails> paymentDetails = userService.unsubscribeUser(mobile, operatorMigName);
-				if (paymentDetails != null && !paymentDetails.isEmpty() && paymentDetails.get(0) != null) {
+				hasNoSuchActivatedPaymentDetails = paymentDetails.isEmpty();
+				if (paymentDetails != null && !hasNoSuchActivatedPaymentDetails && paymentDetails.get(0) != null) {
 					user = paymentDetails.get(0).getOwner();
 				}
 			} else {
 				throw new IllegalStateException("action [" + action + "] not supported");
 			}
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(null, null, null, user, e);
+			ex = e;
 			LOGGER.error("error processing MOLISTENER command", e);
 		} finally {
-			if (!isFailed) {
-				logProfileData(null, null, null, user, null);
+			if (hasNoSuchActivatedPaymentDetails){
+				ex = new Exception("No such activated payment details");
 			}
+			logProfileData(null, null, null, null, user, ex);
 			LOGGER.info("[DONE] invoking MOListener command");
 		}
 	}
