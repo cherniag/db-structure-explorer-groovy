@@ -22,15 +22,16 @@ ch.timestamp,
 ch.numBonusTracks,
 'FOURTH_CHART'
 from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='BASIC_CHART';
 
 insert into community_charts (chart_id, community_id)
 select
 ch.i,
-cc.community_id
+c.i
 from tb_charts ch
-join tb_charts ch1 on ch1.timestamp = ch.timestamp and ch1.type = 'BASIC_CHART'
-join community_charts cc on cc.chart_id = ch1.i
+join tb_communities c on c.rewriteURLParameter = 'o2'
 where ch.type = 'FOURTH_CHART';
 
  -- for remove provious chart updates
