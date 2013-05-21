@@ -51,7 +51,7 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp) throws Exception {
 
         LOGGER.info("command processing started");
-        boolean isFailed = false;
+        Exception ex = null;
 		User user = null; 
 		try {
             user = userService.findByNameAndCommunity(userName, communityName);
@@ -62,13 +62,10 @@ public class ApplyInitPromoController extends CommonController {
 
             return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
-			isFailed = true;
-			logProfileData(null, communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed){
-				logProfileData(null, communityName, null, null, user, null);
-			}
+			logProfileData(null, communityName, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }
@@ -82,7 +79,7 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community) {
     	
-    	boolean isFailed = false;
+    	Exception ex = null;
  		User user = null; 
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
@@ -102,19 +99,15 @@ public class ApplyInitPromoController extends CommonController {
             }
             throw new UserCredentialsException("Bad user credentials");
         }catch (UserCredentialsException ce){
-        	isFailed = true;
-			logProfileData(null, community, null, null, user, ce);
+        	ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
             throw ce;
         }catch (RuntimeException re){
-        	isFailed = true;
-			logProfileData(null, community, null, null, user, re);
+        	ex = re;
             LOGGER.error("APPLY_INIT_PROMO error [{}] for user[{}] in community[{}] otac_token[{}]",re.getMessage(), userName, community, token);
             throw re;
         }finally {
-        	if (!isFailed){
-				logProfileData(null, community, null, null, user, null);
-			}
+        	logProfileData(null, community, null, null, user, ex);
            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }
     }

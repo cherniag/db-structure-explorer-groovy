@@ -41,7 +41,7 @@ public class GetNewsController extends CommonController {
 			@RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis) throws Exception {
 
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -69,13 +69,10 @@ public class GetNewsController extends CommonController {
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(null, communityName, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(null, communityName, null, null, user, null);
-			}
+			logProfileData(null, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -105,7 +102,7 @@ public class GetNewsController extends CommonController {
 			@PathVariable("community") String community) throws Exception {
 
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
@@ -114,13 +111,10 @@ public class GetNewsController extends CommonController {
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(deviceUID, community, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(deviceUID, community, null, null, user, null);
-			}
+			logProfileData(deviceUID, community, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}

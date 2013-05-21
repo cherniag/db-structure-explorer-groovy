@@ -82,7 +82,7 @@ public class UnsubscribeController extends CommonController {
 	public @ResponseBody
 	String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {
 		User user = null;
-		boolean isFailed = false;
+		Exception ex = null;
 		try {
 			LOGGER.info("command processing started");
 			LOGGER.info("input parameters body, community: [{}], [{}]", body, community);
@@ -123,13 +123,10 @@ public class UnsubscribeController extends CommonController {
 			LOGGER.info("Output parameter message=[{}]", message);
 			return message;
 		} catch (Exception e) {
-			isFailed = true;
-			logProfileData(null, community, null, null, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed) {
-				logProfileData(null, community, null, null, user, null);
-			}
+			logProfileData(null, community, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
