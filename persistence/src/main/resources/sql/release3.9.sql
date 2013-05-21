@@ -12,3 +12,4 @@ alter table tb_paymentDetails add column errorCode varchar(255);
 
  -- IMP-1365 O2 Tracks - Pop Up needed for too many download attempts in 24 hours
 alter table user_logs add column phoneNumber char(25);
+alter table user_logs add column type char(25);

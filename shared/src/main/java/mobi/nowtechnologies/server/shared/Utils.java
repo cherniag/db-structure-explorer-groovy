@@ -77,7 +77,11 @@ public class Utils {
 	}
 	
 	public static int getEpochDays() {
-		return (int) (System.currentTimeMillis() / DAY_MILLISECONDS);
+		return toEpochDays(System.currentTimeMillis());
+	}
+	
+	public static int toEpochDays(long millis) {
+		return (int) (millis / DAY_MILLISECONDS);
 	}
 
 	public static long getEpochMillis() {

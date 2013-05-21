@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
@@ -17,11 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +42,12 @@ public class UserRepositoryIT {
 
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
+
+	@Resource(name = "userLogRepository")
+	private UserLogRepository userLogRepository;
 	
 	@Resource(name = "paymentDetailsRepository")
 	private PaymentDetailsRepository paymentDetailsRepository;
-
-	@Resource(name = "paymentPolicyRepository")
-	private PaymentPolicyRepository paymentPolicyRepository;
 
 	@Test
 	@Rollback
@@ -356,41 +356,42 @@ public class UserRepositoryIT {
 	}
 	
 	@Test
-	public void testGetUsersForPendingPayment_O2_O2_CONSUMER_PSMS_Success() throws Exception {
+	public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
 		
-		int epochSeconds = Utils.getEpochSeconds();
+		long epochSeconds = Utils.getEpochMillis()-24*60*60*1000L;
 		
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
 		User testUser = UserFactory.createUser();
-		testUser.setNextSubPayment(epochSeconds);
-		testUser.setLastDeviceLogin(epochSeconds);
 		testUser.setUserGroup(o2UserGroup);
-		
 		testUser = userRepository.save(testUser);
 		
-		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne((short)228);
+        UserLog userLog = new UserLog(null, testUser, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds-24*60*60*1000L);
+        userLogRepository.save(userLog);
+        
+        User testUser1 = UserFactory.createUser();
+		testUser1.setUserGroup(o2UserGroup);
+		testUser1 = userRepository.save(testUser1);
 		
-		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds+24*60*60*1000L);
+        userLogRepository.save(userLog);
+        userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds-24*60*60*1000L);
+        userLogRepository.save(userLog);
 		
-		currentO2PaymentDetails.setActivated(true);
-		currentO2PaymentDetails.setOwner(testUser);
-		currentO2PaymentDetails.setMadeRetries(0);
-		currentO2PaymentDetails.setPaymentPolicy(paymentPolicy);
-		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-		currentO2PaymentDetails.setRetriesOnError(3);
+        User testUser3 = UserFactory.createUser();
+		testUser3.setUserGroup(o2UserGroup);
+		testUser3 = userRepository.save(testUser3);
 		
-		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
-		
-		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
-		
-		testUser = userRepository.save(testUser);
-		
-		List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds);
+        userLog = new UserLog(null, testUser3, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(0);
+        userLogRepository.save(userLog);
+        
+		List<User> actualUsers = userRepository.findUsersForUpdate(epochSeconds, new PageRequest(0, 1000));
 		
 		assertNotNull(actualUsers);
-		assertEquals(2, actualUsers.size());
-		assertEquals(testUser.getId(), actualUsers.get(1).getId());
-		
+		assertEquals(2, actualUsers.size());		
 	}
 }

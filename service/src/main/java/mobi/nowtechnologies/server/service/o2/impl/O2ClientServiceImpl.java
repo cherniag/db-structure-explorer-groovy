@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
@@ -157,29 +158,33 @@ public class O2ClientServiceImpl implements O2ClientService {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 		
 		Long curDay = new Long(Utils.getEpochDays());
-		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumber, VALIDATE_PHONE_NUMBER_DESC, curDay);
+		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumber, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
+		UserLog userLog = null;
 		if(countPerDay >= limitValidatePhoneNumber){
 			LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
 			throw new LimitPhoneNumberValidationException();
+		}else{
+			userLog = userLogRepository.findByPhoneNumber(phoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
+			userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
 		}
 		
 		try {
 			DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
 			
-			userLogRepository.save(new UserLog(result, UserLogStatus.SUCCESS, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, result, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			
 			return result;
 		} catch (RestClientException e) {
-			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.O2_FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
 			throw new InvalidPhoneNumberException();
 		} catch (DOMException e) {
-			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
 			throw new InvalidPhoneNumberException();
 		} catch (Exception e) {
-			userLogRepository.save(new UserLog(phoneNumber, UserLogStatus.FAIL, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
 			throw new InvalidPhoneNumberException();
 		} finally {

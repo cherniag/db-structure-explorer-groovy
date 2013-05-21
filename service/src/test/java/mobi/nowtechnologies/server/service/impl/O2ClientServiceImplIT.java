@@ -12,6 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
@@ -28,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.omg.PortableServer.POAPackage.InvalidPolicyHelper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.web.client.RestTemplate;
@@ -102,7 +102,7 @@ public class O2ClientServiceImplIT {
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
-		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
@@ -113,7 +113,7 @@ public class O2ClientServiceImplIT {
 		assertEquals(expectedPhoneNumber, result);
 		
 		verify(mockUserLogRepository).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -125,7 +125,7 @@ public class O2ClientServiceImplIT {
 
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
-		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
 		try {			
@@ -137,7 +137,7 @@ public class O2ClientServiceImplIT {
 		}
 		
 		verify(mockUserLogRepository, times(1)).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -149,7 +149,7 @@ public class O2ClientServiceImplIT {
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
-		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), anyString(), anyLong())).thenReturn(10L);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(10L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
 		try {			
@@ -161,7 +161,7 @@ public class O2ClientServiceImplIT {
 		}
 		
 		verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), anyString(), anyLong());
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@Test
