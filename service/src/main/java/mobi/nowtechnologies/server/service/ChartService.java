@@ -256,6 +256,18 @@ public class ChartService {
 			chartDetails.add(chartDetail);
 		}
 		
+		Collections.sort(chartDetails, new Comparator<ChartDetail>() {
+			@Override
+			public int compare(ChartDetail o1, ChartDetail o2) {
+				if(o1.getPosition() > o2.getPosition())
+					return 1;
+				else if(o1.getPosition() < o2.getPosition())
+					return -1;
+				else 
+					return 0;
+			}
+		});
+		
 		LOGGER.info("Output parameter charts=[{}]", chartDetails);
 		return chartDetails;
 	}

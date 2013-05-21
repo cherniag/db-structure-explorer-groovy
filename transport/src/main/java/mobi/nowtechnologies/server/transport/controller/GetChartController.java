@@ -190,7 +190,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/3.7/GET_CHART", "*/{community:o2}/3.7/GET_CHART" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:3.7}/GET_CHART", "*/{community:o2}/{apiVersion:3.7}/GET_CHART" })
 	public ModelAndView getChart_O2_v3d7(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,

@@ -1,5 +1,9 @@
 .table_width, .nav_width, .edit_width { width: 50%; margin: 10px;}
 
+.hasError{
+	color:red;
+}
+
 .iframe {
 	display: none;
 	wight: 1px;
