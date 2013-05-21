@@ -31,6 +31,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
 		assertEquals(chartDetail.getI(), result.getChartDetailId());
+		assertEquals(chartDetail.getChart().getType(), result.getChartType());
 	}
 	
 	@Test
@@ -45,6 +46,7 @@ public class ChartAsmTest {
 		
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getName());
+		assertEquals(null, result.getPosition());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

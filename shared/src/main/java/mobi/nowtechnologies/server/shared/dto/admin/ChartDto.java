@@ -5,17 +5,18 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.validator.constraints.FileSize;
 
 /**
- * @author Titov Mykhaylo (titov)
+ * @author Alexander Kolpakov (akolpakov)
  * 
  */
 public class ChartDto {
 
 	public static final String CHART_DTO_LIST = "CHART_DTO_LIST";
 
-	public static final String CHART_DTO = "CHART_DTO";
+	public static final String CHART_DTO = "chart";
 
 	private Byte id;
 	
@@ -31,7 +32,7 @@ public class ChartDto {
 	@Length(min = 1, max = 50)
 	private String subtitle;
 
-	@FileSize(min = 1, max = 30720)
+	@FileSize(min = 1, max = 50000, message="file size must be from 1 to 50 kbytes")
 	private MultipartFile file;
 
 	private String imageFileName;
@@ -43,6 +44,8 @@ public class ChartDto {
 	@NotNull
 	@Length(min = 1, max = 50)
 	private String description = "Default";
+	
+	private ChartType chartType;
 
 	public Byte getId() {
 		return id;
@@ -116,10 +119,18 @@ public class ChartDto {
 		this.chartDetailId = chartDetailId;
 	}
 
+	public ChartType getChartType() {
+		return chartType;
+	}
+
+	public void setChartType(ChartType chartType) {
+		this.chartType = chartType;
+	}
+
 	@Override
 	public String toString() {
 		return "ChartDto [id=" + id + ", chartDetailId=" + chartDetailId + ", position=" + position + ", name=" + name + ", subtitle=" + subtitle + ", file=" + file + ", imageFileName="
-				+ imageFileName + ", imageTitle=" + imageTitle + ", description=" + description + "]";
+				+ imageFileName + ", imageTitle=" + imageTitle + ", description=" + description + ", chartType=" + chartType + "]";
 	}
 
 }

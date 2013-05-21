@@ -776,8 +776,9 @@
 	
 	function chartItemsFromUl(ul){
 		var json = [];
+		var i = 0;
 		json.push("[");
-		$(ul).children().each(function(i) {
+		$(ul).children().each(function() {
 			var li = $(this);
 			if(li.attr('id') != "emptyList"){
 				if(i > 0)
@@ -785,6 +786,7 @@
 				
 				var obj = chartItemFromLi(li);	
 				json.push(obj);
+				i++;
 			}
 		}); 
 		json.push("]");

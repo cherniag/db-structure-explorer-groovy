@@ -1,8 +1,13 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import java.util.List;
+
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 
 import org.springframework.validation.Errors;
 
@@ -16,6 +21,22 @@ public class ChartDtoValidator extends BaseValidator {
 
 	@Override
 	public boolean customValidate(Object target, Errors errors) {
+		ChartDto chartDto = (ChartDto) target;
+		
+		if(chartDto.getChartType().equals(ChartType.FOURTH_CHART) && chartDto.getPosition() != 0){
+			errors.rejectValue("position", "chart.position.error.invalidPositionForFourthChart", "The position for Fourth playlist should be only zero");
+		}
+		
+		String communityURL = RequestUtils.getCommunityURL();
+		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null);
+		for(ChartDetail chartDetail : charts){
+			if(!chartDetail.getChart().getI().equals(chartDto.getId()) && chartDetail.getPosition() == chartDto.getPosition().byteValue()){
+				errors.rejectValue("position", "chart.position.error.samePositionExists", "The chart '"+chartDetail.getTitle()+"' already has position "+chartDto.getPosition());
+				break;
+			}
+		}
+		
+		
 		return errors.hasErrors();
 	}
 

@@ -50,10 +50,11 @@ public class ChartAsm {
 		
 		chartDto.setName(chartDetail.getTitle() != null ? chartDetail.getTitle() : chart.getName());
 		chartDto.setChartDetailId(chartDetail.getI());
-		chartDto.setPosition(chartDetail.getPosition());
+		chartDto.setPosition(chartDetail.getTitle() != null ? chartDetail.getPosition() : null);
 		chartDto.setSubtitle(chartDetail.getSubtitle());
 		chartDto.setImageFileName(chartDetail.getImageFileName());
 		chartDto.setImageTitle(chartDetail.getImageTitle());
+		chartDto.setChartType(chart.getType());
 		chartDto.setDescription(chartDetail.getInfo());
 		
 		LOGGER.info("Output parameter chartDto=[{}]", chartDto);
