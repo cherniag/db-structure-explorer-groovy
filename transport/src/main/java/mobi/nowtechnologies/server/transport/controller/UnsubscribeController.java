@@ -105,7 +105,6 @@ public class UnsubscribeController extends CommonController {
 			String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
 			String operatorName = receivedOperatorName.replaceAll("\\*", "");
 			if (operatorName.isEmpty()) {
-				hasNoSuchActivatedPaymentDetails = true;
 				throw new ServiceException(UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR, "Couldn't parse operator name (NETWORK)");
 			}
 
@@ -113,6 +112,7 @@ public class UnsubscribeController extends CommonController {
 
 			String message;
 			if (paymentDetailsList.isEmpty()) {
+				hasNoSuchActivatedPaymentDetails = true;
 				message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
 			} else {
 				final PaymentDetails paymentDetails = paymentDetailsList.get(0);
