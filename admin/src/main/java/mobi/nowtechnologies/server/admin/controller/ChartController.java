@@ -175,4 +175,24 @@ public class ChartController extends AbstractCommonController {
 
 		return modelAndView;
 	}
+	
+	/**
+	 * Delete chart items for selected date
+	 * 
+	 * @param request
+	 * @param selectedPublishDateTime
+	 *            - selected date and time for which we delete chart items
+	 * @return
+	 */
+	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.DELETE)
+	public ModelAndView deleteChartItems(HttpServletRequest request,
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
+
+		LOGGER.debug("input parameters request, selectedPublishDateTime, chartId: [{}], [{}], [{}]", new Object[] { request,
+				selectedPublishDateTime, chartId });
+
+		chartService.deleteChartItems(chartId, selectedPublishDateTime);
+		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
+		return modelAndView;
+	}
 }

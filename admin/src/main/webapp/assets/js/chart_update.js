@@ -58,7 +58,7 @@ function getPosition(){
 	if(chart.position)
 		return chart.position;
 
-	if(chart.type == 'FOURTH_CHART')
+	if(chart.chartType == 'FOURTH_CHART')
 		return 0;
 	
 	var max = 0;
