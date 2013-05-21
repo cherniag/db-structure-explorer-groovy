@@ -34,7 +34,55 @@ join community_charts cc on cc.chart_id = ch1.i
 where ch.type = 'FOURTH_CHART';
 
  -- for remove provious chart updates
-delete from tb_chartDetails where title is not null;
+delete from tb_chartDetail where media is not null;
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+1,
+unix_timestamp('2013-01-01')*1000,
+0,
+ch.name
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='BASIC_CHART';
+
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+2,
+unix_timestamp('2013-01-01')*1000,
+0,
+ch.name
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='HOT_TRACKS';
+
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+3,
+unix_timestamp('2013-01-01')*1000,
+0,
+ch.name
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='OTHER_CHART';
+
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+0,
+unix_timestamp('2013-01-01')*1000,
+0,
+ch.name
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='FOURTH_CHART';
+
 
  -- IMP-1365 O2 Tracks - Pop Up needed for too many download attempts in 24 hours
 alter table user_logs add column phoneNumber char(25);

@@ -238,7 +238,7 @@ public class ChartService {
 			
 			chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), choosedPublishTimeMillis);
 			if(chartDetail == null){
-				Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, chart.getI());
+				Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(choosedPublishTimeMillis, chart.getI());
 				if (nearestLatestPublishTimeMillis != null){
 					chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), nearestLatestPublishTimeMillis);
 					if(clone && chartDetail!=null){						
