@@ -848,6 +848,11 @@ public class EntityController extends CommonController {
 			userFacebookDetailsDto.setIpAddress(remoteAddr);
 
 			AccountCheckDTO accountCheckDTO = userService.updateUserFacebookDetails(userFacebookDetailsDto);
+			try {
+				user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userFacebookDetailsDto.getCommunityName());
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
