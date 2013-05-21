@@ -33,7 +33,7 @@ function onCreateChartEditForm() {
 	var id = chart.id;
 	var name = chart.name;
 	var subtitle = chart.subtitle;
-	var position = chart.getPosition();
+	var position = getPosition();
 	var description = chart.description;
 	var imageTitle = chart.imageTitle;
 	var imageFileName = chart.imageFileName;
