@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import java.util.concurrent.TimeUnit;
+
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -25,6 +27,7 @@ public class ProfileController {
 
 	public void logProfileData(String deviceUIDFromRequest, String communityFromRequest, UserDeviceRegDetailsDto userDeviceRegDetailsDto, String PHONEFromRequest, User user, Exception exception) {
 		try {
+			if (PROFILE_LOGGER.isDebugEnabled()) {
 			String result = "success";
 			String errorMessage = null;
 			if (exception != null) {
@@ -73,11 +76,11 @@ public class ProfileController {
 				}
 			}
 
-			Long startTimeMillis = LogUtils.getStartTimeMillis();
+				Long startTimeNano = LogUtils.getStartTimeNano();
 			Long executionTimeMillis = null;
-			if (startTimeMillis != null) {
-				final long epochMillis = Utils.getEpochMillis();
-				executionTimeMillis = epochMillis - startTimeMillis;
+				if (startTimeNano != null) {
+					final long epochNano = System.nanoTime();
+					executionTimeMillis = TimeUnit.NANOSECONDS.toMillis(epochNano - startTimeNano);
 			}
 
 			String deviceModelFromRequest = null;
@@ -92,10 +95,12 @@ public class ProfileController {
 			}
 
 			PROFILE_LOGGER
-					.info("communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
-							new Object[] { communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri,
+						.debug("communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
+								new Object[] { communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName,
+										newCommunityRewriteUri,
 									newMobile, newDeviceUID, newDeviceModel, newDeviceType, result,
 									executionTimeMillis, errorMessage });
+			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
