@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.aop;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -28,11 +29,11 @@ public class ProfileLoggingAspect {
 	public Object aroundPostService_sendHttpPost(ProceedingJoinPoint joinPoint) throws Throwable {
 		Throwable throwable = null;
 		Object[] args = null;
-		Long beforeExecutionTimeMillis = null;
+		Long beforeExecutionTimeNano = null;
 		Object postServiceResponseObject = null;
 
 		try {
-			beforeExecutionTimeMillis = Utils.getEpochMillis();
+			beforeExecutionTimeNano = System.nanoTime();
 			args = joinPoint.getArgs();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -46,7 +47,7 @@ public class ProfileLoggingAspect {
 			throwable = t;
 			throw t;
 		} finally {
-			profilePostService(args, beforeExecutionTimeMillis, postServiceResponseObject, throwable);
+			profilePostService(args, beforeExecutionTimeNano, postServiceResponseObject, throwable);
 		}
 	}
 
@@ -58,7 +59,7 @@ public class ProfileLoggingAspect {
 		Object responseObject = null;
 
 		try {
-			beforeExecutionTimeMillis = Utils.getEpochMillis();
+			beforeExecutionTimeMillis = System.nanoTime();
 			args = joinPoint.getArgs();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -77,14 +78,14 @@ public class ProfileLoggingAspect {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void profileWebServiceGateway(Object[] args, long beforeExecutionTimeMillis, Object responseObject, Throwable throwable) {
+	private void profileWebServiceGateway(Object[] args, long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
 				String body = (String) args[1];
 
-				long afterExecutionTimeMillis = Utils.getEpochMillis();
-				long executionDurationMillis = afterExecutionTimeMillis - beforeExecutionTimeMillis;
+				long afterExecutionTimeNano = System.nanoTime();
+				long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
 
 				boolean result = true;
 				String errorMessage = null;
@@ -105,7 +106,7 @@ public class ProfileLoggingAspect {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void profilePostService(Object[] args, long beforeExecutionTimeMillis, Object postServiceResponseObject, Throwable throwable) {
+	private void profilePostService(Object[] args, long beforeExecutionTimeNano, Object postServiceResponseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
@@ -115,17 +116,17 @@ public class ProfileLoggingAspect {
 				for (int i = 0; i < nameValuePairs.size(); i++) {
 					NameValuePair nameValuePair = nameValuePairs.get(i);
 					final String name = nameValuePair.getName();
-					if (!name.equals(SageRequestParam.TxType) && !name.equals(SageRequestParam.VendorTxCode) && !name.equals(SageRequestParam.Amount) && !name.equals(SageRequestParam.Currency)
-							&& !name.equals(SageRequestParam.Description) && !name.equals(SageRequestParam.Vendor) && !name.equals(SageRequestParam.VPSProtocol)
-							&& !name.equals(SageRequestParam.VendorTxCode) && !name.equals(SageRequestParam.VPSTxId) && !name.equals(SageRequestParam.TxAuthNo)
-							&& !name.equals(SageRequestParam.ReleaseAmount) && !name.equals(SageRequestParam.RelatedVPSTxId) && !name.equals(SageRequestParam.RelatedVendorTxCode)
-							&& !name.equals(SageRequestParam.RelatedTxAuthNo)) {
+					if (!(name.equals(SageRequestParam.TxType) || name.equals(SageRequestParam.VendorTxCode) || name.equals(SageRequestParam.Amount) || name.equals(SageRequestParam.Currency)
+							|| name.equals(SageRequestParam.Description) || name.equals(SageRequestParam.Vendor) || name.equals(SageRequestParam.VPSProtocol)
+							|| name.equals(SageRequestParam.VendorTxCode) || name.equals(SageRequestParam.VPSTxId) || name.equals(SageRequestParam.TxAuthNo)
+							|| name.equals(SageRequestParam.ReleaseAmount) || name.equals(SageRequestParam.RelatedVPSTxId) || name.equals(SageRequestParam.RelatedVendorTxCode)
+							|| name.equals(SageRequestParam.RelatedTxAuthNo))) {
 						nameValuePairs.remove(nameValuePair);
 					}
 				}
 
-				long afterExecutionTimeMillis = Utils.getEpochMillis();
-				long executionDurationMillis = afterExecutionTimeMillis - beforeExecutionTimeMillis;
+				long afterExecutionTimeNano = System.nanoTime();
+				long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
 
 				boolean result = true;
 				String errorMessage = null;
