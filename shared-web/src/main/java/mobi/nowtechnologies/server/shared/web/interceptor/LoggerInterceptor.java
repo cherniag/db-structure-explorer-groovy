@@ -90,6 +90,8 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				Contract userContract = null;
 				SegmentType userSegment = null;
 				String userProvider = null;
+				Object currentPaymentDetailsId = null;
+				Boolean isCurrentPaymentDetailsActivated = null;
 
 				final String result;
 				String errorMessages;
@@ -122,6 +124,8 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 							if (user != null) {
 								PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 								if (currentPaymentDetails != null) {
+									currentPaymentDetailsId = currentPaymentDetails.getI();
+									isCurrentPaymentDetailsActivated = currentPaymentDetails.isActivated();
 									PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
 									if (paymentPolicy != null) {
 										userPaymentPolicyAdditionalInfo = paymentPolicy.toString();
@@ -149,9 +153,9 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 					final Object paymentPoliciesObject = request.getAttribute("paymentPolicies");
 					if (paymentPoliciesObject != null) {
 						if (paymentPoliciesObject instanceof List<?>) {
-							List<?> offeredPaymentPolicyDtoList = (List<?>) paymentPoliciesObject;
+							List<?> existedPaymentPoliciesList = (List<?>) paymentPoliciesObject;
 
-							existedPaymentPolicies = offeredPaymentPolicyDtoList.toString();
+							existedPaymentPolicies = existedPaymentPoliciesList.toString();
 						} else {
 							LOGGER.error("Invalid paymentPolicies type");
 						}
@@ -167,8 +171,9 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
 				PROFILE_LOGGER
 						.debug(
-								"execTimeMillis=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicySubWeeks=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
-								execTimeMillis, selectedPaymentPolicyId, existedPaymentPolicies,
+								"execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicySubWeeks=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
+								execTimeMillis, currentPaymentDetailsId,
+								isCurrentPaymentDetailsActivated, selectedPaymentPolicyId, existedPaymentPolicies,
 								userContract,
 								userSegment,
 								userProvider,
