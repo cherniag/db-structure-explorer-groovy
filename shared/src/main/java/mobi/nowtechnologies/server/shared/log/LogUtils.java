@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.shared.log;
 
-import mobi.nowtechnologies.server.shared.Utils;
-
 import org.apache.log4j.MDC;
 
 public class LogUtils {
@@ -21,7 +19,7 @@ public class LogUtils {
 	public static final String LOG_USER_ID = "userId";
 	public static final String LOG_USER_MOBILE = "userMobile";
 	public static final String LOG_REMOTE_ADDR = "remoteAddr";
-	public static final String LOG_START_TIME_MILLIS = "startTimeMillis";
+	public static final String LOG_START_TIME_NANO = "startTimeNano";
 
 	public static final void putGlobalMDC(Object userId, String userMobile, String userName, String community, String commandName, Class<?> c, String remoteAddr) {
 		if (userId != null) {
@@ -40,8 +38,8 @@ public class LogUtils {
 			MDC.put(LOG_COMMAND, commandName);
 		MDC.put(LOG_REMOTE_ADDR, remoteAddr);
 
-		final long startTimeMillis = Utils.getEpochMillis();
-		MDC.put(LOG_START_TIME_MILLIS, startTimeMillis);
+		final long startTimeNano = System.nanoTime();
+		MDC.put(LOG_START_TIME_NANO, startTimeNano);
 	}
 
 	public static final void removeGlobalMDC() {
@@ -60,6 +58,7 @@ public class LogUtils {
 		if (MDC.get(LOG_COMMAND) != null)
 			MDC.remove(LOG_COMMAND);
 		MDC.remove(LOG_REMOTE_ADDR);
+		removeStartTimeNanoMDC();
 	}
 
 	public static final void putClassNameMDC(Class<?> c) {
@@ -118,13 +117,13 @@ public class LogUtils {
 			MDC.remove(LOG_USER_ID);
 	}
 
-	public static Long getStartTimeMillis() {
-		return (Long) MDC.get(LOG_START_TIME_MILLIS);
+	public static Long getStartTimeNano() {
+		return (Long) MDC.get(LOG_START_TIME_NANO);
 	}
 
-	public static void removeStartTimeMillisMDC() {
-		if (MDC.get(LOG_START_TIME_MILLIS) != null)
-			MDC.remove(LOG_START_TIME_MILLIS);
+	public static void removeStartTimeNanoMDC() {
+		if (MDC.get(LOG_START_TIME_NANO) != null)
+			MDC.remove(LOG_START_TIME_NANO);
 	}
 
 	public static Object getUserId() {
