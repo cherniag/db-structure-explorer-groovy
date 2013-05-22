@@ -95,7 +95,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				String errorMessages;
 				final Object externalErrorObject = request.getAttribute("external_error");
 				final Object internalErrorObject = request.getAttribute("internal_error");
-				if (ex == null && externalErrorObject != null && internalErrorObject != null) {
+				if (ex == null && externalErrorObject == null && internalErrorObject == null) {
 					result = "success";
 					errorMessages = null;
 				} else {
@@ -114,31 +114,33 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				}
 
 				final Object userIdObject = LogUtils.getUserId();
-				if (userIdObject instanceof Integer) {
-					final Integer userId = (Integer) userIdObject;
-					if (userId != null) {
-						User user = userService.findById(userId);
-						if (user != null) {
-							PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-							if (currentPaymentDetails != null) {
-								PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
-								if (paymentPolicy != null) {
-									userPaymentPolicyAdditionalInfo = paymentPolicy.toString();
-									userPaymentPolicyId = String.valueOf(paymentPolicy.getId());
-									userPaymentPolicySubWeeks = String.valueOf(paymentPolicy.getSubweeks());
-									final BigDecimal subcost = paymentPolicy.getSubcost();
-									if (subcost != null) {
-										userPaymentPolicySubCost = subcost.toString();
+				if (userIdObject != null) {
+					if (userIdObject instanceof Integer) {
+						final Integer userId = (Integer) userIdObject;
+						if (userId != null) {
+							User user = userService.findById(userId);
+							if (user != null) {
+								PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+								if (currentPaymentDetails != null) {
+									PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
+									if (paymentPolicy != null) {
+										userPaymentPolicyAdditionalInfo = paymentPolicy.toString();
+										userPaymentPolicyId = String.valueOf(paymentPolicy.getId());
+										userPaymentPolicySubWeeks = String.valueOf(paymentPolicy.getSubweeks());
+										final BigDecimal subcost = paymentPolicy.getSubcost();
+										if (subcost != null) {
+											userPaymentPolicySubCost = subcost.toString();
+										}
 									}
 								}
+								userContract = user.getContract();
+								userSegment = user.getSegment();
+								userProvider = user.getProvider();
 							}
-							userContract = user.getContract();
-							userSegment = user.getSegment();
-							userProvider = user.getProvider();
 						}
+					} else {
+						LOGGER.error("Invalid user id type");
 					}
-				} else {
-					LOGGER.error("Invalid user id type");
 				}
 				final String requestURI = request.getRequestURI();
 				if (requestURI.contains("/payments_inapp") || requestURI.contains("/payments")) {
@@ -154,7 +156,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 							LOGGER.error("Invalid paymentPolicies type");
 						}
 					} else {
-						LOGGER.error("paymentPolicies request attribete is null");
+						LOGGER.error("paymentPolicies request attribute is null");
 					}
 				}
 				Long startTimeNano = LogUtils.getStartTimeNano();
