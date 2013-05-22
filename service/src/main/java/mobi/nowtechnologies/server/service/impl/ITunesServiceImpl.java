@@ -100,7 +100,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 
 			String body = gson.toJson(iTunesInAppSubscriptionRequestDto);
 			
-			LOGGER.info("Trying to validate in-app subscription with following params [{}]", body);
+			LOGGER.info("Trying to validate in-app subscription with following params [{}]", iTunesInAppSubscriptionRequestDto);
 			response = postService.sendHttpPost(iTunesUrl, null, body);
 
 			if (response.getStatusCode() == HttpStatus.OK.value()) {
@@ -137,7 +137,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
 					applicationEventPublisher.publishEvent(paymentEvent);
 				} else {
-					LOGGER.info("ITunes rejected the encoded receipt [{}] by response [{}]", user.getBase64EncodedAppStoreReceipt(), response);
+					LOGGER.info("ITunes rejected the encoded receipt [{}] by response [{}]", base64EncodedAppStoreReceipt, response);
 				}
 			}else{
 				LOGGER.info("The request of in-app subscription validation returned unexpected response [{}]", response);
