@@ -1,9 +1,15 @@
 package mobi.nowtechnologies.server.shared.log;
 
 import org.apache.log4j.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 
 public class LogUtils {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogUtils.class);
+
+	private static final String BINDING_RESULT = "bindingResult";
 	public static final String T_PR_RESPONSE = "tPRResponse";
 	public static final String T_PR_BODY = "tPRBody";
 	public static final String T_PR_NAME_VALUE_PAIRS = "tPRNameValuePairs";
@@ -43,22 +49,29 @@ public class LogUtils {
 	}
 
 	public static final void removeGlobalMDC() {
-		if (MDC.get(LOG_USER_ID) != null) {
-			MDC.remove(LOG_USER_ID);
+		try {
+			if (MDC.get(LOG_USER_ID) != null) {
+				MDC.remove(LOG_USER_ID);
+			}
+			if (MDC.get(LOG_USER_MOBILE) != null) {
+				MDC.remove(LOG_USER_MOBILE);
+			}
+			if (MDC.get(LOG_USER_NAME) != null)
+				MDC.remove(LOG_USER_NAME);
+			if (MDC.get(LOG_COMMUNITY) != null)
+				MDC.remove(LOG_COMMUNITY);
+			if (MDC.get(LOG_CLASS) != null)
+				MDC.remove(LOG_CLASS);
+			if (MDC.get(LOG_COMMAND) != null)
+				MDC.remove(LOG_COMMAND);
+			if (MDC.get(BINDING_RESULT) != null) {
+				MDC.remove(BINDING_RESULT);
+			}
+			MDC.remove(LOG_REMOTE_ADDR);
+			removeStartTimeNanoMDC();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		if (MDC.get(LOG_USER_MOBILE) != null) {
-			MDC.remove(LOG_USER_MOBILE);
-		}
-		if (MDC.get(LOG_USER_NAME) != null)
-			MDC.remove(LOG_USER_NAME);
-		if (MDC.get(LOG_COMMUNITY) != null)
-			MDC.remove(LOG_COMMUNITY);
-		if (MDC.get(LOG_CLASS) != null)
-			MDC.remove(LOG_CLASS);
-		if (MDC.get(LOG_COMMAND) != null)
-			MDC.remove(LOG_COMMAND);
-		MDC.remove(LOG_REMOTE_ADDR);
-		removeStartTimeNanoMDC();
 	}
 
 	public static final void putClassNameMDC(Class<?> c) {
@@ -78,13 +91,17 @@ public class LogUtils {
 	}
 
 	public static final void removePaymentMDC() {
-		if (MDC.get(LOG_USER_ID) != null)
-			MDC.remove(LOG_USER_ID);
-		if (MDC.get(LOG_USER_NAME) != null)
-			MDC.remove(LOG_USER_NAME);
-		if (MDC.get(LOG_COMMUNITY) != null)
-			MDC.remove(LOG_COMMUNITY);
-		removeClassNameMDC();
+		try {
+			if (MDC.get(LOG_USER_ID) != null)
+				MDC.remove(LOG_USER_ID);
+			if (MDC.get(LOG_USER_NAME) != null)
+				MDC.remove(LOG_USER_NAME);
+			if (MDC.get(LOG_COMMUNITY) != null)
+				MDC.remove(LOG_COMMUNITY);
+			removeClassNameMDC();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	public static void putSpecificMDC(String userName, String userMobile, Object userId) {
@@ -156,27 +173,41 @@ public class LogUtils {
 	}
 
 	public static void remove3rdParyRequestProfileMDC() {
-		if (MDC.get(T_PR_EXECUTION_DURATION_MILLIS) != null) {
-			MDC.remove(T_PR_EXECUTION_DURATION_MILLIS);
-		}
-		if (MDC.get(T_PR_ERROR_MESSAGE) != null) {
-			MDC.remove(T_PR_ERROR_MESSAGE);
-		}
-		if (MDC.get(T_PR_RESULT) != null) {
-			MDC.remove(T_PR_RESULT);
-		}
-		if (MDC.get(T_PR_URL) != null) {
-			MDC.remove(T_PR_URL);
-		}
-		if (MDC.get(T_PR_NAME_VALUE_PAIRS) != null) {
-			MDC.remove(T_PR_NAME_VALUE_PAIRS);
-		}
-		if (MDC.get(T_PR_BODY) != null) {
-			MDC.remove(T_PR_BODY);
-		}
-		if (MDC.get(T_PR_RESPONSE) != null) {
-			MDC.remove(T_PR_RESPONSE);
+		try {
+			if (MDC.get(T_PR_EXECUTION_DURATION_MILLIS) != null) {
+				MDC.remove(T_PR_EXECUTION_DURATION_MILLIS);
+			}
+			if (MDC.get(T_PR_ERROR_MESSAGE) != null) {
+				MDC.remove(T_PR_ERROR_MESSAGE);
+			}
+			if (MDC.get(T_PR_RESULT) != null) {
+				MDC.remove(T_PR_RESULT);
+			}
+			if (MDC.get(T_PR_URL) != null) {
+				MDC.remove(T_PR_URL);
+			}
+			if (MDC.get(T_PR_NAME_VALUE_PAIRS) != null) {
+				MDC.remove(T_PR_NAME_VALUE_PAIRS);
+			}
+			if (MDC.get(T_PR_BODY) != null) {
+				MDC.remove(T_PR_BODY);
+			}
+			if (MDC.get(T_PR_RESPONSE) != null) {
+				MDC.remove(T_PR_RESPONSE);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
 
+	}
+
+	public static void putBindingResultMDC(Object value) {
+		if (value != null) {
+			MDC.put(BINDING_RESULT, value);
+		}
+	}
+
+	public static Object getBindingResultMDC() {
+		return MDC.get(BINDING_RESULT);
 	}
 }

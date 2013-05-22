@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.shared.web.interceptor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
@@ -15,16 +17,16 @@ import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
@@ -72,6 +74,27 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+		try {
+			if (PROFILE_LOGGER.isDebugEnabled() && modelAndView != null) {
+				final Map<String, Object> model = modelAndView.getModel();
+				Set<String> keySet = model.keySet();
+				for (String key : keySet) {
+					if (key.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
+						final Object keyValue = model.get(key);
+						LogUtils.putBindingResultMDC(keyValue);
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		super.postHandle(request, response, handler, modelAndView);
+	}
+
+	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 		profile(request, ex);
 		LogUtils.removeGlobalMDC();
@@ -93,11 +116,13 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				Object currentPaymentDetailsId = null;
 				Boolean isCurrentPaymentDetailsActivated = null;
 
+				BindingResult bindingResult =  (BindingResult) LogUtils.getBindingResultMDC();
+
 				final String result;
 				String errorMessages;
 				final Object externalErrorObject = request.getAttribute("external_error");
 				final Object internalErrorObject = request.getAttribute("internal_error");
-				if (ex == null && externalErrorObject == null && internalErrorObject == null) {
+				if (ex == null && externalErrorObject == null && internalErrorObject == null && (bindingResult == null || !bindingResult.hasErrors())) {
 					result = "success";
 					errorMessages = null;
 				} else {
@@ -112,6 +137,10 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
 					if (internalErrorObject != null) {
 						errorMessages += "{ " + internalErrorObject.toString() + "} ";
+					}
+
+					if (bindingResult != null && bindingResult.hasErrors()) {
+						errorMessages += "{ " + bindingResult.toString() + "} ";
 					}
 				}
 

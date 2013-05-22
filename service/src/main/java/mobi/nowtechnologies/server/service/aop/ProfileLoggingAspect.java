@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import mobi.nowtechnologies.server.service.payment.request.MigRequest.MigRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
@@ -34,8 +35,11 @@ public class ProfileLoggingAspect {
 			SageRequestParam.TxAuthNo.name(), SageRequestParam.ReleaseAmount.name(), SageRequestParam.RelatedVPSTxId.name(), SageRequestParam.RelatedVendorTxCode.name(),
 			SageRequestParam.RelatedTxAuthNo.name(), PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0.name(), PayPalRequestParam.L_BILLINGTYPE0.name(), PayPalRequestParam.PAYMENTACTION.name(),
 			PayPalRequestParam.CURRENCYCODE.name(), PayPalRequestParam.RETURNURL.name(), PayPalRequestParam.CANCELURL.name(), PayPalRequestParam.TOKEN.name(), PayPalRequestParam.METHOD.name(),
-			PayPalRequestParam.VERSION.name(), PayPalRequestParam.REFERENCEID.name(), PayPalRequestParam.AMT.name(), MigRequestParam.OADC.name(), MigRequestParam.OADCTYPE.name(), MigRequestParam.MESSAGEID.name(),
+			PayPalRequestParam.VERSION.name(), PayPalRequestParam.REFERENCEID.name(), PayPalRequestParam.AMT.name(), MigRequestParam.OADC.name(), MigRequestParam.OADCTYPE.name(),
+			MigRequestParam.MESSAGEID.name(),
 			MigRequestParam.BODY.name(), MigRequestParam.TIMETOLIVE.name() };
+
+	private static final Pattern RECEIPT_DATA_PATTERN = Pattern.compile("\"receipt-data\"\\s*:\\s*\"(.*?)\"");
 
 	private static final Logger THIRD_PARTY_REQUESTS_PROFILE_LOGGER = LoggerFactory.getLogger("THIRD_PARTY_REQUESTS_PROFILE_LOGGER");
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLoggingAspect.class);
@@ -104,7 +108,10 @@ public class ProfileLoggingAspect {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
-				String body = (String) args[1];
+				String body = null;
+				if (args[1] != null) {
+					body = args[1].toString();
+				}
 
 				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
 			}
@@ -123,24 +130,35 @@ public class ProfileLoggingAspect {
 				List<NameValuePair> nameValuePairs = (List<NameValuePair>) args[1];
 				String body = (String) args[2];
 
-				List<String> actualLogNameListForNameValuePair = logNameListForNameValuePair;
-				try {
-					String logNamesStringForNameValuePairFromConfig = communityResourceBundleMessageSource.getMessage(MDC.get(LogUtils.LOG_COMMUNITY), "profileLoggingAspect.logNamesForNameValuePair",
-							null, null);
-					if (!StringUtils.isBlank(logNamesStringForNameValuePairFromConfig)) {
-						actualLogNameListForNameValuePair = Arrays.asList(logNamesStringForNameValuePairFromConfig.split(","));
+				if (body != null) {
+					Matcher matcher = RECEIPT_DATA_PATTERN.matcher(body);
+					if (matcher.find()) {
+						body = matcher.group(0);
+					} else {
+						body = "seccurity params";
 					}
-				} catch (Exception e) {
-					LOGGER.error(e.getMessage(), e);
 				}
 
-				for (Iterator<NameValuePair> iterator = nameValuePairs.iterator(); iterator.hasNext();) {
-					NameValuePair nameValuePair = iterator.next();
-					final String name = nameValuePair.getName();
-					if (!actualLogNameListForNameValuePair.contains(name)) {
-						iterator.remove();
+				if (nameValuePairs != null) {
+					List<String> actualLogNameListForNameValuePair = logNameListForNameValuePair;
+					try {
+						String logNamesStringForNameValuePairFromConfig = communityResourceBundleMessageSource.getMessage(MDC.get(LogUtils.LOG_COMMUNITY), "profileLoggingAspect.logNamesForNameValuePair",
+								null, null);
+						if (!StringUtils.isBlank(logNamesStringForNameValuePairFromConfig)) {
+							actualLogNameListForNameValuePair = Arrays.asList(logNamesStringForNameValuePairFromConfig.split(","));
+						}
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
 					}
+					
+					for (Iterator<NameValuePair> iterator = nameValuePairs.iterator(); iterator.hasNext();) {
+						NameValuePair nameValuePair = iterator.next();
+						final String name = nameValuePair.getName();
+						if (!actualLogNameListForNameValuePair.contains(name)) {
+							iterator.remove();
+						}
 
+					}
 				}
 
 				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, nameValuePairs, body);
@@ -164,7 +182,7 @@ public class ProfileLoggingAspect {
 		}
 
 		LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
-		
+
 		THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
 	}
 
