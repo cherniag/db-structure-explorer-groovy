@@ -186,7 +186,7 @@ public class GetChartController extends CommonController{
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
-			@PathVariable("API_VERSION") String apiVersion,
+			@PathVariable("apiVersion") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
