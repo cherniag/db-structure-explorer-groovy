@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -101,26 +100,13 @@ public class ProfileLoggingAspect {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void profileWebServiceGateway(Object[] args, long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
 				String body = (String) args[1];
 
-				long afterExecutionTimeNano = System.nanoTime();
-				long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
-
-				boolean result = true;
-				String errorMessage = null;
-				if (throwable != null) {
-					result = false;
-					errorMessage = throwable.getMessage();
-				}
-
-				LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, null, body, responseObject);
-
-				THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("");
+				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -130,7 +116,7 @@ public class ProfileLoggingAspect {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void profilePostService(Object[] args, long beforeExecutionTimeNano, Object postServiceResponseObject, Throwable throwable) {
+	private void profilePostService(Object[] args, long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
@@ -157,32 +143,29 @@ public class ProfileLoggingAspect {
 
 				}
 
-				long afterExecutionTimeNano = System.nanoTime();
-				long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
-
-				boolean result = true;
-				String errorMessage = null;
-				if (throwable != null) {
-					result = false;
-					errorMessage = throwable.getMessage();
-				}
-
-				Response response = (Response) postServiceResponseObject;
-
-				String responseMessage = null;
-				if (response != null) {
-					responseMessage = response.toString();
-				}
-
-				LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseMessage);
-
-				THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("");
+				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, nameValuePairs, body);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		} finally {
 			LogUtils.remove3rdParyRequestProfileMDC();
 		}
+	}
+
+	private void commonProfileLogic(long beforeExecutionTimeNano, Object responseObject, Throwable throwable, String url, List<NameValuePair> nameValuePairs, String body) {
+		long afterExecutionTimeNano = System.nanoTime();
+		long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
+
+		String result = "success";
+		String errorMessage = null;
+		if (throwable != null) {
+			result = "fail";
+			errorMessage = throwable.getMessage();
+		}
+
+		LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
+		
+		THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
 	}
 
 }
