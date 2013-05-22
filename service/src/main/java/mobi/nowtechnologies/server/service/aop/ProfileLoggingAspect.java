@@ -30,7 +30,7 @@ public class ProfileLoggingAspect {
 		Object[] args = null;
 		Long beforeExecutionTimeNano = null;
 		Object postServiceResponseObject = null;
-
+		
 		try {
 			beforeExecutionTimeNano = System.nanoTime();
 			args = joinPoint.getArgs();
