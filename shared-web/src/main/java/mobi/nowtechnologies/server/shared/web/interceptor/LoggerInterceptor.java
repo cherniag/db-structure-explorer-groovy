@@ -1,7 +1,11 @@
 package mobi.nowtechnologies.server.shared.web.interceptor;
 
 import java.math.BigDecimal;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
@@ -21,10 +25,13 @@ import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
@@ -72,6 +79,30 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+		try {
+			if (PROFILE_LOGGER.isDebugEnabled() && modelAndView != null) {
+				final Map<String, Object> model = modelAndView.getModel();
+				Set<String> keySet = model.keySet();
+				for (String key : keySet) {
+					if (key.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
+						final Object keyValue = model.get(key);
+						MDC.put("bindingResult", keyValue);
+//						if(keyValue!=null){
+//							MDC.put("bindingResultString", keyValue.toString());
+//						}
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		super.postHandle(request, response, handler, modelAndView);
+	}
+
+	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 		profile(request, ex);
 		LogUtils.removeGlobalMDC();
@@ -80,6 +111,16 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
 	private void profile(HttpServletRequest request, Exception ex) {
 		try {
+			// final Enumeration attributeNames = request.getAttributeNames();
+			// System.out.println(attributeNames);
+			// while (attributeNames.hasMoreElements()) {
+			// String attributeName = (String) attributeNames.nextElement();
+			// System.out.println(attributeName+"="+request.getAttribute(attributeName));
+			//
+			// }
+			// //System.out.println(request.getAttribute(BindingResult.MODEL_KEY_PREFIX
+			// + PaymentsCreditCardController.PAGE_PAYMENTS_CREDITCARD));
+
 			if (PROFILE_LOGGER.isDebugEnabled()) {
 				String userPaymentPolicyId = null;
 				String userPaymentPolicySubCost = null;
@@ -93,11 +134,14 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				Object currentPaymentDetailsId = null;
 				Boolean isCurrentPaymentDetailsActivated = null;
 
+				BindingResult bindingResult = (BindingResult) MDC.get("bindingResult");
+				//String bindingResultString = (String) MDC.get("bindingResultString");
+
 				final String result;
 				String errorMessages;
 				final Object externalErrorObject = request.getAttribute("external_error");
 				final Object internalErrorObject = request.getAttribute("internal_error");
-				if (ex == null && externalErrorObject == null && internalErrorObject == null) {
+				if (ex == null && externalErrorObject == null && internalErrorObject == null && (bindingResult == null || !bindingResult.hasErrors())) {
 					result = "success";
 					errorMessages = null;
 				} else {
@@ -112,6 +156,10 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
 					if (internalErrorObject != null) {
 						errorMessages += "{ " + internalErrorObject.toString() + "} ";
+					}
+
+					if (bindingResult != null && bindingResult.hasErrors()) {
+						errorMessages += "{ " + bindingResult.toString() + "} ";
 					}
 				}
 
