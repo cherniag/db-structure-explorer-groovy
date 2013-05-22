@@ -26,4 +26,6 @@
 			</list>
 		</property>
 	</bean>
+	
+    <bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl"/>
 </beans>
