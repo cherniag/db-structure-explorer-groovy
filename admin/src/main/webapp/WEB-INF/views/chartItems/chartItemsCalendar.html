@@ -70,9 +70,9 @@
 						<form class="edit_btn" th:action="@{/chartsNEW/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__/}" method="get">
 							<button class="btn btn-primary updatesList" type="submit" th:text="${#dates.format(new java.util.Date(updateTime), 'HH:mm')}">Edit for this time</button>
 						</form>
-						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post">
 							<input type="hidden" id="_method" name="_method" value="DELETE" />
-								<a href="#" onCLick="$('form#deleteChartItemsSetForm').submit();"><img th:src="@{/assets/img/icon_delete.png}"
+								<a href="#" onCLick="$(this).parent().submit();"><img th:src="@{/assets/img/icon_delete.png}"
 									th:alt="#{chartItems.page.deleteChartItemsSetForm.submit.text}"
 									width="32" height="32" /></a>
 						</form>
