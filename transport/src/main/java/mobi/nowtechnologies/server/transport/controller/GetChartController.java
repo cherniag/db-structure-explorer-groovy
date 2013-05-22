@@ -242,7 +242,7 @@ public class GetChartController extends CommonController{
 		for (int i = 0; i < tracks.length; i++) {
 			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
 				tracks[i] = null;
-			else if(tracks[i].getChannel() != null && version.contains("3.7"))
+			else if(tracks[i].getChannel() != null && !version.contains("3.7"))
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 		}
 		

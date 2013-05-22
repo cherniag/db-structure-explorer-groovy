@@ -449,6 +449,8 @@
 					activeElement.blur();
 				}
 			}
+			if(event.which == 1)
+				deselectText();
 		});
 		
 		// Search media
@@ -620,6 +622,22 @@
 		}
 	}
 	
+	function enableChartItemHandlers(item, enable){
+		var channelDiv = item.find("div.channel_chartItem, div.channel_chartItemBasket");
+		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
+		var isrcDiv = item.find("div.publishDate_chartItem");
+		
+		if(enable){
+			isrcDiv.bind('dblclick.isrcDiv', onClickIsrc);
+			channelDiv.bind('dblclick.channelDiv', onClickChannel);
+			infoDiv.bind('dblclick.infoDiv',  onClickInfo);
+		}else{
+			isrcDiv.bind('dblclick.isrcDiv', onClickIsrc);
+			channelDiv.bind('dblclick.channelDiv', onClickChannel);
+			infoDiv.unbind('dblclick.infoDiv');
+		}
+	}
+	
 	function refreshChartItemsList(){
 		var chartItemsList = $( "#chartItemsSortable" );
 		var opts = chartItemsList.sortable( "option" );
@@ -636,6 +654,13 @@
 				 positionDiv.text(new_position);
 			}
 		});
+	}
+	
+	function onClickIsrc(event){
+		var isrcDiv = $(event.delegateTarget);
+		
+ 		var span = isrcDiv.find("span");
+ 		selectText(span[0]);
 	}
 	
 	function onClickInfo(event){

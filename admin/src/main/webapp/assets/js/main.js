@@ -271,3 +271,24 @@ function showModalDialog(obj) {
 	else
 		$(obj).modal(modalDialogOptions);
 }
+
+// selection and deselection text
+function selectText(el) {
+	deselectText();
+	if (document.selection) {
+		var range = document.body.createTextRange();
+		range.moveToElementText(el);
+		range.select();
+	}
+	else if (window.getSelection) {
+		var range = document.createRange();
+		range.selectNode(el);
+		window.getSelection().addRange(range);
+	}
+}
+
+function deselectText() {
+	if (document.selection) document.selection.empty(); 
+	else if (window.getSelection)
+            window.getSelection().removeAllRanges();
+}

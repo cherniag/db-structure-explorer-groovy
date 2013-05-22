@@ -110,6 +110,7 @@ import org.xml.sax.SAXException;
 		"classpath:transport-servlet-test.xml",
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",
+		"classpath:META-INF/soap.xml",
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.EntityController")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
@@ -2970,7 +2971,7 @@ public class IntegrationTestIT {
 		
 		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(
 				"POST", requestURI);
-		httpServletRequest.addHeader("Content-Type", "text/xml");
+		httpServletRequest.addHeader("Content-Type", "text/ xml");
 		httpServletRequest.addHeader("Content-Length", "0");
 		httpServletRequest.setRemoteAddr("2.24.0.1");
 		httpServletRequest.setPathInfo("/GET_CHART");

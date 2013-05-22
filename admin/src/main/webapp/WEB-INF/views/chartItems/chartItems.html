@@ -448,6 +448,8 @@
 					activeElement.blur();
 				}
 			}
+			if(event.which == 1)
+				deselectText();
 		});
 		
 		// Search media
@@ -606,11 +608,14 @@
 	function enableChartItemHandlers(item, enable){
 		var prevPositionDiv = item.find("div.prev_position_chartItem, div.prev_position_chartItemBasket");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
+		var isrcDiv = item.find("div.publishDate_chartItem");
 		
 		if(enable){
+			isrcDiv.bind('dblclick.isrcDiv', onClickIsrc);
 			prevPositionDiv.bind('dblclick.prevPositionDiv', onClickPrevPosition);
 			infoDiv.bind('dblclick.infoDiv',  onClickInfo);
 		}else{
+			isrcDiv.bind('dblclick.isrcDiv', onClickIsrc);
 			prevPositionDiv.unbind('dblclick.prevPositionDiv');
 			infoDiv.unbind('dblclick.infoDiv');
 		}
@@ -662,6 +667,12 @@
 		return "NONE";
 	}
 	
+	function onClickIsrc(event){
+		var isrcDiv = $(event.delegateTarget);
+		
+ 		var span = isrcDiv.find("span");
+ 		selectText(span[0]);
+	}
 	
 	function onClickInfo(event){
 		var infoDiv = $(event.delegateTarget);
