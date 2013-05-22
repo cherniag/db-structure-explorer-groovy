@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.shared.web.interceptor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +90,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				Contract userContract = null;
 				SegmentType userSegment = null;
 				String userProvider = null;
-				
 
 				final String result;
 				String errorMessages;
@@ -102,14 +102,14 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 					result = "fail";
 					errorMessages = "";
 					if (ex != null) {
-						errorMessages += "{ " + ex.getMessage() +"} ";
+						errorMessages += "{ " + ex.getMessage() + "} ";
 					}
 					if (externalErrorObject != null) {
-						errorMessages += "{ " + externalErrorObject.toString() +"} ";
+						errorMessages += "{ " + externalErrorObject.toString() + "} ";
 					}
 
 					if (internalErrorObject != null) {
-						errorMessages += "{ " + internalErrorObject.toString()+"} ";
+						errorMessages += "{ " + internalErrorObject.toString() + "} ";
 					}
 				}
 
@@ -157,10 +157,16 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 						LOGGER.error("paymentPolicies request attribete is null");
 					}
 				}
+				Long startTimeNano = LogUtils.getStartTimeNano();
+				Long execTimeMillis = null;
+				if (startTimeNano != null) {
+					execTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNano);
+				}
+
 				PROFILE_LOGGER
 						.debug(
-								"selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicySubWeeks=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
-								selectedPaymentPolicyId, existedPaymentPolicies,
+								"execTimeMillis=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicySubWeeks=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
+								execTimeMillis, selectedPaymentPolicyId, existedPaymentPolicies,
 								userContract,
 								userSegment,
 								userProvider,
