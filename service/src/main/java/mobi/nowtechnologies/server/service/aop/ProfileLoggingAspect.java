@@ -1,18 +1,26 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import mobi.nowtechnologies.server.service.payment.request.MigRequest.MigRequestParam;
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -21,8 +29,25 @@ import org.slf4j.LoggerFactory;
 @Aspect
 public class ProfileLoggingAspect {
 
+	private static final String[] logNameArrayForNameValuePair = new String[] { SageRequestParam.TxType.name(), SageRequestParam.VendorTxCode.name(), SageRequestParam.Amount.name(),
+			SageRequestParam.Currency.name(),
+			SageRequestParam.Description.name(), SageRequestParam.Vendor.name(), SageRequestParam.VPSProtocol.name(), SageRequestParam.VendorTxCode.name(), SageRequestParam.VPSTxId.name(),
+			SageRequestParam.TxAuthNo.name(), SageRequestParam.ReleaseAmount.name(), SageRequestParam.RelatedVPSTxId.name(), SageRequestParam.RelatedVendorTxCode.name(),
+			SageRequestParam.RelatedTxAuthNo.name(), PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0.name(), PayPalRequestParam.L_BILLINGTYPE0.name(), PayPalRequestParam.PAYMENTACTION.name(),
+			PayPalRequestParam.CURRENCYCODE.name(), PayPalRequestParam.RETURNURL.name(), PayPalRequestParam.CANCELURL.name(), PayPalRequestParam.TOKEN.name(), PayPalRequestParam.METHOD.name(),
+			PayPalRequestParam.VERSION.name(), PayPalRequestParam.REFERENCEID.name(), PayPalRequestParam.AMT.name(), MigRequestParam.OADC.name(), MigRequestParam.OADCTYPE.name(), MigRequestParam.MESSAGEID.name(),
+			MigRequestParam.BODY.name(), MigRequestParam.TIMETOLIVE.name() };
+
 	private static final Logger THIRD_PARTY_REQUESTS_PROFILE_LOGGER = LoggerFactory.getLogger("THIRD_PARTY_REQUESTS_PROFILE_LOGGER");
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLoggingAspect.class);
+
+	private List<String> logNameListForNameValuePair = Arrays.asList(logNameArrayForNameValuePair);
+
+	private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+
+	public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {
+		this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
+	}
 
 	@Around("execution(* mobi.nowtechnologies.server.shared.service.PostService.sendHttpPost(..))")
 	public Object aroundPostService_sendHttpPost(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -30,7 +55,7 @@ public class ProfileLoggingAspect {
 		Object[] args = null;
 		Long beforeExecutionTimeNano = null;
 		Object postServiceResponseObject = null;
-		
+
 		try {
 			beforeExecutionTimeNano = System.nanoTime();
 			args = joinPoint.getArgs();
@@ -112,16 +137,24 @@ public class ProfileLoggingAspect {
 				List<NameValuePair> nameValuePairs = (List<NameValuePair>) args[1];
 				String body = (String) args[2];
 
-				for (int i = 0; i < nameValuePairs.size(); i++) {
-					NameValuePair nameValuePair = nameValuePairs.get(i);
-					final String name = nameValuePair.getName();
-					if (!(name.equals(SageRequestParam.TxType) || name.equals(SageRequestParam.VendorTxCode) || name.equals(SageRequestParam.Amount) || name.equals(SageRequestParam.Currency)
-							|| name.equals(SageRequestParam.Description) || name.equals(SageRequestParam.Vendor) || name.equals(SageRequestParam.VPSProtocol)
-							|| name.equals(SageRequestParam.VendorTxCode) || name.equals(SageRequestParam.VPSTxId) || name.equals(SageRequestParam.TxAuthNo)
-							|| name.equals(SageRequestParam.ReleaseAmount) || name.equals(SageRequestParam.RelatedVPSTxId) || name.equals(SageRequestParam.RelatedVendorTxCode)
-							|| name.equals(SageRequestParam.RelatedTxAuthNo))) {
-						nameValuePairs.remove(nameValuePair);
+				List<String> actualLogNameListForNameValuePair = logNameListForNameValuePair;
+				try {
+					String logNamesStringForNameValuePairFromConfig = communityResourceBundleMessageSource.getMessage(MDC.get(LogUtils.LOG_COMMUNITY), "profileLoggingAspect.logNamesForNameValuePair",
+							null, null);
+					if (!StringUtils.isBlank(logNamesStringForNameValuePairFromConfig)) {
+						actualLogNameListForNameValuePair = Arrays.asList(logNamesStringForNameValuePairFromConfig.split(","));
 					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+
+				for (Iterator<NameValuePair> iterator = nameValuePairs.iterator(); iterator.hasNext();) {
+					NameValuePair nameValuePair = iterator.next();
+					final String name = nameValuePair.getName();
+					if (!actualLogNameListForNameValuePair.contains(name)) {
+						iterator.remove();
+					}
+
 				}
 
 				long afterExecutionTimeNano = System.nanoTime();

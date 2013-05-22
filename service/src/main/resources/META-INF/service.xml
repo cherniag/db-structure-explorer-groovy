@@ -275,6 +275,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 	
 	<bean id="service.profileLoggingAspect" class="mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect">
+		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource" />
 	</bean>
 
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
