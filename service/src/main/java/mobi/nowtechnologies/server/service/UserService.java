@@ -234,7 +234,10 @@ public class UserService {
 		User user = findByNameAndCommunity(userName, communityName);
 
 		if (user != null) {
-			LogUtils.putSpecificMDC(userName, user.getMobile(), user.getId());
+			final String mobile = user.getMobile();
+			final int id = user.getId();
+			LogUtils.putSpecificMDC(userName, mobile, id);
+			LogUtils.put3rdParyRequestProfileSpecificMDC(userName, mobile, id);
 			
 			String localUserToken = Utils.createTimestampToken(user.getToken(), timestamp);
 			String deviceUserToken = Utils.createTimestampToken(user.getTempToken(), timestamp);
