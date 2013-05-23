@@ -137,6 +137,46 @@ public class ProfileLoggingAspect {
 			profileRestTemplate(args, beforeExecutionTimeNano, responseObject, throwable);
 		}
 	}
+	
+	@Around("execution(* uk.co.o2.soa.subscriberservice.SubscriberPort.getSubscriberProfile(..))")
+	public Object aroundSubscriberPort_getSubscriberProfile(ProceedingJoinPoint joinPoint) throws Throwable {
+		Throwable throwable = null;
+		Object[] args = null;
+		Long beforeExecutionTimeNano = null;
+		Object responseObject = null;
+
+		try {
+			beforeExecutionTimeNano = System.nanoTime();
+			args = joinPoint.getArgs();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		try {
+			responseObject = joinPoint.proceed();
+
+			return responseObject;
+		} catch (Throwable t) {
+			throwable = t;
+			throw t;
+		} finally {
+			profileSubscriberPort_getSubscriberProfile(args, beforeExecutionTimeNano, responseObject, throwable);
+		}
+	}
+
+	private void profileSubscriberPort_getSubscriberProfile(Object[] args, Long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
+		try {
+			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
+				String url = "http://soa.o2.co.uk/subscriberdata_2";
+				String body = (String) args[0];
+
+				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		} 
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	private void profileRestTemplate(Object[] args, Long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
