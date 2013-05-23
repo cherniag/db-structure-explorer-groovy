@@ -70,6 +70,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 		String communityURL = communityCookie != null ? communityCookie.getValue() : "no-community-request";
 
 		LogUtils.putGlobalMDC(userId, userMobile, userName, communityURL, request.getRequestURI(), handler.getClass(), remoteAddr);
+		LogUtils.put3rdParyRequestProfileSpecificMDC(userName, userMobile, userId);
 		return super.preHandle(request, response, handler);
 	}
 
@@ -98,6 +99,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 		profile(request, ex);
 		LogUtils.removeGlobalMDC();
+		LogUtils.remove3rdParyRequestProfileMDC();
 		super.afterCompletion(request, response, handler, ex);
 	}
 
