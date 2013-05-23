@@ -55,6 +55,8 @@ public abstract class PaymentDetails {
 	private PaymentDetailsStatus lastPaymentStatus;
 
 	private String descriptionError;
+	
+	private String errorCode;
 
 	private long creationTimestampMillis;
 
@@ -146,6 +148,14 @@ public abstract class PaymentDetails {
 
 	public boolean isActivated() {
 		return activated;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 
 	public void setActivated(boolean activated) {
