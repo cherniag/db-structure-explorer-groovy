@@ -75,8 +75,6 @@ public class SubscriberPortDecorator implements SubscriberPort {
 				}
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
-			} finally {
-				LogUtils.remove3rdParyRequestProfileMDC();
 			}
 		}
 	}
