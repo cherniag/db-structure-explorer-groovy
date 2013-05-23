@@ -51,7 +51,7 @@ public class PendingPaymentExecutor {
 			}finally{
 				LOGGER.info("Payment transaction finished");
 				LogUtils.removePaymentMDC();
-				LogUtils.remove3rdParyRequestProfileMDC();
+				LogUtils.removeAll3rdParyRequestProfileMDC();
 			}
 		}
 	}

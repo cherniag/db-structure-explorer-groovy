@@ -99,7 +99,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 		profile(request, ex);
 		LogUtils.removeGlobalMDC();
-		LogUtils.remove3rdParyRequestProfileMDC();
+		LogUtils.removeAll3rdParyRequestProfileMDC();
 		super.afterCompletion(request, response, handler, ex);
 	}
 

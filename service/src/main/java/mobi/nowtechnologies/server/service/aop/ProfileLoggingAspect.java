@@ -231,6 +231,7 @@ public class ProfileLoggingAspect {
 	}
 
 	private void commonProfileLogic(long beforeExecutionTimeNano, Object responseObject, Throwable throwable, String url, List<NameValuePair> nameValuePairs, String body) {
+		try{
 			long afterExecutionTimeNano = System.nanoTime();
 			long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
 
@@ -243,7 +244,10 @@ public class ProfileLoggingAspect {
 
 			LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
 
-			THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC"); 
+			THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
+		}finally{
+			LogUtils.remove3rdParyRequestProfileMDCWithoutSpecific();
+		}
 
 	}
 

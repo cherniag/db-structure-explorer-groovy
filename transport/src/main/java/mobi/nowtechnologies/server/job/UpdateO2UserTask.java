@@ -48,7 +48,7 @@ public class UpdateO2UserTask {
 			makeUserLog(u, UserLogStatus.SUCCESS, null);
 			userRepository.save(u);
 		} finally {
-			LogUtils.remove3rdParyRequestProfileMDC();
+			LogUtils.removeAll3rdParyRequestProfileMDC();
 		}
 	}
 

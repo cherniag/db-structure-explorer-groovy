@@ -207,29 +207,9 @@ public class LogUtils {
 
 	}
 
-	public static void remove3rdParyRequestProfileMDC() {
+	public static void removeAll3rdParyRequestProfileMDC() {
 		try {
-			if (MDC.get(T_PR_EXECUTION_DURATION_MILLIS) != null) {
-				MDC.remove(T_PR_EXECUTION_DURATION_MILLIS);
-			}
-			if (MDC.get(T_PR_ERROR_MESSAGE) != null) {
-				MDC.remove(T_PR_ERROR_MESSAGE);
-			}
-			if (MDC.get(T_PR_RESULT) != null) {
-				MDC.remove(T_PR_RESULT);
-			}
-			if (MDC.get(T_PR_URL) != null) {
-				MDC.remove(T_PR_URL);
-			}
-			if (MDC.get(T_PR_NAME_VALUE_PAIRS) != null) {
-				MDC.remove(T_PR_NAME_VALUE_PAIRS);
-			}
-			if (MDC.get(T_PR_BODY) != null) {
-				MDC.remove(T_PR_BODY);
-			}
-			if (MDC.get(T_PR_RESPONSE) != null) {
-				MDC.remove(T_PR_RESPONSE);
-			}
+			remove3rdParyRequestProfileMDCWithoutSpecific();
 			if (MDC.get(T_PR_USER_NAME) != null) {
 				MDC.remove(T_PR_USER_NAME);
 			}
@@ -253,5 +233,33 @@ public class LogUtils {
 
 	public static Object getBindingResultMDC() {
 		return MDC.get(BINDING_RESULT);
+	}
+
+	public static void remove3rdParyRequestProfileMDCWithoutSpecific() {
+		try {
+			if (MDC.get(T_PR_EXECUTION_DURATION_MILLIS) != null) {
+				MDC.remove(T_PR_EXECUTION_DURATION_MILLIS);
+			}
+			if (MDC.get(T_PR_ERROR_MESSAGE) != null) {
+				MDC.remove(T_PR_ERROR_MESSAGE);
+			}
+			if (MDC.get(T_PR_RESULT) != null) {
+				MDC.remove(T_PR_RESULT);
+			}
+			if (MDC.get(T_PR_URL) != null) {
+				MDC.remove(T_PR_URL);
+			}
+			if (MDC.get(T_PR_NAME_VALUE_PAIRS) != null) {
+				MDC.remove(T_PR_NAME_VALUE_PAIRS);
+			}
+			if (MDC.get(T_PR_BODY) != null) {
+				MDC.remove(T_PR_BODY);
+			}
+			if (MDC.get(T_PR_RESPONSE) != null) {
+				MDC.remove(T_PR_RESPONSE);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
 	}
 }
