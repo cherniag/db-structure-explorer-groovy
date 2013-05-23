@@ -146,6 +146,29 @@ public class DeviceServiceTest {
 		verify(mockMessageSource, times(0)).getMessage(anyString(), eq("o2.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class));
 		verify(mockMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class));
 	}
+	
+	@Test
+	public void testIsPromotedDevicePhone_NotPomotedEmptyPromoPhones_Success()
+			throws Exception {
+		final Community community = CommunityFactory.createCommunity();		
+		community.setRewriteUrlParameter("o2");
+		community.setName("o2");;
+		String phoneNumber = "+447870111111";
+		String promotedPhones = "";
+		String promoCode = "staff";
+		
+		when(mockMessageSource.getMessage(anyString(), eq("promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class))).thenReturn(promotedPhones);
+		when(mockMessageSource.getMessage(anyString(), eq("o2.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class))).thenReturn(promotedPhones);
+		when(mockMessageSource.getMessage(anyString(), eq("o2.staff.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class))).thenReturn(promotedPhones);
+		
+		boolean result = fixture.isPromotedDevicePhone(community, phoneNumber, promoCode);
+		
+		assertFalse(result);
+		
+		verify(mockMessageSource, times(0)).getMessage(anyString(), eq("promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class));
+		verify(mockMessageSource, times(0)).getMessage(anyString(), eq("o2.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class));
+		verify(mockMessageSource, times(1)).getMessage(anyString(), eq("o2.staff.promoted.device.phones"), any(Object[].class), eq(""), any(Locale.class));
+	}
 
 	@Before
 	public void setUp()
