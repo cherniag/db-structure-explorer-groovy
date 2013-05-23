@@ -50,7 +50,6 @@ public class PendingPaymentExecutor {
 				LOGGER.error("Pending payment error caused by: {}", e);
 			}finally{
 				LOGGER.info("Payment transaction finished");
-				LogUtils.removeSpecificMDC();
 				LogUtils.removePaymentMDC();
 				LogUtils.remove3rdParyRequestProfileMDC();
 			}
