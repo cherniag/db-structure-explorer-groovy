@@ -60,20 +60,22 @@ public class SubscriberPortDecorator implements SubscriberPort {
 			throw re;
 		} finally {
 			try {
-				String errorMessage = null;
-				String result = "success";
-				if (throwable != null) {
-					errorMessage = throwable.getMessage();
-					result = "fail";
-				}
-				long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(beforeExecutionTimeNano - System.nanoTime()); 
-				
-				LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, "http://soa.o2.co.uk/subscriberdata_2", null, retainFrom, subscriberProfileType);
+				if (ProfileLoggingAspect.THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
+					String errorMessage = null;
+					String result = "success";
+					if (throwable != null) {
+						errorMessage = throwable.getMessage();
+						result = "fail";
+					}
+					long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(beforeExecutionTimeNano - System.nanoTime());
 
-				ProfileLoggingAspect.THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
+					LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, "http://soa.o2.co.uk/subscriberdata_2", null, retainFrom, subscriberProfileType);
+
+					ProfileLoggingAspect.THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
+				}
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
-			}finally{
+			} finally {
 				LogUtils.remove3rdParyRequestProfileMDC();
 			}
 		}
