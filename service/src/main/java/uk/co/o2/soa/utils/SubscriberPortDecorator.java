@@ -67,7 +67,7 @@ public class SubscriberPortDecorator implements SubscriberPort {
 						errorMessage = throwable.getMessage();
 						result = "fail";
 					}
-					long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(beforeExecutionTimeNano - System.nanoTime());
+					long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - beforeExecutionTimeNano);
 
 					LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, "http://soa.o2.co.uk/subscriberdata_2", null, retainFrom, subscriberProfileType);
 
