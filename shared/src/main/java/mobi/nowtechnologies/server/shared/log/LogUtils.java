@@ -137,7 +137,7 @@ public class LogUtils {
 			MDC.put(T_PR_USER_ID, "n/a");
 		}
 	}
-
+	
 	public static void putSpecificMDC(String userName, String community) {
 		if (userName != null)
 			MDC.put(LOG_USER_NAME, userName);
