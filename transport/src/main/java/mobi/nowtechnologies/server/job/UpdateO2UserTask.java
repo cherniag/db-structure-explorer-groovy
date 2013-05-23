@@ -6,64 +6,72 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
 import uk.co.o2.soa.subscriberservice.GetSubscriberProfileFault;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
-
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
 public class UpdateO2UserTask {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
-    private transient SubscriberPortDecorator port;
-    private transient UserRepository userRepository;
-    private transient UserLogRepository userLogRepository;
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
+	private transient SubscriberPortDecorator port;
+	private transient UserRepository userRepository;
+	private transient UserLogRepository userLogRepository;
 
-    @Transactional
-    public void handleUserUpdate(User u) {
-        try {
-            updateUser(u);
-        } catch (GetSubscriberProfileFault e) {
-            makeUserLog(u, UserLogStatus.O2_FAIL, e.getFaultInfo().toString());
-        } catch (Throwable t) {
-            makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
-        } finally {
-            LOG.info("Finished update user[{}]", u.getMobile());
-        }
-    }
+	@Transactional
+	public void handleUserUpdate(User u) {
+		try {
+			updateUser(u);
+		} catch (GetSubscriberProfileFault e) {
+			makeUserLog(u, UserLogStatus.O2_FAIL, e.getFaultInfo().toString());
+		} catch (Throwable t) {
+			makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
+		} finally {
+			LOG.info("Finished update user[{}]", u.getMobile());
+		}
+	}
 
-    private void updateUser(User u) throws GetSubscriberProfileFault {
-        SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
-        u.setProvider(profile.getProvider().toString());
-        u.setSegment(profile.getSegmentType());
-        u.setContract(profile.getCotract());
-        makeUserLog(u, UserLogStatus.SUCCESS, null);
-        userRepository.save(u);
-    }
+	private void updateUser(User u) throws GetSubscriberProfileFault {
+		try {
+			LogUtils.put3rdParyRequestProfileSpecificMDC(u.getUserName(), u.getMobile(), u.getId());
+			SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
 
-    private void makeUserLog(User u, UserLogStatus status, String description) {
-        UserLog oldLog = userLogRepository.findByUser(u.getId(), UserLogType.UPDATE_O2_USER);
-        UserLog userLog = new UserLog(oldLog, u, status, UserLogType.UPDATE_O2_USER, description);
+			u.setProvider(profile.getProvider().toString());
+			u.setSegment(profile.getSegmentType());
+			u.setContract(profile.getCotract());
+			makeUserLog(u, UserLogStatus.SUCCESS, null);
+			userRepository.save(u);
+		} finally {
+			LogUtils.remove3rdParyRequestProfileMDC();
+		}
+	}
 
-        userLogRepository.save(userLog);
-        if (UserLogStatus.SUCCESS == status)
-            LOG.info("User[{}] segment[{}] updated.", u.getMobile(), u.getSegment());
-        else
-            LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, description);
-    }
+	private void makeUserLog(User u, UserLogStatus status, String description) {
+		UserLog oldLog = userLogRepository.findByUser(u.getId(), UserLogType.UPDATE_O2_USER);
+		UserLog userLog = new UserLog(oldLog, u, status, UserLogType.UPDATE_O2_USER, description);
 
-    public void setPort(SubscriberPortDecorator port) {
-        this.port = port;
-    }
+		userLogRepository.save(userLog);
+		if (UserLogStatus.SUCCESS == status)
+			LOG.info("User[{}] segment[{}] updated.", u.getMobile(), u.getSegment());
+		else
+			LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, description);
+	}
 
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	public void setPort(SubscriberPortDecorator port) {
+		this.port = port;
+	}
 
-    public void setUserLogRepository(UserLogRepository userLogRepository) {
-        this.userLogRepository = userLogRepository;
-    }
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
+	public void setUserLogRepository(UserLogRepository userLogRepository) {
+		this.userLogRepository = userLogRepository;
+	}
 }

@@ -95,8 +95,7 @@ public class ApplyInitPromoController extends CommonController {
     	        proccessRememberMeToken(objects);
 
     	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
-    	        
-    	        LogUtils.put3rdParyRequestProfileSpecificMDC(user.getUserName(), user.getMobile(), user.getId());
+    	      
                 updateO2UserTask.handleUserUpdate(user);
     	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
             }
