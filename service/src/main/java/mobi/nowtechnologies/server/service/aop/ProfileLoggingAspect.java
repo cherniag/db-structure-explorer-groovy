@@ -1,11 +1,18 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import mobi.nowtechnologies.server.service.payment.request.MigRequest.MigRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
@@ -141,6 +148,15 @@ public class ProfileLoggingAspect {
 				if (args[1] != null && args[1] instanceof MultiValueMap) {
 					multiValueMap = (MultiValueMap<String, Object>) args[1];
 					body = multiValueMap.toString();
+				}
+				
+				if (responseObject instanceof DOMSource){
+					StringWriter stringWriter = new StringWriter();
+					Result result = new StreamResult(stringWriter);
+					TransformerFactory factory = TransformerFactory.newInstance();
+					Transformer transformer = factory.newTransformer();
+					transformer.transform((DOMSource)responseObject, result);
+					responseObject = stringWriter.getBuffer().toString();
 				}
 
 				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);

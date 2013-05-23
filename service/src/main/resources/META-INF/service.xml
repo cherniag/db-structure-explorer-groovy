@@ -272,6 +272,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
+		<property name="restTemplate" ref="service.RestTemplate" />
 	</bean>
 	
 	<bean id="service.profileLoggingAspect" class="mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect">

@@ -50,6 +50,10 @@ public class SMSNotification {
 	private NowTechTokenBasedRememberMeServices rememberMeServices;
 
 	private RestTemplate restTemplate = new RestTemplate();
+	
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
 	public String getRememberMeTokenCookieName() {
 		return rememberMeTokenCookieName;
