@@ -152,12 +152,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
 
-    @Query(value = "select user from User user " +
+    @Query(value = "select user from UserLog ul " +
+    		" join ul.user user " +
             " join user.userGroup ug " +
-            " join ug.community c " +
-            " where c.rewriteUrlParameter = 'o2' and user.provider = 'o2' " +
-            " and user.id not in " +
-            " (select userLog.userId from UserLog userLog where  userLog.last_update > ?1)")
+            " join ug.community c with c.rewriteUrlParameter = 'o2'" +
+            " where user.provider = 'o2' and ul.type = 'UPDATE_O2_USER' and  ul.last_update < ?1")
     List<User> findUsersForUpdate(long afterDate, Pageable pagable);
 
     @Query(value = "select u from User u " +

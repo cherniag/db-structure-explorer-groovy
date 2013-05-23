@@ -9,11 +9,9 @@ import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
@@ -44,6 +42,9 @@ public class UserRepositoryIT {
 
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
+
+	@Resource(name = "userLogRepository")
+	private UserLogRepository userLogRepository;
 	
 	@Resource(name = "paymentDetailsRepository")
 	private PaymentDetailsRepository paymentDetailsRepository;
@@ -352,5 +353,45 @@ public class UserRepositoryIT {
 		assertEquals(1, actualUsers.size());
 		assertEquals(testUser.getId(), actualUsers.get(0).getId());
 
+	}
+	
+	@Test
+	public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
+		
+		long epochSeconds = Utils.getEpochMillis()-24*60*60*1000L;
+		
+		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
+		
+		User testUser = UserFactory.createUser();
+		testUser.setUserGroup(o2UserGroup);
+		testUser = userRepository.save(testUser);
+		
+        UserLog userLog = new UserLog(null, testUser, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds-24*60*60*1000L);
+        userLogRepository.save(userLog);
+        
+        User testUser1 = UserFactory.createUser();
+		testUser1.setUserGroup(o2UserGroup);
+		testUser1 = userRepository.save(testUser1);
+		
+        userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds+24*60*60*1000L);
+        userLogRepository.save(userLog);
+        userLog = new UserLog(null, testUser1, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, "dfdf");
+        userLog.setLastUpdateMillis(epochSeconds-24*60*60*1000L);
+        userLogRepository.save(userLog);
+		
+        User testUser3 = UserFactory.createUser();
+		testUser3.setUserGroup(o2UserGroup);
+		testUser3 = userRepository.save(testUser3);
+		
+        userLog = new UserLog(null, testUser3, UserLogStatus.SUCCESS, UserLogType.UPDATE_O2_USER, "dfdf");
+        userLog.setLastUpdateMillis(0);
+        userLogRepository.save(userLog);
+        
+		List<User> actualUsers = userRepository.findUsersForUpdate(epochSeconds, new PageRequest(0, 1000));
+		
+		assertNotNull(actualUsers);
+		assertEquals(2, actualUsers.size());		
 	}
 }

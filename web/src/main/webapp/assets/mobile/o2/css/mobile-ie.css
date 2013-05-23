@@ -179,21 +179,8 @@ img.centered{
 .header {
     text-align: center;
     height: 47px;
+    background-color: #000057;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000057', endColorstr='#000061'); for IE */
-    background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -o-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    -pie-background: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.24, rgb(0,0,97)),
-        color-stop(0.62, rgb(0,0,87))
-    );
 }		
 .logo {
 	display: inline-block;
@@ -237,39 +224,13 @@ img.centered{
 }
 
 .pane-red{
+	background-color: #B70101;
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B70101', endColorstr='#990000'); for IE */
-    background-image: linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-    background-image: -o-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-    background-image: -moz-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-    background-image: -webkit-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-    background-image: -ms-linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-    -pie-background: linear-gradient(bottom, rgb(153,0,0) 0%, rgb(183,1,1) 87%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(153,0,0)),
-        color-stop(0.87, rgb(183,1,1))
-    );
 }
 
 .banner-pane{
+	background-color: #00CCCC;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CCCC', endColorstr='#01BDBD'); for IE */
-    background-image: linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-    background-image: -o-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-    background-image: -moz-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-    background-image: -webkit-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-    background-image: -ms-linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-    -pie-background: linear-gradient(bottom, rgb(1,189,189) 10%, rgb(0,204,204) 55%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.1, rgb(1,189,189)),
-        color-stop(0.55, rgb(0,204,204))
-    );
 }
 
 .pane-red span, .banner-pane span{
@@ -564,54 +525,26 @@ form .formButton  {
 }
 
 .button-arrow{
-    background: transparent url(../imgs/arrow_right.png) no-repeat;
+    background: transparent url(../imgs/arrow_right.png) no-repeat contain;
     top: 12px;
     right: 0;
     background-size: 10px 13px;
+    
 }
 
 .button-off{
     background: transparent url(../imgs/radio_button_off.png) no-repeat;
-    background-size:contain;
+	background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
 	-o-background-size:contain;
 	-ms-background-size:contain;
-}
-
-.alert-button-close{
-	display: block;
-    position: absolute;
-	width: 16px;
-    height: 16px;
-    background: transparent url(../imgs/icon_close_banner.png) no-repeat;
-    background-size:contain;
-	-webkit-background-size:contain;
-	-moz-background-size:contain;
-	-o-background-size:contain;
-	-ms-background-size:contain;
-/* 	position: relative; */
-	top:50%;
-	right: 0;
-	margin-top:-8px;
-	padding-left: 0px;
-}
-
-.pane-red .alert-button-close{
-	padding-left: 10px;
-}
-
-.pane-red .alert-text-close{
-	width: 90%;
-	padding-left: 0px;
-	text-indent: 35px;
-	text-align: left;
-	display: inline-block;
+	display: inline;
 }
 
 .button-on{
     background: transparent url(../imgs/radio_button_on.png) no-repeat;
-    background-size:contain;
+	background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
 	-o-background-size:contain;
@@ -680,97 +613,30 @@ form .formButton  {
 .button-disabled{
     opacity: 1;
     position:relative; 
+    background-color: #000066;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000066', endColorstr='#000066'); for IE */
-    background-image: linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-    background-image: -o-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-    -pie-background: linear-gradient(bottom, rgb(0,0,102) 0%, rgb(0,0,102) 0%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(0,0,102)),
-        color-stop(0, rgb(0,0,102))
-    );
 }
 
 .button-grey{
     color: #4d4d4d;
+    background-color: #E8E9E9;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E8E9E9', endColorstr='#C8C8C9'); for IE */
-    background-image: linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-    background-image: -o-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-    background-image: -moz-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-    background-image: -webkit-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-    background-image: -ms-linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-    -pie-background: linear-gradient(bottom, rgb(200,200,201) 0%, rgb(232,233,233) 80%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(200,200,201)),
-        color-stop(0.8, rgb(232,233,233))
-    );
     border: 1px solid #bfbfc0;
 }
 
 .button-grey:active{
+	background-color: #C8C8C9;
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#C8C8C9', endColorstr='#E8E9E9'); for IE */
-    background-image: linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-    background-image: -o-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-    background-image: -moz-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-    background-image: -webkit-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-    background-image: -ms-linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-    -pie-background: linear-gradient(bottom, rgb(232,233,233) 0%, rgb(200,200,201) 80%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(232,233,233)),
-        color-stop(0.8, rgb(200,200,201))
-    );
 }
 .button-turquoise:active{
-	
+	background-color: #094467;
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#094467', endColorstr='#1399E7'); for IE */
-    background-image: linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-    background-image: -o-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-    background-image: -moz-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-    background-image: -webkit-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-    background-image: -ms-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-    -pie-background: linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(19,153,231)),
-        color-stop(0.8, rgb(9,68,103))
-    );
 }
 
 .button-turquoise {
     font-weight: bold;
-    
+    background-color: #1399E7;
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1399E7', endColorstr='#094467'); for IE */
-    background-image: linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-    background-image: -o-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-    background-image: -moz-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-    background-image: -webkit-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-    background-image: -ms-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-    -pie-background: linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
-
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, rgb(9,68,103)),
-        color-stop(0.8, rgb(19,153,231))
-    );
 }
 
 .button1 {

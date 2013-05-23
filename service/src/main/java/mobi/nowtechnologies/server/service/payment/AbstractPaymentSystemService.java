@@ -2,10 +2,7 @@ package mobi.nowtechnologies.server.service.payment;
 
 import javax.servlet.http.HttpServletResponse;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -58,6 +55,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			status = PaymentDetailsStatus.ERROR;
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
+			paymentDetails.setErrorCode(response.getErrorCode());
 
 			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
 				userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());

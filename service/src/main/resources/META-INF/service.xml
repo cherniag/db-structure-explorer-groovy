@@ -339,8 +339,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="serverO2Url" value="${o2.server.url}" />
 		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
+		<property name="limitValidatePhoneNumber" value="${o2.server.validation.phonenumber.limit}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
 		<property name="deviceService" ref="service.DeviceService" />
+		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
 		

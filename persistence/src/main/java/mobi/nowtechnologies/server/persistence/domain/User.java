@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -56,7 +57,7 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-    public static enum Fields {
+	public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -309,6 +310,16 @@ public class User implements Serializable {
 		return details != null && details.isActivated();
 	}
 
+	public boolean isInvalidPaymentPolicy() {
+		if (getCurrentPaymentDetails() == null)
+			return false;
+
+		PaymentPolicy paymentPolicy = getCurrentPaymentDetails().getPaymentPolicy();
+
+		return !org.apache.commons.lang.StringUtils.equals(getProvider(), paymentPolicy.getProvider())
+				|| (ProviderType.O2.toString().equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
+	}
+
 	public boolean isnonO2User() {
 		Community community = this.userGroup.getCommunity();
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
@@ -318,8 +329,8 @@ public class User implements Serializable {
 
 		return false;
 	}
-	
-	public boolean isO2CommunityUser(){
+
+	public boolean isO2CommunityUser() {
 		Community community = userGroup.getCommunity();
 		String rewriteUrlParameter = community.getRewriteUrlParameter();
 		boolean isO2CommunityUser = rewriteUrlParameter.equalsIgnoreCase("o2");
@@ -529,9 +540,9 @@ public class User implements Serializable {
 		return this.nextSubPayment;
 	}
 
-    public Date getNextSubPaymentAsDate() {
-        return new Date((long)this.nextSubPayment*1000L);
-    }
+	public Date getNextSubPaymentAsDate() {
+		return new Date((long) this.nextSubPayment * 1000L);
+	}
 
 	public void setNextSubPayment(int nextSubPayment) {
 		this.nextSubPayment = nextSubPayment;
@@ -1078,14 +1089,14 @@ public class User implements Serializable {
 		this.freeTrialExpiredMillis = freeTrialExpiredMillis;
 	}
 
-    public void setFreeTrialExpired(Date freeTrialExpiredMillis) {
-        this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
-    }
+	public void setFreeTrialExpired(Date freeTrialExpiredMillis) {
+		this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
+	}
 
-    public User withFreeTrialExpiredMillis(Date freeTrialExpiredMillis) {
-        this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
-        return this;
-    }
+	public User withFreeTrialExpiredMillis(Date freeTrialExpiredMillis) {
+		this.freeTrialExpiredMillis = freeTrialExpiredMillis.getTime();
+		return this;
+	}
 
 	public Long getFreeTrialStartedTimestampMillis() {
 		return freeTrialStartedTimestampMillis;
@@ -1263,15 +1274,15 @@ public class User implements Serializable {
 		return this.status != null && UserStatus.SUBSCRIBED.equals(this.status.getName());
 	}
 
-    public boolean isNonO2Community() {
-        Community community = this.userGroup.getCommunity();
-        String communityUrl = checkNotNull(community.getRewriteUrlParameter());
+	public boolean isNonO2Community() {
+		Community community = this.userGroup.getCommunity();
+		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-        if (!"o2".equalsIgnoreCase(communityUrl))
-            return true;
+		if (!"o2".equalsIgnoreCase(communityUrl))
+			return true;
 
-        return false;
-    }
+		return false;
+	}
 
 	public boolean isSubscribed() {
 		return isSubscribedStatus()
@@ -1303,9 +1314,9 @@ public class User implements Serializable {
 				&& new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
 				&& org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
 	}
-	
-	public boolean isBeforeExpiration(long timestamp, int hours){
-		return nextSubPayment <= timestamp/1000 + hours * 60 * 60;
+
+	public boolean isBeforeExpiration(long timestamp, int hours) {
+		return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
 	}
 
 	public String getProvider() {
@@ -1331,9 +1342,9 @@ public class User implements Serializable {
 	public SegmentType getSegment() {
 		return segment;
 	}
-	
+
 	public User withNextSubPayment(Date time) {
-        this.nextSubPayment = Utils.truncatedToSeconds(time);
-        return this;
-    }
+		this.nextSubPayment = Utils.truncatedToSeconds(time);
+		return this;
+	}
 }
