@@ -17,6 +17,10 @@ public class LogUtils {
 	public static final String T_PR_RESULT = "tPRResult";
 	public static final String T_PR_ERROR_MESSAGE = "tPRErrorMessage";
 	public static final String T_PR_EXECUTION_DURATION_MILLIS = "tPRExecutionDurationMillis";
+	public static final String T_PR_USER_NAME = "tPRUserName";
+	public static final String T_PR_USER_MOBILE = "tPRUserMobile";
+	public static final String T_PR_USER_ID = "tPRUserId";
+	
 	public static final String LOG_USER_NAME = "userName";
 	public static final String LOG_COMMAND = "command";
 	public static final String LOG_CLASS = "class";
@@ -115,6 +119,18 @@ public class LogUtils {
 			MDC.put(LOG_USER_ID, userId);
 		}
 	}
+	
+	public static void put3rdParyRequestProfileSpecificMDC(String userName, String userMobile, Object userId) {
+		if (userName != null) {
+			MDC.put(T_PR_USER_NAME, userName);
+		}
+		if (userMobile != null) {
+			MDC.put(T_PR_USER_MOBILE, userMobile);
+		}
+		if (userId != null) {
+			MDC.put(T_PR_USER_ID, userId);
+		}
+	}
 
 	public static void putSpecificMDC(String userName, String community) {
 		if (userName != null)
@@ -194,6 +210,15 @@ public class LogUtils {
 			}
 			if (MDC.get(T_PR_RESPONSE) != null) {
 				MDC.remove(T_PR_RESPONSE);
+			}
+			if (MDC.get(T_PR_USER_NAME) != null) {
+				MDC.remove(T_PR_USER_NAME);
+			}
+			if (MDC.get(T_PR_USER_MOBILE) != null) {
+				MDC.remove(T_PR_USER_MOBILE);
+			}
+			if (MDC.get(T_PR_USER_ID) != null) {
+				MDC.remove(T_PR_USER_ID);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
