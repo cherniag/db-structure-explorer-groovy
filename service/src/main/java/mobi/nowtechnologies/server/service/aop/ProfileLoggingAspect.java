@@ -233,7 +233,7 @@ public class ProfileLoggingAspect {
 	private void commonProfileLogic(long beforeExecutionTimeNano, Object responseObject, Throwable throwable, String url, List<NameValuePair> nameValuePairs, String body) {
 		try {
 			long afterExecutionTimeNano = System.nanoTime();
-			long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
+			long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
 
 			String result = "success";
 			String errorMessage = null;
