@@ -261,11 +261,11 @@ public class O2ClientServiceImplIT {
 		fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
 		
 		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
-		fixture.init();
+		fixture.setRestTemplate(new RestTemplate());
 		
 		fixture2 = new O2ClientServiceImpl();
 		fixture2.setServerO2Url("https://uat.mqapi.com");
 		fixture2.setCommunityService(mockCommunityService);
-		fixture2.init();
+		fixture2.setRestTemplate(new RestTemplate());
 	}
 }

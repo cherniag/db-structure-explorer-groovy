@@ -344,6 +344,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
+		<property name="restTemplate" value="service.RestTemplate" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
@@ -405,6 +406,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<task:annotation-driven />
+	
+	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
 
 	<import resource="payment.xml" />
 

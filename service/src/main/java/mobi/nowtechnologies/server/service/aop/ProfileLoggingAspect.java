@@ -21,6 +21,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.util.MultiValueMap;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -104,6 +105,52 @@ public class ProfileLoggingAspect {
 		}
 	}
 
+	@Around("execution(* org.springframework.web.client.RestTemplate.postForObject(..))")
+	public Object aroundRestTemplate_postForObject(ProceedingJoinPoint joinPoint) throws Throwable {
+		Throwable throwable = null;
+		Object[] args = null;
+		Long beforeExecutionTimeNano = null;
+		Object responseObject = null;
+
+		try {
+			beforeExecutionTimeNano = System.nanoTime();
+			args = joinPoint.getArgs();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		try {
+			responseObject = joinPoint.proceed();
+
+			return responseObject;
+		} catch (Throwable t) {
+			throwable = t;
+			throw t;
+		} finally {
+			profileRestTemplate(args, beforeExecutionTimeNano, responseObject, throwable);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void profileRestTemplate(Object[] args, Long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
+		try {
+			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
+				String url = (String) args[0];
+				String body = null;
+				MultiValueMap<String, Object> multiValueMap = null;
+				if (args[1] != null && args[1] instanceof MultiValueMap) {
+					multiValueMap = (MultiValueMap<String, Object>) args[1];
+					body = multiValueMap.toString();
+				}
+
+				commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+	}
+
 	private void profileWebServiceGateway(Object[] args, long beforeExecutionTimeNano, Object responseObject, Throwable throwable) {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
@@ -117,9 +164,7 @@ public class ProfileLoggingAspect {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-		} finally {
-			LogUtils.remove3rdParyRequestProfileMDC();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -142,7 +187,8 @@ public class ProfileLoggingAspect {
 				if (nameValuePairs != null) {
 					List<String> actualLogNameListForNameValuePair = logNameListForNameValuePair;
 					try {
-						String logNamesStringForNameValuePairFromConfig = communityResourceBundleMessageSource.getMessage(MDC.get(LogUtils.LOG_COMMUNITY), "profileLoggingAspect.logNamesForNameValuePair",
+						String logNamesStringForNameValuePairFromConfig = communityResourceBundleMessageSource.getMessage(MDC.get(LogUtils.LOG_COMMUNITY),
+								"profileLoggingAspect.logNamesForNameValuePair",
 								null, null);
 						if (!StringUtils.isBlank(logNamesStringForNameValuePairFromConfig)) {
 							actualLogNameListForNameValuePair = Arrays.asList(logNamesStringForNameValuePairFromConfig.split(","));
@@ -150,7 +196,7 @@ public class ProfileLoggingAspect {
 					} catch (Exception e) {
 						LOGGER.error(e.getMessage(), e);
 					}
-					
+
 					for (Iterator<NameValuePair> iterator = nameValuePairs.iterator(); iterator.hasNext();) {
 						NameValuePair nameValuePair = iterator.next();
 						final String name = nameValuePair.getName();
@@ -165,25 +211,29 @@ public class ProfileLoggingAspect {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-		} finally {
-			LogUtils.remove3rdParyRequestProfileMDC();
-		}
+		} 
 	}
 
 	private void commonProfileLogic(long beforeExecutionTimeNano, Object responseObject, Throwable throwable, String url, List<NameValuePair> nameValuePairs, String body) {
-		long afterExecutionTimeNano = System.nanoTime();
-		long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
+		try {
+			long afterExecutionTimeNano = System.nanoTime();
+			long executionDurationMillis = TimeUnit.MILLISECONDS.toMillis(afterExecutionTimeNano - beforeExecutionTimeNano);
 
-		String result = "success";
-		String errorMessage = null;
-		if (throwable != null) {
-			result = "fail";
-			errorMessage = throwable.getMessage();
+			String result = "success";
+			String errorMessage = null;
+			if (throwable != null) {
+				result = "fail";
+				errorMessage = throwable.getMessage();
+			}
+
+			LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
+
+			THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
+
+		} finally {
+			LogUtils.remove3rdParyRequestProfileMDC();
 		}
 
-		LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
-
-		THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
 	}
 
 }

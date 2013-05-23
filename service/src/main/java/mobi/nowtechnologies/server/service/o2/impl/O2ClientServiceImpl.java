@@ -55,9 +55,9 @@ public class O2ClientServiceImpl implements O2ClientService {
 	private DeviceService deviceService;
 
 	private WebServiceGateway webServiceGateway;
-
-	public void init() {
-		restTemplate = new RestTemplate();
+	
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
 	}
 
 	public void setSubscriberEndpoint(String subscriberEndpoint) {
