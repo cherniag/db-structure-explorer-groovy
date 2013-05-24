@@ -80,6 +80,8 @@ public class ChartDetail {
 	private String subtitle;
 
 	private long publishTimeMillis;
+	
+	private boolean locked;
 
 	@Version
 	private int version;
@@ -115,6 +117,14 @@ public class ChartDetail {
 	public void setMedia(Media media) {
 		this.media = media;
 		mediaId = media.getI() != null ? media.getI() : null;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
 	}
 
 	public String getImageFileName() {
@@ -250,6 +260,7 @@ public class ChartDetail {
 
 		chartDetailDto.setPosition(pos);
 
+		chartDetailDto.setLocked(locked);
 		chartDetailDto.setPlaylistId(chart.getI().intValue());
 		chartDetailDto.setArtist(media.getArtistName());
 		chartDetailDto.setAudioSize(audioSize);
@@ -381,9 +392,9 @@ public class ChartDetail {
 
 	@Override
 	public String toString() {
-		return "ChartDetail [i=" + i + ", chartId=" + chartId + ", chart=" + chart + ", mediaId=" + mediaId + ", info=" + info + ", position=" + position + ", prevPosition="
+		return "ChartDetail [i=" + i + ", chartId=" + chartId + ", chart=" + chart + ", mediaId=" + mediaId + ", media=" + media + ", info=" + info + ", position=" + position + ", prevPosition="
 				+ prevPosition + ", chgPositionId=" + chgPositionId + ", chgPosition=" + chgPosition + ", channel=" + channel + ", imageFileName=" + imageFileName + ", imageTitle=" + imageTitle
-				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", version=" + version + "]";
+				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", locked=" + locked + ", version=" + version + "]";
 	}
 
 }
