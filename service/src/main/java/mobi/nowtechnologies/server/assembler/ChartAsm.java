@@ -6,6 +6,7 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 
@@ -89,7 +90,7 @@ public class ChartAsm {
 		return chartDetail;
 	}
 	
-	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail) {
+	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail, boolean switchable) {
 		LOGGER.debug("input parameters chart: [{}], [{}]", chartDetail);
 		
 		PlaylistDto playlistDto = new PlaylistDto();
@@ -101,10 +102,11 @@ public class ChartAsm {
 		playlistDto.setPosition(chartDetail.getPosition());
 		playlistDto.setDescription(chartDetail.getInfo());
 		playlistDto.setImage(chartDetail.getImageFileName());
-		playlistDto.setSwitchable(chartDetail.getDefaultChart());
 		playlistDto.setImageTitle(chartDetail.getImageTitle());
 		playlistDto.setType(chart.getType());
 		
+		playlistDto.setSwitchable(switchable);
+
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;
 	}

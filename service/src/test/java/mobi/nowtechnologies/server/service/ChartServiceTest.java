@@ -126,22 +126,35 @@ public class ChartServiceTest {
 		
 		ChartDetail basicChart = ChartDetailFactory.createChartDetail();
 		basicChart.getChart().setType(ChartType.BASIC_CHART);
-		basicChart.getChart().setI((byte)1);		
+		basicChart.getChart().setI((byte)1);	
+		basicChart.setDefaultChart(true);
+		ChartDetail basicChart1 = ChartDetailFactory.createChartDetail();
+		basicChart1.getChart().setType(ChartType.BASIC_CHART);
+		basicChart1.getChart().setI((byte)5);		
 		ChartDetail topChart = ChartDetailFactory.createChartDetail();
 		topChart.getChart().setType(ChartType.HOT_TRACKS);
 		topChart.getChart().setI((byte)2);
-		ChartDetail otherChart = ChartDetailFactory.createChartDetail();
-		otherChart.getChart().setType(ChartType.OTHER_CHART);
-		otherChart.getChart().setI((byte)3);
+		ChartDetail otherChart1 = ChartDetailFactory.createChartDetail();
+		otherChart1.getChart().setType(ChartType.OTHER_CHART);
+		otherChart1.getChart().setI((byte)3);
+		ChartDetail otherChart2 = ChartDetailFactory.createChartDetail();
+		otherChart2.getChart().setType(ChartType.OTHER_CHART);
+		otherChart2.getChart().setI((byte)4);
+		
+		testUser.setSelectedCharts(Arrays.asList(otherChart2.getChart()));
 		
 		ChartDetail basicChartDetail = getChartDetailInstance(0, 1, media, basicChart.getChart());
+		ChartDetail basicChartDetail1 = getChartDetailInstance(0, 1, media, basicChart1.getChart());
 		ChartDetail topChartDetail = getChartDetailInstance(0, 2, media, topChart.getChart());
-		ChartDetail otherChartDetail = getChartDetailInstance(0, 3, media, otherChart.getChart());
+		ChartDetail otherChartDetail1 = getChartDetailInstance(0, 3, media, otherChart1.getChart());
+		ChartDetail otherChartDetail2 = getChartDetailInstance(0, 3, media, otherChart2.getChart());
 		
-		doReturn(Arrays.asList(basicChart, topChart, otherChart)).when(fixture).getChartsByCommunity(eq((String)null), anyString());
+		doReturn(Arrays.asList(basicChart, topChart, otherChart2, otherChart1, basicChart1)).when(fixture).getChartsByCommunity(eq((String)null), anyString());
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)1), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)2), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)3), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)3), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)4), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)5), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
 		Object[] result = fixture.processGetChartCommand(testUser, communityName, true);
@@ -153,16 +166,16 @@ public class ChartServiceTest {
 		assertEquals(3, playlists.length);
 		assertEquals(basicChart.getTitle(), playlists[0].getPlaylistTitle());
 		assertEquals(topChart.getTitle(), playlists[1].getPlaylistTitle());
-		assertEquals(otherChart.getTitle(), playlists[2].getPlaylistTitle());
+		assertEquals(otherChart2.getTitle(), playlists[2].getPlaylistTitle());
 		assertEquals(basicChart.getSubtitle(), playlists[0].getSubtitle());
 		assertEquals(topChart.getSubtitle(), playlists[1].getSubtitle());
-		assertEquals(otherChart.getSubtitle(), playlists[2].getSubtitle());
+		assertEquals(otherChart2.getSubtitle(), playlists[2].getSubtitle());
 		assertEquals(basicChart.getImageFileName(), playlists[0].getImage());
 		assertEquals(topChart.getImageFileName(), playlists[1].getImage());
-		assertEquals(otherChart.getImageFileName(), playlists[2].getImage());
+		assertEquals(otherChart2.getImageFileName(), playlists[2].getImage());
 		assertEquals(basicChart.getChart().getI().byteValue(), playlists[0].getId().byteValue());
 		assertEquals(topChart.getChart().getI().byteValue(), playlists[1].getId().byteValue());
-		assertEquals(otherChart.getChart().getI().byteValue(), playlists[2].getId().byteValue());
+		assertEquals(otherChart2.getChart().getI().byteValue(), playlists[2].getId().byteValue());
 
 		ChartDetailDto[] list = ((ChartDto)result[1]).getChartDetailDtos();
 		assertNotNull(list);
@@ -175,12 +188,14 @@ public class ChartServiceTest {
 		assertEquals(53, list[2].getPosition());
 		assertEquals(basicChart.getChart().getI().byteValue(), list[0].getPlaylistId().byteValue());
 		assertEquals(topChart.getChart().getI().byteValue(), list[1].getPlaylistId().byteValue());
-		assertEquals(otherChart.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
+		assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
 		verify(fixture).getChartsByCommunity(eq((String)null), anyString());
 		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)1), anyBoolean());
 		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)2), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)3), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq((byte)3), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq((byte)5), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)4), anyBoolean());
 	}
 	
 	@Test

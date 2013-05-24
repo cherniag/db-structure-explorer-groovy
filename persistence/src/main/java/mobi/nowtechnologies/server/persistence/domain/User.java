@@ -275,7 +275,7 @@ public class User implements Serializable {
     inverseJoinColumns=
         @JoinColumn(name="chart_id", referencedColumnName="i")
     )
-	private List<Chart> charts;
+	private List<Chart> selectedCharts;
 
 	public User() {
 		setDisplayName("");
@@ -378,13 +378,13 @@ public class User implements Serializable {
 		}
 		return null;
 	}
-	
-	public List<Chart> getCharts() {
-		return charts;
+
+	public List<Chart> getSelectedCharts() {
+		return selectedCharts;
 	}
 
-	public void setCharts(List<Chart> charts) {
-		this.charts = charts;
+	public void setSelectedCharts(List<Chart> selectedCharts) {
+		this.selectedCharts = selectedCharts;
 	}
 
 	public int getId() {
@@ -1363,5 +1363,16 @@ public class User implements Serializable {
 	public User withNextSubPayment(Date time) {
 		this.nextSubPayment = Utils.truncatedToSeconds(time);
 		return this;
+	}
+
+	public Boolean isSelectedChart(ChartDetail chartDetail) {
+		if(getSelectedCharts() != null){			
+			for(Chart chart : getSelectedCharts()){
+				if(chart.getI().equals(chartDetail.getChart().getI()))
+					return true;
+			}
+		}
+		
+		return chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 }

@@ -104,7 +104,7 @@ public class ChartAsmTest {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail);
+		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, true);
 
 		assertNotNull(result);
 		assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -116,6 +116,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getInfo(), result.getDescription());
 		assertEquals(chartDetail.getDefaultChart(), result.getSwitchable());
 		assertEquals(chart.getType(), result.getType());
+		assertEquals(true, result.getSwitchable());
 	}
 	
 	@Test
@@ -125,7 +126,7 @@ public class ChartAsmTest {
 		chartDetail.setTitle(null);
 		Chart chart = chartDetail.getChart();
 		
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail);
+		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, false);
 		
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getPlaylistTitle());
