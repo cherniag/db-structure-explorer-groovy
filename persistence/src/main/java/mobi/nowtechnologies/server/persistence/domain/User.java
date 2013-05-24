@@ -267,6 +267,15 @@ public class User implements Serializable {
 	// @JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false,
 	// updatable=false) })
 	private transient GracePeriod gracePeriod;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="user_charts",
+    joinColumns=
+        @JoinColumn(name="user_id", referencedColumnName="i"),
+    inverseJoinColumns=
+        @JoinColumn(name="chart_id", referencedColumnName="i")
+    )
+	private List<Chart> charts;
 
 	public User() {
 		setDisplayName("");
@@ -368,6 +377,14 @@ public class User implements Serializable {
 				return pd;
 		}
 		return null;
+	}
+	
+	public List<Chart> getCharts() {
+		return charts;
+	}
+
+	public void setCharts(List<Chart> charts) {
+		this.charts = charts;
 	}
 
 	public int getId() {

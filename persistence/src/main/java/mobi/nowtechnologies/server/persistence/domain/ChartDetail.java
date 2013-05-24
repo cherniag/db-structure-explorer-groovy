@@ -81,7 +81,9 @@ public class ChartDetail {
 
 	private long publishTimeMillis;
 	
-	private boolean locked;
+	private Boolean locked;
+	
+	private Boolean defaultChart;
 
 	@Version
 	private int version;
@@ -91,6 +93,14 @@ public class ChartDetail {
 
 	public Integer getI() {
 		return this.i;
+	}
+
+	public boolean isDefaultChart() {
+		return defaultChart;
+	}
+
+	public void setDefaultChart(boolean defaultChart) {
+		this.defaultChart = defaultChart;
 	}
 
 	public void setI(Integer i) {
@@ -119,12 +129,20 @@ public class ChartDetail {
 		mediaId = media.getI() != null ? media.getI() : null;
 	}
 
-	public boolean isLocked() {
+	public Boolean getLocked() {
 		return locked;
 	}
 
-	public void setLocked(boolean locked) {
+	public void setLocked(Boolean locked) {
 		this.locked = locked;
+	}
+
+	public Boolean getDefaultChart() {
+		return defaultChart;
+	}
+
+	public void setDefaultChart(Boolean defaultChart) {
+		this.defaultChart = defaultChart;
 	}
 
 	public String getImageFileName() {
@@ -394,7 +412,7 @@ public class ChartDetail {
 	public String toString() {
 		return "ChartDetail [i=" + i + ", chartId=" + chartId + ", chart=" + chart + ", mediaId=" + mediaId + ", media=" + media + ", info=" + info + ", position=" + position + ", prevPosition="
 				+ prevPosition + ", chgPositionId=" + chgPositionId + ", chgPosition=" + chgPosition + ", channel=" + channel + ", imageFileName=" + imageFileName + ", imageTitle=" + imageTitle
-				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", locked=" + locked + ", version=" + version + "]";
+				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", locked=" + locked + ", defaultChart=" + defaultChart + ", version=" + version + "]";
 	}
 
 }

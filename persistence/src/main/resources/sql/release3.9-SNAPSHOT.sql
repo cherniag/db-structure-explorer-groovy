@@ -98,4 +98,9 @@ update tb_paymentPolicy pp set pp.provider = 'o2' where pp.segment is not null a
 alter table tb_paymentDetails add column errorCode varchar(255);
 
  -- IMP-1498 [EPIC] Allow user to select a playlist tailored to their taste
- alter table tb_chartDetail add column locked BIT not null default false
+ alter table tb_chartDetail add column locked BIT default false
+ alter table tb_chartDetail add column defaultChart BIT default false
+ 
+ create table user_charts (user_id integer not null, chart_id tinyint not null)
+ alter table user_charts add constraint FKDB106B494E1D2677 foreign key (chart_id) references tb_charts
+ alter table user_logs add constraint FK143939A35A1E0CBD foreign key (user_id) references tb_users
