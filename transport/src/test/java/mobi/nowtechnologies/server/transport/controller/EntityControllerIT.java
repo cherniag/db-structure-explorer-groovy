@@ -1,20 +1,27 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.*;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.job.SpringContext;
-import mobi.nowtechnologies.server.job.UpdateO2UserJob;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDTO;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
-import org.joda.time.DateTime;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,16 +34,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -61,7 +58,7 @@ public class EntityControllerIT {
     public void givenO2ClientWhoHasSavedPhoneAndPin_whenACC_CHECK_thenActivationIs_ACTIVATED()throws Exception{
         //given
         String userName = "test@test.com";
-        EntityController controller = prepareMockController();
+        AccCheckController controller = prepareMockController();
         updateUserActivationStatus(userName, ActivationStatus.ACTIVATED);
 
         //when
@@ -75,7 +72,7 @@ public class EntityControllerIT {
     public void givenO2ClientWhoHasNotSavedPhone_whenACC_CHECK_thenActivationIs_REGISTERED() throws Exception{
         //given
         String userName = "test@test.com";
-        EntityController controller = prepareMockController();
+        AccCheckController controller = prepareMockController();
         updateUserActivationStatus(userName, ActivationStatus.REGISTERED);
 
         //when
@@ -90,7 +87,7 @@ public class EntityControllerIT {
     public void givenO2ClientWhoHasSavedPhone_whenACC_CHECK_thenActivationIs_ENTERED_NUMBER()throws Exception{
         //given
         String userName = "test@test.com";
-        EntityController controller = prepareMockController();
+        AccCheckController controller = prepareMockController();
         updateUserActivationStatus(userName, ActivationStatus.ENTERED_NUMBER);
 
         //when
@@ -103,7 +100,7 @@ public class EntityControllerIT {
 
 
     private String getActivation(ModelAndView mav) {
-        AccountCheckDTO accountCheckDTO = EntityController.getAccountCheckDtoFrom(mav);
+        AccountCheckDTO accountCheckDTO = AccCheckController.getAccountCheckDtoFrom(mav);
         return accountCheckDTO.getActivation().toString();
     }
 
@@ -115,7 +112,7 @@ public class EntityControllerIT {
 
     @Test
     public void verifyThatTwoDifferentXtifyTokensWhenReceivedWithTheSameUserAndCommunityAndDeviceWillUpdated()throws Exception{
-        EntityController controller = prepareMockController();
+    	AccCheckController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(
                 null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
         controller.accountCheckWithXtifyToken(
@@ -133,7 +130,7 @@ public class EntityControllerIT {
     @Test
     @Transactional
     public void verifyThatXtifyTokenWillNotDuplicateWithTheSameUserAndCommunityUrl() throws Exception  {
-        EntityController controller = prepareMockController();
+    	AccCheckController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
                 null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
         controller.accountCheckWithXtifyToken(null,
@@ -148,7 +145,7 @@ public class EntityControllerIT {
     @Test
     public void verifyThatXtifyTokenCanBeSavedThroughRestApi() throws Exception {
 
-        EntityController controller = prepareMockController();
+    	AccCheckController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(null,
                 null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
 
@@ -296,9 +293,9 @@ public class EntityControllerIT {
 
 	}
 
-    private EntityController prepareMockController() throws NoSuchMethodException {
-        EntityController controller = createMock(EntityController.class,
-                EntityController.class.getMethod("accountCheck", HttpServletRequest.class,
+    private AccCheckController prepareMockController() throws NoSuchMethodException {
+    	AccCheckController controller = createMock(AccCheckController.class,
+        		AccCheckController.class.getMethod("accountCheck", HttpServletRequest.class,
                         String.class,
                         String.class,
                         String.class,

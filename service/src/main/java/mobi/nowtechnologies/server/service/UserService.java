@@ -446,6 +446,14 @@ public class UserService {
 					"The user [{0}] is already present", userName));
 		}
 	}
+	
+	@Transactional(readOnly=true)
+	public User getUserWithSelectedCharts(Integer userId){
+		User user = userRepository.findOne(userId);
+		user.getSelectedCharts().size();
+		
+		return user;
+	}
 
 	public User findByNameAndCommunity(String userName, String communityName) {
 		LOGGER.debug("input parameters userName, communityName: [{}], [{}]", userName, communityName);

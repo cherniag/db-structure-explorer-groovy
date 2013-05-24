@@ -62,8 +62,53 @@ public class AccountCheckDTO {
     private String contract;
     private String segment;
     private int graceCreditSeconds;
-    
+   
 	private String lastSubscribedPaymentSystem;
+
+	public AccountCheckDTO(){
+		
+	}
+	
+	public AccountCheckDTO(AccountCheckDTO accountCheckDTO) 
+	{
+	    this.displayName = accountCheckDTO.displayName;
+	    this.subBalance = accountCheckDTO.subBalance;
+	    this.status = accountCheckDTO.status;
+	    this.deviceType = accountCheckDTO.deviceType;
+	    this.deviceUID = accountCheckDTO.deviceUID;
+	    this.chartTimestamp = accountCheckDTO.chartTimestamp;
+	    this.chartItems = accountCheckDTO.chartItems;
+	    this.newsTimestamp = accountCheckDTO.newsTimestamp;
+	    this.newsItems = accountCheckDTO.newsItems;
+	    this.drmType = accountCheckDTO.drmType;
+	    this.drmValue = accountCheckDTO.drmValue;
+	    this.phoneNumber = accountCheckDTO.phoneNumber;
+	    this.operator = accountCheckDTO.operator;
+	    this.paymentStatus = accountCheckDTO.paymentStatus;
+	    this.paymentType = accountCheckDTO.paymentType;
+	    this.paymentEnabled = accountCheckDTO.paymentEnabled;
+	    this.rememberMeToken = accountCheckDTO.rememberMeToken;
+	    this.userName = accountCheckDTO.userName;
+	    this.userToken = accountCheckDTO.userToken;
+	    this.timeOfMovingToLimitedStatusSeconds = accountCheckDTO.timeOfMovingToLimitedStatusSeconds;
+	    this.promotionLabel = accountCheckDTO.promotionLabel;
+	    this.fullyRegistred = accountCheckDTO.fullyRegistred;
+	    this.oAuthProvider = accountCheckDTO.oAuthProvider;
+	    this.isPromotedDevice = accountCheckDTO.isPromotedDevice;
+	    this.promotedWeeks = accountCheckDTO.promotedWeeks;
+	    this.hasPotentialPromoCodePromotion = accountCheckDTO.hasPotentialPromoCodePromotion;
+	    this.hasOffers = accountCheckDTO.hasOffers;
+	    this.isFreeTrial = accountCheckDTO.isFreeTrial;
+	    this.lastPaymentStatus = accountCheckDTO.lastPaymentStatus;
+	    this.nextSubPaymentSeconds = accountCheckDTO.nextSubPaymentSeconds;
+	    this.activation = accountCheckDTO.activation;
+	    this.appStoreProductId = accountCheckDTO.appStoreProductId;
+	    this.provider = accountCheckDTO.provider;
+	    this.contract = accountCheckDTO.contract;
+	    this.segment = accountCheckDTO.segment;
+	    this.graceCreditSeconds = accountCheckDTO.graceCreditSeconds;
+	    this.lastSubscribedPaymentSystem = accountCheckDTO.lastSubscribedPaymentSystem;
+	}
 
 	public int getGraceCreditSeconds() {
 		return graceCreditSeconds;
