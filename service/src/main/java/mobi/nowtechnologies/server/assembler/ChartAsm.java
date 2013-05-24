@@ -52,6 +52,7 @@ public class ChartAsm {
 		chartDto.setChartDetailId(chartDetail.getI());
 		chartDto.setPosition(chartDetail.getTitle() != null ? chartDetail.getPosition() : null);
 		chartDto.setSubtitle(chartDetail.getSubtitle());
+		chartDto.setDefaultChart(chartDetail.getDefaultChart());
 		chartDto.setImageFileName(chartDetail.getImageFileName());
 		chartDto.setImageTitle(chartDetail.getImageTitle());
 		chartDto.setChartType(chart.getType());
@@ -72,6 +73,7 @@ public class ChartAsm {
 		chartDetail.setI(chartDto.getChartDetailId());
 		chartDetail.setTitle(chartDto.getName());
 		chartDetail.setPosition(chartDto.getPosition());
+		chartDetail.setDefaultChart(chartDto.getDefaultChart());
 		chartDetail.setSubtitle(chartDto.getSubtitle());
 		chartDetail.setImageTitle(chartDto.getImageTitle());
 		chartDetail.setInfo(chartDto.getDescription());
@@ -99,6 +101,7 @@ public class ChartAsm {
 		playlistDto.setPosition(chartDetail.getPosition());
 		playlistDto.setDescription(chartDetail.getInfo());
 		playlistDto.setImage(chartDetail.getImageFileName());
+		playlistDto.setSwitchable(chartDetail.getDefaultChart());
 		playlistDto.setImageTitle(chartDetail.getImageTitle());
 		playlistDto.setType(chart.getType());
 		

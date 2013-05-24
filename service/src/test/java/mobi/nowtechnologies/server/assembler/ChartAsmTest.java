@@ -31,6 +31,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
 		assertEquals(chartDetail.getI(), result.getChartDetailId());
+		assertEquals(chartDetail.getDefaultChart(), result.getDefaultChart());
 		assertEquals(chartDetail.getChart().getType(), result.getChartType());
 	}
 	
@@ -74,6 +75,7 @@ public class ChartAsmTest {
 		assertEquals(chartDto.getPosition().byteValue(), result.getPosition());
 		assertEquals(chartDto.getDescription(), result.getInfo());
 		assertEquals(chartDto.getImageTitle(), result.getImageTitle());
+		assertEquals(chartDto.getDefaultChart(), result.getDefaultChart());
 		assertEquals(chartDto.getChartDetailId(), result.getI());
 	}
 	
@@ -92,6 +94,7 @@ public class ChartAsmTest {
 		assertEquals(chartDto.getPosition().byteValue(), result.getPosition());
 		assertEquals(chartDto.getDescription(), result.getInfo());
 		assertEquals(chartDto.getImageTitle(), result.getImageTitle());
+		assertEquals(chartDto.getDefaultChart(), result.getDefaultChart());
 		assertEquals("CHART_", result.getImageFileName().substring(0, 6));
 	}
 	
@@ -111,6 +114,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
+		assertEquals(chartDetail.getDefaultChart(), result.getSwitchable());
 		assertEquals(chart.getType(), result.getType());
 	}
 	

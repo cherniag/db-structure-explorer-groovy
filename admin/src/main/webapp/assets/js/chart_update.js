@@ -39,6 +39,7 @@ function onCreateChartEditForm() {
 	var imageFileName = chart.imageFileName;
 	var imageFileUrl = filesURL+imageFileName;
 	var chartDetailId = chart.chartDetailId;
+	var defaultChart = chart.defaultChart;
 	var chartType = chart.chartType;
 	
 	var chartEditForm = $("form#chart-edit-form");
@@ -50,6 +51,7 @@ function onCreateChartEditForm() {
 	chartEditForm.find("input[name='description']").val(description);
 	chartEditForm.find("input[name='imageFileName']").val(imageFileName);
 	chartEditForm.find("input[name='chartDetailId']").val(chartDetailId);
+	chartEditForm.find("input[name='defaultChart']").val(defaultChart);
 	chartEditForm.find("input[name='chartType']").val(chartType);
 	chartEditForm.find(".addedImage").attr('src', imageFileUrl);	
 };

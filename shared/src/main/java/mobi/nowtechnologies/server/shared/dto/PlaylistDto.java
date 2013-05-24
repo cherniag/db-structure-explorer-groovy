@@ -13,6 +13,7 @@ public class PlaylistDto {
 	private String imageTitle;
 	private String description;
 	private Byte position;
+	private Boolean switchable;
 	private ChartType type;
 
 	public Integer getId() {
@@ -79,9 +80,17 @@ public class PlaylistDto {
 		this.position = position;
 	}
 
+	public Boolean getSwitchable() {
+		return switchable;
+	}
+
+	public void setSwitchable(Boolean switchable) {
+		this.switchable = switchable;
+	}
+
 	@Override
 	public String toString() {
 		return "PlaylistDto [id=" + id + ", playlistTitle=" + playlistTitle + ", subtitle=" + subtitle + ", image=" + image + ", imageTitle=" + imageTitle + ", description=" + description
-				+ ", position=" + position + ", type=" + type + "]";
+				+ ", position=" + position + ", switchable=" + switchable + ", type=" + type + "]";
 	}
 }

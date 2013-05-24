@@ -41,6 +41,8 @@ public class ChartDto {
 	
 	private String description = "Default";
 	
+	private Boolean defaultChart;
+	
 	private ChartType chartType;
 
 	public Byte getId() {
@@ -123,10 +125,18 @@ public class ChartDto {
 		this.chartType = chartType;
 	}
 
+	public Boolean getDefaultChart() {
+		return defaultChart;
+	}
+
+	public void setDefaultChart(Boolean defaultChart) {
+		this.defaultChart = defaultChart;
+	}
+
 	@Override
 	public String toString() {
 		return "ChartDto [id=" + id + ", chartDetailId=" + chartDetailId + ", position=" + position + ", name=" + name + ", subtitle=" + subtitle + ", file=" + file + ", imageFileName="
-				+ imageFileName + ", imageTitle=" + imageTitle + ", description=" + description + ", chartType=" + chartType + "]";
+				+ imageFileName + ", imageTitle=" + imageTitle + ", description=" + description + ", defaultChart=" + defaultChart + ", chartType=" + chartType + "]";
 	}
 
 }
