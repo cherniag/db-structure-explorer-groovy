@@ -114,7 +114,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
-		assertEquals(chartDetail.getDefaultChart(), result.getSwitchable());
+		assertEquals(true, result.getSwitchable());
 		assertEquals(chart.getType(), result.getType());
 		assertEquals(true, result.getSwitchable());
 	}

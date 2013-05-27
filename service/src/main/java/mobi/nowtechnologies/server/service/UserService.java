@@ -626,7 +626,7 @@ public class UserService {
 	}
 
 	public User updateUser(User user) {
-		return entityService.updateEntity(user);
+		return userRepository.save(user);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

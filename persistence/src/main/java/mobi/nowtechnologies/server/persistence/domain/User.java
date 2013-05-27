@@ -275,7 +275,7 @@ public class User implements Serializable {
     inverseJoinColumns=
         @JoinColumn(name="chart_id", referencedColumnName="i")
     )
-	private List<Chart> selectedCharts;
+	private List<Chart> selectedCharts = new ArrayList<Chart>();
 
 	public User() {
 		setDisplayName("");
