@@ -160,9 +160,11 @@ ul.table li div.number_news {
 ul.table li div.image_news {
 	width: 60px;
 }
-
+.px50{
+    width: 50px;
+}
 ul.table li div.body_news {
-	width: 300px;
+	width: 250px;
 }
 
 ul.table li div.filters_news {
