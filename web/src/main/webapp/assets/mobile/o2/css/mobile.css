@@ -227,6 +227,25 @@ img.centered{
     max-width:  50px;
 }
 
+.color-main{
+    background-color: #00aeef;
+    color: #fff;
+}
+
+.color-selected{
+    background-color: #0055cc;
+    color: #fff;
+}
+
+.pane{
+    padding: 10px 10px 12px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.inline{
+    display: inline-block;
+}
+
 .pane-red, .banner-pane{
     padding: 10px 10px 12px 10px;
     margin-bottom: 10px;

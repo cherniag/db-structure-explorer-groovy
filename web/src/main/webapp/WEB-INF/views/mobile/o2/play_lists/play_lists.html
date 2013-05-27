@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Playlists</title>
+    <link rel="stylesheet" type="text/css" href="/mobile.css"/>
+    <script type="text/javascript" src="/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/underscore.js"></script>
+    <script id="tmpl_playlist" type="text/template">
+        <% data.forEach(function (dto) { %>
+        <div class="pane color-selected">
+            <img class="inline" src="<%= dto.image %>">
+
+            <div class="inline">
+                <h2><%= dto.title %></h2>
+                <h5><%= dto.size %></h5>
+            </div>
+        </div>
+        <% }); %>
+    </script>
+    <script type="text/javascript">
+        $(document).ready()
+        {
+            var data = [
+                {image: '#', title: 'Dance', size: 30}
+            ];
+            var html = _.template($('#tmpl_playlist').html(), data);
+            $("#container").empty();
+            $("#container").html(html);
+            console.log(html);
+            console.log($('#container'));
+        }
+    </script>
+</head>
+<body>
+<div class="header">
+    Choose Your Playlist
+    <a href="/account.html" class="button-small button-right">Close</a>
+</div>
+<div class="container">
+
+    <div class="pane color-selected">
+        <img class="inline" src="#">
+
+        <div class="inline">
+            <h2>Dance: Ibiza Hots</h2>
+            <h5>20 Tracks</h5>
+        </div>
+    </div>
+
+    <div class="pane color-main">
+        <img class="inline" src="#">
+
+        <div class="inline">
+            <h2>Dance: Ibiza Hots</h2>
+            <h5>20 Tracks</h5>
+        </div>
+    </div>
+</div>
+</body>
+</html>
