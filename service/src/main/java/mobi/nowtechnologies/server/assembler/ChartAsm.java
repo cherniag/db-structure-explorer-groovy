@@ -101,7 +101,8 @@ public class ChartAsm {
 		playlistDto.setSubtitle(chartDetail.getSubtitle());
 		playlistDto.setPosition(chartDetail.getPosition());
 		playlistDto.setDescription(chartDetail.getInfo());
-		playlistDto.setImage(chartDetail.getImageFileName());
+		playlistDto.setImage(chartDetail.getImageFileName());		
+		playlistDto.setSwitchable(switchable);
 		playlistDto.setImageTitle(chartDetail.getImageTitle());
 		playlistDto.setType(chart.getType());
 		

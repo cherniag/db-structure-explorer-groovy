@@ -37,7 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:META-INF/service-test.xml",
+@ContextConfiguration(locations = {"classpath:META-INF/service-test.xml", "classpath:META-INF/soap.xml",
 		"classpath:META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:transport-servlet-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional

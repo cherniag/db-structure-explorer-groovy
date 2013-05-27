@@ -28,7 +28,7 @@ public class ChartDtoValidator extends BaseValidator {
 		}
 		
 		String communityURL = RequestUtils.getCommunityURL();
-		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null);
+		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, null);
 		for(ChartDetail chartDetail : charts){
 			if(!chartDetail.getChart().getI().equals(chartDto.getId()) && chartDetail.getPosition() == chartDto.getPosition().byteValue()){
 				errors.rejectValue("position", "chart.position.error.samePositionExists", "The chart '"+chartDetail.getTitle()+"' already has position "+chartDto.getPosition());

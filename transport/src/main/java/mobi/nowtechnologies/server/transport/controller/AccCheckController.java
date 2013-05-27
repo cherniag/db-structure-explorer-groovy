@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import org.slf4j.MDC;
@@ -73,6 +72,11 @@ public class AccCheckController extends CommonController {
 
 			final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType, transactionReceipt);
+			
+			user = userService.getUserWithSelectedCharts(user.getId());
+			AccountCheckDTO accountCheckDTONew = new AccountCheckDTO(accountCheckDTO);
+			accountCheckDTONew.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
+			
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 
@@ -138,10 +142,6 @@ public class AccCheckController extends CommonController {
 
 			final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType, transactionReceipt);
-			
-			user = userService.getUserWithSelectedCharts(user.getId());
-			AccountCheckDTO accountCheckDTONew = new AccountCheckDTO(accountCheckDTO);
-			accountCheckDTONew.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
 			
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);

@@ -25,6 +25,10 @@
 		<property name="facebookService" ref="service.FacebookService" />
 		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 	</bean>
+	
+	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" parent="transport.CommonController">
+		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
+	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
         <property name="o2ClientService" ref="service.O2ClientService"/>

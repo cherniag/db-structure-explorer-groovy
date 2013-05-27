@@ -80,6 +80,11 @@
         <property name="userService" ref="service.UserService"/>
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.web.controller.PlaylistController">
+        <property name="userService" ref="service.UserService"/>
+        <property name="chartService" ref="service.ChartService"/>
+    </bean>
+
     <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
         <property name="userService" ref="service.UserService"/>
     </bean>
