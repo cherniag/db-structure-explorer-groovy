@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  *
@@ -98,7 +100,7 @@ public class AdController extends AbstractCommonController {
 		String communityURL = RequestUtils.getCommunityURL();
 
 		List<Message> messages = messageService.getAds(communityURL);
-		List<AdItemDto> adItemDtos = AdItemDto.toDtoList(messages);
+		List<AdItemDto> adItemDtos = AdItemDto.toDtoList(checkNotNull(messages));
 
 		ModelAndView modelAndView = new ModelAndView("ads/ads");
 		modelAndView.getModelMap().put(AdItemDto.LIST, adItemDtos);

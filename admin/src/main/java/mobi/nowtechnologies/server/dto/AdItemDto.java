@@ -1,21 +1,25 @@
 package mobi.nowtechnologies.server.dto;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.google.common.collect.ImmutableMap;
 import mobi.nowtechnologies.server.assembler.FilterAsm;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.enums.AdActionType;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
+
+import static mobi.nowtechnologies.server.shared.enums.AdActionType.NEWS;
+import static mobi.nowtechnologies.server.shared.enums.AdActionType.PORTAL;
+import static mobi.nowtechnologies.server.shared.enums.AdActionType.URL;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -124,16 +128,12 @@ public class AdItemDto {
 	}
 
 	public static List<AdItemDto> toDtoList(Collection<Message> messages) {
-		if (messages == null)
-			throw new NullPointerException("The parameter messages is null");
-
-		List<AdItemDto> adItemDtos = new ArrayList<AdItemDto>();
+		List<AdItemDto> result = new ArrayList<AdItemDto>();
 
 		for (Message message : messages) {
-			adItemDtos.add(AdItemDto.toDtoItem(message));
+			result.add(AdItemDto.toDtoItem(message));
 		}
-
-		return adItemDtos;
+		return result;
 	}
 
 	public boolean isRemoveImage() {
@@ -145,28 +145,41 @@ public class AdItemDto {
 	}
 
 	public static AdItemDto toDtoItem(Message message) {
-		AdItemDto adItemDto = null;
+		AdItemDto dto = null;
 		if (message != null) {
-			adItemDto = new AdItemDto();
+			dto = new AdItemDto();
 
-			adItemDto.setId(message.getId());
-			String title = message.getTitle();
-			adItemDto.setAction(title);
-			adItemDto.setImageFileName(message.getImageFileName());
-			adItemDto.setRemoveImage(message.getImageFileName() == null || message.getImageFileName().isEmpty());
-			adItemDto.setMessage(message.getBody());
-			adItemDto.setActivated(message.isActivated());
-			adItemDto.setFilterDtos(FilterAsm.toDtos(message.getFilterWithCtiteria()));
-			adItemDto.setMessage(message.getBody());
-			adItemDto.setPosition(message.getPosition());
-
-			if (title.startsWith("http")) {
-				adItemDto.setActionType(AdActionType.URL);
-			} else {
-				adItemDto.setActionType(AdActionType.ISRC);
-			}
+			dto.setId(message.getId());
+			dto.setAction(action(message));
+			dto.setImageFileName(message.getImageFileName());
+			dto.setRemoveImage(message.getImageFileName() == null || message.getImageFileName().isEmpty());
+			dto.setMessage(message.getBody());
+			dto.setActivated(message.isActivated());
+			dto.setFilterDtos(FilterAsm.toDtos(message.getFilterWithCtiteria()));
+			dto.setMessage(message.getBody());
+			dto.setPosition(message.getPosition());
+            dto.setActionType(actionType(message));
 		}
-		return adItemDto;
+		return dto;
+	}
+
+    static Map<String, AdActionType> actionTypeMap = ImmutableMap.<String, AdActionType>builder()
+            .put("http", URL)
+            .put("https", URL)
+            .put("news", NEWS)
+            .put("portal", PORTAL)
+            .build();
+
+    private static AdActionType actionType(Message message) {
+			String title = message.getTitle();
+        if(isIsrcOrUnknownAdActionType(title)){
+            return AdActionType.ISRC;
+			}
+        return actionTypeMap.get(substringBefore(title, ":"));
+		}
+
+    private static boolean isIsrcOrUnknownAdActionType(String title) {
+        return title.indexOf(':') == -1 || !actionTypeMap.containsKey(substringBefore(title, ":"));
 	}
 
 	public static Message fromDto(AdItemDto adItemDto) {
@@ -177,7 +190,7 @@ public class AdItemDto {
 		message.setBody(adItemDto.getMessage());
 		message.setId(adItemDto.getId());
 		message.setMessageType(MessageType.AD);
-		message.setTitle(adItemDto.getAction());
+		message.setTitle(title(adItemDto));
 		message.setImageFileName(adItemDto.getImageFileName());
 
 		Integer position = adItemDto.getPosition();
@@ -186,6 +199,27 @@ public class AdItemDto {
 		}
 
 		return message;
+	}
+
+    static Map<AdActionType, String> titleMap = ImmutableMap.<AdActionType, String>builder()
+            .put(NEWS, "news:")
+            .put(PORTAL, "portal:")
+            .build();
+
+    private static String title(AdItemDto dto) {
+        if(titleMap.containsKey(dto.getActionType()))
+            return titleMap.get(dto.getActionType()) + dto.getAction();
+
+        return dto.getAction();
+    }
+
+    private static String action(Message msg) {
+        String title = msg.getTitle();
+        for(String prefix: titleMap.values())
+            if(title.startsWith(prefix))
+                return StringUtils.substringAfter(title, prefix);
+
+        return title;
 	}
 
 	@Override

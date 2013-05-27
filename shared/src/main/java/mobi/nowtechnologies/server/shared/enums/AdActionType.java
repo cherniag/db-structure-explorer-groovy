@@ -5,5 +5,5 @@ package mobi.nowtechnologies.server.shared.enums;
  *
  */
 public enum AdActionType {
-	URL, ISRC
+	URL, ISRC, NEWS, PORTAL
 }
