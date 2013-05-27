@@ -37,8 +37,8 @@ public class PlaylistController extends CommonController {
 		User user = userService.getUserWithSelectedCharts(getSecurityContextDetails().getUserId());
 		List<PlaylistDto> playlistDtos = Collections.singletonList(new PlaylistDto());
 		for (ChartDetail chartDetail : playlists) {
-			if(!chartDetail.getDefaultChart() && user.getSelectedCharts().size() == 0 
-					|| user.getSelectedCharts().size() > 0 && user.getSelectedCharts().get(0).getI().equals(chartDetail.getChartId())){
+			if((!chartDetail.getDefaultChart() && user.getSelectedCharts().size() == 0)
+					|| (user.getSelectedCharts().size() > 0 && !user.getSelectedCharts().get(0).getI().equals(chartDetail.getChartId()))){
 				playlistDtos.get(0).setId(chartDetail.getChartId().intValue());
 				break;
 			}	
