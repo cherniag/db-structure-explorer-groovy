@@ -66,6 +66,16 @@
 					</div>
 					<div class="span8">
 						<div class="filtersSelect">
+
+                            <label>Action Type:</label>
+                            <div class="control-group">
+                                <select th:field="*{actionType}">
+                                    <option th:each="adActionType : ${T(mobi.nowtechnologies.server.shared.enums.AdActionType).values()}"
+                                            th:value="${adActionType.name()}" th:label="${adActionType.name()}"></option>
+                                </select>
+                            </div>
+
+
 							<label><strong th:text="#{ad.edit.page.saveOrUpdateAdForm.action.label}">Action:</strong></label>
 							<div class="control-group">
 								<input th:field="*{action}"
