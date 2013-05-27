@@ -13,6 +13,7 @@
 						<li class="title">
 								<div class="number_news" th:text="#{news.page.newsTable.head.position}">#</div>
 								<div class="image_news" th:text="#{news.page.newsTable.head.image}">Image</div>
+                                <div>ID</div>
 								<div class="body_news" th:text="#{news.page.newsTable.head.headline}">Headline</div>
 								<div class="filters_news" th:text="#{news.page.newsTable.head.filters}">Filters</div>
 								<div class="online" th:text="#{news.page.newsTable.head.activated}">Online</div>
@@ -24,7 +25,8 @@
 						<li th:each="newsItemDto, it: ${NEWS_ITEM_DTO_LIST}">
 							<div class="number_news" th:text="${it.index+1}">1</div>
 							<div class="image_news"><img alt="News picture" src="" th:attr="src=@{__${filesURL +newsItemDto.imageFileName}__}" th:alt="#{news.page.newsTable.message.img.alt}" width="50" height="50"/></div>
-							<div class="body_news">
+                            <div><span th:text="${newsItemDto.id}"></span></div>
+                            <div class="body_news">
 								<span th:text="${newsItemDto.headline}">Editorial 1 Cheryl Cole gets fired from the X Factor</span><br/><br />
 							</div>
 							
