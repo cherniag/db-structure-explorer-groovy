@@ -2,8 +2,7 @@ package mobi.nowtechnologies.server.dto.transport;
 
 import java.util.Arrays;
 
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 /**
  * AccountCheck
@@ -12,17 +11,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Maksym Chernolevskyi (maksym)
  * 
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "user")
-public class AccountCheckDTO extends mobi.nowtechnologies.server.shared.dto.AccountCheckDTO{
+public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.AccountCheckDTO{
 	
 	@XmlAnyElement
 	private SelectedPlaylistDto[] playlists;
 	
-	public AccountCheckDTO(){
+	public AccountCheckDto(){
 		
 	}
 	
-	public AccountCheckDTO(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
+	public AccountCheckDto(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
 		super(accountCheckDTO);
 	}
 

@@ -5,7 +5,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.dto.transport.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -41,9 +41,8 @@ public class AccCheckController extends CommonController {
 	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
 			HttpServletRequest httpServletRequest,
-			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
-			@RequestParam("API_VERSION") String apiVersion,
+			@PathVariable("apiVersion") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
@@ -74,10 +73,10 @@ public class AccCheckController extends CommonController {
 					pushNotificationToken, deviceType, transactionReceipt);
 			
 			user = userService.getUserWithSelectedCharts(user.getId());
-			AccountCheckDTO accountCheckDTONew = new AccountCheckDTO(accountCheckDTO);
+			AccountCheckDto accountCheckDTONew = new AccountCheckDto(accountCheckDTO);
 			accountCheckDTONew.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
 			
-			final Object[] objects = new Object[] { accountCheckDTO };
+			final Object[] objects = new Object[] { accountCheckDTONew };
 			proccessRememberMeToken(objects);
 
 			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
@@ -89,8 +88,8 @@ public class AccCheckController extends CommonController {
 			user = userService.findByNameAndCommunity(userName, community);
 			
 			ActivationStatus activationStatus = user.getActivationStatus();
-			accountCheckDTO.setActivation(activationStatus);
-			accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+			accountCheckDTONew.setActivation(activationStatus);
+			accountCheckDTONew.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
 
 			return mav;
 		} catch (Exception e) {
@@ -102,11 +101,11 @@ public class AccCheckController extends CommonController {
 		}
 	}
 
-	public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
+	public static AccountCheckDto getAccountCheckDtoFrom(ModelAndView mav) {
 		Response resp = (Response) mav.
 				getModelMap().
 				get(MODEL_NAME);
-		return (AccountCheckDTO) resp.getObject()[0];
+		return (AccountCheckDto) resp.getObject()[0];
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
