@@ -403,6 +403,7 @@ public class ChartDetail {
 		newChartDetail.setImageFileName(chartDetail.getImageFileName());
 		newChartDetail.setImageTitle(chartDetail.getImageTitle());
 		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
+		newChartDetail.setDefaultChart(chartDetail.getDefaultChart());
 
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;
