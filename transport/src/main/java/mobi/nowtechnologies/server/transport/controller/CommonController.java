@@ -164,6 +164,7 @@ public abstract class CommonController extends ProfileController{
 	public ModelAndView handleException(ThrottlingException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
 		LOGGER.info(exception.toString());
 		response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+        response.addHeader("reason", "throttling");
 		ErrorMessage errorMessage = getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
 		return sendResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE, response);
 	}
