@@ -1,16 +1,22 @@
 package mobi.nowtechnologies.server.web.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.dtos.PlaylistDto;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,7 +32,7 @@ public class PlaylistController extends CommonController {
 	public static final String REDIREC_PAGE_SWAP = "redirect:swap.html";
 	
 	private UserService userService;
-	
+    private ChartRepository chartRepository;
 	private ChartService chartService;
 	
 	@RequestMapping(value=PAGE_PLAYLIST, method=RequestMethod.GET)
@@ -35,22 +41,27 @@ public class PlaylistController extends CommonController {
 		
 		//TODO get temparally one playlist for direct select
 		User user = userService.getUserWithSelectedCharts(getSecurityContextDetails().getUserId());
-		List<PlaylistDto> playlistDtos = Collections.singletonList(new PlaylistDto());
+		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
 		for (ChartDetail chartDetail : playlists) {
 			if((!chartDetail.getDefaultChart() && user.getSelectedCharts().size() == 0)
 					|| (user.getSelectedCharts().size() > 0 && !user.getSelectedCharts().get(0).getI().equals(chartDetail.getChartId()))){
-				playlistDtos.get(0).setId(chartDetail.getChartId().intValue());
+				playlistDtos.add(new PlaylistDto(chartDetail));
 				break;
 			}	
 		}
-		
-		//-------------------------------------------
-		
+
 		ModelAndView modelAndView = new ModelAndView(VIEW_PLAYLIST);
 		modelAndView.addObject(PlaylistDto.NAME_LIST, playlistDtos);
 			
 		return modelAndView;
 	}
+
+    @RequestMapping(value="playlists", produces = "application/json", method=RequestMethod.GET)
+    public ModelAndView getPlaylists(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
+        List<Chart> charts = chartRepository.getByCommunityName(communityURL);
+
+        return new ModelAndView().addObject("playlists", PlaylistDto.toList(charts));
+    }
 	
 	@RequestMapping(value=PAGE_PLAYLIST_TRACKS, method=RequestMethod.POST)
 	public ModelAndView selectPlaylists(@PathVariable("playlistId") Integer playlistId,
@@ -68,4 +79,8 @@ public class PlaylistController extends CommonController {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
+
+    public void setChartRepository(ChartRepository chartRepository) {
+        this.chartRepository = chartRepository;
+    }
 }
