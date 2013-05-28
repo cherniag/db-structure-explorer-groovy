@@ -9,13 +9,11 @@ import mobi.nowtechnologies.server.admin.validator.ChartDtoValidator;
 import mobi.nowtechnologies.server.admin.validator.ChartItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
-import mobi.nowtechnologies.server.assembler.MediaAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.shared.dto.admin.*;
+import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.social.ResourceNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -93,7 +90,7 @@ public class ChartController extends AbstractCommonController {
 		LOGGER.debug("input parameters request [{}]", new Object[] { request });
 
 		String communityURL = RequestUtils.getCommunityURL();
-		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null);
+		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, null);
 		List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
 
 		ModelAndView modelAndView = new ModelAndView("charts/charts");

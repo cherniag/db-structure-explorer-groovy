@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.admin.validator;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -71,7 +71,7 @@ public class ChartDtoValidatorTest{
 				return null;
 			}
 		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString())).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
+		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString(), any(ChartType.class))).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
 		Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 		
 		boolean hasErrors = fixture.customValidate(chartDto, errors);
@@ -103,7 +103,7 @@ public class ChartDtoValidatorTest{
 				return null;
 			}
 		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString())).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
+		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString(), any(ChartType.class))).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
 		Mockito.when(errors.hasErrors()).thenReturn(Boolean.TRUE);
 		
 		boolean hasErrors = fixture.customValidate(chartDto, errors);
@@ -136,7 +136,7 @@ public class ChartDtoValidatorTest{
 				return null;
 			}
 		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString())).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
+		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString(), any(ChartType.class))).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
 		Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 		
 		boolean hasErrors = fixture.customValidate(chartDto, errors);
@@ -169,7 +169,7 @@ public class ChartDtoValidatorTest{
 				return null;
 			}
 		}).when(errors).rejectValue(Mockito.anyString(), eq("chart.position.error.invalidPositionForFourthChart"), Mockito.anyString());
-		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString())).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
+		Mockito.when(mockChartService.getChartsByCommunity(anyString(), anyString(), any(ChartType.class))).thenReturn(Arrays.asList(chartDetail1, chartDetail2));
 		Mockito.when(errors.hasErrors()).thenReturn(Boolean.TRUE);
 		
 		boolean hasErrors = fixture.customValidate(chartDto, errors);

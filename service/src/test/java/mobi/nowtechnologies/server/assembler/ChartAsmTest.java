@@ -31,6 +31,7 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
 		assertEquals(chartDetail.getI(), result.getChartDetailId());
+		assertEquals(chartDetail.getDefaultChart(), result.getDefaultChart());
 		assertEquals(chartDetail.getChart().getType(), result.getChartType());
 	}
 	
@@ -74,6 +75,7 @@ public class ChartAsmTest {
 		assertEquals(chartDto.getPosition().byteValue(), result.getPosition());
 		assertEquals(chartDto.getDescription(), result.getInfo());
 		assertEquals(chartDto.getImageTitle(), result.getImageTitle());
+		assertEquals(chartDto.getDefaultChart(), result.getDefaultChart());
 		assertEquals(chartDto.getChartDetailId(), result.getI());
 	}
 	
@@ -92,6 +94,7 @@ public class ChartAsmTest {
 		assertEquals(chartDto.getPosition().byteValue(), result.getPosition());
 		assertEquals(chartDto.getDescription(), result.getInfo());
 		assertEquals(chartDto.getImageTitle(), result.getImageTitle());
+		assertEquals(chartDto.getDefaultChart(), result.getDefaultChart());
 		assertEquals("CHART_", result.getImageFileName().substring(0, 6));
 	}
 	
@@ -101,7 +104,7 @@ public class ChartAsmTest {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail);
+		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, true);
 
 		assertNotNull(result);
 		assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -111,7 +114,9 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
 		assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
 		assertEquals(chartDetail.getInfo(), result.getDescription());
+		assertEquals(true, result.getSwitchable());
 		assertEquals(chart.getType(), result.getType());
+		assertEquals(true, result.getSwitchable());
 	}
 	
 	@Test
@@ -121,7 +126,7 @@ public class ChartAsmTest {
 		chartDetail.setTitle(null);
 		Chart chart = chartDetail.getChart();
 		
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail);
+		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, false);
 		
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getPlaylistTitle());

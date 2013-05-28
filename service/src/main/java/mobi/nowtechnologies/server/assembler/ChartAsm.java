@@ -6,6 +6,7 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 
@@ -52,6 +53,7 @@ public class ChartAsm {
 		chartDto.setChartDetailId(chartDetail.getI());
 		chartDto.setPosition(chartDetail.getTitle() != null ? chartDetail.getPosition() : null);
 		chartDto.setSubtitle(chartDetail.getSubtitle());
+		chartDto.setDefaultChart(chartDetail.getDefaultChart());
 		chartDto.setImageFileName(chartDetail.getImageFileName());
 		chartDto.setImageTitle(chartDetail.getImageTitle());
 		chartDto.setChartType(chart.getType());
@@ -72,6 +74,7 @@ public class ChartAsm {
 		chartDetail.setI(chartDto.getChartDetailId());
 		chartDetail.setTitle(chartDto.getName());
 		chartDetail.setPosition(chartDto.getPosition());
+		chartDetail.setDefaultChart(chartDto.getDefaultChart());
 		chartDetail.setSubtitle(chartDto.getSubtitle());
 		chartDetail.setImageTitle(chartDto.getImageTitle());
 		chartDetail.setInfo(chartDto.getDescription());
@@ -87,7 +90,7 @@ public class ChartAsm {
 		return chartDetail;
 	}
 	
-	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail) {
+	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail, boolean switchable) {
 		LOGGER.debug("input parameters chart: [{}], [{}]", chartDetail);
 		
 		PlaylistDto playlistDto = new PlaylistDto();
@@ -98,10 +101,13 @@ public class ChartAsm {
 		playlistDto.setSubtitle(chartDetail.getSubtitle());
 		playlistDto.setPosition(chartDetail.getPosition());
 		playlistDto.setDescription(chartDetail.getInfo());
-		playlistDto.setImage(chartDetail.getImageFileName());
+		playlistDto.setImage(chartDetail.getImageFileName());		
+		playlistDto.setSwitchable(switchable);
 		playlistDto.setImageTitle(chartDetail.getImageTitle());
 		playlistDto.setType(chart.getType());
 		
+		playlistDto.setSwitchable(switchable);
+
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;
 	}

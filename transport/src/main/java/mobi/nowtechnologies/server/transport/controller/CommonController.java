@@ -42,6 +42,7 @@ import java.util.Locale;
 public abstract class CommonController extends ProfileController{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
+	public static final String MODEL_NAME = Response.class.toString();
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 

@@ -653,7 +653,7 @@ public class IntegrationTestIT {
 		MockHttpServletResponse aHttpServletResponse;
 		MockHttpServletRequest httpServletRequest;
 		aHttpServletResponse = new MockHttpServletResponse();
-		final String requestURI = "/ACC_CHECK";
+		final String requestURI = "/o2/3.9/ACC_CHECK";
 		httpServletRequest = new MockHttpServletRequest("POST", requestURI);
 		httpServletRequest.setPathInfo(requestURI);
 		httpServletRequest.addParameter("APP_VERSION", appVersion);

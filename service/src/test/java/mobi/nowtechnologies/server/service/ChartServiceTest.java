@@ -51,9 +51,136 @@ public class ChartServiceTest {
 	//test data
 	private User testUser;
 
+	@Test
+	public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
+			throws Exception {
+		List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
+		charts.get(1).setType(ChartType.OTHER_CHART);
+		
+		Chart selectedChart = ChartFactory.createChart();
+		selectedChart.setI((byte)2);
+		User user = UserFactory.createUser();
+		user.setSelectedCharts(charts);
+		
+		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
+		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
+		when(mockUserService.updateUser(eq(user))).thenReturn(user);
+		
+		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+		
+		assertNotNull(result);
+		assertEquals(user.getId(), result.getId());
+		assertEquals(2, result.getSelectedCharts().size());
+		assertEquals(selectedChart, result.getSelectedCharts().get(1));
+		
+		verify(mockChartRepository, times(1)).findOne(eq(selectedChart.getI()));
+		verify(mockUserService, times(1)).getUserWithSelectedCharts(eq(user.getId()));
+		verify(mockUserService, times(1)).updateUser(eq(user));
+	}
+	
+	@Test
+	public void testSelectChartByType_NotNullChartNotNullUserNullSelectedCharts_Success()
+			throws Exception {
+		Chart selectedChart = ChartFactory.createChart();
+		selectedChart.setI((byte)2);
+		User user = UserFactory.createUser();
+		user.setSelectedCharts(null);
+		
+		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
+		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
+		when(mockUserService.updateUser(eq(user))).thenReturn(user);
+		
+		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+		
+		assertNotNull(result);
+		assertEquals(user.getId(), result.getId());
+		assertEquals(1, result.getSelectedCharts().size());
+		assertEquals(selectedChart, result.getSelectedCharts().get(0));
+		
+		verify(mockChartRepository, times(1)).findOne(eq(selectedChart.getI()));
+		verify(mockUserService, times(1)).getUserWithSelectedCharts(eq(user.getId()));
+		verify(mockUserService, times(1)).updateUser(eq(user));
+	}
+	
+	@Test
+	public void testSelectChartByType_NullChartNotNullUser_Success()
+			throws Exception {
+		List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
+		charts.get(1).setType(ChartType.OTHER_CHART);
+		
+		Chart selectedChart = ChartFactory.createChart();
+		selectedChart.setI((byte)2);
+		User user = UserFactory.createUser();
+		user.setSelectedCharts(charts);
+		
+		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(null);
+		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
+		when(mockUserService.updateUser(eq(user))).thenReturn(user);
+		
+		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+		
+		assertNotNull(result);
+		assertEquals(user.getId(), result.getId());
+		assertEquals(2, result.getSelectedCharts().size());
+		assertEquals(charts.get(1), result.getSelectedCharts().get(1));
+		
+		verify(mockChartRepository, times(1)).findOne(eq(selectedChart.getI()));
+		verify(mockUserService, times(1)).getUserWithSelectedCharts(eq(user.getId()));
+		verify(mockUserService, times(0)).updateUser(eq(user));
+	}
+	
+	@Test
+	public void testSelectChartByType_NotNullChartNullUser_Success()
+			throws Exception {
+		List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
+		charts.get(1).setType(ChartType.OTHER_CHART);
+		
+		Chart selectedChart = ChartFactory.createChart();
+		selectedChart.setI((byte)2);
+		User user = UserFactory.createUser();
+		user.setSelectedCharts(charts);
+		
+		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
+		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(null);
+		when(mockUserService.updateUser(eq(user))).thenReturn(user);
+		
+		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+		
+		assertNull(result);
+		
+		verify(mockChartRepository, times(1)).findOne(eq(selectedChart.getI()));
+		verify(mockUserService, times(1)).getUserWithSelectedCharts(eq(user.getId()));
+		verify(mockUserService, times(0)).updateUser(eq(user));
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetChartsByCommunity_NullName_Success()
+	public void testGetChartsByCommunity_NullNameNotNullType_Success()
+			throws Exception {
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		String communityUrl = "chartsnow";
+		String communityName = null;
+		ChartType chartType = ChartType.OTHER_CHART;
+		
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(Collections.singletonList(new Chart()));
+		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+		
+		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
+		
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		
+		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+		verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
+		verify(mockChartRepository, times(1)).getByCommunityURLAndChartType(anyString(), any(ChartType.class));
+		verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetChartsByCommunity_NullNameNullType_Success()
 		throws Exception {
 		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = "chartsnow";
@@ -63,7 +190,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
-		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName);
+		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
 
 		assertNotNull(result);
 		assertEquals(1, result.size());
@@ -75,7 +202,32 @@ public class ChartServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetChartsByCommunity_NullUrl_Success()
+	public void testGetChartsByCommunity_NullUrlNotNullType_Success()
+			throws Exception {
+		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		String communityUrl = null;
+		String communityName = "chartsnow";
+		ChartType chartType = ChartType.OTHER_CHART;
+		
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(Collections.singletonList(new Chart()));
+		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+		
+		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
+		
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		
+		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+		verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
+		verify(mockChartRepository, times(1)).getByCommunityNameAndChartType(anyString(), any(ChartType.class));
+		verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetChartsByCommunity_NullUrlNullType_Success()
 		throws Exception {
 		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = null;
@@ -85,7 +237,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
-		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName);
+		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
 
 		assertNotNull(result);
 		assertEquals(1, result.size());
@@ -97,7 +249,7 @@ public class ChartServiceTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetChartsByCommunity_NullUrlAndNullName_Success()
+	public void testGetChartsByCommunity_NullUrlAndNullNameNullType_Success()
 		throws Exception {
 		List<ChartDetail> chartDetails = Collections.EMPTY_LIST;
 		String communityUrl = null;
@@ -107,7 +259,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
-		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName);
+		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
 
 		assertNotNull(result);
 		assertEquals(0, result.size());
@@ -126,22 +278,36 @@ public class ChartServiceTest {
 		
 		ChartDetail basicChart = ChartDetailFactory.createChartDetail();
 		basicChart.getChart().setType(ChartType.BASIC_CHART);
-		basicChart.getChart().setI((byte)1);		
+		basicChart.getChart().setI((byte)1);	
+		basicChart.setDefaultChart(true);
+		ChartDetail basicChart1 = ChartDetailFactory.createChartDetail();
+		basicChart1.getChart().setType(ChartType.BASIC_CHART);
+		basicChart1.getChart().setI((byte)5);		
 		ChartDetail topChart = ChartDetailFactory.createChartDetail();
 		topChart.getChart().setType(ChartType.HOT_TRACKS);
 		topChart.getChart().setI((byte)2);
-		ChartDetail otherChart = ChartDetailFactory.createChartDetail();
-		otherChart.getChart().setType(ChartType.OTHER_CHART);
-		otherChart.getChart().setI((byte)3);
+		ChartDetail otherChart1 = ChartDetailFactory.createChartDetail();
+		otherChart1.getChart().setType(ChartType.OTHER_CHART);
+		otherChart1.getChart().setI((byte)3);
+		otherChart1.setDefaultChart(true);
+		ChartDetail otherChart2 = ChartDetailFactory.createChartDetail();
+		otherChart2.getChart().setType(ChartType.OTHER_CHART);
+		otherChart2.getChart().setI((byte)4);
+		
+		testUser.setSelectedCharts(Arrays.asList(otherChart2.getChart(), basicChart1.getChart()));
 		
 		ChartDetail basicChartDetail = getChartDetailInstance(0, 1, media, basicChart.getChart());
+		ChartDetail basicChartDetail1 = getChartDetailInstance(0, 1, media, basicChart1.getChart());
 		ChartDetail topChartDetail = getChartDetailInstance(0, 2, media, topChart.getChart());
-		ChartDetail otherChartDetail = getChartDetailInstance(0, 3, media, otherChart.getChart());
+		ChartDetail otherChartDetail1 = getChartDetailInstance(0, 3, media, otherChart1.getChart());
+		ChartDetail otherChartDetail2 = getChartDetailInstance(0, 3, media, otherChart2.getChart());
 		
-		doReturn(Arrays.asList(basicChart, topChart, otherChart)).when(fixture).getChartsByCommunity(eq((String)null), anyString());
+		doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1)).when(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)1), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)2), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)3), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)3), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)4), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq((byte)5), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
 		Object[] result = fixture.processGetChartCommand(testUser, communityName, true);
@@ -151,18 +317,18 @@ public class ChartServiceTest {
 		PlaylistDto[] playlists = ((ChartDto)result[1]).getPlaylistDtos();
 		assertNotNull(playlists);
 		assertEquals(3, playlists.length);
-		assertEquals(basicChart.getTitle(), playlists[0].getPlaylistTitle());
+		assertEquals(basicChart1.getTitle(), playlists[0].getPlaylistTitle());
 		assertEquals(topChart.getTitle(), playlists[1].getPlaylistTitle());
-		assertEquals(otherChart.getTitle(), playlists[2].getPlaylistTitle());
-		assertEquals(basicChart.getSubtitle(), playlists[0].getSubtitle());
+		assertEquals(otherChart2.getTitle(), playlists[2].getPlaylistTitle());
+		assertEquals(basicChart1.getSubtitle(), playlists[0].getSubtitle());
 		assertEquals(topChart.getSubtitle(), playlists[1].getSubtitle());
-		assertEquals(otherChart.getSubtitle(), playlists[2].getSubtitle());
-		assertEquals(basicChart.getImageFileName(), playlists[0].getImage());
+		assertEquals(otherChart2.getSubtitle(), playlists[2].getSubtitle());
+		assertEquals(basicChart1.getImageFileName(), playlists[0].getImage());
 		assertEquals(topChart.getImageFileName(), playlists[1].getImage());
-		assertEquals(otherChart.getImageFileName(), playlists[2].getImage());
-		assertEquals(basicChart.getChart().getI().byteValue(), playlists[0].getId().byteValue());
+		assertEquals(otherChart2.getImageFileName(), playlists[2].getImage());
+		assertEquals(basicChart1.getChart().getI().byteValue(), playlists[0].getId().byteValue());
 		assertEquals(topChart.getChart().getI().byteValue(), playlists[1].getId().byteValue());
-		assertEquals(otherChart.getChart().getI().byteValue(), playlists[2].getId().byteValue());
+		assertEquals(otherChart2.getChart().getI().byteValue(), playlists[2].getId().byteValue());
 
 		ChartDetailDto[] list = ((ChartDto)result[1]).getChartDetailDtos();
 		assertNotNull(list);
@@ -173,14 +339,16 @@ public class ChartServiceTest {
 		assertEquals(1, list[0].getPosition());
 		assertEquals(42, list[1].getPosition());
 		assertEquals(53, list[2].getPosition());
-		assertEquals(basicChart.getChart().getI().byteValue(), list[0].getPlaylistId().byteValue());
+		assertEquals(basicChart1.getChart().getI().byteValue(), list[0].getPlaylistId().byteValue());
 		assertEquals(topChart.getChart().getI().byteValue(), list[1].getPlaylistId().byteValue());
-		assertEquals(otherChart.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
+		assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
-		verify(fixture).getChartsByCommunity(eq((String)null), anyString());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)1), anyBoolean());
+		verify(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)5), anyBoolean());
 		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)2), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)3), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq((byte)3), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq((byte)1), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq((byte)4), anyBoolean());
 	}
 	
 	@Test

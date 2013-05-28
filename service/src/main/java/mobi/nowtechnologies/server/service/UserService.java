@@ -446,6 +446,14 @@ public class UserService {
 					"The user [{0}] is already present", userName));
 		}
 	}
+	
+	@Transactional(readOnly=true)
+	public User getUserWithSelectedCharts(Integer userId){
+		User user = userRepository.findOne(userId);
+		user.getSelectedCharts().size();
+		
+		return user;
+	}
 
 	public User findByNameAndCommunity(String userName, String communityName) {
 		LOGGER.debug("input parameters userName, communityName: [{}], [{}]", userName, communityName);
@@ -618,7 +626,7 @@ public class UserService {
 	}
 
 	public User updateUser(User user) {
-		return entityService.updateEntity(user);
+		return userRepository.save(user);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

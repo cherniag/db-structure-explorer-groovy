@@ -267,6 +267,15 @@ public class User implements Serializable {
 	// @JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false,
 	// updatable=false) })
 	private transient GracePeriod gracePeriod;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="user_charts",
+    joinColumns=
+        @JoinColumn(name="user_id", referencedColumnName="i"),
+    inverseJoinColumns=
+        @JoinColumn(name="chart_id", referencedColumnName="i")
+    )
+	private List<Chart> selectedCharts = new ArrayList<Chart>();
 
 	public User() {
 		setDisplayName("");
@@ -368,6 +377,14 @@ public class User implements Serializable {
 				return pd;
 		}
 		return null;
+	}
+
+	public List<Chart> getSelectedCharts() {
+		return selectedCharts;
+	}
+
+	public void setSelectedCharts(List<Chart> selectedCharts) {
+		this.selectedCharts = selectedCharts;
 	}
 
 	public int getId() {
@@ -1346,5 +1363,25 @@ public class User implements Serializable {
 	public User withNextSubPayment(Date time) {
 		this.nextSubPayment = Utils.truncatedToSeconds(time);
 		return this;
+	}
+
+	public Boolean isSelectedChart(ChartDetail chartDetail) {
+		Chart sameTypeChart = null;
+		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
+			for(Chart chart : getSelectedCharts()){
+				if(chart.getI().equals(chartDetail.getChart().getI()))
+					return true;
+				else if(chart.getType() == chartDetail.getChart().getType())
+					sameTypeChart = chart;
+					
+			}
+		}
+		
+		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
+	}
+
+	public Boolean isLockedChartItem(ChartDetail chartDetail) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

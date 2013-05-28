@@ -57,6 +57,8 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.PhoneActivationDto</value>
+				<value>mobi.nowtechnologies.server.dto.transport.AccountCheckDto</value>
+				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
 			</list>
 		</property>

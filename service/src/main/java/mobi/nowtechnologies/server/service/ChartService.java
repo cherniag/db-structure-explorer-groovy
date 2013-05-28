@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.slf4j.Logger;
@@ -77,13 +78,23 @@ public class ChartService {
 
 		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
 
-		List<ChartDetail> charts = getChartsByCommunity(null, communityName);
+		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
+		
+		Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
+		for(ChartDetail chart:charts){
+			Integer count = chartGroups.get(chart.getChart().getType());
+			count = count != null ? count : 0;
+			chartGroups.put(chart.getChart().getType(), count+1);
+		}
 
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-		for (ChartDetail chart : charts) {			
-			chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists));
-			playlistDtos.add(ChartAsm.toPlaylistDto(chart));
+		for (ChartDetail chart : charts) {	
+			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
+			if(!switchable || user.isSelectedChart(chart)){
+				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists));
+				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
+			}
 		}
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
@@ -207,14 +218,16 @@ public class ChartService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName) {
-		LOGGER.debug("input parameters communityURL, communityName: [{}] [{}]", new Object[] { communityURL });
+	public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
+		LOGGER.debug("input parameters communityURL, communityName, chartType: [{}] [{}]", new Object[] { communityURL, communityName, chartType });
 
 		List<Chart> charts = Collections.emptyList();
 		if (communityURL != null)
-			charts = chartRepository.getByCommunityURL(communityURL);
+			charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
+										: chartRepository.getByCommunityURL(communityURL); 
 		else if(communityName != null)
-			charts = chartRepository.getByCommunityName(communityName);
+			charts = chartType != null ? chartRepository.getByCommunityNameAndChartType(communityName, chartType)
+										:chartRepository.getByCommunityName(communityName); 
 		
 		List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
 		
@@ -346,5 +359,33 @@ public class ChartService {
 		LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
 		
 		return chartDetail;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public User selectChartByType(Integer userId, Integer playlistId) {
+		LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
+		
+		Chart chart = chartRepository.findOne(playlistId.byteValue());
+		User user = userService.getUserWithSelectedCharts(userId);
+		
+		if(user != null && chart != null){
+			List<Chart> playlists = new ArrayList<Chart>();
+			if(user.getSelectedCharts() != null){
+				for (Chart playlist : user.getSelectedCharts()) {
+					if(playlist.getType() != chart.getType()){
+						playlists.add(playlist);
+					}
+				}
+			}
+			
+			playlists.add(chart);
+			user.setSelectedCharts(playlists);
+			
+			userService.updateUser(user);
+			
+			LOGGER.info("select chart by type done [{}] [{}]", chart, user);
+		}
+		
+		return user;
 	}
 }

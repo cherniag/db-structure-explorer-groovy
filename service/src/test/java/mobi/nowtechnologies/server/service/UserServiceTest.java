@@ -326,7 +326,7 @@ public class UserServiceTest {
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -387,7 +387,7 @@ public class UserServiceTest {
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
+		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 
 		User actualUser = userServiceSpy.updateUser(userDto);
 
@@ -449,8 +449,8 @@ public class UserServiceTest {
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
-
+		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
+		
 		User actualUser = userServiceSpy.updateUser(userDto);
 
 		assertNotNull(actualUser);
@@ -510,8 +510,8 @@ public class UserServiceTest {
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
-
+		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
+		
 		User actualUser = userServiceSpy.updateUser(userDto);
 
 		assertNotNull(actualUser);
@@ -570,8 +570,8 @@ public class UserServiceTest {
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
-
+		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
+		
 		User actualUser = userServiceSpy.updateUser(userDto);
 
 		assertNotNull(actualUser);
@@ -729,30 +729,6 @@ public class UserServiceTest {
 		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
 		Mockito.verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
 		Mockito.verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
-	}
-
-	/**
-	 * Run the User updateUser(UserDto) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 20.08.12 18:31
-	 */
-	@Test(expected = RuntimeException.class)
-	public void testUpdateUser_EntityService_updateEntity_RuntimeException_Failure() throws Exception {
-		UserDto userDto = UserDtoFactory.createUserDto();
-
-		User mockedUser = UserFactory.createUser();
-
-		Map<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus> USER_STATUS_MAP_USER_STATUS_AS_KEY = new HashMap<mobi.nowtechnologies.server.shared.enums.UserStatus, UserStatus>();
-		final UserStatus mockedUserStatus = new UserStatus();
-		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
-
-		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenThrow(new RuntimeException());
-
-		userServiceSpy.updateUser(userDto);
 	}
 
 	/**
@@ -1011,8 +987,7 @@ public class UserServiceTest {
 
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setAmount(BigDecimal.TEN);
-
-		Mockito.when(entityServiceMock.updateEntity(user)).thenReturn(user);
+		Mockito.when(userRepositoryMock.save(user)).thenReturn(user);
 
 		User actualUser = userServiceSpy.populateAmountOfMoneyToUserNotification(user, submittedPayment);
 
