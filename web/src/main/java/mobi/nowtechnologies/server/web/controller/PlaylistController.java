@@ -23,7 +23,7 @@ public class PlaylistController extends CommonController {
 	
 	public static final String PAGE_PLAYLIST = VIEW_PLAYLIST;
 	public static final String PAGE_PLAYLIST_TRACKS = "playlist/{playlistId}/tracks";
-	public static final String REDIREC_PAGE_SWAP = "redirect:swap.html";
+	public static final String REDIREC_PAGE_SWAP = "redirect:/playlist/swap.html";
 	
 	private UserService userService;
 	
