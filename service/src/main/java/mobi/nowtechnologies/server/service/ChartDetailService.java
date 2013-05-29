@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
+import java.util.*;
+
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -9,14 +11,13 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -60,7 +61,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> findChartDetailTree(User user, byte chartId, boolean createDrmIfNotExists) {
+	public List<ChartDetail> findChartDetailTree(User user, byte chartId, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -87,7 +88,10 @@ public class ChartDetailService {
 		if (nearestLatestPublishTimeMillis == null) {
 			chartDetails = Collections.EMPTY_LIST;
 		} else {
-			chartDetails = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
+			if(fetchLocked)
+				chartDetails = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
+			else 
+				chartDetails = chartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
 
 			for (ChartDetail chartDetail : chartDetails) {
 				Media media = chartDetail.getMedia();
@@ -127,6 +131,28 @@ public class ChartDetailService {
 		return allPublishTimeMillis;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Integer> getLockedChartItemIds(Byte chartId, Date selectedPublishDate) {
+		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
+		
+		if (selectedPublishDate == null)
+			throw new ServiceException("The parameter selectedPublishDate is null");
+		if (chartId == null)
+			throw new ServiceException("The parameter chartId is null");
+		
+		Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(selectedPublishDate.getTime(), chartId);
+		
+		final List<Integer> chartDetails;
+		if (nearestLatestPublishTimeMillis != null)
+			chartDetails = chartDetailRepository.getLockedChartItemIdsByDate(chartId, nearestLatestPublishTimeMillis);
+		else
+			chartDetails = Collections.EMPTY_LIST;
+		
+		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+		return chartDetails;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ChartDetail> getActualChartItems(Byte chartId, Date selectedPublishDate) {

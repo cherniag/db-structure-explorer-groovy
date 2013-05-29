@@ -6,13 +6,13 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -31,7 +31,6 @@ import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.view.xml.MarshallingView;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -59,7 +58,8 @@ public class AccCheckControllerIT {
 	private ChartRepository chartRepository;
 
 	@Autowired
-	private MarshallingView marshallingView;
+	private ChartDetailRepository chartDetailRepository;
+
 	
     @Before
     public void setUp() {
@@ -67,7 +67,7 @@ public class AccCheckControllerIT {
     }
 
     @Test
-    public void testAccountCheckForO2Client_Success() throws Exception {
+    public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
     	String userName = "+447111111114";
 		String apiVersion = "3.9";
 		String communityName = "o2";
@@ -95,5 +95,38 @@ public class AccCheckControllerIT {
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
         assertTrue(resultXml.contains("<playlist><id>5</id><type>BASIC_CHART</type></playlist>"));
+    }
+    
+    @Test
+    public void testAccountCheckForO2Client_WithLockedTracks_Success() throws Exception {
+    	String userName = "+447111111114";
+    	String apiVersion = "3.9";
+    	String communityName = "o2";
+    	String communityUrl = "o2";
+    	String timestamp = "2011_12_26_07_04_23";
+    	String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+    	String userToken = Utils.createTimestampToken(storedToken, timestamp);
+    	
+    	ChartDetail chartDetail = chartDetailRepository.findOne(22);
+    	chartDetail.setLocked(true);
+    	chartDetailRepository.save(chartDetail);
+    	User user = userService.findByNameAndCommunity(userName, communityName);
+    	UserStatus userStatus = new UserStatus();
+    	userStatus.setI((byte)10);
+		user.setStatus(userStatus);
+		userService.updateUser(user);
+    	
+    	ResultActions resultActions = mockMvc.perform(
+    			post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+    			.param("COMMUNITY_NAME", communityName)
+    			.param("USER_NAME", userName)
+    			.param("USER_TOKEN", userToken)
+    			.param("TIMESTAMP", timestamp)
+    			).andExpect(status().isOk());
+    	
+    	MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+    	String resultXml = aHttpServletResponse.getContentAsString();
+    	
+    	assertTrue(resultXml.contains("<lockedTrack><id>22</id></lockedTrack>"));
     }
 }

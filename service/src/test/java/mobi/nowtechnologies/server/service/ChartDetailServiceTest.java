@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
@@ -402,7 +403,7 @@ public class ChartDetailServiceTest {
 		User user = null;
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
 
 	/**
@@ -420,7 +421,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(new UserGroup());
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
 
 	/**
@@ -441,7 +442,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(userGroup);
 		byte chartId = (byte) 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
 
 	/**
@@ -476,7 +477,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -493,6 +494,59 @@ public class ChartDetailServiceTest {
 			assertNotNull(actualDrms);
 			assertEquals(1, actualDrms.size());
 		}
+	}
+	
+	/**
+	 * Run the List<ChartDetail> findChartDetailTreeAndUpdateDrm(User,byte)
+	 * method test.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @generatedBy CodePro at 07.08.12 17:19
+	 */
+	@Test
+	public void testFindChartDetailTreeAndUpdateDrm_NotLocked_Success() throws Exception {
+		
+		byte chartId = (byte) 1;
+		Long nearestLatestPublishTimeMillis = new Date().getTime();
+		int userId = 1;
+		
+		User user = new User();
+		user.setId(userId);
+		DrmType drmType = new DrmType();
+		DrmPolicy drmPolicy = new DrmPolicy();
+		drmPolicy.setDrmType(drmType);
+		final UserGroup userGroup = new UserGroup();
+		userGroup.setDrmPolicy(drmPolicy);
+		user.setUserGroup(userGroup);
+		
+		List<ChartDetail> originalChartDetails = getChartDetails(nearestLatestPublishTimeMillis);
+		List<Drm> drms = getDrms();
+		
+		Mockito.when(mockDrmService.findDrmAndDrmTypeTree(userId)).thenReturn(drms);
+		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(Mockito.anyLong(), Mockito.eq(chartId))).thenReturn(nearestLatestPublishTimeMillis);
+		Mockito.when(mockChartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
+				originalChartDetails);
+		
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, false);
+		
+		assertNotNull(actualChartDetails);
+		assertEquals(originalChartDetails, actualChartDetails);
+		
+		actualChartDetails = new LinkedList<ChartDetail>(actualChartDetails);
+		Collections.sort(actualChartDetails, new ChartDetailComparator());
+		
+		for (int i = 0; i < actualChartDetails.size(); i++) {
+			ChartDetail actualChartDetail = actualChartDetails.get(i);
+			Media actualMedia = actualChartDetail.getMedia();
+			assertNotNull(actualMedia);
+			assertEquals(originalChartDetails.get(i).getMedia(), actualMedia);
+			List<Drm> actualDrms = actualMedia.getDrms();
+			assertNotNull(actualDrms);
+			assertEquals(1, actualDrms.size());
+		}
+		
+		verify(mockChartDetailRepository, times(1)).findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
 	}
 
 	/**
@@ -528,7 +582,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -579,7 +633,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 
 		assertNotNull(actualChartDetails);
 		assertTrue(actualChartDetails.isEmpty());
@@ -1569,6 +1623,70 @@ public class ChartDetailServiceTest {
 		Mockito.verify(mockChartDetailRepository).getCount(chartId, selectedPublishDateTime);
 		Mockito.verify(mockChartDetailRepository).updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);
 		
+	}
+	
+	@Test
+	public void testGetLockedChartItemIds_ExistLastNearestItems_Success() throws ServiceCheckedException {
+		
+		Byte chartId = 1;
+		Date selectedPublishDateTime=new Date();
+		Date nearestPublishDateTime=new Date();
+		List<Integer> ids = Collections.singletonList(1);
+		
+		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(nearestPublishDateTime.getTime());
+		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		
+		List<Integer> result = fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);
+		
+		assertNotNull(result);
+		assertEquals(ids.size(), result.size());
+		
+		Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
+		Mockito.verify(mockChartDetailRepository).getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+		
+	}
+	
+	@Test
+	public void testGetLockedChartItemIds_NotExistLastNearestItems_Success() throws ServiceCheckedException {
+		
+		Byte chartId = 1;
+		Date selectedPublishDateTime=new Date();
+		Date nearestPublishDateTime=new Date();
+		List<Integer> ids = Collections.singletonList(1);
+		
+		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(null);
+		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		
+		List<Integer> result = fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);
+		
+		assertNotNull(result);
+		assertEquals(0, result.size());
+		
+		Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
+		Mockito.verify(mockChartDetailRepository, times(0)).getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+		
+	}
+	
+	@Test(expected=ServiceException.class)
+	public void testGetLockedChartItemIds_NullSelectedDate_Failure() throws ServiceCheckedException {
+		
+		Byte chartId = 1;
+		Date selectedPublishDateTime=null;
+		Date nearestPublishDateTime=new Date();
+		List<Integer> ids = Collections.singletonList(1);
+		
+		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		
+		fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);		
+	}
+	
+	@Test(expected=ServiceException.class)
+	public void testGetLockedChartItemIds_NullChartId_Failure() throws ServiceCheckedException {
+		
+		Byte chartId = null;
+		Date selectedPublishDateTime=new Date();
+				
+		fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);		
 	}
 
 	/**

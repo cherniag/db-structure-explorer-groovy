@@ -67,7 +67,7 @@ public class GetChartController extends CommonController{
 			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
-			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
+			Object[] objects = chartService.processGetChartCommand(user, communityName, true, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
 			for (Object object : objects) {
@@ -132,7 +132,7 @@ public class GetChartController extends CommonController{
 			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
-			Object[] objects = chartService.processGetChartCommand(user, communityName, true);
+			Object[] objects = chartService.processGetChartCommand(user, communityName, true, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
 			proccessRememberMeToken(objects);
@@ -167,7 +167,7 @@ public class GetChartController extends CommonController{
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
-			Object[] objects = chartService.processGetChartCommand(user, community, true);
+			Object[] objects = chartService.processGetChartCommand(user, community, true, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
 			proccessRememberMeToken(objects);
@@ -200,7 +200,7 @@ public class GetChartController extends CommonController{
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
-			Object[] objects = chartService.processGetChartCommand(user, community, false);
+			Object[] objects = chartService.processGetChartCommand(user, community, false, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
 			proccessRememberMeToken(objects);
@@ -233,7 +233,7 @@ public class GetChartController extends CommonController{
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
-			Object[] objects = chartService.processGetChartCommand(user, community, false);
+			Object[] objects = chartService.processGetChartCommand(user, community, false, true);
 
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));

@@ -17,6 +17,9 @@ public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.Acco
 	
 	@XmlAnyElement
 	private SelectedPlaylistDto[] playlists;
+
+	@XmlAnyElement
+	private LockedTrackDto[] lockedTracks;
 	
 	public AccountCheckDto(){
 		
@@ -24,6 +27,14 @@ public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.Acco
 	
 	public AccountCheckDto(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
 		super(accountCheckDTO);
+	}
+
+	public LockedTrackDto[] getLockedTracks() {
+		return lockedTracks;
+	}
+
+	public void setLockedTracks(LockedTrackDto[] lockedTracks) {
+		this.lockedTracks = lockedTracks;
 	}
 
 	public SelectedPlaylistDto[] getPlaylists() {
@@ -36,6 +47,6 @@ public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.Acco
 
 	@Override
 	public String toString() {
-		return "AccountCheckDTO [playlists=" + Arrays.toString(playlists) + "]" + super.toString();
+		return "AccountCheckDto [playlists=" + Arrays.toString(playlists) + ", lockedTracks=" + Arrays.toString(lockedTracks) + "]";
 	}
 }
