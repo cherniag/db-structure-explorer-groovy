@@ -116,7 +116,6 @@ public class ChartAsmTest {
 		assertEquals(chartDetail.getInfo(), result.getDescription());
 		assertEquals(true, result.getSwitchable());
 		assertEquals(chart.getType(), result.getType());
-		assertEquals(true, result.getSwitchable());
 	}
 	
 	@Test

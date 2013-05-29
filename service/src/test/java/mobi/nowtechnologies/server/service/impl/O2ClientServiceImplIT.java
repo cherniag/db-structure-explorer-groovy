@@ -87,7 +87,7 @@ public class O2ClientServiceImplIT {
 	public void testValidatePhoneNumber_Promoted_Success()
 			throws Exception {
 		
-		String phoneNumber = "07870111111";
+		String phoneNumber = "078 701 11111";
 		String expectedPhoneNumber = "+447870111111";
 		
 		DOMSource response = new DOMSource();
@@ -102,7 +102,7 @@ public class O2ClientServiceImplIT {
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
-		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(eq("7870111111"), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
@@ -113,7 +113,7 @@ public class O2ClientServiceImplIT {
 		assertEquals(expectedPhoneNumber, result);
 		
 		verify(mockUserLogRepository).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(eq("7870111111"), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
