@@ -132,6 +132,14 @@ public class ChartDetail {
 	public Boolean getLocked() {
 		return locked;
 	}
+	
+	public ChartType getChartType(){
+		return chart.getType();
+	}
+	
+	public String getChartDescription(){
+		return getInfo();
+	}
 
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
