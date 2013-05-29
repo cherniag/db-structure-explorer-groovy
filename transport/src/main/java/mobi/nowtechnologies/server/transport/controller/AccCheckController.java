@@ -2,13 +2,18 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
+import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -28,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AccCheckController extends CommonController {
 
     private UserService userService;
+    private ChartService chartService;
     private DeviceUserDataService deviceUserDataService;
 
 	public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
@@ -37,6 +43,10 @@ public class AccCheckController extends CommonController {
 	public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
+	public void setChartService(ChartService chartService) {
+		this.chartService = chartService;
+	}
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
@@ -73,7 +83,10 @@ public class AccCheckController extends CommonController {
 					pushNotificationToken, deviceType, transactionReceipt);
 			
 			user = userService.getUserWithSelectedCharts(user.getId());
+			List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
+			
 			AccountCheckDto accountCheckDTONew = new AccountCheckDto(accountCheckDTO);
+			accountCheckDTONew.setLockedTracks(LockedTrackDto.fromChartDetailList(chartDetails));
 			accountCheckDTONew.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
 			
 			final Object[] objects = new Object[] { accountCheckDTONew };

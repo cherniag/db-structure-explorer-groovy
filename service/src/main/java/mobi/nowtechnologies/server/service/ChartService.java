@@ -65,7 +65,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists) {
+	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (communityName == null)
@@ -92,7 +92,7 @@ public class ChartService {
 		for (ChartDetail chart : charts) {	
 			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
 			if(!switchable || user.isSelectedChart(chart)){
-				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists));
+				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists, fetchLocked));
 				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
 			}
 		}
@@ -120,6 +120,30 @@ public class ChartService {
 		return allPublishTimeMillis;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<ChartDetail> getLockedChartItems(String communityName, User user) {
+		LOGGER.debug("input parameters communityName: [{}]", communityName);
+		
+		if(user.isPending() || user.isSubscribed() || user.isExpiring())
+			return Collections.EMPTY_LIST;
+		
+		List<Chart> charts = chartRepository.getByCommunityName(communityName);
+		
+		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+		for (Chart chart : charts) {
+			List<Integer> chartDetailIds = chartDetailService.getLockedChartItemIds(chart.getI(), new Date());
+			for(Integer id : chartDetailIds){
+				ChartDetail chartDetail = new ChartDetail();
+				chartDetail.setI(id);
+				chartDetails.add(chartDetail);
+			}
+		}
+		
+		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+		return chartDetails;
+	}
+	
 	@Transactional(readOnly = true)
 	public List<ChartDetail> getActualChartItems(Byte chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);

@@ -26,6 +26,7 @@ public class Utils {
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
 	public static final int DAY_MILLISECONDS = 86400000;
+	public static final int DAY_SECONDS = 86400;
 
     public static int truncatedToSeconds(Date date){
         return (int)(date.getTime()/1000);

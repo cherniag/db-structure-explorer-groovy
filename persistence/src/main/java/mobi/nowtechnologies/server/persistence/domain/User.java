@@ -1150,6 +1150,10 @@ public class User implements Serializable {
 	public String getLastSubscribedPaymentSystem() {
 		return lastSubscribedPaymentSystem;
 	}
+	
+	public PaymentDetailsStatus getLastPaymentStatus() {
+		return currentPaymentDetails != null ? currentPaymentDetails.getLastPaymentStatus() : null;
+	}
 
 	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
@@ -1380,8 +1384,12 @@ public class User implements Serializable {
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
-	public Boolean isLockedChartItem(ChartDetail chartDetail) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isPending() {
+		return isSubscribed() && isBeforeExpiration(Utils.getEpochMillis(), 24);
+	}
+
+	public boolean isExpiring() {
+		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
+				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 }
