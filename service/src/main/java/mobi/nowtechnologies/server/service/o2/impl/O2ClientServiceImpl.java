@@ -158,13 +158,15 @@ public class O2ClientServiceImpl implements O2ClientService {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 		
 		Long curDay = new Long(Utils.getEpochDays());
-		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumber, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
+		String phoneNumberCode = phoneNumber.replaceAll("\\s", "");
+		phoneNumberCode = phoneNumberCode.substring(phoneNumberCode.length()-10);
+		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
 		UserLog userLog = null;
 		if(countPerDay >= limitValidatePhoneNumber){
 			LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
 			throw new LimitPhoneNumberValidationException();
 		}else{
-			userLog = userLogRepository.findByPhoneNumber(phoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
+			userLog = userLogRepository.findByPhoneNumber(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER);
 			userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
 		}
 		
@@ -172,19 +174,19 @@ public class O2ClientServiceImpl implements O2ClientService {
 			DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
 			
-			userLogRepository.save(new UserLog(userLog, result, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			
 			return result;
 		} catch (RestClientException e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
 			throw new InvalidPhoneNumberException();
 		} catch (DOMException e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
 			throw new InvalidPhoneNumberException();
 		} catch (Exception e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
 			throw new InvalidPhoneNumberException();
 		} finally {

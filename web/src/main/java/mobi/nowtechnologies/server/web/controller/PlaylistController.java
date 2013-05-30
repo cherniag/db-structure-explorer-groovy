@@ -29,9 +29,9 @@ public class PlaylistController extends CommonController {
 	public static final String VIEW_PLAYLIST = "playlist";
 	public static final String VIEW_PLAYLIST_TRACKS = "playlist/tracks";
 	
-	public static final String PAGE_PLAYLIST = VIEW_PLAYLIST;
+	public static final String PAGE_PLAYLIST = VIEW_PLAYLIST+"/{playlistType}";
 	public static final String PAGE_PLAYLIST_TRACKS = "playlist/{playlistId}/tracks";
-	public static final String REDIREC_PAGE_SWAP = "redirect:swap.html";
+	public static final String REDIREC_PAGE_SWAP = "redirect:/playlist/swap.html";
 	
 	private UserService userService;
     private ChartDetailService chartDetailService;
@@ -39,8 +39,8 @@ public class PlaylistController extends CommonController {
     private String urlToCDN;
 	
 	@RequestMapping(value=PAGE_PLAYLIST, method=RequestMethod.GET)
-	public ModelAndView getPlaylistPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
-		List<ChartDetail> playlists = chartService.getChartsByCommunity(communityURL, null, ChartType.OTHER_CHART);
+	public ModelAndView getPlaylistPage(@PathVariable("playlistType")ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
+		List<ChartDetail> playlists = chartService.getChartsByCommunity(communityURL, null, playlistType);
 		
 		//TODO get temparally one playlist for direct select
 		User user = userService.getUserWithSelectedCharts(getSecurityContextDetails().getUserId());

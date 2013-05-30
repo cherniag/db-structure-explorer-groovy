@@ -6,10 +6,11 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,21 @@ import org.slf4j.LoggerFactory;
  * @author Titov Mykhaylo (titov)
  * 
  */
-public class ChartAsm {
+public class ChartAsm extends ModelMapper{
+	protected final static ModelMapper modelMapper = new ChartAsm();
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAsm.class);
+	
+	private ChartAsm(){
+		this.addMappings(new PropertyMap<ChartDetail, PlaylistDto>() {
+			@Override
+			protected void configure() {
+				skip().setId(null);
+				skip().setPlaylistTitle(null);	
+				skip().setSwitchable(null);	
+				map().setImage(source.getImageFileName());
+			}
+		});
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
@@ -90,24 +104,14 @@ public class ChartAsm {
 		return chartDetail;
 	}
 	
-	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail, boolean switchable) {
+	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail,final boolean switchable) {
 		LOGGER.debug("input parameters chart: [{}], [{}]", chartDetail);
 		
-		PlaylistDto playlistDto = new PlaylistDto();
-		Chart chart = chartDetail.getChart();
-		
-		playlistDto.setId(chart.getI() != null ? chart.getI().intValue() : null);
-		playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chart.getName());	
-		playlistDto.setSubtitle(chartDetail.getSubtitle());
-		playlistDto.setPosition(chartDetail.getPosition());
-		playlistDto.setDescription(chartDetail.getInfo());
-		playlistDto.setImage(chartDetail.getImageFileName());		
+		PlaylistDto playlistDto = modelMapper.map(chartDetail, PlaylistDto.class);
+		playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI().intValue() : null);
+		playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
 		playlistDto.setSwitchable(switchable);
-		playlistDto.setImageTitle(chartDetail.getImageTitle());
-		playlistDto.setType(chart.getType());
 		
-		playlistDto.setSwitchable(switchable);
-
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;
 	}

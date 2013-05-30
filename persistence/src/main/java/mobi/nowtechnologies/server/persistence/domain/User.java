@@ -1150,6 +1150,10 @@ public class User implements Serializable {
 	public String getLastSubscribedPaymentSystem() {
 		return lastSubscribedPaymentSystem;
 	}
+	
+	public PaymentDetailsStatus getLastPaymentStatus() {
+		return currentPaymentDetails != null ? currentPaymentDetails.getLastPaymentStatus() : null;
+	}
 
 	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
@@ -1366,13 +1370,26 @@ public class User implements Serializable {
 	}
 
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
-		if(getSelectedCharts() != null){			
+		Chart sameTypeChart = null;
+		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
 			for(Chart chart : getSelectedCharts()){
 				if(chart.getI().equals(chartDetail.getChart().getI()))
 					return true;
+				else if(chart.getType() == chartDetail.getChart().getType())
+					sameTypeChart = chart;
+					
 			}
 		}
 		
-		return chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
+		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
+	}
+
+	public boolean isPending() {
+		return isSubscribed() && isBeforeExpiration(Utils.getEpochMillis(), 24);
+	}
+
+	public boolean isExpiring() {
+		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
+				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 }

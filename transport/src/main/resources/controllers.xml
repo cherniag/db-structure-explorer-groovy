@@ -28,6 +28,7 @@
 	
 	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" parent="transport.CommonController">
 		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
+		<property name="chartService" ref="service.ChartService" />
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >

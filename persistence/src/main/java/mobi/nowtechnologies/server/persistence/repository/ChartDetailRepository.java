@@ -28,6 +28,9 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 order by chartDetail.position asc")
 	List<ChartDetail> getChartItemsByDate(byte chartId, long publishTimeMillis);
 	
+	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true")
+	List<Integer> getLockedChartItemIdsByDate(byte chartId, long publishTimeMillis);
+	
 	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.position>?3 order by chartDetail.position asc")
 	List<Integer> getIdsByDateAndPosition(byte chartId, long publishTimeMillis, byte afterPosition);
 
@@ -54,6 +57,10 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
 	List<ChartDetail> findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
+			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
+	
+	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis and chartDetail.locked != true")
+	List<ChartDetail> findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
 	@Query("select chartDetail from ChartDetail chartDetail where chartDetail.media is null and chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")

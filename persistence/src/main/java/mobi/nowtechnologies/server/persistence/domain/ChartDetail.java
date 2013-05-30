@@ -132,6 +132,14 @@ public class ChartDetail {
 	public Boolean getLocked() {
 		return locked;
 	}
+	
+	public ChartType getChartType(){
+		return chart.getType();
+	}
+	
+	public String getChartDescription(){
+		return getInfo();
+	}
 
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
@@ -278,7 +286,6 @@ public class ChartDetail {
 
 		chartDetailDto.setPosition(pos);
 
-		chartDetailDto.setLocked(locked != null ? locked : false);
 		chartDetailDto.setPlaylistId(chart.getI().intValue());
 		chartDetailDto.setArtist(media.getArtistName());
 		chartDetailDto.setAudioSize(audioSize);
@@ -403,6 +410,7 @@ public class ChartDetail {
 		newChartDetail.setImageFileName(chartDetail.getImageFileName());
 		newChartDetail.setImageTitle(chartDetail.getImageTitle());
 		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
+		newChartDetail.setDefaultChart(chartDetail.getDefaultChart());
 
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;

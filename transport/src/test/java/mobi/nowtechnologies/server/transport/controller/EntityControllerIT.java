@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.dto.transport.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.Response;
@@ -63,7 +63,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
         
         assertEquals("ACTIVATED", getActivation(mav));
     }
@@ -77,7 +77,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("REGISTERED", getActivation(mav));
@@ -92,7 +92,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("ENTERED_NUMBER", getActivation(mav));
@@ -100,7 +100,7 @@ public class EntityControllerIT {
 
 
     private String getActivation(ModelAndView mav) {
-        AccountCheckDTO accountCheckDTO = AccCheckController.getAccountCheckDtoFrom(mav);
+        AccountCheckDto accountCheckDTO = AccCheckController.getAccountCheckDtoFrom(mav);
         return accountCheckDTO.getActivation().toString();
     }
 
@@ -233,10 +233,10 @@ public class EntityControllerIT {
 		Object[] objects = response.getObject();
 		assertTrue(objects.length == 1);
 
-		assertTrue(objects[0] instanceof AccountCheckDTO);
-		AccountCheckDTO receivedAccountCheck = (AccountCheckDTO) objects[0];
+		assertTrue(objects[0] instanceof AccountCheckDto);
+		AccountCheckDto receivedAccountCheck = (AccountCheckDto) objects[0];
 
-		AccountCheckDTO accountCheck = new AccountCheckDTO();
+		AccountCheckDto accountCheck = new AccountCheckDto();
 		accountCheck.setChartItems((byte) 25);
 		accountCheck.setChartTimestamp(1313172060);
 		accountCheck.setDeviceType(deviceType);
@@ -327,7 +327,7 @@ public class EntityControllerIT {
     }
 
     private ModelAndView modelAndViewWithAccountCheckDto() {
-        AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
+        AccountCheckDto accountCheckDTO = new AccountCheckDto();
         Object[] objects = {accountCheckDTO};
         return new ModelAndView("view", Response.class.toString(), new Response(objects));
     }
