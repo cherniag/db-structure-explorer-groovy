@@ -35,7 +35,6 @@ public class ChartDetailDto {
 	private int imageSmallVersion;
 	private boolean isArtistUrl;
 	private Integer playlistId;
-	private boolean locked;
 	
 	public ChartDetailDto(ChartDetailDto chartDetailDto) 
 	{
@@ -92,14 +91,6 @@ public class ChartDetailDto {
 
 	public String getArtist() {
 		return artist;
-	}
-
-	public boolean isLocked() {
-		return locked;
-	}
-
-	public void setLocked(boolean locked) {
-		this.locked = locked;
 	}
 
 	public void setArtist(String artist) {
@@ -292,6 +283,6 @@ public class ChartDetailDto {
 				+ drmType + ", drmValue=" + drmValue + ", trackSize=" + trackSize + ", headerSize=" + headerSize + ", audioSize=" + audioSize + ", imageLargeSize=" + imageLargeSize
 				+ ", imageSmallSize=" + imageSmallSize + ", iTunesUrl=" + iTunesUrl + ", amazonUrl=" + amazonUrl + ", previousPosition=" + previousPosition + ", changePosition=" + changePosition
 				+ ", channel=" + channel + ", chartDetailVersion=" + chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion="
-				+ imageLargeVersion + ", imageSmallVersion=" + imageSmallVersion + ", isArtistUrl=" + isArtistUrl + ", playlistId=" + playlistId + ", locked=" + locked + "]";
+				+ imageLargeVersion + ", imageSmallVersion=" + imageSmallVersion + ", isArtistUrl=" + isArtistUrl + ", playlistId=" + playlistId + "]";
 	}
 }

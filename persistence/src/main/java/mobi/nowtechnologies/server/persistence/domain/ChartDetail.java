@@ -286,7 +286,6 @@ public class ChartDetail {
 
 		chartDetailDto.setPosition(pos);
 
-		chartDetailDto.setLocked(locked != null ? locked : false);
 		chartDetailDto.setPlaylistId(chart.getI().intValue());
 		chartDetailDto.setArtist(media.getArtistName());
 		chartDetailDto.setAudioSize(audioSize);
