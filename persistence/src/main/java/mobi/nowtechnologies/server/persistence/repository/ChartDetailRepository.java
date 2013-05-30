@@ -28,8 +28,8 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 order by chartDetail.position asc")
 	List<ChartDetail> getChartItemsByDate(byte chartId, long publishTimeMillis);
 	
-	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true")
-	List<Integer> getLockedChartItemIdsByDate(byte chartId, long publishTimeMillis);
+	@Query("select chartDetail.media.isrc from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true")
+	List<String> getLockedChartItemISRCByDate(byte chartId, long publishTimeMillis);
 	
 	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.position>?3 order by chartDetail.position asc")
 	List<Integer> getIdsByDateAndPosition(byte chartId, long publishTimeMillis, byte afterPosition);

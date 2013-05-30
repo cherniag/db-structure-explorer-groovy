@@ -127,6 +127,6 @@ public class AccCheckControllerIT {
     	MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
     	String resultXml = aHttpServletResponse.getContentAsString();
     	
-    	assertTrue(resultXml.contains("<lockedTrack><id>22</id></lockedTrack>"));
+    	assertTrue(resultXml.contains("<lockedTrack><media>US-UM7-11-00061</media></lockedTrack>"));
     }
 }
