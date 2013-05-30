@@ -7,6 +7,8 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
+import java.security.acl.Owner;
+
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 
@@ -285,5 +287,73 @@ public class UserTest {
 		user.setSegment(SegmentType.CONSUMER);
 		
 		user.isO2Consumer();
+	}
+	
+	@Test
+	public void testIsInvalidPaymentPolicy_NotSameProvider_Success(){
+		PaymentPolicy paymentPolicy = new PaymentPolicy();
+		paymentPolicy.setProvider("non-o2");
+
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+		
+		User user = UserFactory.createUser();
+		user.setProvider("o2");
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+		user.setSegment(SegmentType.CONSUMER);
+		
+		boolean result = user.isInvalidPaymentPolicy();
+		
+		assertEquals(true, result);
+	}
+	
+	@Test
+	public void testIsInvalidPaymentPolicy_O2ProviderNotSameSegment_Success(){
+		PaymentPolicy paymentPolicy = new PaymentPolicy();
+		paymentPolicy.setProvider("o2");
+		paymentPolicy.setSegment(SegmentType.BUSINESS);
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+		
+		User user = UserFactory.createUser();
+		user.setProvider("o2");
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+		user.setSegment(SegmentType.CONSUMER);
+		
+		boolean result = user.isInvalidPaymentPolicy();
+		
+		assertEquals(true, result);
+	}
+	
+	@Test
+	public void testIsInvalidPaymentPolicy_NonO2ProviderNotSameSegment_Success(){
+		PaymentPolicy paymentPolicy = new PaymentPolicy();
+		paymentPolicy.setProvider("non-o2");
+		paymentPolicy.setSegment(SegmentType.BUSINESS);
+		
+		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+		
+		User user = UserFactory.createUser();
+		user.setProvider("non-o2");
+		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+		user.setSegment(SegmentType.CONSUMER);
+		
+		boolean result = user.isInvalidPaymentPolicy();
+		
+		assertEquals(false, result);
+	}
+	
+	@Test
+	public void testIsInvalidPaymentPolicy_NullCurrentPaymentDetails_Success(){
+			
+		User user = UserFactory.createUser();
+		user.setProvider("non-o2");
+		user.setSegment(SegmentType.CONSUMER);
+		
+		boolean result = user.isInvalidPaymentPolicy();
+		
+		assertEquals(false, result);
 	}
 }

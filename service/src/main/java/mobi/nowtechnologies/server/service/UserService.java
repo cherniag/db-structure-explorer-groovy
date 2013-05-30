@@ -39,6 +39,7 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 
 import org.apache.commons.lang.Validate;
@@ -462,7 +463,14 @@ public class UserService {
 	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
 		Promotion promotion = null;
 
-		if (o2ClientService.isO2User(o2UserDetails))
+		String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
+		String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
+		
+		if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
+			promotion = setPotentialPromo(community, user, staffCode);
+		else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
+			promotion = setPotentialPromo(community, user, storeCode);
+		else if (o2ClientService.isO2User(o2UserDetails))
 			promotion = setPotentialPromo(community.getName(), user, "promotionCode");
 		else
 			promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
@@ -477,9 +485,9 @@ public class UserService {
 		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
 		if (promotion != null) {
 			int curTime = Utils.getEpochSeconds();
-			int freeWeeks = promotion.getFreeWeeks() == 0 ? (curTime - promotion.getEndDate())/(7*24*60*60) : promotion.getFreeWeeks();
+			int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
+			int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTime + freeWeeks * Utils.WEEK_SECONDS;
 			
-			int nextSubPayment = curTime + freeWeeks * Utils.WEEK_SECONDS;
 			user.setNextSubPayment(nextSubPayment);
 			user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 
@@ -1482,7 +1490,7 @@ public class UserService {
 			user = userByDeviceUID;
 			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
 			user.setFacebookId(userCredentions.getId());
-			user.setFirstUserLoginMillis(System.currentTimeMillis());
+			user.setFirstUserLoginMillis(Utils.getEpochMillis());
 
 			updateUser(user);
 		}
@@ -1927,7 +1935,7 @@ public class UserService {
 				user = mobileUser;
 			}
 		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER) {
+			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
 				Community community = communityService.getCommunityByName(communityName);
 				
 				hasPromo = applyO2PotentialPromo(o2UserDetails, user, community);

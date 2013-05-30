@@ -34,7 +34,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="false" />
 				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
-<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
+<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" /> -->
 			</bean>
 		</property>
 		<property name="jpaProperties">

@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
@@ -121,5 +123,10 @@ public class SubscriberProfileType {
     public Contract getCotract() {
         return PaymentCategoryType.POSTPAY.equals(getPaymentCategory()) ?
                 Contract.PAYM : Contract.PAYG;
+    }
+    
+    public ProviderType getProvider(){
+    	return "O2".equals(getOperator()) ?
+                ProviderType.O2 : ProviderType.NON_O2;
     }
 }

@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.job;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class UpdateO2UserTask {
 
     private void updateUser(User u) throws GetSubscriberProfileFault {
         SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
+        u.setProvider(profile.getProvider().toString());
         u.setSegment(profile.getSegmentType());
         u.setContract(profile.getCotract());
         makeUserLog(u, UserLogStatus.SUCCESS, null);
@@ -43,8 +45,8 @@ public class UpdateO2UserTask {
     }
 
     private void makeUserLog(User u, UserLogStatus status, String description) {
-        UserLog oldLog = userLogRepository.findByUser(u.getId());
-        UserLog userLog = new UserLog(oldLog, u.getId(), status, description);
+        UserLog oldLog = userLogRepository.findByUser(u.getId(), UserLogType.UPDATE_O2_USER);
+        UserLog userLog = new UserLog(oldLog, u, status, UserLogType.UPDATE_O2_USER, description);
 
         userLogRepository.save(userLog);
         if (UserLogStatus.SUCCESS == status)

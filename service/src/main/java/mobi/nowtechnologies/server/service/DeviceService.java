@@ -63,7 +63,11 @@ public class DeviceService {
 			String[] msgCodes = new String[3];
 			msgCodes[0] = DEFAULT_PROMO_PHONE_MSG_CODE;
 			msgCodes[1] = community.getRewriteUrlParameter().toLowerCase()+"."+msgCodes[0];
-			msgCodes[2] = promoCode != null ? community.getRewriteUrlParameter().toLowerCase()+"."+promoCode+"."+msgCodes[0] : null;
+			
+			if(promoCode != null){
+				msgCodes[2] = promoCode != null ? community.getRewriteUrlParameter().toLowerCase()+"."+promoCode+"."+msgCodes[0] : null;
+				msgCodes[0] = msgCodes[1] = null;
+			}
 			
 			String promotedDevicePhones = "";
 			

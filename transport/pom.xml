@@ -14,80 +14,72 @@
 
 	<build>
 		<finalName>transport-${project.version}-${buildNumber}</finalName>
-        <testResources>
-            <testResource>
-                <directory>src/main/webapp</directory>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
+		<testResources>
+			<testResource>
+				<directory>src/main/webapp</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 	</build>
-	
+
 
 	<dependencies>
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>persistence</artifactId>
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>service</artifactId>
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared</artifactId>
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>opensymphony</groupId>
-		    <artifactId>quartz</artifactId>
-	    </dependency>
-	    
-	    <dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>javapns</groupId>
 			<artifactId>javapns</artifactId>
 		</dependency>
-		<!-- 
+		<!-- <dependency> <groupId>mobi.nowtechnologies.java.server</groupId> <artifactId>service</artifactId> <type>test-jar</type> <scope>test</scope> </dependency> <dependency> <groupId>mobi.nowtechnologies.java.server</groupId> <artifactId>persistence</artifactId> <type>test-jar</type> <scope>test</scope> </dependency> -->
+
 		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>service</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>persistence</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		 -->
-		 
-		 <dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
 		</dependency>
-		 
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test-mvc</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>
