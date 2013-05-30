@@ -1626,67 +1626,67 @@ public class ChartDetailServiceTest {
 	}
 	
 	@Test
-	public void testGetLockedChartItemIds_ExistLastNearestItems_Success() throws ServiceCheckedException {
+	public void testgetLockedChartItemISRCs_ExistLastNearestItems_Success() throws ServiceCheckedException {
 		
 		Byte chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
-		List<Integer> ids = Collections.singletonList(1);
+		List<String> ids = Collections.singletonList("ISRC");
 		
 		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(nearestPublishDateTime.getTime());
-		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 		
-		List<Integer> result = fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);
+		List<String> result = fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);
 		
 		assertNotNull(result);
 		assertEquals(ids.size(), result.size());
 		
 		Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
-		Mockito.verify(mockChartDetailRepository).getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+		Mockito.verify(mockChartDetailRepository).getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
 		
 	}
 	
 	@Test
-	public void testGetLockedChartItemIds_NotExistLastNearestItems_Success() throws ServiceCheckedException {
+	public void testgetLockedChartItemISRCs_NotExistLastNearestItems_Success() throws ServiceCheckedException {
 		
 		Byte chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
-		List<Integer> ids = Collections.singletonList(1);
+		List<String> ids = Collections.singletonList("ISRC");
 		
 		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(null);
-		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 		
-		List<Integer> result = fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);
+		List<String> result = fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);
 		
 		assertNotNull(result);
 		assertEquals(0, result.size());
 		
 		Mockito.verify(mockChartDetailRepository).findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId));
-		Mockito.verify(mockChartDetailRepository, times(0)).getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
+		Mockito.verify(mockChartDetailRepository, times(0)).getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()));
 		
 	}
 	
 	@Test(expected=ServiceException.class)
-	public void testGetLockedChartItemIds_NullSelectedDate_Failure() throws ServiceCheckedException {
+	public void testgetLockedChartItemISRCs_NullSelectedDate_Failure() throws ServiceCheckedException {
 		
 		Byte chartId = 1;
 		Date selectedPublishDateTime=null;
 		Date nearestPublishDateTime=new Date();
-		List<Integer> ids = Collections.singletonList(1);
+		List<String> ids = Collections.singletonList("ISRC");
 		
-		Mockito.when(mockChartDetailRepository.getLockedChartItemIdsByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
+		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 		
-		fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);		
+		fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);		
 	}
 	
 	@Test(expected=ServiceException.class)
-	public void testGetLockedChartItemIds_NullChartId_Failure() throws ServiceCheckedException {
+	public void testgetLockedChartItemISRCs_NullChartId_Failure() throws ServiceCheckedException {
 		
 		Byte chartId = null;
 		Date selectedPublishDateTime=new Date();
 				
-		fixtureChartDetailService.getLockedChartItemIds(chartId, selectedPublishDateTime);		
+		fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);		
 	}
 
 	/**
