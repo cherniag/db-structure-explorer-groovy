@@ -20,8 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class PlaylistController extends CommonController {
 	
 	public static final String VIEW_PLAYLIST = "playlist";
-	public static final String PAGE_PLAYLIST = VIEW_PLAYLIST+"/{playlistType}";
-	public static final String REDIREC_PAGE_SWAP = "redirect:/playlist/swap.html";
+	public static final String PAGE_PLAYLIST = "playlists/{playlistType}/playlist.html";
+	public static final String JSON_PLAYLIST = "playlists/{playlistType}";
+	public static final String JSON_PLAYLIST_TRACKS = "playlists/{playlistType}/tracks";
+	public static final String REDIRECT_PAGE_SWAP = "redirect:/playlist/swap.html";
 	
     private ChartDetailService chartDetailService;
 	private ChartService chartService;
@@ -29,31 +31,33 @@ public class PlaylistController extends CommonController {
 	
 	@RequestMapping(value=PAGE_PLAYLIST, method=RequestMethod.GET)
 	public ModelAndView getPlaylistPage(@PathVariable("playlistType")ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
+		
 		ModelAndView modelAndView = new ModelAndView(VIEW_PLAYLIST);
-			
+		modelAndView.addObject("playlistType", playlistType);
+		
 		return modelAndView;
 	}
 
-    @RequestMapping(value="playlists", produces = "application/json", method=RequestMethod.GET)
-    public ModelAndView getPlaylists(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
-        List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, ChartType.OTHER_CHART);
+    @RequestMapping(value=JSON_PLAYLIST, produces = "application/json", method=RequestMethod.GET)
+    public ModelAndView getPlaylists(@PathVariable("playlistType")ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
+        List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
         return new ModelAndView().addObject("playlists", PlaylistDto.toList(charts));
     }
 
-    @RequestMapping(value="playlists/{playlistId}", produces = "application/json", method=RequestMethod.GET)
+    @RequestMapping(value=JSON_PLAYLIST_TRACKS, produces = "application/json", method=RequestMethod.GET)
     public ModelAndView getTracks(@PathVariable("playlistId")Byte playlistID){
         List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(playlistID, new Date(), false);
         List<TrackDto> tracks = TrackDto.toList(chartDetails, urlToCDN);
         return new ModelAndView().addObject("tracks", tracks);
     }
 	
-	@RequestMapping(value="playlists/{playlistId}", method=RequestMethod.POST)
+	@RequestMapping(value=JSON_PLAYLIST_TRACKS, method=RequestMethod.POST)
 	public ModelAndView selectPlaylists(@PathVariable("playlistId") Integer playlistId,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
 		
 		chartService.selectChartByType(getSecurityContextDetails().getUserId(), playlistId);
 		
-		return new ModelAndView(REDIREC_PAGE_SWAP);
+		return new ModelAndView(REDIRECT_PAGE_SWAP);
 	}
 
 	public void setChartService(ChartService chartService) {
