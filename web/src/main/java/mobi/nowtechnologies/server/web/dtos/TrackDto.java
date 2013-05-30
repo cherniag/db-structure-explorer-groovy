@@ -25,7 +25,7 @@ public class TrackDto {
         this.artist = media.getArtistName();
         MediaFile imageFile = media.getImageFileSmall();
         this.cover = url +imageFile.getFilename();
-        this.audio = url + media.getIsrc();
+        this.audio = url + media.getIsrc() + "P.m4a";
     }
 
     public static List<TrackDto> toList(Collection<ChartDetail> details, String url){

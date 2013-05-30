@@ -1,0 +1,19 @@
+<div class="header">
+    Choose Your Playlist
+    <a href="#allPlaylists" class="button-small button-left">Back</a>
+    <a href="/account.html" class="button-small button-right">Close</a>
+</div>
+<div class="container">
+    <% data.forEach(function (track) { %>
+    <div id="<%= track.id %>" class="pane color-selected">
+        <img class="inline" src="<%= track.cover %>"/>
+        <audio controls>
+            <source src="<%= track.audio %>">
+        </audio>
+        <div class="inline">
+            <h2><%= track.title %></h2>
+            <h5><%= track.artist%></h5>
+        </div>
+    </div>
+    <% }); %>
+</div>
