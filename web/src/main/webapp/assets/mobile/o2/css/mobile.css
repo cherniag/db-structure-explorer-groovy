@@ -242,8 +242,17 @@ img.centered{
     margin-bottom: 10px;
     border-radius: 5px;
 }
+.cover{
+    max-width: 100px;
+    max-height: 100px;
+}
 .inline{
     display: inline-block;
+    vertical-align: top;
+}
+
+.block{
+    display: block;
 }
 
 .pane-red, .banner-pane{

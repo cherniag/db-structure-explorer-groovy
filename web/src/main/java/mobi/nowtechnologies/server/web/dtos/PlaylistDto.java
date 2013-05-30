@@ -13,18 +13,15 @@ public class PlaylistDto {
     private Integer id;
     private String title;
     private Integer length;
+    private String cover;
 
     public PlaylistDto() {}
 
     public PlaylistDto(ChartDetail chart) {
-        this.id = chart.getI();
+        this.id = new Integer(chart.getChart().getI());
         this.title = chart.getTitle();
-    }
-
-    public PlaylistDto(Chart chart) {
-        this.id = new Integer(chart.getI());
-        this.length = new Integer(chart.getNumTracks());
-        this.title = chart.getName();
+        this.cover = chart.getImageFileName();
+        this.length =  new Integer(chart.getChart().getNumTracks());
     }
 
     public Integer getId() {
@@ -48,9 +45,9 @@ public class PlaylistDto {
         this.title = title;
     }
 
-    public static List<PlaylistDto> toList(List<Chart> charts) {
+    public static List<PlaylistDto> toList(List<ChartDetail> charts) {
         List<PlaylistDto> result = new ArrayList<PlaylistDto>();
-        for (Chart chart : charts)
+        for (ChartDetail chart : charts)
             result.add(new PlaylistDto(chart));
         return result;
     }
@@ -61,5 +58,13 @@ public class PlaylistDto {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 }

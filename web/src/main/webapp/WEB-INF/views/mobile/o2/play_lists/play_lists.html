@@ -9,32 +9,54 @@
     <script src="/json2.js"></script>
     <script src="/playlist.js"></script>
 
-    <script id="tmpl_playlist" type="text/template">
-        <% data.forEach(function (dto) { %>
-        <div class="pane color-selected">
-            <img class="inline" src="<%= dto.image %>">
-
-            <div class="inline">
-                <h2><%= dto.title %></h2>
-                <h5><%= dto.size %></h5>
-            </div>
+    <script id="tmpl_tracks" type="text/template">
+        <div class="header">
+            Choose Your Playlist
+            <a href="#allPlaylists" class="button-small button-left">Back</a>
+            <a href="/account.html" class="button-small button-right">Close</a>
         </div>
-        <% }); %>
+        <div class="container">
+            <% data.forEach(function (track) { %>
+            <div id="<%= track.id %>" class="pane color-selected">
+                <img class="inline" src="<%= track.cover %>"/>
+                <audio controls>
+                    <source src="<%= track.audio %>">
+                </audio>
+                <div class="inline">
+                    <h2><%= track.title %></h2>
+                    <h5><%= track.artist%></h5>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </script>
+    <script id="tmpl_playlist" type="text/template">
+        <div class="header">
+            Choose Your Playlist
+            <a href="/account.html" class="button-small button-right">Close</a>
+        </div>
+        <div class="container">
+            <% data.forEach(function (dto) { %>
+            <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-selected">
+                <img class="inline cover" src="http://c1129449.r49.cf3.rackcdn.com/<%= dto.cover %>"/>
+
+                <div class="inline">
+                    <h2><%= dto.title %></h2>
+                    <h5><%= dto.length %> Tracks</h5>
+                </div>
+            </a>
+            <% }); %>
+        </div>
     </script>
     <script type="text/javascript">
-     $(document).ready(function () {
+        $(document).ready(function () {
             var router = new PlaylistRouter();
             Backbone.history.start();
         });
     </script>
 </head>
 <body>
-<div class="header">
-    Choose Your Playlist
-    <a href="/account.html" class="button-small button-right">Close</a>
-</div>
-<div class="container">
 
-</div>
+
 </body>
 </html>
