@@ -158,28 +158,28 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success()
 			throws Exception {
-		List<Integer> chartDetailIds = Collections.singletonList(1);
+		List<String> chartDetailIds = Collections.singletonList("ISRC");
 		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
-		when(mockChartDetailService.getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
+		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
 		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
 		
 		assertNotNull(result);
 		assertEquals(1, result.size());
-		assertEquals(chartDetailIds.get(0), result.get(0).getI());
+		assertEquals(chartDetailIds.get(0), result.get(0).getMedia().getIsrc());
 		
 		verify(mockChartRepository, times(1)).getByCommunityName(anyString());
-		verify(mockChartDetailService, times(1)).getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class));
+		verify(mockChartDetailService, times(1)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
 	}
 	
 	@Test
 	public void testGetLockedChartItems_UserSubscribed_Success()
 			throws Exception {
-		List<Integer> chartDetailIds = Collections.singletonList(1);
+		List<String> chartDetailIds = Collections.singletonList("ISRC");
 		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -189,7 +189,7 @@ public class ChartServiceTest {
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
-		when(mockChartDetailService.getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
+		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
 		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
 		
@@ -197,13 +197,13 @@ public class ChartServiceTest {
 		assertEquals(0, result.size());
 		
 		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-		verify(mockChartDetailService, times(0)).getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class));
+		verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
 	}
 	
 	@Test
 	public void testGetLockedChartItems_UserPending_Success()
 			throws Exception {
-		List<Integer> chartDetailIds = Collections.singletonList(1);
+		List<String> chartDetailIds = Collections.singletonList("ISRC");
 		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -213,7 +213,7 @@ public class ChartServiceTest {
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
-		when(mockChartDetailService.getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
+		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
 		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
 		
@@ -221,13 +221,13 @@ public class ChartServiceTest {
 		assertEquals(0, result.size());
 		
 		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-		verify(mockChartDetailService, times(0)).getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class));
+		verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
 	}
 	
 	@Test
 	public void testGetLockedChartItems_UserExpiring_Success()
 			throws Exception {
-		List<Integer> chartDetailIds = Collections.singletonList(1);
+		List<String> chartDetailIds = Collections.singletonList("ISRC");
 		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -238,7 +238,7 @@ public class ChartServiceTest {
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
-		when(mockChartDetailService.getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
+		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
 		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
 		
@@ -246,7 +246,7 @@ public class ChartServiceTest {
 		assertEquals(0, result.size());
 		
 		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
-		verify(mockChartDetailService, times(0)).getLockedChartItemIds(eq(charts.get(0).getI()), any(Date.class));
+		verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
 	}
 	
 	@SuppressWarnings("unchecked")
