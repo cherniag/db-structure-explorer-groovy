@@ -132,10 +132,12 @@ public class ChartService {
 		
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		for (Chart chart : charts) {
-			List<Integer> chartDetailIds = chartDetailService.getLockedChartItemIds(chart.getI(), new Date());
-			for(Integer id : chartDetailIds){
+			List<String> chartDetailISRCs = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
+			for(String isrc : chartDetailISRCs){
+				Media media = new Media();
+				media.setIsrc(isrc);
 				ChartDetail chartDetail = new ChartDetail();
-				chartDetail.setI(id);
+				chartDetail.setMedia(media);
 				chartDetails.add(chartDetail);
 			}
 		}
