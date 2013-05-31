@@ -37,6 +37,8 @@ public class ChartItemDto {
 
     @DateTimeFormat(iso=ISO.DATE_TIME)
 	private Date publishTime;
+    
+    private Boolean locked;
 
 	public Integer getId() {
 		return id;
@@ -46,7 +48,15 @@ public class ChartItemDto {
 		this.id = id;
 	}
 
-    public String getIsrc() {
+    public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
+	public String getIsrc() {
         return isrc;
     }
 
@@ -120,8 +130,8 @@ public class ChartItemDto {
 
 	@Override
 	public String toString() {
-		return "ChartItemDto [channel=" + channel + ", chartId=" + chartId + ", chgPosition=" + chgPosition + ", id=" + id + ", info=" + info + ", mediaDto="
-				+ mediaDto + ", position=" + position + ", prevPosition=" + prevPosition + ", publishTime=" + publishTime + "]";
+		return "ChartItemDto [id=" + id + ", chartId=" + chartId + ", mediaDto=" + mediaDto + ", info=" + info + ", position=" + position + ", prevPosition=" + prevPosition + ", chgPosition="
+				+ chgPosition + ", channel=" + channel + ", isrc=" + isrc + ", publishTime=" + publishTime + ", locked=" + locked + "]";
 	}
 
 }
