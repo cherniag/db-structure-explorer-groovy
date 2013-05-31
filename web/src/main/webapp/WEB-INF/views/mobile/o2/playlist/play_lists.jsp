@@ -26,6 +26,6 @@
         });
     </script>
 </head>
-<body>
+<body class="color-bg">
 </body>
 </html>

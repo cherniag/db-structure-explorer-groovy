@@ -1,9 +1,23 @@
-<div class="header">
-    Choose Your Playlist
-    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
+<div class="height-header color-header text-center">
+    <div>
+        <div class="logo inline text-header">Choose Your Playlist</div>
+        <a href="/web/playlist/swap.html" class="inline button-small button-right">Close</a>
+    </div>
 </div>
-<div class="container">
-    <% data.forEach(function (dto) { %>
+<div class="pad10">
+    <% data.forEach(function (dto) {
+        if(dto.selected){
+    %>
+    <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-selected">
+        <img class="inline cover" src="<%= dto.cover %>"/>
+
+        <div class="inline top">
+            <h2 class="top0"><%= dto.title %></h2>
+            <h5><%= dto.length %> Tracks</h5>
+        </div>
+        <span class="icon-selected"/>
+    </a>
+    <%} else {%>
     <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-main">
         <img class="inline cover" src="<%= dto.cover %>"/>
 
@@ -12,5 +26,6 @@
             <h5><%= dto.length %> Tracks</h5>
         </div>
     </a>
-    <% }); %>
+    <%}
+    }); %>
 </div>
