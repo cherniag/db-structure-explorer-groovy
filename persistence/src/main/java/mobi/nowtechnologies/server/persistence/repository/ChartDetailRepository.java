@@ -55,11 +55,11 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.i=?1")
 	ChartDetail findById(Integer chartItemId);
 
-	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
+	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis order by chartDetail.position")
 	List<ChartDetail> findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
-	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis and chartDetail.locked != true")
+	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis and (chartDetail.locked is null or chartDetail.locked != true) order by chartDetail.position")
 	List<ChartDetail> findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
