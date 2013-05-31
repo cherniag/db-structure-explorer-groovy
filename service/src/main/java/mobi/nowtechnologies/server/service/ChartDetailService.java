@@ -388,6 +388,7 @@ public class ChartDetailService {
 				chartDetail.setPublishTimeMillis(chartItemDto.getPublishTime().getTime());
 				chartDetail.setChart(chart);
 				chartDetail.setMedia(media);
+				chartDetail.setLocked(chartItemDto.getLocked());
 
 				newChartItems.add(chartDetail);
 			}

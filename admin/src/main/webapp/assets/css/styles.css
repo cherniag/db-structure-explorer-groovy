@@ -227,6 +227,12 @@ ul.table li div.change_position_chartItem {
 	font-weight: bold;
 }
 
+ul.table li div.locked_chartItem {
+	width: 100px;
+	font-size: 9px;
+	font-weight: bold;
+}
+
 ul.table li div.image_chartItem {
 	width: 60px;
 	font-size: 10px;

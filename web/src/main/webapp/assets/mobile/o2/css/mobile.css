@@ -98,6 +98,12 @@ hr.addBothSpaces {
 	margin: 15px 8px 22px 8px;
 	display: block;
 }
+.top0{
+    margin-top: 0;
+}
+.bottom0{
+    margin-bottom: 0;
+}
 h1 {
     margin: 0 0 9px 0;
 	font-size: 1.4em;		
@@ -227,6 +233,45 @@ img.centered{
     max-width:  50px;
 }
 
+.color-main{
+    background-color: #0055cc;
+    color: #fff;
+}
+
+.color-selected{
+    background-color: #00aeef;
+    color: #fff;
+}
+.color-option{
+    background-color: #d9edf7;
+    color: #000066;
+}
+
+.pane{
+    padding: 10px 10px 12px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.cover{
+    max-width: 100px;
+    max-height: 100px;
+}
+.inline{
+    display: inline-block;
+}
+
+.top{
+    vertical-align: top;
+}
+
+.bottom{
+    vertical-align: bottom;
+}
+
+.block{
+    display: block;
+}
+
 .pane-red, .banner-pane{
     padding: 10px 10px 12px 10px;
     margin-bottom: 10px;
@@ -352,6 +397,16 @@ img.centered{
 .text {
 	padding-bottom: 12px;
 }
+
+.btn {
+    border-radius: 3px;
+    height: 32px;
+    line-height: 29px;
+    text-decoration: none;
+    font-family: Helvetica, Arial, sans-serif;
+    padding: 0px 20px!important;
+}
+
 a.button, button {
 	height: 32px;
 	color: #ffffff;

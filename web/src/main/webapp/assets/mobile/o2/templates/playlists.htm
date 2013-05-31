@@ -1,0 +1,16 @@
+<div class="header">
+    Choose Your Playlist
+    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
+</div>
+<div class="container">
+    <% data.forEach(function (dto) { %>
+    <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-main">
+        <img class="inline cover" src="<%= dto.cover %>"/>
+
+        <div class="inline top">
+            <h2 class="top0"><%= dto.title %></h2>
+            <h5><%= dto.length %> Tracks</h5>
+        </div>
+    </a>
+    <% }); %>
+</div>
