@@ -2,7 +2,8 @@ var Playlist = Backbone.Model.extend({
     defaults: {
         id: null,
         title: '',
-        length: 0
+        length: 0,
+        selected: false
     }
 });
 
@@ -61,10 +62,11 @@ var TracksView = Backbone.View.extend({
             this.collection.fetch();
             this.chache[ID] = new Tracks(this.collection.toJSON());
         }
+        this.currentPlaylist = Backbone.playlists.get(ID);
     },
     render: function () {
         var data = this.collection.toJSON();
-        var html = _.template(Templates.get('tracks'), {data: data});
+        var html = _.template(Templates.get('tracks'), {data: data, playlist:this.currentPlaylist.toJSON()});
         $(this.el).empty();
         $(this.el).html(html);
     }
@@ -75,19 +77,20 @@ var PlaylistRouter = Backbone.Router.extend({
     initialize: function () {
 
         //collections
-        this.playlists = new Playlists();
-        this.tracks = new Tracks();
+        Backbone.playlists = new Playlists();
+        Backbone.tracks = new Tracks();
 
         //views
-        this.playlistView = new PlaylistView({collection: this.playlists});
-        this.tracksView = new TracksView({collection: this.tracks});
+        this.playlistView = new PlaylistView({collection: Backbone.playlists});
+        this.tracksView = new TracksView({collection: Backbone.tracks});
 
         this.views = [this.playlistView, this.tracksView];
         this.allPlaylists();
     },
     routes: {
         "tracks/:listID": "goTracks",
-        "allPlaylists" : "allPlaylists"
+        "allPlaylists"  : "allPlaylists",
+        "select/:listID" : "select"
     },
     allPlaylists: function () {
         this.hideAll();
@@ -99,6 +102,11 @@ var PlaylistRouter = Backbone.Router.extend({
         this.tracksView.takeList(listID);
         $(this.tracksView.el).show();
         this.tracksView.render();
+    },
+    select: function(listID){
+        var playlist = Backbone.playlists.get(listID);
+        console.log('select ' + playlist.toJSON());
+        playlist.save({selected: true});
     },
     hideAll: function () {
         _.each(this.views, function (view) {

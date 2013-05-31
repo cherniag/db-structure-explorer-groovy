@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/mvc
-	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController">
         <property name="versionService" ref="service.VersionService"/>
@@ -80,10 +80,18 @@
         <property name="userService" ref="service.UserService"/>
     </bean>
 
+    <util:constant static-field="mobi.nowtechnologies.common.util.Env.URL_TO_CHART_COVER" id="URL_TO_CHART_COVER"/>
+    <util:constant static-field="mobi.nowtechnologies.common.util.Env.URL_TO_TRACKS" id="URL_TO_TRACKS"/>
+
+    <util:map id="env" key-type="java.lang.String">
+        <entry key="URL_TO_CHART_COVER" value="${cloudFile.filesURL}"/>
+        <entry key="URL_TO_TRACKS" value="${cloudFile.mediaCoverFileURL}"/>
+    </util:map>
+
     <bean class="mobi.nowtechnologies.server.web.controller.PlaylistController">
         <property name="chartService" ref="service.ChartService"/>
         <property name="chartDetailService" ref="service.ChartDetailService"/>
-        <property name="urlToCDN" value="${cloudFile.mediaCoverFileURL}"/>
+        <property name="env" ref="env"/>
     </bean>
 
     <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">

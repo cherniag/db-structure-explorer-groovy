@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.web.dtos;
 
+import mobi.nowtechnologies.common.util.Env;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
@@ -7,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class TrackDto {
 
@@ -18,20 +20,21 @@ public class TrackDto {
 
     public TrackDto() {}
 
-    public TrackDto(ChartDetail detail, String url) {
+    public TrackDto(ChartDetail detail, Map<String, String> options) {
         Media media = detail.getMedia();
         this.id = detail.getI();
         this.title = media.getTitle();
         this.artist = media.getArtistName();
         MediaFile imageFile = media.getImageFileSmall();
-        this.cover = url +imageFile.getFilename();
-        this.audio = url + media.getIsrc() + "P.m4a";
+        String urlToTracks = options.get(Env.URL_TO_TRACKS);
+        this.cover = urlToTracks +imageFile.getFilename();
+        this.audio = urlToTracks + media.getIsrc() + "P.m4a";
     }
 
-    public static List<TrackDto> toList(Collection<ChartDetail> details, String url){
+    public static List<TrackDto> toList(Collection<ChartDetail> details, Map options){
         List<TrackDto> result = new ArrayList<TrackDto>();
         for (ChartDetail detail: details)
-            result.add(new TrackDto(detail, url));
+            result.add(new TrackDto(detail, options ));
         return result;
     }
 

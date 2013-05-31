@@ -1,18 +1,29 @@
 <div class="header">
     Choose Your Playlist
     <a href="#allPlaylists" class="button-small button-left">Back</a>
-    <a href="/account.html" class="button-small button-right">Close</a>
+    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
 <div class="container">
+    <div class="pane color-selected">
+        <img class="inline cover" src="<%= playlist.cover %>"/>
+        <div class="inline top">
+            <h2 class="top0"><%= playlist.title %></h2>
+            <div>
+                <h5 class="inline bottom0"><%= playlist.length%> Tracks</h5>
+                <a href="#select/<%= playlist.id%>" class="btn inline color-option bottom0">Select</a>
+            </div>
+        </div>
+    </div>
+
     <% data.forEach(function (track) { %>
-    <div id="<%= track.id %>" class="pane color-selected">
+    <div id="<%= track.id %>" class="pane color-main">
         <img class="inline" src="<%= track.cover %>"/>
         <audio controls>
             <source src="<%= track.audio %>">
         </audio>
-        <div class="inline">
-            <h2><%= track.title %></h2>
-            <h5><%= track.artist%></h5>
+        <div class="inline top">
+            <h2 class="top0"><%= track.title %></h2>
+            <h5 class="bottom0"><%= track.artist%></h5>
         </div>
     </div>
     <% }); %>
