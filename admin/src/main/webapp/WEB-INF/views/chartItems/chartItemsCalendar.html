@@ -26,6 +26,7 @@
 								<div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
 								<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 								<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+								<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
 								<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.publishTime}">Publish Date</div>
 						</li>
 					</ul>
@@ -52,7 +53,9 @@
 								John Bonham) over a period of three years, with the lyrics
 								dating back to 1973.
 							</div>
-
+							<div class="locked_chartItem toggleButton">
+    							<input type="checkbox" th:checked="${chartItemDto.locked}" static=""/>
+    						</div>
 							<div class="publishDate_chartItem" th:text="${#dates.format(chartItemDto.publishTime, '__#{chartItems.publishDate.format}__')}">12/06/2012 12:00:00</div>
 							
 						</li>
@@ -98,7 +101,6 @@
 			</div>
 			
 			<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
-			                                                                 
 			$(function() {
 				var url = /*[[@{'/charts/'+${chart.id}+'.json'}]]*/ '';
 				$.ajax({

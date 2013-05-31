@@ -16,6 +16,10 @@ $.fn.descendantOf = function(element) {
 };
 //---------------------------------------------------//
 $(function() {
+	//-----------------Toggle button-----------------//
+	$('.toggleButton').toggleButtons({
+		transitionspeed: "500%"
+	});
 	//-----------------Date picker-------------------//
 	$('input[id$=Datepicker]').datepicker({
 		dateFormat: "yy-mm-dd",
