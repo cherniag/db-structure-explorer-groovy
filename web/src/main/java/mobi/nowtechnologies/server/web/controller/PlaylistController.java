@@ -43,7 +43,7 @@ public class PlaylistController extends CommonController {
     @RequestMapping(value = JSON_PLAYLIST, produces = "application/json", method = RequestMethod.GET)
     public ModelAndView getPlaylists(@PathVariable("playlistType") ChartType playlistType,
                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
-    	User user = userService.findById(getUserId());
+    	User user = userService.getUserWithSelectedCharts(getUserId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
         return new ModelAndView()
                 .addObject("playlists", PlaylistDto.toList(charts, user, env));
