@@ -205,6 +205,7 @@
 					<div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
 					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
 				</li>
 			</ul>
@@ -225,6 +226,9 @@
 					<div class="info_chartItem" style="display:inline-block;">
 						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
 					</div>
+					<div class="locked_chartItem toggleButton">
+    					<input type="checkbox" th:checked="${chartItemDto.locked}"/>
+    				</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
 						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
@@ -507,7 +511,7 @@
  		$("#chartItemsBasketSortable li#emptyList").css("display","none");
  		
  		
- 		var hiddendiv = item.find("div.position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+ 		var hiddendiv = item.find("div.position_chartItem, div.publishDate_chartItem, div.locked_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -582,6 +586,7 @@
 		var positionDiv = item.find("div.position_chartItem");
 		var artistTitleDiv = item.find("div.ArtistTitle_chartItem, div.ArtistTitle_chartItemBasket");
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
+		var lockedDiv = item.find("div.locked_chartItem");
 		var channelDiv = item.find("div.channel_chartItem, div.channel_chartItemBasket");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
@@ -591,6 +596,7 @@
 		artistTitleDiv.css("display","inline-block");
 		imageDiv.css("display","inline-block");
 		channelDiv.css("display","inline-block");
+		lockedDiv.css("display","inline-block");
 		infoDiv.css("display","inline-block");
 		positionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
@@ -599,6 +605,12 @@
 		imageDiv.attr("class","image_chartItem");
 		channelDiv.attr("class","channel_chartItem");
 		infoDiv.attr("class","info_chartItem");
+		var lockedDivClass = lockedDiv.attr("class");
+		if(!lockedDivClass.endsWith("toggle-button")){
+			lockedDiv.toggleButtons({
+				transitionspeed: "500%"
+			});
+		}
 		
 		updateListPosition($( "#chartItemsSortable" ));
 		
@@ -823,13 +835,37 @@
 		var json = [];
 		var id = li.find("div.id_chartItem").text();
 		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
+		var channel = null;
+		var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
+		json.push(
+		  "{'id':",id != null && id != '' ? id : 'null',",",
+		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
+		  "'position':",li.find("div.position_chartItem").text(),",",
+		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
+		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
+		  "'locked':",locked,",",
+		  "'channel':'",channel,"',",
+		  "'info':'",info,"',",
+		  "'publishTime':'",$selectedPublishDateTime,"',",
+		  "'chartId':",$chartId,"}"
+		);
+		
+		return json.join("");
+	}
+	
+	function chartItemFromLi(li){
+		var json = [];
+		var id = li.find("div.id_chartItem").text();
+		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
 		var channel = li.find("div.channel_chartItem span").text().replace(/\'/g, "&apos;");
+		var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
 		json.push(
 		  "{'id':",id != null && id != '' ? id : 'null',",",
 		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
 		  "'position':",li.find("div.position_chartItem").text(),",",
 		  "'prevPosition':","0",",",
 		  "'chgPosition':","NONE",",",
+		  "'locked':",locked,",",
 		  "'channel':'",channel,"',",
 		  "'info':'",info,"',",
 		  "'publishTime':'",$selectedPublishDateTime,"',",
@@ -873,6 +909,16 @@
 			"style":"display:none; margin: 0 2px"
 		}).appendTo(li);
 		$('<span>').css("word-wrap","break-word").text(chartItem.info).appendTo(infoDiv);
+		
+		var lockedDiv = $('<div>').attr({
+			"class":"locked_chartItem toggleButton",
+			"style":"display:none; margin: 0 2px"
+		}).appendTo(li);
+		var lockedInput = $('<input>').attr({
+			"type":"checkbox"
+		}).appendTo(lockedDiv);
+		if(chartItem.locked)
+			lockedInput.attr("checked", "checked");
 		
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
 		var publishDateDiv = $('<div>').attr({

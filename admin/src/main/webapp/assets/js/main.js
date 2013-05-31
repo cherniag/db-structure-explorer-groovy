@@ -258,6 +258,10 @@ Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
 
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 //Shop Popup
 
 var simpleDialogOptions={opacity:100, overlayClose:true};

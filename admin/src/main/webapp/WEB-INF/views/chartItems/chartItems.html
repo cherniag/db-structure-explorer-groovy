@@ -602,9 +602,12 @@
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
 		infoDiv.attr("class","info_chartItem");
-		lockedDiv.toggleButtons({
-			transitionspeed: "500%"
-		});
+		var lockedDivClass = lockedDiv.attr("class");
+		if(!lockedDivClass.endsWith("toggle-button")){
+			lockedDiv.toggleButtons({
+				transitionspeed: "500%"
+			});
+		}
 		
 		updateListPosition($( "#chartItemsSortable" ));
 		
@@ -826,13 +829,14 @@
 		var id = li.find("div.id_chartItem").text();
 		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
 		var channel = null;
+		var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
 		json.push(
 		  "{'id':",id != null && id != '' ? id : 'null',",",
 		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
 		  "'position':",li.find("div.position_chartItem").text(),",",
 		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
 		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
-		  "'locked':",li.find("div.locked_chartItem input").val(),",",
+		  "'locked':",locked,",",
 		  "'channel':'",channel,"',",
 		  "'info':'",info,"',",
 		  "'publishTime':'",$selectedPublishDateTime,"',",
@@ -897,7 +901,7 @@
 			"class":"publishDate_chartItem",
 			"style":"display:none;"
 		}).appendTo(li);
-		$('<span>').text(dateFormat(chartItem.publishTime, $dateformat)).appendTo(publishDateDiv);
+		$('<span>').text(chartItem.mediaDto.isrc).appendTo(publishDateDiv);
 		$('<button>').attr({
 			"type":"button",
 			"onclick":"onToBasketClick(this, false)",
