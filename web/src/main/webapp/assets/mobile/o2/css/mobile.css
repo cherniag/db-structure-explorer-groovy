@@ -12,9 +12,7 @@
 @font-face {
     font-family: 'FrutigerRegular';
     src: url('../fonts/ftbcx___-webfont.eot');
-    src: url('../fonts/ftbcx___-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/ftbcx___-webfont.woff') format('woff'),
-         url('../fonts/ftbcx___-webfont.ttf') format('truetype');
+    src: url('../fonts/ftbcx___-webfont.eot?#iefix') format('embedded-opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -182,6 +180,23 @@ img.centered{
     margin-right: auto;
 }
 
+.text-header{
+
+}
+
+.height-header{
+    height: 47px;
+}
+
+.pad10{
+    padding: 10px;;
+}
+
+.text-center{
+    text-align: center;
+    vertical-align: middle;
+}
+
 .header {
     text-align: center;
     height: 47px;
@@ -232,15 +247,69 @@ img.centered{
     max-height: 50px;
     max-width:  50px;
 }
+.color-header{
+    color: #fff;
+    background-image: linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -o-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -ms-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.54, rgb(0,0,93)),
+        color-stop(0.77, rgb(0,0,102))
+    );
+}
+
+.icon-selected{
+    background-size: 10px 10px;
+    background: transparent url(../imgs/icon_tick.png) no-repeat left;
+    background-size:contain;
+    -webkit-background-size:contain;
+    -moz-background-size:contain;
+    -o-background-size:contain;
+    -ms-background-size:contain;
+}
 
 .color-main{
-    background-color: #0055cc;
     color: #fff;
+    background-image: linear-gradient(bottom, rgb(0,42,139) 54%, rgb(0,51,153) 77%);
+    background-image: -o-linear-gradient(bottom, rgb(0,42,139) 54%, rgb(0,51,153) 77%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,42,139) 54%, rgb(0,51,153) 77%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,42,139) 54%, rgb(0,51,153) 77%);
+    background-image: -ms-linear-gradient(bottom, rgb(0,42,139) 54%, rgb(0,51,153) 77%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.54, rgb(0,42,139)),
+        color-stop(0.77, rgb(0,51,153))
+    );
+}
+
+.color-bg{
+    background-color: #000033;
 }
 
 .color-selected{
-    background-color: #00aeef;
     color: #fff;
+    background-image: linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -o-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -moz-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -webkit-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+    background-image: -ms-linear-gradient(bottom, rgb(0,0,93) 54%, rgb(0,0,102) 77%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.54, rgb(0,0,93)),
+        color-stop(0.77, rgb(0,0,102))
+    );
 }
 .color-option{
     background-color: #d9edf7;
