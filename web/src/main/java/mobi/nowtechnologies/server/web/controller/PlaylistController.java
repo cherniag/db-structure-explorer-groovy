@@ -1,20 +1,23 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.service.ChartDetailService;
-import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import mobi.nowtechnologies.server.web.dtos.PlaylistDto;
-import mobi.nowtechnologies.server.web.dtos.TrackDto;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.ChartDetailService;
+import mobi.nowtechnologies.server.service.ChartService;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.dtos.PlaylistDto;
+import mobi.nowtechnologies.server.web.dtos.TrackDto;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PlaylistController extends CommonController {
@@ -27,6 +30,7 @@ public class PlaylistController extends CommonController {
 
     private ChartDetailService chartDetailService;
     private ChartService chartService;
+    private UserService userService;
     private Map<String, String> env;
 
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
@@ -39,9 +43,10 @@ public class PlaylistController extends CommonController {
     @RequestMapping(value = JSON_PLAYLIST, produces = "application/json", method = RequestMethod.GET)
     public ModelAndView getPlaylists(@PathVariable("playlistType") ChartType playlistType,
                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
+    	User user = userService.findById(getUserId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
         return new ModelAndView()
-                .addObject("playlists", PlaylistDto.toList(charts, env));
+                .addObject("playlists", PlaylistDto.toList(charts, user, env));
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
@@ -64,8 +69,11 @@ public class PlaylistController extends CommonController {
         this.chartService = chartService;
     }
 
+    public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
 
-    public void setChartDetailService(ChartDetailService chartDetailService) {
+	public void setChartDetailService(ChartDetailService chartDetailService) {
         this.chartDetailService = chartDetailService;
     }
 

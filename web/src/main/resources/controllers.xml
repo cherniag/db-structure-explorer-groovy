@@ -90,6 +90,7 @@
 
     <bean class="mobi.nowtechnologies.server.web.controller.PlaylistController">
         <property name="chartService" ref="service.ChartService"/>
+        <property name="userService" ref="service.UserService"/>
         <property name="chartDetailService" ref="service.ChartDetailService"/>
         <property name="env" ref="env"/>
     </bean>
