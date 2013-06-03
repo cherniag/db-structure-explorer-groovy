@@ -51,7 +51,7 @@ public class UserRepositoryIT {
 
 	@Resource(name = "paymentPolicyRepository")
 	private PaymentPolicyRepository paymentPolicyRepository;
-
+	
 	@Test
 	@Rollback
 	public void testFindBefore48hExpireUsers() throws Exception {

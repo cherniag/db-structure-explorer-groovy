@@ -1,100 +1,40 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Aspect
 public class SMSNotification {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SMSNotification.class);
-
-	private MigHttpService migService;
-
-	private CommunityResourceBundleMessageSource messageSource;
+	
+	private UserNotificationService userNotificationService;
 
 	private UserService userService;
 
-	private List<String> availableCommunities = Collections.emptyList();
-
-	private String paymentsUrl;
-
-	private String unsubscribeUrl;
-
-	private String tinyUrlService;
-
-	private String rememberMeTokenCookieName;
-
-	private NowTechTokenBasedRememberMeServices rememberMeServices;
-
-	private RestTemplate restTemplate = new RestTemplate();
-
-	public String getRememberMeTokenCookieName() {
-		return rememberMeTokenCookieName;
-	}
-
-	public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
-		this.rememberMeTokenCookieName = rememberMeTokenCookieName;
-	}
-
-	public void setMigService(MigHttpService migService) {
-		this.migService = migService;
-	}
-
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
+	public void setUserNotificationService(UserNotificationService userNotificationService) {
+		this.userNotificationService = userNotificationService;
 	}
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-
-	public void setRememberMeServices(NowTechTokenBasedRememberMeServices rememberMeServices) {
-		this.rememberMeServices = rememberMeServices;
-	}
-
-	public void setAvailableCommunities(String availableCommunities) {
-		if (availableCommunities == null)
-			return;
-
-		String delims = "[ ,]+";
-		this.availableCommunities = Arrays.asList(availableCommunities.split(delims));
-	}
-
-	public void setPaymentsUrl(String paymentsUrl) {
-		this.paymentsUrl = paymentsUrl;
-	}
-
-	public void setUnsubscribeUrl(String unsubscribeUrl) {
-		this.unsubscribeUrl = unsubscribeUrl;
-	}
-
-	public void setTinyUrlService(String tinyUrlService) {
-		this.tinyUrlService = tinyUrlService;
-	}
-
+	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
 	protected void startCreditCardPayment() {
 	}
@@ -106,11 +46,11 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.startPayment(..))")
 	protected void startO2PSMSPayment() {
 	}
-
+	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
 	protected void startMigPayment() {
 	}
-
+	
 	/**
 	 * Sending sms after any payment system has spent all retries with failures
 	 * 
@@ -125,7 +65,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
 			try {
-				sendPaymentFailSMS(pendingPayment);
+				userNotificationService.sendPaymentFailSMS(pendingPayment);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -149,7 +89,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try {
-				sendLimitedStatusSMS(user);
+				userNotificationService.sendSmsOnFreeTrialExpired(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -167,42 +107,17 @@ public class SMSNotification {
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
+		Object object = joinPoint.proceed();
+		Integer userId = (Integer) joinPoint.getArgs()[0];
 		try {
-			LogUtils.putClassNameMDC(this.getClass());
-
-			Object object = joinPoint.proceed();
-			Integer userId = (Integer) joinPoint.getArgs()[0];
-			try {
-				User user = userService.findById(userId);
-				sendUnsubscribeAfterSMS(user);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return object;
-		} finally {
-			LogUtils.removeClassNameMDC();
+			User user = userService.findById(userId);
+			userNotificationService.sendUnsubscribeAfterSMS(user);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		return object;
 	}
-
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(mobi.nowtechnologies.server.persistence.domain.User, String))")
-	public Object unsubscribeUserByUser(ProceedingJoinPoint joinPoint) throws Throwable {
-		try {
-			LogUtils.putClassNameMDC(this.getClass());
-
-			Object object = joinPoint.proceed();
-			User user = (User) joinPoint.getArgs()[0];
-
-			try {
-				sendUnsubscribeAfterSMS(user);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return object;
-		} finally {
-			LogUtils.removeClassNameMDC();
-		}
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(String, String))")
 	public Object unsubscribeUserOnStopMessage(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -215,7 +130,7 @@ public class SMSNotification {
 				try {
 					User user = paymentDetails.getOwner();
 					if (!users.contains(user)) {
-						sendUnsubscribeAfterSMS(user);
+						userNotificationService.sendUnsubscribeAfterSMS(user);
 						users.add(user);
 					}
 				} catch (Exception e) {
@@ -242,7 +157,7 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
-				sendLowBalanceWarning(user);
+				userNotificationService.sendLowBalanceWarning(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -263,7 +178,7 @@ public class SMSNotification {
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.commitMigPaymentDetails(..))")
 	protected void createdMigPaymentDetails() {
 	}
-
+	
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymnetDetails(..))")
 	protected void createdO2PsmsPaymentDetails() {
 	}
@@ -282,7 +197,7 @@ public class SMSNotification {
 			Integer userId = (Integer) joinPoint.getArgs()[joinPoint.getArgs().length - 1];
 			try {
 				User user = userService.findById(userId);
-				sendUnsubscribePotentialSMS(user);
+				userNotificationService.sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -291,7 +206,6 @@ public class SMSNotification {
 			LogUtils.removeClassNameMDC();
 		}
 	}
-
 	@Around("createdO2PsmsPaymentDetails()")
 	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
@@ -299,7 +213,7 @@ public class SMSNotification {
 			Object object = joinPoint.proceed();
 			User user = (User) joinPoint.getArgs()[0];
 			try {
-				sendUnsubscribePotentialSMS(user);
+				userNotificationService.sendUnsubscribePotentialSMS(user);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -307,158 +221,5 @@ public class SMSNotification {
 		} finally {
 			LogUtils.removeClassNameMDC();
 		}
-	}
-
-	protected void sendLimitedStatusSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || !user.getStatus().getName().equals(UserStatus.LIMITED.name()) || !user.getPaymentDetailsList().isEmpty())
-			return;
-		if (rejectDevice(user, "sms.notification.limited.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.limited.status.text", new String[] { paymentsUrl });
-	}
-
-	protected void sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null)
-			return;
-		if (rejectDevice(user, "sms.notification.subscribed.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] { unsubscribeUrl });
-	}
-
-	protected void sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null)
-			return;
-		Integer days = Days.daysBetween(new DateTime(System.currentTimeMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
-		if (rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.unsubscribe.after.text", new String[] { paymentsUrl, days.toString() });
-	}
-
-	protected void sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		if (user == null || user.getCurrentPaymentDetails() == null || user.getContract() != Contract.PAYG || user.getSegment() != SegmentType.CONSUMER)
-			return;
-		if (rejectDevice(user, "sms.notification.lowBalance.not.for.device.type"))
-			return;
-		sendSMSWithUrl(user, "sms.lowBalance.text", null);
-	}
-
-	protected void sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
-		User user = pendingPayment.getUser();
-		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-		if (user == null || paymentDetails.getMadeRetries() != paymentDetails.getRetriesOnError())
-			return;
-
-		int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-		if (rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type"))
-			return;
-
-		sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
-	}
-
-	protected void sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
-		Community community = user.getUserGroup().getCommunity();
-		String communityUrl = community.getRewriteUrlParameter();
-		if (rejectDevice(user, "sms.notification.not.for.device.type"))
-			return;
-		if (!availableCommunities.contains(communityUrl))
-			return;
-
-		String baseUrl = msgArgs != null ? msgArgs[0] : null;
-		if (baseUrl != null) {
-			String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-			String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
-
-			MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-			request.add("url", url);
-
-			try {
-				url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
-			} catch (Exception e) {
-				LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
-			}
-
-			msgArgs[0] = url;
-		}
-
-		String message = getMessage(user, community, msgCode, msgArgs);
-		String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-
-		if (!message.isEmpty())
-			migService.makeFreeSMSRequest(user.getMobile(), message, title);
-	}
-
-	protected boolean rejectDevice(User user, String code) {
-		Community community = user.getUserGroup().getCommunity();
-		String communityUrl = community.getRewriteUrlParameter();
-		String devices = messageSource.getMessage(communityUrl, code, null, null, null);
-		for (String device : devices.split(",")) {
-			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
-				LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected int addBeforeMessageExt(User user, String[] codes, int i) {
-		PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated() ? user.getCurrentPaymentDetails().getPaymentPolicy() : null;
-
-		if (paymentPolicy == null || paymentPolicy.getProvider() == null)
-			return i;
-
-		boolean isContractChanged = paymentPolicy.getContract() != null && paymentPolicy.getContract() != user.getContract();
-		boolean isSegmentChanged = paymentPolicy.getSegment() != null && paymentPolicy.getSegment() != user.getSegment();
-		boolean isProviderChanged = !StringUtils.equals(paymentPolicy.getProvider(), user.getProvider());
-
-		String msg;
-		int c = i;
-
-		if (isProviderChanged || isSegmentChanged || isContractChanged) {
-
-			int s = isSegmentChanged ? 2 : 3;
-			s = isProviderChanged ? 1 : s;
-			for (int j = s; j < c; j++) {
-				codes[i] = codes[j] + ".before." + paymentPolicy.getProvider();
-				
-				msg = codes[i] + "." + paymentPolicy.getSegment();
-				i = isProviderChanged ? i + 1 : i;
-				codes[i] = msg;
-				
-				msg = codes[i] + "." + paymentPolicy.getContract();
-				i = isProviderChanged || isSegmentChanged ? i + 1 : i;
-				codes[i] = msg;
-				
-				i++;
-			}
-		}
-
-		return i;
-	}
-
-	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-		String[] codes = new String[20];
-		int i = 0;
-		codes[i++] = msgCodeBase;
-		if (user.getProvider() != null) {
-			codes[i++] = codes[i - 2] + ".for." + user.getProvider();
-			if (user.getSegment() != null) {
-				codes[i++] = codes[i - 2] + "." + user.getSegment();
-				if (user.getContract() != null) {
-					codes[i++] = codes[i - 2] + "." + user.getContract();
-				}
-			}
-
-			i = addBeforeMessageExt(user, codes, i);
-		}
-
-		for (i--; i >= 0; i--) {
-			if (codes[i] != null) {
-				String msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-				if (StringUtils.isNotEmpty(msg))
-					return msg;
-			}
-		}
-
-		return "";
 	}
 }
