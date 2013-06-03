@@ -5,7 +5,7 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 alter table user_logs add column phoneNumber char(25);
 alter table user_logs add column type char(25) default 'UPDATE_O2_USER';
 
- --IMP-1198 [jAdmin] Ability to schedule updates to the covers and sub-titles on the home screen
+ -- IMP-1198 [jAdmin] Ability to schedule updates to the covers and sub-titles on the home screen
 alter table tb_chartDetail add column image_filename varchar(255);
 alter table tb_chartDetail add column image_title varchar(255);
 alter table tb_chartDetail add column subtitle char(50);
@@ -40,8 +40,10 @@ where ch.type = 'FOURTH_CHART';
 
  -- for remove provious chart updates
 delete from tb_chartDetail where media is null;
-insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+insert into tb_chartDetail (subtitle, image_filename, chart, position, publishTimeMillis, version, title)
 select
+'The Official Top 40',
+'CHART_1369842177974_10',
 ch.i,
 1,
 unix_timestamp('2013-01-01')*1000,
@@ -52,8 +54,10 @@ join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='BASIC_CHART';
 
-insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+insert into tb_chartDetail (subtitle, image_filename, chart, position, publishTimeMillis, version, title)
 select
+'The Hottest New Releases',
+'CHART_1369842274293_20',
 ch.i,
 2,
 unix_timestamp('2013-01-01')*1000,
@@ -64,7 +68,7 @@ join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='HOT_TRACKS';
 
-insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+insert into tb_chartDetail (subtitle, image_filename, chart, position, publishTimeMillis, version, title)
 select
 ch.i,
 3,
@@ -76,8 +80,9 @@ join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='OTHER_CHART';
 
-insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+insert into tb_chartDetail (subtitle, chart, position, publishTimeMillis, version, title)
 select
+'Album Choice',
 ch.i,
 0,
 unix_timestamp('2013-01-01')*1000,
