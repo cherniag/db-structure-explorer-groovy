@@ -269,8 +269,9 @@ public class GetChartController extends CommonController{
 			if(playlistDtos[i].getType() == ChartType.FOURTH_CHART){
 				removedPlaylistIds.add(playlistDtos[i].getId());
 				playlistDtos[i] = null;
+			}else{
+				playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
 			}
-			playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
 		}
 		
 		ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
