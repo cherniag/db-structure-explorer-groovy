@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -265,20 +264,33 @@ public class GetChartController extends CommonController{
 	public ChartDto converToOldVersion(ChartDto chartDto, String version) {
 		PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
 		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
+		Map<Integer, PlaylistDto> playlistMap = new HashMap<Integer, PlaylistDto>();
 		for (int i = 0; i < playlistDtos.length; i++) {
 			if(playlistDtos[i].getType() == ChartType.FOURTH_CHART){
 				removedPlaylistIds.add(playlistDtos[i].getId());
 				playlistDtos[i] = null;
+			}else{
+				playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
 			}
 		}
 		
 		ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
-		
+		Map<ChartType, Integer> positionMap = new HashMap<ChartType, Integer>();
 		for (int i = 0; i < tracks.length; i++) {
 			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
 				tracks[i] = null;
 			else if(tracks[i].getChannel() != null && !version.contains("3.7"))
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
+			
+			if(tracks[i] != null){
+				PlaylistDto playlistDto = playlistMap.get(tracks[i].getPlaylistId());
+				Integer position = positionMap.get(playlistDto.getType());
+				position = position != null ? position : 1;
+				
+				tracks[i].setPosition(position.byteValue());
+				
+				positionMap.put(playlistDto.getType(), position+1);
+			}
 		}
 		
 		return chartDto;
