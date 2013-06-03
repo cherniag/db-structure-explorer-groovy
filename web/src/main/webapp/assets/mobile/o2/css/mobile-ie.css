@@ -574,6 +574,9 @@ form .formButton  {
     margin: 10px 0 13px 10px;
     position: relative;
 }
+.right6px{
+    margin-right: 6px;
+}
 .button-right  {
     float: right;
     margin: 10px 10px 13px 0;

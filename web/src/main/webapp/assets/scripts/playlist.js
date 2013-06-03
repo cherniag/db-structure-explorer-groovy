@@ -85,11 +85,11 @@ var PlaylistRouter = Backbone.Router.extend({
         this.tracksView = new TracksView({collection: Backbone.tracks});
 
         this.views = [this.playlistView, this.tracksView];
-        this.allPlaylists();
     },
     routes: {
         "tracks/:listID": "goTracks",
         "allPlaylists"  : "allPlaylists",
+        ""  : "allPlaylists",
         "select/:listID" : "select"
     },
     allPlaylists: function () {

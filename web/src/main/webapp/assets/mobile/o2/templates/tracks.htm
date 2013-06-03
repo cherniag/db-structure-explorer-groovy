@@ -1,30 +1,31 @@
-<div class="height-header color-header text-center">
-    Choose Your Playlist
+<div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
     <a href="#allPlaylists" class="button-small button-left">Back</a>
+    <div class="inline in-center font-main S17">
+        <div class="inline icon-playlist middle"/>
+        <div class="inline text-header middle">Choose Your Playlist</div>
+    </div>
     <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
-<div class="pad10">
-    <div class="pane color-selected">
+<div class="pad5">
+    <div class="pane height-pane block middle color-selected">
         <img class="inline cover" src="<%= playlist.cover %>"/>
         <div class="inline top">
-            <h2 class="top0"><%= playlist.title %></h2>
-            <div>
-                <h5 class="inline bottom0"><%= playlist.length%> Tracks</h5>
-                <a href="#select/<%= playlist.id%>" class="btn inline color-option bottom0">Select</a>
-            </div>
+            <span class="top0 font-main S15"><%= playlist.title %></span><br/>
+            <span class="inline font-main S15"><%= playlist.length%> Tracks</span>
         </div>
+        <div onclick="location.href='#select/<%= playlist.id%>'" class="btn inline bottom-right font-main S13 color-apply">Select</div>
     </div>
 
     <% data.forEach(function (track) { %>
-    <div id="<%= track.id %>" class="pane color-main">
-        <img class="inline" src="<%= track.cover %>"/>
-        <audio controls>
+    <div class="pane height-track color-main" onclick="">
+        <img class="inline cover-track" src="<%= track.cover %>"/>
+        <div class="inline top">
+            <span class="top0 font-main S15"><%= track.title %></span><br/>
+            <span class="font-main S13"><%= track.artist%></span>
+        </div>
+        <audio id="<%= track.id %>" controls class="inline">
             <source src="<%= track.audio %>">
         </audio>
-        <div class="inline top">
-            <h2 class="top0"><%= track.title %></h2>
-            <h5 class="bottom0"><%= track.artist%></h5>
-        </div>
     </div>
     <% }); %>
 </div>

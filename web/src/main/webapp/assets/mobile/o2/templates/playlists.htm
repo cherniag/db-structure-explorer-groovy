@@ -1,31 +1,34 @@
-<div class="height-header color-header text-center">
-    <div>
-        <div class="logo inline text-header">Choose Your Playlist</div>
-        <a href="/web/playlist/swap.html" class="inline button-small button-right">Close</a>
+<div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
+    <div class="inline in-center font-main S17">
+        <div class="inline icon-playlist middle"/>
+        <div class="inline text-header middle">Choose Your Playlist</div>
     </div>
+    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
-<div class="pad10">
+<div class="pad5">
     <% data.forEach(function (dto) {
         if(dto.selected){
     %>
-    <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-selected">
+    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'" class="pane height-pane block middle color-selected">
+        <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= dto.cover %>"/>
 
-        <div class="inline top">
-            <h2 class="top0"><%= dto.title %></h2>
-            <h5><%= dto.length %> Tracks</h5>
+        <div class="inline top marg-L10">
+            <span class="font-main S13 color-current-theme">Current Theme:</span><br/>
+            <span class="top0 font-main S15"><%= dto.title %></span><br/>
+            <span class="font-main S13"><%= dto.length %> Tracks</span>
         </div>
-        <span class="icon-selected"/>
-    </a>
+        <div class="inline icon-selected in-right in-middle"/>
+    </div>
     <%} else {%>
-    <a id="<%= dto.id %>" href="#tracks/<%=dto.id%>" class="pane block color-main">
+    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'" class="pane height-pane block middle color-main">
+        <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= dto.cover %>"/>
-
-        <div class="inline top">
-            <h2 class="top0"><%= dto.title %></h2>
-            <h5><%= dto.length %> Tracks</h5>
+        <div class="inline top marg-L10">
+            <span class="top0 font-main S15"><%= dto.title %></span><br/>
+            <span class="font-main S13"><%= dto.length %> Tracks</span>
         </div>
-    </a>
+    </div>
     <%}
     }); %>
 </div>
