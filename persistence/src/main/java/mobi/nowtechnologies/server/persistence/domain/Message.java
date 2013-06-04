@@ -199,10 +199,10 @@ public class Message {
 		LOGGER.debug("Output parameter clonedMessage=[{}]", clonedMessage);
 		return clonedMessage;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Message [activated=" + activated + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria=" + filterWithCtiteria
+		return "Message [activated=" + activated +", actionType=" + actionType + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria=" + filterWithCtiteria
 				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
 				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";
 	}
