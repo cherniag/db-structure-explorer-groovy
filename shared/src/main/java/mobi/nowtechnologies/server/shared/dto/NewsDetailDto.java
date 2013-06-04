@@ -28,7 +28,7 @@ public class NewsDetailDto {
 	private MessageFrequence messageFrequence;
 
 	public enum MessageType {
-		NEWS, POPUP, NOTIFICATION, AD
+		NEWS, POPUP, NOTIFICATION, RICH_POPUP, AD
 	}
 	
 	public enum MessageFrequence {
