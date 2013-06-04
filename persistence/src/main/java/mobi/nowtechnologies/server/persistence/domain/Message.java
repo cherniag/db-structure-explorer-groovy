@@ -48,6 +48,8 @@ public class Message {
 	private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
 	
 	private MessageActionType actionType;
+	
+	private String action;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -179,6 +181,14 @@ public class Message {
 		this.actionType = actionType;
 	}
 
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
 	public static Message newInstance(Message message) {
 		LOGGER.debug("input parameters message: [{}], [{}]", message);
 
@@ -202,7 +212,8 @@ public class Message {
 
 	@Override
 	public String toString() {
-		return "Message [activated=" + activated +", actionType=" + actionType + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria=" + filterWithCtiteria
+		return "Message [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria="
+				+ filterWithCtiteria
 				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
 				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";
 	}
