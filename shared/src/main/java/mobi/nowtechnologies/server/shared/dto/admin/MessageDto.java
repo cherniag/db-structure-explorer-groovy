@@ -52,6 +52,8 @@ public class MessageDto {
 	
 	private String action;
 	
+	private String actionButtonText;
+	
 	public Integer getPosition() {
 		return position;
 	}
@@ -148,9 +150,18 @@ public class MessageDto {
 		this.action = action;
 	}
 
+	public String getActionButtonText() {
+		return actionButtonText;
+	}
+
+	public void setActionButtonText(String actionButtonText) {
+		this.actionButtonText = actionButtonText;
+	}
+
 	@Override
 	public String toString() {
-		return "MessageDto [activated=" + activated +", actionType=" + actionType +", action=" + action + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence
+		return "MessageDto [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", body=" + body + ", file=" + file
+				+ ", filterDtos=" + filterDtos + ", frequence=" + frequence
 				+ ", headline=" + headline + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime + "]";
 	}
 
