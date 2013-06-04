@@ -2,10 +2,13 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +46,8 @@ public class Message {
 	private String imageFileName;
 
 	private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
+	
+	private MessageActionType actionType;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -127,12 +132,6 @@ public class Message {
 		this.position = position;
 	}
 
-	@Override
-	public String toString() {
-		return "Message [activated=" + activated + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria=" + filterWithCtiteria
-				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
-				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";
-	}
 
 	public Message() {
 	}
@@ -171,6 +170,15 @@ public class Message {
 		this.publishTimeMillis = publishTimeMillis;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public MessageActionType getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(MessageActionType actionType) {
+		this.actionType = actionType;
+	}
+
 	public static Message newInstance(Message message) {
 		LOGGER.debug("input parameters message: [{}], [{}]", message);
 
@@ -190,5 +198,12 @@ public class Message {
 
 		LOGGER.debug("Output parameter clonedMessage=[{}]", clonedMessage);
 		return clonedMessage;
+	}
+	
+	@Override
+	public String toString() {
+		return "Message [activated=" + activated + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria=" + filterWithCtiteria
+				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
+				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";
 	}
 }
