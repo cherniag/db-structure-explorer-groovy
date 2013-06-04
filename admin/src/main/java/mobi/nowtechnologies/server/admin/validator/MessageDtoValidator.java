@@ -6,11 +6,14 @@ import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
 
 public class MessageDtoValidator extends BaseValidator {
+
+	private final UrlValidator urlValidator = new UrlValidator();
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageDtoValidator.class);
 
@@ -29,14 +32,19 @@ public class MessageDtoValidator extends BaseValidator {
 						|| messageActionType.equals(MessageActionType.EXTERNAL_URL) || messageActionType.equals(MessageActionType.MOBILE_WEB_PORTAL)) {
 					errors.rejectValue("action", "richPopups.action.isEmptyOrBlank", "The action field couldn't be empty or blank for this action type");
 				}
-			} else if (action.length() > 255) {
-				errors.rejectValue("action", "richPopups.action.size", "This is field must consist of 1-255 characters");
+			} else {
+				if (action.length() > 255) {
+					errors.rejectValue("action", "richPopups.action.size", "This is field must consist of 1-255 characters");
+				}
+				if (!urlValidator.isValid(action) && (messageActionType.equals(MessageActionType.EXTERNAL_URL) || messageActionType.equals(MessageActionType.MOBILE_WEB_PORTAL))) {
+					errors.rejectValue("action", "richPopups.action.notUrl", "This is field should contain URL for this action type");
+				}
 			}
 
 			final String actionButtonText = messageDto.getActionButtonText();
 			if (StringUtils.isBlank(actionButtonText)) {
 				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.isEmptyOrBlank", "The action button text field couldn't be empty or blank");
-			}else if (actionButtonText.length() > 255) {
+			} else if (actionButtonText.length() > 255) {
 				errors.rejectValue("action", "richPopups.actionButtonText.size", "This is field must consist of 1-255 characters");
 			}
 		}
