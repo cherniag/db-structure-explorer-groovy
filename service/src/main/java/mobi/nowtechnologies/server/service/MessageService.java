@@ -176,6 +176,9 @@ public class MessageService {
 		message.setFilterWithCtiteria(filterWithCtiteria);
 		message.setPosition(position);
 		message.setCommunity(community);
+		message.setAction(messageDto.getAction());
+		message.setActionType(messageDto.getActionType());
+		message.setActionButtonText(messageDto.getActionButtonText());
 
 		message = messageRepository.save(message);
 
