@@ -50,6 +50,8 @@ public class MessageDto {
 	
 	private MessageActionType actionType;
 	
+	private String action;
+	
 	public Integer getPosition() {
 		return position;
 	}
@@ -138,9 +140,17 @@ public class MessageDto {
 		this.actionType = actionType;
 	}
 
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
 	@Override
 	public String toString() {
-		return "MessageDto [activated=" + activated +", actionType=" + actionType + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence
+		return "MessageDto [activated=" + activated +", actionType=" + actionType +", action=" + action + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence
 				+ ", headline=" + headline + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime + "]";
 	}
 
