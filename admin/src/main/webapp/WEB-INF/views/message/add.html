@@ -98,6 +98,19 @@
 									Wrong text format
 								</p>
 							</div>
+							
+							<label><strong>Close Button Text:</strong></label>
+							<div class="control-group">
+								<input th:field="*{closeButtonText}"
+								th:class="${#fields.hasErrors('closeButtonText')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.closeButtonText.placeholder}"
+								placeholder="Close button text is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('closeButtonText')}" th:errors="*{closeButtonText}">
+									Wrong text format
+								</p>
+							</div>
 						
 							<label><strong>Message Headline:</strong></label>
 							<div class="control-group">
