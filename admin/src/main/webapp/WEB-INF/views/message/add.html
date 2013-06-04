@@ -85,6 +85,19 @@
 									Wrong text format
 								</p>
 							</div>
+							
+							<label><strong>Action Button Text:</strong></label>
+							<div class="control-group">
+								<input th:field="*{actionButtonText}"
+								th:class="${#fields.hasErrors('actionButtonText')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.actionButtonText.placeholder}"
+								placeholder="Action button text is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('actionButtonText')}" th:errors="*{actionButtonText}">
+									Wrong text format
+								</p>
+							</div>
 						
 							<label><strong>Message Headline:</strong></label>
 							<div class="control-group">
