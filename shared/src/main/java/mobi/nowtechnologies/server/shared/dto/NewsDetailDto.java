@@ -32,7 +32,7 @@ public class NewsDetailDto {
 	}
 	
 	public enum MessageFrequence {
-		ONCE, DAILY, WEEKLY
+		ONCE, ONCE_AFTER_1ST_TRACK_DOWNLOAD, DAILY, WEEKLY
 	}
 	
 	public enum UserHandset {
