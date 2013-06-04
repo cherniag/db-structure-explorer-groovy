@@ -54,8 +54,6 @@ public class MessageDto {
 	
 	private String actionButtonText;
 	
-	private String closeButtonText;
-	
 	public Integer getPosition() {
 		return position;
 	}
@@ -160,17 +158,9 @@ public class MessageDto {
 		this.actionButtonText = actionButtonText;
 	}
 
-	public String getCloseButtonText() {
-		return closeButtonText;
-	}
-
-	public void setCloseButtonText(String closeButtonText) {
-		this.closeButtonText = closeButtonText;
-	}
-
 	@Override
 	public String toString() {
-		return "MessageDto [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", closeButtonText=" + closeButtonText
+		return "MessageDto [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText
 				+ ", body=" + body + ", file=" + file
 				+ ", filterDtos=" + filterDtos + ", frequence=" + frequence
 				+ ", headline=" + headline + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime + "]";
