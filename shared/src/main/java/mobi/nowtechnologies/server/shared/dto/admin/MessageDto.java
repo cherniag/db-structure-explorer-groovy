@@ -7,10 +7,10 @@ import javax.validation.constraints.Pattern;
 
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageActionType;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -47,6 +47,8 @@ public class MessageDto {
 	private Set<FilterDto> filterDtos;
 	
 	private MultipartFile file;
+	
+	private MessageActionType actionType;
 	
 	public Integer getPosition() {
 		return position;
@@ -127,10 +129,18 @@ public class MessageDto {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
+	public MessageActionType getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(MessageActionType actionType) {
+		this.actionType = actionType;
+	}
 
 	@Override
 	public String toString() {
-		return "MessageDto [activated=" + activated + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence
+		return "MessageDto [activated=" + activated +", actionType=" + actionType + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence
 				+ ", headline=" + headline + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime + "]";
 	}
 
