@@ -65,6 +65,27 @@
 					<div class="span8">
 					<input type="hidden" name="publishTime" required = "required" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd HH:mm:ss.SSS')}" />
 						<div class="filtersSelect">
+							<label>Action Type:</label>
+                            <div class="control-group">
+                                <select th:field="*{actionType}">
+                                    <option th:each="messageActionType : ${T(mobi.nowtechnologies.server.shared.enums.MessageActionType).values()}"
+                                            th:value="${messageActionType.name()}" th:label="${messageActionType.name()}" th:text="${messageActionType.name()}"></option>
+                                </select>
+                            </div>
+
+							<label><strong th:text="#{message.add.page.addMessageForm.action.label}">Action:</strong></label>
+							<div class="control-group">
+								<input th:field="*{action}"
+								th:class="${#fields.hasErrors('action')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.action.placeholder}"
+								placeholder="Action is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('action')}" th:errors="*{action}">
+									Wrong text format
+								</p>
+							</div>
+						
 							<label><strong>Message Headline:</strong></label>
 							<div class="control-group">
 								<input th:field="*{headline}"
