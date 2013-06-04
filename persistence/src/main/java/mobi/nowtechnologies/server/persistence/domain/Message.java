@@ -50,6 +50,8 @@ public class Message {
 	private MessageActionType actionType;
 	
 	private String action;
+	
+	private String actionButtonText;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -189,6 +191,14 @@ public class Message {
 		this.action = action;
 	}
 
+	public String getActionButtonText() {
+		return actionButtonText;
+	}
+
+	public void setActionButtonText(String actionButtonText) {
+		this.actionButtonText = actionButtonText;
+	}
+
 	public static Message newInstance(Message message) {
 		LOGGER.debug("input parameters message: [{}], [{}]", message);
 
@@ -212,7 +222,8 @@ public class Message {
 
 	@Override
 	public String toString() {
-		return "Message [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", body=" + body + ", communityId=" + communityId + ", filterWithCtiteria="
+		return "Message [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", body=" + body + ", communityId=" + communityId
+				+ ", filterWithCtiteria="
 				+ filterWithCtiteria
 				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
 				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";

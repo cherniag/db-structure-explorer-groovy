@@ -5,3 +5,4 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 -- http://jira.musicqubed.com/browse/IMP-1542          
 alter table messages add column actionType varchar(255);
 alter table messages add column action varchar(255);
+alter table messages add column actionButtonText varchar(255);
