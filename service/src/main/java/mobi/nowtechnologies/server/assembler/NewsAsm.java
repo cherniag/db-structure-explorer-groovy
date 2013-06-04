@@ -71,6 +71,9 @@ public class NewsAsm {
 		newsDetailDto.setMessageType(message.getMessageType());
 		newsDetailDto.setTimestampMilis(message.getPublishTimeMillis());
 		newsDetailDto.setImageFileName(message.getImageFileName());
+		newsDetailDto.setAction(message.getAction());
+		newsDetailDto.setActionType(message.getActionType());
+		newsDetailDto.setActionButtonText(message.getActionButtonText());
 		return newsDetailDto;
 	}
 	
