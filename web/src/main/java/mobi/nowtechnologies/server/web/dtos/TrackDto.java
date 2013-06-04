@@ -9,16 +9,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
+/*
+   Intentionally define as immutable - w/o setters and final fields.
+   If change to some field needed create some copy() methood with new value.
+ */
 public class TrackDto {
 
-    private Integer id;
-    private String title;
-    private String artist;
-    private String cover;
-    private String audio;
-
-    public TrackDto() {}
+    private final Integer id;
+    private final String title;
+    private final String artist;
+    private final String cover;
+    private final String audio;
+    private final String channel;
 
     public TrackDto(ChartDetail detail, Map<String, String> options) {
         Media media = detail.getMedia();
@@ -29,6 +31,7 @@ public class TrackDto {
         String urlToTracks = options.get(Env.URL_TO_TRACKS);
         this.cover = urlToTracks +imageFile.getFilename();
         this.audio = urlToTracks + media.getIsrc() + "P.m4a";
+        this.channel = detail.getChannel();
     }
 
     public static List<TrackDto> toList(Collection<ChartDetail> details, Map options){
@@ -42,39 +45,23 @@ public class TrackDto {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
     public String getCover() {
         return cover;
-    }
-
-    public void setCover(String image) {
-        this.cover = image;
     }
 
     public String getAudio() {
         return audio;
     }
 
-    public void setAudio(String audio) {
-        this.audio = audio;
+    public String getChannel() {
+        return channel;
     }
 }

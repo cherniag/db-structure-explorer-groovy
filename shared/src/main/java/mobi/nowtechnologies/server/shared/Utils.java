@@ -221,4 +221,10 @@ public class Utils {
     public static <T> boolean  isNull(T o) {
         return o == null ? true : false;
     }
+
+    public static Byte toByteIfNull(Object obj) {
+        if(obj == null)
+            return  null;
+        return (Byte)obj;
+    }
 }

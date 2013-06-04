@@ -383,6 +383,13 @@ public class User implements Serializable {
 		return selectedCharts;
 	}
 
+    public Byte getSelectedChartId(ChartType chartType) {
+        for(Chart chart: selectedCharts)
+            if(chartType.equals(chart.getType()))
+                return chart.getI();
+		return null;
+	}
+
 	public void setSelectedCharts(List<Chart> selectedCharts) {
 		this.selectedCharts = selectedCharts;
 	}

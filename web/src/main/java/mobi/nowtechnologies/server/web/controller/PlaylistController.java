@@ -31,7 +31,7 @@ public class PlaylistController extends CommonController {
     private ChartDetailService chartDetailService;
     private ChartService chartService;
     private UserService userService;
-    private Map<String, String> env;
+    private Map<String, Object> env;
 
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
     public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType,
@@ -45,8 +45,9 @@ public class PlaylistController extends CommonController {
                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
     	User user = userService.getUserWithSelectedCharts(getUserId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
+        env.put(PlaylistDto.SELECTED_CHART_ID, user.getSelectedChartId(playlistType));
         return new ModelAndView()
-                .addObject("playlists", PlaylistDto.toList(charts, user, env));
+                .addObject("playlists", PlaylistDto.toList(charts, env));
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
@@ -77,7 +78,7 @@ public class PlaylistController extends CommonController {
         this.chartDetailService = chartDetailService;
     }
 
-    public void setEnv(Map<String, String> env) {
+    public void setEnv(Map<String, Object> env) {
         this.env = env;
     }
 }
