@@ -93,7 +93,7 @@ public class MessageService {
 	public List<MessageDto> getMessageDtos(String communityURL) {
 		LOGGER.debug("input parameters communityURL: [{}]", communityURL);
 
-		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP), null);
+		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP, MessageType.RICH_POPUP), null);
 		List<MessageDto> messageDtos = MessageAsm.toDtos(messages);
 		LOGGER.debug("Output parameter [{}]", messageDtos);
 		return messageDtos;
