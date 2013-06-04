@@ -5,6 +5,7 @@ package mobi.nowtechnologies.server.shared.enums;
  *
  */
 public enum MessageActionType {
+	SUBSCRIPTION_PAGE,
 	OFFICIAL_TOP_40_PLAYLIST,
 	JUST_IN_PLAYLIST,
 	OUR_PLAYLIST,
