@@ -148,3 +148,8 @@ from tb_charts ch
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='OTHER_CHART' and ch.name='Other Chart Not Default';
+
+-- Implement a badge on IOS Home Screen when new App content available
+-- http://jira.musicqubed.com/browse/IMP-1385
+alter table tb_useriPhoneDetails add column last_push_of_content_update_millis bigint(20) NOT NULL;
+alter table tb_userAndroidDetails add column last_push_of_content_update_millis bigint(20) NOT NULL;

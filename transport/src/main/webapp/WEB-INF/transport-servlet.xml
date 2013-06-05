@@ -210,7 +210,11 @@
 		<property name="password" value="${notificationJob.password}" />
 		<property name="production" value="${notificationJob.production}" />
 		<property name="communityName" value="Now Music" />
+		<property name="badgeValue" value="${notificationJob.badgeValue}" />
 		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
+		<property name="chartDetailService" ref="service.ChartDetailService" />
+		<property name="messageService" ref="service.MessageService" />
+		<property name="userIPhoneDetailsListFetchSize" value="${notificationJob.userIPhoneDetailsListFetchSize}" />
 	</bean>
 
 
@@ -232,7 +236,11 @@
 		<property name="password" value="${notificationJob.password}" />
 		<property name="production" value="${notificationJob.production}" />
 		<property name="communityName" value="o2" />
+		<property name="badgeValue" value="${notificationJob.badgeValue}" />
 		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
+		<property name="chartDetailService" ref="service.ChartDetailService" />
+		<property name="messageService" ref="service.MessageService" />
+		<property name="userIPhoneDetailsListFetchSize" value="${notificationJob.userIPhoneDetailsListFetchSize}" />
 	</bean>
 
 	<bean id="transport.notificationO2QuartzJobDetail"

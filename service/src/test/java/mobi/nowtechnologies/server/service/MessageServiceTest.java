@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -347,6 +349,45 @@ public class MessageServiceTest {
 		Mockito.verify(mockFilterService, Mockito.times(1)).find(filterDtos);
 		Mockito.verify(mockMessageRepository, Mockito.times(1)).save(message);
 		Mockito.verify(mockCloudFileService, Mockito.times(0)).uploadFile(multipartFile, message.getImageFileName());
+	}
+	
+	@Test
+	public void testFindNearestLatestPublishDate_Success(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = Long.MAX_VALUE;
+		
+		Long nearestLatestPublishTimeMillis = Long.MIN_VALUE;
+		
+		when(mockMessageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS)).thenReturn(nearestLatestPublishTimeMillis);
+		
+		Long actaulNearestLatestPublishTimeMillis = fixture.findNearestLatestPublishDate(community, choosedPublishTimeMillis);
+		
+		assertNotNull(actaulNearestLatestPublishTimeMillis);
+		assertEquals(nearestLatestPublishTimeMillis, actaulNearestLatestPublishTimeMillis);
+	}
+	
+	@Test
+	public void testFindNearestLatestPublishDate_nearestLatestPublishTimeMillisIsNull_Success(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = Long.MAX_VALUE;
+		
+		Long nearestLatestPublishTimeMillis = null;
+		
+		when(mockMessageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS)).thenReturn(nearestLatestPublishTimeMillis);
+		
+		Long actaulNearestLatestPublishTimeMillis = fixture.findNearestLatestPublishDate(community, choosedPublishTimeMillis);
+		
+		assertNull(actaulNearestLatestPublishTimeMillis);
+	}
+	
+	@Test(expected=Exception.class)
+	public void testFindNearestLatestPublishDate_Failure(){
+		Community community = CommunityFactory.createCommunity();
+		long choosedPublishTimeMillis = Long.MAX_VALUE;
+		
+		when(mockMessageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS)).thenThrow(new Exception());
+		
+		fixture.findNearestLatestPublishDate(community, choosedPublishTimeMillis);
 	}
 	
 	@Before

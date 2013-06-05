@@ -322,7 +322,7 @@ public class MessageService {
 		boolean isNewsForChoosedPublishDateAlreadyExist = (count > 0);
 		if (!isNewsForChoosedPublishDateAlreadyExist) {
 
-			Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS);
+			Long nearestLatestPublishTimeMillis = findNearestLatestPublishDate(community, choosedPublishTimeMillis);
 
 			if (nearestLatestPublishTimeMillis != null) {
 				List<Message> messages = messageRepository.findByCommunityAndMessageTypesAndPublishTimeMillis(community, Arrays.asList(MessageType.NEWS), nearestLatestPublishTimeMillis);
@@ -339,6 +339,15 @@ public class MessageService {
 		return clonedMessages;
 	}
 
+	public Long findNearestLatestPublishDate(Community community, final long choosedPublishTimeMillis) {
+		LOGGER.debug("input parameters community, choosedPublishTimeMillis: [{}], [{}]", community, choosedPublishTimeMillis);
+		
+		Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS);
+		
+		LOGGER.debug("Output parameter nearestLatestPublishTimeMillis=[{}]", nearestLatestPublishTimeMillis);
+		return nearestLatestPublishTimeMillis;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<Message> getActualNews(String communityUrl, Date selectedDate) {
@@ -347,7 +356,7 @@ public class MessageService {
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		long currentTimeMillis = selectedDate.getTime();
 
-		Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(currentTimeMillis, community, MessageType.NEWS);
+		Long nearestLatestPublishTimeMillis = findNearestLatestPublishDate(community, currentTimeMillis);
 
 		final List<Message> messages;
 		if (nearestLatestPublishTimeMillis != null)

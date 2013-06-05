@@ -4,10 +4,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 public class ChartDetailFactory
  {
-	private ChartDetailFactory() {
-	}
-
-
 	public static ChartDetail createChartDetail() {
 		Chart chart = ChartFactory.createChart();
 		ChartDetail chartDetail = new ChartDetail();
