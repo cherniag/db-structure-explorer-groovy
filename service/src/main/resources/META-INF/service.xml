@@ -227,12 +227,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userAndroidDetailsService" ref="service.UserAndroidDetailsService" />
 	</bean>
 
-	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService">
-		<property name="userIPhoneDetailsRepository" ref="userIPhoneDetailsRepository" />
+	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService" parent="service.UserDeviceDetailsService">
 	</bean>
 
 
-	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService">
+	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService" parent="service.UserDeviceDetailsService">
 		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />
 	</bean>
 
