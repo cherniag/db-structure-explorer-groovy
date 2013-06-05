@@ -228,6 +228,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService" parent="service.UserDeviceDetailsService">
+		<property name="userIPhoneDetailsRepository" ref="userIPhoneDetailsRepository" />
 	</bean>
 
 
