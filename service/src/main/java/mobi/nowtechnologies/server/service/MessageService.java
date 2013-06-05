@@ -146,7 +146,7 @@ public class MessageService {
 	private Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters messageDto, communityURL, message: [{}], [{}]", new Object[] { messageDto, communityURL, message });
 
-		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+		Community community = communityService.getCommunityByUrl(communityURL);
 
 		final long publishTimeMillis = messageDto.getPublishTime().getTime();
 		Integer position;
@@ -248,7 +248,7 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters newsItemDto, communityURL, message: [{}], [{}]", new Object[] { newsItemDto, communityURL, message });
 
 		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
