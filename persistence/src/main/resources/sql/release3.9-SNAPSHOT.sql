@@ -153,3 +153,6 @@ where ch.type='OTHER_CHART' and ch.name='Other Chart Not Default';
 -- http://jira.musicqubed.com/browse/IMP-1385
 alter table tb_useriPhoneDetails add column last_push_of_content_update_millis bigint(20) NOT NULL;
 alter table tb_userAndroidDetails add column last_push_of_content_update_millis bigint(20) NOT NULL;
+
+update tb_useriPhoneDetails set tb_useriPhoneDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
+update tb_userAndroidDetails set tb_userAndroidDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
