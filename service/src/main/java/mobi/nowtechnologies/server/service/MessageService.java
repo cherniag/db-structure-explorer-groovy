@@ -143,7 +143,7 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters messageDto, communityURL, message: [{}], [{}]", new Object[] { messageDto, communityURL, message });
 
 		Community community = communityService.getCommunityByUrl(communityURL);
