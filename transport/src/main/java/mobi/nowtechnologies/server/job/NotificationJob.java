@@ -123,7 +123,7 @@ public class NotificationJob {
 
 	public List<PushedNotification> proccess(final Long nearestLatestPublishTimeMillis, List<PushedNotification> pushedNotifications) {
 		LOGGER.debug("input parameters nearestLatestPublishTimeMillis, pushedNotifications: [{}], [{}]", nearestLatestPublishTimeMillis, pushedNotifications);
-		
+
 		if (pushedNotifications == null)
 			throw new NullPointerException("The parameter pushedNotifications is null");
 
@@ -144,43 +144,45 @@ public class NotificationJob {
 			}
 		}
 
-		try {
-			pushedNotifications = Push.payloads(keystore.getInputStream(), password, production,
-					numberOfThreads, payloadDevicePairs);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-
-		List<PushedNotification> successfulPushedNotifications = PushedNotification
-				.findSuccessfulNotifications(pushedNotifications);
-		for (PushedNotification pushedNotification : successfulPushedNotifications) {
+		if (payloadDevicePairs.size() > 0) {
 			try {
-				LOGGER.info("PushedNotification [{}]",
-						pushedNotification);
-				Device device = pushedNotification.getDevice();
-				UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsMap
-						.get(device.getToken());
-				userIPhoneDetailsService
-						.markUserIPhoneDetailsAsProcessed(userIPhoneDetails, nearestLatestPublishTimeMillis);
+				pushedNotifications = Push.payloads(keystore.getInputStream(), password, production,
+						numberOfThreads, payloadDevicePairs);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
-		}
 
-		List<PushedNotification> failedPushedNotifications = PushedNotification
-				.findFailedNotifications(pushedNotifications);
-		for (PushedNotification pushedNotification : failedPushedNotifications) {
-			Device device = pushedNotification.getDevice();
-			String deviceToken = device.getToken();
-			UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsMap
-					.get(deviceToken);
-			LOGGER
-					.error(
-							"Codn't send notification to user with id [{}] and deviceToken [{}]. PushedNotification is [{}]",
-							new Object[] {
-									userIPhoneDetails.getUser()
-											.getId(), deviceToken,
-									pushedNotification });
+			List<PushedNotification> successfulPushedNotifications = PushedNotification
+					.findSuccessfulNotifications(pushedNotifications);
+			for (PushedNotification pushedNotification : successfulPushedNotifications) {
+				try {
+					LOGGER.info("PushedNotification [{}]",
+							pushedNotification);
+					Device device = pushedNotification.getDevice();
+					UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsMap
+							.get(device.getToken());
+					userIPhoneDetailsService
+							.markUserIPhoneDetailsAsProcessed(userIPhoneDetails, nearestLatestPublishTimeMillis);
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+
+			List<PushedNotification> failedPushedNotifications = PushedNotification
+					.findFailedNotifications(pushedNotifications);
+			for (PushedNotification pushedNotification : failedPushedNotifications) {
+				Device device = pushedNotification.getDevice();
+				String deviceToken = device.getToken();
+				UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsMap
+						.get(deviceToken);
+				LOGGER
+						.error(
+								"Coldn't send notification to user with id [{}] and deviceToken [{}]. PushedNotification is [{}]",
+								new Object[] {
+										userIPhoneDetails.getUser()
+												.getId(), deviceToken,
+										pushedNotification });
+			}
 		}
 		LOGGER.debug("Output parameter pushedNotifications=[{}]", pushedNotifications);
 		return pushedNotifications;
