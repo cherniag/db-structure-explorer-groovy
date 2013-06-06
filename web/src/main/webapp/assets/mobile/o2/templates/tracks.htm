@@ -18,7 +18,7 @@
     </div>
 
     <% data.forEach(function (track) { %>
-    <div class="pane height-track color-main" onclick="">
+    <div class="pane height-track color-main" onclick="Backbone.playTrack(<%= track.id %>)">
         <img class="inline cover-track" src="<%= track.cover %>"/>
         <div class="inline top">
             <span class="top0 font-main S15"><%= track.title %></span><br/>
