@@ -7,13 +7,14 @@
     <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
 <div class="pad5">
-    <div class="pane height-pane block middle color-selected">
+    <div class="pane height-pane block middle color-main">
+        <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= playlist.cover %>"/>
-        <div class="inline top">
+        <div class="inline top bottom-right marg-L10">
             <span class="top0 font-main S15"><%= playlist.title %></span><br/>
             <span class="inline font-main S15"><%= playlist.length%> Tracks</span>
+            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn inline bottom-right font-main S12 color-apply">Select</div>
         </div>
-        <div onclick="location.href='#select/<%= playlist.id%>'" class="btn inline bottom-right font-main S13 color-apply">Select</div>
     </div>
 
     <% data.forEach(function (track) { %>

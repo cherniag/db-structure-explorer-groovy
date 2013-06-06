@@ -51,8 +51,7 @@ public class PlaylistController extends CommonController {
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
-    public ModelAndView updatePlaylist(@PathVariable("playlistID") Integer playlistId,
-                                       @ModelAttribute(PlaylistDto.NAME) PlaylistDto playlist) throws IOException {
+    public ModelAndView updatePlaylist(@PathVariable("playlistID") Integer playlistId) throws IOException {
         chartService.selectChartByType(getUserId(), playlistId);
         List<PlaylistDto> playlists = null;
         return new ModelAndView()
