@@ -24,7 +24,7 @@ public class TrackDto {
 
     public TrackDto(ChartDetail detail, Map<String, String> options) {
         Media media = detail.getMedia();
-        this.id = detail.getI();
+        this.id = media.getI();
         this.title = media.getTitle();
         this.artist = media.getArtistName();
         MediaFile imageFile = media.getImageFileSmall();

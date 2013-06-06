@@ -33,7 +33,6 @@ var Playlists = Backbone.Collection.extend({
     },
     initialize: function () {
         this.fetch({async: false});
-        this.fetch();
     },
     parse: function (response) {
         return response.playlists;
@@ -59,7 +58,6 @@ var TracksView = Backbone.View.extend({
         else{
             this.collection.playlistId = ID;
             this.collection.fetch({async: false, reset:true});
-            this.collection.fetch();
             this.chache[ID] = new Tracks(this.collection.toJSON());
         }
         this.currentPlaylist = Backbone.playlists.get(ID);
@@ -105,7 +103,6 @@ var PlaylistRouter = Backbone.Router.extend({
     },
     select: function(listID){
         var playlist = Backbone.playlists.get(listID);
-        console.log('select ' + playlist.toJSON());
         playlist.save({selected: true});
     },
     hideAll: function () {

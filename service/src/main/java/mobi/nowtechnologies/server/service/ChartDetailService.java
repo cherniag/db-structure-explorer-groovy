@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -179,10 +181,8 @@ public class ChartDetailService {
 	public List<ChartDetail> getChartItemsByDate(Byte chartId, Date selectedPublishDate, boolean changePosition) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
-		if (selectedPublishDate == null)
-			throw new ServiceException("The parameter selectedPublishDate is null");
-		if (chartId == null)
-			throw new ServiceException("The parameter chartId is null");
+		notNull(selectedPublishDate , "The parameter selectedPublishDate is null");
+		notNull(chartId , "The parameter chartId is null");
 
 		List<ChartDetail> chartDetails = chartDetailRepository.getChartItemsByDate(chartId, selectedPublishDate.getTime());
 		if (chartDetails == null || chartDetails.size() == 0) {
