@@ -33,7 +33,7 @@ public class MessageDtoValidator extends BaseValidator {
 			if (StringUtils.isBlank(action)) {
 				if (messageActionType.equals(MessageActionType.A_SPECIFIC_NEWS_STORY) || messageActionType.equals(MessageActionType.A_SPECIFIC_TRACK)
 						|| messageActionType.equals(MessageActionType.EXTERNAL_URL) || messageActionType.equals(MessageActionType.MOBILE_WEB_PORTAL)) {
-					errors.rejectValue("action", "richPopups.action.isEmptyOrBlank", "The action field couldn't be empty or blank for this action type");
+					errors.rejectValue("action", "richPopups.action.isNullEmptyOrBlank", "The action field couldn't be null, empty or blank for this action type");
 				}
 			} else {
 				if (action.length() > 255) {
@@ -45,13 +45,13 @@ public class MessageDtoValidator extends BaseValidator {
 			}
 			
 			if (StringUtils.isBlank(actionButtonText)) {
-				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.isEmptyOrBlank", "The action button text field couldn't be empty or blank");
+				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.isNullEmptyOrBlank", "The action button text field couldn't be null, empty or blank");
 			} else if (actionButtonText.length() > 255) {
 				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.size", "The action button text field must consist of 1-255 characters");
 			}
 		} else {
 			if (MessageFrequence.ONCE_AFTER_1ST_TRACK_DOWNLOAD.equals(messageDto.getFrequence())) {
-				errors.rejectValue("frequence", "notRichPopups.frequence.isNotNull", "The frequence field should be null for this message type");
+				errors.rejectValue("frequence", "notRichPopups.frequence.isOnceAfter1stTrackDownload", "The frequence field couldn't be such selected option for this message type");
 			}
 		}
 

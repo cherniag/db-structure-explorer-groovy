@@ -24,7 +24,6 @@ public class MessageDtoFactory
 		messageDto.setPublishTime(new Date(0));
 		messageDto.setPosition(Integer.MAX_VALUE);
 		
-		
 		messageDto.setAction("action");
 		messageDto.setActionType(MessageActionType.A_SPECIFIC_NEWS_STORY);
 		messageDto.setActionButtonText("actionButtonText");
