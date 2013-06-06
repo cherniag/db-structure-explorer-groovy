@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.validator;
 
 import mobi.nowtechnologies.server.service.util.BaseValidator;
+import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
@@ -23,10 +24,12 @@ public class MessageDtoValidator extends BaseValidator {
 
 		MessageDto messageDto = (MessageDto) target;
 
+		String action = messageDto.getAction();
+		MessageActionType messageActionType = messageDto.getActionType();
+		final String actionButtonText = messageDto.getActionButtonText();
+
 		if (messageDto.getMessageType().equals(MessageType.RICH_POPUP)) {
 
-			String action = messageDto.getAction();
-			MessageActionType messageActionType = messageDto.getActionType();
 			if (StringUtils.isBlank(action)) {
 				if (messageActionType.equals(MessageActionType.A_SPECIFIC_NEWS_STORY) || messageActionType.equals(MessageActionType.A_SPECIFIC_TRACK)
 						|| messageActionType.equals(MessageActionType.EXTERNAL_URL) || messageActionType.equals(MessageActionType.MOBILE_WEB_PORTAL)) {
@@ -34,18 +37,21 @@ public class MessageDtoValidator extends BaseValidator {
 				}
 			} else {
 				if (action.length() > 255) {
-					errors.rejectValue("action", "richPopups.action.size", "This is field must consist of 1-255 characters");
+					errors.rejectValue("action", "richPopups.action.size", "The action field must consist of 1-255 characters");
 				}
 				if (!urlValidator.isValid(action) && (messageActionType.equals(MessageActionType.EXTERNAL_URL) || messageActionType.equals(MessageActionType.MOBILE_WEB_PORTAL))) {
-					errors.rejectValue("action", "richPopups.action.notUrl", "This is field should contain URL for this action type");
+					errors.rejectValue("action", "richPopups.action.notUrl", "The action should contain URL for this action type");
 				}
 			}
-
-			final String actionButtonText = messageDto.getActionButtonText();
+			
 			if (StringUtils.isBlank(actionButtonText)) {
 				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.isEmptyOrBlank", "The action button text field couldn't be empty or blank");
 			} else if (actionButtonText.length() > 255) {
-				errors.rejectValue("action", "richPopups.actionButtonText.size", "This is field must consist of 1-255 characters");
+				errors.rejectValue("actionButtonText", "richPopups.actionButtonText.size", "The action button text field must consist of 1-255 characters");
+			}
+		} else {
+			if (MessageFrequence.ONCE_AFTER_1ST_TRACK_DOWNLOAD.equals(messageDto.getFrequence())) {
+				errors.rejectValue("frequence", "notRichPopups.frequence.isNotNull", "The frequence field should be null for this message type");
 			}
 		}
 
