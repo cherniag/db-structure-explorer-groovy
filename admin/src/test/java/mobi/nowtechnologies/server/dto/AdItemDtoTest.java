@@ -43,7 +43,7 @@ public class AdItemDtoTest {
 		Message result = AdItemDto.fromDto(adItemDto);
 
 		assertNotNull(result);
-		assertEquals("Message [activated=true, body=message, communityId=0, filterWithCtiteria=[], frequence=null, id=1, messageType=AD, position=0, publishTimeMillis=0, title=https://i.ua, imageFileName=imageFileName]", result.toString());
+		assertEquals("Message [activated=true, actionType=null, action=null, actionButtonText=null, body=message, communityId=0, filterWithCtiteria=[], frequence=null, id=1, messageType=AD, position=0, publishTimeMillis=0, title=https://i.ua, imageFileName=imageFileName]", result.toString());
 		assertEquals(adItemDto.getId(), result.getId());
 		assertEquals(0, result.getPosition());
 		assertEquals(adItemDto.isActivated(), result.isActivated());

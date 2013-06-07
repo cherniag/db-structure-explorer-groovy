@@ -434,6 +434,6 @@ public class UserRepositoryIT {
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());
 		assertEquals(testUser.getId(), actualUsers.get(1).getId());
-		
+			
 	}
 }

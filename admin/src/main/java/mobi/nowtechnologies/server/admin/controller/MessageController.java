@@ -25,8 +25,8 @@ import java.util.List;
 public class MessageController extends AbstractMessageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
-	
-	@InitBinder( { MessageDto.MESSAGE_DTO })
+
+	@InitBinder({ MessageDto.MESSAGE_DTO })
 	public void initMessageBinder(WebDataBinder binder) {
 		binder.setValidator(new MessageDtoValidator());
 	}
@@ -34,7 +34,7 @@ public class MessageController extends AbstractMessageController {
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	public ModelAndView getMessagesPage(HttpServletRequest request) {
 		LOGGER.debug("input parameters request [{}]", request);
-		
+
 		String communityURL = RequestUtils.getCommunityURL();
 
 		List<MessageDto> messageDtos = messageService.getMessageDtos(communityURL);

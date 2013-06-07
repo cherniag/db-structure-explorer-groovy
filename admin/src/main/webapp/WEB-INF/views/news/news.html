@@ -12,6 +12,7 @@
 				<ul  class="table">
 					<li class="title">
 							<div class="number_news" th:text="#{news.page.newsTable.head.position}">#</div>
+							<div class="number_news" th:text="#{news.page.newsTable.head.id}">id</div>
 							<div class="image_news" th:text="#{news.page.newsTable.head.image}">Image</div>
 							<div class="px50">ID</div>
 							<div class="body_news" th:text="#{news.page.newsTable.head.headline}">Headline</div>
@@ -26,6 +27,7 @@
 						<input type="hidden" id="ID" name="ID" th:value="${newsItemDto.id}" />
 						<input type="hidden" id="position" name="position" th:value="${newsItemDto.position}" />
 						<div class="number_news" th:text="${it.index+1}">1</div>
+						<div class="number_news" th:text="${newsItemDto.id}">1</div>
 						<div class="image_news"><img alt="News picture" width="50" height="50" src="" th:attr="src=@{__${filesURL +newsItemDto.imageFileName}__}" th:alt="#{news.page.newsTable.message.img.alt}"/></div>
 						<div class="px50"><span th:text="${newsItemDto.id}"></span></div>
                         <div class="body_news">

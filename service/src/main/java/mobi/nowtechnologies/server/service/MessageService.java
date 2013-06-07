@@ -93,7 +93,7 @@ public class MessageService {
 	public List<MessageDto> getMessageDtos(String communityURL) {
 		LOGGER.debug("input parameters communityURL: [{}]", communityURL);
 
-		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP), null);
+		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP, MessageType.RICH_POPUP), null);
 		List<MessageDto> messageDtos = MessageAsm.toDtos(messages);
 		LOGGER.debug("Output parameter [{}]", messageDtos);
 		return messageDtos;
@@ -143,10 +143,10 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters messageDto, communityURL, message: [{}], [{}]", new Object[] { messageDto, communityURL, message });
 
-		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+		Community community = communityService.getCommunityByUrl(communityURL);
 
 		final long publishTimeMillis = messageDto.getPublishTime().getTime();
 		Integer position;
@@ -176,6 +176,9 @@ public class MessageService {
 		message.setFilterWithCtiteria(filterWithCtiteria);
 		message.setPosition(position);
 		message.setCommunity(community);
+		message.setAction(messageDto.getAction());
+		message.setActionType(messageDto.getActionType());
+		message.setActionButtonText(messageDto.getActionButtonText());
 
 		message = messageRepository.save(message);
 
@@ -245,7 +248,7 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters newsItemDto, communityURL, message: [{}], [{}]", new Object[] { newsItemDto, communityURL, message });
 
 		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());

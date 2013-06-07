@@ -156,3 +156,9 @@ alter table tb_userAndroidDetails add column last_push_of_content_update_millis 
 
 update tb_useriPhoneDetails set tb_useriPhoneDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
 update tb_userAndroidDetails set tb_userAndroidDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
+
+-- [Jadmin] Add rich popup which allows deeplinking to various "anchors" in the app/mobile web
+-- http://jira.musicqubed.com/browse/IMP-1542          
+alter table messages add column actionType varchar(255);
+alter table messages add column action varchar(255);
+alter table messages add column actionButtonText varchar(255);
