@@ -1,10 +1,9 @@
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
     <a href="#allPlaylists" class="button-small button-left">Back</a>
     <div class="inline in-center font-main S17">
-        <div class="inline icon-playlist middle"/>
-        <div class="inline text-header middle">Choose Your Playlist</div>
+        <div class="icon-playlist"/>
+        <div class="text-header middle">Choose Your Playlist</div>
     </div>
-    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
 <div class="pad5">
     <%
@@ -16,22 +15,25 @@
         <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= playlist.cover %>"/>
         <div class="inline top marg-L10">
-            <span class="top0 font-main S15"><%= playlist.title %></span><br/>
-            <span class="inline font-main S15"><%= playlist.length%> Tracks</span>
+            <span class="font-main S15"><%= playlist.title %></span><br/>
+            <!--<span class="font-main S13"><%= playlist.description%></span><br/>-->
+            <span class="font-main S15"><%= playlist.length%> Tracks</span>
         </div>
             <div onclick="location.href='#select/<%= playlist.id%>'" class="btn inline bottom-right font-main S12 color-apply">Select</div>
     </div>
 
     <% data.forEach(function (track) { %>
-    <div class="pane height-track color-main" onclick="Backbone.playTrack(<%= track.id %>)">
-        <img class="inline cover-track" src="<%= track.cover %>"/>
+    <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Backbone.player.playTrack(<%= track.id %>)">
+        <img class="cover-track" src="<%= track.cover %>"/>
         <div class="inline top">
             <span class="top0 font-main S15"><%= track.title %></span><br/>
-            <span class="font-main S13"><%= track.artist%></span>
+            <span class="font-main S13"><%= track.artist%></span><br/>
+            <span class="font-main S13 color-channel"><%= track.channel%></span>
         </div>
         <audio id="<%= track.id %>" controls>
             <source src="<%= track.audio %>">
         </audio>
+        <div class="icon-clock in-right"/>
     </div>
     <% }); %>
 </div>

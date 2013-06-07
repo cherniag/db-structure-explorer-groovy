@@ -306,6 +306,12 @@ audio{
    visibility: hidden;
 }
 
+.icon-clock{
+    width: 20px;
+    height: 20px;
+    background: transparent url(../imgs/icon_track_preview.png) no-repeat;
+}
+
 .icon-playlist{
     width: 18px;
     height: 16px;
@@ -326,12 +332,29 @@ audio{
     background: transparent url(../imgs/icon_your_playlist.png) no-repeat;
 }
 
-.icon-playlist, .icon-selected, .icon-playlist-filled{
+.icon-playlist, .icon-selected, .icon-playlist-filled, .icon-clock{
     background-size:contain;
     -webkit-background-size:contain;
     -moz-background-size:contain;
     -o-background-size:contain;
     -ms-background-size:contain;
+    position: absolute;
+}
+
+.color-player{
+    background-image: linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
+    background-image: -o-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
+    background-image: -moz-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
+    background-image: -webkit-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
+    background-image: -ms-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.15, rgb(80,169,233)),
+        color-stop(0.58, rgb(102,204,255))
+    );
 }
 
 .color-main{
@@ -351,9 +374,13 @@ audio{
     );
 }
 
+.color-channel{
+    color: #952d98;
+}
+
 .color-apply{
     background-color: #d9edf7;
-    color: #000066;
+    color: #003399;
 }
 
 .color-current-theme{

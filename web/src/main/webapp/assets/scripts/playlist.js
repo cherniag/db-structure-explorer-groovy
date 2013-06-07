@@ -1,22 +1,37 @@
-Backbone.player = {};
-Backbone.playTrack = function (id) {
-    if (!Backbone.player[id]) {
-        var audio = document.getElementById(id);
-        Backbone.player[id] = audio;
+Backbone.player = {
+    cssPlaying: function(id){
+        $('div#track' + id).removeClass('color-main');
+        $('div#track' + id).addClass('color-player');
+    },
+    cssStop: function(id){
+        $('div#track' + id).removeClass('color-player');
+        $('div#track' + id).addClass('color-main');
+    },
+    playTrack: function (id) {
+        if (!this[id]) {
+            var audio = document.getElementById(id);
+            this[id] = audio;
+        }
+        if (!this.current) {
+            this[id].play();
+            this.current = id;
+            this.cssPlaying(id);
+        } else if (this.current == id) {
+            this[id].pause();
+            this.current = null;
+            this.cssStop(id);
+        } else {
+            var current = this.current;
+            this[current].pause()
+            this[current].currentTime = 0;
+            this.cssStop(current);
+            this[id].play();
+            this.cssPlaying(id);
+            this.current = id;
+        }
     }
-    if (!Backbone.player.current) {
-        Backbone.player[id].play();
-        Backbone.player.current = id;
-    } else if (Backbone.player.current == id) {
-        Backbone.player[id].pause();
-        Backbone.player.current = null;
-    } else {
-        var current = Backbone.player.current;
-        Backbone.player[current].pause();
-        Backbone.player[id].play();
-        Backbone.player.current = id;
-    }
-}
+
+};
 
 var Playlist = Backbone.Model.extend({
     defaults: {
@@ -32,7 +47,8 @@ var Track = Backbone.Model.extend({
         id: '',
         title: '',
         artist: '',
-        cover: '#'
+        cover: '#',
+        channel: ''
     }
 });
 
@@ -83,9 +99,10 @@ var TracksView = Backbone.View.extend({
         if (this.chache.hasOwnProperty(ID))
             this.collection = this.chache[ID];
         else {
-            this.collection.playlistId = ID;
-            this.collection.fetch({async: false, reset: true});
-            this.chache[ID] = new Tracks(this.collection.toJSON());
+            var c = this.collection;
+            c.playlistId = ID;
+            c.fetch({async: false, reset: true});
+            this.chache[ID] = new Tracks(c.toJSON());
         }
         this.currentPlaylist = Backbone.playlists.get(ID);
     },

@@ -16,7 +16,7 @@
             currentTheme = '<span class="font-main S13 color-current-theme">Current Theme:</span><br/>';
         }
         if(dto.selected)
-            selectedIcon = '<div class="inline icon-selected in-right in-middle"/>';
+            selectedIcon = '<div class="inline icon-selected"/>';
     %>
     <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
          class="pane height-pane block middle <%= color %> ">
@@ -30,6 +30,5 @@
         </div>
         <%= selectedIcon %>
     </div>
-
    <% }); %>
 </div>
