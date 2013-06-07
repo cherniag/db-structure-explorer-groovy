@@ -139,5 +139,23 @@
 				
 			</form>
 		</div>
+		<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+			$(function() {			
+				$('#messageType').change(function() {
+			          var value = $("#messageType :selected").val();
+			          if (value=='RICH_POPUP'){
+			        	  $("#frequence2").attr('disabled', false);
+			        	  $("#action").attr('disabled', false);
+			        	  $("#actionType").attr('disabled', false);
+			        	  $("#actionButtonText").attr('disabled', false);
+			          }else{
+			        	  $("#frequence2").attr('disabled', true);
+			        	  $("#action").attr('disabled', true);
+			        	  $("#actionType").attr('disabled', true);
+			        	  $("#actionButtonText").attr('disabled', true);
+			          }      
+			    }).change();
+			 });
+		/*]]>*/</script>
 	</body>
 </html>
