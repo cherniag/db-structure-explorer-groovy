@@ -3,13 +3,14 @@
         <div class="inline icon-playlist middle"/>
         <div class="inline text-header middle">Choose Your Playlist</div>
     </div>
-    <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
+    <a href="#apply" class="button-small button-right">Apply</a>
 </div>
 <div class="pad5">
     <% data.forEach(function (dto) {
-        if(dto.selected){
+    if(dto.selected){
     %>
-    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'" class="pane height-pane block middle color-selected">
+    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
+         class="pane height-pane block middle color-selected">
         <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= dto.cover %>"/>
 
@@ -21,9 +22,11 @@
         <div class="inline icon-selected in-right in-middle"/>
     </div>
     <%} else {%>
-    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'" class="pane height-pane block middle color-main">
+    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
+         class="pane height-pane block middle color-main">
         <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= dto.cover %>"/>
+
         <div class="inline top marg-L10">
             <span class="top0 font-main S15"><%= dto.title %></span><br/>
             <span class="font-main S13"><%= dto.length %> Tracks</span>

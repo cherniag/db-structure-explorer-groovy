@@ -56,6 +56,11 @@ var Playlists = Backbone.Collection.extend({
     },
     parse: function (response) {
         return response.playlists;
+    },
+    select: function(id){
+        this.models.forEach(function(list){
+            list.set('selected', list.get('id') == id);
+        });
     }
 });
 
@@ -71,7 +76,7 @@ var PlaylistView = Backbone.View.extend({
 
 var TracksView = Backbone.View.extend({
     el: 'body',
-    chache: new Object(),
+    chache: {},
     takeList: function (ID) {
         if (this.chache.hasOwnProperty(ID))
             this.collection = this.chache[ID];
@@ -93,7 +98,6 @@ var TracksView = Backbone.View.extend({
 
 var PlaylistRouter = Backbone.Router.extend({
     initialize: function () {
-
         //collections
         Backbone.playlists = new Playlists();
         Backbone.tracks = new Tracks();
@@ -108,7 +112,8 @@ var PlaylistRouter = Backbone.Router.extend({
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
         "": "allPlaylists",
-        "select/:listID": "select"
+        "select/:listID": "select",
+        "apply": "apply"
     },
     allPlaylists: function () {
         this.hideAll();
@@ -122,8 +127,11 @@ var PlaylistRouter = Backbone.Router.extend({
         this.tracksView.render();
     },
     select: function (listID) {
-        var playlist = Backbone.playlists.get(listID);
-        playlist.save({selected: true});
+        Backbone.playlists.select(listID);
+    },
+    apply: function(){
+        var list = Backbone.playlists.findWhere({selected: true});
+        list.save({selected: true});
     },
     hideAll: function () {
         _.each(this.views, function (view) {
