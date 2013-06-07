@@ -1,8 +1,8 @@
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
     <a href="#allPlaylists" class="button-small button-left">Back</a>
     <div class="inline in-center font-main S17">
-        <div class="icon-playlist"/>
-        <div class="text-header middle">Choose Your Playlist</div>
+        <!--<div class="inline icon-playlist"/>-->
+        <div class="inline text-header middle">Choose Your Playlist</div>
     </div>
 </div>
 <div class="pad5">
@@ -30,10 +30,10 @@
             <span class="font-main S13"><%= track.artist%></span><br/>
             <span class="font-main S13 color-channel"><%= track.channel%></span>
         </div>
+        <div class="inline icon-clock"/>
         <audio id="<%= track.id %>" controls>
             <source src="<%= track.audio %>">
         </audio>
-        <div class="icon-clock in-right"/>
     </div>
     <% }); %>
 </div>

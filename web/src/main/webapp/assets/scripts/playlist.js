@@ -1,3 +1,10 @@
+var Strings = {
+    cut:function(str, length){
+        if(str.length > length)
+            return str.substring(0, length-3) + '...';
+        return str;
+    }
+};
 Backbone.player = {
     cssPlaying: function(id){
         $('div#track' + id).removeClass('color-main');
@@ -30,7 +37,6 @@ Backbone.player = {
             this.current = id;
         }
     }
-
 };
 
 var Playlist = Backbone.Model.extend({
@@ -39,6 +45,10 @@ var Playlist = Backbone.Model.extend({
         title: '',
         length: 0,
         selected: false
+    },
+    parse: function(list){
+        list.description = Strings.cut(list.description, 20);
+        return list;
     }
 });
 
@@ -49,6 +59,11 @@ var Track = Backbone.Model.extend({
         artist: '',
         cover: '#',
         channel: ''
+    },
+    parse: function(track){
+        track.artist = Strings.cut(track.artist, 20);
+        track.title = Strings.cut(track.title, 20);
+        return track;
     }
 });
 

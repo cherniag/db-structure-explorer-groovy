@@ -309,6 +309,8 @@ audio{
 .icon-clock{
     width: 20px;
     height: 20px;
+    margin-top: 10px;
+    right: 10px;
     background: transparent url(../imgs/icon_track_preview.png) no-repeat;
 }
 
@@ -460,9 +462,7 @@ audio{
 }
 
 .in-center {
-    right: 0;
-    left: 0;
-    top: 12px;
+    margin: 18px auto ;
     position: absolute;
 }
 
