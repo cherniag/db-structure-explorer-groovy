@@ -7,7 +7,12 @@
     <a href="/web/playlist/swap.html" class="button-small button-right">Close</a>
 </div>
 <div class="pad5">
-    <div class="pane height-pane block middle color-main">
+    <%
+    var color = 'color-main';
+    if(playlist.selected)
+        color = 'color-selected';
+    %>
+    <div class="pane height-pane block middle <%= color %>">
         <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= playlist.cover %>"/>
         <div class="inline top marg-L10">
@@ -24,7 +29,7 @@
             <span class="top0 font-main S15"><%= track.title %></span><br/>
             <span class="font-main S13"><%= track.artist%></span>
         </div>
-        <audio id="<%= track.id %>" controls class="inline">
+        <audio id="<%= track.id %>" controls>
             <source src="<%= track.audio %>">
         </audio>
     </div>

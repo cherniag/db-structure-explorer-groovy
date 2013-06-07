@@ -6,32 +6,30 @@
     <a href="#apply" class="button-small button-right">Apply</a>
 </div>
 <div class="pad5">
-    <% data.forEach(function (dto) {
-    if(dto.selected){
+    <%
+    data.forEach(function (dto) {
+        var color = 'color-main';
+        var selectedIcon = '';
+        var currentTheme = '';
+        if(Backbone.playlists.preSelected == dto.id){
+            color = 'color-selected';
+            currentTheme = '<span class="font-main S13 color-current-theme">Current Theme:</span><br/>';
+        }
+        if(dto.selected)
+            selectedIcon = '<div class="inline icon-selected in-right in-middle"/>';
     %>
     <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
-         class="pane height-pane block middle color-selected">
+         class="pane height-pane block middle <%= color %> ">
         <div class="icon-playlist-filled"/>
         <img class="inline cover" src="<%= dto.cover %>"/>
 
         <div class="inline top marg-L10">
-            <span class="font-main S13 color-current-theme">Current Theme:</span><br/>
+            <%= currentTheme %>
             <span class="top0 font-main S15"><%= dto.title %></span><br/>
             <span class="font-main S13"><%= dto.length %> Tracks</span>
         </div>
-        <div class="inline icon-selected in-right in-middle"/>
+        <%= selectedIcon %>
     </div>
-    <%} else {%>
-    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
-         class="pane height-pane block middle color-main">
-        <div class="icon-playlist-filled"/>
-        <img class="inline cover" src="<%= dto.cover %>"/>
 
-        <div class="inline top marg-L10">
-            <span class="top0 font-main S15"><%= dto.title %></span><br/>
-            <span class="font-main S13"><%= dto.length %> Tracks</span>
-        </div>
-    </div>
-    <%}
-    }); %>
+   <% }); %>
 </div>

@@ -53,12 +53,14 @@ var Playlists = Backbone.Collection.extend({
     },
     initialize: function () {
         this.fetch({async: false});
+        var selected = this.findWhere({selected: true});
+        this.preSelected = selected.get('id');
     },
     parse: function (response) {
         return response.playlists;
     },
-    select: function(id){
-        this.models.forEach(function(list){
+    select: function (id) {
+        this.models.forEach(function (list) {
             list.set('selected', list.get('id') == id);
         });
     }
@@ -129,9 +131,11 @@ var PlaylistRouter = Backbone.Router.extend({
     select: function (listID) {
         Backbone.playlists.select(listID);
     },
-    apply: function(){
+    apply: function () {
         var list = Backbone.playlists.findWhere({selected: true});
-        list.save({selected: true});
+        if (Backbone.playlists.preSelected != list.get('id'))
+            list.save({selected: true});
+        window.location.href = '/web/playlist/swap.html';
     },
     hideAll: function () {
         _.each(this.views, function (view) {
