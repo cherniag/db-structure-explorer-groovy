@@ -345,7 +345,6 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
-		<appender-ref ref="transportProfileAppender" />
 	</logger>
 	<!-- END MIG Logger -->
 	

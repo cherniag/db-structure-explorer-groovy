@@ -41,14 +41,8 @@ public class Chart implements Serializable {
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
 
-	@Column(name="subtitle",columnDefinition="char(50)", nullable = false)
-	private String subtitle;
-
 	@Enumerated(value=EnumType.STRING)
 	private ChartType type;
-	
-	@Column(name="image_filename")
-	private String imageFileName;
 	
 	private byte numTracks;
 	
@@ -78,22 +72,6 @@ public class Chart implements Serializable {
 
 	public void setI(Byte i) {
 		this.i = i;
-	}
-	
-	public String getSubtitle() {
-		return subtitle;
-	}
-
-	public void setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
-	}
-
-	public String getImageFileName() {
-		return imageFileName;
-	}
-
-	public void setImageFileName(String imageFileName) {
-		this.imageFileName = imageFileName;
 	}
 
 	public List<Community> getCommunities() {
@@ -171,7 +149,7 @@ public class Chart implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Chart [subtitle=" + subtitle + ", imageFileName=" + imageFileName + ", genreId=" + genreId + ", i=" + i + ", name=" + name + ", numTracks=" + numTracks
+		return "Chart [genreId=" + genreId + ", i=" + i + ", name=" + name + ", numTracks=" + numTracks
 		+ ", numBonusTracks="+numBonusTracks+ ", timestamp=" + timestamp + "type=" + type + "]";
 	}	
 

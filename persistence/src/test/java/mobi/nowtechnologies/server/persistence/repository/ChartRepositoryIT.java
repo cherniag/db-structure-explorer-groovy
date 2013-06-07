@@ -49,14 +49,4 @@ public class ChartRepositoryIT {
 		assertNotNull(charts);
 		assertEquals(2, charts.size());
 	}
-	
-	@Test
-	@Transactional(propagation=Propagation.REQUIRED)
-	public void testUpdateFields() throws Exception {
-
-		int updated = chartRepository.updateFields((byte)1, "chart name", "chart subtitle", "chart image");
-
-		assertEquals(1, updated);
-	}
-
 }

@@ -13,16 +13,16 @@ insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image');
 
 insert into tb_labels (i,name) values (9,'INTERSCOPE');
 
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (1,'Basic Chart','Default Chart',20,1,1307035342,0, 'BASIC_CHART');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (2,'Basic Chart','Default Chart',20,1,1306787849,0, 'BASIC_CHART');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (3,'Basic Chart','Default Chart',20,1,1317281215,0, 'BASIC_CHART');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (4,'The Heavy List','The Heavy List',20,1,1317107880,0, 'BASIC_CHART');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (5,'Basic Chart','Default Chart',21,1,1321452650,6, 'BASIC_CHART');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (6,'Hot Chart','Default Chart',20,1,1307035342,0, 'HOT_TRACKS');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (7,'Hot Chart','Default Chart',20,1,1306787849,0, 'HOT_TRACKS');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (8,'Hot Chart','Default Chart',20,1,1317281215,0, 'HOT_TRACKS');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (9,'The Heavy List','The Heavy List',20,1,1317107880,0, 'HOT_TRACKS');
-insert into tb_charts (i, name, subtitle, numTracks, genre, timestamp, numBonusTracks, type) values (10,'Hot Chart','Default Chart',21,1,1321452650,6, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (1,'Default Chart',20,1,1307035342,0, 'BASIC_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (2,'Default Chart',20,1,1306787849,0, 'BASIC_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (3,'Default Chart',20,1,1317281215,0, 'BASIC_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (4,'The Heavy List',20,1,1317107880,0, 'BASIC_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (5,'Default Chart',21,1,1321452650,6, 'BASIC_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (6,'Default Chart',20,1,1307035342,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (7,'Default Chart',20,1,1306787849,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (8,'Default Chart',20,1,1317281215,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (9,'The Heavy List',20,1,1317107880,0, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (10,'Default Chart',21,1,1321452650,6, 'HOT_TRACKS');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);

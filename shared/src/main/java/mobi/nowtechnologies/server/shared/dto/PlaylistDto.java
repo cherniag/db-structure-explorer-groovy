@@ -10,6 +10,9 @@ public class PlaylistDto {
 	private String playlistTitle;
 	private String subtitle;
 	private String image;
+	private String imageTitle;
+	private String description;
+	private Byte position;
 	private ChartType type;
 
 	public Integer getId() {
@@ -52,8 +55,33 @@ public class PlaylistDto {
 		this.image = image;
 	}
 
+	public String getImageTitle() {
+		return imageTitle;
+	}
+
+	public void setImageTitle(String imageTitle) {
+		this.imageTitle = imageTitle;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Byte getPosition() {
+		return position;
+	}
+
+	public void setPosition(Byte position) {
+		this.position = position;
+	}
+
 	@Override
 	public String toString() {
-		return "PlaylistDto [id=" + id + ", playlistTitle=" + playlistTitle + ", subtitle=" + subtitle + ", image=" + image + ", type=" + type + "]";
+		return "PlaylistDto [id=" + id + ", playlistTitle=" + playlistTitle + ", subtitle=" + subtitle + ", image=" + image + ", imageTitle=" + imageTitle + ", description=" + description
+				+ ", position=" + position + ", type=" + type + "]";
 	}
 }

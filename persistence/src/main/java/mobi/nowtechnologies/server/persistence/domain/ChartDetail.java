@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
@@ -46,7 +45,7 @@ public class ChartDetail {
 	private Chart chart;
 
 	@Column(name = "media", insertable = false, updatable = false)
-	private int mediaId;
+	private Integer mediaId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "media")
@@ -58,18 +57,30 @@ public class ChartDetail {
 
 	private byte position;
 
-	private byte prevPosition;
+	private Byte prevPosition;
 
 	@Column(name = "chgPosition", insertable = false, updatable = false)
-	private int chgPositionId;
+	private Integer chgPositionId;
 
 	@Enumerated(EnumType.ORDINAL)
 	private ChgPosition chgPosition;
 
 	private String channel;
-	
+
+	@Column(name = "image_filename")
+	private String imageFileName;
+
+	@Column(name = "image_title")
+	private String imageTitle;
+
+	@Column(name = "title", columnDefinition = "char(50)", nullable = true)
+	private String title;
+
+	@Column(name = "subtitle", columnDefinition = "char(50)", nullable = true)
+	private String subtitle;
+
 	private long publishTimeMillis;
-	
+
 	@Version
 	private int version;
 
@@ -103,7 +114,39 @@ public class ChartDetail {
 
 	public void setMedia(Media media) {
 		this.media = media;
-		mediaId = media.getI();
+		mediaId = media.getI() != null ? media.getI() : null;
+	}
+
+	public String getImageFileName() {
+		return imageFileName;
+	}
+
+	public void setImageFileName(String imageFileName) {
+		this.imageFileName = imageFileName;
+	}
+
+	public String getImageTitle() {
+		return imageTitle;
+	}
+
+	public void setImageTitle(String imageTitle) {
+		this.imageTitle = imageTitle;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
 	}
 
 	public byte getPosition() {
@@ -118,11 +161,11 @@ public class ChartDetail {
 		return mediaId;
 	}
 
-	public byte getPrevPosition() {
+	public Byte getPrevPosition() {
 		return prevPosition;
 	}
 
-	public void setPrevPosition(byte prevPosition) {
+	public void setPrevPosition(Byte prevPosition) {
 		this.prevPosition = prevPosition;
 	}
 
@@ -134,7 +177,7 @@ public class ChartDetail {
 		this.chgPosition = chgPosition;
 	}
 
-	public int getChgPositionId() {
+	public Integer getChgPositionId() {
 		return chgPositionId;
 	}
 
@@ -170,6 +213,10 @@ public class ChartDetail {
 		this.version = version;
 	}
 
+	public boolean isChartItem() {
+		return media != null;
+	}
+
 	public static List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, String defaultAmazonUrl) {
 		if (chartDetails == null)
 			throw new PersistenceException("The parameter chartDetails is null");
@@ -179,11 +226,7 @@ public class ChartDetail {
 		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
 		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			if (chartDetail.getChart().getType() == ChartType.BASIC_CHART)
-				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
-			else {
-				chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
-			}
+			chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
 		}
 		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
 		return chartDetailDtos;
@@ -201,10 +244,10 @@ public class ChartDetail {
 		Integer audioSize = media.getAudioSize();
 		int headerSize = media.getHeaderSize();
 		ChartType chartType = chart.getType();
-		
-		byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte)(position+40) : position;
-		pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte)(position+50) : pos;
-		
+
+		byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte) (position + 40) : position;
+		pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte) (position + 50) : pos;
+
 		chartDetailDto.setPosition(pos);
 
 		chartDetailDto.setPlaylistId(chart.getI().intValue());
@@ -227,19 +270,19 @@ public class ChartDetail {
 		chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
 		chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
-	
+
 		String enocodediTunesUrl = null;
 		String enocodedAmazonUrl = null;
 		try {
 			String iTunesUrl = media.getiTunesUrl();
 			if (iTunesUrl != null)
 				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
-			String amazonUrl = media.getAmazonUrl();	
-			if (amazonUrl == null || amazonUrl.isEmpty()){
+			String amazonUrl = media.getAmazonUrl();
+			if (amazonUrl == null || amazonUrl.isEmpty()) {
 				amazonUrl = defaultAmazonUrl;
 			}
 			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
-			
+
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new PersistenceException(e.getMessage(), e);
@@ -316,26 +359,31 @@ public class ChartDetail {
 
 	public static ChartDetail newInstance(ChartDetail chartDetail) {
 		LOGGER.debug("input parameters chartDetail: [{}]", chartDetail);
-		
+
 		ChartDetail newChartDetail = new ChartDetail();
 		newChartDetail.setChannel(chartDetail.getChannel());
 		newChartDetail.setChart(chartDetail.getChart());
 		newChartDetail.setChgPosition(chartDetail.getChgPosition());
 		newChartDetail.setInfo(chartDetail.getInfo());
-		newChartDetail.setMedia(chartDetail.getMedia());
+		if(chartDetail.getMedia() != null)
+			newChartDetail.setMedia(chartDetail.getMedia());
 		newChartDetail.setPosition(chartDetail.getPosition());
 		newChartDetail.setPrevPosition(chartDetail.getPrevPosition());
+		newChartDetail.setTitle(chartDetail.getTitle());
+		newChartDetail.setSubtitle(chartDetail.getSubtitle());
+		newChartDetail.setImageFileName(chartDetail.getImageFileName());
+		newChartDetail.setImageTitle(chartDetail.getImageTitle());
 		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
-		
+
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "ChartDetail [chartId=" + chartId + ", chgPositionId=" + chgPositionId + ", i=" + i + ", mediaId=" + mediaId + ", position=" + position
-				+ ", prevPosition=" + prevPosition + ", channel=" + channel + ", info=" + info + ", publishTimeMillis=" + publishTimeMillis + ", version="
-				+ version + "]";
+		return "ChartDetail [i=" + i + ", chartId=" + chartId + ", chart=" + chart + ", mediaId=" + mediaId + ", info=" + info + ", position=" + position + ", prevPosition="
+				+ prevPosition + ", chgPositionId=" + chgPositionId + ", chgPosition=" + chgPosition + ", channel=" + channel + ", imageFileName=" + imageFileName + ", imageTitle=" + imageTitle
+				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", version=" + version + "]";
 	}
 
 }

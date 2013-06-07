@@ -32,7 +32,7 @@ public class PhoneNumberController extends CommonController {
 			@PathVariable("community") String community) throws Exception {
 		LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 		
-		boolean isFailed = false;
+		Exception ex = null;
 		User user = null; 
 		try {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
@@ -43,13 +43,10 @@ public class PhoneNumberController extends CommonController {
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
 		}catch(Exception e){
-			isFailed = true;
-			logProfileDate(community, null, phone, user, e);
+			ex = e;
 			throw e;
 		} finally {
-			if (!isFailed){
-				logProfileDate(community, null, phone, user, null);
-			}
+			logProfileData(null, community, null, phone, user, ex);
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
 	}

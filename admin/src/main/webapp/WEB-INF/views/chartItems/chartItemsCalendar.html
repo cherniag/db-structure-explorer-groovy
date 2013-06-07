@@ -7,13 +7,6 @@
 			<div th:substituteby="tpl::navbar"></div>
 			<div class="container">
 			<h1 class="head" th:text="#{chartItems.page.calendar.chooseDay.head.headline}">Chart Items Calendar</h1>
-			<form id="addNew" style="padding-left: 25px;">
-					<ul class="nav nav-pills table_margin">
-						<li class="active">
-							<a href="#" th:text="#{chartItems.page.button.chart.edit}" onclick="showChartEditDialog();">Edit Chart</a>
-						</li>
-					</ul>
-			</form>
 			
 				<div class="pageWindow simplePopup" id="popupNotificationError">
 					<div class="pageWindowContent simpleTextPopup">
@@ -77,9 +70,9 @@
 						<form class="edit_btn" th:action="@{/chartsNEW/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__/}" method="get">
 							<button class="btn btn-primary updatesList" type="submit" th:text="${#dates.format(new java.util.Date(updateTime), 'HH:mm')}">Edit for this time</button>
 						</form>
-						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post" th:if="${!#lists.isEmpty(CHART_ITEM_DTO_LIST)}">
+						<form id="deleteChartItemsSetForm" class="del_btn" th:action="@{/charts/__${chart.id}__/__${#dates.format(new java.util.Date(updateTime), 'yyyy-MM-dd_HH:mm:ss')}__}" method="post">
 							<input type="hidden" id="_method" name="_method" value="DELETE" />
-								<a href="#" onCLick="$('form#deleteChartItemsSetForm').submit();"><img th:src="@{/assets/img/icon_delete.png}"
+								<a href="#" onCLick="$(this).parent().submit();"><img th:src="@{/assets/img/icon_delete.png}"
 									th:alt="#{chartItems.page.deleteChartItemsSetForm.submit.text}"
 									width="32" height="32" /></a>
 						</form>
@@ -104,67 +97,7 @@
 												
 			</div>
 			
-				<div id="chart-edit-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 id="myModalLabel">Edit Chart</h3>
-					</div>
-					<div class="modal-body" style="width:530px">
-						<form id="chart-edit-form" action="#" th:action="@{'/charts/'+${chart.id}}" method="post"
-						enctype="multipart/form-data" accept-charset="UTF-8">
-							<div class="control-group">
-								<input type="hidden" name="id"/> 
-								<input type="hidden" name="name"/>
-								<input type="hidden" name="imageFileName"/>
-								<div class="filtersSelect">
-									<div id="selectImageDiv">
-										<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.image}">Select Image:</strong></label>
-										<img class="addedImage" src="###" width="240" height="180"/>
-										<br/><br/>
-										<input id="file" name="file" type="file" accept="image"/>
-									</div>
-								</div>
-								<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.subtitle}">Subtitle:</strong></label>
-								<input type="text" name="subtitle" style="width:98%;"/>
-							</div>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="onSaveChart();">Save</button>
-						<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-					</div>
-				</div>
-			
 			<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
-			var filesURL = /*[[@{__${chartFilesURL}__/}]]*/ 'url';			                                                                 
-			var chart = {};
-			chart.id = /*[[${chart.id}]]*/ '1';
-			chart.name = /*[[${chart.name}]]*/ 'name';
-			chart.subtitle = /*[[${chart.subtitle}]]*/ 'subtitle';
-			chart.imageFileName = /*[[${chart.imageFileName}]]*/ 'imageFileName';
-			                                                                 
-			function showChartEditDialog() {
-				
-				var id = chart.id;
-				var name = chart.name;
-				var subtitle = chart.subtitle;
-				var imageFileName = chart.imageFileName;
-				var imageFileUrl = filesURL+imageFileName;
-				
-				var chartEditForm = $("form#chart-edit-form");
-				chartEditForm.find("input[name='id']").val(id);
-				chartEditForm.find("input[name='name']").val(name);
-				chartEditForm.find("input[name='subtitle']").val(subtitle);
-				chartEditForm.find("input[name='imageFileName']").val(imageFileName);
-				chartEditForm.find(".addedImage").attr('src', imageFileUrl);
-				
-				$("#chart-edit-dialog").modal("show");
-			};
-			
-			function onSaveChart() {
-				var chartEditForm = $("form#chart-edit-form");
-				chartEditForm.submit();
-			};	
 			                                                                 
 			$(function() {
 				var url = /*[[@{'/charts/'+${chart.id}+'.json'}]]*/ '';

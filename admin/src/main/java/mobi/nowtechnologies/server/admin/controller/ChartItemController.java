@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
+import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
@@ -14,6 +15,7 @@ import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
+import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ public class ChartItemController extends AbstractCommonController{
 	private ChartDetailService chartDetailService;
 	private MediaService mediaService;
 	private String filesURL;
+	private String chartFilesURL;
 	private ChartService chartService;
 	private Map<String, String> viewByChartType;
 	
@@ -60,6 +63,15 @@ public class ChartItemController extends AbstractCommonController{
 	public void setFilesURL(String filesURL) {
 		this.filesURL = filesURL;
 	}
+	
+	public void setChartFilesURL(String chartFilesURL) {
+		this.chartFilesURL = chartFilesURL;
+	}
+
+	@ModelAttribute("chartFilesURL")
+	public String getFilesURL() {
+		return chartFilesURL;
+	}
 
 	/**
 	 * Getting chart item list for selected date
@@ -70,12 +82,18 @@ public class ChartItemController extends AbstractCommonController{
 	 * @return madel and view name of chart item list page
 	 */
 	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.GET)
-	public ModelAndView getChartItemsPage(@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId, @RequestParam(value="changePosition", required=false) boolean changePosition, Locale locale) {
+	public ModelAndView getChartItemsPage(
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, 
+			@PathVariable("chartId") Byte chartId, 
+			@RequestParam(value="changePosition", required=false) boolean changePosition, 
+			Locale locale) {
 		LOGGER.debug("input parameters request getChartItemsPage(selectedPublishDateTime, chartId): [{}], [{}]", new Object[] { selectedPublishDateTime, chartId });
 		
 		Chart chart = chartService.getChartById(chartId);
+		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, true).get(0);
 		List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDateTime, changePosition);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartDetails);
+		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
 		
 		Collection<String> allChannels = new HashSet<String>(getInitChannels(locale));
 		allChannels.addAll(chartDetailService.getAllChannels());
@@ -87,7 +105,7 @@ public class ChartItemController extends AbstractCommonController{
 		modelAndView.addObject("selectedPublishDateTime", selectedPublishDateTime);
 		modelAndView.addObject("filesURL", filesURL);
 		modelAndView.addObject("allChannels", allChannels);
-		modelAndView.addObject("chartId", chartId);
+		modelAndView.addObject("chart", chartDto);
 
 		return modelAndView;
 	}
@@ -182,7 +200,7 @@ public class ChartItemController extends AbstractCommonController{
 		ModelAndView modelAndView;
 		try {
 			chartDetailService.updateChartItems(chartId, selectedPublishDateTime.getTime(), newPublishDateTime.getTime());
-			modelAndView = new ModelAndView("redirect:/charts/" + chartId + "/" + dateTimeFormat.format(newPublishDateTime));
+			modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + dateTimeFormat.format(newPublishDateTime));
 		} catch (ServiceCheckedException e) {
 			LOGGER.warn(e.getMessage(), e);
 			response.setStatus(HttpStatus.PRECONDITION_FAILED.value());

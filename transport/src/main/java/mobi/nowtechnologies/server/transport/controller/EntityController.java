@@ -1,10 +1,37 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.util.StringUtils.hasText;
+
+import java.io.StringReader;
+import java.lang.Thread.State;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
+import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.DeviceUserDataService;
+import mobi.nowtechnologies.server.service.DrmService;
+import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
+import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.service.PromotionService;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDetailsDtoValidator;
@@ -18,30 +45,22 @@ import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
-import java.lang.Thread.State;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * EntityController
@@ -159,7 +178,7 @@ public class EntityController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
 	public ModelAndView accountCheckForO2Client(
 			HttpServletRequest httpServletRequest,
@@ -175,18 +194,48 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
 			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-			@PathVariable("community") String community) {
-		ModelAndView mav = accountCheckWithXtifyToken(httpServletRequest, appVersion, community, apiVersion, userName, userToken,
-				timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt);
+			@PathVariable("community") String community) throws Exception {
 
-		User user = userService.findByNameAndCommunity(userName, community);
-		AccountCheckDTO accountCheckDTO = getAccountCheckDtoFrom(mav);
+		User user = null;
+		Exception ex = null;
+		try {
+			LOGGER.info("command proccessing started");
+			
+			if (iphoneToken != null)
+				pushNotificationToken = iphoneToken;
+			
+			if (org.springframework.util.StringUtils.hasText(deviceUID))
+				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
+			else
+				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-		ActivationStatus activationStatus = user.getActivationStatus();
-		accountCheckDTO.setActivation(activationStatus);
-		accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+			logAboutSuccessfullAccountCheck();
 
-		return mav;
+			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
+					pushNotificationToken, deviceType, transactionReceipt);
+			final Object[] objects = new Object[] { accountCheckDTO };
+			proccessRememberMeToken(objects);
+
+			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
+			
+			if (isNotBlank(xtifyToken)) {
+				user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+			}
+
+			user = userService.findByNameAndCommunity(userName, community);
+			
+			ActivationStatus activationStatus = user.getActivationStatus();
+			accountCheckDTO.setActivation(activationStatus);
+			accountCheckDTO.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+
+			return mav;
+		} catch (Exception e) {
+			ex = e;
+			throw e;
+		} finally {
+			logProfileData(deviceUID, community, null, null, user, ex);
+			LOGGER.info("command processing finished");
+		}
 	}
 
 	public static AccountCheckDTO getAccountCheckDtoFrom(ModelAndView mav) {
@@ -210,56 +259,50 @@ public class EntityController extends CommonController {
 			@RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) {
+			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) throws Exception {
 
-		ModelAndView mav = accountCheck(httpServletRequest, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, transactionReceipt);
-		if (isNotBlank(xtifyToken)) {
-			deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
-		}
-
-		return mav;
-	}
-
-	public ModelAndView accountCheck(
-			HttpServletRequest httpServletRequest,
-			String appVersion,
-			String communityName,
-			String apiVersion,
-			String userName,
-			String userToken,
-			String timestamp,
-			String deviceType,
-			String deviceUID,
-			String pushNotificationToken,
-			String iphoneToken,
-			String transactionReceipt) {
+		User user = null;
+		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started for [{}] user, [{}] community", userName, communityName);
-
+			LOGGER.info("command proccessing started");
+			
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
-
-			User user = null;
+			
 			if (org.springframework.util.StringUtils.hasText(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-			MDC.put("ACC_CHECK", "");
-			try {
-				LOGGER.info("The login was successful");
-			} finally {
-				MDC.remove("ACC_CHECK");
-			}
+			logAboutSuccessfullAccountCheck();
 
 			final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType, transactionReceipt);
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
 
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
+			
+			if (isNotBlank(xtifyToken)) {
+				user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+			}
+
+			return mav;
+		} catch (Exception e) {
+			ex = e;
+			throw e;
 		} finally {
+			logProfileData(deviceUID, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
+		}
+	}
+
+	private void logAboutSuccessfullAccountCheck() {
+		MDC.put("ACC_CHECK", "");
+		try {
+			LOGGER.info("The login was successful");
+		} finally {
+			MDC.remove("ACC_CHECK");
 		}
 	}
 
@@ -324,7 +367,9 @@ public class EntityController extends CommonController {
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -345,14 +390,18 @@ public class EntityController extends CommonController {
 						"The argument timestamp is null");
 			LOGGER.info("command after USER_NAME parameter validation on null");
 
-			User user = userService.checkCredentials(userName, userToken,
+			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 			Object[] objects = drmService.processBuyTrackCommand(user, isrc,
 					communityName);
 			proccessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(objects));
+		} catch (Exception e) {
+			ex = e;
+			throw e;
 		} finally {
+			logProfileData(null, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -405,7 +454,9 @@ public class EntityController extends CommonController {
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+		User user = null;
+		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
 			if (userName == null)
@@ -436,12 +487,21 @@ public class EntityController extends CommonController {
 			// devices
 			deviceType = (deviceType.equals(DeviceTypeDao.ANDROID.concat(",").concat(DeviceTypeDao.ANDROID))) ? DeviceTypeDao.ANDROID : deviceType;
 
-			User user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-			DeviceSet deviceSet = deviceService.setDevice(user.getId(),
-					deviceType, deviceUID);
+			user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+			
+			Map<String, Object> resultMap = deviceService.setDevice(user.getId(),
+					deviceType, deviceUID); 
+			
+			DeviceSet deviceSet = (DeviceSet) resultMap.get(DeviceTypeDao.DEVICE_SET_RESULT_MAP_KEY);
+			user = (User) resultMap.get(DeviceTypeDao.USER_RESULT_MAP_KEY);
+			
 			return new ModelAndView(view, Response.class.getSimpleName(),
 					new Response(new DeviceSet[] { deviceSet }));
+		} catch (Exception e) {
+			ex = e;
+			throw e;
 		} finally {
+			logProfileData(deviceUID, communityName, null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
@@ -743,7 +803,9 @@ public class EntityController extends CommonController {
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/SIGN_UP", "**/SIGN_UP" })
 	public void signUp(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
-			BindingResult result) {
+			BindingResult result) throws Exception {
+		User user = null;
+		Exception ex = null;
 		LOGGER.info("command processing started");
 		try {
 			if (result.hasErrors()) {
@@ -758,14 +820,20 @@ public class EntityController extends CommonController {
 
 			userRegDetailsDto.setIpAddress(remoteAddr);
 
-			userService.registerUser(userRegDetailsDto);
+			user = userService.registerUser(userRegDetailsDto);
+		} catch (Exception e) {
+			ex = e;
+			throw e;
 		} finally {
+			logProfileData(null, userRegDetailsDto.getCommunityName(), null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_FACEBOOK_DETAILS", "**/UPDATE_USER_FACEBOOK_DETAILS" })
-	public ModelAndView updateUserFacebookDetails(HttpServletRequest request, @Valid @ModelAttribute(UserFacebookDetailsDto.NAME) UserFacebookDetailsDto userFacebookDetailsDto, BindingResult result) {
+	public ModelAndView updateUserFacebookDetails(HttpServletRequest request, @Valid @ModelAttribute(UserFacebookDetailsDto.NAME) UserFacebookDetailsDto userFacebookDetailsDto, BindingResult result) throws Exception {
+		User user = null;
+		Exception ex = null;
 		try {
 			LOGGER.info("command processing started");
 			if (result.hasErrors()) {
@@ -780,39 +848,23 @@ public class EntityController extends CommonController {
 			userFacebookDetailsDto.setIpAddress(remoteAddr);
 
 			AccountCheckDTO accountCheckDTO = userService.updateUserFacebookDetails(userFacebookDetailsDto);
-
-			final Object[] objects = new Object[] { accountCheckDTO };
-			proccessRememberMeToken(objects);
-
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
-
-		} finally {
-			LOGGER.info("command processing finished");
-		}
-	}
-
-	@RequestMapping(method = RequestMethod.POST, value = { "/UPDATE_USER_DETAILS", "**/UPDATE_USER_DETAILS" })
-	public ModelAndView updateUserDetails(HttpServletRequest request, @Valid @ModelAttribute(UserDetailsDto.NAME) UserDetailsDto userDetailsDto, BindingResult result) {
-		LOGGER.info("command processing started");
-		try {
-			if (result.hasErrors()) {
-				List<ObjectError> objectErrors = result.getAllErrors();
-
-				for (ObjectError objectError : objectErrors) {
-					throw ValidationException.getInstance(objectError.getDefaultMessage());
+			try {
+				if (PROFILE_LOGGER.isDebugEnabled()) {
+					user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userFacebookDetailsDto.getCommunityName());
 				}
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
 			}
 
-			String remoteAddr = Utils.getIpFromRequest(request);
-			userDetailsDto.setIpAddress(remoteAddr);
-
-			AccountCheckDTO accountCheckDTO = userService.updateUserDetails(userDetailsDto);
-
 			final Object[] objects = new Object[] { accountCheckDTO };
 			proccessRememberMeToken(objects);
-			return new ModelAndView(view, MODEL_NAME, new Response(objects));
 
+			return new ModelAndView(view, MODEL_NAME, new Response(objects));
+		} catch (Exception e) {
+			ex = e;
+			throw e;
 		} finally {
+			logProfileData(userFacebookDetailsDto.getDeviceUID(), userFacebookDetailsDto.getCommunityName(), null, null, user, ex);
 			LOGGER.info("command processing finished");
 		}
 	}
