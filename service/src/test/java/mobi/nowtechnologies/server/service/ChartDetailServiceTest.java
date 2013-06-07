@@ -858,14 +858,7 @@ public class ChartDetailServiceTest {
 
 	}
 
-	/**
-	 * Run the List<ChartDetail> getChartItemsByDate(Byte,Date) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected = ServiceException.class)
+	@Test(expected = Exception.class)
 	public void testGetChartItemsByDate_ChartIdIsNull_Failure() throws Exception {
 		Byte chartId = null;
 		Date selectedPublishDate = new Date();
@@ -873,14 +866,7 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
 	}
 
-	/**
-	 * Run the List<ChartDetail> getChartItemsByDate(Byte,Date) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected = ServiceException.class)
+	@Test(expected = Exception.class)
 	public void testGetChartItemsByDate_SelectedPublishDateIsNull_Failure() throws Exception {
 		Byte chartId = new Byte((byte) 1);
 		Date selectedPublishDate = null;
@@ -888,13 +874,6 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
 	}
 	
-	/**
-	 * Run the List<ChartDetail> getChartItemsByDate(List<ChartDetailDto>) method test successfully.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSaveChartItems_Successful() throws Exception {
