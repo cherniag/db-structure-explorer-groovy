@@ -79,11 +79,6 @@ public class ChartController extends AbstractCommonController {
 		chartDtoValidator.setChartService(chartService);
 		binder.setValidator(chartDtoValidator);	
 	}
-	
-	@ModelAttribute("chartFilesURL")
-	public String getFilesURL() {
-		return chartFilesURL;
-	}
 
 	@RequestMapping(value = "/charts/list", method = RequestMethod.GET)
 	public ModelAndView getCharts(HttpServletRequest request) {
@@ -168,6 +163,7 @@ public class ChartController extends AbstractCommonController {
 		modelAndView.addObject("selectedDateTime", selectedPublishDateTime);
 		modelAndView.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId));
 		modelAndView.addObject("filesURL", filesURL);
+		modelAndView.addObject("chartFilesURL", chartFilesURL);
 		modelAndView.addObject("chart", chartDto);
 
 		return modelAndView;

@@ -236,7 +236,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="container chartControl" style="overflow-x: auto;">
+		<div class="container chartControl" style="overflow-x: auto;" th:with="curDate=${#dates.format(#dates.createToday(), '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
 			<div class="navButtonsWithoutBorder" th:with="cancelUrlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
 					<form id="addNew">
 						<ul class="nav nav-pills table_margin">
@@ -245,10 +245,10 @@
 							</li>
 						</ul>
 					</form>
-					<form id="updatePositionsForm" class="del_btn">
+					<form id="updatePositionsForm" class="del_btn" th:with="selectedDate = ${curDate != cancelUrlDate ? cancelUrlDate : #dates.format(#dates.createNow(), '__#{chartItems.publishDateInURL.format}__')}">
 						<ul class="nav nav-pills table_margin">
 							<li class="active">
-								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chart.id}__/(selectedPublishDateTime=${cancelUrlDate})}">Cancel</a>
+								<a th:text="#{chartItems.page.button.cancel}" th:href="@{/charts/__${chart.id}__/(selectedPublishDateTime=${selectedDate})}">Cancel</a>
 							</li>
 						</ul>
 					</form>
