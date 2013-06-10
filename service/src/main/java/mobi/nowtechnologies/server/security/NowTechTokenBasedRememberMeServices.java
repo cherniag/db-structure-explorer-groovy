@@ -26,8 +26,10 @@ import java.io.IOException;
 public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeServices {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NowTechTokenBasedRememberMeServices.class);
+	
 	private AuthenticationSuccessHandler successfulHander;
-    private final long EXPIRY_TIME_2_YEARS = new DateTime().plusYears(2).getMillis();
+    
+	private final long EXPIRY_TIME_2_YEARS = new DateTime().plusYears(2).getMillis();
 	
 	public NowTechTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
 		super(key, userDetailsService);
