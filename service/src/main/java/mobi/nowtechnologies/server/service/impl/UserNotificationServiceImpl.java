@@ -154,7 +154,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			final UserGroup userGroup = user.getUserGroup();
 			final Community community = userGroup.getCommunity();
 
-			LogUtils.putGlobalMDC(user.getUserName(), community.getName(), "", this.getClass(), "");
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
@@ -194,7 +194,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			final UserGroup userGroup = user.getUserGroup();
 			final Community community = userGroup.getCommunity();
 
-			LogUtils.putGlobalMDC(user.getUserName(), community.getName(), "", this.getClass(), "");
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
@@ -240,7 +240,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			final UserGroup userGroup = user.getUserGroup();
 			final Community community = userGroup.getCommunity();
 
-			LogUtils.putGlobalMDC(user.getUserName(), community.getName(), "", this.getClass(), "");
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			if (userStatusName.equals(UserStatus.LIMITED.name()) && paymentDetailsList.isEmpty()) {
@@ -281,7 +281,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			final UserGroup userGroup = user.getUserGroup();
 			final Community community = userGroup.getCommunity();
 
-			LogUtils.putGlobalMDC(user.getUserName(), community.getName(), "", this.getClass(), "");
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			if (user.isO2PAYGConsumer()) {
@@ -321,7 +321,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			final UserGroup userGroup = user.getUserGroup();
 			final Community community = userGroup.getCommunity();
 
-			LogUtils.putGlobalMDC(user.getUserName(), community.getName(), "", this.getClass(), "");
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();

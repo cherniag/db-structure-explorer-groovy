@@ -11,4 +11,6 @@ public interface SecurityContextDetails {
 	public String getUsername();
 	
 	public List<GrantedAuthority> getUserAuthorities();
+
+	String getUserMobile();
 }
