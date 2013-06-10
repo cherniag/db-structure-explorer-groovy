@@ -38,6 +38,7 @@ public class PendingPaymentExecutor {
 			try {
 				User user = pendingPayment.getUser();
 				LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity().getName()), this.getClass());
+				LogUtils.put3rdParyRequestProfileSpecificMDC(user.getUserName(), user.getMobile(), user.getId());
 				
 			LOGGER.info("Starting payment transaction with txId:{} ...", pendingPayment.getInternalTxId());
 			LOGGER.info("for user {} with balance {}", user.getId(), user.getSubBalance());
@@ -50,6 +51,7 @@ public class PendingPaymentExecutor {
 			}finally{
 				LOGGER.info("Payment transaction finished");
 				LogUtils.removePaymentMDC();
+				LogUtils.removeAll3rdParyRequestProfileMDC();
 			}
 		}
 	}

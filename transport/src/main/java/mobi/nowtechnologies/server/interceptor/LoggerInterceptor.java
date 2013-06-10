@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
@@ -29,14 +31,16 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 		String remoteAddr = Utils.getIpFromRequest(request);
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		
-		LogUtils.putGlobalMDC(request.getParameter("USER_NAME"), request.getParameter("COMMUNITY_NAME"), request.getPathInfo().replaceFirst("/", ""), handlerMethod.getBean().getClass(), remoteAddr);
+		LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), request.getParameter("COMMUNITY_NAME"), request.getPathInfo().replaceFirst("/", ""), handlerMethod.getBean().getClass(), remoteAddr);
 		
 		return super.preHandle(request, response, handler);
 	}
 	
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+		
 		LogUtils.removeGlobalMDC();
+		LogUtils.removeAll3rdParyRequestProfileMDC();
 		super.afterCompletion(request, response, handler, ex);
 	}
 	
