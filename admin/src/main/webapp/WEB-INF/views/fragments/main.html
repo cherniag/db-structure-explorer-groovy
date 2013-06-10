@@ -53,7 +53,7 @@ section {
 					
 				for (i in data.CHART_DTO_LIST) {
 					$("ul#dropdownCharts").append(
-							'<li><a>' + data.CHART_DTO_LIST[i].name
+							'<li><a>' + data.CHART_DTO_LIST[i].name + " " + data.CHART_DTO_LIST[i].subtitle 
 									+ '</a></li>');
 					var $chartId = data.CHART_DTO_LIST[i].id;
 					var $w = location.protocol + '//' + location.host;

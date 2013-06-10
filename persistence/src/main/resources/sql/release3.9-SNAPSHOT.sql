@@ -162,3 +162,20 @@ update tb_userAndroidDetails set tb_userAndroidDetails.last_push_of_content_upda
 alter table messages add column actionType varchar(255);
 alter table messages add column action varchar(255);
 alter table messages add column actionButtonText varchar(255);
+
+--IMP-1631 [jAdmin] Change the way of showing playlist names\
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
+set cd.title = 'Official Top 40' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
+set cd.title = 'Just In' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART'
+set cd.title = 'Your playlist' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
+set cd.title = 'Mainstage' where cd.media is null
