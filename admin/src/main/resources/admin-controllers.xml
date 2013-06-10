@@ -68,6 +68,7 @@
 				<entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
 				<entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
 				<entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
+				<entry key ="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
 			</map>
 		</property>		    
 	</bean>
