@@ -523,4 +523,14 @@ public class ChartDetailService {
 		return updatedRowCount;
 
 	}
+	
+	@Transactional(readOnly = true)
+	public Long findNearestLatestPublishTimeMillis(Community community, long choosedPublishTimeMillis){
+		LOGGER.debug("input parameters community, choosedPublishTimeMillis: [{}], [{}]", community, choosedPublishTimeMillis);
+		
+		Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community);
+		
+		LOGGER.debug("Output parameter nearestLatestPublishTimeMillis=[{}]", nearestLatestPublishTimeMillis);
+		return nearestLatestPublishTimeMillis;
+	}
 }

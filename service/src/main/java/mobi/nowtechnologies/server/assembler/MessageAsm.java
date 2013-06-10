@@ -28,6 +28,9 @@ public class MessageAsm {
 			messageDto.setMessageType(message.getMessageType());
 			messageDto.setPosition(message.getPosition());
 			messageDto.setPublishTime(new Date(message.getPublishTimeMillis()));
+			messageDto.setAction(message.getAction());
+			messageDto.setActionType(message.getActionType());
+			messageDto.setActionButtonText(message.getActionButtonText());
 			Set<FilterDto> filterDtos = FilterAsm.toDtos(message.getFilterWithCtiteria());
 			messageDto.setFilterDtos(filterDtos);
 		return messageDto;

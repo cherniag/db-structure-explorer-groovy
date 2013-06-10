@@ -227,12 +227,13 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userAndroidDetailsService" ref="service.UserAndroidDetailsService" />
 	</bean>
 
-	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService">
+	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService" parent="service.UserDeviceDetailsService">
+		<property name="userIPhoneDetailsRepository" ref="userIPhoneDetailsRepository" />
 		<property name="userIPhoneDetailsDao" ref="persistence.UserIPhoneDetailsDao" />
 	</bean>
 
 
-	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService">
+	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService" parent="service.UserDeviceDetailsService">
 		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />
 	</bean>
 
@@ -264,15 +265,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="smsNotificationAspect" class="mobi.nowtechnologies.server.service.aop.SMSNotification" depends-on="service.WeeklyUpdateService">
-		<property name="migService" ref="service.migHttpService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="messageSource" ref="serviceMessageSource" />
-		<property name="paymentsUrl" value="${payments.url}" />
-		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
-		<property name="tinyUrlService" value="${tinyurl.service}" />
-		<property name="availableCommunities" value="${sms.available.communities}" />
-		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
-		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
+		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
@@ -333,7 +327,15 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
+		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="userService" ref="service.UserService" />
+		<property name="messageSource" ref="serviceMessageSource" />
+		<property name="paymentsUrl" value="${payments.url}" />
+		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
+		<property name="tinyUrlService" value="${tinyurl.service}" />
+		<property name="availableCommunities" value="${sms.available.communities}" />
+		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
+		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 	</bean>
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl">
@@ -403,7 +405,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="soaConsumerTransactionID" value="${o2.service.security.costumerTransactionId}"/>        
 	</bean>
 
-	<task:annotation-driven />
+	<task:annotation-driven executor="service.Executor"/>
+	<task:executor id="service.Executor" pool-size="20"/>
 
 	<import resource="payment.xml" />
 

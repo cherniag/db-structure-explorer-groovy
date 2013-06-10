@@ -51,7 +51,7 @@ public class UserRepositoryIT {
 
 	@Resource(name = "paymentPolicyRepository")
 	private PaymentPolicyRepository paymentPolicyRepository;
-
+	
 	@Test
 	@Rollback
 	public void testFindBefore48hExpireUsers() throws Exception {
@@ -434,6 +434,6 @@ public class UserRepositoryIT {
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());
 		assertEquals(testUser.getId(), actualUsers.get(1).getId());
-		
+			
 	}
 }

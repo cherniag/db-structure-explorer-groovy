@@ -72,7 +72,7 @@ public abstract class AbstractMessageController extends AbstractCommonController
 
 	@ModelAttribute("allMessageDtoTypes")
 	public MessageType[] populateAllMessageDtoTypes() {
-		return new MessageType[] { MessageType.NOTIFICATION, MessageType.POPUP };
+		return new MessageType[] { MessageType.NOTIFICATION, MessageType.POPUP, MessageType.RICH_POPUP };
 	}
 	
 	protected Date validateSelectedPublishDate(String selectedPublishDate) {

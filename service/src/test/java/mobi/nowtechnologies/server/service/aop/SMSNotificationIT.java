@@ -8,10 +8,12 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.util.Locale;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
@@ -49,7 +51,7 @@ public class SMSNotificationIT {
 	public PowerMockRule rule = new PowerMockRule();
 
 	@Autowired
-	private SMSNotification fixture;
+	private SMSNotification smsNotificationFixture;
 	
 	@Autowired
 	@Qualifier("service.WeeklyUpdateService")
@@ -86,6 +88,8 @@ public class SMSNotificationIT {
 	private MigHttpService mockMigService;
 	
 	private UserService mockUserService;
+	
+	private UserNotificationService userNotificationServiceMock;
 	
 	private CommunityResourceBundleMessageSource mockMessageSource;
 	
@@ -281,8 +285,10 @@ public class SMSNotificationIT {
 		mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
 		mockO2ClientService = mock(O2ClientService.class);
 		
-		fixture.setMigService(mockMigService);
-		fixture.setUserService(mockUserService);
+		userNotificationServiceMock = mock(UserNotificationService.class);
+		
+		smsNotificationFixture.setUserService(mockUserService);
+		smsNotificationFixture.setUserNotificationService(userNotificationServiceMock);
 		
 		payPalPaymentService.setEntityService(entityService);
 		payPalPaymentService.setHttpService(mockPaypalHttpService);

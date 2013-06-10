@@ -9,8 +9,6 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
  */
 public class ChartFactory
 {
-	private ChartFactory() {
-	}
 
 	public static Chart createChart() {
 		Chart chart = new Chart();

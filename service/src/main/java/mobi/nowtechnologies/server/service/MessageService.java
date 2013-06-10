@@ -93,7 +93,7 @@ public class MessageService {
 	public List<MessageDto> getMessageDtos(String communityURL) {
 		LOGGER.debug("input parameters communityURL: [{}]", communityURL);
 
-		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP), null);
+		List<Message> messages = getMessages(communityURL, Arrays.asList(MessageType.NOTIFICATION, MessageType.POPUP, MessageType.RICH_POPUP), null);
 		List<MessageDto> messageDtos = MessageAsm.toDtos(messages);
 		LOGGER.debug("Output parameter [{}]", messageDtos);
 		return messageDtos;
@@ -143,10 +143,10 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(MessageDto messageDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters messageDto, communityURL, message: [{}], [{}]", new Object[] { messageDto, communityURL, message });
 
-		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
+		Community community = communityService.getCommunityByUrl(communityURL);
 
 		final long publishTimeMillis = messageDto.getPublishTime().getTime();
 		Integer position;
@@ -176,6 +176,9 @@ public class MessageService {
 		message.setFilterWithCtiteria(filterWithCtiteria);
 		message.setPosition(position);
 		message.setCommunity(community);
+		message.setAction(messageDto.getAction());
+		message.setActionType(messageDto.getActionType());
+		message.setActionButtonText(messageDto.getActionButtonText());
 
 		message = messageRepository.save(message);
 
@@ -245,7 +248,7 @@ public class MessageService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
+	protected Message saveOrUpdate(NewsItemDto newsItemDto, String communityURL, Message message) {
 		LOGGER.debug("input parameters newsItemDto, communityURL, message: [{}], [{}]", new Object[] { newsItemDto, communityURL, message });
 
 		Community community = CommunityDao.getMapAsUrls().get(communityURL.toUpperCase());
@@ -322,7 +325,7 @@ public class MessageService {
 		boolean isNewsForChoosedPublishDateAlreadyExist = (count > 0);
 		if (!isNewsForChoosedPublishDateAlreadyExist) {
 
-			Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS);
+			Long nearestLatestPublishTimeMillis = findNearestLatestPublishDate(community, choosedPublishTimeMillis);
 
 			if (nearestLatestPublishTimeMillis != null) {
 				List<Message> messages = messageRepository.findByCommunityAndMessageTypesAndPublishTimeMillis(community, Arrays.asList(MessageType.NEWS), nearestLatestPublishTimeMillis);
@@ -339,6 +342,15 @@ public class MessageService {
 		return clonedMessages;
 	}
 
+	public Long findNearestLatestPublishDate(Community community, final long choosedPublishTimeMillis) {
+		LOGGER.debug("input parameters community, choosedPublishTimeMillis: [{}], [{}]", community, choosedPublishTimeMillis);
+		
+		Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS);
+		
+		LOGGER.debug("Output parameter nearestLatestPublishTimeMillis=[{}]", nearestLatestPublishTimeMillis);
+		return nearestLatestPublishTimeMillis;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<Message> getActualNews(String communityUrl, Date selectedDate) {
@@ -347,7 +359,7 @@ public class MessageService {
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		long currentTimeMillis = selectedDate.getTime();
 
-		Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(currentTimeMillis, community, MessageType.NEWS);
+		Long nearestLatestPublishTimeMillis = findNearestLatestPublishDate(community, currentTimeMillis);
 
 		final List<Message> messages;
 		if (nearestLatestPublishTimeMillis != null)

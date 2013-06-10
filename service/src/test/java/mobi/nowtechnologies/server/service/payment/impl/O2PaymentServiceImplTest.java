@@ -1,15 +1,20 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.service.UserServiceTest.O2_PAYG_CONSUMER_GRACE_DURATION_CODE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Locale;
 
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.service.UserServiceTest.O2_PAYG_CONSUMER_GRACE_DURATION_CODE;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
@@ -67,7 +72,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -97,42 +101,42 @@ public class O2PaymentServiceImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		o2PaymentServiceImplSpy = Mockito.spy(new O2PaymentServiceImpl());
+		o2PaymentServiceImplSpy = spy(new O2PaymentServiceImpl());
 		
-		userServiceMock = Mockito.mock(UserService.class);
+		userServiceMock = mock(UserService.class);
 
-		SagePayService mockSagePayService = PowerMockito.mock(SagePayService.class);
-		PaymentPolicyService mockPaymentPolicyService = PowerMockito.mock(PaymentPolicyService.class);
-		mockCountryService = PowerMockito.mock(CountryService.class);
-		mockCommunityResourceBundleMessageSource = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
-		DeviceTypeService mockDeviceTypeService = PowerMockito.mock(DeviceTypeService.class);
-		mockUserRepository = PowerMockito.mock(UserRepository.class);
-		CountryByIpService mockCountryByIpService = PowerMockito.mock(CountryByIpService.class);
-		OfferService mockOfferService = PowerMockito.mock(OfferService.class);
-		mockPaymentDetailsService = PowerMockito.mock(PaymentDetailsService.class);
-		UserDeviceDetailsService mockUserDeviceDetailsService = PowerMockito.mock(UserDeviceDetailsService.class);
-		PromotionService mockPromotionService = PowerMockito.mock(PromotionService.class);
-		mockUserDao = PowerMockito.mock(UserDao.class);
-		CountryAppVersionService mocCountryAppVersionService = PowerMockito.mock(CountryAppVersionService.class);
-		mockEntityService = PowerMockito.mock(EntityService.class);
-		MigPaymentService mockMigPaymentService = PowerMockito.mock(MigPaymentService.class);
-		DrmService mockDrmService = PowerMockito.mock(DrmService.class);
-		FacebookService mockFacebookService = PowerMockito.mock(FacebookService.class);
-		mockCommunityService = PowerMockito.mock(CommunityService.class);
-		mockDeviceService = PowerMockito.mock(DeviceService.class);
-		mockMigHttpService = PowerMockito.mock(MigHttpService.class);
-		PaymentService mockPaymentService = PowerMockito.mock(PaymentService.class);
-		mockAccountLogService = PowerMockito.mock(AccountLogService.class);
-		mockO2ClientService = PowerMockito.mock(O2ClientService.class);
-		mockUserRepository = PowerMockito.mock(UserRepository.class);
-		MailService mockMailService = PowerMockito.mock(MailService.class);
-		mockPaymentDetailsRepository = PowerMockito.mock(PaymentDetailsRepository.class);
+		SagePayService mockSagePayService = mock(SagePayService.class);
+		PaymentPolicyService mockPaymentPolicyService = mock(PaymentPolicyService.class);
+		mockCountryService = mock(CountryService.class);
+		mockCommunityResourceBundleMessageSource = mock(CommunityResourceBundleMessageSource.class);
+		DeviceTypeService mockDeviceTypeService = mock(DeviceTypeService.class);
+		mockUserRepository = mock(UserRepository.class);
+		CountryByIpService mockCountryByIpService = mock(CountryByIpService.class);
+		OfferService mockOfferService = mock(OfferService.class);
+		mockPaymentDetailsService = mock(PaymentDetailsService.class);
+		UserDeviceDetailsService mockUserDeviceDetailsService = mock(UserDeviceDetailsService.class);
+		PromotionService mockPromotionService = mock(PromotionService.class);
+		mockUserDao = mock(UserDao.class);
+		CountryAppVersionService mocCountryAppVersionService = mock(CountryAppVersionService.class);
+		mockEntityService = mock(EntityService.class);
+		MigPaymentService mockMigPaymentService = mock(MigPaymentService.class);
+		DrmService mockDrmService = mock(DrmService.class);
+		FacebookService mockFacebookService = mock(FacebookService.class);
+		mockCommunityService = mock(CommunityService.class);
+		mockDeviceService = mock(DeviceService.class);
+		mockMigHttpService = mock(MigHttpService.class);
+		PaymentService mockPaymentService = mock(PaymentService.class);
+		mockAccountLogService = mock(AccountLogService.class);
+		mockO2ClientService = mock(O2ClientService.class);
+		mockUserRepository = mock(UserRepository.class);
+		MailService mockMailService = mock(MailService.class);
+		mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
 
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
+		when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 
-		PowerMockito.mockStatic(UserStatusDao.class);
+		mockStatic(UserStatusDao.class);
 		
-		mockApplicationEventPublisher = PowerMockito.mock(ApplicationEventPublisher.class);
+		mockApplicationEventPublisher = mock(ApplicationEventPublisher.class);
 		
 		o2PaymentServiceImplSpy.setUserService(userServiceMock);
 		o2PaymentServiceImplSpy.setApplicationEventPublisher(mockApplicationEventPublisher);
@@ -174,25 +178,25 @@ public class O2PaymentServiceImplTest {
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
 		
 		final Boolean smsNotify = Boolean.TRUE;
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
+		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull())).thenReturn(message);
+		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
 		
 		final int internalTxId = Integer.MAX_VALUE;
 
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getBigRandomInt()).thenReturn(internalTxId);
+		mockStatic(Utils.class);
+		when(Utils.getBigRandomInt()).thenReturn(internalTxId);
 		
 		final String externalTxId = String.valueOf(Integer.MIN_VALUE);
 		O2Response o2Response = O2Response.successfulO2Response();
 		o2Response.setExternalTxId(externalTxId);
 		
-		Mockito.when(
+		when(
 				mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
 				.thenReturn(o2Response);
 		
-		Mockito.when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+		when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
 			@Override
 			public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -205,7 +209,7 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+		when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
 			@Override
 			public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -218,14 +222,14 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+		doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
 		
-		PowerMockito.mock(SubmittedPayment.class);
+		mock(SubmittedPayment.class);
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
-		PowerMockito.whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
+		whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 		
-		Mockito.when(mockEntityService.updateEntity(Mockito.eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+		when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
 			@Override
 			public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -253,18 +257,18 @@ public class O2PaymentServiceImplTest {
 			}
 		};
 		
-		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(matcher ));
+		doNothing().when(mockApplicationEventPublisher).publishEvent(argThat(matcher ));
 
 		o2PaymentServiceImplSpy.startPayment(pendingPayment);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull());
-		Mockito.verify(
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull());
+		verify(
 				mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
-		Mockito.verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.verify(mockApplicationEventPublisher, times(1)).publishEvent(Mockito.argThat(matcher));
+		verify(mockEntityService, times(1)).updateEntity(pendingPayment);
+		verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+		verify(mockApplicationEventPublisher, times(1)).publishEvent(argThat(matcher));
 		
 	}
 	
@@ -302,26 +306,26 @@ public class O2PaymentServiceImplTest {
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
 		
 		final Boolean smsNotify = Boolean.TRUE;
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
+		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull())).thenReturn(message);
+		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
 		
 		final int internalTxId = Integer.MAX_VALUE;
 
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getBigRandomInt()).thenReturn(internalTxId);
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
+		mockStatic(Utils.class);
+		when(Utils.getBigRandomInt()).thenReturn(internalTxId);
+		when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
 		
 		final String externalTxId = String.valueOf(Integer.MIN_VALUE);
 		final O2Response o2Response = O2Response.failO2Response("");
 		o2Response.setExternalTxId(externalTxId);
 		
-		Mockito.when(
+		when(
 				mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
 				.thenReturn(o2Response);
 		
-		Mockito.when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+		when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
 			@Override
 			public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -334,7 +338,7 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+		when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
 			@Override
 			public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -346,14 +350,14 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+		doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
 		
-		PowerMockito.mock(SubmittedPayment.class);
+		mock(SubmittedPayment.class);
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
-		PowerMockito.whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
+		whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 		
-		Mockito.when(mockEntityService.updateEntity(Mockito.eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+		when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
 			@Override
 			public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -382,21 +386,21 @@ public class O2PaymentServiceImplTest {
 			}
 		};
 		
-		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(matcher ));
+		doNothing().when(mockApplicationEventPublisher).publishEvent(argThat(matcher ));
 		
-		Mockito.when(userServiceMock.unsubscribeUser(user, o2Response.getDescriptionError())).thenReturn(user);
+		when(userServiceMock.unsubscribeUser(user, o2Response.getDescriptionError())).thenReturn(user);
 
 		o2PaymentServiceImplSpy.startPayment(pendingPayment);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull());
-		Mockito.verify(
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull());
+		verify(
 				mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
-		Mockito.verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(matcher));
-		Mockito.verify(userServiceMock, times(1)).unsubscribeUser(user, o2Response.getDescriptionError());
+		verify(mockEntityService, times(1)).updateEntity(pendingPayment);
+		verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+		verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
+		verify(userServiceMock, times(1)).unsubscribeUser(user, o2Response.getDescriptionError());
 		
 	}
 	
@@ -431,25 +435,25 @@ public class O2PaymentServiceImplTest {
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
 		
 		final Boolean smsNotify = Boolean.TRUE;
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
+		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
-		Mockito.when(mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull())).thenReturn(message);
+		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
 		
 		final int internalTxId = Integer.MAX_VALUE;
 
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getBigRandomInt()).thenReturn(internalTxId);
+		mockStatic(Utils.class);
+		when(Utils.getBigRandomInt()).thenReturn(internalTxId);
 		
 		final String externalTxId = String.valueOf(Integer.MIN_VALUE);
 		final O2Response o2Response = O2Response.failO2Response("");
 		o2Response.setExternalTxId(externalTxId);
 		
-		Mockito.when(
+		when(
 				mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
 				.thenReturn(o2Response);
 		
-		Mockito.when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
+		when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
 			@Override
 			public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -462,7 +466,7 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+		when(mockEntityService.updateEntity(o2psmsPaymentDetails)).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
 			@Override
 			public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -475,14 +479,14 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
+		doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
 		
-		PowerMockito.mock(SubmittedPayment.class);
+		mock(SubmittedPayment.class);
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
-		PowerMockito.whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
+		whenNew(SubmittedPayment.class).withNoArguments().thenReturn(submittedPayment);
 		
-		Mockito.when(mockEntityService.updateEntity(Mockito.eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
+		when(mockEntityService.updateEntity(eq(submittedPayment))).thenAnswer(new Answer<SubmittedPayment>() {
 
 			@Override
 			public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -511,18 +515,18 @@ public class O2PaymentServiceImplTest {
 			}
 		};
 		
-		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(matcher ));
+		doNothing().when(mockApplicationEventPublisher).publishEvent(argThat(matcher ));
 
 		o2PaymentServiceImplSpy.startPayment(pendingPayment);
 		
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
-		Mockito.verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(Mockito.eq("o2"), Mockito.eq("sms.o2_psms"), (Object[]) Mockito.any(), (Locale)Mockito.isNull());
-		Mockito.verify(
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2_psms.send", null, null);
+		verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull());
+		verify(
 				mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
 						paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
-		Mockito.verify(mockEntityService, times(1)).updateEntity(pendingPayment);
-		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(matcher));
+		verify(mockEntityService, times(1)).updateEntity(pendingPayment);
+		verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
+		verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
 		
 	}
 
@@ -570,8 +574,8 @@ public class O2PaymentServiceImplTest {
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
 		user.setGracePeriod(gracePeriod);
 		
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
+		mockStatic(Utils.class);
+		when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
 		
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
@@ -663,15 +667,15 @@ public class O2PaymentServiceImplTest {
 		
 		final long currentTimeMillis = Long.MAX_VALUE;
 
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
+		mockStatic(Utils.class);
+		when(Utils.getEpochMillis()).thenReturn(currentTimeMillis);
 		
-		Mockito.when(mockPaymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details")).thenReturn(user);
+		when(mockPaymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details")).thenReturn(user);
 		
 		final int retriesOnError = Integer.MIN_VALUE;
-		Mockito.when(o2PaymentServiceImplSpy.getRetriesOnError()).thenReturn(retriesOnError);
+		when(o2PaymentServiceImplSpy.getRetriesOnError()).thenReturn(retriesOnError);
 		
-		Mockito.when(mockPaymentDetailsRepository.save(Mockito.any(O2PSMSPaymentDetails.class))).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
+		when(mockPaymentDetailsRepository.save(any(O2PSMSPaymentDetails.class))).thenAnswer(new Answer<O2PSMSPaymentDetails>() {
 
 			@Override
 			public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
@@ -696,8 +700,8 @@ public class O2PaymentServiceImplTest {
 		
 		assertEquals(actualO2PSMSPaymentDetails, user.getCurrentPaymentDetails());
 		
-		Mockito.verify(mockPaymentDetailsService, times(1)).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-		Mockito.verify(o2PaymentServiceImplSpy, times(1)).getRetriesOnError();
-		Mockito.verify(mockPaymentDetailsRepository, times(1)).save(Mockito.any(O2PSMSPaymentDetails.class));
+		verify(mockPaymentDetailsService, times(1)).deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+		verify(o2PaymentServiceImplSpy, times(1)).getRetriesOnError();
+		verify(mockPaymentDetailsRepository, times(1)).save(any(O2PSMSPaymentDetails.class));
 	}
 }

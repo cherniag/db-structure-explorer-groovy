@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.shared.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -26,13 +28,19 @@ public class NewsDetailDto {
 	private MessageType messageType;
 	
 	private MessageFrequence messageFrequence;
+	
+	private MessageActionType actionType;
+	
+	private String action;
+	
+	private String actionButtonText;
 
 	public enum MessageType {
-		NEWS, POPUP, NOTIFICATION, AD
+		NEWS, POPUP, NOTIFICATION, RICH_POPUP, AD
 	}
 	
 	public enum MessageFrequence {
-		ONCE, DAILY, WEEKLY
+		ONCE, ONCE_AFTER_1ST_TRACK_DOWNLOAD, DAILY, WEEKLY
 	}
 	
 	public enum UserHandset {
@@ -122,9 +130,34 @@ public class NewsDetailDto {
 		this.imageFileName = imageFileName;
 	}
 
+	public MessageActionType getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(MessageActionType actionType) {
+		this.actionType = actionType;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getActionButtonText() {
+		return actionButtonText;
+	}
+
+	public void setActionButtonText(String actionButtonText) {
+		this.actionButtonText = actionButtonText;
+	}
+
 	@Override
 	public String toString() {
-		return "NewsDetailDto [body=" + body + ", detail=" + detail + ", i=" + i + ", id=" + id + ", imageFileName=" + imageFileName + ", messageFrequence="
+		return "NewsDetailDto [actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", body=" + body + ", detail=" + detail + ", i=" + i + ", id=" + id
+				+ ", imageFileName=" + imageFileName + ", messageFrequence="
 				+ messageFrequence + ", messageType=" + messageType + ", position=" + position + ", timestampMilis=" + timestampMilis + "]";
 	}
 

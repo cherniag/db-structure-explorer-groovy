@@ -67,6 +67,39 @@
 					<div class="span8">
 					<input type="hidden" name="publishTime" required = "required" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd HH:mm:ss.SSS')}" />
 						<div class="filtersSelect">
+						<label>Action Type:</label>
+                            <div class="control-group">
+                                <select th:field="*{actionType}">
+                                    <option th:each="messageActionType : ${T(mobi.nowtechnologies.server.shared.enums.MessageActionType).values()}"
+                                            th:value="${messageActionType.name()}" th:label="${messageActionType.name()}" th:text="${messageActionType.name()}"></option>
+                                </select>
+                            </div>
+
+							<label><strong th:text="#{message.add.page.addMessageForm.action.label}">Action:</strong></label>
+							<div class="control-group">
+								<input th:field="*{action}"
+								th:class="${#fields.hasErrors('action')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.action.placeholder}"
+								placeholder="Action is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('action')}" th:errors="*{action}">
+									Wrong text format
+								</p>
+							</div>
+							
+							<label><strong>Action Button Text:</strong></label>
+							<div class="control-group">
+								<input th:field="*{actionButtonText}"
+								th:class="${#fields.hasErrors('actionButtonText')}? 'fieldError'"
+								type="text"
+								value=""
+								th:attr="placeholder=#{message.add.page.addMessageForm.actionButtonText.placeholder}"
+								placeholder="Action button text is here" class="span3" style="width: 755px; font-size: 11px;" />
+								<p th:if="${#fields.hasErrors('actionButtonText')}" th:errors="*{actionButtonText}">
+									Wrong text format
+								</p>
+							</div>
 							<label><strong>Message Headline:</strong></label>
 							<div class="control-group">
 								<input th:field="*{headline}"
@@ -106,5 +139,23 @@
 				
 			</form>
 		</div>
+		<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+			$(function() {			
+				$('#messageType').change(function() {
+			          var value = $("#messageType :selected").val();
+			          if (value=='RICH_POPUP'){
+			        	  $("#frequence2").attr('disabled', false);
+			        	  $("#action").attr('disabled', false);
+			        	  $("#actionType").attr('disabled', false);
+			        	  $("#actionButtonText").attr('disabled', false);
+			          }else{
+			        	  $("#frequence2").attr('disabled', true);
+			        	  $("#action").attr('disabled', true);
+			        	  $("#actionType").attr('disabled', true);
+			        	  $("#actionButtonText").attr('disabled', true);
+			          }      
+			    }).change();
+			 });
+		/*]]>*/</script>
 	</body>
 </html>
