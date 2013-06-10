@@ -169,3 +169,20 @@ INSERT INTO tb_charts( genre , name , subtitle , numBonusTracks , numTracks , TI
 select @chart_id:=tb_charts.i from tb_charts where tb_charts.type='FIFTH_CHART';
 INSERT INTO community_charts (chart_id, community_id) select @chart_id, tb_communities.i from tb_communities where tb_communities.name='o2';
 INSERT INTO tb_chartDetail( chart , POSITION , media , prevPosition , chgPosition , channel , info , publishTimeMillis , VERSION , image_filename , image_title , subtitle , title , locked , defaultChart ) VALUES( (select @chart_id) , 5 , NULL , NULL , NULL , NULL , NULL , UNIX_TIMESTAMP()*1000 , 0 , NULL , NULL , 'Especially For You' , 'VIP Playlist' , FALSE , TRUE ) ;
+
+--IMP-1631 [jAdmin] Change the way of showing playlist names\
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
+set cd.title = 'Official Top 40' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
+set cd.title = 'Just In' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART'
+set cd.title = 'Your playlist' where cd.media is null
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
+set cd.title = 'Mainstage' where cd.media is null
