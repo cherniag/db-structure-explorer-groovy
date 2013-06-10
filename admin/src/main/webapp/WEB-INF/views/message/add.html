@@ -114,8 +114,8 @@
 							<div class="controls">
 								<label><strong>Message Body:</strong></label>
 								<textarea th:field="*{body}"
-									th:class="${#fields.hasErrors('headline')}? 'fieldError'"
-									rows="30" id="textarea"
+									th:class="${#fields.hasErrors('body')}? 'fieldError'"
+									rows="30" id="editableTextArea"
 									th:attr="placeholder=#{message.add.page.addMessageForm.body.placeholder}"
 									placeholder="Full new is here" class="input-xlarge"
 									style="width: 755px; height: 400px; font-size: 11px;"></textarea>
@@ -143,11 +143,20 @@
 			        	  $("#action").attr('disabled', false);
 			        	  $("#actionType").attr('disabled', false);
 			        	  $("#actionButtonText").attr('disabled', false);
+			        	  tinyMCE.init({
+			  				mode : "textareas",
+			  				theme : "advanced",
+			  				plugins :"lists, searchreplace, wordcount",
+			  				// Theme options
+			  				theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,|,bullist,numlist,|,code,|,forecolor,backcolor"
+			  			});
 			          }else{
 			        	  $("#frequence2").attr('disabled', true);
 			        	  $("#action").attr('disabled', true);
 			        	  $("#actionType").attr('disabled', true);
 			        	  $("#actionButtonText").attr('disabled', true);
+			        	  $("#editableTextArea_tbl").detach();
+			        	  $("#editableTextArea").show();
 			          }      
 			    }).change();
 			 });
