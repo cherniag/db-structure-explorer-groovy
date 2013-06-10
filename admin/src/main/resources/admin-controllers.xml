@@ -38,12 +38,15 @@
 		<property name="cloudFileService" ref="service.CloudFileService" />
 	</bean>
 	
-	<bean name="admin.ChartController"
-		class="mobi.nowtechnologies.server.admin.controller.ChartController">
+	<bean id="admin.CommonChartController" abstract="true">
 		<property name="chartService" ref="service.ChartService" />
-		<property name="chartItemController" ref="admin.ChartItemController" />
 		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
 		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
+	</bean>
+	
+	<bean name="admin.ChartController"
+		class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
+		<property name="chartItemController" ref="admin.ChartItemController" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
@@ -56,18 +59,16 @@
 	</bean>
 	
 	<bean name="admin.ChartItemController"
-		class="mobi.nowtechnologies.server.admin.controller.ChartItemController">
-		<property name="chartService" ref="service.ChartService" />
+		class="mobi.nowtechnologies.server.admin.controller.ChartItemController" parent="admin.CommonChartController">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
-		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
-		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItems"/>
 				<entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
 				<entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
 				<entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
+				<entry key ="FIFTH_CHART" value="chartItems/hotTracks"/>
 			</map>
 		</property>		    
 	</bean>

@@ -436,16 +436,21 @@ audio{
 .inline{
     display: inline-block;
 }
-.in-middle{
-    top: 0;
-    bottom: 0;
-}
 
 .in-bottom{
     bottom: 0;
 }
 .middle{
     vertical-align: middle;
+}
+
+.wide{
+    width: 100%;
+}
+
+.in-middle{
+    vertical-align: middle;
+    display: inline-block;
 }
 
 .top{
