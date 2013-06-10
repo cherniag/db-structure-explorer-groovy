@@ -156,3 +156,10 @@ alter table tb_userAndroidDetails add column last_push_of_content_update_millis 
 
 update tb_useriPhoneDetails set tb_useriPhoneDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
 update tb_userAndroidDetails set tb_userAndroidDetails.last_push_of_content_update_millis=UNIX_TIMESTAMP()*1000;
+
+-- [Server] Create the 5th playlist - VIP
+-- http://jira.musicqubed.com/browse/IMP-1548
+INSERT INTO tb_charts( genre , name , subtitle , numBonusTracks , numTracks , TIMESTAMP , type ) VALUES( 1 , 'VIP Playlist' , '', 0 , 10 , UNIX_TIMESTAMP() , 'FIFTH_CHART' ) ;
+select @chart_id:=tb_charts.i from tb_charts where tb_charts.subtitle='Especially For You';
+INSERT INTO community_charts (chart_id, community_id) select @chart_id, tb_communities.i from tb_communities where tb_communities.name='o2';
+INSERT INTO tb_chartDetail( chart , POSITION , media , prevPosition , chgPosition , channel , info , publishTimeMillis , VERSION , image_filename , image_title , subtitle , title , locked , defaultChart ) VALUES( chart_id , 0 , NULL , NULL , NULL , NULL , NULL , UNIX_TIMESTAMP()*1000 , 0 , NULL , NULL , NULL , 'Especially For You' , FALSE , TRUE ) ;
