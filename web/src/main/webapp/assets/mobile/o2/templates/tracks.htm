@@ -1,8 +1,8 @@
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
     <a href="#allPlaylists" class="button-small button-left">Back</a>
-    <div class="inline in-center font-main S17">
-        <!--<div class="inline icon-playlist"/>-->
-        <div class="inline text-header middle">Choose Your Playlist</div>
+    <div class="in-middle font-main S17 marg-T15">
+        <div class="in-middle icon-playlist"/>
+        <div class="in-middle text-header middle">Choose Your Playlist</div>
     </div>
 </div>
 <div class="pad5">
@@ -11,29 +11,33 @@
     if(playlist.selected)
         color = 'color-selected';
     %>
-    <div class="pane height-pane block middle <%= color %>">
-        <div class="icon-playlist-filled"/>
-        <img class="inline cover" src="<%= playlist.cover %>"/>
-        <div class="inline top marg-L10">
+    <div class="pane height-pane <%= color %>">
+        <div class="in-middle icon-playlist-filled"/>
+        <img class="in-middle cover" src="<%= playlist.cover %>"/>
+        <div class="in-middle marg-L10">
             <span class="font-main S15"><%= playlist.title %></span><br/>
-            <!--<span class="font-main S13"><%= playlist.description%></span><br/>-->
+            <span class="font-main S13"><%= playlist.description%></span><br/>
             <span class="font-main S15"><%= playlist.length%> Tracks</span>
         </div>
-            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn inline bottom-right font-main S12 color-apply">Select</div>
+        <% if(playlist.selected){ %>
+            <div class="bottom-right icon-selected"/>
+        <% } else { %>
+            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn bottom-right font-main S12 color-apply">Select</div>
+        <% } %>
     </div>
 
     <% data.forEach(function (track) { %>
     <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Backbone.player.playTrack(<%= track.id %>)">
-        <img class="cover-track" src="<%= track.cover %>"/>
-        <div class="inline top">
-            <span class="top0 font-main S15"><%= track.title %></span><br/>
+        <img class="in-middle cover-track" src="<%= track.cover %>"/>
+        <div class="in-middle">
+            <span class="font-main S15"><%= track.title %></span><br/>
             <span class="font-main S13"><%= track.artist%></span><br/>
             <span class="font-main S13 color-channel"><%= track.channel%></span>
         </div>
-        <div class="inline icon-clock"/>
-        <audio id="<%= track.id %>" controls>
+        <audio id="<%= track.id %>" class="in-middle" controls>
             <source src="<%= track.audio %>">
         </audio>
+        <div id="icon<%= track.id %>" class="icon-clock"/>
     </div>
     <% }); %>
 </div>

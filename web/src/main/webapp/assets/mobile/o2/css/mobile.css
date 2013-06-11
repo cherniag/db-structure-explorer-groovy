@@ -100,8 +100,10 @@ hr.addBothSpaces {
     margin-top: 0;
 }
 .bottom-right{
-    bottom: 0;
-    right: 0;
+    vertical-align: bottom;
+    display: inline-block;
+    right: 10px;
+    position: absolute;
 }
 .bottom0{
     margin-bottom: 0;
@@ -196,7 +198,7 @@ img.centered{
 
 .font-main{
     font-family: frutigerRoman;
-    line-height: 7px;
+    line-height: 10px;
 }
 
 .S17{
@@ -218,6 +220,14 @@ img.centered{
     height: 44px;
 }
 
+.marg-T15{
+    margin-top: 15px;
+}
+
+.marg-T30 {
+    margin-top: 30px;
+}
+
 .height-track{
     height: 42px;
 }
@@ -228,11 +238,6 @@ img.centered{
 
 .pad5 {
     padding: 5px;;
-}
-
-.text-center{
-    text-align: center;
-    vertical-align: middle;
 }
 
 .header {
@@ -306,12 +311,29 @@ audio{
    visibility: hidden;
 }
 
+.icon-swap{
+    width: 25px;
+    height: 25px;
+    background: transparent url(../imgs/icon_swap.png) no-repeat;
+    float: left;
+}
+
 .icon-clock{
-    width: 20px;
-    height: 20px;
-    margin-top: 10px;
-    right: 10px;
+    width: 18px;
+    height: 18px;
     background: transparent url(../imgs/icon_track_preview.png) no-repeat;
+    right: 20px;
+    margin-top: -50px;
+    position: absolute;
+}
+
+.icon-speakers{
+    width: 35px;
+    height: 35px;
+    background: transparent url(../imgs/icon_now_playing.png) no-repeat;
+    left: 15px;
+    margin-top: -50px;
+    position: absolute;
 }
 
 .icon-playlist{
@@ -321,29 +343,37 @@ audio{
     background: transparent url(../imgs/icon_header_your_playlist.png) no-repeat;
 }
 
-.icon-selected{
-    width: 30px;
-    height: 30px;
+.icon-check{
+    width: 25px;
+    height: 25px;
+    position: absolute;
     background: transparent url(../imgs/icon_tick.png) no-repeat;
 }
 
+.icon-selected{
+    width: 80px;
+    height: 30px;
+    position: absolute;
+    background: transparent url(../imgs/icon_selected.png) no-repeat;
+}
+
 .icon-playlist-filled{
-    width: 20px;
-    height: 20px;
-    position: fixed;
+    width: 24px;
+    height: 24px;
+    position: absolute;
     background: transparent url(../imgs/icon_your_playlist.png) no-repeat;
 }
 
-.icon-playlist, .icon-selected, .icon-playlist-filled, .icon-clock{
+.icon-playlist, .icon-speakers, .icon-selected,.icon-check, .icon-playlist-filled, .icon-clock, .icon-swap{
     background-size:contain;
     -webkit-background-size:contain;
     -moz-background-size:contain;
     -o-background-size:contain;
     -ms-background-size:contain;
-    position: absolute;
 }
 
 .color-player{
+    color: white;
     background-image: linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
     background-image: -o-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
     background-image: -moz-linear-gradient(bottom, rgb(80,169,233) 15%, rgb(102,204,255) 58%);
@@ -415,7 +445,7 @@ audio{
 }
 
 .pane{
-    padding: 10px;
+    padding: 16px 10px 4px 6px;
     margin-bottom: 5px;
     border-radius: 3px;
 }
@@ -448,6 +478,10 @@ audio{
     width: 100%;
 }
 
+.text-center{
+    text-align: center;
+}
+
 .in-middle{
     vertical-align: middle;
     display: inline-block;
@@ -457,9 +491,18 @@ audio{
     vertical-align: top;
 }
 
+.right10{
+    right: 10px;
+    position: absolute;
+}
+
+.right20{
+    right: 20px;
+    position: absolute;
+}
+
 .in-right{
-    right: 0;
-    float: right;
+    position: fixed;
 }
 
 .bottom{
@@ -1213,7 +1256,7 @@ div.inputAreaBox  {
 /*table dats*/
 .tableList {
 	font-size: 1.2em;
-	width: 440x;
+	width: 440px;
 	margin-left: 28px;
 	margin-top: 13px;
 }
