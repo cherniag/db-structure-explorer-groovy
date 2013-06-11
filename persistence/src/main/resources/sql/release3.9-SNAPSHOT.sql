@@ -166,16 +166,24 @@ alter table messages add column actionButtonText varchar(255);
 --IMP-1631 [jAdmin] Change the way of showing playlist names\
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.title = 'Official Top 40' where cd.media is null
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.title = 'Just In' where cd.media is null
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.title = 'Your playlist' where cd.media is null
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.title = 'Mainstage' where cd.media is null
