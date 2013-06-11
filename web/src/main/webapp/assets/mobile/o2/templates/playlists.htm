@@ -27,14 +27,14 @@
             selectedIcon = '<div class="in-middle right10 marg-T30 icon-check"/>';
     %>
     <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
-         class="pane height-pane <%= color %> ">
+         class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
         <img class="in-middle cover" src="<%= dto.cover %>"/>
 
-        <div class="in-middle  marg-L10">
+        <div class="in-middle font-main marg-L10">
             <%= currentTheme %>
-            <span class="font-main S15"><%= dto.title %></span><br/>
-            <span class="font-main S13"><%= dto.length %> Tracks</span>
+            <span class="S15 line10"><%= dto.title %></span><br/>
+            <span class="S13 line10"><%= dto.length %> Tracks</span>
         </div>
         <%= selectedIcon %>
     </div>
