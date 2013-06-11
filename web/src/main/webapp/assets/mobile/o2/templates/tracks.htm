@@ -34,9 +34,6 @@
             <span class="line4 S11"><%= track.artist%></span><br/>
             <span class="line4 S9 color-channel"><%= track.channel%></span>
         </div>
-        <audio id="<%= track.id %>" class="in-middle" controls>
-            <source src="<%= track.audio %>">
-        </audio>
         <div id="icon<%= track.id %>" class="icon-clock"/>
     </div>
     <% }); %>

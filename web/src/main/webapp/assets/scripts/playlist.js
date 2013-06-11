@@ -1,34 +1,40 @@
 var Strings = {
-    cut:function(str, length){
-        if(str.length > length)
-            return str.substring(0, length-3) + '...';
+    cut: function (str, length) {
+        if (str.length > length)
+            return str.substring(0, length - 3) + '...';
         return str;
     }
 };
 Backbone.player = {
-    cssPlaying: function(id){
+    load: function (id) {
+        var player = Backbone.player;
+        if (!player[id]) {
+            var track = Backbone.tracks.get(id);
+            var audio = new Audio();
+            audio.setAttribute("src", track.get('audio'));
+            audio.load();
+            player[id] = audio;
+        }
+    },
+    cssPlaying: function (id) {
         $('div#track' + id).removeClass('color-main');
         $('div#track' + id).addClass('color-player');
-        $('div#icon' + id).removeClass('icon-clock');
         $('div#icon' + id).addClass('icon-speakers');
     },
-    cssStop: function(id){
+    cssStop: function (id) {
         $('div#track' + id).removeClass('color-player');
         $('div#track' + id).addClass('color-main');
         $('div#icon' + id).removeClass('icon-speakers');
-        $('div#icon' + id).addClass('icon-clock');
     },
     playTrack: function (id) {
         var player = Backbone.player;
-        if (!this[id]) {
-            var audio = document.getElementById(id);
-            player[id] = audio;
-        }
+
+        player.load(id);
         if (!player.current) {
             player[id].play();
             player.current = id;
             player.cssPlaying(id);
-        } else if (this.current == id) {
+        } else if (player.current == id) {
             player[id].pause();
             player.current = null;
             player.cssStop(id);
@@ -51,7 +57,7 @@ var Playlist = Backbone.Model.extend({
         length: 0,
         selected: false
     },
-    parse: function(list){
+    parse: function (list) {
         list.description = Strings.cut(list.description, 20);
         return list;
     }
@@ -65,7 +71,7 @@ var Track = Backbone.Model.extend({
         cover: '#',
         channel: ''
     },
-    parse: function(track){
+    parse: function (track) {
         track.artist = Strings.cut(track.artist, 20);
         track.title = Strings.cut(track.title, 20);
         return track;
@@ -94,7 +100,7 @@ var Playlists = Backbone.Collection.extend({
         this.models.forEach(function (list) {
             list.set('selected', list.get('id') == id);
         });
-        var selected = this.findWhere({selected:true});
+        var selected = this.findWhere({selected: true});
         this.swaped = selected.get('id') != this.preSelected;
     }
 });
@@ -105,9 +111,9 @@ var PlaylistView = Backbone.View.extend({
         var me = this;
         var list = me.collection;
         list.fetch({
-            success: function(data){
+            success: function (data) {
                 var selected = list.findWhere({selected: true});
-                list.preSelected = selected ? selected.get('id'): -1;
+                list.preSelected = selected ? selected.get('id') : -1;
                 me.draw(data.toJSON());
                 Backbone.playlists = data;
             }
@@ -116,7 +122,7 @@ var PlaylistView = Backbone.View.extend({
     render: function () {
         this.draw(this.collection.toJSON());
     },
-    draw: function(data){
+    draw: function (data) {
         var data = this.collection.toJSON();
         var html = Templates.playlists({data: data});
         $(this.el).empty();
@@ -136,25 +142,25 @@ var TracksView = Backbone.View.extend({
         var cache = me.cache;
         var draw = me.draw;
 
-        if (this.cache.hasOwnProperty(ID)){
+        if (this.cache.hasOwnProperty(ID)) {
             list = cache[ID];
             draw(list.toJSON(), currentPL.toJSON(), me);
         } else {
             list.playlistId = ID;
             list.fetch({
                 reset: true,
-                success: function(data){
+                success: function (data) {
                     var JSON = data.toJSON();
                     cache[ID] = new Tracks(JSON);
                     draw(JSON, currentPL.toJSON(), me);
-        }
+                }
             });
         }
     },
     render: function (ID) {
         this.takeList(ID);
     },
-    draw: function(data, currentPL, me){
+    draw: function (data, currentPL, me) {
         var html = Templates.tracks({data: data, playlist: currentPL});
         $(me.el).empty();
         $(me.el).html(html);
