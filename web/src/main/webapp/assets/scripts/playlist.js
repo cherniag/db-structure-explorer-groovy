@@ -9,32 +9,37 @@ Backbone.player = {
     cssPlaying: function(id){
         $('div#track' + id).removeClass('color-main');
         $('div#track' + id).addClass('color-player');
+        $('div#icon' + id).removeClass('icon-clock');
+        $('div#icon' + id).addClass('icon-speakers');
     },
     cssStop: function(id){
         $('div#track' + id).removeClass('color-player');
         $('div#track' + id).addClass('color-main');
+        $('div#icon' + id).removeClass('icon-speakers');
+        $('div#icon' + id).addClass('icon-clock');
     },
     playTrack: function (id) {
+        var player = Backbone.player;
         if (!this[id]) {
             var audio = document.getElementById(id);
-            this[id] = audio;
+            player[id] = audio;
         }
-        if (!this.current) {
-            this[id].play();
-            this.current = id;
-            this.cssPlaying(id);
+        if (!player.current) {
+            player[id].play();
+            player.current = id;
+            player.cssPlaying(id);
         } else if (this.current == id) {
-            this[id].pause();
-            this.current = null;
-            this.cssStop(id);
+            player[id].pause();
+            player.current = null;
+            player.cssStop(id);
         } else {
-            var current = this.current;
-            this[current].pause()
-            this[current].currentTime = 0;
-            this.cssStop(current);
-            this[id].play();
-            this.cssPlaying(id);
-            this.current = id;
+            var current = player.current;
+            player[current].currentTime = 0;
+            player[current].pause()
+            player.cssStop(current);
+            player[id].play();
+            player.cssPlaying(id);
+            player.current = id;
         }
     }
 };
@@ -82,11 +87,6 @@ var Playlists = Backbone.Collection.extend({
     url: function () {
         return "/web/playlists/" + Backbone.chartType;
     },
-    initialize: function () {
-        this.fetch({async: false});
-        var selected = this.findWhere({selected: true});
-        this.preSelected = selected.get('id');
-    },
     parse: function (response) {
         return response.playlists;
     },
@@ -94,14 +94,31 @@ var Playlists = Backbone.Collection.extend({
         this.models.forEach(function (list) {
             list.set('selected', list.get('id') == id);
         });
+        var selected = this.findWhere({selected:true});
+        this.swaped = selected.get('id') != this.preSelected;
     }
 });
 
 var PlaylistView = Backbone.View.extend({
     el: 'body',
+    initialize: function () {
+        var me = this;
+        var list = me.collection;
+        list.fetch({
+            success: function(data){
+                var selected = list.findWhere({selected: true});
+                list.preSelected = selected ? selected.get('id'): -1;
+                me.draw(data.toJSON());
+                Backbone.playlists = data;
+            }
+        });
+    },
     render: function () {
+        this.draw(this.collection.toJSON());
+    },
+    draw: function(data){
         var data = this.collection.toJSON();
-        var html = _.template(Templates.get('playlists'), {data: data});
+        var html = Templates.playlists({data: data});
         $(this.el).empty();
         $(this.el).html(html);
     }
@@ -109,23 +126,38 @@ var PlaylistView = Backbone.View.extend({
 
 var TracksView = Backbone.View.extend({
     el: 'body',
-    chache: {},
+    cache: {},
+    currentPlaylist: null,
     takeList: function (ID) {
-        if (this.chache.hasOwnProperty(ID))
-            this.collection = this.chache[ID];
-        else {
-            var c = this.collection;
-            c.playlistId = ID;
-            c.fetch({async: false, reset: true});
-            this.chache[ID] = new Tracks(c.toJSON());
+        var currentPL = this.currentPlaylist;
+        currentPL = Backbone.playlists.get(ID);
+        var me = this;
+        var list = me.collection;
+        var cache = me.cache;
+        var draw = me.draw;
+
+        if (this.cache.hasOwnProperty(ID)){
+            list = cache[ID];
+            draw(list.toJSON(), currentPL.toJSON(), me);
+        } else {
+            list.playlistId = ID;
+            list.fetch({
+                reset: true,
+                success: function(data){
+                    var JSON = data.toJSON();
+                    cache[ID] = new Tracks(JSON);
+                    draw(JSON, currentPL.toJSON(), me);
         }
-        this.currentPlaylist = Backbone.playlists.get(ID);
+            });
+        }
     },
-    render: function () {
-        var data = this.collection.toJSON();
-        var html = _.template(Templates.get('tracks'), {data: data, playlist: this.currentPlaylist.toJSON()});
-        $(this.el).empty();
-        $(this.el).html(html);
+    render: function (ID) {
+        this.takeList(ID);
+    },
+    draw: function(data, currentPL, me){
+        var html = Templates.tracks({data: data, playlist: currentPL});
+        $(me.el).empty();
+        $(me.el).html(html);
     }
 });
 
@@ -156,16 +188,17 @@ var PlaylistRouter = Backbone.Router.extend({
     },
     goTracks: function (listID) {
         this.hideAll();
-        this.tracksView.takeList(listID);
         $(this.tracksView.el).show();
-        this.tracksView.render();
+        this.tracksView.render(listID);
     },
     select: function (listID) {
         Backbone.playlists.select(listID);
+        this.goTracks(listID);
     },
     apply: function () {
         var list = Backbone.playlists.findWhere({selected: true});
-        if (Backbone.playlists.preSelected != list.get('id'))
+        var preSelected = Backbone.playlists.preSelected;
+        if (preSelected && preSelected != list.get('id'))
             list.save({selected: true});
         window.location.href = '/web/playlist/swap.html';
     },

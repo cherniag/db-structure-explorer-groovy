@@ -12,17 +12,18 @@
     <link rel="stylesheet" type="text/css" href="/web/${requestScope.assetsPathAccordingToCommunity}css/mobile.css" />
     <script type="text/javascript" src="/web/assets/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/underscore.js"></script>
+    <script type="text/javascript" src="/web/assets/scripts/json2.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/backbone.js"></script>
-    <script src="/web/assets/scripts/json2.js"></script>
-    <script src="/web/assets/scripts/playlist.js"></script>
-    <script src="/web/assets/scripts/template-manager.js"></script>
+    <script type="text/javascript" src="/web/assets/scripts/template-manager.js"></script>
+    <script type="text/javascript" src="/web/assets/scripts/playlist.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             Backbone.chartType = '${playlistType}';
             Templates.templatesPath = '/web/${requestScope.assetsPathAccordingToCommunity}/templates/';
-            Templates.load(['playlists', 'tracks']);
+            Templates.load(['playlists', 'tracks'], 'playlists', function(){
             var router = new PlaylistRouter();
             Backbone.history.start();
+            });
         });
     </script>
 </head>
