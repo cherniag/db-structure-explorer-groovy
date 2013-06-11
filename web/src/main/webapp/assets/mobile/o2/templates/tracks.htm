@@ -29,10 +29,10 @@
     <% data.forEach(function (track) { %>
     <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Backbone.player.playTrack(<%= track.id %>)">
         <img class="in-middle cover-track" src="<%= track.cover %>"/>
-        <div class="in-middle">
-            <span class="font-main S15"><%= track.title %></span><br/>
-            <span class="font-main S13"><%= track.artist%></span><br/>
-            <span class="font-main S13 color-channel"><%= track.channel%></span>
+        <div class="in-middle font-main">
+            <span class="line4 S16"><%= track.title %></span><br/>
+            <span class="line4 S11"><%= track.artist%></span><br/>
+            <span class="line4 S9 color-channel"><%= track.channel%></span>
         </div>
         <audio id="<%= track.id %>" class="in-middle" controls>
             <source src="<%= track.audio %>">

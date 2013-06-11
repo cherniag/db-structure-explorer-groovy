@@ -26,7 +26,6 @@ public class PlaylistController extends CommonController {
     public static final String PAGE_PLAYLIST = "playlists/{playlistType}/playlist.html";
     public static final String JSON_PLAYLIST = "playlists/{playlistType}";
     public static final String JSON_PLAYLIST_TRACKS = "playlists/{playlistId}/tracks";
-    public static final String REDIRECT_PAGE_SWAP = "redirect:/playlist/swap.html";
 
     private ChartDetailService chartDetailService;
     private ChartService chartService;

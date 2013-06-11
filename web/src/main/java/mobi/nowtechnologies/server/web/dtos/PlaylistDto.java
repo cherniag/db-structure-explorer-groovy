@@ -29,7 +29,7 @@ public class PlaylistDto {
     public PlaylistDto(ChartDetail chart, Map<String, Object> options) {
         Byte chartId = chart.getChart().getI();
         this.id = new Integer(chartId);
-		this.title = chart.getTitle();
+		this.title = chart.getSubtitle();
 		String urlToChartCover = valueOf(options.get(Env.URL_TO_CHART_COVER));
 		this.cover = urlToChartCover + chart.getImageFileName();
 		this.length = new Integer(chart.getChart().getNumTracks());

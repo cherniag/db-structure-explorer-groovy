@@ -196,25 +196,17 @@ img.centered{
     margin-right: auto;
 }
 
-.font-main{
-    font-family: frutigerRoman;
-    line-height: 10px;
-}
+.font-main{ font-family: frutigerRoman; }
+.line10{line-height: 10px;}
+.line4{line-height: 4px;}
 
-.S17{
-    font-size: 17px;
-}
-
-.S15{
-    font-size: 15px;
-}
-
-.S13{
-    font-size: 13px;
-}
-.S12{
-    font-size: 12px;
-}
+.S17{ font-size: 17px; }
+.S16{ font-size: 16px; }
+.S15{ font-size: 15px; }
+.S13{ font-size: 13px; }
+.S12{ font-size: 12px; }
+.S11{ font-size: 11px; }
+.S9{ font-size: 9px; }
 
 .height-header{
     height: 44px;
@@ -444,8 +436,14 @@ audio{
     color: #000066;
 }
 
-.pane{
+.playlist{
     padding: 16px 10px 4px 6px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.pane{
+    padding: 10px 10px 10px 6px;
     margin-bottom: 5px;
     border-radius: 3px;
 }
