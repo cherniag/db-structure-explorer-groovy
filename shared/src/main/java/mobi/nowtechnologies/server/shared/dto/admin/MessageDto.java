@@ -30,9 +30,7 @@ public class MessageDto {
 	@NotEmpty
 	@Pattern(regexp = ".{1,255}")
 	private String headline;
-	
-	@NotEmpty
-	@Pattern(regexp = ".{1,255}")
+
 	private String body;
 	
 	private boolean activated;

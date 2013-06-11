@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class PlaylistController extends CommonController {
 
     public static final String VIEW_PLAYLIST = "playlist";
+    public static final String VIEW_PLAYLIST_PREVIEW = "playlist/preview";
     public static final String PAGE_PLAYLIST = "playlists/{playlistType}/playlist.html";
     public static final String JSON_PLAYLIST = "playlists/{playlistType}";
     public static final String JSON_PLAYLIST_TRACKS = "playlists/{playlistId}/tracks";
@@ -35,8 +36,11 @@ public class PlaylistController extends CommonController {
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
     public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType,
                                         @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
-        return new ModelAndView(VIEW_PLAYLIST)
-                .addObject("playlistType", playlistType);
+    	User user = userService.findById(getUserId());
+    	if(user.isLimited())
+    		return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
+    	else	
+    		return new ModelAndView(VIEW_PLAYLIST).addObject("playlistType", playlistType);
     }
 
     @RequestMapping(value = JSON_PLAYLIST, produces = "application/json", method = RequestMethod.GET)

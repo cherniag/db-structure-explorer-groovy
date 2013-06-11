@@ -241,5 +241,11 @@
     <definition name="playlist" extends="simpleTemplate" preparer="web.CommunityViewPreparer">
         <put-attribute name="page" expression="${requestScope.viewPathAccordingToDevice}/playlist/play_lists.jsp"/>
     </definition>
+    
+    <definition name="playlist/preview" extends="mainTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/playlist/headSection.jsp"/>
+		<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
+		<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/playlist/preview_playlists.jsp"/>
+	</definition>
 
 </tiles-definitions>
