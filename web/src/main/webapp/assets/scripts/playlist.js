@@ -13,6 +13,7 @@ Backbone.player = {
             var audio = new Audio();
             audio.setAttribute("src", track.get('audio'));
             audio.load();
+            audio.addEventListener('canplay', function(){this.canplay = true;});
             player[id] = audio;
         }
     },
@@ -39,10 +40,12 @@ Backbone.player = {
             player.current = null;
             player.cssStop(id);
         } else {
-            var current = player.current;
-            player[current].currentTime = 0;
-            player[current].pause()
-            player.cssStop(current);
+            var current = player[player.current];
+            if(current.canplay){
+                current.pause();
+                current.currentTime = 0;
+            }
+            player.cssStop(player.current);
             player[id].play();
             player.cssPlaying(id);
             player.current = id;
