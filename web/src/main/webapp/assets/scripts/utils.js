@@ -6,6 +6,16 @@ var Strings = {
         if (str.length > length)
             return str.substring(0, length - 3) + '...';
         return str;
+    },
+    cutLn: function(str, rows, columns){
+        var result = '';
+        var cuted = Strings.cut(str, rows*columns);
+        for (var c in cuted){
+            if(c % columns == 0)
+                result += '\n';
+            result += cuted[c];
+        }
+        return result;
     }
 };
 

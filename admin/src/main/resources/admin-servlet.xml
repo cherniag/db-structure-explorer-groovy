@@ -102,7 +102,9 @@
 		    </bean>
 		</mvc:interceptor>
 		
-		<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" />
+		<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" >
+            <property name="userService" ref="service.UserService"/>
+        </bean>
 		
 		<bean class="mobi.nowtechnologies.server.web.interceptor.ImplicitObjectsInterceptor">
 			<property name="adminUserService" ref="adminUserService" />
