@@ -1,3 +1,14 @@
+var i18n = {
+
+};
+var Strings = {
+    cut: function (str, length) {
+        if (str.length > length)
+            return str.substring(0, length - 3) + '...';
+        return str;
+    }
+};
+
 Templates = {
     templates: {},
     names:[],
@@ -10,7 +21,6 @@ Templates = {
             $.ajax({
             url: T.templatesPath + name + ".htm",
                 success: function (data) {
-                T.templates[name] = data;
                 T[name] = _.template(data);
                 T.loaded++;
                 if(T.notStarted && (T.loaded == T.names.length || T.mainName == name)){

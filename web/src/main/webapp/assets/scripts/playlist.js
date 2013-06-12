@@ -1,10 +1,3 @@
-var Strings = {
-    cut: function (str, length) {
-        if (str.length > length)
-            return str.substring(0, length - 3) + '...';
-        return str;
-    }
-};
 Backbone.player = {
     load: function (id) {
         var player = Backbone.player;
@@ -170,14 +163,11 @@ var TracksView = Backbone.View.extend({
     }
 });
 
-
 var PlaylistRouter = Backbone.Router.extend({
     initialize: function () {
-        //collections
         Backbone.playlists = new Playlists();
         Backbone.tracks = new Tracks();
 
-        //views
         this.playlistView = new PlaylistView({collection: Backbone.playlists});
         this.tracksView = new TracksView({collection: Backbone.tracks});
 
