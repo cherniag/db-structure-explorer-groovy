@@ -16,7 +16,7 @@
         <img class="in-middle cover" src="<%= playlist.cover %>"/>
         <div class="line16 in-middle marg-L10">
             <span class="font-main S15"><%= playlist.title %></span><br/>
-            <span class="font-main S13"><%= playlist.description%></span><br/>
+            <pre class="font-main S13"><%= Strings.cutLn(playlist.description, 2, 18)%></pre>
             <span class="font-main S13"><%= playlist.length%> Tracks</span>
         </div>
         <% if(playlist.selected){ %>

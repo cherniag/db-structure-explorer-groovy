@@ -52,10 +52,6 @@ var Playlist = Backbone.Model.extend({
         title: '',
         length: 0,
         selected: false
-    },
-    parse: function (list) {
-        list.description = Strings.cut(list.description, 20);
-        return list;
     }
 });
 
@@ -68,8 +64,8 @@ var Track = Backbone.Model.extend({
         channel: ''
     },
     parse: function (track) {
-        track.artist = Strings.cut(track.artist, 20);
-        track.title = Strings.cut(track.title, 20);
+        track.artist = Strings.cut(track.artist, 25);
+        track.title = Strings.cut(track.title, 25);
         return track;
     }
 });
