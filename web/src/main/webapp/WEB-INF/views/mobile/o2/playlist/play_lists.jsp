@@ -18,7 +18,7 @@
     <script type="text/javascript" src="/web/assets/scripts/underscore.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/json2.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/backbone.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/template-manager.js"></script>
+    <script type="text/javascript" src="/web/assets/scripts/utils.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/playlist.js"></script>
     <script type="text/javascript">
 	    Messages = {
@@ -34,7 +34,7 @@
             Backbone.chartType = '${playlistType}';
             
             Templates.templatesPath = '/web/${requestScope.assetsPathAccordingToCommunity}/templates/';
-            Templates.load(['home', 'playlists', 'tracks'], 'playlists', function(){
+            Templates.load(['playlists', 'tracks'], 'playlists', function(){
             	var router = new PlaylistRouter();
             	Backbone.history.start();
             });
