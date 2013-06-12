@@ -1,7 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
+
 <!DOCTYPE html>
 <html>
 <head>
+	<s:message code='page.playlists.menu.apply' var="page_playlists_menu_apply" />
+	
     <title>Playlists</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
@@ -17,12 +21,22 @@
     <script type="text/javascript" src="/web/assets/scripts/template-manager.js"></script>
     <script type="text/javascript" src="/web/assets/scripts/playlist.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
+	    Messages = {
+	    		'page.playlists.header.text' : '<s:message code="page.playlists.header.text"/>',
+	    		'page.playlists.alert.swap' : '<s:message code="page.playlists.alert.swap"/>',
+	    		'page.playlists.menu.apply' : '<s:message code="page.playlists.menu.apply"/>',
+	    		'page.playlists.item.current.label' : '<s:message code="page.playlists.item.current.label"/>',
+	    		'page.playlists.tracks.menu.back' : '<s:message code="page.playlists.tracks.menu.back"/>',
+	    		'page.playlists.tracks.item.select' : '<s:message code="page.playlists.tracks.item.select"/>',
+		};
+    
+        $(document).ready(function () {       	
             Backbone.chartType = '${playlistType}';
+            
             Templates.templatesPath = '/web/${requestScope.assetsPathAccordingToCommunity}/templates/';
             Templates.load(['playlists', 'tracks'], 'playlists', function(){
-            var router = new PlaylistRouter();
-            Backbone.history.start();
+            	var router = new PlaylistRouter();
+            	Backbone.history.start();
             });
         });
     </script>

@@ -187,7 +187,7 @@ update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.title = 'Your playlist' where cd.media is null
+set cd.title = 'Your Playlist' where cd.media is null
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'

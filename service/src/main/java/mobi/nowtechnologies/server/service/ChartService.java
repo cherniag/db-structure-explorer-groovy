@@ -270,19 +270,20 @@ public class ChartService {
 		if(charts == null)
 			return chartDetails;
 		
-		long choosedPublishTimeMillis = selectedPublishDateTime != null ? selectedPublishDateTime.getTime() : new Date().getTime();
+		Long choosedPublishTimeMillis = selectedPublishDateTime != null ? selectedPublishDateTime.getTime() : new Date().getTime();
 		
 		for(Chart chart : charts){
 			ChartDetail chartDetail = null;
+			Long lastPublishTimeMillis = choosedPublishTimeMillis;
 			
-			chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), choosedPublishTimeMillis);
+			chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
 			if(chartDetail == null){
-				Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(choosedPublishTimeMillis, chart.getI());
-				if (nearestLatestPublishTimeMillis != null){
-					chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), nearestLatestPublishTimeMillis);
+				lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(choosedPublishTimeMillis, chart.getI());
+				if (lastPublishTimeMillis != null){
+					chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
 					if(clone && chartDetail!=null){						
 						chartDetail = ChartDetail.newInstance(chartDetail);
-						chartDetail.setPublishTimeMillis(choosedPublishTimeMillis);
+						chartDetail.setPublishTimeMillis(lastPublishTimeMillis);
 					}
 				}	
 			}
@@ -290,6 +291,10 @@ public class ChartService {
 			if(chartDetail == null){
 				chartDetail = new ChartDetail();
 				chartDetail.setChart(chart);
+				chart.setNumTracks((byte)0);
+			}else{
+				Long numTracks = chartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
+				chartDetail.getChart().setNumTracks(numTracks.byteValue());
 			}
 			
 			chartDetails.add(chartDetail);

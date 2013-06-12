@@ -68,6 +68,10 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail where chartDetail.media is null and chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
 	ChartDetail findChartWithDetailsByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
+
+	@Query("select count(chartDetail) from ChartDetail chartDetail where chartDetail.media is not null and chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis")
+	Long countChartDetailTreeByChartAndPublishTimeMillis(@Param("chartId") byte chartId,
+			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
 	@Query("select max(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.media is null and chartDetail.chart.i=?2 and chartDetail.publishTimeMillis<=?1")
 	Long findNearestLatestChartPublishDate(long choosedPublishTimeMillis, byte chartId);

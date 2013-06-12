@@ -24,7 +24,6 @@ public class PlaylistDto {
 	private final String cover;
 	private final boolean selected;
     private final String description;
-    private final String channel;
 
     public PlaylistDto(ChartDetail chart, Map<String, Object> options) {
         Byte chartId = chart.getChart().getI();
@@ -36,7 +35,6 @@ public class PlaylistDto {
         this.description = chart.getChartDescription();
         Byte selectedChartId = toByteIfNull(options.get(SELECTED_CHART_ID));
         this.selected = chartId.equals(selectedChartId) ? true: false;
-        this.channel = chart.getChannel();
 	}
 
 	public Integer getId() {
@@ -73,10 +71,6 @@ public class PlaylistDto {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getChannel() {
-        return channel;
     }
 
 }

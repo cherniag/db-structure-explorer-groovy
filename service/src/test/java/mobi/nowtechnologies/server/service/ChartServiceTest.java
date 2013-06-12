@@ -554,6 +554,9 @@ public class ChartServiceTest {
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()))).thenReturn(chartDetail2);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()))).thenReturn(chartDetail3);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()))).thenReturn(1L);
 		
 		List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, false);
 		
@@ -565,6 +568,9 @@ public class ChartServiceTest {
 		assertEquals(chartDetail1.getTitle(), result.get(0).getTitle());
 		assertEquals(chartDetail2.getTitle(), result.get(1).getTitle());
 		assertEquals(chartDetail3.getTitle(), result.get(2).getTitle());
+		assertEquals(1, result.get(0).getChart().getNumTracks());
+		assertEquals(1, result.get(1).getChart().getNumTracks());
+		assertEquals(1, result.get(2).getChart().getNumTracks());
 		
 		verify(mockChartDetailRepository, times(0)).findNearestLatestPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
@@ -573,6 +579,9 @@ public class ChartServiceTest {
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()));
 	}
 	
 	@Test
@@ -595,6 +604,9 @@ public class ChartServiceTest {
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()))).thenReturn(null);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()))).thenReturn(null);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()))).thenReturn(null);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate))).thenReturn(1L);
 		
 		List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, true);
 		
@@ -606,6 +618,9 @@ public class ChartServiceTest {
 		assertEquals(chartDetail1.getTitle(), result.get(0).getTitle());
 		assertEquals(chartDetail2.getTitle(), result.get(1).getTitle());
 		assertEquals(chartDetail3.getTitle(), result.get(2).getTitle());
+		assertEquals(1, result.get(0).getChart().getNumTracks());
+		assertEquals(1, result.get(1).getChart().getNumTracks());
+		assertEquals(1, result.get(2).getChart().getNumTracks());
 		
 		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
@@ -614,6 +629,9 @@ public class ChartServiceTest {
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate));
 	}
 	
 	@Test
@@ -636,6 +654,9 @@ public class ChartServiceTest {
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()))).thenReturn(null);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()))).thenReturn(null);
 		when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()))).thenReturn(null);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate))).thenReturn(1L);
+		when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate))).thenReturn(1L);
 		
 		List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, false);
 		
@@ -647,6 +668,9 @@ public class ChartServiceTest {
 		assertEquals(chartDetail1.getTitle(), result.get(0).getTitle());
 		assertEquals(chartDetail2.getTitle(), result.get(1).getTitle());
 		assertEquals(chartDetail3.getTitle(), result.get(2).getTitle());
+		assertEquals(1, result.get(0).getChart().getNumTracks());
+		assertEquals(1, result.get(1).getChart().getNumTracks());
+		assertEquals(1, result.get(2).getChart().getNumTracks());
 		
 		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
@@ -655,6 +679,9 @@ public class ChartServiceTest {
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)2), eq(choosenDate.getTime()));
 		verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)3), eq(choosenDate.getTime()));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)2), eq(nearestLatestDate));
+		verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq((byte)3), eq(nearestLatestDate));
 	}
 	
 	@Test
@@ -685,6 +712,9 @@ public class ChartServiceTest {
 		assertEquals(null, result.get(0).getTitle());
 		assertEquals(null, result.get(1).getTitle());
 		assertEquals(null, result.get(2).getTitle());
+		assertEquals(0, result.get(0).getChart().getNumTracks());
+		assertEquals(0, result.get(1).getChart().getNumTracks());
+		assertEquals(0, result.get(2).getChart().getNumTracks());
 		
 		verify(mockChartDetailRepository, times(3)).findNearestLatestChartPublishDate(anyLong(), anyByte());
 		verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq((byte)1), eq(nearestLatestDate));

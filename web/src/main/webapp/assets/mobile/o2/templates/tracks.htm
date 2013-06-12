@@ -1,8 +1,8 @@
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
-    <a href="#allPlaylists" class="button-small button-left">Back</a>
+    <a href="#allPlaylists" class="button-small button-left"><%=Messages['page.playlists.tracks.menu.back']%></a>
     <div class="in-middle font-main S17 marg-T15">
         <div class="in-middle icon-playlist"/>
-        <div class="in-middle text-header middle">Choose Your Playlist</div>
+        <div class="in-middle text-header middle"><%=Messages['page.playlists.header.text']%></div>
     </div>
 </div>
 <div class="pad5">
@@ -22,7 +22,7 @@
         <% if(playlist.selected){ %>
             <div class="bottom-right icon-selected"/>
         <% } else { %>
-            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn bottom-right font-main S12 color-apply">Select</div>
+            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn bottom-right font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
         <% } %>
     </div>
 
