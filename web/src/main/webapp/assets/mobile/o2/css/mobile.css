@@ -6,7 +6,6 @@
          url('../fonts/ftlcx___-light-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-
 }
 
 @font-face {
@@ -49,18 +48,10 @@ body {
     background-color: #003399;
 }
 
-a {
-	color: #1d3150;
-}
-.rel {
-	position: relative;
-}
-.abs {
-	position: absolute;
-}
-.bold {
-	 font-weight: bold;
-}
+a { color: #1d3150; }
+.rel { position: relative; }
+.abs { position: absolute; }
+.bold { font-weight: bold; }
 hr {
     height: 1px;
     border: none;
@@ -91,33 +82,13 @@ hr.addSpace2 {
 	margin-bottom: 35px;
     margin-top: 35px;
 }
-
-hr.addBothSpaces {
-	margin: 15px 8px 22px 8px;
-	display: block;
-}
-.top0{
-    margin-top: 0;
-}
 .bottom-right{
-    vertical-align: bottom;
-    display: inline-block;
-    right: 10px;
+    right: 13px;
+    margin-top: -14px;
     position: absolute;
 }
-.bottom0{
-    margin-bottom: 0;
-    bottom: 0;
-}
-.marg-L10{
-    margin-left: 10px;
-}
-.margin0{
-    margin-right: 0;
-    margin-left: 0;
-    padding-left: 0;
-    padding-right: 0;
-}
+.marg-L5{margin-left: 5px;}
+.marg-L10{ margin-left: 10px; }
 h1 {
     margin: 0 0 9px 0;
 	font-size: 1.4em;		
@@ -134,9 +105,7 @@ h3 {
 	margin-top: 12px;
 	color: #1d3150;
 }
-h2  a {
-	text-decoration: none;
-}
+h2  a { text-decoration: none; }
 select {
 	width: 100%;
 	font-size: 0.8em;
@@ -165,30 +134,15 @@ p  {
 	font-size: 0.8em;		
 	line-height: 1.3em;
 }
-.oneQuestion p
-{
-	color: #838383;	
-}
-td, li {
-	font-size: 1.1em;		
-}
-form {
-	display: block;
-}
-/*service tools*/
-.floatRight {
-	float: right !important; 
-}
-.floatLeft {
-	float: left; 
-}
-.clr {
-	clear: both;
-}
+.oneQuestion p { color: #838383; }
+td, li { font-size: 1.1em; }
+form { display: block; }
 
-p.centered {
-    text-align: center;
-}
+.floatRight { float: right !important; }
+.floatLeft { float: left; }
+.clr { clear: both; }
+
+p.centered { text-align: center; }
 
 img.centered{
     display: block;
@@ -197,8 +151,10 @@ img.centered{
 }
 
 .font-main{ font-family: frutigerRoman; }
-.line10{line-height: 10px;}
-.line4{line-height: 4px;}
+.b{font-weight: bold}
+.line16 {line-height: 1.6}
+.line1 {line-height: 1.0;}
+.line04{line-height: 0.4;}
 
 .S17{ font-size: 17px; }
 .S16{ font-size: 16px; }
@@ -208,29 +164,15 @@ img.centered{
 .S11{ font-size: 11px; }
 .S9{ font-size: 9px; }
 
-.height-header{
-    height: 44px;
-}
+.height-header{ height: 44px; }
+.height-swap {height: 17px;}
+.height-track{ height: 42px; }
+.height-pane{ height: 93px; }
 
-.marg-T15{
-    margin-top: 15px;
-}
+.marg-T15{ margin-top: 15px; }
+.marg-T30 { margin-top: 30px; }
 
-.marg-T30 {
-    margin-top: 30px;
-}
-
-.height-track{
-    height: 42px;
-}
-
-.height-pane{
-    height: 93px;
-}
-
-.pad5 {
-    padding: 5px;;
-}
+.pad5 { padding: 5px;; }
 
 .header {
     text-align: center;
@@ -266,9 +208,7 @@ img.centered{
 	padding: 10px;
 }
 
-.pane-red span{
-    padding-left: 35px;
-}
+.pane-red span{ padding-left: 35px; }
 
 .pane-red img{
     display: block;
@@ -299,32 +239,31 @@ img.centered{
     );
 }
 
-audio{
-   visibility: hidden;
-}
-
 .icon-swap{
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 16px;
     background: transparent url(../imgs/icon_swap.png) no-repeat;
-    float: left;
+    right: 17px;
+    margin-right: 8px;
+    margin-top: 0px;
+    position: absolute;
 }
 
 .icon-clock{
     width: 18px;
     height: 18px;
     background: transparent url(../imgs/icon_track_preview.png) no-repeat;
-    right: 20px;
-    margin-top: -50px;
+    right: 22px;
+    margin-top: -31px;
     position: absolute;
 }
 
 .icon-speakers{
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     background: transparent url(../imgs/icon_now_playing.png) no-repeat;
-    left: 15px;
-    margin-top: -50px;
+    left: 12px;
+    margin-top: -41px;
     position: absolute;
 }
 
@@ -343,8 +282,8 @@ audio{
 }
 
 .icon-selected{
-    width: 80px;
-    height: 30px;
+    width: 61px;
+    height: 15px;
     position: absolute;
     background: transparent url(../imgs/icon_selected.png) no-repeat;
 }
@@ -398,9 +337,7 @@ audio{
     );
 }
 
-.color-channel{
-    color: #952d98;
-}
+.color-channel{ color: #952d98; }
 
 .color-apply{
     background-color: #d9edf7;
@@ -411,9 +348,7 @@ audio{
     color: #66ccff;
 }
 
-.color-bg{
-    background-color: #000033;
-}
+.color-bg{ background-color: #000033; }
 
 .color-selected{
     color: #fff;
@@ -461,33 +396,18 @@ audio{
     height: 82px;
     border-radius: 41px;
 }
-.inline{
-    display: inline-block;
-}
+.inline{ display: inline-block; }
 
-.in-bottom{
-    bottom: 0;
-}
-.middle{
-    vertical-align: middle;
-}
-
-.wide{
-    width: 100%;
-}
-
-.text-center{
-    text-align: center;
-}
+.in-bottom{ bottom: 0; }
+.middle{ vertical-align: middle; }
+.text-center{ text-align: center; }
 
 .in-middle{
     vertical-align: middle;
     display: inline-block;
 }
 
-.top{
-    vertical-align: top;
-}
+.top{ vertical-align: top; }
 
 .right10{
     right: 10px;
@@ -499,22 +419,16 @@ audio{
     position: absolute;
 }
 
-.in-right{
-    position: fixed;
-}
-
-.bottom{
-    vertical-align: bottom;
-}
+.in-right{ position: fixed; }
+.bottom{ vertical-align: bottom; }
 
 .in-center {
     margin: 18px auto ;
     position: absolute;
 }
 
-.block{
-    display: block;
-}
+.block{ display: block; }
+.hidden{visibility: hidden}
 
 .pane-red, .banner-pane{
     padding: 10px 10px 12px 10px;
@@ -594,20 +508,12 @@ audio{
 	margin-left: 27px;
 	margin-right: 27px;
 }
-.getAppContent h1 {
-	color: #1d3150;
-}
+.getAppContent h1 { color: #1d3150; }
 
 .orBox {
 	text-align: center;
 	height: 53px;
 	background: transparent url(../imgs/bgs/or_bg.png) repeat-x center center ;
-	/*position: absolute;
-	top: 330px;
-	left: 48%;*/
-}
-.getAppBottom {
-	/*margin-top: 80px;*/
 }
 .getAppContent .formButton {
 	margin-left: 27px; 
@@ -616,9 +522,6 @@ audio{
 
 .linksToStores {
 	height: 202px;
-	/*position: absolute; 
-	top: 456px;
-	left: 20px;*/
 	width: 99%;
 }
 .linksToStores a {
@@ -628,19 +531,11 @@ audio{
 	margin: 0 7px;
 	height: 173px;
 }
-.appStore {
-	background: transparent url(../imgs/apple.png) no-repeat left bottom;	
-}
-.androidMarket {
-	background: transparent url(../imgs/android.png) no-repeat left bottom;	
-}
-.bbMarket {
-	background: transparent url(../imgs/blackberry.png) no-repeat left bottom;	
-}
+.appStore { background: transparent url(../imgs/apple.png) no-repeat left bottom; }
+.androidMarket { background: transparent url(../imgs/android.png) no-repeat left bottom; }
+.bbMarket { background: transparent url(../imgs/blackberry.png) no-repeat left bottom; }
 
-.text {
-	padding-bottom: 12px;
-}
+.text { padding-bottom: 12px; }
 
 .btn {
     border-radius: 3px;
@@ -680,17 +575,13 @@ input.accounts{
 	border: 1px solid #000000;
 }
 
-.buttonBox .button {
-	font-size: 14px;
-}
+.buttonBox .button { font-size: 14px; }
 
 .footer .buttonBox a {
 	font-size: 1.3em;
 	margin-right: 0;
 }
-.footer .buttonBox {
-	margin-right: 0;
-}
+.footer .buttonBox { margin-right: 0; }
 .arrow {
 	display: inline-block;
 	width: 15px;
@@ -704,12 +595,8 @@ input.accounts{
 	background-size: 8px 10px;	
 }
 
-.buttonWrapper {
-	margin: 17px;	
-}
+.buttonWrapper { margin: 17px; }
 
-
-/*marketing*/
 .marketingMaterials {	
 	height: 0px;
 	text-align: center;
@@ -719,8 +606,7 @@ input.accounts{
 	display: inline-block;
 	text-align: center;
 }
-.rules
-{
+.rules {
 	background-color: #efefef;
 	font-size: 0.8em;		 
 	line-height: 1em;
@@ -737,9 +623,7 @@ input.accounts{
 	margin-top: 23px;
 	color: #1d3150;	
 }
-.footer {	
-	padding: 0px 15px 10px 0;
-}
+.footer { padding: 0px 15px 10px 0; }
 .footer a {	
 	text-decoration: none;	
 	display: inline-block;
@@ -829,9 +713,7 @@ input.accounts{
 	display: block;
 }
 
-.setOfButtons  {
-	margin-bottom: 17px;
-}
+.setOfButtons  { margin-bottom: 17px; }
 .setOfButtons .formButton{
 	margin-top: 10px;	
 	margin-bottom: 15px;	
@@ -888,16 +770,13 @@ form .formButton  {
 	-moz-background-size:contain;
 	-o-background-size:contain;
 	-ms-background-size:contain;
-/* 	position: relative; */
 	top:50%;
 	right: 0;
 	margin-top:-8px;
 	padding-left: 0px;
 }
 
-.pane-red .alert-button-close{
-	padding-left: 10px;
-}
+.pane-red .alert-button-close{ padding-left: 10px; }
 
 .pane-red .alert-text-close{
 	width: 90%;
@@ -1033,7 +912,6 @@ form .formButton  {
     );
 }
 .button-turquoise:active{
-	
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#094467', endColorstr='#1399E7'); for IE */
     background-image: linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
     background-image: -o-linear-gradient(bottom, rgb(19,153,231) 0%, rgb(9,68,103) 80%);
@@ -1053,7 +931,6 @@ form .formButton  {
 
 .button-turquoise {
     font-weight: bold;
-    
 /* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1399E7', endColorstr='#094467'); for IE */
     background-image: linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
     background-image: -o-linear-gradient(bottom, rgb(9,68,103) 0%, rgb(19,153,231) 80%);
@@ -1072,7 +949,6 @@ form .formButton  {
 }
 
 .button1 {
-	
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002E8A', endColorstr='#00153F'); /* for IE */
     background-image: linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,138) 62%);
     background-image: -o-linear-gradient(bottom, rgb(0,21,63) 24%, rgb(0,46,138) 62%);
@@ -1093,15 +969,9 @@ form .formButton  {
 	margin: 26px 17px;
 	height: 40px;
 }
-.firstButton  {
-	margin-right: 2%;
-}
-.redButton  {
-	background: transparent url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
-}
-.redButton  a {
-	background: #ff3333 url(../imgs/bgs/red_button.png) repeat-x 0px 0px;	
-}
+.firstButton  { margin-right: 2%; }
+.redButton  { background: transparent url(../imgs/bgs/red_button.png) repeat-x 0px 0px; }
+.redButton  a { background: #ff3333 url(../imgs/bgs/red_button.png) repeat-x 0px 0px; }
 .oneField label {
 	display: block;	
 	font-size: 1em;
@@ -1134,28 +1004,20 @@ div.inputAreaBox  {
 	background: #ffffff url(../imgs/bgs/input.png) repeat-x 0px 0px;	
 	font-family: Helvetica, Arial, sans-serif;	
 }
- .inputBox textarea 
-{
+ .inputBox textarea {
 	height: 180px;	
 	background-position: left bottom;
 	width: 100%;
 	line-height: 1.2em;  
 }
-.shortField .inputBox {
-	width: 140px;
-}
-.mediumField .inputBox {
-	width: 198px;
-}
+.shortField .inputBox { width: 140px; }
+.mediumField .inputBox { width: 198px; }
 .attention{
 	color: #e80505;
 	font-weight: bold;
 }
 
-/*account details*/
-.accounDetails {
-	margin-top: 18px;
-}
+.accounDetails { margin-top: 18px; }
 .accountOneField  {
 	height: 28px; 
 	border: solid 2px #a8aca9; 
@@ -1197,9 +1059,7 @@ div.inputAreaBox  {
 	border: none;
 	background: #ffffff url(../imgs/bgs/account_arrow_current.png) no-repeat center center;		
 }
-.currentFieldValue{
-	display: block;
-}
+.currentFieldValue{ display: block; }
 .orangeField {
 	background: #ff6600 url(../imgs/bgs/orange_button.png) repeat-x 0px 0px;	
 	border: none;
@@ -1218,7 +1078,6 @@ div.inputAreaBox  {
 	right: 15px;
 	top: 28px;
 }
- /*Corners*/
 .rad10 {
 	border-radius: 5px; 
 	-moz-border-radius: 5px; 
@@ -1251,7 +1110,7 @@ div.inputAreaBox  {
 	display: none;
 
 }
-/*table dats*/
+
 .tableList {
 	font-size: 1.2em;
 	width: 440px;
@@ -1290,26 +1149,19 @@ div.inputAreaBox  {
 	margin: -3px 22px 35px 22px;
 
 }
-.table table {
-	width: 100%;
-}
+.table table { width: 100%;}
 .table td {
 	height: 57px;
 	border-right: solid 1px #b3b3b3;
 	padding: 0 19px;
 }
-.table td.secondCol 
-{
+.table td.secondCol {
 	border-left: solid 1px #ffffff;
 	border-right: none;
 }
 
-.total {
-	font-weight: bold;
-}
-.even {
-	background-color: #ebe8e8;
-}
+.total { font-weight: bold; }
+.even { background-color: #ebe8e8; }
 
 /*account*/
 .oneLine, .oneInputLine {
@@ -1322,44 +1174,31 @@ div.inputAreaBox  {
 
 .nameCell {display:-moz-inline-box; display:inline-block; vertical-align:top; width:30%; zoom:1; color: #616465;}
 
- .formDetails .nameCell, .payDetails  .nameCell{
- 	padding-top: 7px;
- }
+ .formDetails .nameCell, .payDetails  .nameCell{ padding-top: 7px; }
 
 .valueCell {display:-moz-inline-box; display:inline-block; vertical-align:bottom; width:60%; zoom:1; //display:inline}
 .helper {display:-moz-inline-box; display:inline-block; height:100%; width:0px; vertical-align:bottom; zoom:1; //display:inline}
 
- .valueCell .inputBox input {
-	min-width: 323px;
- }
- .disabled input 
- {
- 	color: #5d5d5d;
- }
- .pink {
- 	color: #1d3150;
-}
+ .valueCell .inputBox input { min-width: 323px; }
+ .disabled input { color: #5d5d5d; }
+ .pink { color: #1d3150; }
 .valueCell a {
 	display: inline-block;	
 	font-weight: normal;
 	margin-left: 10px;
 }
 /*sms*/
+.shortInput { width: 80px; }
+
 .oneField label.shortLabel {
-	width: 80px; 
-	float: left; 
-	line-height: 2em; 
+	width: 80px;
+	float: left;
+	line-height: 2em;
 	margin-top: 7px;
 }
 
-.shortInput {
-	width: 80px; 
-}
-
 /*credit card*/
-.payDetails {
-	margin-bottom: 36px;
-}
+.payDetails { margin-bottom: 36px; }
 .payDetails input, .formDetails input, .oneField  input {
 	background: url('../imgs/bgs/input.png') repeat-x scroll 0 0 #FFFFFF;
     border: 1px solid #777777;
