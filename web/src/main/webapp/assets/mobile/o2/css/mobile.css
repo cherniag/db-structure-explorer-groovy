@@ -89,6 +89,7 @@ hr.addSpace2 {
 }
 .marg-L5{margin-left: 5px;}
 .marg-L10{ margin-left: 10px; }
+.marg-L7{ margin-left: 7px; }
 h1 {
     margin: 0 0 9px 0;
 	font-size: 1.4em;		
@@ -372,7 +373,7 @@ img.centered{
 }
 
 .playlist{
-    padding: 16px 10px 4px 6px;
+    padding: 26px 10px 4px 5px;
     margin-bottom: 5px;
     border-radius: 3px;
 }
