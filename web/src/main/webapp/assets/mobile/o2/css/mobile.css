@@ -100,18 +100,17 @@ hr.addBothSpaces {
     margin-top: 0;
 }
 .bottom-right{
-    vertical-align: bottom;
-    display: inline-block;
-    right: 10px;
+    right: 13px;
+    margin-top: -14px;
     position: absolute;
 }
 .bottom0{
     margin-bottom: 0;
     bottom: 0;
 }
-.marg-L10{
-    margin-left: 10px;
-}
+.marg-L5{margin-left: 5px;}
+.marg-L10{ margin-left: 10px; }
+
 .margin0{
     margin-right: 0;
     margin-left: 0;
@@ -304,8 +303,8 @@ audio{
 }
 
 .icon-swap{
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 16px;
     background: transparent url(../imgs/icon_swap.png) no-repeat;
     float: left;
 }
@@ -314,17 +313,17 @@ audio{
     width: 18px;
     height: 18px;
     background: transparent url(../imgs/icon_track_preview.png) no-repeat;
-    right: 20px;
-    margin-top: -50px;
+    right: 22px;
+    margin-top: -31px;
     position: absolute;
 }
 
 .icon-speakers{
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     background: transparent url(../imgs/icon_now_playing.png) no-repeat;
     left: 15px;
-    margin-top: -50px;
+    margin-top: -39px;
     position: absolute;
 }
 
@@ -343,8 +342,8 @@ audio{
 }
 
 .icon-selected{
-    width: 80px;
-    height: 30px;
+    width: 61px;
+    height: 15px;
     position: absolute;
     background: transparent url(../imgs/icon_selected.png) no-repeat;
 }
