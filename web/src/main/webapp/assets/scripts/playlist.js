@@ -20,12 +20,12 @@ Backbone.player = {
     cssPlaying: function (id) {
         $('div#track' + id).removeClass('color-main');
         $('div#track' + id).addClass('color-player');
-        $('div#icon' + id).addClass('icon-speakers');
+        $('#icon-speakers' + id).removeClass('hidden');
     },
     cssStop: function (id) {
         $('div#track' + id).removeClass('color-player');
         $('div#track' + id).addClass('color-main');
-        $('div#icon' + id).removeClass('icon-speakers');
+        $('#icon-speakers' + id).addClass('hidden');
     },
     playTrack: function (id) {
         var player = Backbone.player;

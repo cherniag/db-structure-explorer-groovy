@@ -9,7 +9,7 @@
     <%
     if(Backbone.playlists.swaped){
     %>
-    <div class="pane color-selected">
+    <div class="pane height-swap color-selected">
         <span class="font-main S13 color-current-theme">Playlist will be swapped in next update</span>
         <div class="in-middle icon-swap  right10"/>
     </div>
@@ -29,12 +29,12 @@
     <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
          class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
-        <img class="in-middle cover" src="<%= dto.cover %>"/>
+        <img class="in-middle marg-L10 cover" src="<%= dto.cover %>"/>
 
         <div class="in-middle font-main marg-L10">
             <%= currentTheme %>
-            <span class="S15 line10"><%= dto.title %></span><br/>
-            <span class="S13 line10"><%= dto.length %> Tracks</span>
+            <span class="S15 line16"><%= dto.title %></span><br/>
+            <span class="S13 line16"><%= dto.length %> Tracks</span>
         </div>
         <%= selectedIcon %>
     </div>

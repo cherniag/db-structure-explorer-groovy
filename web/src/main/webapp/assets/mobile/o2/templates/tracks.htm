@@ -14,7 +14,7 @@
     <div class="pane height-pane <%= color %>">
         <div class="in-middle icon-playlist-filled"/>
         <img class="in-middle cover" src="<%= playlist.cover %>"/>
-        <div class="in-middle marg-L10">
+        <div class="line16 in-middle marg-L10">
             <span class="font-main S15"><%= playlist.title %></span><br/>
             <span class="font-main S13"><%= playlist.description%></span><br/>
             <span class="font-main S13"><%= playlist.length%> Tracks</span>
@@ -28,13 +28,16 @@
 
     <% data.forEach(function (track) { %>
     <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Backbone.player.playTrack(<%= track.id %>)">
-        <img class="in-middle cover-track" src="<%= track.cover %>"/>
-        <div class="in-middle font-main marg-L5">
+        <div class="inline middle text-center">
+            <img class="in-middle cover-track" src="<%= track.cover %>">
+            <span id="icon-speakers<%= track.id %>" class="hidden icon-speakers"/>
+        </div>
+        <div class="line1 in-middle font-main marg-L5">
             <span class="S16"><%= track.title %></span><br/>
             <span class="S11"><%= track.artist%></span><br/>
-            <span class="S9 color-channel"><%= track.channel%></span>
+            <span class="line04 b S9 color-channel"><%= track.channel%></span>
         </div>
-        <div id="icon<%= track.id %>" class="icon-clock"/>
+        <div class="icon-clock"/>
     </div>
     <% }); %>
 </div>
