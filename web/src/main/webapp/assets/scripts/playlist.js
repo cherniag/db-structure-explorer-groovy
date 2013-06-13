@@ -30,7 +30,7 @@ Player = {
             Player[id].pause();
             Player[id].currentTime = 0;
         }
-        id = null;
+        Player.current = null;
     },
     cssPlaying: function () {
         var id = Player.current;
@@ -126,7 +126,6 @@ var PlaylistView = Backbone.View.extend({
         });
     },
     render: function () {
-        Player.stop();
         this.draw(this.collection.toJSON());
     },
     draw: function (data) {
@@ -193,14 +192,15 @@ var PlaylistRouter = Backbone.Router.extend({
         "apply": "apply"
     },
     allPlaylists: function () {
+    	Player.stop();
         this.hideAll();
-        $(this.playlistView.el).show();
         this.playlistView.render();
+        $(this.playlistView.el).show();
     },
     goTracks: function (listID) {
-        this.hideAll();
+    	this.hideAll();
+    	this.tracksView.render(listID);
         $(this.tracksView.el).show();
-        this.tracksView.render(listID);
     },
     select: function (listID) {
         Backbone.playlists.select(listID);

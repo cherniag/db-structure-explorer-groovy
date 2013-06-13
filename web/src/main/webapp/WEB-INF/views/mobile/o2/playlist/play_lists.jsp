@@ -28,6 +28,7 @@
 	    		'page.playlists.menu.apply' : '<s:message code="page.playlists.menu.apply"/>',
 	    		'page.playlists.item.current.label' : '<s:message code="page.playlists.item.current.label"/>',
 	    		'page.playlists.item.tracks' : '<s:message code="page.playlists.item.tracks"/>',
+	    		'page.playlists.tracks.item.tracks' : '<s:message code="page.playlists.tracks.item.tracks"/>',
 	    		'page.playlists.tracks.menu.back' : '<s:message code="page.playlists.tracks.menu.back"/>',
 	    		'page.playlists.tracks.item.select' : '<s:message code="page.playlists.tracks.item.select"/>',
 		};
