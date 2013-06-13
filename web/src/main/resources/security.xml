@@ -60,6 +60,7 @@
             <ref bean="security.nowTechUserDetailsService" />
         </constructor-arg>
         <property name="cookieName" value="${rememberMe.cookieName}"/>
+        <property name="tokenValiditySeconds" value="${rememberMe.tokenValiditySeconds}"/>
         <property name="alwaysRemember" value="true"/>
         <property name="successfulHander">
             <bean class="mobi.nowtechnologies.server.security.authentication.NowTechBasedRememberMeSuccessfulHandler">
