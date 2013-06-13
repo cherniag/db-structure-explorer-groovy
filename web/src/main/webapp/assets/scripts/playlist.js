@@ -209,6 +209,7 @@ var PlaylistRouter = Backbone.Router.extend({
     apply: function () {
         var list = Backbone.playlists.findWhere({selected: true});
         var preSelected = Backbone.playlists.preSelected;
+        Player.stop();
         if (!preSelected || preSelected != list.get('id'))
             list.save({selected: true});
         window.location.href = '/web/playlist/swap.html';
