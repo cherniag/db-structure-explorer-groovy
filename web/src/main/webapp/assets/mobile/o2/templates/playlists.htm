@@ -1,5 +1,5 @@
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
-    <div class="in-middle font-main S17 marg-T15">
+    <div class="header-position font-main S17">
         <div class="icon-playlist in-middle"/>
         <div class="in-middle"><%=Messages['page.playlists.header.text']%></div>
     </div>
@@ -29,7 +29,7 @@
     <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
          class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
-        <img class="in-middle marg-L10 cover" src="<%= dto.cover %>"/>
+        <img class="in-middle marg-L7 cover" src="<%= dto.cover %>"/>
 
         <div class="in-middle font-main marg-L10">
             <%= currentTheme %>
