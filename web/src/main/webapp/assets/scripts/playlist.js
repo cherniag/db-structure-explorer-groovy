@@ -1,14 +1,14 @@
 Backbone.player = {
     load: function (id) {
         var player = Backbone.player;
-        /*if (!player[id]) {*/
+        if (!player[id]) {
             var track = Backbone.tracks.get(id);
             var audio = new Audio();
             audio.setAttribute("src", track.get('audio'));
             audio.load();
             audio.addEventListener('canplay', function(){this.canplay = true;});
             player[id] = audio;
-        /*}*/
+        }
     },
     cssPlaying: function (id) {
         $('div#track' + id).removeClass('color-main');
