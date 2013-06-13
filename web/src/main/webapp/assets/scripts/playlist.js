@@ -10,10 +10,22 @@ Backbone.player = {
             player[id] = audio;
         }
     },
-    cssPlaying: function (id) {
-        $('div#track' + id).removeClass('color-main');
-        $('div#track' + id).addClass('color-player');
-        $('#icon-speakers' + id).removeClass('hidden');
+    stop: function(){
+        var id = Backbone.player.current;
+        var player = Backbone.player;
+        if(id && player[id].canplay){
+            player[id].pause();
+            player[id].currentTime = 0;
+            id = null;
+        }
+    },
+    cssPlaying: function () {
+        var id = Backbone.player.current;
+        if(id){
+            $('div#track' + id).removeClass('color-main');
+            $('div#track' + id).addClass('color-player');
+            $('#icon-speakers' + id).removeClass('hidden');
+        }
     },
     cssStop: function (id) {
         $('div#track' + id).removeClass('color-player');
@@ -27,7 +39,7 @@ Backbone.player = {
         if (!player.current) {
             player[id].play();
             player.current = id;
-            player.cssPlaying(id);
+            player.cssPlaying();
         } else if (player.current == id) {
             player[id].pause();
             player.current = null;
@@ -40,8 +52,8 @@ Backbone.player = {
             }
             player.cssStop(player.current);
             player[id].play();
-            player.cssPlaying(id);
             player.current = id;
+            player.cssPlaying();
         }
     }
 };
@@ -112,6 +124,7 @@ var PlaylistView = Backbone.View.extend({
         });
     },
     render: function () {
+        Backbone.player.stop();
         this.draw(this.collection.toJSON());
     },
     draw: function (data) {
@@ -156,6 +169,7 @@ var TracksView = Backbone.View.extend({
         var html = Templates.tracks({data: data, playlist: currentPL});
         $(me.el).empty();
         $(me.el).html(html);
+        Backbone.player.cssPlaying();
     }
 });
 
