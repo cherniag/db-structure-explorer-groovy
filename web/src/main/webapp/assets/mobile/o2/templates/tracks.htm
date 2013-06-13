@@ -27,7 +27,7 @@
     </div>
 
     <% data.forEach(function (track) { %>
-    <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Backbone.player.playTrack(<%= track.id %>)">
+    <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Player.playTrack(<%= track.id %>)">
         <div class="inline middle text-center">
             <img class="in-middle cover-track" src="<%= track.cover %>">
             <span id="icon-speakers<%= track.id %>" class="hidden icon-speakers"/>
