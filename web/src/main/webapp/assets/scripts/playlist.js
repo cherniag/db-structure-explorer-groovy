@@ -170,7 +170,6 @@ var TracksView = Backbone.View.extend({
         var html = Templates.tracks({data: data, playlist: currentPL});
         $(me.el).empty();
         $(me.el).html(html);
-        Player.cssPlaying();
     }
 });
 
