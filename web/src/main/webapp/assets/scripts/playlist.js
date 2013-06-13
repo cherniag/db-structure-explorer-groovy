@@ -1,26 +1,39 @@
-Backbone.player = {
+Player = {
+    current: null,
     load: function (id) {
-        var player = Backbone.player;
-        if (!player[id]) {
+        if (!Player[id]) {
             var track = Backbone.tracks.get(id);
             var audio = new Audio();
             audio.setAttribute("src", track.get('audio'));
             audio.load();
             audio.addEventListener('canplay', function(){this.canplay = true;});
-            player[id] = audio;
+            Player[id] = audio;
+        }
+    },
+    play: function(){
+        Player.cssPlaying();
+        Player[Player.current].play();
+    },
+    pauseResume: function(){
+        var id = Player.current;
+        if(Player[id].currentTime > 0){
+            Player[id].pause();
+            Player.cssStop(id);
+        }else{
+            Player.play();
         }
     },
     stop: function(){
-        var id = Backbone.player.current;
-        var player = Backbone.player;
-        if(id && player[id].canplay){
-            player[id].pause();
-            player[id].currentTime = 0;
-            id = null;
+        var id = Player.current;
+        Player.cssStop(id);
+        if(id && Player[id].canplay){
+            Player[id].pause();
+            Player[id].currentTime = 0;
         }
+        id = null;
     },
     cssPlaying: function () {
-        var id = Backbone.player.current;
+        var id = Player.current;
         if(id){
             $('div#track' + id).removeClass('color-main');
             $('div#track' + id).addClass('color-player');
@@ -33,27 +46,16 @@ Backbone.player = {
         $('#icon-speakers' + id).addClass('hidden');
     },
     playTrack: function (id) {
-        var player = Backbone.player;
-
-        player.load(id);
-        if (!player.current) {
-            player[id].play();
-            player.current = id;
-            player.cssPlaying();
-        } else if (player.current == id) {
-            player[id].pause();
-            player.current = null;
-            player.cssStop(id);
+        Player.load(id);
+        if (!Player.current) {
+            Player.current = id;
+            Player.play();
+        } else if (Player.current == id) {
+            Player.pauseResume();
         } else {
-            var current = player[player.current];
-            if(current.canplay){
-                current.pause();
-                current.currentTime = 0;
-            }
-            player.cssStop(player.current);
-            player[id].play();
-            player.current = id;
-            player.cssPlaying();
+            Player.stop();
+            Player.current = id;
+            Player.play();
         }
     }
 };
@@ -124,7 +126,7 @@ var PlaylistView = Backbone.View.extend({
         });
     },
     render: function () {
-        Backbone.player.stop();
+        Player.stop();
         this.draw(this.collection.toJSON());
     },
     draw: function (data) {
@@ -169,7 +171,7 @@ var TracksView = Backbone.View.extend({
         var html = Templates.tracks({data: data, playlist: currentPL});
         $(me.el).empty();
         $(me.el).html(html);
-        Backbone.player.cssPlaying();
+        Player.cssPlaying();
     }
 });
 
