@@ -51,7 +51,7 @@ Player = {
             Player.current = id;
             Player.play();
         } else if (Player.current == id) {
-            Player.pauseResume();
+        	Player.stop();
         } else {
             Player.stop();
             Player.current = id;
@@ -170,7 +170,6 @@ var TracksView = Backbone.View.extend({
         var html = Templates.tracks({data: data, playlist: currentPL});
         $(me.el).empty();
         $(me.el).html(html);
-        Player.cssPlaying();
     }
 });
 
