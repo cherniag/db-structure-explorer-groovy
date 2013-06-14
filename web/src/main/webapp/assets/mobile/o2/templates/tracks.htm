@@ -2,7 +2,7 @@
     <a href="#allPlaylists" class="button-small button-left"><%=Messages['page.playlists.tracks.menu.back']%></a>
     <div class="header-position font-main S17">
         <div class="in-middle icon-playlist"/>
-        <div class="in-middle text-header middle"><%=Messages['page.playlists.header.text']%></div>
+        <div class="in-middle text-header middle"><%=Messages['page.playlists.tracks.header.text']%></div>
     </div>
 </div>
 <div class="pad5">
@@ -17,7 +17,7 @@
         <div class="line04 in-middle marg-L10">
             <span class="font-main S15"><%= playlist.title %></span><br/>
             <pre class="line1 font-main S13"><%= Strings.cutLn(playlist.description, 2, 18)%></pre>
-            <span class="font-main S13"><%= playlist.length%> Tracks</span>
+            <span class="font-main S13"><%= playlist.length%> <%=Messages['page.playlists.tracks.item.tracks']%></span>
         </div>
         <% if(playlist.selected){ %>
             <div class="bottom-right icon-selected"/>

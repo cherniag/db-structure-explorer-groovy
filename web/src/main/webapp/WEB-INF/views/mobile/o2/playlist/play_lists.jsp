@@ -23,9 +23,12 @@
     <script type="text/javascript">
 	    Messages = {
 	    		'page.playlists.header.text' : '<s:message code="page.playlists.header.text"/>',
+	    		'page.playlists.tracks.header.text' : '<s:message code="page.playlists.tracks.header.text"/>',
 	    		'page.playlists.alert.swap' : '<s:message code="page.playlists.alert.swap"/>',
 	    		'page.playlists.menu.apply' : '<s:message code="page.playlists.menu.apply"/>',
 	    		'page.playlists.item.current.label' : '<s:message code="page.playlists.item.current.label"/>',
+	    		'page.playlists.item.tracks' : '<s:message code="page.playlists.item.tracks"/>',
+	    		'page.playlists.tracks.item.tracks' : '<s:message code="page.playlists.tracks.item.tracks"/>',
 	    		'page.playlists.tracks.menu.back' : '<s:message code="page.playlists.tracks.menu.back"/>',
 	    		'page.playlists.tracks.item.select' : '<s:message code="page.playlists.tracks.item.select"/>',
 		};
