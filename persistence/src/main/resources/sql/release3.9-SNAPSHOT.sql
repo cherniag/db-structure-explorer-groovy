@@ -102,26 +102,15 @@ update tb_paymentPolicy pp set pp.provider = 'o2' where pp.segment is not null a
  -- IMP-1261 [MOBILE WEB] Error Messaging
 alter table tb_paymentDetails add column errorCode varchar(255);
 
- -- IMP-1498 [EPIC] Allow user to select a playlist tailored to their taste
- alter table tb_chartDetail add column locked BIT default false
- alter table tb_chartDetail add column defaultChart BIT default false
+  -- IMP-1498 [EPIC] Allow user to select a playlist tailored to their taste
+ alter table tb_chartDetail add column locked BIT default false;
+ alter table tb_chartDetail add column defaultChart BIT default false;
  
- create table user_charts (user_id integer not null, chart_id tinyint not null)
- alter table user_charts add constraint FK_chart_id foreign key (chart_id) references tb_charts
- alter table user_charts add constraint FK_user_id foreign key (user_id) references tb_users
+ create table user_charts (user_id integer not null, chart_id tinyint not null);
+ alter table user_charts add constraint FK_chart_id foreign key (chart_id) references tb_charts;
+ alter table user_charts add constraint FK_user_id foreign key (user_id) references tb_users;
  
-insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type)
-select
-'Other Chart Not Default',
-ch.numTracks,
-ch.genre,
-ch.timestamp,
-ch.numBonusTracks,
-'OTHER_CHART'
-from tb_charts ch
-join community_charts cc on cc.chart_id = ch.i
-join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-where ch.type='BASIC_CHART';
+insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) select 'Other Chart Not Default',ch.numTracks,ch.genre,ch.timestamp,ch.numBonusTracks,'OTHER_CHART' from tb_charts ch join community_charts cc on cc.chart_id = ch.i join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2' where ch.type='BASIC_CHART';
 
 insert into community_charts (chart_id, community_id)
 select
@@ -165,32 +154,32 @@ alter table messages add column actionButtonText varchar(255);
 
 -- [Server] Create the 5th playlist - VIP
 -- http://jira.musicqubed.com/browse/IMP-1548
-INSERT INTO tb_charts( genre , name , subtitle , numBonusTracks , numTracks , TIMESTAMP , type ) VALUES( 1 , 'VIP Playlist' , '', 0 , 10 , UNIX_TIMESTAMP() , 'FIFTH_CHART' ) ;
+INSERT INTO tb_charts( genre , name , numBonusTracks , numTracks , TIMESTAMP , type ) VALUES( 1 , 'VIP Playlist' , 0 , 10 , UNIX_TIMESTAMP() , 'FIFTH_CHART' ) ;
 select @chart_id:=tb_charts.i from tb_charts where tb_charts.type='FIFTH_CHART';
 INSERT INTO community_charts (chart_id, community_id) select @chart_id, tb_communities.i from tb_communities where tb_communities.name='o2';
 INSERT INTO tb_chartDetail( chart , POSITION , media , prevPosition , chgPosition , channel , info , publishTimeMillis , VERSION , image_filename , image_title , subtitle , title , locked , defaultChart ) VALUES( (select @chart_id) , 5 , NULL , NULL , NULL , NULL , NULL , UNIX_TIMESTAMP()*1000 , 0 , NULL , NULL , 'Especially For You' , 'VIP Playlist' , FALSE , TRUE ) ;
 
---IMP-1631 [jAdmin] Change the way of showing playlist names\
+--IMP-1631 [jAdmin] Change the way of showing playlist names
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.title = 'Official Top 40' where cd.media is null
+set cd.title = 'Official Top 40' where cd.media is null;
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.title = 'Just In' where cd.media is null
+set cd.title = 'Just In' where cd.media is null;
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.title = 'Your Playlist' where cd.media is null
+set cd.title = 'Your Playlist' where cd.media is null;
 
 update tb_chartDetail cd 
 join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.title = 'Mainstage' where cd.media is null
+set cd.title = 'Mainstage' where cd.media is null;
