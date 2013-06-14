@@ -51,7 +51,8 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		
 		final PaymentDetailsStatus status;
-		if (!response.isSuccessful() && HttpServletResponse.SC_OK == response.getHttpStatus()) {
+		final int httpStatus = response.getHttpStatus();
+		if (!response.isSuccessful() && HttpServletResponse.SC_OK == httpStatus) {
 			status = PaymentDetailsStatus.ERROR;
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
@@ -64,6 +65,10 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			status = PaymentDetailsStatus.SUCCESSFUL;
 		} else {
 			status = PaymentDetailsStatus.ERROR;
+			final String descriptionError = "Unexpected http statuc code ["+httpStatus+"] so the madeRetries willn't be incremented";
+			submittedPayment.setDescriptionError(descriptionError);
+			paymentDetails.setDescriptionError(descriptionError);
+			paymentDetails.decrementRetries();
 		}
 
 		if (submittedPayment.getExternalTxId() == null) {
