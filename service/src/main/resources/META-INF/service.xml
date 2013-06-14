@@ -268,6 +268,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 		<property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
+	
+	<bean id="service.profileLoggingAspect" class="mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect">
+		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource" />
+	</bean>
 
 	<bean id="service.communityService" class="mobi.nowtechnologies.server.service.impl.CommunityServiceImpl">
 		<property name="communityRepository" ref="communityRepository" />
@@ -344,6 +348,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="limitValidatePhoneNumber" value="${o2.server.validation.phonenumber.limit}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
+		<property name="restTemplate" ref="service.RestTemplate" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
@@ -407,6 +412,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<task:annotation-driven executor="service.Executor"/>
 	<task:executor id="service.Executor" pool-size="20"/>
+	
+	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
 
 	<import resource="payment.xml" />
 

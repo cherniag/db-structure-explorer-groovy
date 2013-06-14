@@ -102,7 +102,7 @@ public class O2ClientServiceImplIT {
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
-		when(mockUserLogRepository.countByPhoneNumberAndDay(eq("7870111111"), any(UserLogType.class), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 
 		String result = fixture.validatePhoneNumber(phoneNumber);
@@ -113,7 +113,7 @@ public class O2ClientServiceImplIT {
 		assertEquals(expectedPhoneNumber, result);
 		
 		verify(mockUserLogRepository).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(eq("7870111111"), any(UserLogType.class), anyLong());
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -309,11 +309,11 @@ public class O2ClientServiceImplIT {
 		fixture.setLimitValidatePhoneNumber(9);
 		
 		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
-		fixture.init();
+		fixture.setRestTemplate(new RestTemplate());
 		
 		fixture2 = new O2ClientServiceImpl();
 		fixture2.setServerO2Url("https://uat.mqapi.com");
 		fixture2.setCommunityService(mockCommunityService);
-		fixture2.init();
+		fixture2.setRestTemplate(new RestTemplate());
 	}
 }

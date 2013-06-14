@@ -143,4 +143,11 @@ public class PaymentPolicyDto {
     private boolean isPayPalPolicy() {
         return true;
     }
+
+	@Override
+	public String toString() {
+		return "PaymentPolicyDto [id=" + id + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorName=" + operatorName + ", paymentType=" + paymentType
+				+ ", shortCode=" + shortCode + ", oldSubcost=" + oldSubcost + ", oldSubweeks=" + oldSubweeks + ", currencyISO=" + currencyISO + "]";
+	}
+    
 }
