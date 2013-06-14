@@ -392,7 +392,7 @@ public class UserRepositoryIT {
         userLog.setLastUpdateMillis(0);
         userLogRepository.save(userLog);
         
-		List<User> actualUsers = userRepository.findUsersForUpdate(epochSeconds, new PageRequest(0, 1000));
+		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochSeconds*1000L);
 		
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());		
