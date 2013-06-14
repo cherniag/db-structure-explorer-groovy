@@ -2,24 +2,26 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
-
+import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
 import uk.co.o2.soa.subscriberservice.GetSubscriberProfileFault;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
+
+import static mobi.nowtechnologies.server.shared.Utils.different;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
 public class UpdateO2UserTask {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
+    private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
 	private transient SubscriberPortDecorator port;
 	private transient UserRepository userRepository;
 	private transient UserLogRepository userLogRepository;
@@ -38,17 +40,19 @@ public class UpdateO2UserTask {
 	}
 
 	private void updateUser(User u) throws GetSubscriberProfileFault {
-		try {
-			LogUtils.put3rdParyRequestProfileSpecificMDC(u.getUserName(), u.getMobile(), u.getId());
 			SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
 
-			u.setProvider(profile.getProvider().toString());
-			u.setSegment(profile.getSegmentType());
-			u.setContract(profile.getCotract());
+        String newProvider = profile.getProvider().toString();
+        SegmentType newSegment = profile.getSegmentType();
+        Contract newCotract = profile.getCotract();
+
 			makeUserLog(u, UserLogStatus.SUCCESS, null);
+
+        if(different(newProvider, u.getProvider()) || different(newCotract, u.getContract()) || different(newSegment, u.getSegment())){
+            u.setProvider(newProvider);
+            u.setSegment(newSegment);
+            u.setContract(newCotract);
 			userRepository.save(u);
-		} finally {
-			LogUtils.removeAll3rdParyRequestProfileMDC();
 		}
 	}
 

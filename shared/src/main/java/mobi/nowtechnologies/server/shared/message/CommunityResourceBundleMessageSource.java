@@ -4,7 +4,9 @@ import java.util.Locale;
 
 public interface CommunityResourceBundleMessageSource {
 	
-	public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
+	String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
 	
-	public String getMessage(String community, String code, Object[] args, Locale locale) throws CommunityNoSuchMessageException;
+	String getMessage(String community, String code, Object[] args, Locale locale) throws CommunityNoSuchMessageException;
+
+    int readInt(String code, int defaults);
 }

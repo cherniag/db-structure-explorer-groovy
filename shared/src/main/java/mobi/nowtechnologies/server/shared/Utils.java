@@ -222,9 +222,13 @@ public class Utils {
         return o == null ? true : false;
     }
 
-    public static Byte toByteIfNull(Object obj) {
-        if(obj == null)
-            return  null;
-        return (Byte)obj;
+    public static <T> boolean different(T one, T two) {
+        if(one == null && two == null)
+            return false;
+        if(one == null && two != null)
+            return true;
+        if(one.equals(two))
+            return false;
+        return true;
     }
 }
