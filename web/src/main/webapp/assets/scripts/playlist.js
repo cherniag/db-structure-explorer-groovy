@@ -272,6 +272,7 @@ var PlaylistRouter = Backbone.Router.extend({
 		
 		Player.isiPhone3 = Browser.isiPhone3();
 	},
+	
 	routes : {
 		"tracks/:listID" : "goTracks",
 		"allPlaylists" : "allPlaylists",
