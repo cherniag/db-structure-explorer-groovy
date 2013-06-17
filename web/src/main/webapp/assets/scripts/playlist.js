@@ -1,3 +1,5 @@
+
+
 Player = {
 	current : null,
 	load : function(id) {
@@ -9,19 +11,24 @@ Player = {
 			audio.addEventListener('canplay', function() {
 				this.canplay = true;
 			});
-			audio.addEventListener('pause', this.onPaused(id));
+			audio.addEventListener('ended', this.onEnded);
+			audio.addEventListener('pause', this.onPaused);
+			audio.addEventListener('error', this.onError);
+			audio.addEventListener('abort', this.onError);
 			Player[id] = audio;
 		}
 	},
+	
 	play : function(delay) {
 		if (delay != 0) {
 			setTimeout(function() {
 				Player.play(0);
 			}, delay);
 		} else {
-			if (Player.current && Player[Player.current].currentTime == 0) {
-				Player.cssPlaying();
-				Player[Player.current].play();
+			var id = Player.current;
+			if (id && Player[id].currentTime == 0) {
+					Player.cssPlaying();
+					Player[id].play();
 			}
 		}
 	},
@@ -34,12 +41,19 @@ Player = {
 			Player.play(0);
 		}
 	},
-	onPaused : function(id) {
-		Player.play(200);
-	},
-	stop : function() {
+	onEnded : function() {
 		var id = Player.current;
-		Player.current = null;
+		Player.cssStop(id);
+	},
+	onPaused : function() {
+		var id = Player.current;
+		if(Player[id].currentTime != Player[id].duration){
+			Player.play(0);
+		}
+	},
+	stop : function(nextId) {
+		var id = Player.current;
+		Player.current = nextId;
 		Player.cssStop(id);
 		if (id && Player[id].canplay && !Player[id].paused) {
 			Player[id].pause();
@@ -60,22 +74,28 @@ Player = {
 		$('#icon-speakers' + id).addClass('hidden');
 	},
 	playTrack : function(id) {
-		Player.load(id);
-		if (!Player.current) {
-			Player.current = id;
-			Player.play(0);
-		} else if (Player.current == id) {
-			Player.stop();
-		} else {
-			Player.stop();
-			Player.current = id;
-			Player.play(500);
+		var nowdate = new Date();
+		var nowtime = nowdate.getTime();
+		if(!Player.lastPlayed || ((nowtime - Player.lastPlayed) > 2000)){
+			Player.load(id);
+			if (!Player.current) {
+				Player.current = id;
+				Player.play(0);
+			} else if (Player.current == id) {
+				Player.lastPlayed = null;
+				Player.stop();
+			} else {
+				Player.stop(id);
+			}
+			Player.lastPlayed = nowtime;
 		}
 	},
 	clearCache : function(){
 		for(var p in Player){
 			var constructor = Player[p] ? Player[p]['constructor'] : null;
 			if(constructor == Audio){
+				Player[p].setAttribute("src", null);
+				Player[p].load();
 				Player[p] = null;
 			}
 		}
@@ -148,6 +168,10 @@ var PlaylistView = Backbone.View.extend({
 				list.preSelected = selected ? selected.get('id') : -1;
 				me.draw(data.toJSON());
 				Backbone.playlists = data;
+				
+				data.each(function(playlist) {
+					Backbone.tracksView.load(playlist.get('id')); 
+				});
 			}
 		});
 	},
@@ -161,7 +185,7 @@ var PlaylistView = Backbone.View.extend({
 		});
 		$(this.el).empty();
 		$(this.el).html(html);
-	}
+	},
 });
 
 var TracksView = Backbone.View.extend({
@@ -175,24 +199,35 @@ var TracksView = Backbone.View.extend({
 		if(currentPL){			
 			var me = this;
 			var list = me.collection;
-			var cache = me.cache;
 			var draw = me.draw;
 			
-			if (this.cache[ID]) {
-				var JSON = cache[ID];
-				me.collection.reset(JSON);
-				draw(JSON, currentPL.toJSON(), me);
-			} else {
+			this.load(ID, function(JSON){
+				list.reset(JSON);
 				list.playlistId = ID;
-				list.fetch({
-					reset : true,
-					success : function(data) {
-						var JSON = data.toJSON();
-						cache[ID] = JSON;
-						draw(JSON, currentPL.toJSON(), me);
-					}
-				});
-			}
+				draw(JSON, currentPL.toJSON(), me);
+			});
+		}
+	},
+	load: function(playlistId, callback){
+		var ID = playlistId;
+		var me = this;
+		var cache = me.cache;
+		
+		if (this.cache[ID]) {
+			var JSON = cache[ID];
+			if(callback)
+				callback(JSON);
+		} else {
+			list = new Tracks();
+			list.playlistId = playlistId;
+			list.fetch({
+				success : function(data) {
+					var JSON = data.toJSON();
+					cache[ID] = JSON;
+					if(callback)
+						callback(JSON);
+				}
+			});
 		}
 	},
 	render : function(ID) {
@@ -210,13 +245,14 @@ var TracksView = Backbone.View.extend({
 
 var PlaylistRouter = Backbone.Router.extend({
 	initialize : function() {
+		Backbone.router = this;
 		Backbone.playlists = new Playlists();
 		Backbone.tracks = new Tracks();
 
-		this.playlistView = new PlaylistView({
+		Backbone.playlistView = this.playlistView = new PlaylistView({
 			collection : Backbone.playlists
 		});
-		this.tracksView = new TracksView({
+		Backbone.tracksView = this.tracksView = new TracksView({
 			collection : Backbone.tracks
 		});
 
@@ -230,11 +266,12 @@ var PlaylistRouter = Backbone.Router.extend({
 		"apply" : "apply"
 	},
 	allPlaylists : function() {
+		me = this;
 		Player.stop();
 		Player.clearCache();
-		this.hideAll();
-		this.playlistView.render();
-		$(this.playlistView.el).show();
+		me.hideAll();
+		me.playlistView.render();
+		$(me.playlistView.el).show();
 	},
 	goTracks : function(listID) {
 		this.hideAll();

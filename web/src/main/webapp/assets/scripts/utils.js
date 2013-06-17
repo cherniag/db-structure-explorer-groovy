@@ -1,6 +1,7 @@
 var i18n = {
 
 };
+
 var Strings = {
     cut: function (str, length) {
         if (str.length > length)
