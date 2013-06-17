@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.web.dtos;
 
 import static java.lang.String.valueOf;
-import static mobi.nowtechnologies.server.shared.Utils.toByteIfNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

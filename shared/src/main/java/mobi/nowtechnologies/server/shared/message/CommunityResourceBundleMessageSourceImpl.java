@@ -4,11 +4,24 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 import java.util.Locale;
 
+import static org.apache.commons.lang.StringUtils.trim;
+
 public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
 	public static final String DEFAULT_COMMUNITY_DELIM = "_";
 	
 	private String communityDelim = DEFAULT_COMMUNITY_DELIM;
-	
+
+    @Override
+    public int readInt(String code, int defaults) {
+        try {
+            String pediodString = trim(getMessage(null, code, null, null));
+            int period = Integer.parseInt(pediodString);
+            return period;
+        } catch (RuntimeException e) {
+            return defaults;
+        }
+    }
+
 	@Override
 	public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
 		Locale communityLocale = new Locale(community);

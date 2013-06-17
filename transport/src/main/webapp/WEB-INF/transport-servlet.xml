@@ -351,6 +351,15 @@
         <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
 
+    <!-- Fork users job -->
+    <bean id="job.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="mobi.nowtechnologies.server.job.ForkO2UsersForUpdateJob"/>
+    </bean>
+    <bean id="jobTrigger.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="job.ForkO2UsersForUpdateJob"/>
+        <property name="cronExpression" value="${jobs.default.cron.expression}"/>
+    </bean>
+
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
         <property name="applicationContextSchedulerContextKey" value="applicationContext" />
         <property name="dataSource" ref="persistence.DataSource"/>
@@ -360,6 +369,7 @@
         <property name="triggers">
             <list>
                 <ref bean="jobTrigger.updateO2User"/>
+                <ref bean="jobTrigger.ForkO2UsersForUpdateJob"/>
             </list>
         </property>
         <property name="quartzProperties">
