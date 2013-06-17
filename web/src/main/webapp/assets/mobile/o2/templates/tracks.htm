@@ -26,11 +26,14 @@
         <% } %>
     </div>
 
-    <% data.forEach(function (track) { %>
-    <div id="track<%= track.id %>" class="pane height-track color-main" onclick="Player.playTrack(<%= track.id %>)">
+    <% data.forEach(function (track) { 
+    	var trackClass = track.id == Player.current ? 'color-player' : 'color-main';
+    	var playerClass = track.id == Player.current ? '' : 'hidden';
+    %>
+    <div id="track<%= track.id %>" class="pane height-track <%= trackClass %>" onclick="Player.playTrack(<%= track.id %>)">
         <div class="inline middle text-center">
             <img class="in-middle cover-track" src="<%= track.cover %>">
-            <span id="icon-speakers<%= track.id %>" class="hidden icon-speakers"/>
+            <span id="icon-speakers<%= track.id %>" class="<%= playerClass %> icon-speakers"/>
         </div>
         <div class="line1 in-middle font-main marg-L5">
             <span class="S16"><%= track.title %></span><br/>

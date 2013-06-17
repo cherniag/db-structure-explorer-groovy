@@ -1,5 +1,4 @@
 
-
 Player = {
 	current : null,
 	load : function(id) {
@@ -13,12 +12,13 @@ Player = {
 			});
 			audio.addEventListener('ended', this.onEnded);
 			audio.addEventListener('pause', this.onPaused);
+			audio.addEventListener('play', this.onPlayed);
 			audio.addEventListener('error', this.onError);
 			audio.addEventListener('abort', this.onError);
 			Player[id] = audio;
 		}
 	},
-	
+
 	play : function(delay) {
 		if (delay != 0) {
 			setTimeout(function() {
@@ -26,9 +26,9 @@ Player = {
 			}, delay);
 		} else {
 			var id = Player.current;
-			if (id && Player[id].currentTime == 0) {
-					Player.cssPlaying();
-					Player[id].play();
+			if (id) {
+				Player.cssPlaying();
+				Player[id].play();
 			}
 		}
 	},
@@ -41,21 +41,30 @@ Player = {
 			Player.play(0);
 		}
 	},
+	onPlayed : function() {
+		Player.cssPlaying();
+	},
 	onEnded : function() {
-		var id = Player.current;
-		Player.cssStop(id);
+		Player.cssStop(Player.current);
+		Player.current = null;
+		
+		if(Player.isiPhone3)
+			Player.cssStop(Player.previous);
 	},
 	onPaused : function() {
+		var prevId = Player.previous;
+		Player.cssStop(prevId);
+		
 		var id = Player.current;
-		if(Player[id].currentTime != Player[id].duration){
-			Player.play(0);
-		}
+		if (Player[id] && Player[id].currentTime != Player[id].duration) {
+			Player.play(200);
+		} 
 	},
 	stop : function(nextId) {
-		var id = Player.current;
-		Player.current = nextId;
-		Player.cssStop(id);
+		var id = Player.previous = Player.current;
 		if (id && Player[id].canplay && !Player[id].paused) {
+			Player.current = nextId;
+			Player[id].currentTime = 0;
 			Player[id].pause();
 			Player[id].currentTime = 0;
 		}
@@ -76,24 +85,27 @@ Player = {
 	playTrack : function(id) {
 		var nowdate = new Date();
 		var nowtime = nowdate.getTime();
-		if(!Player.lastPlayed || ((nowtime - Player.lastPlayed) > 2000)){
-			Player.load(id);
+		var delay =  Player.isiPhone3 ? 2000 : 500;
+		
+		Player.load(id);
+		
+		if (!Player.lastPlayed || ((nowtime - Player.lastPlayed) > delay)) {
 			if (!Player.current) {
 				Player.current = id;
 				Player.play(0);
 			} else if (Player.current == id) {
-				Player.lastPlayed = null;
 				Player.stop();
+				Player.lastPlayed = null;
 			} else {
 				Player.stop(id);
 			}
 			Player.lastPlayed = nowtime;
 		}
 	},
-	clearCache : function(){
-		for(var p in Player){
+	clearCache : function() {
+		for ( var p in Player) {
 			var constructor = Player[p] ? Player[p]['constructor'] : null;
-			if(constructor == Audio){
+			if (constructor == Audio) {
 				Player[p].setAttribute("src", null);
 				Player[p].load();
 				Player[p] = null;
@@ -168,9 +180,9 @@ var PlaylistView = Backbone.View.extend({
 				list.preSelected = selected ? selected.get('id') : -1;
 				me.draw(data.toJSON());
 				Backbone.playlists = data;
-				
+
 				data.each(function(playlist) {
-					Backbone.tracksView.load(playlist.get('id')); 
+					Backbone.tracksView.load(playlist.get('id'));
 				});
 			}
 		});
@@ -195,27 +207,27 @@ var TracksView = Backbone.View.extend({
 	takeList : function(ID) {
 		var currentPL = this.currentPlaylist;
 		currentPL = Backbone.playlists.get(ID);
-		
-		if(currentPL){			
+
+		if (currentPL) {
 			var me = this;
 			var list = me.collection;
 			var draw = me.draw;
-			
-			this.load(ID, function(JSON){
+
+			this.load(ID, function(JSON) {
 				list.reset(JSON);
 				list.playlistId = ID;
 				draw(JSON, currentPL.toJSON(), me);
 			});
 		}
 	},
-	load: function(playlistId, callback){
+	load : function(playlistId, callback) {
 		var ID = playlistId;
 		var me = this;
 		var cache = me.cache;
-		
+
 		if (this.cache[ID]) {
 			var JSON = cache[ID];
-			if(callback)
+			if (callback)
 				callback(JSON);
 		} else {
 			list = new Tracks();
@@ -224,7 +236,7 @@ var TracksView = Backbone.View.extend({
 				success : function(data) {
 					var JSON = data.toJSON();
 					cache[ID] = JSON;
-					if(callback)
+					if (callback)
 						callback(JSON);
 				}
 			});
@@ -257,6 +269,8 @@ var PlaylistRouter = Backbone.Router.extend({
 		});
 
 		this.views = [ this.playlistView, this.tracksView ];
+		
+		Player.isiPhone3 = Browser.isiPhone3();
 	},
 	routes : {
 		"tracks/:listID" : "goTracks",

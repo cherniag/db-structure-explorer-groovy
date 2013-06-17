@@ -1,3 +1,18 @@
+var Browser = {
+		isiPhone5 : function (){
+			return this.isiPhone() && navigator.userAgent.match(/OS 6(_\d)+ like Mac OS X/i) != null;
+		},
+		isiPhone4 : function (){
+			return this.isiPhone() && navigator.userAgent.match(/OS 5(_\d)+ like Mac OS X/i) != null;
+		},
+		isiPhone3 : function (){
+			return this.isiPhone() && navigator.userAgent.match(/OS 4(_\d)+ like Mac OS X/i) != null;
+		},
+		isiPhone : function(){
+			return navigator.userAgent.match(/iPhone/i) != null;
+		}
+};
+
 var i18n = {
 
 };
