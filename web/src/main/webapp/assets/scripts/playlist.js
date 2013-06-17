@@ -1,5 +1,4 @@
 
-
 Player = {
 	current : null,
 	load : function(id) {
@@ -18,7 +17,7 @@ Player = {
 			Player[id] = audio;
 		}
 	},
-	
+
 	play : function(delay) {
 		if (delay != 0) {
 			setTimeout(function() {
@@ -26,9 +25,9 @@ Player = {
 			}, delay);
 		} else {
 			var id = Player.current;
-			if (id && Player[id].currentTime == 0) {
-					Player.cssPlaying();
-					Player[id].play();
+			if (id) {
+				Player.cssPlaying();
+				Player[id].play();
 			}
 		}
 	},
@@ -42,12 +41,11 @@ Player = {
 		}
 	},
 	onEnded : function() {
-		var id = Player.current;
-		Player.cssStop(id);
+		Player.stop();
 	},
 	onPaused : function() {
 		var id = Player.current;
-		if(Player[id].currentTime != Player[id].duration){
+		if (Player[id] && Player[id].currentTime != Player[id].duration) {
 			Player.play(0);
 		}
 	},
@@ -56,6 +54,7 @@ Player = {
 		Player.current = nextId;
 		Player.cssStop(id);
 		if (id && Player[id].canplay && !Player[id].paused) {
+			Player[id].currentTime = 0;
 			Player[id].pause();
 			Player[id].currentTime = 0;
 		}
@@ -76,24 +75,24 @@ Player = {
 	playTrack : function(id) {
 		var nowdate = new Date();
 		var nowtime = nowdate.getTime();
-		if(!Player.lastPlayed || ((nowtime - Player.lastPlayed) > 2000)){
+		if (!Player.lastPlayed || ((nowtime - Player.lastPlayed) > 1000)) {
 			Player.load(id);
 			if (!Player.current) {
 				Player.current = id;
 				Player.play(0);
 			} else if (Player.current == id) {
-				Player.lastPlayed = null;
 				Player.stop();
+				Player.lastPlayed = null;
 			} else {
 				Player.stop(id);
 			}
 			Player.lastPlayed = nowtime;
 		}
 	},
-	clearCache : function(){
-		for(var p in Player){
+	clearCache : function() {
+		for ( var p in Player) {
 			var constructor = Player[p] ? Player[p]['constructor'] : null;
-			if(constructor == Audio){
+			if (constructor == Audio) {
 				Player[p].setAttribute("src", null);
 				Player[p].load();
 				Player[p] = null;
@@ -168,9 +167,9 @@ var PlaylistView = Backbone.View.extend({
 				list.preSelected = selected ? selected.get('id') : -1;
 				me.draw(data.toJSON());
 				Backbone.playlists = data;
-				
+
 				data.each(function(playlist) {
-					Backbone.tracksView.load(playlist.get('id')); 
+					Backbone.tracksView.load(playlist.get('id'));
 				});
 			}
 		});
@@ -195,27 +194,27 @@ var TracksView = Backbone.View.extend({
 	takeList : function(ID) {
 		var currentPL = this.currentPlaylist;
 		currentPL = Backbone.playlists.get(ID);
-		
-		if(currentPL){			
+
+		if (currentPL) {
 			var me = this;
 			var list = me.collection;
 			var draw = me.draw;
-			
-			this.load(ID, function(JSON){
+
+			this.load(ID, function(JSON) {
 				list.reset(JSON);
 				list.playlistId = ID;
 				draw(JSON, currentPL.toJSON(), me);
 			});
 		}
 	},
-	load: function(playlistId, callback){
+	load : function(playlistId, callback) {
 		var ID = playlistId;
 		var me = this;
 		var cache = me.cache;
-		
+
 		if (this.cache[ID]) {
 			var JSON = cache[ID];
-			if(callback)
+			if (callback)
 				callback(JSON);
 		} else {
 			list = new Tracks();
@@ -224,7 +223,7 @@ var TracksView = Backbone.View.extend({
 				success : function(data) {
 					var JSON = data.toJSON();
 					cache[ID] = JSON;
-					if(callback)
+					if (callback)
 						callback(JSON);
 				}
 			});
