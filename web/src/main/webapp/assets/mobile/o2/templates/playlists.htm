@@ -15,24 +15,25 @@
         var color = 'color-main';
         var currentTheme = '';
         var preselected = Backbone.playlists.preSelected == dto.id
+        var swapButtonId = 'swap' + dto.id;
         if(preselected){
             color = 'color-selected';
             currentTheme = '<span class="font-light S10 color-current-theme">'
                 + Messages['page.playlists.item.current.label'] + '<span class="icon-check"/></span><br/>';
         }
     %>
-    <div id="<%= dto.id %>" onclick="if(event.target === this) location.href='#tracks/<%=dto.id%>'"
+    <div id="<%= dto.id %>" onclick="if(event.target.id != swapButtonId )location.href='#tracks/<%=dto.id%>'"
          class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
         <img class="in-middle marg-L7 cover" src="<%= dto.cover %>"/>
 
-        <div style="margin-left: 4px;" class="in-middle font-main">
+        <span style="margin-left: 4px;" class="in-middle font-main">
             <%= currentTheme %>
             <span class="S15 line16"><%= Strings.cut(dto.title, 18) %></span><br/>
             <span class="S13 line16"><%= dto.length %> <%=Messages['page.playlists.item.tracks']%></span>
-        </div>
+        </span>
         <% if(!preselected) { %>
-            <div  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">Swap</div>
+            <div id="<%=swapButtonId %>"  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">Swap</div>
         <% } %>
     </div>
    <% }); %>

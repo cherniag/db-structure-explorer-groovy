@@ -37,7 +37,7 @@
             Backbone.chartType = '${playlistType}';
             
             Templates.templatesPath = '/web/${requestScope.assetsPathAccordingToCommunity}/templates/';
-            Templates.load(['home', 'playlists', 'tracks', 'swap'], 'home', function(){
+            Templates.load(['home', 'playlists', 'tracks', 'swap'], 'playlists', function(){
             	var router = new PlaylistRouter();
             	Backbone.history.start();
             });
