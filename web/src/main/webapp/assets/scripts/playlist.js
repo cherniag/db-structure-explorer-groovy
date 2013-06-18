@@ -234,7 +234,8 @@ var PlaylistRouter = Backbone.Router.extend({
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
         "select/:listID": "select",
-        "apply": "apply"
+        "apply": "apply",
+        "back": "back"
     },
     swap: function(listID){
         Backbone.playlists.select(listID);
@@ -255,6 +256,9 @@ var PlaylistRouter = Backbone.Router.extend({
     select: function (listID) {
         Backbone.playlists.select(listID);
         this.goTracks(listID);
+    },
+    back: function(){
+        window.location.href = '/web/playlist/swap.html';
     },
     apply: function () {
         var list = Backbone.playlists.findWhere({selected: true});
