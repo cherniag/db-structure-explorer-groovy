@@ -22,7 +22,7 @@
                 + Messages['page.playlists.item.current.label'] + '<span class="icon-check"/></span><br/>';
         }
     %>
-    <div id="<%= dto.id %>" onclick="if(event.target.id != swapButtonId )location.href='#tracks/<%=dto.id%>'"
+    <div id="<%= dto.id %>" onclick="if(event.target.id != <%= swapButtonId %> )location.href='#tracks/<%=dto.id%>'"
          class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
         <img class="in-middle marg-L7 cover" src="<%= dto.cover %>"/>
