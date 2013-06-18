@@ -7,9 +7,7 @@ Player = {
 			var audio = new Audio();
 			audio.setAttribute("src", track.get('audio'));
 			audio.load();
-			audio.addEventListener('canplay', function() {
-				this.canplay = true;
-			});
+			audio.addEventListener('canplay', this.onCanPlay);
 			audio.addEventListener('ended', this.onEnded);
 			audio.addEventListener('pause', this.onPaused);
 			audio.addEventListener('play', this.onPlayed);
@@ -40,6 +38,9 @@ Player = {
 		} else {
 			Player.play(0);
 		}
+	},
+	onCanPlay : function() {
+		this.canplay = true;
 	},
 	onPlayed : function() {
 		Player.cssPlaying();
@@ -85,17 +86,15 @@ Player = {
 	playTrack : function(id) {
 		var nowdate = new Date();
 		var nowtime = nowdate.getTime();
-		var delay =  Player.isiPhone3 ? 2000 : 500;
-		
-		Player.load(id);
-		
+		var delay =  Player.isiPhone3 ? 2000 : 1000;
+				
 		if (!Player.lastPlayed || ((nowtime - Player.lastPlayed) > delay)) {
+			Player.load(id);
 			if (!Player.current) {
 				Player.current = id;
 				Player.play(0);
 			} else if (Player.current == id) {
 				Player.stop();
-				Player.lastPlayed = null;
 			} else {
 				Player.stop(id);
 			}
