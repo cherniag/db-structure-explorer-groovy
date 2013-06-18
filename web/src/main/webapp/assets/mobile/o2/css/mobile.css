@@ -287,6 +287,7 @@ img.centered{
     top: 108px;
     width: 410px;
     height: 353px;
+    z-index: -100;
     background: transparent url(../imgs/bg_swap_confirmed.png) no-repeat;
 }
 .icon_swap_landing{
