@@ -20,7 +20,6 @@ var Strings = {
 };
 
 Templates = {
-    templates: {},
     names:[],
     mainName: null,
     loaded: 0,
@@ -46,9 +45,5 @@ Templates = {
         T.mainName = mainName;
         for(var i in T.names)
             T.pick(T.names[i], callback);
-    },
-    get: function (name) {
-        return this.templates[name];
     }
-
 }

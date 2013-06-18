@@ -6,27 +6,29 @@ Player = {
             var audio = new Audio();
             audio.setAttribute("src", track.get('audio'));
             audio.load();
-            audio.addEventListener('canplay', function(){this.canplay = true;});
+            audio.addEventListener('canplay', function () {
+                this.canplay = true;
+            });
             Player[id] = audio;
         }
     },
-    play: function(){
+    play: function () {
         Player.cssPlaying();
         Player[Player.current].play();
     },
-    pauseResume: function(){
+    pauseResume: function () {
         var id = Player.current;
-        if(Player[id].currentTime > 0){
+        if (Player[id].currentTime > 0) {
             Player[id].pause();
             Player.cssStop(id);
-        }else{
+        } else {
             Player.play();
         }
     },
-    stop: function(){
+    stop: function () {
         var id = Player.current;
         Player.cssStop(id);
-        if(id && Player[id].canplay){
+        if (id && Player[id].canplay) {
             Player[id].pause();
             Player[id].currentTime = 0;
         }
@@ -34,7 +36,7 @@ Player = {
     },
     cssPlaying: function () {
         var id = Player.current;
-        if(id){
+        if (id) {
             $('div#track' + id).removeClass('color-main');
             $('div#track' + id).addClass('color-player');
             $('#icon-speakers' + id).removeClass('hidden');
@@ -51,7 +53,7 @@ Player = {
             Player.current = id;
             Player.play();
         } else if (Player.current == id) {
-        	Player.stop();
+            Player.stop();
         } else {
             Player.stop();
             Player.current = id;
@@ -113,7 +115,8 @@ var Playlists = Backbone.Collection.extend({
 
 var PlaylistView = Backbone.View.extend({
     el: 'body',
-    initialize: function () {
+    loaded: false,
+    load: function(){
         var me = this;
         var list = me.collection;
         list.fetch({
@@ -122,15 +125,37 @@ var PlaylistView = Backbone.View.extend({
                 list.preSelected = selected ? selected.get('id') : -1;
                 me.draw(data.toJSON());
                 Backbone.playlists = data;
+                me.loaded = true;
             }
         });
     },
     render: function () {
-        this.draw(this.collection.toJSON());
+        if(this.loaded)
+            this.draw(this.collection.toJSON());
+        else
+            this.load();
     },
     draw: function (data) {
         var data = this.collection.toJSON();
         var html = Templates.playlists({data: data});
+        $(this.el).empty();
+        $(this.el).html(html);
+    }
+});
+
+var HomeView = Backbone.View.extend({
+    el: 'body',
+    render: function(){
+        var html = Templates.home();
+        $(this.el).empty();
+        $(this.el).html(html);
+    }
+});
+
+var SwapView = Backbone.View.extend({
+    el: 'body',
+    render: function(){
+        var html = Templates.swap();
         $(this.el).empty();
         $(this.el).html(html);
     }
@@ -180,25 +205,34 @@ var PlaylistRouter = Backbone.Router.extend({
 
         this.playlistView = new PlaylistView({collection: Backbone.playlists});
         this.tracksView = new TracksView({collection: Backbone.tracks});
+        this.homeView = new HomeView();
+        this.swapView = new SwapView();
 
-        this.views = [this.playlistView, this.tracksView];
+        this.views = [this.playlistView, this.tracksView, this.homeView, this.swapView];
     },
     routes: {
+        "home": "home",
+        "swap/:listID":"swap",
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
         "": "allPlaylists",
         "select/:listID": "select",
         "apply": "apply"
     },
+    swap: function(listID){
+        //Backbone.playlists.select(listID);
+        this.goto(this.swapView);
+    },
+    home: function () {
+        this.goto(this.homeView);
+    },
     allPlaylists: function () {
-    	Player.stop();
-        this.hideAll();
-        this.playlistView.render();
-        $(this.playlistView.el).show();
+        Player.stop();
+        this.goto(this.playlistView);
     },
     goTracks: function (listID) {
-    	this.hideAll();
-    	this.tracksView.render(listID);
+        this.hideAll();
+        this.tracksView.render(listID);
         $(this.tracksView.el).show();
     },
     select: function (listID) {
@@ -212,6 +246,11 @@ var PlaylistRouter = Backbone.Router.extend({
         if (!preSelected || preSelected != list.get('id'))
             list.save({selected: true});
         window.location.href = '/web/playlist/swap.html';
+    },
+    goto: function(view){
+        this.hideAll();
+        view.render();
+        $(view.el).show();
     },
     hideAll: function () {
         _.each(this.views, function (view) {

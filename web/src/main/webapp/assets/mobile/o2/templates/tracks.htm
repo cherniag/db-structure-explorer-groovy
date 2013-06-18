@@ -1,5 +1,6 @@
+<div class="wide color-bg">
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
-    <a href="#allPlaylists" class="button-small button-left"><%=Messages['page.playlists.tracks.menu.back']%></a>
+    <a href="#allPlaylists" style="top:8px;left:4px;" class="button-small absolute"><%=Messages['page.playlists.tracks.menu.back']%></a>
     <div class="header-position font-main S17">
         <div class="in-middle icon-playlist"/>
         <div class="in-middle text-header middle"><%=Messages['page.playlists.tracks.header.text']%></div>
@@ -11,18 +12,16 @@
     if(playlist.selected)
         color = 'color-selected';
     %>
-    <div class="pane height-pane <%= color %>">
-        <div class="in-middle icon-playlist-filled"/>
-        <img class="in-middle cover" src="<%= playlist.cover %>"/>
+    <div style="height: 94px;" class="pane <%= color %>">
+        <div style="margin-left: -2px;margin-top: 3px;" class="in-middle icon-playlist-filled"/>
+        <img class="in-middle cover" style="margin-left: 5px; margin-top: 11px" src="<%= playlist.cover %>"/>
         <div class="line04 in-middle marg-L10">
             <span class="font-main S15"><%= playlist.title %></span><br/>
             <pre class="line1 font-main S13"><%= Strings.cutLn(playlist.description, 2, 18)%></pre>
             <span class="font-main S13"><%= playlist.length%> <%=Messages['page.playlists.tracks.item.tracks']%></span>
         </div>
-        <% if(playlist.selected){ %>
-            <div class="bottom-right icon-selected"/>
-        <% } else { %>
-            <div onclick="location.href='#select/<%= playlist.id%>'" class="btn bottom-right font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
+        <% if(!playlist.selected){ %>
+            <div onclick="location.href='#select/<%= playlist.id%>'"style="margin-top: -51px; right: 14px;" class="btn absolute font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
         <% } %>
     </div>
 
@@ -40,4 +39,5 @@
         <div class="icon-clock"/>
     </div>
     <% }); %>
+</div>
 </div>
