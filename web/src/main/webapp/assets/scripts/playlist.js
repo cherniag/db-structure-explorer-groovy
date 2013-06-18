@@ -220,37 +220,37 @@ var PlaylistRouter = Backbone.Router.extend({
 		Backbone.playlists = new Playlists();
 		Backbone.tracks = new Tracks();
 
-        this.playlistView = new PlaylistView({collection: Backbone.playlists});
-        this.tracksView = new TracksView({collection: Backbone.tracks});
-        this.homeView = new HomeView();
-        this.swapView = new SwapView();
+        Backbone.playlistView = new PlaylistView({collection: Backbone.playlists});
+        Backbone.tracksView = new TracksView({collection: Backbone.tracks});
+        Backbone.homeView = new HomeView();
+        Backbone.swapView = new SwapView();
 
-        this.views = [this.playlistView, this.tracksView, this.homeView, this.swapView];
+        this.views = [Backbone.playlistView, Backbone.tracksView, Backbone.homeView, Backbone.swapView];
     },
     routes: {
         "home": "home",
+        "": "home",
         "swap/:listID":"swap",
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
-        "": "allPlaylists",
         "select/:listID": "select",
         "apply": "apply"
     },
     swap: function(listID){
-        //Backbone.playlists.select(listID);
-        this.goto(this.swapView);
+        Backbone.playlists.select(listID);
+        this.goto(Backbone.swapView);
     },
     home: function () {
-        this.goto(this.homeView);
+        this.goto(Backbone.homeView);
     },
     allPlaylists: function () {
         Player.stop();
-        this.goto(this.playlistView);
+        this.goto(Backbone.playlistView);
     },
     goTracks: function (listID) {
         this.hideAll();
-        this.tracksView.render(listID);
-        $(this.tracksView.el).show();
+        Backbone.tracksView.render(listID);
+        $(Backbone.tracksView.el).show();
     },
     select: function (listID) {
         Backbone.playlists.select(listID);

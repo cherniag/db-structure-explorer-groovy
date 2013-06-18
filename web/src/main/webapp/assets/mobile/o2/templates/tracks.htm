@@ -21,7 +21,7 @@
             <span class="font-main S13"><%= playlist.length%> <%=Messages['page.playlists.tracks.item.tracks']%></span>
         </div>
         <% if(!playlist.selected){ %>
-            <div onclick="location.href='#select/<%= playlist.id%>'"style="margin-top: -51px; right: 14px;" class="btn absolute font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
+            <div onclick="location.href='#swap/<%= playlist.id%>'"style="margin-top: -51px; right: 14px;" class="btn absolute font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
         <% } %>
     </div>
 
