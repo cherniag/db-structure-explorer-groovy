@@ -103,6 +103,10 @@ public class O2ClientServiceImpl implements O2ClientService {
 		this.webServiceGateway = webServiceGateway;
 	}
 
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
 	@Override
 	public String getServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByName("o2");

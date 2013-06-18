@@ -81,6 +81,12 @@ public abstract class PaymentDetails {
 	public void incrementRetries() {
 		this.madeRetries++;
 	}
+	
+	public void decrementRetries() {
+		if (madeRetries > 0) {
+			this.madeRetries--;
+		}
+	}
 
 	public Long getI() {
 		return i;

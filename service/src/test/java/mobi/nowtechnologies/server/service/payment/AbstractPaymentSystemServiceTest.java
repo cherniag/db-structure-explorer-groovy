@@ -305,13 +305,18 @@ public class AbstractPaymentSystemServiceTest {
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
+		final String descriptionError = "Unexpected http statuc code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries willn't be incremented";
+
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
 		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
+		assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 		
 		assertEquals(curremtTimeSeconds, user.getLastPaymentTryInCycleSeconds());
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+		assertEquals(3, paymentDetails.getRetriesOnError());
+		assertEquals(descriptionError, paymentDetails.getDescriptionError());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
