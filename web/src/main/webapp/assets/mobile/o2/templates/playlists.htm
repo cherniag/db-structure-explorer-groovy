@@ -14,7 +14,7 @@
     <% data.forEach(function (dto) {
         var color = 'color-main';
         var currentTheme = '';
-        var preselected = Backbone.playlists.preSelected == dto.id
+        var preselected = Backbone.playlists.preSelected == dto.id;
         var swapButtonId = 'swap' + dto.id;
         if(preselected){
             color = 'color-selected';
@@ -33,7 +33,7 @@
             <span class="S13 line16"><%= dto.length %> <%=Messages['page.playlists.item.tracks']%></span>
         </span>
         <% if(!preselected) { %>
-            <div id="<%=swapButtonId %>"  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">Swap</div>
+            <div id="<%= swapButtonId %>"  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">Swap</div>
         <% } %>
     </div>
    <% }); %>
