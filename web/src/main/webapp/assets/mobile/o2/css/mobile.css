@@ -286,7 +286,7 @@ img.centered{
     right: 0;
     top: 108px;
     width: 410px;
-    height: 353px;
+    height: 893px;
     z-index: -100;
     background: transparent url(../imgs/bg_swap_confirmed.png) no-repeat;
 }
@@ -295,7 +295,7 @@ img.centered{
     right: 0;
     top: 107px;
     width: 416px;
-    height: 353px;
+    height: 893px;
     z-index: -100;
     background: transparent url(../imgs/bg_swap_landing.png) no-repeat;
 }
