@@ -21,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
+
 /**
  * GetChartController
  * 
@@ -266,7 +268,8 @@ public class GetChartController extends CommonController{
 		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
 		Map<Integer, PlaylistDto> playlistMap = new HashMap<Integer, PlaylistDto>();
 		for (int i = 0; i < playlistDtos.length; i++) {
-			if(playlistDtos[i].getType() == ChartType.FOURTH_CHART){
+            ChartType chartType = playlistDtos[i].getType();
+            if(FOURTH_CHART.equals(chartType)|| FIFTH_CHART.equals(chartType)){
 				removedPlaylistIds.add(playlistDtos[i].getId());
 				playlistDtos[i] = null;
 			}else{
