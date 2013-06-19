@@ -5,7 +5,6 @@ Player = {
 		if (!this.player) {
 			this.player = new Audio();
 			this.player.addEventListener('ended', this.onEnded);
-			//audio.addEventListener('error', this.onError);
 		}
 	},
 	playPause : function() {
@@ -89,7 +88,7 @@ var Track = Backbone.Model.extend({
 var Tracks = Backbone.Collection.extend({
 	model : Track,
 	url : function() {
-		return "/web/playlists/" + this.playlistId + "/tracks"
+		return "/web/playlists/" + this.playlistId + "/tracks";
 	},
 	parse : function(response) {
 		return response.tracks;
@@ -116,36 +115,54 @@ var Playlists = Backbone.Collection.extend({
 });
 
 var PlaylistView = Backbone.View.extend({
-	el : 'body',
-	initialize : function() {
-		var me = this;
-		var list = me.collection;
-		list.fetch({
-			success : function(data) {
-				var selected = list.findWhere({
-					selected : true
-				});
-				list.preSelected = selected ? selected.get('id') : -1;
-				me.draw(data.toJSON());
-				Backbone.playlists = data;
+    el: 'body',
+    loaded: false,
+    load: function () {
+        var me = this;
+        var list = me.collection;
+        list.fetch({
+            success: function (data) {
+                var selected = list.findWhere({selected: true});
+                list.preSelected = selected ? selected.get('id') : -1;
+                me.draw(data.toJSON());
+                Backbone.playlists = data;
+                
+                data.each(function(playlist) {
+                    Backbone.tracksView.load(playlist.get('id'));
+                });
+            }
+        });
+    },
+    render: function () {
+        if(this.loaded)
+            this.draw(this.collection.toJSON());
+        else
+            this.load();
+    },
+    draw: function (data) {
+        var data = this.collection.toJSON();
+        var html = Templates.playlists({data: data});
+        $(this.el).empty();
+        $(this.el).html(html);
+    }
+});
 
-				data.each(function(playlist) {
-					Backbone.tracksView.load(playlist.get('id'));
-				});
-			}
-		});
-	},
-	render : function() {
-		this.draw(this.collection.toJSON());
-	},
-	draw : function(data) {
-		var data = this.collection.toJSON();
-		var html = Templates.playlists({
-			data : data
-		});
-		$(this.el).empty();
-		$(this.el).html(html);
-	},
+var HomeView = Backbone.View.extend({
+    el: 'body',
+    render: function(){
+        var html = Templates.home();
+        $(this.el).empty();
+        $(this.el).html(html);
+    }
+});
+
+var SwapView = Backbone.View.extend({
+    el: 'body',
+    render: function(){
+        var html = Templates.swap();
+        $(this.el).empty();
+        $(this.el).html(html);
+    }
 });
 
 var TracksView = Backbone.View.extend({
@@ -194,10 +211,7 @@ var TracksView = Backbone.View.extend({
 		this.takeList(ID);
 	},
 	draw : function(data, currentPL, me) {
-		var html = Templates.tracks({
-			data : data,
-			playlist : currentPL
-		});
+		var html = Templates.tracks({ data : data, playlist : currentPL });
 		$(me.el).empty();
 		$(me.el).html(html);
 	}
@@ -209,56 +223,63 @@ var PlaylistRouter = Backbone.Router.extend({
 		Backbone.playlists = new Playlists();
 		Backbone.tracks = new Tracks();
 
-		Backbone.playlistView = this.playlistView = new PlaylistView({
-			collection : Backbone.playlists
-		});
-		Backbone.tracksView = this.tracksView = new TracksView({
-			collection : Backbone.tracks
-		});
+        Backbone.playlistView = new PlaylistView({collection: Backbone.playlists});
+        Backbone.tracksView = new TracksView({collection: Backbone.tracks});
+        Backbone.homeView = new HomeView();
+        Backbone.swapView = new SwapView();
 
-		this.views = [ this.playlistView, this.tracksView ];
-
-		Player.isiPhone3 = Browser.isiPhone3();
-	},
-
-	routes : {
-		"tracks/:listID" : "goTracks",
-		"allPlaylists" : "allPlaylists",
-		"" : "allPlaylists",
-		"select/:listID" : "select",
-		"apply" : "apply"
-	},
-	allPlaylists : function() {
-		me = this;
-		Player.stop();
-		me.hideAll();
-		me.playlistView.render();
-		$(me.playlistView.el).show();
-	},
-	goTracks : function(listID) {
-		this.hideAll();
-		this.tracksView.render(listID);
-		$(this.tracksView.el).show();
-	},
-	select : function(listID) {
-		Backbone.playlists.select(listID);
-		this.goTracks(listID);
-	},
-	apply : function() {
-		var list = Backbone.playlists.findWhere({
-			selected : true
-		});
-		var preSelected = Backbone.playlists.preSelected;
-		Player.stop();
-		if (!preSelected || preSelected != list.get('id'))
-			list.save({
-				selected : true
-			});
-		window.location.href = '/web/playlist/swap.html';
-	},
-	hideAll : function() {
-		_.each(this.views, function(view) {
-			$(view.el).hide();
-		});
-	}
+        this.views = [Backbone.playlistView, Backbone.tracksView, Backbone.homeView, Backbone.swapView];
+    },
+    routes: {
+        "home": "home",
+        "": "home",
+        "swap/:listID":"swap",
+        "tracks/:listID": "goTracks",
+        "allPlaylists": "allPlaylists",
+        "select/:listID": "select",
+        "apply": "apply",
+        "back": "back"
+    },
+    swap: function(listID){
+        Backbone.playlists.select(listID);
+        this.gotoView(Backbone.swapView);
+    },
+    home: function () {
+        this.gotoView(Backbone.homeView);
+    },
+    allPlaylists: function () {
+        Player.stop();
+        this.gotoView(Backbone.playlistView);
+    },
+    goTracks: function (listID) {
+        this.hideAll();
+        Backbone.tracksView.render(listID);
+        $(Backbone.tracksView.el).show();
+    },
+    select: function (listID) {
+        Backbone.playlists.select(listID);
+        this.goTracks(listID);
+    },
+    back: function(){
+        window.location.href = '/web/playlist/swap.html';
+    },
+    apply: function () {
+        var list = Backbone.playlists.findWhere({selected: true});
+        var preSelected = Backbone.playlists.preSelected;
+        Player.stop();
+        if (!preSelected || preSelected != list.get('id'))
+            list.save({selected: true});
+        window.location.href = '/web/playlist/swap.html';
+    },
+    gotoView: function(view){
+        this.hideAll();
+        view.render();
+        $(view.el).show();
+    },
+    hideAll: function () {
+        _.each(this.views, function (view) {
+            $(view.el).hide();
+        });
+    }
 });
+

@@ -1,42 +1,41 @@
+<div class="wide color-bg">
 <div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
+    <a href="#home" style="top:8px;left:4px;" class="button-small absolute"><%=Messages['page.playlists.tracks.menu.back']%></a>
     <div class="header-position font-main S17">
         <div class="icon-playlist in-middle"/>
         <div class="in-middle"><%=Messages['page.playlists.header.text']%></div>
     </div>
-    <a href="#apply" class="button-small button-right"><%=Messages['page.playlists.menu.apply']%></a>
 </div>
 <div class="pad5">
-    <%
-    if(Backbone.playlists.swaped){
-    %>
-    <div class="pane height-swap color-selected">
+    <div class="pane height-swap color-infobar">
         <span class="font-main S13 color-current-theme"><%=Messages['page.playlists.alert.swap']%></span>
         <div class="in-middle icon-swap  right10"/>
     </div>
-    <%
-    }
-    data.forEach(function (dto) {
+    <% data.forEach(function (dto) {
         var color = 'color-main';
-        var selectedIcon = '';
         var currentTheme = '';
-        if(Backbone.playlists.preSelected == dto.id){
+        var preselected = Backbone.playlists.preSelected == dto.id;
+        var swapButtonId = 'swap' + dto.id;
+        if(preselected){
             color = 'color-selected';
-            currentTheme = '<span class="font-main S13 color-current-theme">'+Messages['page.playlists.item.current.label']+'</span><br/>';
+            currentTheme = '<span class="font-light S10 color-current-theme">'
+                + Messages['page.playlists.item.current.label'] + '<span class="icon-check"/></span><br/>';
         }
-        if(dto.selected)
-            selectedIcon = '<div class="in-middle right10 marg-T30 icon-check"/>';
     %>
-    <div id="<%= dto.id %>" onclick="location.href='#tracks/<%=dto.id%>'"
+    <div id="<%= dto.id %>" onclick="if(event.target.id != <%= swapButtonId %> )location.href='#tracks/<%=dto.id%>'"
          class="playlist height-pane <%= color %> ">
         <div class="in-middle icon-playlist-filled"/>
         <img class="in-middle marg-L7 cover" src="<%= dto.cover %>"/>
 
-        <div class="in-middle font-main marg-L10">
+        <span style="margin-left: 4px;" class="in-middle font-main">
             <%= currentTheme %>
             <span class="S15 line16"><%= Strings.cut(dto.title, 18) %></span><br/>
             <span class="S13 line16"><%= dto.length %> <%=Messages['page.playlists.item.tracks']%></span>
-        </div>
-        <%= selectedIcon %>
+        </span>
+        <% if(!preselected) { %>
+            <div id="<%= swapButtonId %>"  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">Swap</div>
+        <% } %>
     </div>
    <% }); %>
+</div>
 </div>

@@ -192,11 +192,10 @@ public class Utils {
 		final String USER_NAME =
 				"test@test.com";
 		final String PASSWORD = "test@test.com";
-		final String TIMESTAMP = "1";
+		final String TIMESTAMP = "2013-06-01 09:33+0200";
 
 		System.out.println(createStoredToken(USER_NAME, PASSWORD));
-		System.out.println(createTimestampToken(createStoredToken(USER_NAME,
-				PASSWORD), TIMESTAMP));
+		System.out.println(createTimestampToken("18b56228b14fda6633ae0551a04b5250", TIMESTAMP));
 
 		// System.out.println(getOTACode(132,"richard.monday@chartsnow.mobi"));
 		//f701af8d07e5c95d3f5cf3bd9a62344d
