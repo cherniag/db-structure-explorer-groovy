@@ -31,13 +31,24 @@
 	    		'page.playlists.tracks.item.tracks' : '<s:message code="page.playlists.tracks.item.tracks"/>',
 	    		'page.playlists.tracks.menu.back' : '<s:message code="page.playlists.tracks.menu.back"/>',
 	    		'page.playlists.tracks.item.select' : '<s:message code="page.playlists.tracks.item.select"/>',
+
+                'page.playlists.home.header.text' : '<s:message code="page.playlists.home.header.text"/>',
+                'page.playlists.home.title.text': '<s:message code="page.playlists.home.title.text"/>',
+                'page.playlists.home.message.text' : '<s:message code="page.playlists.home.message.text"/>',
+                'page.playlists.home.button.go.text' : '<s:message code="page.playlists.home.button.go.text"/>',
+
+                'page.swap.header.text' : '<s:message code="page.swap.header.text"/>',
+                'page.swap.button.back.text' : '<s:message code="page.swap.button.back.text"/>',
+                'page.swap.title.text' : '<s:message code="page.swap.title.text"/>',
+                'page.swap.message.text' : '<s:message code="page.swap.message.text"/>',
+                'page.swap.button.ok.text': '<s:message code="page.swap.button.ok.text"/>'
 		};
     
         $(document).ready(function () {       	
             Backbone.chartType = '${playlistType}';
             
             Templates.templatesPath = '/web/${requestScope.assetsPathAccordingToCommunity}/templates/';
-            Templates.load(['home', 'playlists', 'tracks', 'swap'], 'playlists', function(){
+            Templates.load(['home', 'playlists', 'tracks', 'swap'], 'home', function(){
             	var router = new PlaylistRouter();
             	Backbone.history.start();
             });
