@@ -31,11 +31,13 @@
 	    		'page.playlists.tracks.item.tracks' : '<s:message code="page.playlists.tracks.item.tracks"/>',
 	    		'page.playlists.tracks.menu.back' : '<s:message code="page.playlists.tracks.menu.back"/>',
 	    		'page.playlists.tracks.item.select' : '<s:message code="page.playlists.tracks.item.select"/>',
+                'page.playlists.button.swap.text': '<s:message code="page.playlists.button.swap.text"/> ',
 
                 'page.playlists.home.header.text' : '<s:message code="page.playlists.home.header.text"/>',
                 'page.playlists.home.title.text': '<s:message code="page.playlists.home.title.text"/>',
                 'page.playlists.home.message.text' : '<s:message code="page.playlists.home.message.text"/>',
                 'page.playlists.home.button.go.text' : '<s:message code="page.playlists.home.button.go.text"/>',
+                'page.playlists.home.button.back.text': '<s:message code="page.playlists.home.button.back.text"/> ',
 
                 'page.swap.header.text' : '<s:message code="page.swap.header.text"/>',
                 'page.swap.button.back.text' : '<s:message code="page.swap.button.back.text"/>',
