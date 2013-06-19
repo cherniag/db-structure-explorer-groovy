@@ -185,9 +185,10 @@ var TracksView = Backbone.View.extend({
 	load : function(playlistId, callback) {
 		var ID = playlistId;
 		var me = this;
+        var list = me.collection;
 		var cache = me.cache;
 
-		if (this.cache[ID]) {
+		if (cache[ID]) {
 			var JSON = cache[ID];
 			if (callback)
 				callback(JSON);
