@@ -103,14 +103,14 @@ var Playlists = Backbone.Collection.extend({
 	parse : function(response) {
 		return response.playlists;
 	},
+    comparator:function(playlist){
+        return playlist.get('selected') ? -1 : 1;
+    },
 	select : function(id) {
 		this.models.forEach(function(list) {
 			list.set('selected', list.get('id') == id);
 		});
-		var selected = this.findWhere({
-			selected : true
-		});
-		this.swaped = selected.get('id') != this.preSelected;
+		var selected = this.findWhere({ selected : true });
 	}
 });
 
@@ -141,10 +141,12 @@ var PlaylistView = Backbone.View.extend({
             this.load();
     },
     draw: function (data) {
+        this.collection.sort();
         var data = this.collection.toJSON();
         var html = Templates.playlists({data: data});
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).addClass('color-bg');
     }
 });
 
@@ -154,6 +156,7 @@ var HomeView = Backbone.View.extend({
         var html = Templates.home();
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).removeClass('color-bg');
     }
 });
 
@@ -163,6 +166,7 @@ var SwapView = Backbone.View.extend({
         var html = Templates.swap();
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).removeClass('color-bg');
     }
 });
 
@@ -216,6 +220,7 @@ var TracksView = Backbone.View.extend({
 		var html = Templates.tracks({ data : data, playlist : currentPL });
 		$(me.el).empty();
 		$(me.el).html(html);
+        $(me.el).addClass('color-bg');
 	}
 });
 
