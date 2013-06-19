@@ -129,6 +129,7 @@ var PlaylistView = Backbone.View.extend({
                 list.preSelected = selected ? selected.get('id') : -1;
                 me.draw(data.toJSON());
                 Backbone.playlists = data;
+                me.loaded = true;
                 
                 data.each(function(playlist) {
                     Backbone.tracksView.load(playlist.get('id'));
