@@ -14,14 +14,14 @@
     <meta name="MobileOptimized" content="640"/>
 
     <link rel="stylesheet" type="text/css" href="/web/${requestScope.assetsPathAccordingToCommunity}css/mobile.css" />
-    <script type="text/javascript" src="/web/assets/scripts/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/underscore.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/json2.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/backbone.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/utils.js"></script>
-    <script type="text/javascript" src="/web/assets/scripts/playlist.js"></script>
-    <script type="text/javascript">
-	    Messages = {
+    <script src="/web/assets/scripts/jquery-1.7.2.min.js"></script>
+    <script src="/web/assets/scripts/underscore.js"></script>
+    <script src="/web/assets/scripts/json2.js"></script>
+    <script src="/web/assets/scripts/backbone.js"></script>
+    <script src="/web/assets/scripts/utils.js"></script>
+    <script src="/web/assets/scripts/playlist.js"></script>
+    <script>
+	    var Messages = {
 	    		'page.playlists.header.text' : '<s:message code="page.playlists.header.text"/>',
 	    		'page.playlists.tracks.header.text' : '<s:message code="page.playlists.tracks.header.text"/>',
 	    		'page.playlists.alert.swap' : '<s:message code="page.playlists.alert.swap"/>',

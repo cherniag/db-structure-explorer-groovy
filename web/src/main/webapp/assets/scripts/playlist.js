@@ -110,10 +110,7 @@ var Playlists = Backbone.Collection.extend({
 		this.models.forEach(function(list) {
 			list.set('selected', list.get('id') == id);
 		});
-		var selected = this.findWhere({
-			selected : true
-		});
-		this.swaped = selected.get('id') != this.preSelected;
+		var selected = this.findWhere({ selected : true });
 	}
 });
 
