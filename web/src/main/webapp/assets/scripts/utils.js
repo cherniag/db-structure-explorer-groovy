@@ -35,7 +35,7 @@ var Strings = {
     }
 };
 
-Templates = {
+var Templates = {
     names:[],
     mainName: null,
     loaded: 0,

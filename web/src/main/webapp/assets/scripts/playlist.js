@@ -1,4 +1,4 @@
-Player = {
+var Player = {
 	current : null,
 	player : null,
 	load : function() {
@@ -29,21 +29,19 @@ Player = {
 		this.playPause();
 	},
 	onEnded : function() {
-		Player.cssStop(Player.current);
+		Player.cssStop();
 	},
 	cssPlaying : function() {
 		var id = Player.current;
 		if (id) {
-			$('div#track' + id).removeClass('color-main');
-			$('div#track' + id).addClass('color-player');
+			$('div#track' + id).removeClass('color-main').addClass('color-player');
 			$('#icon-speakers' + id).removeClass('hidden');
 		}
 	},
-	cssStop : function(id) {
+	cssStop : function() {
 		var id = Player.current;
 		if (id) {
-			$('div#track' + id).removeClass('color-player');
-			$('div#track' + id).addClass('color-main');
+			$('div#track' + id).removeClass('color-player').addClass('color-main');
 			$('#icon-speakers' + id).addClass('hidden');
 		}
 	},
@@ -57,8 +55,7 @@ Player = {
 		}else{
 			this.stop();
 		}
-	},
-
+	}
 };
 
 var Playlist = Backbone.Model.extend({
@@ -103,20 +100,20 @@ var Playlists = Backbone.Collection.extend({
 	parse : function(response) {
 		return response.playlists;
 	},
-    comparator:function(playlist){
+    comparator: function(playlist){
         return playlist.get('selected') ? -1 : 1;
     },
 	select : function(id) {
 		this.models.forEach(function(list) {
 			list.set('selected', list.get('id') == id);
 		});
-		var selected = this.findWhere({ selected : true });
 	}
 });
 
 var PlaylistView = Backbone.View.extend({
     el: 'body',
     loaded: false,
+    willBeSelected: null,
     load: function () {
         var me = this;
         var list = me.collection;
@@ -124,7 +121,7 @@ var PlaylistView = Backbone.View.extend({
             success: function (data) {
                 var selected = list.findWhere({selected: true});
                 list.preSelected = selected ? selected.get('id') : -1;
-                me.draw(data.toJSON());
+                me.draw(data);
                 Backbone.playlists = data;
                 me.loaded = true;
                 
@@ -136,14 +133,13 @@ var PlaylistView = Backbone.View.extend({
     },
     render: function () {
         if(this.loaded)
-            this.draw(this.collection.toJSON());
+            this.draw(this.collection);
         else
             this.load();
     },
     draw: function (data) {
-        this.collection.sort();
-        var data = this.collection.toJSON();
-        var html = Templates.playlists({data: data});
+        data.sort();
+        var html = Templates.playlists({data: data.toJSON()});
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).addClass('color-bg');
@@ -183,7 +179,7 @@ var TracksView = Backbone.View.extend({
 			var list = me.collection;
 			var draw = me.draw;
 
-			this.load(ID, function(JSON) {
+			me.load(ID, function(JSON) {
 				list.reset(JSON);
 				list.playlistId = ID;
 				draw(JSON, currentPL.toJSON(), me);
@@ -238,17 +234,16 @@ var PlaylistRouter = Backbone.Router.extend({
         this.views = [Backbone.playlistView, Backbone.tracksView, Backbone.homeView, Backbone.swapView];
     },
     routes: {
-        "home": "home",
         "": "home",
+        "home": "home",
         "swap/:listID":"swap",
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
-        "select/:listID": "select",
         "apply": "apply",
         "back": "back"
     },
     swap: function(listID){
-        Backbone.playlists.select(listID);
+        Backbone.playlistView.willBeSelected = listID;
         this.gotoView(Backbone.swapView);
     },
     home: function () {
@@ -263,19 +258,16 @@ var PlaylistRouter = Backbone.Router.extend({
         Backbone.tracksView.render(listID);
         $(Backbone.tracksView.el).show();
     },
-    select: function (listID) {
-        Backbone.playlists.select(listID);
-        this.goTracks(listID);
-    },
     back: function(){
         window.location.href = '/web/playlist/swap.html';
     },
     apply: function () {
-        var list = Backbone.playlists.findWhere({selected: true});
-        var preSelected = Backbone.playlists.preSelected;
-        Player.stop();
-        if (!preSelected || preSelected != list.get('id'))
+        var listID = Backbone.playlistView.willBeSelected;
+        if (listID){
+            var list = Backbone.playlists.get(listID);
             list.save({selected: true});
+        }
+        Player.stop();
         window.location.href = '/web/playlist/swap.html';
     },
     gotoView: function(view){
