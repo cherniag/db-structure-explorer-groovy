@@ -149,6 +149,7 @@ var PlaylistView = Backbone.View.extend({
         var html = Templates.playlists({data: data});
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).addClass('color-bg');
     }
 });
 
@@ -158,6 +159,7 @@ var HomeView = Backbone.View.extend({
         var html = Templates.home();
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).removeClass('color-bg');
     }
 });
 
@@ -167,6 +169,7 @@ var SwapView = Backbone.View.extend({
         var html = Templates.swap();
         $(this.el).empty();
         $(this.el).html(html);
+        $(this.el).removeClass('color-bg');
     }
 });
 
@@ -220,6 +223,7 @@ var TracksView = Backbone.View.extend({
 		var html = Templates.tracks({ data : data, playlist : currentPL });
 		$(me.el).empty();
 		$(me.el).html(html);
+        $(me.el).addClass('color-bg');
 	}
 });
 
