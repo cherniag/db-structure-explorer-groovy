@@ -102,12 +102,7 @@ var Playlists = Backbone.Collection.extend({
 	},
     comparator: function(playlist){
         return playlist.get('selected') ? -1 : 1;
-    },
-	select : function(id) {
-		this.models.forEach(function(list) {
-			list.set('selected', list.get('id') == id);
-		});
-	}
+    }
 });
 
 var PlaylistView = Backbone.View.extend({
