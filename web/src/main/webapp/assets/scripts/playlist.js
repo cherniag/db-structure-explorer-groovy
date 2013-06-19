@@ -1,74 +1,36 @@
-
 Player = {
 	current : null,
-	load : function(id) {
-		if (!Player[id]) {
-			var track = Backbone.tracks.get(id);
-			var audio = new Audio();
-			audio.setAttribute("src", track.get('audio'));
-			audio.load();
-			audio.addEventListener('canplay', this.onCanPlay);
-			audio.addEventListener('ended', this.onEnded);
-			audio.addEventListener('pause', this.onPaused);
-			audio.addEventListener('play', this.onPlayed);
-			audio.addEventListener('error', this.onError);
-			audio.addEventListener('abort', this.onError);
-			Player[id] = audio;
+	player : null,
+	load : function() {
+		if (!this.player) {
+			this.player = new Audio();
+			this.player.addEventListener('ended', this.onEnded);
+			//audio.addEventListener('error', this.onError);
 		}
 	},
-
-	play : function(delay) {
-		if (delay != 0) {
-			setTimeout(function() {
-				Player.play(0);
-			}, delay);
+	playPause : function() {
+		this.load();
+		
+		if (this.player.paused && this.current) {
+			this.player.play();
 		} else {
-			var id = Player.current;
-			if (id) {
-				Player.cssPlaying();
-				Player[id].play();
-			}
+			this.player.pause();
 		}
 	},
-	pauseResume : function() {
-		var id = Player.current;
-		if (Player[id].currentTime > 0) {
-			Player[id].pause();
-			Player.cssStop(id);
-		} else {
-			Player.play(0);
-		}
+	play : function() {
+		this.load();
+		
+		var track = Backbone.tracks.get(Player.current);
+        this.player.src=track.get('audio');
+        this.player.load();
+        this.player.play();
 	},
-	onCanPlay : function() {
-		this.canplay = true;
-	},
-	onPlayed : function() {
-		Player.cssPlaying();
+	stop : function() {
+		this.current = null;
+		this.playPause();
 	},
 	onEnded : function() {
 		Player.cssStop(Player.current);
-		Player.current = null;
-		
-		if(Player.isiPhone3)
-			Player.cssStop(Player.previous);
-	},
-	onPaused : function() {
-		var prevId = Player.previous;
-		Player.cssStop(prevId);
-		
-		var id = Player.current;
-		if (Player[id] && Player[id].currentTime != Player[id].duration) {
-			Player.play(200);
-		} 
-	},
-	stop : function(nextId) {
-		var id = Player.previous = Player.current;
-		if (id && Player[id].canplay && !Player[id].paused) {
-			Player.current = nextId;
-			Player[id].currentTime = 0;
-			Player[id].pause();
-			Player[id].currentTime = 0;
-		}
 	},
 	cssPlaying : function() {
 		var id = Player.current;
@@ -79,38 +41,25 @@ Player = {
 		}
 	},
 	cssStop : function(id) {
-		$('div#track' + id).removeClass('color-player');
-		$('div#track' + id).addClass('color-main');
-		$('#icon-speakers' + id).addClass('hidden');
+		var id = Player.current;
+		if (id) {
+			$('div#track' + id).removeClass('color-player');
+			$('div#track' + id).addClass('color-main');
+			$('#icon-speakers' + id).addClass('hidden');
+		}
 	},
 	playTrack : function(id) {
-		var nowdate = new Date();
-		var nowtime = nowdate.getTime();
-		var delay =  Player.isiPhone3 ? 2000 : 1000;
-				
-		if (!Player.lastPlayed || ((nowtime - Player.lastPlayed) > delay)) {
-			Player.load(id);
-			if (!Player.current) {
-				Player.current = id;
-				Player.play(0);
-			} else if (Player.current == id) {
-				Player.stop();
-			} else {
-				Player.stop(id);
-			}
-			Player.lastPlayed = nowtime;
+		this.cssStop();
+		
+		if(this.current != id){
+			this.current = id;
+			this.cssPlaying();
+			this.play();
+		}else{
+			this.stop();
 		}
 	},
-	clearCache : function() {
-		for ( var p in Player) {
-			var constructor = Player[p] ? Player[p]['constructor'] : null;
-			if (constructor == Audio) {
-				Player[p].setAttribute("src", null);
-				Player[p].load();
-				Player[p] = null;
-			}
-		}
-	}
+
 };
 
 var Playlist = Backbone.Model.extend({
@@ -268,10 +217,10 @@ var PlaylistRouter = Backbone.Router.extend({
 		});
 
 		this.views = [ this.playlistView, this.tracksView ];
-		
+
 		Player.isiPhone3 = Browser.isiPhone3();
 	},
-	
+
 	routes : {
 		"tracks/:listID" : "goTracks",
 		"allPlaylists" : "allPlaylists",
@@ -282,7 +231,6 @@ var PlaylistRouter = Backbone.Router.extend({
 	allPlaylists : function() {
 		me = this;
 		Player.stop();
-		Player.clearCache();
 		me.hideAll();
 		me.playlistView.render();
 		$(me.playlistView.el).show();
