@@ -1,20 +1,18 @@
 <div class="wide color-swap-bg">
 <div class="height-header color-swap-header" xmlns="http://www.w3.org/1999/html">
-    <div style="left: 121px; top: 12px" class="absolute font-main S17 text-shadow">O2 Tracks</div>
+    <div style="left: 121px; top: 12px" class="absolute font-main S17 text-shadow"><%=Messages['page.playlists.home.header.text']%></div>
     <a href="#back" style="top:8px;left:6px;" class="absolute border-swap transparent button-swap S11">Back</a>
 </div>
 <div class="pad5">
-    <div style="top: 62px;left: 10px" class="absolute font-main S20 color-current-theme">Swap
-        <div class="inline icon-playlist-large"/>
-        Your Playlist
+    <div style="top: 62px;left: 10px" class="absolute font-main S20 color-current-theme">
+        <%=Messages['page.playlists.home.title.text']%>
     </div>
     <div style="width: 130px;left: 10px;top: 109px;" class="absolute font-light S15 line14">
-        Did you know you can now swap<br>
-        <div class="inline icon-playlist"/>
-        <span class="font-main">Your Playlist</span><br>
-        ready for your next update?
+        <%=Messages['page.playlists.home.message.text']%>
         <div style="width: 120px;" onclick="location.href='#allPlaylists'"
-             class="marg-T15 button-turquoise font-light S15 shadow">GO</div>
+             class="marg-T15 button-turquoise font-light S15 shadow">
+                <%=Messages['page.playlists.home.button.go.text']%>
+             </div>
     </div>
 
     <div class="icon_swap_landing"/>
