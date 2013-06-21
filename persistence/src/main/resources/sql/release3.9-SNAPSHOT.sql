@@ -68,7 +68,7 @@ join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='HOT_TRACKS';
 
-insert into tb_chartDetail (subtitle, image_filename, chart, position, publishTimeMillis, version, title)
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
 select
 ch.i,
 3,
@@ -110,7 +110,12 @@ alter table tb_paymentDetails add column errorCode varchar(255);
  alter table user_charts add constraint FK_chart_id foreign key (chart_id) references tb_charts;
  alter table user_charts add constraint FK_user_id foreign key (user_id) references tb_users;
  
-insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) select 'Other Chart Not Default',ch.numTracks,ch.genre,ch.timestamp,ch.numBonusTracks,'OTHER_CHART' from tb_charts ch join community_charts cc on cc.chart_id = ch.i join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2' where ch.type='BASIC_CHART';
+insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) 
+select 'Other Chart Not Default',ch.numTracks,ch.genre,ch.timestamp,ch.numBonusTracks,'OTHER_CHART' 
+from tb_charts ch 
+join community_charts cc on cc.chart_id = ch.i 
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2' 
+where ch.type='BASIC_CHART';
 
 insert into community_charts (chart_id, community_id)
 select
@@ -183,3 +188,108 @@ join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.title = 'Mainstage' where cd.media is null;
+
+ -- IMP-1686 Update release scrip to change playlist positions and subtitles
+insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) 
+select 'Other Chart Not Default1',ch.numTracks,ch.genre,ch.timestamp,ch.numBonusTracks,'OTHER_CHART' 
+from tb_charts ch 
+join community_charts cc on cc.chart_id = ch.i 
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2' 
+where ch.type='BASIC_CHART';
+insert into tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) 
+select 'Other Chart Not Default2',ch.numTracks,ch.genre,ch.timestamp,ch.numBonusTracks,'OTHER_CHART' 
+from tb_charts ch 
+join community_charts cc on cc.chart_id = ch.i 
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2' 
+where ch.type='BASIC_CHART';
+
+insert into community_charts (chart_id, community_id)
+select
+ch.i,
+c.i
+from tb_charts ch
+join tb_communities c on c.rewriteURLParameter = 'o2'
+where ch.type = 'OTHER_CHART' and ch.name='Other Chart Not Default1';
+insert into community_charts (chart_id, community_id)
+select
+ch.i,
+c.i
+from tb_charts ch
+join tb_communities c on c.rewriteURLParameter = 'o2'
+where ch.type = 'OTHER_CHART' and ch.name='Other Chart Not Default2';
+
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+1,
+unix_timestamp('2013-01-01')*1000,
+0,
+'Your Playlist'
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='OTHER_CHART' and ch.name='Other Chart Not Default1';
+insert into tb_chartDetail (chart, position, publishTimeMillis, version, title)
+select
+ch.i,
+1,
+unix_timestamp('2013-01-01')*1000,
+0,
+'Your Playlist'
+from tb_charts ch
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+where ch.type='OTHER_CHART' and ch.name='Other Chart Not Default2';
+
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = "Victoria Pendleton\'s Playlist",cd.position=3,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'Dance: Ibiza Hits',cd.position=5,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default1'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'Rock: Classic Hits',cd.position=6,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default2'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'R&B: Cool Hits',cd.position=7,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='FIFTH_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'Especially For You',cd.position=4,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'The Hottest New Releases',cd.position=2,cd.image_filename='CHART_1369842274293_20' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'The Official Top 40',cd.position=1,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
+set cd.subtitle = 'Emeli Sandé',cd.position=0,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
+
+ --    IMP-1670 [jAdmin] Playlist saving throws user to Details tab if subtitle is empty
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter <> 'o2'
+set cd.subtitle = 'The Hottest New Releases',cd.position=2,cd.image_filename='CHART_1369842274293_20' where cd.media is null;
+update tb_chartDetail cd 
+join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
+join community_charts cc on cc.chart_id = ch.i
+join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter <> 'o2'
+set cd.subtitle = 'The Official Top 40',cd.position=1,cd.image_filename='CHART_1369842177974_10' where cd.media is null;
