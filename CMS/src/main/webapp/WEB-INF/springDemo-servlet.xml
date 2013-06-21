@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="no"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<!-- our beans -->
+
+	<bean id="springDemoController"
+		class="mobi.nowtechnologies.mvc.controller.SpringDemoController">
+		<property name="viewName" value="hello" />
+	</bean>
+
+	<bean id="listTracksController"
+		class="mobi.nowtechnologies.mvc.controller.ListTracksController">
+		<property name="trackDAO" ref="trackDAO" />
+		<property name="formView" value="listTracks" />
+		<property name="successView" value="listTracks" />
+	</bean>
+
+	<bean id="listIngestionLogsController"
+		class="mobi.nowtechnologies.mvc.controller.ListIngestionLogsController">
+		<property name="ingestionLogDAO" ref="ingestionLogDAO" />
+		<property name="formView" value="listIngestionLogs" />
+		<property name="successView" value="listIngestionLogs" />
+	</bean>
+
+
+	<bean id="trackDetailsController"
+		class="mobi.nowtechnologies.mvc.controller.TrackDetailsController">
+		<property name="trackDAO" ref="trackDAO" />
+		<property name="viewName" value="trackDetails" />
+	</bean>
+
+	<bean id="deleteTrackController"
+		class="mobi.nowtechnologies.mvc.controller.DeleteTrackController">
+		<property name="trackDAO" ref="trackDAO" />
+		<property name="viewName" value="redirect:/list.erm" />
+	</bean>
+
+	<bean id="publishFormController"
+		class="mobi.nowtechnologies.mvc.controller.PublishFormController">
+		<property name="publishService" ref="publishService" />
+		<property name="commandName" value="data" />
+		<property name="formView" value="publishForm" />
+		<property name="validator" ref="publishValidator" />
+		<property name="successView" value="redirect:/list.erm" />
+	</bean>
+
+
+	<bean id="formTrackController" class="mobi.nowtechnologies.mvc.controller.EditFormController">
+		<property name="trackDAO" ref="trackDAO" />
+		<property name="commandName" value="track" />
+		<property name="formView" value="editForm" />
+		<property name="validator" ref="trackValidator" />
+		<property name="successView" value="redirect:/list.erm" />
+	</bean>
+	<bean id="listRemoteFilesController"
+		class="mobi.nowtechnologies.mvc.controller.ListRemoteFilesController">
+		<property name="commandName" value="data" />
+		<property name="formView" value="listRemoteFiles" />
+		<property name="successView" value="redirect:/list.erm" />
+	</bean>
+
+	<bean id="listPushController" class="mobi.nowtechnologies.mvc.controller.ListPushController">
+		<property name="commandName" value="data" />
+		<property name="formView" value="listPush" />
+		<property name="successView" value="redirect:/listPush.erm" />
+	</bean>
+	<bean id="editPushController" class="mobi.nowtechnologies.mvc.controller.EditPushController">
+		<property name="commandName" value="data" />
+		<property name="formView" value="editPush" />
+		<property name="successView" value="redirect:/listPush.erm" />
+	</bean>
+	<bean id="tryPushController" class="mobi.nowtechnologies.mvc.controller.TryPushController">
+		<property name="commandName" value="data" />
+		<property name="formView" value="tryPush" />
+		<property name="successView" value="redirect:/listPush.erm" />
+	</bean>
+
+
+
+	<bean id="ingestWizardController"
+		class="mobi.nowtechnologies.mvc.controller.IngestTracksWizardController">
+		<property name="ingestService" ref="ingestService" />
+		
+
+		<property name="pages">
+			<list>
+				<value>dropsForm</value>
+				<value>ingestForm</value>
+				<value>ingestConfirmForm</value>
+				<value>redirect:/list.erm</value>
+			</list>
+		</property>
+	</bean>
+
+
+
+	<bean id="trackValidator" class="mobi.nowtechnologies.validator.TrackValidator">
+	</bean>
+	<bean id="publishValidator" class="mobi.nowtechnologies.validator.PublishValidator">
+	</bean>
+
+	<bean id="puliziaConnessione"
+		class="mobi.nowtechnologies.mvc.intercept.EntityManagerCleanupInterceptor">
+		<property name="appManager" ref="appManager" />
+	</bean>
+
+
+
+
+	<!-- Spring helpers -->
+
+	<!-- detecting automatico per controller mapping -->
+
+	<!-- 2 controller mappings, for different interceptor chains -->
+
+	<bean id="no_dbRelatedHandlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+
+				<!-- referenced bean -->
+				<ref bean="localeChInterc" />
+
+				<!-- inline bean -->
+				<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
+					<property name="paramName" value="miotema" />
+				</bean>
+			</list>
+		</property>
+
+		<property name="mappings">
+			<props>
+				<prop key="/home.*">springDemoController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="dbRelatedHandlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="puliziaConnessione" />
+			</list>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="/myform.*">formTrackController</prop>
+				<prop key="/list.*">listTracksController</prop>
+				<prop key="/details.*">trackDetailsController</prop>
+				<prop key="/ingestWizard.*">ingestWizardController</prop>
+				<prop key="/delete.*">deleteTrackController</prop>
+				<prop key="/publish.*">publishFormController</prop>
+				<prop key="/xfer.*">listRemoteFilesController</prop>
+				<prop key="/listPush.*">listPushController</prop>
+				<prop key="/editPush.*">editPushController</prop>
+				<prop key="/tryPush.*">tryPushController</prop>
+				<prop key="/ingestionLogs.*">listIngestionLogsController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- classic stuff -->
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+	</bean>
+
+	<bean id="localeChInterc"
+		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="linguaggio" />
+	</bean>
+
+	<bean id="themeResolver"
+		class="org.springframework.web.servlet.theme.CookieThemeResolver">
+		<property name="defaultThemeName" value="tema1" />
+	</bean>
+
+	<bean id="themeSource"
+		class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+		<property name="basenamePrefix" value="themes." />
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView">
+		</property>
+		<property name="prefix" value="/WEB-INF/pagine/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+
+	<!-- hint for future -->
+
+	<!-- <bean id="urlFilenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"> 
+		</bean> <bean id="listMultiActionController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController"> 
+		<constructor-arg index="0" ref="listDelegate"></constructor-arg> <property 
+		name="methodNameResolver" ref="methodResolver" /> </bean> <bean id="listDelegate" 
+		class="mobi.nowtechnologies.model.FindPersonaBean"> <property name="trackDAO" 
+		ref="trackDAO" /> <property name="viewName" value="list" /> </bean> <bean 
+		id="methodResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"> 
+		</bean> -->
+
+</beans>
