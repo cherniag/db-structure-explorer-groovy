@@ -16,7 +16,7 @@
         <div style="margin-left: -2px;margin-top: 3px;" class="in-middle icon-playlist-filled"/>
         <img class="in-middle cover" style="margin-left: 5px; margin-top: 11px" src="<%= playlist.cover %>"/>
         <div class="line04 in-middle marg-L10">
-            <span class="font-main S15"><%= Strings.cut(playlist.title, 15) %></span><br/>
+            <span class="font-main S15"><%= Strings.cut(playlist.title, 20) %></span><br/>
             <pre class="line1 font-main S13"><%= Strings.cutLn(playlist.description, 2, 18)%></pre>
             <span class="font-main S13"><%= playlist.length%> <%=Messages['page.playlists.tracks.item.tracks']%></span>
         </div>
