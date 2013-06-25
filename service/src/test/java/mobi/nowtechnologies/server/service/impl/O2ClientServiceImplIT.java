@@ -142,6 +142,30 @@ public class O2ClientServiceImplIT {
 	
 	@SuppressWarnings("unchecked")
 	@Test
+	public void testValidatePhoneNumber_ShortInvalidPhoneNumber_Failure()
+			throws Exception {
+		
+		String phoneNumber = "0787011";
+		
+		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
+		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
+		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
+		
+		try {			
+			fixture.validatePhoneNumber(phoneNumber);
+			fail();
+		} catch (Exception e) {
+			if(!(e instanceof InvalidPhoneNumberException))
+				fail();
+		}
+		
+		verify(mockUserLogRepository, times(1)).save(any(UserLog.class));
+		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testValidatePhoneNumber_LimitPhoneNumber_Failure()
 			throws Exception {
 		
