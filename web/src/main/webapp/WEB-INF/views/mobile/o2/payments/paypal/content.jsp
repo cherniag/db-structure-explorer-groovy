@@ -17,7 +17,7 @@
 			<div class="addSmallSpace"></div>		
 			<!--button-->
 			<div class="contentButton formButton rad10 rel" >
-				<input class="button accounts" title="${pageContext.request.contextPath}/account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.inapp' />" />
+				<input class="button accounts button-turquoise pie" title="${pageContext.request.contextPath}/account.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.inapp' />" />
 				<span class="button-arrow"/>
 			</div>
 		</c:when>
