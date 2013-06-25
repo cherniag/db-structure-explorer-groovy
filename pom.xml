@@ -17,6 +17,7 @@
 		<module>web</module>
 		<module>shared-web</module>
 		<module>track-repo</module>
+		<module>CMS</module>
 		<module>uits</module>
         <module>dtos</module>
     </modules>
