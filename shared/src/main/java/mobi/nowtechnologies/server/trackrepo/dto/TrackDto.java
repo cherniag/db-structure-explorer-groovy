@@ -8,8 +8,6 @@ import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -40,6 +38,7 @@ public class TrackDto {
 	private String album;
 	private String info;
 	private Boolean licensed;
+	private Boolean explicit;
 	private Date ingestionUpdateDate;
 	private Date publishDate;
 	private Date releaseDate;
@@ -83,6 +82,7 @@ public class TrackDto {
 		this.resolution = track.resolution;
 		this.publishTitle = track.publishTitle;
 		this.publishArtist = track.publishArtist;
+        this.explicit = track.explicit;
 	}
 
 	public Long getId() {
@@ -93,7 +93,15 @@ public class TrackDto {
 		this.id = id;
 	}
 
-	public String getIngestor() {
+    public Boolean getExplicit() {
+        return explicit;
+    }
+
+    public void setExplicit(Boolean explicit) {
+        this.explicit = explicit;
+    }
+
+    public String getIngestor() {
 		return ingestor;
 	}
 
@@ -506,12 +514,39 @@ public class TrackDto {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "TrackDto [id=" + id + ", ingestor=" + ingestor + ", isrc=" + isrc + ", title=" + title + ", artist=" + artist + ", ingestionDate=" + ingestionDate + ", status=" + status
-				+ ", coverFileName=" + coverFileName + ", label=" + label + ", subTitle=" + subTitle + ", productId=" + productId + ", productCode=" + productCode + ", genre=" + genre
-				+ ", copyright=" + copyright + ", year=" + year + ", album=" + album + ", info=" + info + ", licensed=" + licensed + ", ingestionUpdateDate=" + ingestionUpdateDate + ", publishDate="
-				+ publishDate + ", releaseDate=" + releaseDate + ", publishTitle=" + publishTitle + ", publishArtist=" + publishArtist + ", itunesUrl=" + itunesUrl + ", amazonUrl=" + amazonUrl
-				+", areArtistUrls="+ areArtistUrls + ", resolution=" + resolution + ", territories=" + territories + ", files=" + files + "]";
-	}
+    @Override
+    public String toString() {
+        return "TrackDto{" +
+                "id=" + id +
+                ", ingestor='" + ingestor + '\'' +
+                ", isrc='" + isrc + '\'' +
+                ", title='" + title + '\'' +
+                ", artist='" + artist + '\'' +
+                ", ingestionDate=" + ingestionDate +
+                ", status=" + status +
+                ", coverFileName='" + coverFileName + '\'' +
+                ", label='" + label + '\'' +
+                ", subTitle='" + subTitle + '\'' +
+                ", productId='" + productId + '\'' +
+                ", productCode='" + productCode + '\'' +
+                ", genre='" + genre + '\'' +
+                ", copyright='" + copyright + '\'' +
+                ", year='" + year + '\'' +
+                ", album='" + album + '\'' +
+                ", info='" + info + '\'' +
+                ", licensed=" + licensed +
+                ", explicit=" + explicit +
+                ", ingestionUpdateDate=" + ingestionUpdateDate +
+                ", publishDate=" + publishDate +
+                ", releaseDate=" + releaseDate +
+                ", publishTitle='" + publishTitle + '\'' +
+                ", publishArtist='" + publishArtist + '\'' +
+                ", itunesUrl='" + itunesUrl + '\'' +
+                ", amazonUrl='" + amazonUrl + '\'' +
+                ", areArtistUrls=" + areArtistUrls +
+                ", resolution=" + resolution +
+                ", territories='" + territories + '\'' +
+                ", files=" + files +
+                "} " + super.toString();
+    }
 }

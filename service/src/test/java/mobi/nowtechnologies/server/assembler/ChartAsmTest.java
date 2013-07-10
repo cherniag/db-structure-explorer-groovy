@@ -1,22 +1,24 @@
 package mobi.nowtechnologies.server.assembler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ChartAsmTest {
 	
 	@Test
 	public void testToChartDto_Success()
 		throws Exception {
-		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 

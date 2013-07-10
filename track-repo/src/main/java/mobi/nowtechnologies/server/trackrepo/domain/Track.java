@@ -66,7 +66,10 @@ public class Track extends AbstractEntity {
 	protected String info;	
 	@Basic(optional=true)
 	@Column(name="Licensed")
-	protected Boolean licensed;	
+	protected Boolean licensed;
+    @Basic(optional=true)
+	@Column(name="explicit")
+	protected Boolean explicit;
 	@Temporal(TemporalType.DATE)
 	@Basic(optional=true)
 	@Column(name="IngestionUpdateDate")
@@ -331,11 +334,40 @@ public class Track extends AbstractEntity {
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		return "Track [" + super.toString() + "isrc=" + isrc + ", artist=" + artist + ", title=" + title + ", subTitle=" + subTitle + ", album=" + album + ", genre=" + genre + ", info=" + info + ", itunesUrl=" + itunesUrl
-				+ ", ingestor=" + ingestor + ", publishDate=" + publishDate + ", year=" + year + ", resolution=" + resolution + ", status=" + status + ", copyright=" + copyright + ", ingestionDate="
-				+ ingestionDate + ", ingestionUpdateDate=" + ingestionUpdateDate + ", licensed=" + licensed + ", productCode=" + productCode + ", productId=" + productId + ", xml="
-				+ Arrays.toString(xml) + "]";
-	}
+    public Boolean getExplicit() {
+        return explicit;
+    }
+
+    public void setExplicit(Boolean explicit) {
+        this.explicit = explicit;
+    }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "title='" + title + '\'' +
+                ", ingestor='" + ingestor + '\'' +
+                ", isrc='" + isrc + '\'' +
+                ", artist='" + artist + '\'' +
+                ", ingestionDate=" + ingestionDate +
+                ", status=" + status +
+                ", subTitle='" + subTitle + '\'' +
+                ", productId='" + productId + '\'' +
+                ", productCode='" + productCode + '\'' +
+                ", genre='" + genre + '\'' +
+                ", copyright='" + copyright + '\'' +
+                ", year='" + year + '\'' +
+                ", album='" + album + '\'' +
+                ", info='" + info + '\'' +
+                ", licensed=" + licensed +
+                ", explicit=" + explicit +
+                ", ingestionUpdateDate=" + ingestionUpdateDate +
+                ", publishDate=" + publishDate +
+                ", xml=" + Arrays.toString(xml) +
+                ", territories=" + territories +
+                ", files=" + files +
+                ", resolution=" + resolution +
+                ", itunesUrl='" + itunesUrl + '\'' +
+                "} " + super.toString();
+    }
 }

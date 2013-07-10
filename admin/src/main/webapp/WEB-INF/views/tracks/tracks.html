@@ -89,7 +89,7 @@
 					</div>
 					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
-					<div class="repo_columns" th:text="${trackDto.subTitle}">SubTitle</div>
+					<div class="repo_columns" th:text="${trackDto.explicit != null and trackDto.explicit ? trackDto.subTitle+'(EXPLICIT)' : trackDto.subTitle)}">SubTitle</div>
 					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
 					<div class="repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish

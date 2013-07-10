@@ -1,29 +1,10 @@
 package mobi.nowtechnologies.ingestors.sony;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import mobi.nowtechnologies.ExternalCommandThread;
 import mobi.nowtechnologies.domain.AssetFile.FileType;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropTerritory;
-import mobi.nowtechnologies.ingestors.DropTrack;
-import mobi.nowtechnologies.ingestors.IParser;
+import mobi.nowtechnologies.ingestors.*;
 import mobi.nowtechnologies.ingestors.DropTrack.Type;
-import mobi.nowtechnologies.service.IngestService;
 import mobi.nowtechnologies.util.Property;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -31,6 +12,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class SonyParser extends IParser {
 	
@@ -98,6 +84,8 @@ public class SonyParser extends IParser {
 				result.artist = artist;
 				String genre = metadata.getChild("Genre").getAttributeValue("name");
 				result.genre = genre;
+                String explicit = metadata.getChild("Advisory").getValue();
+				result.explicit = Boolean.valueOf(explicit);
 				String copyright = metadata.getChild("Copyright").getValue();
 				result.copyright = copyright;
 				String label = metadata.getChild("Label").getValue();

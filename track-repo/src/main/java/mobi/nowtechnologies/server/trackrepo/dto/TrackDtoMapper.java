@@ -20,6 +20,7 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 	public TrackDtoMapper(Track track) {
 		this.setId(track.getId());
 		this.setTitle(track.getTitle());
+        this.setExplicit(track.getExplicit());
 		this.setAlbum(track.getAlbum());
 		this.setArtist(track.getArtist());
 		this.setCopyright(track.getCopyright());
