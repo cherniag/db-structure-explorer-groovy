@@ -319,7 +319,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr){
-        List<NameValuePair> params = paramsArr.length > 0 ? new LinkedList<NameValuePair>() : paramsArr[0];
+        List<NameValuePair> params = paramsArr.length == 0 ? new LinkedList<NameValuePair>() : paramsArr[0];
 		
 		params.add(new BasicNameValuePair("page.size", String.valueOf(page.getPageSize())));
 		params.add(new BasicNameValuePair("page.page", String.valueOf(page.getPageNumber()+1)));
