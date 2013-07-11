@@ -273,29 +273,32 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		PageListDto<TrackDto> tracks = new PageListDto<TrackDto>(Collections.<TrackDto>emptyList(), 0, page.getPageNumber()+1, page.getPageSize());
 		try {
 			if (criteria != null) {
-				List<NameValuePair> queryParams = buildPageParams(page);
+                List<NameValuePair> queryParams = new LinkedList<NameValuePair>();
                 addQParam(criteria.getArtist(), "artist", queryParams);
                 addQParam(criteria.getTitle(), "title", queryParams);
-				addQParam(criteria.getIsrc(), "isrc", queryParams);
+                addQParam(criteria.getIsrc(), "isrc", queryParams);
                 addDateQParam(criteria.getIngestTo(), "ingestTo", queryParams);
                 addDateQParam(criteria.getIngestFrom(), "ingestFrom", queryParams);
                 addDateQParam(criteria.getReleaseTo(), "releaseTo", queryParams);
                 addDateQParam(criteria.getReleaseFrom(), "releaseFrom", queryParams);
-				addQParam(criteria.getLabel(), "label", queryParams);
+                addQParam(criteria.getLabel(), "label", queryParams);
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
                 addQParam(criteria.getGenre(), "genre", queryParams);
+                if(queryParams.size() > 0){
+                    buildPageParams(page, queryParams);
 
-				String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
-				HttpGet signin = new HttpGet(url);
-				signin.setHeaders(getSecuredHeaders());
-				HttpResponse response = getHttpClient().execute(signin);
-				if (200 == response.getStatusLine().getStatusCode()) {
-					Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-					Type type = new TypeToken<PageListDto<TrackDto>>() {
-					}.getType();
-					tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
-				}
+                    String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
+                    HttpGet signin = new HttpGet(url);
+                    signin.setHeaders(getSecuredHeaders());
+                    HttpResponse response = getHttpClient().execute(signin);
+                    if (200 == response.getStatusLine().getStatusCode()) {
+                        Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+                        Type type = new TypeToken<PageListDto<TrackDto>>() {
+                        }.getType();
+                        tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                    }
+                }
 			}
 		} catch (ClientProtocolException e) {
 			LOGGER.error("Cannot search in track repository. {}", e);
@@ -315,8 +318,8 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         	queryParams.add(new BasicNameValuePair(key, param));
     }
 
-    protected List<NameValuePair> buildPageParams(Pageable page){
-		List<NameValuePair> params = new LinkedList<NameValuePair>();
+    protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr){
+        List<NameValuePair> params = paramsArr.length > 0 ? new LinkedList<NameValuePair>() : paramsArr[0];
 		
 		params.add(new BasicNameValuePair("page.size", String.valueOf(page.getPageSize())));
 		params.add(new BasicNameValuePair("page.page", String.valueOf(page.getPageNumber()+1)));
