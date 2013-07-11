@@ -1,32 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.*;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -48,7 +27,6 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -61,10 +39,21 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -98,8 +87,9 @@ public class UserServiceTest {
 	private DeviceService deviceServiceMock;
 	private FacebookService facebookServiceMock;
 	private ITunesService iTunesServiceMock;
+    private UserBannedRepository userBannedRepositoryMock;
 
-	/**
+    /**
 	 * Run the User changePassword(userId, password) method test with success result.
 	 * 
 	 * @throws Exception
@@ -817,6 +807,7 @@ public class UserServiceTest {
 		o2ClientServiceMock = PowerMockito.mock(O2ClientService.class);
 		MailService mailServiceMock = PowerMockito.mock(MailService.class);
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
+        userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
 
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 		
@@ -846,6 +837,7 @@ public class UserServiceTest {
 		userServiceSpy.setO2ClientService(o2ClientServiceMock);
 		userServiceSpy.setUserRepository(userRepositoryMock);
 		userServiceSpy.setiTunesService(iTunesServiceMock);
+		userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -2912,7 +2904,8 @@ public class UserServiceTest {
 		final Promotion promotion = new Promotion();
 		promotion.setPromoCode(promoCode);
 		promotion.setEndDate((int)(calendar.getTimeInMillis()/1000));
-		
+
+        when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
 		when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -2928,7 +2921,8 @@ public class UserServiceTest {
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
 		
 		userServiceSpy.applyPromotionByPromoCode(user, promotion);
-				
+
+        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
 		verify(entityServiceMock, times(1)).updateEntity(eq(promotion));
 		verify(entityServiceMock, times(1)).updateEntity(eq(user));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
@@ -2942,7 +2936,7 @@ public class UserServiceTest {
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-		
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2013, 0, 1);
 		PromoCode promoCode = new PromoCode();
@@ -2961,13 +2955,49 @@ public class UserServiceTest {
 				return user;
 			}
 		});
+        when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
 		when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
 		when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
 		
 		userServiceSpy.applyPromotionByPromoCode(user, promotion);
-		
+
+        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
 		verify(entityServiceMock, times(1)).updateEntity(eq(promotion));
+		verify(entityServiceMock, times(1)).updateEntity(eq(user));
+		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void testApplyPromotionByPromoCode_BannedUserWithNoPromotion_Success() {
+		User user = UserFactory.createUser();
+		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
+        UserBanned userBanned = new UserBanned(user);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2013, 0, 1);
+        PromoCode promoCode = new PromoCode();
+        promoCode.setCode("store");
+        final Promotion promotion = new Promotion();
+        promotion.setPromoCode(promoCode);
+        promotion.setFreeWeeks((byte)52);
+
+        when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
+            @Override
+            public User answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User)invocation.getArguments()[0];
+                return user;
+            }
+        });
+        when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(userBanned);
+		when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
+		when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
+		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
+
+		userServiceSpy.applyPromotionByPromoCode(user, promotion);
+
+        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
+		verify(entityServiceMock, times(0)).updateEntity(eq(promotion));
 		verify(entityServiceMock, times(1)).updateEntity(eq(user));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(eq(user.getId()), anyString(), anyString(), anyString());
 	}

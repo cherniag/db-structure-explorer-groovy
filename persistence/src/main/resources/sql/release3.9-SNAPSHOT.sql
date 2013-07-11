@@ -272,37 +272,44 @@ join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Othe
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.subtitle = "Victoria Pendleton\'s Playlist",cd.position=3 where cd.media is null;
-update tb_chartDetail cd 
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.subtitle = 'Dance: Ibiza Hits',cd.position=5 where cd.media is null;
-update tb_chartDetail cd 
+set cd.subtitle = 'Dance: Ibiza Hits',cd.position=4 where cd.media is null;
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default1'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.subtitle = 'Rock: Classic Hits',cd.position=6 where cd.media is null;
-update tb_chartDetail cd 
+set cd.subtitle = 'Rock: Classic Hits',cd.position=5 where cd.media is null;
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='OTHER_CHART' and ch.name='Other Chart Not Default2'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.subtitle = 'R&B: Cool Hits',cd.position=7 where cd.media is null;
-update tb_chartDetail cd 
+set cd.subtitle = 'R&B: Cool Hits',cd.position=6 where cd.media is null;
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='FIFTH_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
-set cd.subtitle = 'Especially For You',cd.position=4 where cd.media is null;
-update tb_chartDetail cd 
+set cd.subtitle = 'Especially For You',cd.position=7 where cd.media is null;
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.subtitle = 'The Hottest New Releases',cd.position=2 where cd.media is null;
-update tb_chartDetail cd 
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 set cd.subtitle = 'The Official Top 40',cd.position=1 where cd.media is null;
-update tb_chartDetail cd 
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='FOURTH_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
@@ -314,8 +321,12 @@ join tb_charts ch on ch.i = cd.chart and ch.type='HOT_TRACKS'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter <> 'o2'
 set cd.subtitle = 'The Hottest New Releases',cd.position=2 where cd.media is null;
-update tb_chartDetail cd 
+
+update tb_chartDetail cd
 join tb_charts ch on ch.i = cd.chart and ch.type='BASIC_CHART'
 join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter <> 'o2'
 set cd.subtitle = 'The Official Top 40',cd.position=1 where cd.media is null;
+
+ --  PRO-2373 Check on applying the free trial against the list of users that must have no further promotions
+ create table user_banned (user_id integer not null, description varchar(255), giveAnyPromotion boolean not null, timestamp bigint not null, primary key (user_id));

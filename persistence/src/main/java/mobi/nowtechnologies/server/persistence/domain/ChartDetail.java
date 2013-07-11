@@ -91,13 +91,13 @@ public class ChartDetail {
 	public ChartDetail() {
 	}
 
-	public Integer getI() {
-		return this.i;
-	}
+    public Integer getI() {
+        return this.i;
+    }
 
-	public boolean isDefaultChart() {
-		return defaultChart;
-	}
+    public boolean isDefaultChart() {
+        return defaultChart;
+    }
 
 	public void setDefaultChart(boolean defaultChart) {
 		this.defaultChart = defaultChart;

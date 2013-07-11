@@ -57,6 +57,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="drmService" ref="service.DrmService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
+		<property name="userBannedRepository" ref="userBannedRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="iTunesService" ref="service.ITunesService" />
 	</bean>

@@ -1,17 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
-import static org.apache.commons.lang.Validate.notNull;
-
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -20,9 +8,13 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
-import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -34,15 +26,19 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.dto.web.*;
+import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
-
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +51,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static org.apache.commons.lang.Validate.notNull;
+
 /**
  * UserService
- * 
+ *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  * @author Maksym Chernolevskyi (maksym)
@@ -67,7 +75,7 @@ public class UserService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(UserService.class);
 
-	@Deprecated
+    @Deprecated
 	public static class AmountCurrencyWeeks {
 		BigDecimal amount;
 		String currency;
@@ -126,13 +134,19 @@ public class UserService {
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
 	private ITunesService iTunesService;
+    private UserBannedRepository userBannedRepository;
+
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
-	public void setO2ClientService(O2ClientService o2ClientService) {
+    public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
 
-	public void setDrmService(DrmService drmService) {
+    public void setUserBannedRepository(UserBannedRepository userBannedRepository) {
+        this.userBannedRepository = userBannedRepository;
+    }
+
+    public void setDrmService(DrmService drmService) {
 		this.drmService = drmService;
 	}
 
@@ -238,7 +252,7 @@ public class UserService {
 			final int id = user.getId();
 			LogUtils.putSpecificMDC(userName, mobile, id);
 			LogUtils.put3rdParyRequestProfileSpecificMDC(userName, mobile, id);
-			
+
 			String localUserToken = Utils.createTimestampToken(user.getToken(), timestamp);
 			String deviceUserToken = Utils.createTimestampToken(user.getTempToken(), timestamp);
 			if (localUserToken.equalsIgnoreCase(userToken) || deviceUserToken.equalsIgnoreCase(userToken)) {
@@ -310,6 +324,10 @@ public class UserService {
 			return false;
 		}
 	}
+
+    public UserBanned getUserBanned(Integer userId) {
+         return userBannedRepository.findOne(userId);
+    }
 
 	@Deprecated
 	public boolean isUserExist(String userName, String storedToken, String communityName) {
@@ -452,12 +470,12 @@ public class UserService {
 					"The user [{0}] is already present", userName));
 		}
 	}
-	
+
 	@Transactional(readOnly=true)
 	public User getUserWithSelectedCharts(Integer userId){
 		User user = userRepository.findOne(userId);
 		user.getSelectedCharts().size();
-		
+
 		return user;
 	}
 
@@ -473,13 +491,13 @@ public class UserService {
 	// return communityName.equals(userDao
 	// .getCommunityNameByUserGroup(userGroup));
 	// }
-	
+
 	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
 		Promotion promotion = null;
 
 		String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
 		String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
-		
+
 		if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
 			promotion = setPotentialPromo(community, user, staffCode);
 		else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
@@ -488,9 +506,9 @@ public class UserService {
 			promotion = setPotentialPromo(community.getName(), user, "promotionCode");
 		else
 			promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
-		
+
 		applyPromotionByPromoCode(user, promotion);
-		
+
 		return true;
 	}
 
@@ -498,30 +516,36 @@ public class UserService {
 	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
 		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
 		if (promotion != null) {
-			int curTime = Utils.getEpochSeconds();
-			int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
-			int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTime + freeWeeks * Utils.WEEK_SECONDS;
-			
-			user.setNextSubPayment(nextSubPayment);
-			user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
+            UserBanned userBanned = getUserBanned(user.getId());
+            if(userBanned == null || userBanned.isGiveAnyPromotion()){
+                int curTime = Utils.getEpochSeconds();
+                int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
+                int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTime + freeWeeks * Utils.WEEK_SECONDS;
 
-			final PromoCode promoCode = promotion.getPromoCode();
-			user.setPotentialPromoCodePromotion(null);
+                user.setNextSubPayment(nextSubPayment);
+                user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 
-			user.setStatus(UserStatusDao.getSubscribedUserStatus());
-			user.setFreeTrialStartedTimestampMillis(Utils.getEpochMillis());
-			user = entityService.updateEntity(user);
+                final PromoCode promoCode = promotion.getPromoCode();
+                user.setPotentialPromoCodePromotion(null);
 
-			promotion.setNumUsers(promotion.getNumUsers() + 1);
-			promotion = entityService.updateEntity(promotion);
-			AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
-					TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED);
-			accountLog.setPromoCode(promoCode.getCode());
-			entityService.saveEntity(accountLog);
-			for (byte i = 1; i <= freeWeeks; i++) {
-				entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
-						TransactionType.SUBSCRIPTION_CHARGE));
-			}
+                user.setStatus(UserStatusDao.getSubscribedUserStatus());
+                user.setFreeTrialStartedTimestampMillis(Utils.getEpochMillis());
+                user = entityService.updateEntity(user);
+
+                promotion.setNumUsers(promotion.getNumUsers() + 1);
+                promotion = entityService.updateEntity(promotion);
+                AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
+                        TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED);
+                accountLog.setPromoCode(promoCode.getCode());
+                entityService.saveEntity(accountLog);
+                for (byte i = 1; i <= freeWeeks; i++) {
+                    entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
+                            TransactionType.SUBSCRIPTION_CHARGE));
+                }
+            } else {
+                user.setPotentialPromoCodePromotion(null);
+                user = entityService.updateEntity(user);
+            }
 			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
 		}
 		throw new IllegalArgumentException("No promotion found");
@@ -680,7 +704,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
 		LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
-		
+
 		List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
 		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
 		final String reason = "STOP sms";
@@ -695,7 +719,7 @@ public class UserService {
 			entityService.updateEntity(paymentDetail);
 			LOGGER.info("Phone number [{}] was successfuly unsubscribed", phoneNumber);
 		}
-		
+
 		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
 		return paymentDetails;
 	}
@@ -804,7 +828,7 @@ public class UserService {
 
 	/**
 	 * Deprecated due to new portal implementation Use sendSMSWithOTALink(String phone, int userId)
-	 * 
+	 *
 	 * @param user
 	 */
 	@Deprecated
@@ -1124,7 +1148,7 @@ public class UserService {
 		final int userId = user.getId();
 
 		final int deactivatedGraceCreditSeconds = user.getDeactivatedGraceCreditSeconds();
-		
+
 		if (deactivatedGraceCreditSeconds > 0) {
 			user.setNextSubPayment(user.getNextSubPayment() - deactivatedGraceCreditSeconds);
 			user.setDeactivatedGraceCreditSeconds(0);
@@ -1421,7 +1445,7 @@ public class UserService {
 
 	/**
 	 * Sends an OTA link to users number and return true if sms was accepted by MIG or false otherwise
-	 * 
+	 *
 	 * @param phone
 	 *            - the phone number entered on the page
 	 * @param userId
@@ -1660,7 +1684,7 @@ public class UserService {
 		boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
 		return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
 	}
-	
+
 	public Promotion setPotentialPromo(String communityName, User user, String promotionCode) {
 		Community community = communityService.getCommunityByName(communityName);
 		String communityUri = community.getRewriteUrlParameter().toLowerCase();
@@ -1704,7 +1728,7 @@ public class UserService {
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User updateLastDeviceLogin(User user) {
 		LOGGER.debug("input parameters user: [{}]", user);
@@ -1772,7 +1796,7 @@ public class UserService {
 			if (user.isOnFreeTrial()) {
 				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
 			}
-			else{ 
+			else{
 				accountLogService.logAccountEvent(userId, originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
 			}
 		}
@@ -1951,7 +1975,7 @@ public class UserService {
 		} else {
 			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
 				Community community = communityService.getCommunityByName(communityName);
-				
+
 				hasPromo = applyO2PotentialPromo(o2UserDetails, user, community);
 			}
 		}
@@ -2023,21 +2047,21 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public List<User> findBefore48hExpireUsers(int epochSeconds, Pageable pageable) {
-		
+
 		return userRepository.findBefore48hExpireUsers(epochSeconds, pageable);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
-	
+
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
 	}
 
 	@Transactional(readOnly = true)
 	public List<User> getUsersForRetryPayment() {
-		
+
 		List<User> usersForRetryPayment = userRepository.getUsersForRetryPayment(Utils.getEpochSeconds());
-		
+
 		LOGGER.debug("Output parameter usersForRetryPayment=[{}]", usersForRetryPayment);
 		return usersForRetryPayment;
 	}
