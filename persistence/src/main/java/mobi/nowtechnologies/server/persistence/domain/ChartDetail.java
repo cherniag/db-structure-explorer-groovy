@@ -38,7 +38,7 @@ public class ChartDetail {
 	private Integer i;
 
 	@Column(name = "chart", insertable = false, updatable = false)
-	private Byte chartId;
+	private Integer chartId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "chart", columnDefinition = "int(10) unsigned")
@@ -116,7 +116,7 @@ public class ChartDetail {
 		chartId = chart.getI();
 	}
 
-	public Byte getChartId() {
+	public Integer getChartId() {
 		return chartId;
 	}
 
@@ -306,6 +306,7 @@ public class ChartDetail {
 		chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
 		chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
+        chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
 		String enocodediTunesUrl = null;
 		String enocodedAmazonUrl = null;

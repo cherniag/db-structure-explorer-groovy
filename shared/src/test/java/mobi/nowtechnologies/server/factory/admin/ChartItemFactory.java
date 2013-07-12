@@ -3,17 +3,16 @@
  */
 package mobi.nowtechnologies.server.factory.admin;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
 /**
  * @author Mayboroda Dmytro
@@ -21,7 +20,7 @@ import mobi.nowtechnologies.server.shared.enums.ChgPosition;
  */
 public class ChartItemFactory {
 	
-	public static ChartItemDto anyChartItemDto(Byte chartId, Date publishDate) {
+	public static ChartItemDto anyChartItemDto(Integer chartId, Date publishDate) {
 		ChartItemDto expectedItemDto = new ChartItemDto();
 		expectedItemDto.setId(Integer.MAX_VALUE);
 		expectedItemDto.setChartId(chartId);
@@ -36,14 +35,14 @@ public class ChartItemFactory {
 		return expectedItemDto;
 	}
 	
-	public static String anyChartItemJSON(Byte chartId, Date publishDate) {
+	public static String anyChartItemJSON(Integer chartId, Date publishDate) {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
 		Type type = new TypeToken<ChartItemDto>(){}.getType();
 		
 		return gson.toJson(anyChartItemDto(chartId, publishDate), type);
 	}
 	
-	public static String anyChartItemListJSON(int amount, Byte chartId, Date publishDate) {
+	public static String anyChartItemListJSON(int amount, Integer chartId, Date publishDate) {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH:mm:ss").create();
 		Type type = new TypeToken<ArrayList<ChartItemDto>>(){}.getType();
 		
@@ -53,7 +52,7 @@ public class ChartItemFactory {
 	/**
 	 * @return
 	 */
-	public static List<ChartItemDto> getChartItemDtos(int amount, Byte chartId, Date publishDate) {
+	public static List<ChartItemDto> getChartItemDtos(int amount, Integer chartId, Date publishDate) {
 		List<ChartItemDto> items = new ArrayList<ChartItemDto>();
 		for (int i=0; i<amount; i++)
 			items.add(anyChartItemDto(chartId, publishDate));

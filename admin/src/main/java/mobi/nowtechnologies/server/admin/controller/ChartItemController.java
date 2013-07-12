@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 
-import java.lang.reflect.Type;
-import java.util.*;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -17,7 +15,6 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,9 +24,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Controller
 public class ChartItemController extends AbstractCommonController{
@@ -84,7 +81,7 @@ public class ChartItemController extends AbstractCommonController{
 	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.GET)
 	public ModelAndView getChartItemsPage(
 			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, 
-			@PathVariable("chartId") Byte chartId, 
+			@PathVariable("chartId") Integer chartId, 
 			@RequestParam(value="changePosition", required=false) boolean changePosition, 
 			Locale locale) {
 		LOGGER.debug("input parameters request getChartItemsPage(selectedPublishDateTime, chartId): [{}], [{}]", new Object[] { selectedPublishDateTime, chartId });
@@ -137,7 +134,7 @@ public class ChartItemController extends AbstractCommonController{
 	 */
 	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
 	public ModelAndView updateChartItems(@RequestBody String chartItemListJSON,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
 
 		LOGGER.debug("input parameters request updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId): [{}], [{}], [{}]", new Object[] {chartItemListJSON, selectedPublishDateTime, chartId });
 
@@ -161,7 +158,7 @@ public class ChartItemController extends AbstractCommonController{
 	 */
 	@RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/media/list", method = RequestMethod.GET)
 	public ModelAndView getMediaList(@RequestParam(value = "q", required = false) String searchWords,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
 		
 		LOGGER.debug("input parameters request getMediaList(searchWords, selectedPublishDateTime, chartId): [{}], [{}], [{}]", new Object[] {searchWords, selectedPublishDateTime, chartId });
 		
@@ -193,7 +190,7 @@ public class ChartItemController extends AbstractCommonController{
 	public ModelAndView updateChartItems(HttpServletResponse response,
 			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
 			@PathVariable("newPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date newPublishDateTime,
-			@PathVariable("chartId") Byte chartId) {
+			@PathVariable("chartId") Integer chartId) {
 
 		LOGGER.debug("input parameters response, selectedPublishDateTime, newPublishDateTime, chartId: [{}], [{}]", new Object[] { response, selectedPublishDateTime, newPublishDateTime, chartId });
 

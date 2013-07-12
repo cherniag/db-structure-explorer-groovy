@@ -34,6 +34,7 @@ public class ChartDetailDto {
 	private int imageLargeVersion;
 	private int imageSmallVersion;
 	private boolean isArtistUrl;
+    private Integer duration;
 	private Integer playlistId;
 	
 	public ChartDetailDto(ChartDetailDto chartDetailDto) 
@@ -277,12 +278,53 @@ public class ChartDetailDto {
 		this.playlistId = playlistId;
 	}
 
-	@Override
-	public String toString() {
-		return "ChartDetailDto [position=" + position + ", media=" + media + ", title=" + title + ", artist=" + artist + ", info=" + info + ", genre1=" + genre1 + ", genre2=" + genre2 + ", drmType="
-				+ drmType + ", drmValue=" + drmValue + ", trackSize=" + trackSize + ", headerSize=" + headerSize + ", audioSize=" + audioSize + ", imageLargeSize=" + imageLargeSize
-				+ ", imageSmallSize=" + imageSmallSize + ", iTunesUrl=" + iTunesUrl + ", amazonUrl=" + amazonUrl + ", previousPosition=" + previousPosition + ", changePosition=" + changePosition
-				+ ", channel=" + channel + ", chartDetailVersion=" + chartDetailVersion + ", headerVersion=" + headerVersion + ", audioVersion=" + audioVersion + ", imageLargeVersion="
-				+ imageLargeVersion + ", imageSmallVersion=" + imageSmallVersion + ", isArtistUrl=" + isArtistUrl + ", playlistId=" + playlistId + "]";
-	}
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public boolean isArtistUrl() {
+
+        return isArtistUrl;
+    }
+
+    public void setArtistUrl(boolean artistUrl) {
+        isArtistUrl = artistUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "ChartDetailDto{" +
+                "position=" + position +
+                ", media='" + media + '\'' +
+                ", title='" + title + '\'' +
+                ", artist='" + artist + '\'' +
+                ", info='" + info + '\'' +
+                ", genre1='" + genre1 + '\'' +
+                ", genre2='" + genre2 + '\'' +
+                ", drmType='" + drmType + '\'' +
+                ", drmValue=" + drmValue +
+                ", trackSize=" + trackSize +
+                ", headerSize=" + headerSize +
+                ", audioSize=" + audioSize +
+                ", imageLargeSize=" + imageLargeSize +
+                ", imageSmallSize=" + imageSmallSize +
+                ", iTunesUrl='" + iTunesUrl + '\'' +
+                ", amazonUrl='" + amazonUrl + '\'' +
+                ", previousPosition=" + previousPosition +
+                ", changePosition='" + changePosition + '\'' +
+                ", channel='" + channel + '\'' +
+                ", chartDetailVersion=" + chartDetailVersion +
+                ", headerVersion=" + headerVersion +
+                ", audioVersion=" + audioVersion +
+                ", imageLargeVersion=" + imageLargeVersion +
+                ", imageSmallVersion=" + imageSmallVersion +
+                ", isArtistUrl=" + isArtistUrl +
+                ", duration=" + duration +
+                ", playlistId=" + playlistId +
+                "} " + super.toString();
+    }
 }

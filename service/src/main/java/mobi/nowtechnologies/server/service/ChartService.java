@@ -1,24 +1,29 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.*;
-
 import mobi.nowtechnologies.server.assembler.ChartAsm;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -111,7 +116,7 @@ public class ChartService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Long> getAllPublishTimeMillis(Byte chartId) {
+	public List<Long> getAllPublishTimeMillis(Integer chartId) {
 		LOGGER.debug("input parameters chartId: [{}]", chartId);
 
 		List<Long> allPublishTimeMillis = chartDetailService.getAllPublishTimeMillis(chartId);
@@ -147,7 +152,7 @@ public class ChartService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getActualChartItems(Byte chartId, Date selectedPublishDate) {
+	public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
 		List<ChartDetail> chartDetails = chartDetailService.getActualChartItems(chartId, selectedPublishDate);
@@ -157,7 +162,7 @@ public class ChartService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartItemsByDate(Byte chartId, Date selectedPublishDate) {
+	public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
 		List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
@@ -167,7 +172,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Byte chartId) {
+	public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId) {
 		LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", choosedPublishDate, chartId);
 
 		List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, false);
@@ -233,7 +238,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Byte chartId, int afterPosition, int chPosition) {
+	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
 		LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
 				chPosition });
 
@@ -317,7 +322,7 @@ public class ChartService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Chart getChartById(Byte chartId) {
+	public Chart getChartById(Integer chartId) {
 		LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
 
 		Chart chart = chartRepository.findOne(chartId);
@@ -346,7 +351,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public boolean deleteChartItems(Byte chartId, Date selectedPublishDateTime) {
+	public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
 		LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
 		if (chartId == null)
@@ -361,7 +366,7 @@ public class ChartService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Byte chartId) {
+	public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Integer chartId) {
 		LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", selectedPublishDateTime, chartId);
 
 		List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(selectedPublishDateTime, chartId, true);
@@ -396,7 +401,7 @@ public class ChartService {
 	public User selectChartByType(Integer userId, Integer playlistId) {
 		LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
 		
-		Chart chart = chartRepository.findOne(playlistId.byteValue());
+		Chart chart = chartRepository.findOne(playlistId);
 		User user = userService.getUserWithSelectedCharts(userId);
 		
 		if(user != null && chart != null){

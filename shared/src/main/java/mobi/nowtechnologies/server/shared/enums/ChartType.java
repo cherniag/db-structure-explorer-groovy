@@ -5,5 +5,6 @@ public enum ChartType {
 	HOT_TRACKS, 
 	FOURTH_CHART, 
 	OTHER_CHART,
-	FIFTH_CHART
+	FIFTH_CHART,
+    VIDEO_CHART
 }

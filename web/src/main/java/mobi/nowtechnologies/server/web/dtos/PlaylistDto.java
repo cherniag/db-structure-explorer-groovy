@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.web.dtos;
 
-import static java.lang.String.valueOf;
+import mobi.nowtechnologies.common.util.Env;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import mobi.nowtechnologies.common.util.Env;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import static java.lang.String.valueOf;
 /*
    Intentionally define as immutable - w/o setters and final fields.
    If change to some field needed create some copy() methood with new value.
@@ -24,8 +25,7 @@ public class PlaylistDto {
     private final String description;
 
     public PlaylistDto(User user, ChartDetail chart, Map<String, Object> options) {
-        Byte chartId = chart.getChart().getI();
-        this.id = new Integer(chartId);
+        this.id = chart.getChart().getI();
 		this.title = chart.getSubtitle();
 		String urlToChartCover = valueOf(options.get(Env.URL_TO_CHART_COVER));
 		this.cover = urlToChartCover + chart.getImageFileName();

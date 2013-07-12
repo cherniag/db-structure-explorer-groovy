@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartDetailService;
@@ -14,10 +9,17 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.dtos.PlaylistDto;
 import mobi.nowtechnologies.server.web.dtos.TrackDto;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PlaylistController extends CommonController {
@@ -62,7 +64,7 @@ public class PlaylistController extends CommonController {
     }
 
     @RequestMapping(value = JSON_PLAYLIST_TRACKS, produces = "application/json", method = RequestMethod.GET)
-    public ModelAndView getTracks(@PathVariable("playlistId") Byte playlistID) {
+    public ModelAndView getTracks(@PathVariable("playlistId") Integer playlistID) {
         List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(playlistID, new Date(), false);
         List<TrackDto> tracks = TrackDto.toList(chartDetails, env);
         return new ModelAndView().addObject("tracks", tracks);

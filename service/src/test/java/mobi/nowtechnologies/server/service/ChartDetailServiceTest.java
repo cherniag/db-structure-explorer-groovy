@@ -1,15 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -20,7 +10,6 @@ import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +19,14 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * The class <code>ChartDetailServiceTest</code> contains tests for the class
@@ -82,7 +79,7 @@ public class ChartDetailServiceTest {
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ThoseOfSelectedPublishDateDoesNotExistAndPreviousOnesExists_Success()
 			throws Exception {
 		Date choosedPublishDate = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		final long choosedPublishTimeMillis = choosedPublishDate.getTime();
 		final long nearestLatestPublishDate = choosedPublishTimeMillis - 10000L;
 		boolean minorUpdate=false;
@@ -142,7 +139,7 @@ public class ChartDetailServiceTest {
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ThoseOfSelectedPublishDateDoesNotExistAndPreviousOnesExists_MinorUpdate_Success()
 			throws Exception {
 		Date choosedPublishDate = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		final long choosedPublishTimeMillis = choosedPublishDate.getTime();
 		final long nearestLatestPublishDate = choosedPublishTimeMillis - 10000L;
 		boolean minorUpdate=true;
@@ -211,7 +208,7 @@ public class ChartDetailServiceTest {
 
 	private Chart getChartInstance(int i) {
 		final Chart chart = new Chart();
-		chart.setI((byte) i);
+		chart.setI(i);
 		return chart;
 	}
 
@@ -286,7 +283,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_OnesForSelectedPublishDateAlreadyExists_Success() throws Exception {
 		Date choosedPublishDate = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		boolean minorUpdate=false;
 		final long choosedPublishTimeMillis = choosedPublishDate.getTime();
 
@@ -310,7 +307,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_OnesForPrevoiusPublishDateDoesNotExist_Success() throws Exception {
 		Date choosedPublishDate = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		final long choosedPublishTimeMillis = choosedPublishDate.getTime();
 		final Long nearestLatestPublishDate = null;
 		boolean minorUpdate=false;
@@ -336,7 +333,7 @@ public class ChartDetailServiceTest {
 	@Test(expected = ServiceException.class)
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ChoosedPublishDateIsNull_Failure() throws Exception {
 		Date choosedPublishDate = null;
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		boolean minorUpdate=false;
 
 		fixtureChartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, minorUpdate);
@@ -354,7 +351,7 @@ public class ChartDetailServiceTest {
 	@Test(expected = ServiceException.class)
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ChartIdIsNull_Failure() throws Exception {
 		Date choosedPublishDate = new Date();
-		Byte chartId = null;
+		Integer chartId = null;
 		boolean minorUpdate=false;
 
 		fixtureChartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, minorUpdate);
@@ -401,7 +398,7 @@ public class ChartDetailServiceTest {
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	public void testFindChartDetailTreeAndUpdateDrm_UserIsNull_Failure() throws Exception {
 		User user = null;
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 
 		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
@@ -419,7 +416,7 @@ public class ChartDetailServiceTest {
 
 		User user = new User();
 		user.setUserGroup(new UserGroup());
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 
 		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
@@ -440,7 +437,7 @@ public class ChartDetailServiceTest {
 		final UserGroup userGroup = new UserGroup();
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 
 		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
 	}
@@ -456,7 +453,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_Success() throws Exception {
 
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 		Long nearestLatestPublishTimeMillis = new Date().getTime();
 		int userId = 1;
 
@@ -507,7 +504,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_NotLocked_Success() throws Exception {
 		
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 		Long nearestLatestPublishTimeMillis = new Date().getTime();
 		int userId = 1;
 		
@@ -561,7 +558,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_DrmsIsEmpty_Success() throws Exception {
 
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 		Long nearestLatestPublishTimeMillis = new Date().getTime();
 		int userId = 1;
 
@@ -612,7 +609,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_NearestLatestPublishTimeMillisIsNull_Success() throws Exception {
 
-		byte chartId = (byte) 1;
+		Integer chartId = 1;
 		Long nearestLatestPublishTimeMillis = null;
 		int userId = 1;
 
@@ -648,7 +645,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetActualChartItems_Success() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		Date selectedPublishDate = new Date();
 		Long nearestLatestPublishTimeMillis = new Date().getTime();
 
@@ -674,7 +671,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetActualChartItems_NearestLatestPublishTimeMillisIsNull_Success() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		Date selectedPublishDate = new Date();
 		Long nearestLatestPublishTimeMillis = null;
 
@@ -695,7 +692,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test(expected = ServiceException.class)
 	public void testGetActualChartItems_ChartIdIsNull_Failure() throws Exception {
-		Byte chartId = null;
+		Integer chartId = null;
 		Date selectedPublishDate = new Date();
 
 		fixtureChartDetailService.getActualChartItems(chartId, selectedPublishDate);
@@ -710,7 +707,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test(expected = ServiceException.class)
 	public void testGetActualChartItems_SelectedPublishDateIsNull_Failure() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		Date selectedPublishDate = null;
 
 		fixtureChartDetailService.getActualChartItems(chartId, selectedPublishDate);
@@ -745,7 +742,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetAllPublishTimeMillis_Success() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 
 		List<Long> allPublishTimeMillis = Arrays.asList(1L, 666L, 999L);
 
@@ -766,7 +763,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test(expected = ServiceException.class)
 	public void testGetAllPublishTimeMillis_ChartIdIsNull_Failure() throws Exception {
-		Byte chartId = null;
+		Integer chartId = null;
 
 		fixtureChartDetailService.getAllPublishTimeMillis(chartId);
 	}
@@ -831,7 +828,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChartItemsByDate_Success() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		Date selectedPublishDate = new Date();
 
 		final long selectedPublishTimeMillis = selectedPublishDate.getTime();
@@ -860,7 +857,7 @@ public class ChartDetailServiceTest {
 
 	@Test(expected = Exception.class)
 	public void testGetChartItemsByDate_ChartIdIsNull_Failure() throws Exception {
-		Byte chartId = null;
+		Integer chartId = null;
 		Date selectedPublishDate = new Date();
 
 		fixtureChartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
@@ -868,7 +865,7 @@ public class ChartDetailServiceTest {
 
 	@Test(expected = Exception.class)
 	public void testGetChartItemsByDate_SelectedPublishDateIsNull_Failure() throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer(1);
 		Date selectedPublishDate = null;
 
 		fixtureChartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
@@ -948,8 +945,8 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PositionAndPrevPositionAreEqualAndBonus_Sucess() throws Exception {
-		byte position = (byte) 1;
-		byte prevPosition = (byte) 1;
+		byte position = 1;
+		byte prevPosition = 1;
 		boolean isBonus = true;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition,isBonus);
@@ -968,8 +965,8 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testGetChgPosition_PositionMoreThanPrevPositionAndBonus_Success() throws Exception {
 
-		byte position = (byte) 10;
-		byte prevPosition = (byte) 1;
+		byte position = 10;
+		byte prevPosition = 1;
 		boolean isBonus = true;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition,isBonus);
@@ -987,8 +984,8 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PrevPositionMoreThanPositionAndBonus_Success() throws Exception {
-		byte position = (byte) 1;
-		byte prevPosition = (byte) 10;
+		byte position = 1;
+		byte prevPosition = 10;
 		boolean isBonus = true;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition,isBonus);
@@ -1006,7 +1003,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PrevPositionIsZeroAndBonus_Success() throws Exception {
-		byte position = (byte) 1;
+		byte position = 1;
 		byte prevPosition = (byte) 0;
 		boolean isBonus = true;
 
@@ -1025,8 +1022,8 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PositionAndPrevPositionAreEqualAndNotABonus_Success() throws Exception {
-		byte position = (byte) 1;
-		byte prevPosition = (byte) 1;
+		byte position = 1;
+		byte prevPosition = 1;
 		boolean isBonus = false;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition, isBonus);
@@ -1045,8 +1042,8 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testGetChgPosition_PositionMoreThanPrevPositionAndNotABonus_Success() throws Exception {
 
-		byte position = (byte) 10;
-		byte prevPosition = (byte) 1;
+		byte position = 10;
+		byte prevPosition = 1;
 		boolean isBonus = false;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition, isBonus);
@@ -1064,8 +1061,8 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PrevPositionMoreThanPositionAndNotABonus_Success() throws Exception {
-		byte position = (byte) 1;
-		byte prevPosition = (byte) 10;
+		byte position = 1;
+		byte prevPosition = 10;
 		boolean isBonus = false;
 
 		ChgPosition result = fixtureChartDetailService.getChgPosition(position, prevPosition, isBonus);
@@ -1083,7 +1080,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test
 	public void testGetChgPosition_PrevPositionIsZeroAndNotABonus_Success() throws Exception {
-		byte position = (byte) 1;
+		byte position = 1;
 		byte prevPosition = (byte) 0;
 		boolean isBonus = false;
 
@@ -1119,7 +1116,7 @@ public class ChartDetailServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testGetChgPosition_PrevPositionIsLessThanZero_Failure() throws Exception {
-		byte position = (byte) 1;
+		byte position = 1;
 		byte prevPosition = (byte) -1;
 		boolean isBonus = true;
 
@@ -1169,7 +1166,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testNotBonusSaveChartItem_Success() throws Exception {
 		final int mediaId = 1;
-		byte chartId = (byte) mediaId;
+		Integer chartId = mediaId;
 		final Date choosedPublishDate = new Date();
 		Byte position = (byte) 3;
 		final Integer chartDetailId = 55;
@@ -1216,7 +1213,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=ServiceCheckedException.class)
 	public void testSaveChartItem_DataIntegrityViolationException_Failure() throws Exception {
 		final int mediaId = 1;
-		byte chartId = (byte) mediaId;
+		Integer chartId = mediaId;
 		final Date choosedPublishDate = new Date();
 		Byte position = (byte) 3;
 
@@ -1262,7 +1259,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testSaveNotBonusChartItem_PositionIsNull_Success() throws Exception {
 		final int mediaId = 1;
-		byte chartId = (byte) mediaId;
+		Integer chartId = mediaId;
 		final Date choosedPublishDate = new Date();
 		Byte position = null;
 		final Integer chartDetailId = 55;
@@ -1342,7 +1339,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testUpdateChartItem_Success() throws Exception {
 		final int mediaId = 1;
-		byte chartId = (byte) mediaId;
+		Integer chartId = mediaId;
 		final Date choosedPublishDate = new Date();
 		Byte position = (byte) 3;
 		byte prevPosition =(byte)2;
@@ -1503,7 +1500,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testDeleteChartItems_Success() {
 		
-		Byte chartId =1;
+		Integer chartId =1;
 		long selectedPublishDateTime=0;
 		
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
@@ -1520,7 +1517,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=RuntimeException.class)
 	public void testDeleteChartItems_delete_Failure() {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		long selectedPublishDateTime=0;
 		
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishDateTime);
@@ -1534,7 +1531,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=RuntimeException.class)
 	public void testDeleteChartItems_getActualChartDetails_Failure() {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		long selectedPublishDateTime=0;
 		
 		Mockito.doThrow(new RuntimeException()).when(mockChartDetailRepository).getAllActualChartDetails(chartId, selectedPublishDateTime);
@@ -1545,7 +1542,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testUpdateChartItems_Success() throws ServiceCheckedException{
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		long selectedPublishDateTime=0;
 		long newPublishDateTime=0;
 		
@@ -1566,7 +1563,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=ServiceCheckedException.class)
 	public void testUpdateChartItems_newPublishTimeAlreadyScheduled_Failure() throws ServiceCheckedException {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		long selectedPublishDateTime=0;
 		long newPublishDateTime=0;
 		
@@ -1586,7 +1583,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=ServiceCheckedException.class)
 	public void testUpdateChartItems_UpdatedRowCountIs0_Failure() throws ServiceCheckedException {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		long selectedPublishDateTime=0;
 		long newPublishDateTime=0;
 		
@@ -1607,7 +1604,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testgetLockedChartItemISRCs_ExistLastNearestItems_Success() throws ServiceCheckedException {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
 		List<String> ids = Collections.singletonList("ISRC");
@@ -1628,7 +1625,7 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testgetLockedChartItemISRCs_NotExistLastNearestItems_Success() throws ServiceCheckedException {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
 		List<String> ids = Collections.singletonList("ISRC");
@@ -1649,7 +1646,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=ServiceException.class)
 	public void testgetLockedChartItemISRCs_NullSelectedDate_Failure() throws ServiceCheckedException {
 		
-		Byte chartId = 1;
+		Integer chartId = 1;
 		Date selectedPublishDateTime=null;
 		Date nearestPublishDateTime=new Date();
 		List<String> ids = Collections.singletonList("ISRC");
@@ -1662,7 +1659,7 @@ public class ChartDetailServiceTest {
 	@Test(expected=ServiceException.class)
 	public void testgetLockedChartItemISRCs_NullChartId_Failure() throws ServiceCheckedException {
 		
-		Byte chartId = null;
+		Integer chartId = null;
 		Date selectedPublishDateTime=new Date();
 				
 		fixtureChartDetailService.getLockedChartItemISRCs(chartId, selectedPublishDateTime);		

@@ -1,9 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -12,16 +8,26 @@ import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-
 import org.apache.log4j.MDC;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.enums.ChartType.FIFTH_CHART;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.FOURTH_CHART;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
 
 /**
  * GetChartController
@@ -220,12 +226,44 @@ public class GetChartController extends CommonController{
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
-			@RequestParam("API_VERSION") String apiVersion,
+            @PathVariable("apiVersion") String apiVersion,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
 			@PathVariable("community") String community) throws Exception {
+		User user = null;
+		Exception ex = null;
+		try {
+			LOGGER.info("command proccessing started");
+			throttling(request, userName, deviceUID, community);
+
+			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+
+            Object[] objects = chartService.processGetChartCommand(user, community, false, true);
+            objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+
+			proccessRememberMeToken(objects);
+			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		} catch (Exception e) {
+			ex = e;
+			throw e;
+		} finally {
+			logProfileData(deviceUID, community, null, null, user, ex);
+			LOGGER.info("command processing finished");
+		}
+	}
+
+    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART" })
+	public ModelAndView getChart_O2_v4d0(
+			HttpServletRequest request,
+			@RequestParam("USER_NAME") String userName,
+			@RequestParam("USER_TOKEN") String userToken,
+			@RequestParam("TIMESTAMP") String timestamp,
+			@PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+            ) throws Exception {
 		User user = null;
 		Exception ex = null;
 		try {
@@ -264,12 +302,16 @@ public class GetChartController extends CommonController{
 	}
 
 	public ChartDto converToOldVersion(ChartDto chartDto, String version) {
-		PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
+        version = version.replace(".","").substring(0,2);
+        int intVersion = new Integer(version);
+
+        Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ? Arrays.asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) : Arrays.asList(VIDEO_CHART));
+        PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
 		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
 		Map<Integer, PlaylistDto> playlistMap = new HashMap<Integer, PlaylistDto>();
 		for (int i = 0; i < playlistDtos.length; i++) {
             ChartType chartType = playlistDtos[i].getType();
-            if(FOURTH_CHART.equals(chartType)|| FIFTH_CHART.equals(chartType)){
+            if(removeChartTypes.contains(chartType)){
 				removedPlaylistIds.add(playlistDtos[i].getId());
 				playlistDtos[i] = null;
 			}else{
@@ -282,10 +324,10 @@ public class GetChartController extends CommonController{
 		for (int i = 0; i < tracks.length; i++) {
 			if(removedPlaylistIds.contains(tracks[i].getPlaylistId()))
 				tracks[i] = null;
-			else if(tracks[i].getChannel() != null && !version.contains("3.7"))
+			else if(tracks[i].getChannel() != null && intVersion < 37)
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
 			
-			if(tracks[i] != null){
+			if(intVersion < 38 && tracks[i] != null){
 				PlaylistDto playlistDto = playlistMap.get(tracks[i].getPlaylistId());
 				Integer position = positionMap.get(playlistDto.getType());
 				position = position != null ? position : 1;

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.*;
-
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -11,13 +9,14 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -63,7 +62,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> findChartDetailTree(User user, byte chartId, boolean createDrmIfNotExists, boolean fetchLocked) {
+	public List<ChartDetail> findChartDetailTree(User user, Integer chartId, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -121,7 +120,7 @@ public class ChartDetailService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Long> getAllPublishTimeMillis(Byte chartId) {
+	public List<Long> getAllPublishTimeMillis(Integer chartId) {
 		LOGGER.debug("input parameters chartId: [{}]", chartId);
 
 		if (chartId == null)
@@ -135,7 +134,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<String> getLockedChartItemISRCs(Byte chartId, Date selectedPublishDate) {
+	public List<String> getLockedChartItemISRCs(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 		
 		if (selectedPublishDate == null)
@@ -157,7 +156,7 @@ public class ChartDetailService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getActualChartItems(Byte chartId, Date selectedPublishDate) {
+	public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
 		if (selectedPublishDate == null)
@@ -178,7 +177,7 @@ public class ChartDetailService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartItemsByDate(Byte chartId, Date selectedPublishDate, boolean changePosition) {
+	public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate, boolean changePosition) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
 		notNull(selectedPublishDate , "The parameter selectedPublishDate is null");
@@ -247,7 +246,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Byte chartId, boolean minorUpdate) {
+	public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId, boolean minorUpdate) {
 		LOGGER.debug("input parameters choosedPublishDate, chartId, minorUpdate: [{}], [{}], [{}]", new Object[] { choosedPublishDate, chartId, minorUpdate });
 
 		if (chartId == null)
@@ -407,7 +406,7 @@ public class ChartDetailService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Byte chartId, int afterPosition, int chPosition) {
+	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
 		LOGGER.debug("input parameters selectedPublishDateTime, chartId, afterPosition, chPosition: [{}], [{}], [{}], [{}]", new Object[] { selectedPublishDateTime, chartId,
 				afterPosition, chPosition });
 		List<Integer> ids = chartDetailRepository.getIdsByDateAndPosition(chartId, selectedPublishDateTime.getTime(), (byte) afterPosition);
@@ -493,7 +492,7 @@ public class ChartDetailService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public boolean deleteChartItems(byte chartId, long selectedPublishDateTime) {
+	public boolean deleteChartItems(Integer chartId, long selectedPublishDateTime) {
 		LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
 		List<ChartDetail> chartDetails = chartDetailRepository.getAllActualChartDetails(chartId, selectedPublishDateTime);
@@ -506,7 +505,7 @@ public class ChartDetailService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public int updateChartItems(byte chartId, long selectedPublishDateTime, long newPublishDateTime) throws ServiceCheckedException{
+	public int updateChartItems(Integer chartId, long selectedPublishDateTime, long newPublishDateTime) throws ServiceCheckedException{
 		LOGGER.debug("input parameters chartId, selectedPublishDateTime, newPublishDateTime: [{}], [{}]", new Object[] { chartId, selectedPublishDateTime, newPublishDateTime });
 
 		final long count = chartDetailRepository.getCount(chartId, newPublishDateTime);

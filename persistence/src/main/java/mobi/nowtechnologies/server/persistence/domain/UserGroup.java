@@ -22,7 +22,7 @@ public class UserGroup implements Serializable {
 	private byte i;
 
 	@Column(name="chart", insertable=false,updatable=false)
-	private byte chartId;
+	private Integer chartId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="chart")
@@ -63,7 +63,7 @@ public class UserGroup implements Serializable {
 		this.i = i;
 	}
 
-	public byte getChartId() {
+	public Integer getChartId() {
 		return this.chartId;
 	}
 
