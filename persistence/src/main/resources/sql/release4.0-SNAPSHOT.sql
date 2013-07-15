@@ -11,3 +11,9 @@ alter table tb_chartDetail modify column chart int unsigned not null;
 alter table tb_paymentpolicy add column tariff char(255);
 
 update tb_paymentpolicy set tariff='_3G' where provider='o2';
+
+-- IMP-1774 [Server] Update the Account Check command to include the Video access flags
+alter table tb_users add column tariff char(255);
+alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
+alter table tb_users add column hasAllDetails boolean;
+alter table tb_users add column showFreeTrial boolean;
