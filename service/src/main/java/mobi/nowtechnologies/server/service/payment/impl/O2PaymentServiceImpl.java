@@ -117,15 +117,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		LOGGER.info("Done creation of o2Psms payment details for user {}", user.getUserName());
 		
 		return details;
-	}
-
-	@Override
-	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-		LOGGER.info("Creating o2Psms payment details...");
-
-		O2PSMSPaymentDetails o2PSMSPaymentDetails = commitPaymentDetails(user, paymentPolicy);
-		LOGGER.debug("Output parameter o2PSMSPaymentDetails=[{}]", o2PSMSPaymentDetails);
-		return o2PSMSPaymentDetails;
-	}
+    }
 
 }
