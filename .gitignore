@@ -6,3 +6,4 @@
 .project
 target/
 .springBeans
+atlassian-ide-plugin.xml

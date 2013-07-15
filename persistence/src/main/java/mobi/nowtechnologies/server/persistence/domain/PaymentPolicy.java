@@ -97,7 +97,7 @@ public class PaymentPolicy {
     private String contentDescription;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(255)")
+    @Column(columnDefinition = "char(255)", nullable = false)
     private Tariff tariff;
 
     public void setId(short id) {

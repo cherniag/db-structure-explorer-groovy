@@ -23,7 +23,6 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -99,7 +98,7 @@ public class PaymentDetailsService {
 				}
 				paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
 			}else if(dto.getPaymentType().equals(PaymentType.O2_PSMS)){
-				paymentDetails = o2PaymentService.createPaymentDetails(dto.getPhoneNumber(), user, paymentPolicy);
+				paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
 			}
 
 			if (null != paymentDetails) {

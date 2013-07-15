@@ -155,7 +155,7 @@ public class SMSNotification {
 	protected void createdMigPaymentDetails() {
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymnetDetails(..))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymentDetails(..))")
 	protected void createdO2PsmsPaymentDetails() {
 	}
 

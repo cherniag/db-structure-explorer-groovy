@@ -2,13 +2,10 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.O2ClientService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.O2PaymentService;
@@ -98,7 +95,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	}
 
 	@Override
-	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
+	public O2PSMSPaymentDetails commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
 		LOGGER.info("Commiting o2Psms payment details for user {} ...", user.getUserName());
 		
 		O2PSMSPaymentDetails details = new O2PSMSPaymentDetails();
@@ -120,15 +117,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		LOGGER.info("Done creation of o2Psms payment details for user {}", user.getUserName());
 		
 		return details;
-	}
-
-	@Override
-	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException {
-		LOGGER.info("Creating o2Psms payment details...");
-		
-		O2PSMSPaymentDetails o2PSMSPaymentDetails = commitPaymnetDetails(user, paymentPolicy);
-		LOGGER.debug("Output parameter o2PSMSPaymentDetails=[{}]", o2PSMSPaymentDetails);
-		return o2PSMSPaymentDetails;
-	}
+    }
 
 }
