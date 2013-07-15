@@ -74,7 +74,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
@@ -660,7 +659,7 @@ public class O2PaymentServiceImplTest {
 	}
 	
 	@Test
-	public void testCommitPaymnetDetails_Success() throws Exception{
+	public void testCommitPaymentDetails_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		
 		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
@@ -694,7 +693,7 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		O2PSMSPaymentDetails  actualO2PSMSPaymentDetails  = o2PaymentServiceImplSpy.commitPaymnetDetails(user, paymentPolicy);
+		O2PSMSPaymentDetails  actualO2PSMSPaymentDetails  = o2PaymentServiceImplSpy.commitPaymentDetails(user, paymentPolicy);
 		
 		assertNotNull(actualO2PSMSPaymentDetails);
 		
