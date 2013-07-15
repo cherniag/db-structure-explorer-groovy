@@ -57,7 +57,31 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-	public static enum Fields {
+    public boolean canGetVideo() {
+        return isO2Consumer() && is4G();
+    }
+
+    public TariffType getTariffType() {
+        return tariffType;
+    }
+
+    public void setTariffType(TariffType tariffType) {
+        this.tariffType = tariffType;
+    }
+
+    public boolean is4G(){
+        return TariffType.O2_4G.equals(tariffType);
+    }
+
+    public boolean canPlayVideo() {
+        return is4G() && (isOnFreeTrial() || isSubscribed());
+    }
+
+    public boolean canActivateVideoTrial() {
+        return canGetVideo();
+    }
+
+    public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
 
@@ -65,6 +89,9 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "i")
 	private int id;
+
+    @Enumerated(EnumType.STRING)
+    private TariffType tariffType;
 
 	@Column(name = "address1", columnDefinition = "char(50)")
 	private String address1;
