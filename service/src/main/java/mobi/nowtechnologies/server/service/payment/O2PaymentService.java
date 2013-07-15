@@ -11,8 +11,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
  */
 public interface O2PaymentService {
 	
-	public O2PSMSPaymentDetails createPaymentDetails(String phoneNumber, User user, PaymentPolicy paymentPolicy) throws ServiceException;
-	
-	public O2PSMSPaymentDetails commitPaymnetDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException;
+	public O2PSMSPaymentDetails commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException;
 
 }
