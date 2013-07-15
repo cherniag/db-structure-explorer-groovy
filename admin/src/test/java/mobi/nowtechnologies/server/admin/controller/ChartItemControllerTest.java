@@ -1,24 +1,18 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +23,18 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
  * The class <code>ChartItemControllerTest</code> contains tests for the class <code>{@link ChartItemController}</code>.
@@ -61,7 +67,7 @@ public class ChartItemControllerTest extends TestCase {
 	public void testUpdateChartItems_Successful()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		String chartItemListJSON = ChartItemFactory.anyChartItemListJSON(2, chartId, selectedPublishDateTime);
 		
 		when(chartDetailService.saveChartItems(any(List.class))).thenReturn(Collections.<ChartDetail>emptyList());
@@ -86,7 +92,7 @@ public class ChartItemControllerTest extends TestCase {
 	public void testUpdateChartItems_ServiceException()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		String chartItemListJSON = ChartItemFactory.anyChartItemListJSON(2, chartId, selectedPublishDateTime);
 		
 		doThrow(ServiceException.getInstance("")).when(chartDetailService).saveChartItems(any(List.class));
@@ -105,7 +111,7 @@ public class ChartItemControllerTest extends TestCase {
 	@Test
 	public void testGetChartItemsPage_BasicChart_Successful()
 		throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.BASIC_CHART);
@@ -115,8 +121,8 @@ public class ChartItemControllerTest extends TestCase {
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
-		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
-		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartById(anyInt())).thenReturn(chart);
 		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
@@ -128,7 +134,7 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
 		
-		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		verify(chartDetailService, times(1)).getChartItemsByDate(anyInt(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
 		ChartDetailsAsm.toChartItemDtos(anyList());
 
@@ -145,7 +151,7 @@ public class ChartItemControllerTest extends TestCase {
 	@Test
 	public void testGetChartItemsPage_HotChart_Successful()
 		throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.HOT_TRACKS);
@@ -155,9 +161,9 @@ public class ChartItemControllerTest extends TestCase {
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
-		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
 		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
-		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(chartService.getChartById(anyInt())).thenReturn(chart);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
 		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
@@ -168,7 +174,7 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
 		
-		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		verify(chartDetailService, times(1)).getChartItemsByDate(anyInt(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
 		ChartDetailsAsm.toChartItemDtos(anyList());
 
@@ -185,7 +191,7 @@ public class ChartItemControllerTest extends TestCase {
 	@Test
 	public void testGetChartItemsPage_OtherChart_Successful()
 		throws Exception {
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.OTHER_CHART);
@@ -196,8 +202,8 @@ public class ChartItemControllerTest extends TestCase {
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		fixture.setFilesURL(filesUrl);
-		when(chartDetailService.getChartItemsByDate(anyByte(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
-		when(chartService.getChartById(anyByte())).thenReturn(chart);
+		when(chartDetailService.getChartItemsByDate(anyInt(), any(Date.class), anyBoolean())).thenReturn(Collections.<ChartDetail>emptyList());
+		when(chartService.getChartById(anyInt())).thenReturn(chart);
 		when(ChartDetailsAsm.toChartItemDtos(anyList())).thenReturn(chartItemDtos);
 		
 		ModelAndView result = fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
@@ -208,7 +214,7 @@ public class ChartItemControllerTest extends TestCase {
 		ModelAndViewAssert.assertModelAttributeValue(result, "selectedPublishDateTime", selectedPublishDateTime);
 		ModelAndViewAssert.assertModelAttributeValue(result, "filesURL", filesUrl);
 		
-		verify(chartDetailService, times(1)).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		verify(chartDetailService, times(1)).getChartItemsByDate(anyInt(), any(Date.class), anyBoolean());
 		verifyStatic(times(1));
 		ChartDetailsAsm.toChartItemDtos(anyList());
 
@@ -225,11 +231,11 @@ public class ChartItemControllerTest extends TestCase {
 	public void testGetChartItemsPage_ServiceException()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		
 		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
-		doThrow(ServiceException.getInstance("")).when(chartDetailService).getChartItemsByDate(anyByte(), any(Date.class), anyBoolean());
+		doThrow(ServiceException.getInstance("")).when(chartDetailService).getChartItemsByDate(anyInt(), any(Date.class), anyBoolean());
 
 		fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
 	}
@@ -246,12 +252,12 @@ public class ChartItemControllerTest extends TestCase {
 	public void testGetMediaList_Successful()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		String searchWords = "some words";
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		when(mediaService.getMedias(anyString())).thenReturn(Collections.<Media>emptyList());
-		when(ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyByte(), anyList())).thenReturn(chartItemDtos);
+		when(ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyInt(), anyList())).thenReturn(chartItemDtos);
 
 		ModelAndView result = fixture.getMediaList(searchWords, selectedPublishDateTime, chartId);
 
@@ -261,7 +267,7 @@ public class ChartItemControllerTest extends TestCase {
 		
 		verify(mediaService, times(1)).getMedias(anyString());
 		verifyStatic(times(1));
-		ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyByte(), anyList());
+		ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyInt(), anyList());
 	}
 	
 	/**
@@ -276,7 +282,7 @@ public class ChartItemControllerTest extends TestCase {
 		throws Exception {
 		String searchWords = "some words";
 		Date selectedPublishDateTime = new Date();
-		Byte chartId = new Byte((byte) 1);
+		Integer chartId = new Integer((byte) 1);
 		
 		doThrow(ServiceException.getInstance("")).when(mediaService).getMedias(anyString());
 

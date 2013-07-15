@@ -19,7 +19,7 @@ public class ChartItemDto {
 	
 	private Integer id;
 	
-	private Byte chartId;
+	private Integer chartId;
 	
 	private MediaDto mediaDto;
 	
@@ -72,15 +72,15 @@ public class ChartItemDto {
 		this.publishTime = publishTime;
 	}
 
-	public Byte getChartId() {
-		return chartId;
-	}
+    public Integer getChartId() {
+        return chartId;
+    }
 
-	public void setChartId(Byte chartId) {
-		this.chartId = chartId;
-	}
+    public void setChartId(Integer chartId) {
+        this.chartId = chartId;
+    }
 
-	public byte getPosition() {
+    public byte getPosition() {
 		return position;
 	}
 

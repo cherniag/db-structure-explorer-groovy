@@ -194,7 +194,7 @@ public class ChartDetailsAsm {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<ChartItemDto> toChartItemDtosFromMedia(Date selectedPublishDateTime, Byte chartId, List<Media> list) {
+	public static List<ChartItemDto> toChartItemDtosFromMedia(Date selectedPublishDateTime, Integer chartId, List<Media> list) {
 		LOGGER.debug("input parameters chartDetails: [{}]", list);
 
 		List<ChartItemDto> chartItemDtos;
@@ -213,7 +213,7 @@ public class ChartDetailsAsm {
 
 	}
 
-	public static ChartItemDto toChartItemDto(Media media, Date selectedPublishDateTime, Byte chartId) {
+	public static ChartItemDto toChartItemDto(Media media, Date selectedPublishDateTime, Integer chartId) {
 		LOGGER.debug("input parameters media: [{}]", media);
 
 		ChartItemDto chartItemDto = new ChartItemDto();

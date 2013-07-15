@@ -31,6 +31,7 @@ public class PaymentPolicyFactory
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
 		paymentPolicy.setShortCode("shortCode");
+        paymentPolicy.setAvailableInStore(false);
 		return paymentPolicy;
 	}
 }

@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import mobi.nowtechnologies.server.admin.validator.ChartDtoValidator;
 import mobi.nowtechnologies.server.admin.validator.ChartItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
@@ -15,7 +10,6 @@ import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -26,6 +20,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -96,13 +94,13 @@ public class ChartController extends AbstractCommonController {
 	
 	/**Update properties of selected chart
 	 * 
-	 * @param chartItemDto dto of chart
+	 * @param chartDto dto of chart
 	 * @param chartId id of chart
 	 * @return redirect to the chart calender page
 	 */
 	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
 	public ModelAndView updateChart(
-			@PathVariable("chartId") Byte chartId,
+			@PathVariable("chartId") Integer chartId,
 			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
 			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
 			BindingResult bindingResult,
@@ -137,7 +135,7 @@ public class ChartController extends AbstractCommonController {
 	public ModelAndView getChartCalendarPage(
 			HttpServletRequest request,
 			@RequestParam(required = false, value = "selectedPublishDateTime", defaultValue = "") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-			@PathVariable("chartId") Byte chartId) {
+			@PathVariable("chartId") Integer chartId) {
 
 		LOGGER.debug("input parameters request, selectedPublishDateTime, chartId: [{}], [{}], [{}]", new Object[] { request, selectedPublishDateTime, chartId });
 
@@ -179,7 +177,7 @@ public class ChartController extends AbstractCommonController {
 	 */
 	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.DELETE)
 	public ModelAndView deleteChartItems(HttpServletRequest request,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Byte chartId) {
+			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
 
 		LOGGER.debug("input parameters request, selectedPublishDateTime, chartId: [{}], [{}], [{}]", new Object[] { request,
 				selectedPublishDateTime, chartId });

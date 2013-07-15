@@ -1,12 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import javax.validation.constraints.NotNull;
-
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.validator.constraints.FileSize;
-
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -18,7 +17,7 @@ public class ChartDto {
 
 	public static final String CHART_DTO = "chart";
 
-	private Byte id;
+	private Integer id;
 	
 	private Integer chartDetailId;
 
@@ -45,15 +44,15 @@ public class ChartDto {
 	
 	private ChartType chartType;
 
-	public Byte getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Byte id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getName() {
+    public String getName() {
 		return name;
 	}
 

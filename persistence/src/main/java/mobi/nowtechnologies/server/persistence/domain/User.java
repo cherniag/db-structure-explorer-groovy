@@ -410,7 +410,7 @@ public class User implements Serializable {
 		return selectedCharts;
 	}
 
-    public Byte getSelectedChartId(ChartType chartType) {
+    public Integer getSelectedChartId(ChartType chartType) {
         for(Chart chart: selectedCharts)
             if(chartType.equals(chart.getType()))
                 return chart.getI();

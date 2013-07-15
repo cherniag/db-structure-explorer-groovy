@@ -13,304 +13,316 @@ import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
 @NamedQueries(value = { @NamedQuery(name = PaymentPolicy.GET_OPERATORS_LIST, query = "select paymentPolicy.operator from PaymentPolicy paymentPolicy where paymentPolicy.communityId=?1 and paymentPolicy.paymentType=?2"),
-		@NamedQuery(name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
+        @NamedQuery(name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
 
-	public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
 
-	public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
+    public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
 
-	public static enum Fields {
-		communityId, operator, paymentType
-	}
+    public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
-	@Id
-	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-	@Column(name = "i", length = 5, nullable = false)
-	private short id;
+    public static enum Fields {
+        communityId, operator, paymentType
+    }
 
-	@Column(name = "communityID", length = 10, nullable = false, insertable = false, updatable = false)
-	private Integer communityId;
+    @Id
+    @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
+    @Column(name = "i", length = 5, nullable = false)
+    private short id;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = true)
-	@JoinColumn(name = "communityId")
-	private Community community;
+    @Column(name = "communityID", length = 10, nullable = false, insertable = false, updatable = false)
+    private Integer communityId;
 
-	@Column(name = "subCost", columnDefinition = "char(5)", length = 5, nullable = false)
-	private BigDecimal subcost;
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "communityId")
+    private Community community;
 
-	@Column(name = "subWeeks", columnDefinition = "tinyint(3)", length = 3, nullable = false)
-	private byte subweeks;
+    @Column(name = "subCost", columnDefinition = "char(5)", length = 5, nullable = false)
+    private BigDecimal subcost;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = true)
-	@JoinColumn(name = "operator")
-	private Operator operator;
+    @Column(name = "subWeeks", columnDefinition = "tinyint(3)", length = 3, nullable = false)
+    private byte subweeks;
 
-	@Column(name = "operator", insertable = false, updatable = false)
-	private Integer operatorId;
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "operator")
+    private Operator operator;
 
-	private String paymentType;
+    @Column(name = "operator", insertable = false, updatable = false)
+    private Integer operatorId;
 
-	@Transient
-	private String operatorName;
+    private String paymentType;
 
-	private String shortCode;
+    @Transient
+    private String operatorName;
 
-	private String currencyISO;
+    private String shortCode;
 
-	private boolean availableInStore;
-	
-	@Column(name="app_store_product_id")
-	private String appStoreProductId;
-	
-	@Transient
-	private ProviderType providerType;
-	
-	@Enumerated(EnumType.STRING)
+    private String currencyISO;
+
+    private boolean availableInStore;
+
+    @Column(name="app_store_product_id")
+    private String appStoreProductId;
+
+    @Transient
+    private ProviderType providerType;
+
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
     private SegmentType segment;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "char(255)")
-	private Contract contract;
-	
-	@Column(name="content_category")
-	private String contentCategory;
-	
-	@Column(name="content_type")
-	private String contentType;
-	
-	@Column(name="sub_merchant_id")
-	private String subMerchantId;
-	
-	@Column(name="content_description")
-	private String contentDescription;
-	
 
-	public void setId(short id) {
-		this.id = id;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)")
+    private Contract contract;
 
-	public short getId() {
-		return id;
-	}
+    @Column(name="content_category")
+    private String contentCategory;
 
-	public Community getCommunity() {
-		return community;
-	}
+    @Column(name="content_type")
+    private String contentType;
 
-	public void setCommunity(Community community) {
-		this.community = community;
-	}
+    @Column(name="sub_merchant_id")
+    private String subMerchantId;
 
-	public BigDecimal getSubcost() {
-		return subcost;
-	}
+    @Column(name="content_description")
+    private String contentDescription;
 
-	public void setSubcost(BigDecimal subcost) {
-		this.subcost = subcost;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)")
+    private Tariff tariff;
 
-	public Operator getOperator() {
-		return operator;
-	}
+    public void setId(short id) {
+        this.id = id;
+    }
 
-	public void setOperator(Operator operator) {
-		this.operator = operator;
-	}
+    public short getId() {
+        return id;
+    }
 
-	public Integer getCommunityId() {
-		return communityId;
-	}
+    public Community getCommunity() {
+        return community;
+    }
 
-	public Integer getOperatorId() {
-		return operatorId;
-	}
+    public void setCommunity(Community community) {
+        this.community = community;
+    }
 
-	public void setSubweeks(byte subweeks) {
-		this.subweeks = subweeks;
-	}
+    public BigDecimal getSubcost() {
+        return subcost;
+    }
 
-	public byte getSubweeks() {
-		return subweeks;
-	}
+    public void setSubcost(BigDecimal subcost) {
+        this.subcost = subcost;
+    }
 
-	public String getPaymentType() {
-		return paymentType;
-	}
+    public Operator getOperator() {
+        return operator;
+    }
 
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
 
-	public void setOperatorName(String operatorName) {
-		this.operatorName = operatorName;
-	}
+    public Integer getCommunityId() {
+        return communityId;
+    }
 
-	public String getOperatorName() {
-		return operatorName;
-	}
+    public Integer getOperatorId() {
+        return operatorId;
+    }
 
-	public String getShortCode() {
-		return shortCode;
-	}
+    public void setSubweeks(byte subweeks) {
+        this.subweeks = subweeks;
+    }
 
-	public void setShortCode(String shortCode) {
-		this.shortCode = shortCode;
-	}
+    public byte getSubweeks() {
+        return subweeks;
+    }
 
-	public String getCurrencyISO() {
-		return currencyISO;
-	}
+    public String getPaymentType() {
+        return paymentType;
+    }
 
-	public void setCurrencyISO(String currencyISO) {
-		this.currencyISO = currencyISO;
-	}
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
 
-	public boolean isAvailableInStore() {
-		return availableInStore;
-	}
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
 
-	public void setAvailableInStore(boolean availableInStore) {
-		this.availableInStore = availableInStore;
-	}
+    public String getOperatorName() {
+        return operatorName;
+    }
 
-	public String getAppStoreProductId() {
-		return appStoreProductId;
-	}
+    public String getShortCode() {
+        return shortCode;
+    }
 
-	public void setAppStoreProductId(String appStoreProductId) {
-		this.appStoreProductId = appStoreProductId;
-	}
+    public void setShortCode(String shortCode) {
+        this.shortCode = shortCode;
+    }
 
-	public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
-		OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
-		
-		offerPaymentPolicyDto.setPaymentType(paymentType);
-		
-		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDto);
-		return offerPaymentPolicyDto;
-	}
+    public String getCurrencyISO() {
+        return currencyISO;
+    }
 
-	public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-		LOGGER.debug("input parameters paymentPolicies: [{}]", paymentPolicies);
-		
-		List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
-		for (PaymentPolicy paymentPolicy : paymentPolicies) {
-			offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
-		}
-		
-		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
-		return offerPaymentPolicyDtos;
-	}
+    public void setCurrencyISO(String currencyISO) {
+        this.currencyISO = currencyISO;
+    }
 
-	public SegmentType getSegment() {
-		return segment;
-	}
+    public boolean isAvailableInStore() {
+        return availableInStore;
+    }
 
-	public void setSegment(SegmentType segment) {
-		this.segment = segment;
-	}
+    public void setAvailableInStore(boolean availableInStore) {
+        this.availableInStore = availableInStore;
+    }
 
-	public Contract getContract() {
-		return contract;
-	}
+    public String getAppStoreProductId() {
+        return appStoreProductId;
+    }
 
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
+    public void setAppStoreProductId(String appStoreProductId) {
+        this.appStoreProductId = appStoreProductId;
+    }
 
-	public String getContentCategory() {
-		return contentCategory;
-	}
+    public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
+        OfferPaymentPolicyDto offerPaymentPolicyDto = new OfferPaymentPolicyDto();
 
-	public void setContentCategory(String contentCategory) {
-		this.contentCategory = contentCategory;
-	}
+        offerPaymentPolicyDto.setPaymentType(paymentType);
 
-	public String getContentType() {
-		return contentType;
-	}
+        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDto);
+        return offerPaymentPolicyDto;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
+        LOGGER.debug("input parameters paymentPolicies: [{}]", paymentPolicies);
 
-	public String getSubMerchantId() {
-		return subMerchantId;
-	}
+        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
+        for (PaymentPolicy paymentPolicy : paymentPolicies) {
+            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
+        }
 
-	public void setSubMerchantId(String subMerchantId) {
-		this.subMerchantId = subMerchantId;
-	}
+        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
+        return offerPaymentPolicyDtos;
+    }
 
-	public String getContentDescription() {
-		return contentDescription;
-	}
+    public SegmentType getSegment() {
+        return segment;
+    }
 
-	public void setContentDescription(String contentDescription) {
-		this.contentDescription = contentDescription;
-	}
+    public void setSegment(SegmentType segment) {
+        this.segment = segment;
+    }
 
-	public ProviderType getProviderAsEnum() {
-		return providerType;
-	}
+    public Contract getContract() {
+        return contract;
+    }
 
-	public void setProviderAsEnum(ProviderType providerType) {
-		this.providerType = providerType;
-	}
-	
-	@Access(AccessType.PROPERTY)
-	@Column(name="provider", columnDefinition = "char(255)")
-	public String getProvider() {
-		return  providerType != null ? providerType.toString() : null;
-	}
-	
-	public void setProvider(String provider) {
-		for(ProviderType providerType : ProviderType.values()){
-			if(providerType.toString().equals(provider))
-				this.providerType = providerType;
-		}
-	}
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
 
-	@Override
-	public String toString() {
-		return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
-				+ ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
-				+ ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", contentCategory=" + contentCategory
-				+ ", contentType=" + contentType + ", subMerchantId=" + subMerchantId + ", contentDescription=" + contentDescription + "]";
-	}
+    public String getContentCategory() {
+        return contentCategory;
+    }
 
-	public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
-		LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
-		
-		PaymentPolicyDto paymentPolicyDto = paymentDetailsByPaymentDto.new PaymentPolicyDto();
-		
-		paymentPolicyDto.setCurrencyISO(currencyISO);
-		//paymentPolicyDto.setOldSubcost(oldSubcost);
-		//paymentPolicyDto.setOldSubweeks(oldSubweeks);
-		if (operator!=null) {
-			paymentPolicyDto.setOperator(operator.getId());
-			paymentPolicyDto.setOperatorName(operatorName);
-			paymentPolicyDto.setShortCode(shortCode);
-		}
+    public void setContentCategory(String contentCategory) {
+        this.contentCategory = contentCategory;
+    }
 
-		paymentPolicyDto.setPaymentType(paymentType);
-		paymentPolicyDto.setSubcost(subcost);
-		paymentPolicyDto.setSubweeks(new Integer(subweeks));
-		
-		LOGGER.debug("Output parameter [{}]", paymentPolicyDto);
-		return paymentPolicyDto;
-	}
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getSubMerchantId() {
+        return subMerchantId;
+    }
+
+    public void setSubMerchantId(String subMerchantId) {
+        this.subMerchantId = subMerchantId;
+    }
+
+    public String getContentDescription() {
+        return contentDescription;
+    }
+
+    public void setContentDescription(String contentDescription) {
+        this.contentDescription = contentDescription;
+    }
+
+    public ProviderType getProviderAsEnum() {
+        return providerType;
+    }
+
+    public void setProviderAsEnum(ProviderType providerType) {
+        this.providerType = providerType;
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name="provider", columnDefinition = "char(255)")
+    public String getProvider() {
+        return  providerType != null ? providerType.toString() : null;
+    }
+
+    public void setProvider(String provider) {
+        for(ProviderType providerType : ProviderType.values()){
+            if(providerType.toString().equals(provider))
+                this.providerType = providerType;
+        }
+    }
+
+    public Tariff getTariff() {
+        return tariff;
+    }
+
+    public void setTariff(Tariff tariff) {
+        this.tariff = tariff;
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
+                + ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
+                + ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", tariff="+ tariff + ", contentCategory=" + contentCategory
+                + ", contentType=" + contentType + ", subMerchantId=" + subMerchantId + ", contentDescription=" + contentDescription + "]";
+    }
+
+    public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
+        LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
+
+        PaymentPolicyDto paymentPolicyDto = paymentDetailsByPaymentDto.new PaymentPolicyDto();
+
+        paymentPolicyDto.setCurrencyISO(currencyISO);
+        //paymentPolicyDto.setOldSubcost(oldSubcost);
+        //paymentPolicyDto.setOldSubweeks(oldSubweeks);
+        if (operator!=null) {
+            paymentPolicyDto.setOperator(operator.getId());
+            paymentPolicyDto.setOperatorName(operatorName);
+            paymentPolicyDto.setShortCode(shortCode);
+        }
+
+        paymentPolicyDto.setPaymentType(paymentType);
+        paymentPolicyDto.setSubcost(subcost);
+        paymentPolicyDto.setSubweeks(new Integer(subweeks));
+
+        LOGGER.debug("Output parameter [{}]", paymentPolicyDto);
+        return paymentPolicyDto;
+    }
 
 
 }

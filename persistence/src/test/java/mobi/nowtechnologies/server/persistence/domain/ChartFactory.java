@@ -12,7 +12,7 @@ public class ChartFactory
 
 	public static Chart createChart() {
 		Chart chart = new Chart();
-		chart.setI(new Byte((byte) 1));
+		chart.setI(1);
 		chart.setType(ChartType.BASIC_CHART);
 		chart.setGenre(new Genre());
 		

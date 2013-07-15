@@ -37,12 +37,12 @@ insert into community_charts (chart_id, community_id) values (8,3);
 insert into community_charts (chart_id, community_id) values (9,4);
 insert into community_charts (chart_id, community_id) values (10,5);
 
-insert into tb_files (i, filename, size, fileType, version) values (1894,'US-UM7-11-00061.aud',1464070,2,1);
-insert into tb_files (i, filename, size, fileType, version) values (1893,'US-UM7-11-00061.hdr',162676,1,666);
-insert into tb_files (i, filename, size, fileType, version) values (1891,'US-UM7-11-00061S.jpg',6125,3,3);
-insert into tb_files (i, filename, size, fileType, version) values (1892,'US-UM7-11-00061L.jpg',41581,3,2);
-insert into tb_files (i, filename, size, fileType, version) values (1675,'US-UM7-11-00061.jpg',0,3,4);
-insert into tb_files (i, filename, size, fileType, version) values (1676,'US-UM7-11-00061.mp3',0,1,9999);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1891,'US-UM7-11-00061S.jpg',6125,3,3, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1892,'US-UM7-11-00061L.jpg',41581,3,2, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1675,'US-UM7-11-00061.jpg',0,3,4, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1676,'US-UM7-11-00061.mp3',0,1,9999, 0);
 
 insert into tb_artist (i, name, info, realName) values (50,'Lmfao/Lauren Bennett/Goonrock','LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.','Lmfao/Lauren Bennett/Goonrock');
 

@@ -28,6 +28,8 @@ public class MediaFile implements Serializable {
 
 	private int size;
 
+    private int duration;
+
 	@Version
 	private int version;
 
@@ -79,9 +81,25 @@ public class MediaFile implements Serializable {
 		this.version = version;
 	}
 
-	@Override
-	public String toString() {
-		return "MediaFile [fileTypeId=" + fileTypeId + ", filename=" + filename + ", i=" + i + ", size=" + size + ", version=" + version + "]";
-	}
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    @Override
+    public String toString() {
+        return "MediaFile{" +
+                "i=" + i +
+                ", filename='" + filename + '\'' +
+                ", fileTypeId=" + fileTypeId +
+                ", fileType=" + fileType +
+                ", size=" + size +
+                ", duration=" + duration +
+                ", version=" + version +
+                "} " + super.toString();
+    }
 
 }

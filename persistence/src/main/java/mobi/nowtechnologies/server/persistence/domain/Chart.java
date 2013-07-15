@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class Chart implements Serializable {
 	@XmlTransient
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Byte i;
+	private Integer i;
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "genre")
@@ -61,20 +62,20 @@ public class Chart implements Serializable {
     inverseJoinColumns=
         @JoinColumn(name="community_id", referencedColumnName="i")
     )
-	private List<Community> communities;
+	private List<Community> communities = new ArrayList<Community>();
 	
     public Chart() {
     }
 
-	public Byte getI() {
-		return this.i;
-	}
+    public Integer getI() {
+        return i;
+    }
 
-	public void setI(Byte i) {
-		this.i = i;
-	}
+    public void setI(Integer i) {
+        this.i = i;
+    }
 
-	public List<Community> getCommunities() {
+    public List<Community> getCommunities() {
 		return communities;
 	}
 
