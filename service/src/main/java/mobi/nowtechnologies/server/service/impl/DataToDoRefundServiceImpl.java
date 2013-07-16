@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.DataToDoRefund;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DataToDoRefundRepository;
 import mobi.nowtechnologies.server.service.DataToDoRefundService;
@@ -26,9 +25,9 @@ public class DataToDoRefundServiceImpl implements DataToDoRefundService{
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public DataToDoRefund logOnTariffMigration(User user, PaymentPolicy newPaymentPolicy) {
+    public DataToDoRefund logOnTariffMigration(User user) {
         DataToDoRefund resultDataToDoRefund = DataToDoRefund.nullObject();
-        if(!user.areTariffsEqual(newPaymentPolicy)){
+        if(!user.isTariffChanged()){
             if (user.isUnsubscribedWithFullAccess()){
                 resultDataToDoRefund = logUnSubscribeData(user);
             }else{

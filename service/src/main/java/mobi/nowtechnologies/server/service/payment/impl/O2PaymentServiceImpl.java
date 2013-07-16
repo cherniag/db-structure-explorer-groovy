@@ -31,7 +31,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	
 	private O2ClientService o2ClientService;
 	private CommunityResourceBundleMessageSource messageSource;
-    private DataToDoRefundService dataToDoRefundService;
 	
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -45,10 +44,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	public PaymentSystemResponse getExpiredResponse() {
 		return O2Response.failO2Response("O2 pending payment has been expired");
 	}
-
-    public void setDataToDoRefundService(DataToDoRefundService dataToDoRefundService) {
-        this.dataToDoRefundService = dataToDoRefundService;
-    }
 
     @Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -114,8 +109,6 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		details.setActivated(true);
 		
 		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-
-        dataToDoRefundService.logOnTariffMigration(user, paymentPolicy);
 
 		user.setCurrentPaymentDetails(details);
 		details.setOwner(user);

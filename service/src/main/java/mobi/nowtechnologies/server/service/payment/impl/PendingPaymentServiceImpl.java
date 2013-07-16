@@ -57,7 +57,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 				userService.updateUser(user);
 				LOGGER.info("Pending payment {} was created for user {}", pendingPayment.getInternalTxId(), user.getUserName());
 			} else {
-				LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscibe him", user.getUserName());
+				LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscribe him", user.getUserName());
 				
 				userService.unsubscribeUser(user, "Payment Policy is invalid for user");
 			}

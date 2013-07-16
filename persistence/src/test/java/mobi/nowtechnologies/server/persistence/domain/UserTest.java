@@ -347,7 +347,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testIsInvalidPaymentPolicy_NullCurrentPaymentDetails_Success(){
+	public void testIsTariffChanged_tariffsAreTheSame_Success(){
 			
 		User user = UserFactory.createUser();
 		user.setProvider("non-o2");
@@ -358,42 +358,25 @@ public class UserTest {
 		assertEquals(false, result);
 	}
 
-    public void testAreTariffsEqual_UserTariffIsNullAndDetachedPaymentPolicyTariffIs3G_Success(){
-        createFreeTrialUserAndDetachedPaymentPolicy(Tariff._3G);
 
-        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+    public void testIsTariffChanged_userTariffIs4GAAndNewTariffIs3G_Success(){
+        createSubscribedUserWithTariffMigration(Tariff._4G, Tariff._3G);
 
-        Assert.assertTrue(result);
-    }
-
-    private void createFreeTrialUserAndDetachedPaymentPolicy(Tariff detachedPaymentPolicyTariff) {
-        user = UserFactory.createUser();
-        createDetachedPaymentPolicy(detachedPaymentPolicyTariff);
-    }
-
-
-    public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs3G_Success(){
-        createSubscribedUserAndDetachedPaymentPolicy(Tariff._3G, Tariff._3G);
-
-        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+        boolean result = user.isTariffChanged();
 
         Assert.assertTrue(result);
     }
 
     public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs4G_Success(){
-        createSubscribedUserAndDetachedPaymentPolicy(Tariff._3G, Tariff._3G);
+        createSubscribedUserWithTariffMigration(Tariff._3G, Tariff._3G);
 
-        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+        boolean result = user.isTariffChanged();
 
         Assert.assertFalse(result);
     }
 
-    private void createSubscribedUserAndDetachedPaymentPolicy(Tariff subscribedUserTariff, Tariff detachedPaymentPolicyTariff) {
+    private void createSubscribedUserWithTariffMigration(Tariff subscribedUserTariff, Tariff newUserTariff) {
         user = UserFactory.createUserWithPaymentDetails(subscribedUserTariff);
-        createDetachedPaymentPolicy(detachedPaymentPolicyTariff);
-    }
-
-    private void createDetachedPaymentPolicy(Tariff detachedPaymentPolicyTariff) {
-        detachedPaymentPolicy = PaymentPolicyFactory.createPaymentPolicy(detachedPaymentPolicyTariff);
+        user.setTariff(newUserTariff);
     }
 }

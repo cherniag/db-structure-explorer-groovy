@@ -27,15 +27,13 @@ import static org.powermock.api.mockito.PowerMockito.*;
 public class DataToDoRefundServiceImplTest {
 
     User user;
-    PaymentPolicy newPaymentPolicy;
-
     DataToDoRefundServiceImpl dataToDoRefundService;
     DataToDoRefundRepository dataToDoRefundRepositoryMock;
-    private long expectedLogTimeMillis;
-    private DataToDoRefund resultDataToDoRefund;
-    private int nextSubPayment;
-    private Tariff userTariff;
-    private Tariff newUserTariff;
+    long expectedLogTimeMillis;
+    DataToDoRefund resultDataToDoRefund;
+    int nextSubPayment;
+    Tariff userTariff;
+    Tariff newUserTariff;
 
     @Before
     public void setUp(){
@@ -50,7 +48,7 @@ public class DataToDoRefundServiceImplTest {
         user.setNextSubPayment(nextSubPayment);
         user.getCurrentPaymentDetails().setActivated(false);
 
-        newPaymentPolicy = PaymentPolicyFactory.createPaymentPolicy(newUserTariff);
+        user.setTariff(newUserTariff);
     }
 
     private void prepareDataWithTheSameTariffs() {
@@ -94,7 +92,7 @@ public class DataToDoRefundServiceImplTest {
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user, newPaymentPolicy);
+        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         validate();
     }
@@ -115,7 +113,7 @@ public class DataToDoRefundServiceImplTest {
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user, newPaymentPolicy);
+        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         verifyUnsuccessfulCase();
     }
@@ -136,7 +134,7 @@ public class DataToDoRefundServiceImplTest {
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user, newPaymentPolicy);
+        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         verifyUnsuccessfulCase();
     }

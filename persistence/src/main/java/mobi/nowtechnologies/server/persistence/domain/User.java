@@ -1413,10 +1413,10 @@ public class User implements Serializable {
 				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
-    public boolean areTariffsEqual(PaymentPolicy paymentPolicy){
+    public boolean isTariffChanged(){
         boolean areTariffsEqual = true;
         if (currentPaymentDetails != null){
-            areTariffsEqual = paymentPolicy.getTariff().equals(currentPaymentDetails.getPaymentPolicy().getTariff());
+            areTariffsEqual = currentPaymentDetails.getPaymentPolicy().getTariff().equals(tariff);
         }
         return areTariffsEqual;
     }

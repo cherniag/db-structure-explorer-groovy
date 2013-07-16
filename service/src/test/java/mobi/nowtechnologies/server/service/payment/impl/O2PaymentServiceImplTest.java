@@ -110,7 +110,6 @@ public class O2PaymentServiceImplTest {
 		o2PaymentServiceImplSpy.setEntityService(mockEntityService);
 		o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
 		o2PaymentServiceImplSpy.setPaymentDetailsService(mockPaymentDetailsService);
-        o2PaymentServiceImplSpy.setDataToDoRefundService(new DataToDoRefundServiceImpl());
 	}
 	
 	

@@ -17,5 +17,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface DataToDoRefundService {
 
-    DataToDoRefund logOnTariffMigration(User user, PaymentPolicy newPaymentPolicy);
+    DataToDoRefund logOnTariffMigration(User user);
 }
