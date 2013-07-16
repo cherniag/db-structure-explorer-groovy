@@ -37,9 +37,12 @@ import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -72,8 +75,18 @@ import static org.apache.commons.lang.Validate.notNull;
  */
 public class UserService {
 	private static final String PAYD_CC_ERROR = "payd.cc.error";
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(UserService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
+    public Boolean canActivateVideoTrial(User u) {
+        Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(2014, 1, 1));
+
+        if(u.is4G() && u.isO2PAYGConsumer() && u.isVideoFreeTrialHasBeenActivated()) return true;
+
+        boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnFreeTrial() && !u.isSubscribed() && lessMagicDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
+        return  false;
+    }
 
     @Deprecated
 	public static class AmountCurrencyWeeks {

@@ -57,30 +57,6 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-    public boolean canGetVideo() {
-        return isO2Consumer() && is4G();
-    }
-
-    public Tariff getTariff() {
-        return tariff;
-    }
-
-    public void setTariff(Tariff tariff) {
-        this.tariff = tariff;
-    }
-
-    public boolean is4G(){
-        return Tariff._4G.equals(tariff);
-    }
-
-    public boolean canPlayVideo() {
-        return is4G() && (isOnFreeTrial() || isSubscribed());
-    }
-
-    public boolean canActivateVideoTrial() {
-        return canGetVideo();
-    }
-
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
@@ -91,6 +67,7 @@ public class User implements Serializable {
 	private int id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "tariff", columnDefinition = "char(255)")
     private Tariff tariff;
 
 	@Column(name = "address1", columnDefinition = "char(50)")
@@ -303,6 +280,15 @@ public class User implements Serializable {
         @JoinColumn(name="chart_id", referencedColumnName="i")
     )
 	private List<Chart> selectedCharts = new ArrayList<Chart>();
+
+    @Column(name = "videoFreeTrialHasBeenActivated")
+    private boolean videoFreeTrialHasBeenActivated;
+
+    @Column(name = "hasAllDetails")
+    private Boolean hasAllDetails;
+
+    @Column(name = "showFreeTrial")
+    private Boolean showFreeTrial;
 
 	public User() {
 		setDisplayName("");
@@ -1436,4 +1422,52 @@ public class User implements Serializable {
     }
 
 
+    public boolean canGetVideo() {
+        return isO2Consumer() && is4G();
+    }
+
+    public Tariff getTariff() {
+        return tariff;
+    }
+
+    public void setTariff(Tariff tariffType) {
+        this.tariff = tariffType;
+    }
+
+    public boolean is4G(){
+        return Tariff._4G.equals(tariff);
+    }
+
+    public boolean canPlayVideo() {
+        return is4G() && (isOnFreeTrial() || isSubscribed());
+    }
+
+    public boolean isVideoFreeTrialHasBeenActivated() {
+        return videoFreeTrialHasBeenActivated;
+    }
+
+    public boolean isO2PAYMConsumer() {
+        return isO2Consumer() && Contract.PAYM.equals(contract);
+    }
+
+    public Boolean hasAllDetails() {
+        return  this.hasAllDetails;
+
+    }
+
+    public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
+        this.videoFreeTrialHasBeenActivated = videoFreeTrialHasBeenActivated;
+    }
+
+    public Boolean showFreeTrial() {
+        return this.showFreeTrial;
+    }
+
+    public void setHasAllDetails(Boolean hasAllDetails) {
+        this.hasAllDetails = hasAllDetails;
+    }
+
+    public void setShowFreeTrial(Boolean showFreeTrial) {
+        this.showFreeTrial = showFreeTrial;
+    }
 }
