@@ -68,7 +68,7 @@ public class User implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tariff", columnDefinition = "char(255)")
-    private TariffType tariffType;
+    private Tariff tariff;
 
 	@Column(name = "address1", columnDefinition = "char(50)")
 	private String address1;
@@ -1416,16 +1416,16 @@ public class User implements Serializable {
         return isO2Consumer() && is4G();
     }
 
-    public TariffType getTariffType() {
-        return tariffType;
+    public Tariff getTariff() {
+        return tariff;
     }
 
-    public void setTariffType(TariffType tariffType) {
-        this.tariffType = tariffType;
+    public void setTariff(Tariff tariffType) {
+        this.tariff = tariffType;
     }
 
     public boolean is4G(){
-        return TariffType.O2_4G.equals(tariffType);
+        return Tariff._4G.equals(tariff);
     }
 
     public boolean canPlayVideo() {
