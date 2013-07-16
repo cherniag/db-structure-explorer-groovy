@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.DataToDoRefundService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
@@ -30,6 +31,7 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	
 	private O2ClientService o2ClientService;
 	private CommunityResourceBundleMessageSource messageSource;
+    private DataToDoRefundService dataToDoRefundService;
 	
 	public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -44,7 +46,11 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		return O2Response.failO2Response("O2 pending payment has been expired");
 	}
 
-	@Override
+    public void setDataToDoRefundService(DataToDoRefundService dataToDoRefundService) {
+        this.dataToDoRefundService = dataToDoRefundService;
+    }
+
+    @Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void startPayment(PendingPayment pendingPayment) throws Exception {
 		LOGGER.debug("input parameters pendingPayment: [{}]", pendingPayment);
@@ -108,6 +114,8 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 		details.setActivated(true);
 		
 		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+
+        dataToDoRefundService.logOnTariffMigration(user, paymentPolicy);
 
 		user.setCurrentPaymentDetails(details);
 		details.setOwner(user);

@@ -44,12 +44,18 @@ public class DataToDoRefund {
         return paymentDetailsId;
     }
 
+    public static class NullObjectDataToDoRefund extends DataToDoRefund{}
+
+    public static DataToDoRefund nullObject(){
+        return new NullObjectDataToDoRefund();
+    }
+
     @Override
     public String toString() {
         return "DataToDoRefund[" +
                 "id=" + id +
-                "getUserId()=" + getUserId() +
-                "getPaymentDetailsId()=" + getPaymentDetailsId() +
+                ", getUserId()=" + getUserId() +
+                ", getPaymentDetailsId()=" + getPaymentDetailsId() +
                 ", logTimeMillis=" + logTimeMillis +
                 ", nextSubPaymentMillis=" + nextSubPaymentMillis +
                 ']';
