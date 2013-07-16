@@ -3,8 +3,10 @@
  */
 package mobi.nowtechnologies.server.persistence.domain;
 
+import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -12,6 +14,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UserTest {
+
+    User user;
+    PaymentPolicy detachedPaymentPolicy;
 	
 	/**
 	 * user.isOnFreeTrial() returns true
@@ -352,4 +357,43 @@ public class UserTest {
 		
 		assertEquals(false, result);
 	}
+
+    public void testAreTariffsEqual_UserTariffIsNullAndDetachedPaymentPolicyTariffIs3G_Success(){
+        createFreeTrialUserAndDetachedPaymentPolicy(Tariff._3G);
+
+        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+
+        Assert.assertTrue(result);
+    }
+
+    private void createFreeTrialUserAndDetachedPaymentPolicy(Tariff detachedPaymentPolicyTariff) {
+        user = UserFactory.createUser();
+        createDetachedPaymentPolicy(detachedPaymentPolicyTariff);
+    }
+
+
+    public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs3G_Success(){
+        createSubscribedUserAndDetachedPaymentPolicy(Tariff._3G, Tariff._3G);
+
+        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+
+        Assert.assertTrue(result);
+    }
+
+    public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs4G_Success(){
+        createSubscribedUserAndDetachedPaymentPolicy(Tariff._3G, Tariff._3G);
+
+        boolean result = user.areTariffsEqual(detachedPaymentPolicy);
+
+        Assert.assertFalse(result);
+    }
+
+    private void createSubscribedUserAndDetachedPaymentPolicy(Tariff subscribedUserTariff, Tariff detachedPaymentPolicyTariff) {
+        user = UserFactory.createUserWithPaymentDetails(subscribedUserTariff);
+        createDetachedPaymentPolicy(detachedPaymentPolicyTariff);
+    }
+
+    private void createDetachedPaymentPolicy(Tariff detachedPaymentPolicyTariff) {
+        detachedPaymentPolicy = PaymentPolicyFactory.createPaymentPolicy(detachedPaymentPolicyTariff);
+    }
 }
