@@ -534,10 +534,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(2*Utils.WEEK_SECONDS*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -547,8 +544,7 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
 	}
@@ -558,10 +554,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(2*Utils.WEEK_SECONDS*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -571,7 +564,6 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-		user.setGracePeriod(gracePeriod);
 		
 		mockStatic(Utils.class);
 		when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
@@ -582,15 +574,10 @@ public class O2PaymentServiceImplTest {
 	
 	@Test
 	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisEqGracePeriodEnding_Success(){		
-		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
-
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(graceDurationSeconds*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -599,9 +586,8 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment() + graceDurationSeconds);
-		user.setGracePeriod(gracePeriod);
-		
+		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment());
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
@@ -613,10 +599,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(graceDurationSeconds*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -626,8 +609,7 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
@@ -652,8 +634,7 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}

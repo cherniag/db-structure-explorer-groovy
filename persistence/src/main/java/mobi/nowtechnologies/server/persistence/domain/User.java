@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -56,6 +55,27 @@ public class User implements Serializable {
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";
+    private ContractChannel contractChannel;
+
+    public boolean isO2Direct() {
+        return false;
+    }
+
+    public boolean isO24GConsumer() {
+        return isO2Consumer() && is4G();
+    }
+
+    public boolean isO2Indirect() {
+        return false;
+    }
+
+    public ContractChannel getContractChannel() {
+        return contractChannel;
+    }
+
+    public void setContractChannel(ContractChannel contractChannel) {
+        this.contractChannel = contractChannel;
+    }
 
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
@@ -265,13 +285,6 @@ public class User implements Serializable {
 	@Column(name = "last_before48_sms_millis", columnDefinition = "BIGINT default 0")
 	private long lastBefore48SmsMillis;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumns(value = { @JoinColumn(name = "segment", referencedColumnName = "segment", insertable=false, updatable=false), @JoinColumn(name = "contract", referencedColumnName = "contract",
-	// insertable=false, updatable=false),
-	// @JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false,
-	// updatable=false) })
-	private transient GracePeriod gracePeriod;
-	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(name="user_charts",
     joinColumns=
@@ -323,15 +336,6 @@ public class User implements Serializable {
 		return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
 	}
 
-	public boolean isNotIOSDevice() {
-		return !isIOSDevice();
-	}
-
-	public boolean hasActivePaymentDetails() {
-		PaymentDetails details = this.getCurrentPaymentDetails();
-		return details != null && details.isActivated();
-	}
-
 	public boolean isInvalidPaymentPolicy() {
 		if (getCurrentPaymentDetails() == null)
 			return false;
@@ -344,7 +348,6 @@ public class User implements Serializable {
 
 	public boolean isnonO2User() {
 		Community community = this.userGroup.getCommunity();
-		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
 		if (!"o2".equals(this.provider))
 			return true;
@@ -366,10 +369,6 @@ public class User implements Serializable {
 	public boolean isO2User() {
 		Community community = this.getUserGroup().getCommunity();
 		return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
-	}
-
-	public boolean isO2Business() {
-		return isO2User() && BUSINESS.equals(segment);
 	}
 
 	public boolean isO2Consumer() {
@@ -394,13 +393,6 @@ public class User implements Serializable {
 
 	public List<Chart> getSelectedCharts() {
 		return selectedCharts;
-	}
-
-    public Integer getSelectedChartId(ChartType chartType) {
-        for(Chart chart: selectedCharts)
-            if(chartType.equals(chart.getType()))
-                return chart.getI();
-		return null;
 	}
 
 	public void setSelectedCharts(List<Chart> selectedCharts) {
@@ -857,22 +849,6 @@ public class User implements Serializable {
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
 	}
 
-	public long getGraceDurationMillis() {
-		final long graceDurationMillis;
-		if (gracePeriod != null) {
-			graceDurationMillis = gracePeriod.getDurationMillis();
-		} else {
-			graceDurationMillis = 0;
-		}
-
-		return graceDurationMillis;
-	}
-
-	public int getGraceDurationSeconds() {
-		final int graceDurationSeconds = (int) (getGraceDurationMillis() / 1000);
-		return graceDurationSeconds;
-	}
-
 	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
 		Chart chart = userGroup.getChart();
 		News news = userGroup.getNews();
@@ -891,15 +867,10 @@ public class User implements Serializable {
 		accountCheckDTO.setChartItems(chart.getNumTracks());
 		setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-		final int actualGraceDurationSeconds = getActualGraceDurationSeconds();
-
-		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, actualGraceDurationSeconds));
+		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0));
 		if (null != getCurrentPaymentDetails())
 			accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
 
-		final int usedGraceDurationSeconds = getUsedGraceDurationSeconds();
-
-		accountCheckDTO.setGraceCreditSeconds(usedGraceDurationSeconds);
 		accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
 		accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
 		accountCheckDTO.setStatus(status.getName());
@@ -945,16 +916,6 @@ public class User implements Serializable {
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
 		return accountCheckDTO;
-	}
-
-	private int getActualGraceDurationSeconds() {
-		final int actualGraceDurationSeconds;
-		if (deactivatedGraceCreditMillis != 0) {
-			actualGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
-		} else {
-			actualGraceDurationSeconds = getGraceDurationSeconds();
-		}
-		return actualGraceDurationSeconds;
 	}
 
 	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
@@ -1048,33 +1009,12 @@ public class User implements Serializable {
 			throw new PersistenceException("Couldn't recognize the user subscription");
 
 		accountDto.setSubscription(subscription);
-		final int actualGraceDurationSeconds = getActualGraceDurationSeconds();
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, actualGraceDurationSeconds) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
 		return accountDto;
-	}
-
-	public int getUsedGraceDurationSeconds() {
-		final int usedGraceDurationSeconds;
-		if (UserStatus.LIMITED.equals(status.getName())) {
-			usedGraceDurationSeconds = getDeactivatedGraceCreditSeconds();
-		} else {
-			int delta = Utils.getEpochSeconds() - nextSubPayment;
-			if (delta < 0 || lastSubscribedPaymentSystem == null) {
-				usedGraceDurationSeconds = 0;
-			} else {
-				final int graceDurationSeconds = getGraceDurationSeconds();
-				if (delta < graceDurationSeconds) {
-					usedGraceDurationSeconds = delta;
-				} else {
-					usedGraceDurationSeconds = graceDurationSeconds;
-				}
-			}
-		}
-		return usedGraceDurationSeconds;
 	}
 
 	public ContactUsDto toContactUsDto() {
@@ -1217,14 +1157,6 @@ public class User implements Serializable {
 
 	public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
-	}
-
-	public GracePeriod getGracePeriod() {
-		return gracePeriod;
-	}
-
-	public void setGracePeriod(GracePeriod gracePeriod) {
-		this.gracePeriod = gracePeriod;
 	}
 
 	@Override

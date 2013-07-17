@@ -1698,6 +1698,13 @@ public class UserService {
 		return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
 	}
 
+    public Promotion setPotentialPromo(User user, String promotionCode) {
+        String community = user.getUserGroup()
+                .getCommunity()
+                .getRewriteUrlParameter();
+        return setPotentialPromo(community, user, promotionCode);
+    }
+
 	public Promotion setPotentialPromo(String communityName, User user, String promotionCode) {
 		Community community = communityService.getCommunityByName(communityName);
 		String communityUri = community.getRewriteUrlParameter().toLowerCase();
