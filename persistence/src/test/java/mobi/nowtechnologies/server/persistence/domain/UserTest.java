@@ -3,8 +3,10 @@
  */
 package mobi.nowtechnologies.server.persistence.domain;
 
+import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -12,6 +14,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UserTest {
+
+    User user;
+    PaymentPolicy detachedPaymentPolicy;
 	
 	/**
 	 * user.isOnFreeTrial() returns true
@@ -342,7 +347,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testIsInvalidPaymentPolicy_NullCurrentPaymentDetails_Success(){
+	public void testIsTariffChanged_tariffsAreTheSame_Success(){
 			
 		User user = UserFactory.createUser();
 		user.setProvider("non-o2");
@@ -352,4 +357,26 @@ public class UserTest {
 		
 		assertEquals(false, result);
 	}
+
+
+    public void testIsTariffChanged_userTariffIs4GAAndNewTariffIs3G_Success(){
+        createSubscribedUserWithTariffMigration(Tariff._4G, Tariff._3G);
+
+        boolean result = user.isTariffChanged();
+
+        Assert.assertTrue(result);
+    }
+
+    public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs4G_Success(){
+        createSubscribedUserWithTariffMigration(Tariff._3G, Tariff._3G);
+
+        boolean result = user.isTariffChanged();
+
+        Assert.assertFalse(result);
+    }
+
+    private void createSubscribedUserWithTariffMigration(Tariff subscribedUserTariff, Tariff newUserTariff) {
+        user = UserFactory.createUserWithPaymentDetails(subscribedUserTariff);
+        user.setTariff(newUserTariff);
+    }
 }

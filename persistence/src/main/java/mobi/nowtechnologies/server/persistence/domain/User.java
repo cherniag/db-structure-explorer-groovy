@@ -1344,6 +1344,16 @@ public class User implements Serializable {
 		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
 				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
+
+    public boolean isTariffChanged(){
+        boolean areTariffsEqual = true;
+        if (currentPaymentDetails != null){
+            areTariffsEqual = currentPaymentDetails.getPaymentPolicy().getTariff().equals(tariff);
+        }
+        return areTariffsEqual;
+    }
+
+
     public boolean canGetVideo() {
         return isO2Consumer() && is4G();
     }

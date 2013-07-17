@@ -70,6 +70,12 @@ public class PaymentDetailsService {
     
     private PaymentDetailsRepository paymentDetailsRepository;
 
+    private DataToDoRefundService dataToDoRefundService;
+
+    public void setDataToDoRefundService(DataToDoRefundService dataToDoRefundService) {
+        this.dataToDoRefundService = dataToDoRefundService;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
@@ -456,6 +462,8 @@ public class PaymentDetailsService {
 			
 			user.setLastPaymentTryInCycleMillis(0L);
 			userService.updateUser(user);
+
+            dataToDoRefundService.logOnTariffMigration(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);

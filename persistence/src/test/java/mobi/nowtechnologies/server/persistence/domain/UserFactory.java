@@ -8,6 +8,7 @@ import java.util.*;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 
@@ -116,4 +117,16 @@ public class UserFactory
 		
 		return user;
 	}
+
+     public static User createUserWithPaymentDetails(Tariff subscribedUserTariff) {
+         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(subscribedUserTariff);
+
+         PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+         paymentDetails.setPaymentPolicy(paymentPolicy);
+
+         User user = createUser();
+         user.setCurrentPaymentDetails(paymentDetails);
+
+         return user;
+     }
 }
