@@ -29,7 +29,7 @@ public class IngestServiceImpl implements IngestService{
 	private IngestionLogRepository ingestionLogRepository;
     private IParserFactory parserFactory;
 
-    private Map<String, IngestWizardData> ingestDataBuffer = Collections.synchronizedMap(new HashMap<String, IngestWizardData>());
+    protected Map<String, IngestWizardData> ingestDataBuffer = Collections.synchronizedMap(new HashMap<String, IngestWizardData>());
 
 	public void setTrackRepository(TrackRepository trackRepository) {
 		this.trackRepository = trackRepository;
@@ -53,8 +53,6 @@ public class IngestServiceImpl implements IngestService{
 
 			IParserFactory.Ingestors ingestor = IParserFactory.Ingestors.valueOf(parserName);
 			IParser parser = parserFactory.getParser(ingestor);
-			// wizardData.setParser(parser);
-			// wizardData.setIngestor(parserName);
 			DropsData drops = new DropsData();
 			wizardData.setDropdata(drops);
 			drops.setDrops(new ArrayList<DropsData.Drop>());
@@ -319,16 +317,18 @@ public class IngestServiceImpl implements IngestService{
             if(ingestDataBuffer.size() == MAX_SIZE_DATA_BUFFER){
                 Long earliest = null;
                 Long nowtime = System.currentTimeMillis();
-                for(String key : ingestDataBuffer.keySet()){
-                    Long time = new Long(key);
+                Iterator<Map.Entry<String, IngestWizardData>> i = ingestDataBuffer.entrySet().iterator();
+                while(i.hasNext()){
+                    Map.Entry<String, IngestWizardData> entry = i.next();
+                    Long time = new Long(entry.getKey());
                     if(earliest == null || earliest > time)
                         earliest = time;
                     if(nowtime - time >= EXPIRE_PERIOD_BUFFER)
-                        ingestDataBuffer.remove(key);
+                        i.remove();
                 }
 
                 if(ingestDataBuffer.size() == MAX_SIZE_DATA_BUFFER){
-                     ingestDataBuffer.remove(earliest);
+                     ingestDataBuffer.remove(earliest.toString());
                 }
             }
 

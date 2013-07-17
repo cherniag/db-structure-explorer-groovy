@@ -30,9 +30,9 @@
 		    </bean>
 		</mvc:interceptor>
 		
-		<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" >
-            <property name="userService" ref="service.UserService"/>
-        </bean>
+		<!--<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" >-->
+            <!--<property name="userService" ref="service.UserService"/>-->
+        <!--</bean>-->
 	</mvc:interceptors>
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">

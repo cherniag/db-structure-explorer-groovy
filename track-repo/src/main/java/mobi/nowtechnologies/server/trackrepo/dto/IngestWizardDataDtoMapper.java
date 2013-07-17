@@ -30,9 +30,10 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
                 dropDto.setName(drop.getDrop().getName());
                 dropDto.setSelected(drop.isSelected());
 
-                List<IngestData.Track> tracks = drop.getIngestdata().getData();
-                List<DropTrackDto> dropTracks = new ArrayList<DropTrackDto>();
+                List<IngestData.Track> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getData() : null;
                 if(tracks != null){
+                    List<DropTrackDto> dropTracks = new ArrayList<DropTrackDto>();
+
                     for(IngestData.Track track : tracks){
                         DropTrackDto dropTrackDto = new DropTrackDto();
 
@@ -46,9 +47,11 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
 
                         dropTracks.add(dropTrackDto);
                     }
+
+                    dropDto.setTracks(dropTracks);
                 }
 
-                dropDto.setTracks(dropTracks);
+
                 this.drops.add(dropDto);
             }
         }

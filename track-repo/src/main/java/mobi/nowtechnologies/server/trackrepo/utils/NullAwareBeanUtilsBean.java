@@ -26,11 +26,10 @@ public class NullAwareBeanUtilsBean extends BeanUtilsBean {
                 if(value instanceof Collection){
                     Iterator<?> i = ((Collection) oldval).iterator();
                     for (Object obj : (Collection)value) {
-                        if(i.hasNext()){
+                        if(i != null && i.hasNext()){
                             Object oldobj =  i.next();
-
+                            super.copyProperties(oldobj, obj);
                         }
-                        super.copyProperties(oldval, value);
                     }
                 } else {
                     super.copyProperties(oldval, value);
