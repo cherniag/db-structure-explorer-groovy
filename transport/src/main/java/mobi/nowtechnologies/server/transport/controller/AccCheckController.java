@@ -85,11 +85,11 @@ public class AccCheckController extends CommonController {
 			user = userService.getUserWithSelectedCharts(user.getId());
 			List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
 			
-			AccountCheckDto accountCheckDTONew = new AccountCheckDto(accountCheckDTO);
-			accountCheckDTONew.setLockedTracks(LockedTrackDto.fromChartDetailList(chartDetails));
-			accountCheckDTONew.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
+			AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
+			accountCheck.setLockedTracks(LockedTrackDto.fromChartDetailList(chartDetails));
+			accountCheck.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
 			
-			final Object[] objects = new Object[] { accountCheckDTONew };
+			final Object[] objects = new Object[] { accountCheck };
 			proccessRememberMeToken(objects);
 
 			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
@@ -101,8 +101,14 @@ public class AccCheckController extends CommonController {
 			user = userService.findByNameAndCommunity(userName, community);
 			
 			ActivationStatus activationStatus = user.getActivationStatus();
-			accountCheckDTONew.setActivation(activationStatus);
-			accountCheckDTONew.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+			accountCheck.setActivation(activationStatus);
+			accountCheck.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
+
+            accountCheck.setCanGetVideo(user.canGetVideo());
+            accountCheck.setCanPlayVideo(user.canPlayVideo());
+            accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
+            accountCheck.setHasAllDetails(user.hasAllDetails());
+            accountCheck.setShowFreeTrial(user.showFreeTrial());
 
 			return mav;
 		} catch (Exception e) {

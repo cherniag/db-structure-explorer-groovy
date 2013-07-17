@@ -38,3 +38,28 @@ join community_charts cc on cc.chart_id = ch.i
 join tb_communities c on cc.community_id = c.i and c.rewriteURLParameter = 'o2'
 where ch.type='VIDEO_CHART';
 
+ -- http://jira.musicqubed.com/browse/IMP-1784
+ -- [Server] Adjust payment system and jobs to support new 4G payment options
+alter table tb_paymentpolicy add column tariff char(255) not null default '_3G';
+
+ alter table tb_users add column tariff char(255);
+
+-- IMP-1774 [Server] Update the Account Check command to include the Video access flags
+alter table tb_users add column tariff char(255);
+alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
+alter table tb_users add column hasAllDetails boolean;
+alter table tb_users add column showFreeTrial boolean;
+
+ -- http://jira.musicqubed.com/browse/IMP-1782
+ -- [Server] Calculate and store the Refund when user activates Video
+create table data_to_do_refund (
+  id bigint not null auto_increment,
+  log_time_millis bigint,
+  next_sub_payment_millis bigint,
+  payment_details_id bigint(20) not null,
+  user_id int(11) not null,
+  primary key (id))
+ engine=INNODB DEFAULT CHARSET=utf8;
+
+ alter table data_to_do_refund add index data_to_do_refund_PK_payment_details_id (payment_details_id), add constraint data_to_do_refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
+ alter table data_to_do_refund add index data_to_do_refund_PK_user_id (user_id), add constraint data_to_do_refund_U_user_id foreign key (user_id) references tb_users (i);

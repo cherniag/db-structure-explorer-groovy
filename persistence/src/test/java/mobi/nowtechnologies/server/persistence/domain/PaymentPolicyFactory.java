@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.enums.Tariff;
+
 import java.math.BigDecimal;
 
 
@@ -31,6 +33,13 @@ public class PaymentPolicyFactory
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
 		paymentPolicy.setShortCode("shortCode");
+        paymentPolicy.setAvailableInStore(false);
 		return paymentPolicy;
 	}
+
+     public static PaymentPolicy createPaymentPolicy(Tariff tariff) {
+         PaymentPolicy paymentPolicy = createPaymentPolicy();
+         paymentPolicy.setTariff(tariff);
+         return paymentPolicy;
+     }
 }

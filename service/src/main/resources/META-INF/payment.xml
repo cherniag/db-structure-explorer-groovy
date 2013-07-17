@@ -4,6 +4,10 @@
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="service.DataToDoRefundService" class="mobi.nowtechnologies.server.service.impl.DataToDoRefundServiceImpl">
+        <property name="dataToDoRefundRepository" ref="dataToDoRefundRepository" />
+    </bean>
 	
 	<bean id="service.PendingPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PendingPaymentServiceImpl">
 		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
@@ -90,6 +94,7 @@
 		<property name="expireMillis" value="${o2.pendingExpireMillis}" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
+        <property name="dataToDoRefundService" ref="service.DataToDoRefundService" />
 	</bean>
 	
 	

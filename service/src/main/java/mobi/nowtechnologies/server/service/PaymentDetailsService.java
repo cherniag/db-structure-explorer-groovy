@@ -23,7 +23,6 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,6 +70,12 @@ public class PaymentDetailsService {
     
     private PaymentDetailsRepository paymentDetailsRepository;
 
+    private DataToDoRefundService dataToDoRefundService;
+
+    public void setDataToDoRefundService(DataToDoRefundService dataToDoRefundService) {
+        this.dataToDoRefundService = dataToDoRefundService;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
@@ -99,7 +104,7 @@ public class PaymentDetailsService {
 				}
 				paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
 			}else if(dto.getPaymentType().equals(PaymentType.O2_PSMS)){
-				paymentDetails = o2PaymentService.createPaymentDetails(dto.getPhoneNumber(), user, paymentPolicy);
+				paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
 			}
 
 			if (null != paymentDetails) {
@@ -457,6 +462,8 @@ public class PaymentDetailsService {
 			
 			user.setLastPaymentTryInCycleMillis(0L);
 			userService.updateUser(user);
+
+            dataToDoRefundService.logOnTariffMigration(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);

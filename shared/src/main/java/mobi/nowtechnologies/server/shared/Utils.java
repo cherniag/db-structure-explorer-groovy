@@ -230,4 +230,11 @@ public class Utils {
             return false;
         return true;
     }
+
+    public static String concatLowerCase(String... strs) {
+        StringBuilder buf = new StringBuilder();
+        for(String s: strs)
+            buf.append(s);
+        return buf.toString().toLowerCase();
+    }
 }

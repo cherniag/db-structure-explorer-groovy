@@ -20,46 +20,12 @@ import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.GracePeriod;
-import mobi.nowtechnologies.server.persistence.domain.GracePeriodFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.AccountLogService;
-import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.CountryAppVersionService;
-import mobi.nowtechnologies.server.service.CountryByIpService;
-import mobi.nowtechnologies.server.service.CountryService;
-import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.DeviceTypeService;
-import mobi.nowtechnologies.server.service.DrmService;
-import mobi.nowtechnologies.server.service.EntityService;
-import mobi.nowtechnologies.server.service.FacebookService;
-import mobi.nowtechnologies.server.service.MailService;
-import mobi.nowtechnologies.server.service.O2ClientService;
-import mobi.nowtechnologies.server.service.OfferService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.PaymentPolicyService;
-import mobi.nowtechnologies.server.service.PaymentService;
-import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.SagePayService;
-import mobi.nowtechnologies.server.service.UserDeviceDetailsService;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
+import mobi.nowtechnologies.server.service.impl.DataToDoRefundServiceImpl;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
@@ -74,7 +40,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
@@ -535,10 +500,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(2*Utils.WEEK_SECONDS*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -548,8 +510,7 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertTrue(mustTheAttemptsOfPaymentContinue);
 	}
@@ -559,10 +520,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(2*Utils.WEEK_SECONDS*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -572,7 +530,6 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-		user.setGracePeriod(gracePeriod);
 		
 		mockStatic(Utils.class);
 		when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
@@ -583,15 +540,10 @@ public class O2PaymentServiceImplTest {
 	
 	@Test
 	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisEqGracePeriodEnding_Success(){		
-		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
-
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(graceDurationSeconds*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -600,9 +552,8 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment() + graceDurationSeconds);
-		user.setGracePeriod(gracePeriod);
-		
+		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment());
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
@@ -614,10 +565,7 @@ public class O2PaymentServiceImplTest {
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(graceDurationSeconds*1000L);
-		
+
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
@@ -627,8 +575,7 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
@@ -653,14 +600,13 @@ public class O2PaymentServiceImplTest {
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-		user.setGracePeriod(gracePeriod);
-		
+
 		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
 		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
 	
 	@Test
-	public void testCommitPaymnetDetails_Success() throws Exception{
+	public void testCommitPaymentDetails_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		
 		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
@@ -694,7 +640,7 @@ public class O2PaymentServiceImplTest {
 			}
 		});
 		
-		O2PSMSPaymentDetails  actualO2PSMSPaymentDetails  = o2PaymentServiceImplSpy.commitPaymnetDetails(user, paymentPolicy);
+		O2PSMSPaymentDetails  actualO2PSMSPaymentDetails  = o2PaymentServiceImplSpy.commitPaymentDetails(user, paymentPolicy);
 		
 		assertNotNull(actualO2PSMSPaymentDetails);
 		

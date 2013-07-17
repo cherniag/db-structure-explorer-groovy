@@ -62,7 +62,13 @@ public class AccountCheckDTO {
     private String contract;
     private String segment;
     private int graceCreditSeconds;
-   
+
+    private Boolean canGetVideo;
+    private Boolean canPlayVideo;
+    private Boolean hasAllDetails;
+    private Boolean showFreeTrial;
+    private Boolean canActivateVideoTrial;
+
 	private String lastSubscribedPaymentSystem;
 
 	public AccountCheckDTO(){
@@ -424,4 +430,43 @@ public class AccountCheckDTO {
 				+ ", contract=" + contract + ", segment=" + segment + ", graceCreditSeconds=" + graceCreditSeconds + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem + "]";
 	}
 
+    public Boolean getCanGetVideo() {
+        return canGetVideo;
+    }
+
+    public void setCanGetVideo(Boolean canGetVideo) {
+        this.canGetVideo = canGetVideo;
+    }
+
+    public Boolean getCanPlayVideo() {
+        return canPlayVideo;
+    }
+
+    public void setCanPlayVideo(Boolean canPlayVideo) {
+        this.canPlayVideo = canPlayVideo;
+    }
+
+    public Boolean getHasAllDetails() {
+        return hasAllDetails;
+    }
+
+    public void setHasAllDetails(Boolean hasAllDetails) {
+        this.hasAllDetails = hasAllDetails;
+    }
+
+    public Boolean getShowFreeTrial() {
+        return showFreeTrial;
+    }
+
+    public void setShowFreeTrial(Boolean showFreeTrial) {
+        this.showFreeTrial = showFreeTrial;
+    }
+
+    public Boolean getCanActivateVideoTrial() {
+        return canActivateVideoTrial;
+    }
+
+    public void setCanActivateVideoTrial(Boolean canActivateVideoTrial) {
+        this.canActivateVideoTrial = canActivateVideoTrial;
+    }
 }

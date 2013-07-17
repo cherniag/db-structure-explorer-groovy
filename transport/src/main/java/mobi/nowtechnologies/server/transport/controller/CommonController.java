@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -31,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
+
+import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * EntityController
@@ -224,10 +228,8 @@ public abstract class CommonController extends ProfileController{
 	}
 
 	private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
-		if (status == null)
-			throw new NullPointerException("The parameter httpStatus is null");
-		if (errorMessage == null)
-			throw new NullPointerException("The parameter errorMessage is null");
+		notNull(status , "The parameter httpStatus is null");
+        notNull(errorMessage , "The parameter errorMessage is null");
 		response.setStatus(status.value());
 		return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
 	}
@@ -251,14 +253,23 @@ public abstract class CommonController extends ProfileController{
 	
 	public String getRememberMeToken(String userName, String storedToken) {
 		LOGGER.debug("input parameters userName, storedToken: [{}], [{}]", new String[] { userName, storedToken});
-		if (userName == null)
-			throw new NullPointerException("The parameter userName is null");
-		if (storedToken == null)
-			throw new NullPointerException("The parameter storedToken is null");
+        notNull(userName , "The parameter userName is null");
+		notNull(storedToken , "The parameter storedToken is null");
 
 		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
 	}
+
+    protected SecurityContextDetails getSecurityContextDetails() {
+        return (SecurityContextDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
+    protected int getUserId() {
+        SecurityContextDetails securityContextDetails = getSecurityContextDetails();
+        return securityContextDetails.getUserId();
+    }
 	
 }
