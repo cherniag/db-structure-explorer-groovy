@@ -1,29 +1,14 @@
 package mobi.nowtechnologies.ingestors.manual;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
+import mobi.nowtechnologies.domain.AssetFile.FileType;
+import mobi.nowtechnologies.ingestors.*;
+import mobi.nowtechnologies.ingestors.DropTrack.Type;
+import mobi.nowtechnologies.util.Property;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import mobi.nowtechnologies.domain.AssetFile.FileType;
-import mobi.nowtechnologies.ingestors.DDEXParser;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropTerritory;
-import mobi.nowtechnologies.ingestors.DropTrack;
-import mobi.nowtechnologies.ingestors.IParser;
-import mobi.nowtechnologies.ingestors.DropTrack.Type;
-import mobi.nowtechnologies.util.Property;
+import java.io.*;
+import java.util.*;
 
 public class ManualParser extends IParser {
 	protected static final Log LOG = LogFactory.getLog(ManualParser.class);

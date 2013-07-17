@@ -15,9 +15,9 @@ import java.util.List;
  * @author Alexander Kolpakov (akolpakov)
  * 
  */
-public class TrackDtoExt extends mobi.nowtechnologies.server.trackrepo.dto.TrackDto {
+public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.TrackDto {
 	
-	public TrackDtoExt(Track track) {
+	public TrackDtoMapper(Track track) {
 		this.setId(track.getId());
 		this.setTitle(track.getTitle());
 		this.setAlbum(track.getAlbum());
@@ -61,20 +61,20 @@ public class TrackDtoExt extends mobi.nowtechnologies.server.trackrepo.dto.Track
 		this.setCoverFileName(fileId != null ? fileId.toString() : "0");
 	}
 	
-	public static List<TrackDtoExt> toList(List<Track> tracks) {
-		List<TrackDtoExt> trackDtos = new LinkedList<TrackDtoExt>();
+	public static List<TrackDtoMapper> toList(List<Track> tracks) {
+		List<TrackDtoMapper> trackDtos = new LinkedList<TrackDtoMapper>();
 
 		for (Track track : tracks) {
-			trackDtos.add(new TrackDtoExt(track));
+			trackDtos.add(new TrackDtoMapper(track));
 		}
 
 		return trackDtos;
 	}
 	
-	public static PageListDto<TrackDtoExt> toPage(Page<Track> tracks) {
+	public static PageListDto<TrackDtoMapper> toPage(Page<Track> tracks) {
 		long total = tracks.getTotalElements();
 		total = total % tracks.getSize() == 0 ? total / tracks.getSize() : total / tracks.getSize() + 1;
 
-		return new PageListDto<TrackDtoExt>(toList(tracks.getContent()), (int)total, tracks.getNumber(), tracks.getSize());
+		return new PageListDto<TrackDtoMapper>(toList(tracks.getContent()), (int)total, tracks.getNumber(), tracks.getSize());
 	}
 }

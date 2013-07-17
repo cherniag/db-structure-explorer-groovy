@@ -30,6 +30,7 @@ public class Chart implements Serializable {
 	@XmlTransient
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="i", columnDefinition="tinyint(4)")
 	private Integer i;
 
 	@ManyToOne(fetch=FetchType.EAGER)

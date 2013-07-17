@@ -16,4 +16,9 @@
 		<property name="trackService" ref="trackRepo.TrackService" />
 		<property name="resourceFileDtoBuilder" ref="trackRepo.ResourceFileDtoBuilder" />
 	</bean>
+
+    <bean name="trackRepo.IngestTracksWizardController"
+		class="mobi.nowtechnologies.server.trackrepo.controller.IngestTracksWizardController">
+		<property name="ingestService" ref="trackRepo.IngestService" />
+	</bean>
 </beans>

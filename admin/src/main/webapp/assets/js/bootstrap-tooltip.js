@@ -44,7 +44,7 @@
       this.options = this.getOptions(options)
       this.enabled = true
 
-      if (this.options.trigger != 'manual') {
+      if (this.options.trigger != 'mobi.nowtechnologies.server.trackrepo.ingest.manual') {
         eventIn  = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
         eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
         this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this))
@@ -52,7 +52,7 @@
       }
 
       this.options.selector ?
-        (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
+        (this._options = $.extend({}, this.options, { trigger: 'mobi.nowtechnologies.server.trackrepo.ingest.manual', selector: '' })) :
         this.fixTitle()
     }
 

@@ -1,22 +1,16 @@
 package mobi.nowtechnologies.ingestors.ci;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import mobi.nowtechnologies.ingestors.DDEXParser;
+import mobi.nowtechnologies.ingestors.DropAssetFile;
+import mobi.nowtechnologies.ingestors.DropData;
+import mobi.nowtechnologies.ingestors.DropTrack;
+import mobi.nowtechnologies.util.Property;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
-import mobi.nowtechnologies.ingestors.DDEXParser;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropTrack;
-import mobi.nowtechnologies.util.Property;
+import java.io.File;
+import java.util.*;
 
 public class CiParser extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(CiParser.class);

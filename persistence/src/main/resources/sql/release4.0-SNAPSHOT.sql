@@ -3,6 +3,4 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 
  -- IMP-1776 [Server] Update the Get Chart command to include Video
 alter table tb_files add column duration int unsigned not null;
-alter table tb_charts modify column i int unsigned not null;
-alter table tb_chartDetail modify column chart int unsigned not null;
 

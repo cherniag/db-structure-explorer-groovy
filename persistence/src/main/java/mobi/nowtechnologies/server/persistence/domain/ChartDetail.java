@@ -41,7 +41,7 @@ public class ChartDetail {
 	private Integer chartId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "chart", columnDefinition = "int(10) unsigned")
+	@JoinColumn(name = "chart", columnDefinition = "tinyint(4)")
 	private Chart chart;
 
 	@Column(name = "media", insertable = false, updatable = false)

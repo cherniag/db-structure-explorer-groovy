@@ -1,29 +1,11 @@
 package mobi.nowtechnologies.ingestors.ioda;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import mobi.nowtechnologies.domain.AssetFile.FileType;
-import mobi.nowtechnologies.ingestors.DDEXParser;
-import mobi.nowtechnologies.ingestors.DebugErrorHandler;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropTerritory;
-import mobi.nowtechnologies.ingestors.DropTrack;
-import mobi.nowtechnologies.ingestors.IParser;
+import mobi.nowtechnologies.ingestors.*;
 import mobi.nowtechnologies.ingestors.DropTrack.Type;
 import mobi.nowtechnologies.util.Property;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -31,7 +13,11 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
-import antlr.NameSpace;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class IodaParser extends IParser {
 	protected static final Log LOG = LogFactory.getLog(IodaParser.class);
