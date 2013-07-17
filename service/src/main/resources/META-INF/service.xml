@@ -389,7 +389,33 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 			</list>
         </property>
     </bean>
-	
+
+    <bean id="service.O2TariffService" class="mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl">
+        <property name="webServiceGateway" ref="service.O2TariffGateway"/>
+        <property name="managePostpayTariffEndpoint" value="${o2.service.endpoint.managepostpaytariffdata_2}" />
+        <property name="managePrepayTariffEndpoint" value="${o2.service.endpoint.manageprepaytariffdata_2}" />
+        <property name="managePostpayBoltonEndpoint" value="${o2.service.endpoint.managepostpayboltonsdata_2}" />
+    </bean>
+
+    <bean id="service.O2TariffGateway" class="mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway">
+        <property name="messageFactory" ref="service.Soap11MessageFactory"/>
+        <property name="marshaller" ref="service.O2TariffMarshaller"/>
+        <property name="unmarshaller" ref="service.O2TariffMarshaller"/>
+        <property name="defaultWebServiceMessageHandler" ref="service.O2WebServiceMessageHandler"/>
+        <property name="keystoreLocation" value="${o2.service.security.keystore.url}"/>
+        <property name="KeystorePassword" value="${o2.service.security.keystore.password}"/>
+    </bean>
+
+    <bean id="service.O2TariffMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPaths">
+            <list>
+                <value>uk.co.o2.soa.managepostpaytariffdata_2</value>
+                <value>uk.co.o2.soa.manageprepaytariffdata_2</value>
+                <value>uk.co.o2.soa.managepostpayboltonsdata_2</value>
+            </list>
+        </property>
+    </bean>
+
 	<bean id="service.Soap11MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
 		<property name="soapVersion">
             <util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_11" />
