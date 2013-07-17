@@ -88,6 +88,11 @@ public class UserService {
         return  false;
     }
 
+    public void applyPromotion(User user, String promoCode) {
+        Promotion promotion = setPotentialPromo(user, promoCode);
+        applyPromotionByPromoCode(user, promotion);
+    }
+
     @Deprecated
 	public static class AmountCurrencyWeeks {
 		BigDecimal amount;
@@ -1699,9 +1704,8 @@ public class UserService {
 	}
 
     public Promotion setPotentialPromo(User user, String promotionCode) {
-        String community = user.getUserGroup()
-                .getCommunity()
-                .getRewriteUrlParameter();
+        Community community = user.getUserGroup()
+                .getCommunity();
         return setPotentialPromo(community, user, promotionCode);
     }
 

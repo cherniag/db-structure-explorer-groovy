@@ -48,11 +48,9 @@ public class PromotionDao extends JpaDaoSupport {
 	public Promotion getActivePromoCodePromotion(final String promotionCode, final byte userGroupId) {
 		Promotion outPromo = null;
 		notNull(promotionCode, "The parameter promotionCode is null");
-		
-		
+
 		final String promotionId = PromoCode.Fields.promotionId.toString();
-		String code = PromoCode.Fields.code.toString();
-		
+
 		List<?> promotionIds = getJpaTemplate().executeFind(new JpaCallback<List>() {
 			@Override
 			public List doInJpa(EntityManager em)

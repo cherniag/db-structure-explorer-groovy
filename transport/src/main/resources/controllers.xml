@@ -10,6 +10,7 @@
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="communityService" ref="service.communityService" />
 		<property name="nowTechTokenBasedRememberMeServices" ref="nowTechBasedRememberMeServices" />
+        <property name="userRepository" ref="userRepository" />
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.FileController" parent="transport.CommonController">

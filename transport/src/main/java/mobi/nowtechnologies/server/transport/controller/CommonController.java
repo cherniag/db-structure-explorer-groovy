@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.exception.*;
@@ -55,6 +56,7 @@ public abstract class CommonController extends ProfileController{
 	protected Jaxb2Marshaller jaxb2Marshaller;
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
+    private UserRepository userRepository;
 
 	public void setView(View view) {
 		this.view = view;
@@ -271,5 +273,12 @@ public abstract class CommonController extends ProfileController{
         SecurityContextDetails securityContextDetails = getSecurityContextDetails();
         return securityContextDetails.getUserId();
     }
-	
+
+    protected User getUser(){
+        return userRepository.findOne(getUserId());
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }

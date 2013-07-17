@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -33,11 +34,9 @@ import javax.validation.Valid;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -114,11 +113,11 @@ public class EntityController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACTIVATE_TRIAL", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACTIVATE_TRIAL"})
     public void activateFreeTrial(HttpServletResponse response) {
-        User user = userRepository.findOne(getUserId());
+        User user = getUser();
         if (user.isO24GConsumer() && (user.isO2Indirect() || user.isO2Direct())) {
-            String promoCode = messageSource.getMessage(Utils.concatLowerCase("promotion.for.o2.cunsumer.4g.", user.getContractChannel().name()), "videoTrial8m");
-            Promotion promotion = userService.setPotentialPromo(user, promoCode);
-            userService.applyPromotionByPromoCode(user, promotion);
+            String promoCode = messageSource.getMessage(concatLowerCase("promotion.for.o2.cunsumer.4g.", user.getContractChannel().name()), "o2_direct");
+            userService.applyPromotion(user, promoCode);
+            // create PaymentDetails
             response.setStatus(HttpStatus.OK.value());
         } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -453,7 +452,7 @@ public class EntityController extends CommonController {
 
         try {
             LOGGER.info("command processing started");
-            notNull(appVersion , "The parameter appVersion is null");
+            notNull(appVersion, "The parameter appVersion is null");
             notNull(communityName , "The parameter communityName is null");
             notNull(apiVersion , "The parameter apiVersion is null");
 
