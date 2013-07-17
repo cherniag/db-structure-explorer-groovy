@@ -1,14 +1,13 @@
 package mobi.nowtechnologies.ingestors.emi;
 
+import mobi.nowtechnologies.util.Property;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-
-import mobi.nowtechnologies.util.Property;
-
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 
 public class EmiTeleporter {
 	

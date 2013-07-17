@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * The class <code>TrackDtoExtTest</code> contains tests for the class <code>{@link TrackDtoExt}</code>.
+ * The class <code>TrackDtoExtTest</code> contains tests for the class <code>{@link TrackDtoMapper}</code>.
  *
  * @generatedBy CodePro at 11/13/12 3:16 PM
  * @author Alexander Kolpakov (akolpakov)
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TrackDtoExtTest {
 	/**
-	 * Run the TrackDtoExt(Track) constructor test none territories.
+	 * Run the TrackDtoMapper(Track) constructor test none territories.
 	 *
 	 * @throws Exception
 	 *
@@ -56,7 +56,7 @@ public class TrackDtoExtTest {
 		track.setInfo("");
 		track.setProductId("");
 
-		TrackDtoExt result = new TrackDtoExt(track);
+		TrackDtoMapper result = new TrackDtoMapper(track);
 
 		assertNotNull(result);
 		assertEquals(track.getId(), result.getId());
@@ -82,7 +82,7 @@ public class TrackDtoExtTest {
 	}
 	
 	/**
-	 * Run the TrackDtoExt(Track) constructor test one territory.
+	 * Run the TrackDtoMapper(Track) constructor test one territory.
 	 *
 	 * @throws Exception
 	 *
@@ -99,14 +99,14 @@ public class TrackDtoExtTest {
 		Track track = new Track();
 		track.setTerritories(Collections.singleton(territory));
 
-		TrackDtoExt result = new TrackDtoExt(track);
+		TrackDtoMapper result = new TrackDtoMapper(track);
 		assertEquals("GB", result.getTerritories());
 		assertEquals(territory.getLabel(), result.getLabel());
 		assertEquals(territory.getStartDate(), result.getReleaseDate());
 	}
 	
 	/**
-	 * Run the TrackDtoExt(Track) constructor test one territory.
+	 * Run the TrackDtoMapper(Track) constructor test one territory.
 	 *
 	 * @throws Exception
 	 *
@@ -127,14 +127,14 @@ public class TrackDtoExtTest {
 		Track track = new Track();
 		track.setTerritories(new HashSet<Territory>(Arrays.asList(territory, territory1)));
 
-		TrackDtoExt result = new TrackDtoExt(track);
+		TrackDtoMapper result = new TrackDtoMapper(track);
 		assertEquals(true, "GB, US".equals(result.getTerritories()) || "US, GB".equals(result.getTerritories()));
 		assertEquals(territory.getLabel(), result.getLabel());
 		assertEquals(territory.getStartDate(), result.getReleaseDate());
 	}
 
 	/**
-	 * Run the List<TrackDtoExt> toList(List<Track>) method test.
+	 * Run the List<TrackDtoMapper> toList(List<Track>) method test.
 	 *
 	 * @throws Exception
 	 *
@@ -145,14 +145,14 @@ public class TrackDtoExtTest {
 		throws Exception {
 		List<Track> tracks = new LinkedList<Track>();
 
-		List<TrackDtoExt> result = TrackDtoExt.toList(tracks);
+		List<TrackDtoMapper> result = TrackDtoMapper.toList(tracks);
 
 		assertNotNull(result);
 		assertEquals(tracks.size(), result.size());
 	}
 	
 	/**
-	 * Run the PageListDto<TrackDtoExt> toPage(Page<Track>) method test odd page size.
+	 * Run the PageListDto<TrackDtoMapper> toPage(Page<Track>) method test odd page size.
 	 *
 	 * @throws Exception
 	 *
@@ -163,7 +163,7 @@ public class TrackDtoExtTest {
 		throws Exception {
 		Page<Track> tracks = new PageImpl<Track>(new LinkedList<Track>(), new PageRequest(1, 10), 42);
 
-		PageListDto<TrackDtoExt> result = TrackDtoExt.toPage(tracks);
+		PageListDto<TrackDtoMapper> result = TrackDtoMapper.toPage(tracks);
 
 		assertNotNull(result);
 		assertEquals(tracks.getContent().size(), result.getList().size());
@@ -173,7 +173,7 @@ public class TrackDtoExtTest {
 	}
 	
 	/**
-	 * Run the PageListDto<TrackDtoExt> toPage(Page<Track>) method test even page size.
+	 * Run the PageListDto<TrackDtoMapper> toPage(Page<Track>) method test even page size.
 	 *
 	 * @throws Exception
 	 *
@@ -184,14 +184,14 @@ public class TrackDtoExtTest {
 		throws Exception {
 		Page<Track> tracks = new PageImpl<Track>(new LinkedList<Track>(), new PageRequest(1, 10), 40);
 
-		PageListDto<TrackDtoExt> result = TrackDtoExt.toPage(tracks);
+		PageListDto<TrackDtoMapper> result = TrackDtoMapper.toPage(tracks);
 
 		assertNotNull(result);
 		assertEquals(4, result.getTotal());
 	}
 
 	/**
-	 * Run the PageListDto<TrackDtoExt> toPage(Page<Track>) method test failure.
+	 * Run the PageListDto<TrackDtoMapper> toPage(Page<Track>) method test failure.
 	 *
 	 * @throws Exception
 	 *
@@ -202,7 +202,7 @@ public class TrackDtoExtTest {
 		throws Exception {
 		Page<Track> tracks = new PageImpl<Track>(new LinkedList<Track>());
 
-		PageListDto<TrackDtoExt> result = TrackDtoExt.toPage(tracks);
+		PageListDto<TrackDtoMapper> result = TrackDtoMapper.toPage(tracks);
 
 		assertNotNull(result);
 		

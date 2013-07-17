@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-import mobi.nowtechnologies.server.trackrepo.dto.TrackDtoExt;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDtoMapper;
 import mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
@@ -51,21 +51,21 @@ public class TrackController extends AbstractCommonController{
 
 		Track track = trackService.encode(trackId, isHighRate, licensed);
 		
-		return new TrackDtoExt(track);
+		return new TrackDtoMapper(track);
 	}
 	
 	@RequestMapping(value = "/tracks", method = RequestMethod.GET)
 	public @ResponseBody PageListDto<? extends TrackDto> find(@RequestParam(value="query", required = false) String query, @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto
 			, @PageableDefaults(pageNumber = 0, value = 10) Pageable page) {
 
-		return TrackDtoExt.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
+		return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
 	}
 	
 	@RequestMapping(value = "/tracks/{trackId}/pull", method = RequestMethod.GET)
 	public @ResponseBody TrackDto pull(@PathVariable("trackId")Long trackId) {
 		try {
 			Track track = trackService.pull(trackId);
-			TrackDtoExt trackDto = new TrackDtoExt(track);
+			TrackDtoMapper trackDto = new TrackDtoMapper(track);
 			
 			if(track.getStatus() == TrackStatus.ENCODED){
 				trackDto.setFiles(resourceFileDtoBuilder.build(track.getIsrc()));
