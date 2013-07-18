@@ -55,6 +55,8 @@ public class User implements Serializable {
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";
+
+    @Transient
     private ContractChannel contractChannel;
 
     public boolean isO2Direct() {

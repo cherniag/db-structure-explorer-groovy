@@ -10,6 +10,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -81,6 +82,9 @@ public class NullAwareBeanUtilsBeanTest {
         dropResult.setName("bbbbb");
         resultDrops.add(dropResult);
 
+        Map<String, Object> introspected = new org.apache.commons.beanutils.BeanMap(result);
+
+        Map map = fixture.describe(result);
         fixture.copyProperties(result, data);
 
         Assert.assertNotSame(data.getDropdata(), result.getDropdata());

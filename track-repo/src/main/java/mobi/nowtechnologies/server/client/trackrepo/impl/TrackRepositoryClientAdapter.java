@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.client.trackrepo.impl;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
 import mobi.nowtechnologies.server.trackrepo.controller.TrackController;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.springframework.data.domain.Pageable;
@@ -37,5 +38,10 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     @Override
     public PageListDto<TrackDto> search(SearchTrackDto criteria, Pageable page) {
         return (PageListDto<TrackDto>)trackController.find(null, criteria, page);
+    }
+
+    @Override
+    public IngestWizardDataDto getDrops() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
