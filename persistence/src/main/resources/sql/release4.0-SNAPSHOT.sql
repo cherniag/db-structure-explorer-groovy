@@ -29,7 +29,7 @@ insert into tb_chartDetail (subtitle, chart, position, publishTimeMillis, versio
 select
 'Video Chart',
 ch.i,
-4,
+8,
 unix_timestamp('2013-01-01')*1000,
 0,
 ch.name
