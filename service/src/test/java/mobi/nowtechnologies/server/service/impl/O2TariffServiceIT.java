@@ -21,9 +21,7 @@ import static org.junit.Assert.assertEquals;
  * lach : 17/07/2013 : 11:41
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
+@ContextConfiguration(locations = {"/META-INF/service-test-ws.xml" })
 public class O2TariffServiceIT {
 
     @Resource(name = "service.O2TariffService")
