@@ -71,5 +71,5 @@ create table data_to_do_refund (
  insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_indirect';
 
  --
- alter table tb_users add column contractChannel char(255) not null default 'DIRECT';
+ alter table tb_users add column contractChannel varchar(255) not null default 'DIRECT';
 
