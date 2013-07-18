@@ -13,7 +13,7 @@
 	<name>Now Technologies Java Server Transport Webapp</name>
 
 	<build>
-		<finalName>transport-${project.version}-${buildNumber}</finalName>
+		<!--<finalName>transport-${project.version}-${buildNumber}</finalName>-->
 		<testResources>
 			<testResource>
 				<directory>src/main/webapp</directory>

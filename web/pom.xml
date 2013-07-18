@@ -13,9 +13,9 @@
 	<packaging>war</packaging>
 	<name>Now Technologies Java Server Web App</name>
 
-	<build>
-		<finalName>web-${project.version}-${buildNumber}</finalName>
-	</build>
+	<!--<build>-->
+		<!--<finalName>web-${project.version}-${buildNumber}</finalName>-->
+	<!--</build>-->
 
 	<dependencies>
         <dependency>
