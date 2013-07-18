@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 													            						
+	Date			Change		Author			Change Description      						
+	25/01/2011     	2.0.1	    Subramanyam		Internally reviewed
+	18/01/2011     	2.0.0	    shivaji    		Initial Version   	
+-->
+<wsdl:definitions name="ManagePrepayTariff"
+	targetNamespace="http://soa.o2.co.uk/manageprepaytariffservice_2"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:mpd="http://soa.o2.co.uk/manageprepaytariffdata_2" xmlns:mps="http://soa.o2.co.uk/manageprepaytariffservice_2">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://soa.o2.co.uk/manageprepaytariffdata_2"
+				schemaLocation="manageprepaytariffdata_2_0.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="getTariff_1">
+		<wsdl:part name="getTariff_1" element="mpd:getTariff_1" />
+	</wsdl:message>
+	<wsdl:message name="getTariff_1Response">
+		<wsdl:part name="getTariff_1Response" element="mpd:getTariff_1Response" />
+	</wsdl:message>
+	<wsdl:message name="getTariff_1Fault">
+		<wsdl:part name="getTariff_1Fault" element="mpd:getTariff_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="getCurrentAndPendingTariff_1">
+		<wsdl:part name="getCurrentAndPendingTariff_1" element="mpd:getCurrentAndPendingTariff_1" />
+	</wsdl:message>
+	<wsdl:message name="getCurrentAndPendingTariff_1Response">
+		<wsdl:part name="getCurrentAndPendingTariff_1Response"
+			element="mpd:getCurrentAndPendingTariff_1Response" />
+	</wsdl:message>
+	<wsdl:message name="getCurrentAndPendingTariff_1Fault">
+		<wsdl:part name="getCurrentAndPendingTariff_1Fault" element="mpd:getCurrentAndPendingTariff_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="getBusinessPolicies_1">
+		<wsdl:part name="getBusinessPolicies_1" element="mpd:getBusinessPolicies_1" />
+	</wsdl:message>
+	<wsdl:message name="getBusinessPolicies_1Response">
+		<wsdl:part name="getBusinessPolicies_1Response" element="mpd:getBusinessPolicies_1Response" />
+	</wsdl:message>
+	<wsdl:message name="getBusinessPolicies_1Fault">
+		<wsdl:part name="getBusinessPolicies_1Fault" element="mpd:getBusinessPolicies_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="validateParameters_1">
+		<wsdl:part name="validateParameters_1" element="mpd:validateParameters_1" />
+	</wsdl:message>
+	<wsdl:message name="validateParameters_1Response">
+		<wsdl:part name="validateParameters_1Response" element="mpd:validateParameters_1Response" />
+	</wsdl:message>
+	<wsdl:message name="validateParameters_1Fault">
+		<wsdl:part name="validateParameters_1Fault" element="mpd:validateParameters_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="validateTariff_1">
+		<wsdl:part name="validateTariff_1" element="mpd:validateTariff_1" />
+	</wsdl:message>
+	<wsdl:message name="validateTariff_1Response">
+		<wsdl:part name="validateTariff_1Response" element="mpd:validateTariff_1Response" />
+	</wsdl:message>
+	<wsdl:message name="validateTariff_1Fault">
+		<wsdl:part name="validateTariff_1Fault" element="mpd:validateTariff_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="changeTariff_1">
+		<wsdl:part name="changeTariff_1" element="mpd:changeTariff_1" />
+	</wsdl:message>
+	<wsdl:message name="changeTariff_1Response">
+		<wsdl:part name="changeTariff_1Response" element="mpd:changeTariff_1Response" />
+	</wsdl:message>
+	<wsdl:message name="changeTariff_1Fault">
+		<wsdl:part name="changeTariff_1Fault" element="mpd:changeTariff_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="getTariffParameters_1">
+		<wsdl:part name="getTariffParameters_1" element="mpd:getTariffParameters_1" />
+	</wsdl:message>
+	<wsdl:message name="getTariffParameters_1Response">
+		<wsdl:part name="getTariffParameters_1Response" element="mpd:getTariffParameters_1Response" />
+	</wsdl:message>
+	<wsdl:message name="getTariffParameters_1Fault">
+		<wsdl:part name="getTariffParameters_1Fault" element="mpd:getTariffParameters_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="changeTariffParameters_1">
+		<wsdl:part name="changeTariffParameters_1" element="mpd:changeTariffParameters_1" />
+	</wsdl:message>
+	<wsdl:message name="changeTariffParameters_1Response">
+		<wsdl:part name="changeTariffParameters_1Response" element="mpd:changeTariffParameters_1Response" />
+	</wsdl:message>
+	<wsdl:message name="changeTariffParameters_1Fault">
+		<wsdl:part name="changeTariffParameters_1Fault" element="mpd:changeTariffParameters_1Fault" />
+	</wsdl:message>
+	<wsdl:message name="getValidTariffs_1">
+		<wsdl:part name="getValidTariffs_1" element="mpd:getValidTariffs_1" />
+	</wsdl:message>
+	<wsdl:message name="getValidTariffs_1Response">
+		<wsdl:part name="getValidTariffs_1Response" element="mpd:getValidTariffs_1Response" />
+	</wsdl:message>
+	<wsdl:message name="getValidTariffs_1Fault">
+		<wsdl:part name="getValidTariffs_1Fault" element="mpd:getValidTariffs_1Fault" />
+	</wsdl:message>
+	<wsdl:portType name="ManagePrepayTariffPort">
+		<wsdl:operation name="getTariff_1">
+			<wsdl:input name="getTariff_1" message="mps:getTariff_1" />
+			<wsdl:output name="getTariff_1Response" message="mps:getTariff_1Response" />
+			<wsdl:fault name="getTariff_1Fault" message="mps:getTariff_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getCurrentAndPendingTariff_1">
+			<wsdl:input name="getCurrentAndPendingTariff_1" message="mps:getCurrentAndPendingTariff_1" />
+			<wsdl:output name="getCurrentAndPendingTariff_1Response"
+				message="mps:getCurrentAndPendingTariff_1Response" />
+			<wsdl:fault name="getCurrentAndPendingTariff_1Fault"
+				message="mps:getCurrentAndPendingTariff_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getBusinessPolicies_1">
+			<wsdl:input name="getBusinessPolicies_1" message="mps:getBusinessPolicies_1" />
+			<wsdl:output name="getBusinessPolicies_1Response"
+				message="mps:getBusinessPolicies_1Response" />
+			<wsdl:fault name="getBusinessPolicies_1Fault" message="mps:getBusinessPolicies_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="validateParameters_1">
+			<wsdl:input name="validateParameters_1" message="mps:validateParameters_1" />
+			<wsdl:output name="validateParameters_1Response" message="mps:validateParameters_1Response" />
+			<wsdl:fault name="validateParameters_1Fault" message="mps:validateParameters_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="validateTariff_1">
+			<wsdl:input name="validateTariff_1" message="mps:validateTariff_1" />
+			<wsdl:output name="validateTariff_1Response" message="mps:validateTariff_1Response" />
+			<wsdl:fault name="validateTariff_1Fault" message="mps:validateTariff_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="changeTariff_1">
+			<wsdl:input name="changeTariff_1" message="mps:changeTariff_1" />
+			<wsdl:output name="changeTariff_1Response" message="mps:changeTariff_1Response" />
+			<wsdl:fault name="changeTariff_1Fault" message="mps:changeTariff_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getTariffParameters_1">
+			<wsdl:input name="getTariffParameters_1" message="mps:getTariffParameters_1" />
+			<wsdl:output name="getTariffParameters_1Response"
+				message="mps:getTariffParameters_1Response" />
+			<wsdl:fault name="getTariffParameters_1Fault" message="mps:getTariffParameters_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="changeTariffParameters_1">
+			<wsdl:input name="changeTariffParameters_1" message="mps:changeTariffParameters_1" />
+			<wsdl:output name="changeTariffParameters_1Response"
+				message="mps:changeTariffParameters_1Response" />
+			<wsdl:fault name="changeTariffParameters_1Fault" message="mps:changeTariffParameters_1Fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getValidTariffs_1">
+			<wsdl:input name="getValidTariffs_1" message="mps:getValidTariffs_1" />
+			<wsdl:output name="getValidTariffs_1Response" message="mps:getValidTariffs_1Response" />
+			<wsdl:fault name="getValidTariffs_1Fault" message="mps:getValidTariffs_1Fault" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ManagePrepayTariffBinding" type="mps:ManagePrepayTariffPort">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getTariff_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="getTariff_1">
+				<soap:body parts="getTariff_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getTariff_1Response">
+				<soap:body parts="getTariff_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="getTariff_1Fault">
+				<soap:fault name="getTariff_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getCurrentAndPendingTariff_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="getCurrentAndPendingTariff_1">
+				<soap:body parts="getCurrentAndPendingTariff_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getCurrentAndPendingTariff_1Response">
+				<soap:body parts="getCurrentAndPendingTariff_1Response"
+					use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="getCurrentAndPendingTariff_1Fault">
+				<soap:fault name="getCurrentAndPendingTariff_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getBusinessPolicies_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="getBusinessPolicies_1">
+				<soap:body parts="getBusinessPolicies_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getBusinessPolicies_1Response">
+				<soap:body parts="getBusinessPolicies_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="getBusinessPolicies_1Fault">
+				<soap:fault name="getBusinessPolicies_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="validateParameters_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="validateParameters_1">
+				<soap:body parts="validateParameters_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="validateParameters_1Response">
+				<soap:body parts="validateParameters_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="validateParameters_1Fault">
+				<soap:fault name="validateParameters_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="validateTariff_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="validateTariff_1">
+				<soap:body parts="validateTariff_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="validateTariff_1Response">
+				<soap:body parts="validateTariff_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="validateTariff_1Fault">
+				<soap:fault name="validateTariff_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="changeTariff_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="changeTariff_1">
+				<soap:body parts="changeTariff_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="changeTariff_1Response">
+				<soap:body parts="changeTariff_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="changeTariff_1Fault">
+				<soap:fault name="changeTariff_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getTariffParameters_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="getTariffParameters_1">
+				<soap:body parts="getTariffParameters_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getTariffParameters_1Response">
+				<soap:body parts="getTariffParameters_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="getTariffParameters_1Fault">
+				<soap:fault name="getTariffParameters_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="changeTariffParameters_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="changeTariffParameters_1">
+				<soap:body parts="changeTariffParameters_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="changeTariffParameters_1Response">
+				<soap:body parts="changeTariffParameters_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="changeTariffParameters_1Fault">
+				<soap:fault name="changeTariffParameters_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getValidTariffs_1">
+			<soap:operation soapAction="" />
+			<wsdl:input name="getValidTariffs_1">
+				<soap:body parts="getValidTariffs_1" use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getValidTariffs_1Response">
+				<soap:body parts="getValidTariffs_1Response" use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="getValidTariffs_1Fault">
+				<soap:fault name="getValidTariffs_1Fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ManagePrepayTariffService">
+		<wsdl:port name="ManagePrepayTariffPort" binding="mps:ManagePrepayTariffBinding">
+			<soap:address
+				location="https://sdpapi.o2.co.uk/services/ManagePrepayTariff_2_0" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
