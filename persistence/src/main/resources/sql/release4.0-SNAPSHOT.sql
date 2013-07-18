@@ -69,3 +69,7 @@ create table data_to_do_refund (
    value('o2 Free Trial for indirect users', 1356342064, 1606780800, true, 8, 10, 'PromoCode', 'o2_indirect');
  insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_direct';
  insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_indirect';
+
+ --
+ alter table tb_users add column contractChannel char(255) not null default 'DIRECT';
+
