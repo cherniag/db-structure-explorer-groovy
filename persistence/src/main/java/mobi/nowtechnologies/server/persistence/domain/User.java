@@ -56,6 +56,26 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
+    public boolean isO2Direct() {
+        return false;
+    }
+
+    public boolean isO24GConsumer() {
+        return isO2Consumer() && is4G();
+    }
+
+    public boolean isO2Indirect() {
+        return false;
+    }
+
+    public ContractChannel getContractChannel() {
+        return contractChannel;
+    }
+
+    public void setContractChannel(ContractChannel contractChannel) {
+        this.contractChannel = contractChannel;
+    }
+
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
@@ -1383,25 +1403,5 @@ public class User implements Serializable {
 
     public void setShowFreeTrial(Boolean showFreeTrial) {
         this.showFreeTrial = showFreeTrial;
-    }
-
-    public boolean isO2Direct() {
-        return ContractChannel.DIRECT.equals(contractChannel);
-    }
-
-    public boolean isO24GConsumer() {
-        return isO2Consumer() && is4G();
-    }
-
-    public boolean isO2Indirect() {
-        return ContractChannel.INDIRECT.equals(contractChannel);
-    }
-
-    public ContractChannel getContractChannel() {
-        return contractChannel;
-    }
-
-    public void setContractChannel(ContractChannel contractChannel) {
-        this.contractChannel = contractChannel;
     }
 }

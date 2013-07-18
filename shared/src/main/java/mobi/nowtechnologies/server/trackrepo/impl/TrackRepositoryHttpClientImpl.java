@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.apache.http.Header;
@@ -121,6 +122,32 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		}
 		return tracks;
 	}
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
+    */
+    @Override
+    public IngestWizardDataDto getDrops() {
+        IngestWizardDataDto data = null;
+        try {
+                HttpGet query = new HttpGet(trackRepoUrl.concat("drops.json"));
+                query.setHeaders(getSecuredHeaders());
+                HttpResponse response = getHttpClient().execute(query);
+                if (200 == response.getStatusLine().getStatusCode()) {
+                    Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+                    Type type = new TypeToken<IngestWizardDataDto>() {
+                    }.getType();
+                    data = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                }
+        } catch (ClientProtocolException e) {
+            LOGGER.error("Cannot search in track repository. {}", e);
+        } catch (IOException e) {
+            LOGGER.error("Communication exception while searching for track in track repository. {}", e);
+        }
+        return data;
+    }
 
 	/*
 	 * (non-Javadoc)

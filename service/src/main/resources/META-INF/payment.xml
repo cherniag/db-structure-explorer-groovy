@@ -94,7 +94,6 @@
 		<property name="expireMillis" value="${o2.pendingExpireMillis}" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
-        <property name="dataToDoRefundService" ref="service.DataToDoRefundService" />
 	</bean>
 	
 	

@@ -21,11 +21,11 @@ public class UserGroup implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private byte i;
 
-	@Column(name="chart", insertable=false,updatable=false)
+	@Column(name="chart", insertable=false,updatable=false, columnDefinition = "tinyint(4)")
 	private Integer chartId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="chart")
+	@JoinColumn(name="chart", columnDefinition = "tinyint(4)")
 	private Chart chart;
 
 	@Column(name="community", insertable=false,updatable=false)

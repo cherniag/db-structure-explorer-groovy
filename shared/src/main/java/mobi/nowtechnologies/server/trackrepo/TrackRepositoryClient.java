@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.springframework.data.domain.Pageable;
@@ -52,5 +53,11 @@ public interface TrackRepositoryClient {
 	 * @return
 	 */
 	public PageListDto<TrackDto> search(SearchTrackDto criteria, Pageable page);
-	
+
+    /*
+        * (non-Javadoc)
+        *
+        * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#search (java.lang.String)
+        */
+    IngestWizardDataDto getDrops();
 }
