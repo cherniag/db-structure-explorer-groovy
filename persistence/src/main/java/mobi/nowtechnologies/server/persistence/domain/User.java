@@ -56,9 +56,6 @@ public class User implements Serializable {
 
 	public static final String NONE = "NONE";
 
-    @Transient
-    private ContractChannel contractChannel;
-
     public boolean isO2Direct() {
         return false;
     }
@@ -87,6 +84,9 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "i")
 	private int id;
+
+    @Enumerated(EnumType.STRING)
+    private ContractChannel contractChannel;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tariff", columnDefinition = "char(255)")
