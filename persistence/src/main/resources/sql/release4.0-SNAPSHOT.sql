@@ -64,9 +64,10 @@ create table data_to_do_refund (
  alter table data_to_do_refund add index data_to_do_refund_PK_payment_details_id (payment_details_id), add constraint data_to_do_refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
  alter table data_to_do_refund add index data_to_do_refund_PK_user_id (user_id), add constraint data_to_do_refund_U_user_id foreign key (user_id) references tb_users (i);
 
- insert into tb_promoCode(id, code, promotionId) value(31, 'o2_direct', 33);
- insert into tb_promoCode(id, code, promotionId) value(32, 'o2_indirect', 34);
+ -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label)
    value(33, 'o2 Free Trial for direct users', 1356342064, 1606780800, true, 48, 10, 'PromoCode', 'o2_direct');
  insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label)
    value(34, 'o2 Free Trial for indirect users', 1356342064, 1606780800, true, 8, 10, 'PromoCode', 'o2_indirect');
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_direct';
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_indirect';
