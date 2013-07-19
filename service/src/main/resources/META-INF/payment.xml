@@ -5,8 +5,8 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="service.DataToDoRefundService" class="mobi.nowtechnologies.server.service.impl.DataToDoRefundServiceImpl">
-        <property name="dataToDoRefundRepository" ref="dataToDoRefundRepository" />
+    <bean id="service.RefundService" class="mobi.nowtechnologies.server.service.impl.RefundServiceImpl">
+        <property name="refundRepository" ref="refundRepository" />
     </bean>
 	
 	<bean id="service.PendingPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PendingPaymentServiceImpl">

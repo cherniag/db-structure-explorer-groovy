@@ -21,7 +21,7 @@ alter table tb_users add column showFreeTrial boolean;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
-create table data_to_do_refund (
+create table refund (
   id bigint not null auto_increment,
   log_time_millis bigint,
   next_sub_payment_millis bigint,
@@ -30,8 +30,8 @@ create table data_to_do_refund (
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
- alter table data_to_do_refund add index data_to_do_refund_PK_payment_details_id (payment_details_id), add constraint data_to_do_refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
- alter table data_to_do_refund add index data_to_do_refund_PK_user_id (user_id), add constraint data_to_do_refund_U_user_id foreign key (user_id) references tb_users (i);
+ alter table refund add index refund_PK_payment_details_id (payment_details_id), add constraint refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
+ alter table refund add index refund_PK_user_id (user_id), add constraint refund_U_user_id foreign key (user_id) references tb_users (i);
 
  alter table tb_users add column last_successful_payment_details bigint(20);
  alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details), add constraint tb_users_U_last_successful_payment_details foreign key (payment_details_id) references tb_paymentDetails (i);

@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.DataToDoRefundRepository;
+import mobi.nowtechnologies.server.persistence.repository.RefundRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
@@ -29,20 +29,20 @@ import static org.powermock.api.mockito.PowerMockito.*;
 public class DataToDoRefundServiceImplTest {
 
     User user;
-    DataToDoRefundServiceImpl dataToDoRefundService;
-    DataToDoRefundRepository dataToDoRefundRepositoryMock;
+    RefundServiceImpl dataToDoRefundService;
+    RefundRepository refundRepositoryMock;
     long expectedLogTimeMillis;
-    DataToDoRefund resultDataToDoRefund;
+    Refund resultRefund;
     int nextSubPayment;
     Tariff userTariff;
     Tariff newUserTariff;
 
     @Before
     public void setUp(){
-        dataToDoRefundRepositoryMock = mock(DataToDoRefundRepository.class);
+        refundRepositoryMock = mock(RefundRepository.class);
 
-        dataToDoRefundService = new DataToDoRefundServiceImpl();
-        dataToDoRefundService.setDataToDoRefundRepository(dataToDoRefundRepositoryMock);
+        dataToDoRefundService = new RefundServiceImpl();
+        dataToDoRefundService.setRefundRepository(refundRepositoryMock);
     }
 
     private void prepareData() {
@@ -66,16 +66,16 @@ public class DataToDoRefundServiceImplTest {
     }
 
     private void validate() {
-        assertNotNull(resultDataToDoRefund);
-        assertEquals(user, resultDataToDoRefund.user);
-        assertEquals(user.getCurrentPaymentDetails(), resultDataToDoRefund.paymentDetails);
-        assertEquals(expectedLogTimeMillis, resultDataToDoRefund.logTimeMillis);
-        assertEquals(user.getNextSubPayment() * 1000L, resultDataToDoRefund.nextSubPaymentMillis);
+        assertNotNull(resultRefund);
+        assertEquals(user, resultRefund.user);
+        assertEquals(user.getCurrentPaymentDetails(), resultRefund.paymentDetails);
+        assertEquals(expectedLogTimeMillis, resultRefund.logTimeMillis);
+        assertEquals(user.getNextSubPayment() * 1000L, resultRefund.nextSubPaymentMillis);
     }
 
     private void verifyUnsuccessfulCase() {
-        assertNotNull(resultDataToDoRefund);
-        assertTrue(resultDataToDoRefund instanceof DataToDoRefund.NullObjectDataToDoRefund);
+        assertNotNull(resultRefund);
+        assertTrue(resultRefund instanceof Refund.NullObjectRefund);
     }
 
     @Test
@@ -89,15 +89,15 @@ public class DataToDoRefundServiceImplTest {
         expectedLogTimeMillis = Long.MAX_VALUE;
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(expectedLogTimeMillis);
-        when(dataToDoRefundRepositoryMock.save(any(DataToDoRefund.class))).thenAnswer(new Answer<DataToDoRefund>() {
+        when(refundRepositoryMock.save(any(Refund.class))).thenAnswer(new Answer<Refund>() {
             @Override
-            public DataToDoRefund answer(InvocationOnMock invocation) throws Throwable {
-                DataToDoRefund arg = (DataToDoRefund) invocation.getArguments()[0];
+            public Refund answer(InvocationOnMock invocation) throws Throwable {
+                Refund arg = (Refund) invocation.getArguments()[0];
                 return arg;
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
+        resultRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         validate();
     }
@@ -110,15 +110,15 @@ public class DataToDoRefundServiceImplTest {
         expectedLogTimeMillis = Long.MAX_VALUE;
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(expectedLogTimeMillis);
-        when(dataToDoRefundRepositoryMock.save(any(DataToDoRefund.class))).thenAnswer(new Answer<DataToDoRefund>() {
+        when(refundRepositoryMock.save(any(Refund.class))).thenAnswer(new Answer<Refund>() {
             @Override
-            public DataToDoRefund answer(InvocationOnMock invocation) throws Throwable {
-                DataToDoRefund arg = (DataToDoRefund) invocation.getArguments()[0];
+            public Refund answer(InvocationOnMock invocation) throws Throwable {
+                Refund arg = (Refund) invocation.getArguments()[0];
                 return arg;
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
+        resultRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         verifyUnsuccessfulCase();
     }
@@ -131,15 +131,15 @@ public class DataToDoRefundServiceImplTest {
         expectedLogTimeMillis = Long.MAX_VALUE;
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(expectedLogTimeMillis);
-        when(dataToDoRefundRepositoryMock.save(any(DataToDoRefund.class))).thenAnswer(new Answer<DataToDoRefund>() {
+        when(refundRepositoryMock.save(any(Refund.class))).thenAnswer(new Answer<Refund>() {
             @Override
-            public DataToDoRefund answer(InvocationOnMock invocation) throws Throwable {
-                DataToDoRefund arg = (DataToDoRefund) invocation.getArguments()[0];
+            public Refund answer(InvocationOnMock invocation) throws Throwable {
+                Refund arg = (Refund) invocation.getArguments()[0];
                 return arg;
             }
         });
 
-        resultDataToDoRefund = dataToDoRefundService.logOnTariffMigration(user);
+        resultRefund = dataToDoRefundService.logOnTariffMigration(user);
 
         verifyUnsuccessfulCase();
     }

@@ -7,8 +7,8 @@ import javax.persistence.*;
  * 15.07.13 12:57
  */
 @Entity
-@Table(name = "data_to_do_refund")
-public class DataToDoRefund {
+@Table(name = "refund")
+public class Refund {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,15 +44,15 @@ public class DataToDoRefund {
         return paymentDetailsId;
     }
 
-    public static class NullObjectDataToDoRefund extends DataToDoRefund{}
+    public static class NullObjectRefund extends Refund {}
 
-    public static DataToDoRefund nullObject(){
-        return new NullObjectDataToDoRefund();
+    public static Refund nullObject(){
+        return new NullObjectRefund();
     }
 
     @Override
     public String toString() {
-        return "DataToDoRefund[" +
+        return "Refund[" +
                 "id=" + id +
                 ", getUserId()=" + getUserId() +
                 ", getPaymentDetailsId()=" + getPaymentDetailsId() +
