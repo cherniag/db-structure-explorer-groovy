@@ -64,7 +64,7 @@ create table data_to_do_refund (
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label)
-   value('o2 Free Trial for direct users', unix_timestamp(), 1606780800, true, 48, 10, 'PromoCode', 'o2_direct');
+   value('o2 Free Trial for direct users', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2_direct');
  insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label)
    value('o2 Free Trial for indirect users', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2_indirect');
  insert into tb_promoCode(code, promotionId) select label, i from tb_promoCode where label = 'o2_direct';
