@@ -69,10 +69,8 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "tariff", columnDefinition = "char(255)")
     private Tariff tariff;
-
 	@Column(name = "address1", columnDefinition = "char(50)")
 	private String address1;
-
 	@Column(name = "address2", columnDefinition = "char(50)")
 	private String address2;
 
@@ -271,7 +269,7 @@ public class User implements Serializable {
 	// @JoinColumn(name = "provider", referencedColumnName = "provider", insertable=false, updatable=false), @JoinColumn(name = "userGroup", referencedColumnName = "user_group_id", insertable=false,
 	// updatable=false) })
 	private transient GracePeriod gracePeriod;
-	
+
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(name="user_charts",
     joinColumns=
@@ -289,6 +287,10 @@ public class User implements Serializable {
 
     @Column(name = "showFreeTrial")
     private Boolean showFreeTrial;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "last_successful_payment_details", nullable = true)
+    private PaymentDetails lastSuccessfulPaymentDetails;
 
 	public User() {
 		setDisplayName("");
@@ -1170,7 +1172,7 @@ public class User implements Serializable {
 	public String getLastSubscribedPaymentSystem() {
 		return lastSubscribedPaymentSystem;
 	}
-	
+
 	public PaymentDetailsStatus getLastPaymentStatus() {
 		return currentPaymentDetails != null ? currentPaymentDetails.getLastPaymentStatus() : null;
 	}
@@ -1290,13 +1292,11 @@ public class User implements Serializable {
 
 	/**
 	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isOnFreeTrial() {
-		return new DateTime(getFreeTrialExpiredMillis()).isAfterNow()
-				&& isEmpty(getLastSubscribedPaymentSystem())
-				&& getCurrentPaymentDetails() == null;
+		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
 
 	public boolean wasSubscribed() {
@@ -1391,16 +1391,16 @@ public class User implements Serializable {
 
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
 		Chart sameTypeChart = null;
-		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
+		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){
 			for(Chart chart : getSelectedCharts()){
 				if(chart.getI().equals(chartDetail.getChart().getI()))
 					return true;
 				else if(chart.getType() == chartDetail.getChart().getType())
 					sameTypeChart = chart;
-					
+
 			}
 		}
-		
+
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
@@ -1409,18 +1409,26 @@ public class User implements Serializable {
 	}
 
 	public boolean isExpiring() {
-		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
+		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
 				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
-    public boolean isTariffChanged(){
-        boolean areTariffsEqual = true;
-        if (currentPaymentDetails != null){
-            areTariffsEqual = currentPaymentDetails.getPaymentPolicy().getTariff().equals(tariff);
-        }
-        return areTariffsEqual;
+    public boolean has4GVideoAudioSubscription(){
+        return isOn4GVideoAudioSubscription(currentPaymentDetails);
     }
 
+    public boolean isOn4GVideoAudioBoughtPeriod(){
+        return isOn4GVideoAudioSubscription(lastSuccessfulPaymentDetails) && nextSubPayment > Utils.getEpochSeconds();
+    }
+
+    private boolean isOn4GVideoAudioSubscription(PaymentDetails paymentDetails){
+        boolean is4GVideoAudioSubscription = false;
+        if (paymentDetails != null ){
+            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+            is4GVideoAudioSubscription = paymentPolicy.is4GVideoAudioSubscription();
+        }
+        return is4GVideoAudioSubscription;
+    }
 
     public boolean canGetVideo() {
         return isO2Consumer() && is4G();
@@ -1469,5 +1477,13 @@ public class User implements Serializable {
 
     public void setShowFreeTrial(Boolean showFreeTrial) {
         this.showFreeTrial = showFreeTrial;
+    }
+
+    public PaymentDetails getLastSuccessfulPaymentDetails() {
+        return lastSuccessfulPaymentDetails;
+    }
+
+    public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
+        this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
 }

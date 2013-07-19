@@ -1,10 +1,13 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.DataToDoRefund;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DataToDoRefundRepository;
 import mobi.nowtechnologies.server.service.DataToDoRefundService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,19 +27,26 @@ public class DataToDoRefundServiceImpl implements DataToDoRefundService{
         this.dataToDoRefundRepository = dataToDoRefundRepository;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+//    @Transactional(propagation = Propagation.REQUIRED)
+ //   public DataToDoRefund logOnTariffMigration(User user) {
+//        DataToDoRefund resultDataToDoRefund = DataToDoRefund.nullObject();
+//        if(user.hasTariff(newUserTariff)){
+//            if (user.getLastSuccessfulPaymentDetails().getPaymentPolicy().getContentCategory().equals(PaymentPolicy.VIDEO_AND_AUDIO)){
+//
+//            if (user.isUnsubscribedWithFullAccess()){
+//                resultDataToDoRefund = logUnSubscribeData(user);
+//            }else{
+//                LOGGER.info("Don't logging data for refunding 'case of no remaining subscription days");
+//            }
+//        }else{
+//            LOGGER.info("Don't logging data for refunding 'case of no tariff migration");
+//        }
+//        }
+//        return resultDataToDoRefund;
+//    }
+
     public DataToDoRefund logOnTariffMigration(User user) {
-        DataToDoRefund resultDataToDoRefund = DataToDoRefund.nullObject();
-        if(!user.isTariffChanged()){
-            if (user.isUnsubscribedWithFullAccess()){
-                resultDataToDoRefund = logUnSubscribeData(user);
-            }else{
-                LOGGER.info("Don't logging data for refunding 'case of no remaining subscription days");
-            }
-        }else{
-            LOGGER.info("Don't logging data for refunding 'case of no tariff migration");
-        }
-        return resultDataToDoRefund;
+        return null;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

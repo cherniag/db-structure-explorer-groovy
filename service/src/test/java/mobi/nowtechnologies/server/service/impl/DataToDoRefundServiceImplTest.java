@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.DataToDoRefundReposito
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -22,6 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
  * User: Titov Mykhaylo (titov)
  * 16.07.13 9:02
  */
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = Utils.class)
 public class DataToDoRefundServiceImplTest {
@@ -44,10 +46,10 @@ public class DataToDoRefundServiceImplTest {
     }
 
     private void prepareData() {
-        user = UserFactory.createUserWithPaymentDetails(userTariff);
+        user = UserFactory.createUserWithVideoPaymentDetails(userTariff);
         user.setNextSubPayment(nextSubPayment);
+        user.setLastSubscribedPaymentSystem("o2Psms");
         user.getCurrentPaymentDetails().setActivated(false);
-
         user.setTariff(newUserTariff);
     }
 
@@ -68,7 +70,7 @@ public class DataToDoRefundServiceImplTest {
         assertEquals(user, resultDataToDoRefund.user);
         assertEquals(user.getCurrentPaymentDetails(), resultDataToDoRefund.paymentDetails);
         assertEquals(expectedLogTimeMillis, resultDataToDoRefund.logTimeMillis);
-        assertEquals(user.getNextSubPayment()*1000L, resultDataToDoRefund.nextSubPaymentMillis);
+        assertEquals(user.getNextSubPayment() * 1000L, resultDataToDoRefund.nextSubPaymentMillis);
     }
 
     private void verifyUnsuccessfulCase() {
@@ -77,9 +79,12 @@ public class DataToDoRefundServiceImplTest {
     }
 
     @Test
-    public void testLogOnTariffMigration_Success() throws Exception {
+    public void testLogOnTariffMigration_from4GVideoSubscriptionTo3GWithNoActivePaymentDetails_Success() throws Exception {
         nextSubPayment = Integer.MAX_VALUE;
-        prepareDataWithDifTariffs();
+        userTariff = Tariff._4G;
+        newUserTariff = Tariff._3G;
+        prepareData();
+        //prepareDataWithDifTariffs();
 
         expectedLogTimeMillis = Long.MAX_VALUE;
         mockStatic(Utils.class);

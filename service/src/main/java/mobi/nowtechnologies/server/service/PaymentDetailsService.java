@@ -463,7 +463,7 @@ public class PaymentDetailsService {
 			user.setLastPaymentTryInCycleMillis(0L);
 			userService.updateUser(user);
 
-            dataToDoRefundService.logOnTariffMigration(user);
+            //dataToDoRefundService.logOnTariffMigration(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);

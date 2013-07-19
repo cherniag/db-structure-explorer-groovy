@@ -10,6 +10,7 @@ alter table tb_chartDetail modify column chart int unsigned not null;
  -- [Server] Adjust payment system and jobs to support new 4G payment options
 alter table tb_paymentpolicy add column tariff char(255) not null default '_3G';
 
+  -- Vova's task
  alter table tb_users add column tariff char(255);
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
@@ -31,3 +32,13 @@ create table data_to_do_refund (
 
  alter table data_to_do_refund add index data_to_do_refund_PK_payment_details_id (payment_details_id), add constraint data_to_do_refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
  alter table data_to_do_refund add index data_to_do_refund_PK_user_id (user_id), add constraint data_to_do_refund_U_user_id foreign key (user_id) references tb_users (i);
+
+ alter table tb_users add column last_successful_payment_details bigint(20);
+ alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details), add constraint tb_users_U_last_successful_payment_details foreign key (payment_details_id) references tb_paymentDetails (i);
+
+ -- http://jira.musicqubed.com/browse/IMP-1794
+ -- Remove video access from downgrading users
+ insert into tb_accountlogtypes (i, name) value (11, "Trial skipping");
+ insert into tb_accountlogtypes (i, name) value (12, "Bought period skipping");
+
+ update tb_paymentpolicy set content_category="other";

@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
 
+    public static final String VIDEO_AND_AUDIO = "videoAndAudio";
+    public static final String AUDIO = "other";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
 
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
@@ -322,6 +325,10 @@ public class PaymentPolicy {
 
         LOGGER.debug("Output parameter [{}]", paymentPolicyDto);
         return paymentPolicyDto;
+    }
+
+    public boolean is4GVideoAudioSubscription(){
+        return tariff.equals(Tariff._4G) && VIDEO_AND_AUDIO.equals(contentCategory);
     }
 
 

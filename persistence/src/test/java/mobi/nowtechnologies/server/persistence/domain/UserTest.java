@@ -5,20 +5,33 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Utils.class)
 public class UserTest {
 
     User user;
     PaymentPolicy detachedPaymentPolicy;
-	
-	/**
+    private PaymentPolicy paymentPolicy;
+    private Tariff paymentPolicyTariff;
+    private String contentCategory;
+    private int nextSubPayment;
+    private int epochSeconds;
+
+    /**
 	 * user.isOnFreeTrial() returns true
 	 * only if freeTrialExpiredMillis > System.currentMillis  
 	 */
@@ -358,25 +371,79 @@ public class UserTest {
 		assertEquals(false, result);
 	}
 
-
-    public void testIsTariffChanged_userTariffIs4GAAndNewTariffIs3G_Success(){
-        createSubscribedUserWithTariffMigration(Tariff._4G, Tariff._3G);
-
-        boolean result = user.isTariffChanged();
-
-        Assert.assertTrue(result);
-    }
-
-    public void testAreTariffsEqual_UserTariffIs3GAndDetachedPaymentPolicyTariffIs4G_Success(){
-        createSubscribedUserWithTariffMigration(Tariff._3G, Tariff._3G);
-
-        boolean result = user.isTariffChanged();
-
-        Assert.assertFalse(result);
-    }
-
     private void createSubscribedUserWithTariffMigration(Tariff subscribedUserTariff, Tariff newUserTariff) {
-        user = UserFactory.createUserWithPaymentDetails(subscribedUserTariff);
+        user = UserFactory.createUserWithVideoPaymentDetails(subscribedUserTariff);
         user.setTariff(newUserTariff);
+    }
+
+    @Test
+     public void testIsOn4GVideoAudioBoughtPeriod_Success() throws Exception {
+        paymentPolicyTariff = Tariff._4G;
+        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        epochSeconds = 0;
+        nextSubPayment = epochSeconds + 10;
+
+        prepareDataToIsOn4GVideoAudioBoughtPeriod();
+
+        boolean isOn4GVideoAudioBoughtPeriod = user.isOn4GVideoAudioBoughtPeriod();
+
+        Assert.assertTrue(isOn4GVideoAudioBoughtPeriod);
+    }
+
+    @Test
+    public void testIsOn4GVideoAudioBoughtPeriod_NextSubPaymentInThePast_Success() throws Exception {
+        paymentPolicyTariff = Tariff._4G;
+        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        epochSeconds = Integer.MAX_VALUE;
+        nextSubPayment = epochSeconds - 10;
+
+        prepareDataToIsOn4GVideoAudioBoughtPeriod();
+
+        boolean isOn4GVideoAudioBoughtPeriod = user.isOn4GVideoAudioBoughtPeriod();
+
+        Assert.assertFalse(isOn4GVideoAudioBoughtPeriod);
+    }
+
+    @Test
+    public void testIsOn4GVideoAudioBoughtPeriod_WrongTariff_Success() throws Exception {
+        paymentPolicyTariff = Tariff._3G;
+        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        epochSeconds = 0;
+        nextSubPayment = epochSeconds + 10;
+        prepareDataToIsOn4GVideoAudioBoughtPeriod();
+
+        boolean isOn4GVideoAudioBoughtPeriod = user.isOn4GVideoAudioBoughtPeriod();
+
+        Assert.assertFalse(isOn4GVideoAudioBoughtPeriod);
+    }
+
+    @Test
+    public void testIsOn4GVideoAudioBoughtPeriod_WrongContentCategory_Success() throws Exception {
+
+        paymentPolicyTariff = Tariff._4G;
+        contentCategory = PaymentPolicy.AUDIO;
+        epochSeconds = 0;
+        nextSubPayment = epochSeconds + 10;
+        prepareDataToIsOn4GVideoAudioBoughtPeriod();
+
+        boolean isOn4GVideoAudioBoughtPeriod = user.isOn4GVideoAudioBoughtPeriod();
+
+        Assert.assertFalse(isOn4GVideoAudioBoughtPeriod);
+    }
+
+    private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
+
+        mockStatic(Utils.class);
+        when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
+
+        paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(paymentPolicyTariff);
+        paymentPolicy.setContentCategory(contentCategory);
+
+        O2PSMSPaymentDetails o2PSMSPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        o2PSMSPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user = UserFactory.createUser();
+        user.setLastSuccessfulPaymentDetails(o2PSMSPaymentDetails);
+        user.setNextSubPayment(nextSubPayment);
     }
 }

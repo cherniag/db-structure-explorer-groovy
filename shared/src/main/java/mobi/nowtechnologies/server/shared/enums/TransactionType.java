@@ -20,7 +20,8 @@ public enum TransactionType {
 	OFFER_PURCHASE((byte) 8),
 	TRIAL_TOPUP((byte) 9),
 	TRACK_GIFT((byte) 10),
-	PAY_OFF_DEBT((byte)11);
+    TRIAL_SKIPPING((byte) 11),
+    BOUGHT_PERIOD_SKIPPING((byte) 12);
 	
 	private byte code;
 	
