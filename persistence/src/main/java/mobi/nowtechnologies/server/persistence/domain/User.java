@@ -297,7 +297,7 @@ public class User implements Serializable {
 	private List<Chart> selectedCharts = new ArrayList<Chart>();
 
     @Column(name = "videoFreeTrialHasBeenActivated")
-    private boolean videoFreeTrialHasBeenActivated;
+    private Boolean videoFreeTrialHasBeenActivated;
 
     @Column(name = "hasAllDetails")
     private Boolean hasAllDetails;
@@ -1377,7 +1377,7 @@ public class User implements Serializable {
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {
-        return videoFreeTrialHasBeenActivated;
+        return videoFreeTrialHasBeenActivated != null && videoFreeTrialHasBeenActivated;
     }
 
     public boolean isO2PAYMConsumer() {
