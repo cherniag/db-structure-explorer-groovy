@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.RefundRepository;
 import mobi.nowtechnologies.server.service.RefundService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,33 +25,31 @@ public class RefundServiceImpl implements RefundService {
         this.refundRepository = refundRepository;
     }
 
-//    @Transactional(propagation = Propagation.REQUIRED)
- //   public Refund logOnTariffMigration(User user) {
-//        Refund resultDataToDoRefund = Refund.nullObject();
-//        if(user.hasTariff(newUserTariff)){
-//            if (user.getLastSuccessfulPaymentDetails().getPaymentPolicy().getContentCategory().equals(PaymentPolicy.VIDEO_AND_AUDIO)){
-//
-//            if (user.isUnsubscribedWithFullAccess()){
-//                resultDataToDoRefund = logUnSubscribeData(user);
-//            }else{
-//                LOGGER.info("Don't logging data for refunding 'case of no remaining subscription days");
-//            }
-//        }else{
-//            LOGGER.info("Don't logging data for refunding 'case of no tariff migration");
-//        }
-//        }
-//        return resultDataToDoRefund;
-//    }
-
+    @Transactional(propagation = Propagation.REQUIRED)
     public Refund logOnTariffMigration(User user) {
-        return null;
+        Refund resultRefund = Refund.nullObject();
+        Tariff newUserTariff = Tariff._3G;
+        Tariff olUserTariff = Tariff._4G;
+
+        if (Tariff._4G.equals(newUserTariff) && Tariff._3G.equals(newUserTariff) && user.isOn4GVideoAudioBoughtPeriod()) {
+            LOGGER.info("Attempt to log about skipping Video Audio bought period on tariff migration from 4G to 3G. The nextSubPayment was [{]]", user.getNextSubPayment());
+
+            logSkippedBoughtPeriod(user);
+        } else if (Tariff._4G.equals(newUserTariff) && user.isOnAudioBoughtPeriod() && user.has4GVideoAudioSubscription()) {
+            LOGGER.info("Attempt to log about skipping Audio bought period on tariff migration from [{}] to 4G Video Audio subscription. The nextSubPayment was [{]]", olUserTariff, user.getNextSubPayment());
+
+            logSkippedBoughtPeriod(user);
+        } else {
+            LOGGER.info("Skip logging about skipped bought period because none ot the following conditions are not met: 1. The new tariff [{}] is 4G, old tariff [{}] is 3G, user is Audio Video bought period; 2. The new tariff [{}] is 3G, user is on Audio bought period, user has Audio Video Subscription", newUserTariff, olUserTariff, newUserTariff);
+        }
+        return resultRefund;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private Refund logUnSubscribeData(User user) {
+    private Refund logSkippedBoughtPeriod(User user) {
         Refund refund = new Refund();
         refund.user = user;
-        refund.paymentDetails = user.getCurrentPaymentDetails();
+        refund.paymentDetails = user.getLastSuccessfulPaymentDetails();
         refund.logTimeMillis = Utils.getEpochMillis();
         refund.nextSubPaymentMillis = user.getNextSubPaymentAsDate().getTime();
 

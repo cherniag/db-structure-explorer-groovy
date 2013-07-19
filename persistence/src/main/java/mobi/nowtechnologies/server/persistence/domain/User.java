@@ -1414,20 +1414,33 @@ public class User implements Serializable {
 	}
 
     public boolean has4GVideoAudioSubscription(){
-        return isOn4GVideoAudioSubscription(currentPaymentDetails);
+        return is4GVideoAudioPaymentDetails(currentPaymentDetails);
     }
 
     public boolean isOn4GVideoAudioBoughtPeriod(){
-        return isOn4GVideoAudioSubscription(lastSuccessfulPaymentDetails) && nextSubPayment > Utils.getEpochSeconds();
+        return nextSubPayment > Utils.getEpochSeconds() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
-    private boolean isOn4GVideoAudioSubscription(PaymentDetails paymentDetails){
-        boolean is4GVideoAudioSubscription = false;
+    public boolean isOnAudioBoughtPeriod() {
+        return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+    }
+
+    private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
+        boolean is4GVideoAudioPaymentDetails = false;
         if (paymentDetails != null ){
             PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-            is4GVideoAudioSubscription = paymentPolicy.is4GVideoAudioSubscription();
+            is4GVideoAudioPaymentDetails = paymentPolicy.is4GVideoAudioSubscription();
         }
-        return is4GVideoAudioSubscription;
+        return is4GVideoAudioPaymentDetails;
+    }
+
+    private boolean isAudioPaymentDetails(PaymentDetails paymentDetails){
+        boolean isAudioPaymentDetails = false;
+        if (paymentDetails != null ){
+            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+            isAudioPaymentDetails = paymentPolicy.isAudioSubscription();
+        }
+        return isAudioPaymentDetails;
     }
 
     public boolean canGetVideo() {

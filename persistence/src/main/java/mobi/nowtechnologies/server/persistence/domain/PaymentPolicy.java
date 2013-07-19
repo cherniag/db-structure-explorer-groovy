@@ -331,5 +331,7 @@ public class PaymentPolicy {
         return tariff.equals(Tariff._4G) && VIDEO_AND_AUDIO.equals(contentCategory);
     }
 
-
+    public boolean isAudioSubscription() {
+        return AUDIO.equals(contentCategory);
+    }
 }
