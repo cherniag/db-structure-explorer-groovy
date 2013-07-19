@@ -78,7 +78,7 @@ public class UserService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public Boolean canActivateVideoTrial(User u) {
-        Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(2014, 1, 1));
+        Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
 
         if(u.is4G() && u.isO2PAYGConsumer() && u.isVideoFreeTrialHasBeenActivated()) return true;
 
