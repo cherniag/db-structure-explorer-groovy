@@ -255,13 +255,13 @@ public class ChartService {
 		List<Chart> charts = Collections.emptyList();
 		if (communityURL != null)
 			charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
-										: chartRepository.getByCommunityURL(communityURL); 
+										: chartRepository.getByCommunityURL(communityURL);
 		else if(communityName != null)
 			charts = chartType != null ? chartRepository.getByCommunityNameAndChartType(communityName, chartType)
-										:chartRepository.getByCommunityName(communityName); 
-		
+										:chartRepository.getByCommunityName(communityName);
+
 		List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
-		
+
 		LOGGER.info("Output parameter charts=[{}]", charts);
 		return chartDetails;
 	}

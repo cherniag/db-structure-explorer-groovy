@@ -38,18 +38,14 @@ public class ChartAsm extends ModelMapper{
 	public static List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
 		LOGGER.debug("input parameters charts: [{}]", chartDetails);
 
-		final List<ChartDto> chartDtos;
-		if (chartDetails.isEmpty()) {
-			chartDtos = Collections.EMPTY_LIST;
-		} else {
-			chartDtos = new LinkedList<ChartDto>();
+		if (!chartDetails.isEmpty()) {
+            List<ChartDto> chartDtos = new LinkedList<ChartDto>();
 			for (ChartDetail chartDetail: chartDetails) {
 				chartDtos.add(ChartAsm.toChartDto(chartDetail));
 			}
+            return chartDtos;
 		}
-
-		LOGGER.info("Output parameter chartDtos=[{}]", chartDtos);
-		return chartDtos;
+        return Collections.EMPTY_LIST;
 	}
 
 	public static ChartDto toChartDto(ChartDetail chartDetail) {
