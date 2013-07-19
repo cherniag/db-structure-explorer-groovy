@@ -1,26 +1,9 @@
 package mobi.nowtechnologies.ingestors.universal;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import mobi.nowtechnologies.domain.AssetFile;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropTerritory;
-import mobi.nowtechnologies.ingestors.DropTrack;
-import mobi.nowtechnologies.ingestors.DtdLoader;
-import mobi.nowtechnologies.ingestors.IParser;
+import mobi.nowtechnologies.ingestors.*;
 import mobi.nowtechnologies.ingestors.DropTrack.Type;
-import mobi.nowtechnologies.service.IngestService;
 import mobi.nowtechnologies.util.Property;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -29,7 +12,15 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class UniversalParser extends IParser {
+    private static final String CLASSPATH_PROTOCOL = "classpath:";
 	
 	protected static final Log LOG = LogFactory.getLog(UniversalParser.class);
 
@@ -38,6 +29,14 @@ public class UniversalParser extends IParser {
 
 	public UniversalParser() {
 		root = Property.getInstance().getStringValue("ingest.universal.root");
+        if(root.startsWith(CLASSPATH_PROTOCOL)){
+            String classpathRoot = root.substring(CLASSPATH_PROTOCOL.length());
+            try {
+                root = new File(this.getClass().getClassLoader().getResource(classpathRoot).toURI()).getAbsolutePath();
+            } catch (URISyntaxException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
 		LOG.info("Universal parser loading from " + root);
 	}
 
@@ -106,6 +105,12 @@ public class UniversalParser extends IParser {
 						String title = track.getChildText("track_title");
 						data.title = title;
 						data.subTitle = track.getChildText("track_version_title");
+
+                        String prdExplicit = product.getChildText("prd_explicit");
+                        String trackExplicit = track.getChildText("track_explicit");
+                        data.explicit = "Y".equals(prdExplicit);
+                        data.explicit = !"".equals(trackExplicit) ? "Y".equals(trackExplicit) : data.explicit;
+
 						List<Element> artists = track.getChild("track_contributors").getChildren("artist_name");
 						boolean firstArtist = true;
 						String artist = "";

@@ -1,10 +1,8 @@
 package mobi.nowtechnologies.util;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class Property {
 	private Properties props;
@@ -14,7 +12,7 @@ public class Property {
 	protected Property() {
 		props = new Properties();
 		try {
-			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("config.properties");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("dev/config.properties");
 			props.load(inputStream);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

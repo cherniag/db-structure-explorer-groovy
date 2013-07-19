@@ -11,10 +11,7 @@ import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -23,6 +20,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
@@ -61,6 +59,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	
 	protected DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 	protected DateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+    protected Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +108,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 				signin.setHeaders(getSecuredHeaders());
 				HttpResponse response = getHttpClient().execute(signin);
 				if (200 == response.getStatusLine().getStatusCode()) {
-					Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 					Type type = new TypeToken<PageListDto<TrackDto>>() {
 					}.getType();
 					tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
@@ -136,7 +134,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 query.setHeaders(getSecuredHeaders());
                 HttpResponse response = getHttpClient().execute(query);
                 if (200 == response.getStatusLine().getStatusCode()) {
-                    Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
                     Type type = new TypeToken<IngestWizardDataDto>() {
                     }.getType();
                     data = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
@@ -147,6 +144,35 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             LOGGER.error("Communication exception while searching for track in track repository. {}", e);
         }
         return data;
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
+    */
+    @Override
+    public IngestWizardDataDto selectDrops(IngestWizardDataDto data) {
+        IngestWizardDataDto result = null;
+        try {
+            String jsonBody = gson.toJson(data);
+
+            HttpPost query = new HttpPost(trackRepoUrl.concat("drops/select.json"));
+            HttpEntity entity = new StringEntity(jsonBody);
+            query.setEntity(entity);
+            query.setHeaders(getSecuredHeaders());
+            HttpResponse response = getHttpClient().execute(query);
+            if (200 == response.getStatusLine().getStatusCode()) {
+                Type type = new TypeToken<IngestWizardDataDto>() {
+                }.getType();
+                result = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+            }
+        } catch (ClientProtocolException e) {
+            LOGGER.error("Cannot search in track repository. {}", e);
+        } catch (IOException e) {
+            LOGGER.error("Communication exception while searching for track in track repository. {}", e);
+        }
+        return result;
     }
 
 	/*
@@ -163,7 +189,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 				pull.setHeaders(getSecuredHeaders());
 				HttpResponse response = getHttpClient().execute(pull);
 				if (200 == response.getStatusLine().getStatusCode()) {
-					Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 					trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
 				}
 			}
@@ -199,7 +224,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 			HttpResponse httpResponse = getHttpClient().execute(httpPost);
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
-				Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 				trackDto = gson.fromJson(new InputStreamReader(httpResponse.getEntity().getContent()), TrackDto.class);
 			} else if (statusCode == HttpStatus.SC_NO_CONTENT) {
 				trackDto = null;
@@ -249,29 +273,32 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		PageListDto<TrackDto> tracks = new PageListDto<TrackDto>(Collections.<TrackDto>emptyList(), 0, page.getPageNumber()+1, page.getPageSize());
 		try {
 			if (criteria != null) {
-				List<NameValuePair> queryParams = buildPageParams(page);
+                List<NameValuePair> queryParams = new LinkedList<NameValuePair>();
                 addQParam(criteria.getArtist(), "artist", queryParams);
                 addQParam(criteria.getTitle(), "title", queryParams);
-				addQParam(criteria.getIsrc(), "isrc", queryParams);
+                addQParam(criteria.getIsrc(), "isrc", queryParams);
                 addDateQParam(criteria.getIngestTo(), "ingestTo", queryParams);
                 addDateQParam(criteria.getIngestFrom(), "ingestFrom", queryParams);
                 addDateQParam(criteria.getReleaseTo(), "releaseTo", queryParams);
                 addDateQParam(criteria.getReleaseFrom(), "releaseFrom", queryParams);
-				addQParam(criteria.getLabel(), "label", queryParams);
+                addQParam(criteria.getLabel(), "label", queryParams);
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
                 addQParam(criteria.getGenre(), "genre", queryParams);
+                if(queryParams.size() > 0){
+                    buildPageParams(page, queryParams);
 
-				String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
-				HttpGet signin = new HttpGet(url);
-				signin.setHeaders(getSecuredHeaders());
-				HttpResponse response = getHttpClient().execute(signin);
-				if (200 == response.getStatusLine().getStatusCode()) {
-					Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-					Type type = new TypeToken<PageListDto<TrackDto>>() {
-					}.getType();
-					tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
-				}
+                    String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));
+                    HttpGet signin = new HttpGet(url);
+                    signin.setHeaders(getSecuredHeaders());
+                    HttpResponse response = getHttpClient().execute(signin);
+                    if (200 == response.getStatusLine().getStatusCode()) {
+                        Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+                        Type type = new TypeToken<PageListDto<TrackDto>>() {
+                        }.getType();
+                        tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                    }
+                }
 			}
 		} catch (ClientProtocolException e) {
 			LOGGER.error("Cannot search in track repository. {}", e);
@@ -291,8 +318,8 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         	queryParams.add(new BasicNameValuePair(key, param));
     }
 
-    protected List<NameValuePair> buildPageParams(Pageable page){
-		List<NameValuePair> params = new LinkedList<NameValuePair>();
+    protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr){
+        List<NameValuePair> params = paramsArr.length == 0 ? new LinkedList<NameValuePair>() : paramsArr[0];
 		
 		params.add(new BasicNameValuePair("page.size", String.valueOf(page.getPageSize())));
 		params.add(new BasicNameValuePair("page.page", String.valueOf(page.getPageNumber()+1)));

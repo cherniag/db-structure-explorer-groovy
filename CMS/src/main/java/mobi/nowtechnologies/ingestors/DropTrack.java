@@ -28,6 +28,7 @@ public class DropTrack {
 	public String info;
 	public boolean licensed;
 	public boolean exists;
+    public boolean explicit;
 	public List<DropAssetFile> files = new ArrayList<DropAssetFile>();
 	public List<DropTerritory> territories = new ArrayList<DropTerritory>();
 	public String productId;
@@ -64,7 +65,13 @@ public class DropTrack {
 	public String getArtist() {
 		return artist;
 	}
-	public void setArtist(String artist) {
+    public boolean isExplicit() {
+        return explicit;
+    }
+    public void setExplicit(boolean explicit) {
+        this.explicit = explicit;
+    }
+    public void setArtist(String artist) {
 		this.artist = artist;
 	}
 	public String getGenre() {

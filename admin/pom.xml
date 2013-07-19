@@ -55,7 +55,7 @@
 			<artifactId>shared-web</artifactId>
 		</dependency>
 		
-			<dependency>
+		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
 		</dependency>

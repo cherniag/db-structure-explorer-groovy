@@ -48,7 +48,9 @@ public class Track extends AbstractEntity {
 	@Basic(optional=true)
 	protected String Info;	
 	@Basic(optional=true)
-	protected Boolean Licensed;	
+	protected Boolean Licensed;
+    @Basic(optional=true)
+	protected Boolean explicit;
 
 	
     @Column(columnDefinition="LONGBLOB")
@@ -223,7 +225,12 @@ public class Track extends AbstractEntity {
 	public void setLicensed(Boolean licensed) {
 		Licensed = licensed;
 	}
-	
 
+    public Boolean getExplicit() {
+        return explicit;
+    }
 
+    public void setExplicit(Boolean explicit) {
+        this.explicit = explicit;
+    }
 }

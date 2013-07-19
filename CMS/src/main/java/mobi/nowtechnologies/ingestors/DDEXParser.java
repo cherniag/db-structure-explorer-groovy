@@ -1,21 +1,7 @@
 package mobi.nowtechnologies.ingestors;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import mobi.nowtechnologies.domain.AssetFile.FileType;
 import mobi.nowtechnologies.ingestors.DropTrack.Type;
-import mobi.nowtechnologies.service.dao.CNBaseDAO;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -23,6 +9,12 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public abstract class DDEXParser extends IParser {
 
@@ -71,6 +63,8 @@ public abstract class DDEXParser extends IParser {
 				resourceDetail = new DropTrack();
 				String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
 				resourceDetail.isrc = isrc;
+                String parentalWarningType = details.getChildText("ParentalWarningType");
+                resourceDetail.explicit = "Explicit".equals(parentalWarningType);
 				resourceDetails.put(reference, resourceDetail);
 				if (details.getChild("PLine") != null) {
 					resourceDetail.copyright = details.getChild("PLine").getChildText("PLineText");
@@ -256,11 +250,12 @@ public abstract class DDEXParser extends IParser {
 					track.files.add(imageFile);
 
 				getIds(release, track, track.files);
+                DropTrack resourceDetail = resourceDetails.get(resourceRef);
 				if (track.isrc == null || "".equals(track.isrc)) {
 					if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
-							&& resourceDetails.get(resourceRef) != null) {
+							&& resourceDetail != null) {
 						LOG.info("Getting ISRC from resource " + resourceRef);
-						track.isrc = resourceDetails.get(resourceRef).isrc;
+						track.isrc = resourceDetail.isrc;
 					}
 				}
 
@@ -272,11 +267,15 @@ public abstract class DDEXParser extends IParser {
 					if (pline != null) {
 						track.year = pline.getChildText("Year");
 						track.copyright = pline.getChildText("PLineText");
-					} else if (resourceDetails.get(resourceRef) != null) {
-						track.year = resourceDetails.get(resourceRef).year;
-						track.copyright = resourceDetails.get(resourceRef).copyright;
+					} else if (resourceDetail != null) {
+						track.year = resourceDetail.year;
+						track.copyright = resourceDetail.copyright;
 
 					}
+
+                    if (resourceDetail != null) {
+                        track.explicit = resourceDetail.explicit;
+                    }
 
 					Element details = release.getChild("ReleaseDetailsByTerritory");
 					String title = release.getChild("ReferenceTitle").getChildText("TitleText");

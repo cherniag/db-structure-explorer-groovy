@@ -37,6 +37,7 @@ public class TrackDtoExtTest {
 		throws Exception {
 		Track track = new Track();
 		track.setLicensed(new Boolean(true));
+		track.setExplicit(new Boolean(true));
 		track.setStatus(TrackStatus.ENCODED);
 		track.setYear("");
 		track.setResolution(AudioResolution.RATE_256);
@@ -72,6 +73,7 @@ public class TrackDtoExtTest {
 		assertEquals(track.getPublishDate(), result.getPublishDate());
 		assertEquals(track.getAlbum(), result.getAlbum());
 		assertEquals(track.getLicensed(), result.getLicensed());
+		assertEquals(track.getExplicit(), result.getExplicit());
 		assertEquals(track.getIngestor(), result.getIngestor());
 		assertEquals(track.getSubTitle(), result.getSubTitle());
 		assertEquals(track.getProductCode(), result.getProductCode());

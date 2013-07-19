@@ -1,26 +1,8 @@
 package mobi.nowtechnologies.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import mobi.nowtechnologies.domain.AssetFile;
-import mobi.nowtechnologies.domain.DropContent;
-import mobi.nowtechnologies.domain.IngestionLog;
-import mobi.nowtechnologies.domain.Territory;
-import mobi.nowtechnologies.domain.Track;
-import mobi.nowtechnologies.ingestors.DropAssetFile;
-import mobi.nowtechnologies.ingestors.DropData;
-import mobi.nowtechnologies.ingestors.DropTerritory;
-import mobi.nowtechnologies.ingestors.DropTrack;
+import mobi.nowtechnologies.domain.*;
+import mobi.nowtechnologies.ingestors.*;
 import mobi.nowtechnologies.ingestors.DropTrack.Type;
-import mobi.nowtechnologies.ingestors.IParser;
-import mobi.nowtechnologies.ingestors.IParserFactory;
 import mobi.nowtechnologies.ingestors.IParserFactory.Ingestors;
 import mobi.nowtechnologies.mvc.controller.DropsData;
 import mobi.nowtechnologies.mvc.controller.DropsData.Drop;
@@ -28,9 +10,10 @@ import mobi.nowtechnologies.mvc.controller.IngestData;
 import mobi.nowtechnologies.mvc.controller.IngestWizardData;
 import mobi.nowtechnologies.service.dao.IngestionLogDAO;
 import mobi.nowtechnologies.service.dao.TrackDAO;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.*;
 
 public class IngestService {
 
@@ -186,6 +169,7 @@ public class IngestService {
 				track.setXml(value.xml.getBytes());
 				track.setInfo(value.info);
 				track.setLicensed(value.licensed);
+				track.setExplicit(value.explicit);
 
 				Set<AssetFile> files = track.getFiles();
 				if (files == null) {
