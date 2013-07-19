@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -304,6 +305,10 @@ public class User implements Serializable {
 
     @Column(name = "showFreeTrial")
     private Boolean showFreeTrial;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "last_successful_payment_details", nullable = true)
+    private PaymentDetails lastSuccessfulPaymentDetails;
 
 	public User() {
 		setDisplayName("");
@@ -1112,7 +1117,7 @@ public class User implements Serializable {
 	public String getLastSubscribedPaymentSystem() {
 		return lastSubscribedPaymentSystem;
 	}
-	
+
 	public PaymentDetailsStatus getLastPaymentStatus() {
 		return currentPaymentDetails != null ? currentPaymentDetails.getLastPaymentStatus() : null;
 	}
@@ -1224,13 +1229,11 @@ public class User implements Serializable {
 
 	/**
 	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isOnFreeTrial() {
-		return new DateTime(getFreeTrialExpiredMillis()).isAfterNow()
-				&& isEmpty(getLastSubscribedPaymentSystem())
-				&& getCurrentPaymentDetails() == null;
+		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
 
 	public boolean wasSubscribed() {
@@ -1347,14 +1350,35 @@ public class User implements Serializable {
 				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
-    public boolean isTariffChanged(){
-        boolean areTariffsEqual = true;
-        if (currentPaymentDetails != null){
-            areTariffsEqual = currentPaymentDetails.getPaymentPolicy().getTariff().equals(tariff);
-        }
-        return areTariffsEqual;
+    public boolean has4GVideoAudioSubscription(){
+        return is4GVideoAudioPaymentDetails(currentPaymentDetails);
     }
 
+    public boolean isOn4GVideoAudioBoughtPeriod(){
+        return nextSubPayment > Utils.getEpochSeconds() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
+    }
+
+    public boolean isOnAudioBoughtPeriod() {
+        return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+    }
+
+    private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
+        boolean is4GVideoAudioPaymentDetails = false;
+        if (paymentDetails != null ){
+            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+            is4GVideoAudioPaymentDetails = paymentPolicy.is4GVideoAudioSubscription();
+        }
+        return is4GVideoAudioPaymentDetails;
+    }
+
+    private boolean isAudioPaymentDetails(PaymentDetails paymentDetails){
+        boolean isAudioPaymentDetails = false;
+        if (paymentDetails != null ){
+            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+            isAudioPaymentDetails = paymentPolicy.isAudioSubscription();
+        }
+        return isAudioPaymentDetails;
+    }
 
     public boolean canGetVideo() {
         return isO2Consumer() && is4G();
@@ -1377,7 +1401,7 @@ public class User implements Serializable {
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {
-        return videoFreeTrialHasBeenActivated != null && videoFreeTrialHasBeenActivated;
+        return videoFreeTrialHasBeenActivated;
     }
 
     public boolean isO2PAYMConsumer() {
@@ -1403,5 +1427,13 @@ public class User implements Serializable {
 
     public void setShowFreeTrial(Boolean showFreeTrial) {
         this.showFreeTrial = showFreeTrial;
+    }
+
+    public PaymentDetails getLastSuccessfulPaymentDetails() {
+        return lastSuccessfulPaymentDetails;
+    }
+
+    public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
+        this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
 }

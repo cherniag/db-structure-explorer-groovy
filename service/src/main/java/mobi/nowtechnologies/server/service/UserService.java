@@ -31,9 +31,7 @@ import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.TransactionType;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -42,7 +40,6 @@ import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -64,6 +61,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -74,8 +72,9 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author Maksym Chernolevskyi (maksym)
  */
 public class UserService {
-	private static final String PAYD_CC_ERROR = "payd.cc.error";
+    private static final String PAYD_CC_ERROR = "payd.cc.error";
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
 
     public Boolean canActivateVideoTrial(User u) {
         Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
@@ -504,31 +503,34 @@ public class UserService {
 		return user;
 	}
 
-	// private boolean userGroupIsInCommuntiy(byte userGroup, String
-	// communityName) {
-	// return communityName.equals(userDao
-	// .getCommunityNameByUserGroup(userGroup));
-	// }
-
 	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
-		Promotion promotion = null;
 
-		String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
-		String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
+        boolean isO2User = o2ClientService.isO2User(o2UserDetails);
 
-		if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
-			promotion = setPotentialPromo(community, user, staffCode);
-		else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
-			promotion = setPotentialPromo(community, user, storeCode);
-		else if (o2ClientService.isO2User(o2UserDetails))
-			promotion = setPotentialPromo(community.getName(), user, "promotionCode");
-		else
-			promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
+        boolean promotionApplied = applyO2PotentialPromo(isO2User, user, community);
 
-		applyPromotionByPromoCode(user, promotion);
-
-		return true;
+        return promotionApplied;
 	}
+
+    public synchronized boolean applyO2PotentialPromo(boolean isO2User, User user, Community community) {
+        Promotion promotion = null;
+
+        String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
+        String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
+
+        if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
+            promotion = setPotentialPromo(community, user, staffCode);
+        else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
+            promotion = setPotentialPromo(community, user, storeCode);
+        else if (isO2User)
+            promotion = setPotentialPromo(community.getName(), user, "promotionCode");
+        else
+            promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
+
+        applyPromotionByPromoCode(user, promotion);
+
+        return true;
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
@@ -536,9 +538,14 @@ public class UserService {
 		if (promotion != null) {
             UserBanned userBanned = getUserBanned(user.getId());
             if(userBanned == null || userBanned.isGiveAnyPromotion()){
-                int curTime = Utils.getEpochSeconds();
-                int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTime)/(7*24*60*60) : promotion.getFreeWeeks();
-                int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTime + freeWeeks * Utils.WEEK_SECONDS;
+                int curTimeSeconds;
+                if (user.getFreeTrialStartedTimestampMillis()!=null){
+                    curTimeSeconds = (int)(user.getFreeTrialStartedTimestampMillis()/1000);
+                }else{
+                    curTimeSeconds = Utils.getEpochSeconds();
+                }
+                int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTimeSeconds)/(7*24*60*60) : promotion.getFreeWeeks();
+                int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTimeSeconds + freeWeeks * Utils.WEEK_SECONDS;
 
                 user.setNextSubPayment(nextSubPayment);
                 user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
@@ -547,7 +554,7 @@ public class UserService {
                 user.setPotentialPromoCodePromotion(null);
 
                 user.setStatus(UserStatusDao.getSubscribedUserStatus());
-                user.setFreeTrialStartedTimestampMillis(Utils.getEpochMillis());
+                user.setFreeTrialStartedTimestampMillis(curTimeSeconds*1000L);
                 user = entityService.updateEntity(user);
 
                 promotion.setNumUsers(promotion.getNumUsers() + 1);
@@ -986,8 +993,8 @@ public class UserService {
 				.getPaymentStatus()) {
 			LOGGER
 					.info(
-							"Removing user [{}] in PIN_PENDING status during registration",
-							user.getId());
+                            "Removing user [{}] in PIN_PENDING status during registration",
+                            user.getId());
 			entityService.removeEntity(User.class, user.getId());
 			deleted = true;
 		}
@@ -1112,6 +1119,7 @@ public class UserService {
 		final long epochMillis = Utils.getEpochMillis();
 		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
 		user.setLastSubscribedPaymentSystem(paymentSystem);
+        user.setLastSuccessfulPaymentDetails(payment.getPaymentDetails());
 
 		final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
 
@@ -1119,13 +1127,12 @@ public class UserService {
 
 		final int oldNextSubPayment = user.getNextSubPayment();
 		if (paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
+            if (user.isOnFreeTrial()) {
+                skipFreeTrial(user);
+            }
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-			final Long freeTrialExpiredMillis = user.getFreeTrialExpiredMillis();
-			if (freeTrialExpiredMillis != null && freeTrialExpiredMillis > epochMillis) {
-				user.setFreeTrialExpiredMillis(epochMillis);
-			}
 		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
 		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
@@ -1157,30 +1164,6 @@ public class UserService {
 		entityService.updateEntity(user);
 
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED)
-	public User payOffDebt(User user, SubmittedPayment submittedPayment) {
-		LOGGER.debug("input parameters user: [{}]", user);
-
-		final int userId = user.getId();
-
-		final int deactivatedGraceCreditSeconds = user.getDeactivatedGraceCreditSeconds();
-
-		if (deactivatedGraceCreditSeconds > 0) {
-			user.setNextSubPayment(user.getNextSubPayment() - deactivatedGraceCreditSeconds);
-			user.setDeactivatedGraceCreditSeconds(0);
-			int count = userRepository.payOffDebt(user.getNextSubPayment(), user.getDeactivatedGraceCreditMillis(), userId);
-
-			if (count != 1) {
-				throw new ServiceException("Wrong update row count [" + count + "]");
-			}
-
-			accountLogService.logAccountEvent(userId, user.getSubBalance(), null, submittedPayment, TransactionType.PAY_OFF_DEBT, null);
-		}
-
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return user;
 	}
 
 	public boolean isnonO2User(User user) {
@@ -1919,8 +1902,8 @@ public class UserService {
 			if (migResponse.isSuccessful()) {
 				LOGGER
 						.info(
-								"The request for freeSms sent to MIG about user {} succesfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
-								new Object[] { user, user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance() });
+                                "The request for freeSms sent to MIG about user {} succesfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
+                                new Object[]{user, user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance()});
 			} else
 				throw new Exception(migResponse.getDescriptionError());
 
@@ -2089,4 +2072,72 @@ public class UserService {
 		LOGGER.debug("Output parameter usersForRetryPayment=[{}]", usersForRetryPayment);
 		return usersForRetryPayment;
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User downgradeUserTariff(User user, Tariff newTariff) {
+
+        Tariff currentTariff = user.getTariff();
+        if (Tariff._4G.equals(currentTariff) &&_3G.equals(newTariff)){
+            if (user.has4GVideoAudioSubscription()){
+                if(user.isOn4GVideoAudioBoughtPeriod()){
+                    LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", user.getNextSubPayment(), currentTariff, newTariff);
+                    user = downgradeUserOn4GVideoAudioBoughPeriodTo3G(user);
+                }else if (user.isOnFreeTrial()){
+                    LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", currentTariff, newTariff);
+                    user = downgradeUserOn4GFreeTrialVideoAudioSubscription(user);
+                }else{
+                    LOGGER.info("Attempt to unsubscribe already paid user because of tariff downgraded from [{}] Free Trial Video Audio with nextSubPayment [{}] in the past to [{}]", currentTariff, user.getNextSubPayment(), newTariff);
+                    user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+                }
+            }else{
+                if (user.isOn4GVideoAudioBoughtPeriod()){
+                    LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] BUT NOT Video Audio Subscription to [{}] ", user.getNextSubPayment(), currentTariff, newTariff);;
+                    user = downgradeUserOn4GVideoAudioBoughPeriodTo3G(user);
+                }else{
+                    LOGGER.info("The payment details leaves as is because of user hasn't Video Audio Subscription on tariff downgrading from [{}] to [{}]", currentTariff, newTariff);
+                }
+            }
+        }else{
+            LOGGER.info("The payment details leaves as is because of new user tariff [{}] isn't 3G", newTariff);
+        }
+        return user;
+    }
+
+    private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
+        user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        user = skipFreeTrial(user);
+        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity());
+        return user;
+    }
+
+    private User downgradeUserOn4GVideoAudioBoughPeriodTo3G(User user) {
+        user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        user = skipBoughtPeriod(user);
+        return user;
+    }
+
+    private User skipBoughtPeriod(User user) {
+        int epochSeconds = Utils.getEpochSeconds();
+        final int nextSubPayment = user.getNextSubPayment();
+
+        LOGGER.info("Attempt to skip nextSubPayment [{}] by assigning current time [{}]", nextSubPayment, epochSeconds);
+        user.setNextSubPayment(epochSeconds);
+
+        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
+        return user;
+    }
+
+    private User skipFreeTrial(User user){
+        int currentTimeSeconds = Utils.getEpochSeconds();
+        long currentTimeMillis = currentTimeSeconds * 1000L;
+
+        LOGGER.info("Attempt of skipping free trial. The nextSubPayment [{}] and freeTrialExpiredMillis [{}] will be changed to [{}] and [{}] corresponding", user.getNextSubPayment(), user.getFreeTrialExpiredMillis(), currentTimeSeconds, currentTimeMillis);
+
+        user.setNextSubPayment(currentTimeSeconds);
+        user.setFreeTrialExpiredMillis(currentTimeMillis);
+
+        accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+
+        return user;
+    }
 }

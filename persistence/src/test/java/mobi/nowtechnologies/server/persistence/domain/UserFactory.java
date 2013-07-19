@@ -118,8 +118,9 @@ public class UserFactory
 		return user;
 	}
 
-     public static User createUserWithPaymentDetails(Tariff subscribedUserTariff) {
+     public static User createUserWithVideoPaymentDetails(Tariff subscribedUserTariff) {
          PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(subscribedUserTariff);
+         paymentPolicy.setContentCategory("");
 
          PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
          paymentDetails.setPaymentPolicy(paymentPolicy);
