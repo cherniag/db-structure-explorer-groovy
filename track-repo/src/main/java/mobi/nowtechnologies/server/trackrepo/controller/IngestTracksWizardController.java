@@ -7,10 +7,7 @@ import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class IngestTracksWizardController extends AbstractCommonController {
@@ -29,7 +26,7 @@ public class IngestTracksWizardController extends AbstractCommonController {
 	}
 
     @RequestMapping(value = "/drops/select", method = RequestMethod.POST)
-	protected @ResponseBody IngestWizardDataDto selectDrops(@ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto dto)
+	protected @ResponseBody IngestWizardDataDto selectDrops(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
@@ -38,7 +35,7 @@ public class IngestTracksWizardController extends AbstractCommonController {
 	}
 
     @RequestMapping(value = "/drops/tracks/select", method = RequestMethod.POST)
-	protected @ResponseBody IngestWizardDataDto selectDropTracks(@ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto dto)
+	protected @ResponseBody IngestWizardDataDto selectDropTracks(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
@@ -47,7 +44,7 @@ public class IngestTracksWizardController extends AbstractCommonController {
 	}
 
     @RequestMapping(value = "/drops/commit", method = RequestMethod.POST)
-	protected @ResponseBody Boolean commitDrops(@ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto dto)
+	protected @ResponseBody Boolean commitDrops(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);

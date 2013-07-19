@@ -44,4 +44,9 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     public IngestWizardDataDto getDrops() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public IngestWizardDataDto selectDrops(IngestWizardDataDto data) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
