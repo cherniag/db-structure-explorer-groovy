@@ -98,6 +98,11 @@ function videoSelected() {
 			        		<c:set var="checkedAttrib" />
 			        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoPaymentPolicy==true)}">
 			        			<c:set var="checkedAttrib">checked="checked"</c:set>
+			        			<%--Activate the video checkbox if the user has a video subscription --%>
+			        		</c:if>
+			        		<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
+			        			<c:set var="checkedAttrib">checked="checked"</c:set>
+			        			<%--Activate the video checkbox if the user has no subscription --%>
 			        		</c:if>
 			        		
 			        		<input type="checkbox"  onchange="videoSelected()" id="videoCheckbox" ${readOnlyAttrib} ${checkedAttrib} />
