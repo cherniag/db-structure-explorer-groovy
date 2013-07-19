@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +74,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
+        mav.addObject("canGetVideo", user.canGetVideo());
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -82,13 +84,38 @@ public class PaymentsController extends CommonController {
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
         List<PaymentPolicyDto> paymentPolicy;
-        if(user.isnonO2User())
+        
+        if(user.isnonO2User()) {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
-        else
+        } else {
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-        if(isEmpty(paymentPolicy))
+        }
+        
+        if(isEmpty(paymentPolicy)) {
             return Collections.emptyList();
+        }
+        
+        paymentPolicy = filterVideo(paymentPolicy, user);
+        
         return paymentPolicy;
+    }
+    
+    /**
+     * If the list of payment policies has videos but the user is not entitled for video, we'll remove
+     * the payment policies with video
+     */
+    private List<PaymentPolicyDto> filterVideo(List<PaymentPolicyDto> paymentPolicyList, User user) {
+    	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
+    	
+    	boolean videoEnabledUser = user.canGetVideo();
+    	for ( PaymentPolicyDto pp : paymentPolicyList ) {
+    		if ( pp.getVideoPaymentPolicy() && !videoEnabledUser ) {
+    			continue;
+    		}
+    		ret.add( pp );
+    	}
+    	
+    	return ret;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {

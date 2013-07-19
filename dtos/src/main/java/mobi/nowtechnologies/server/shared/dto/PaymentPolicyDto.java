@@ -25,6 +25,7 @@ public class PaymentPolicyDto {
     private BigDecimal oldSubcost;
     private Integer oldSubweeks;
     private String currencyISO;
+    private boolean videoPaymentPolicy;
 
     public PaymentPolicyDto() { }
 
@@ -50,15 +51,16 @@ public class PaymentPolicyDto {
         setPaymentType(policy.getPaymentType());
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
+        setVideoPaymentPolicy(policy.getVideoPaymentPolicy());
     }
 
-    private boolean isPsmsPolicy() {
+    /*private boolean isPsmsPolicy() {
         return paymentType.equalsIgnoreCase("");
     }
 
     private boolean isO2Operator() {
         return "O2 UK".equals(operatorName);
-    }
+    }*/
 
     public short getId() {
         return id;
@@ -132,7 +134,7 @@ public class PaymentPolicyDto {
         this.currencyISO = currencyISO;
     }
 
-    private boolean isInAppPolicy() {
+    /*private boolean isInAppPolicy() {
         return true;
     }
 
@@ -142,7 +144,15 @@ public class PaymentPolicyDto {
 
     private boolean isPayPalPolicy() {
         return true;
-    }
+    }*/
+    
+    public boolean getVideoPaymentPolicy() {
+		return videoPaymentPolicy;
+	}
+
+	public void setVideoPaymentPolicy(boolean videoPaymentPolicy) {
+		this.videoPaymentPolicy = videoPaymentPolicy;
+	}
 
 	@Override
 	public String toString() {

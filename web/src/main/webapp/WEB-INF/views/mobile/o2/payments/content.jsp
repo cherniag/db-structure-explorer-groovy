@@ -2,6 +2,41 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<script type="text/javascript">
+
+$(document).ready( function(){videoSelected()} );
+
+function videoSelected() {
+	var videoCheckbox = $("#videoCheckbox");
+	if ( typeof videoCheckbox == 'undefined' ) {
+		return;
+	}
+	
+	var paymentButtons = $("div.rel");
+	var isVideoSelected = videoCheckbox.is(':checked');
+	
+	if ( isVideoSelected ) {
+		$("div.videoOption").addClass("videoOptionHighlight");
+	} else {
+		$("div.videoOption").removeClass("videoOptionHighlight");
+	}
+	
+	paymentButtons.each(function(){
+		var attrib = $(this).attr("data-hasvideo");
+		if ( typeof attrib === 'undefined' || attrib === false ) {
+			return;
+		}
+		var videoAttr = attrib == "1";
+		
+		if ( videoAttr == isVideoSelected ) {
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
+}
+</script>
+
 <div class="header pie">
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
     <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right pie"><s:message code='m.page.main.menu.close' /></a>
@@ -42,6 +77,39 @@
                 <h1>${paymentPoliciesHeader}</h1>
                 <p>${paymentPoliciesNote}</p>
                 <hr />
+                
+                <c:if test="${canGetVideo eq true}">
+                <div class="videoOption">
+        	
+		        	<s:message code='pays.page.note.account.videotitle' var="payment_videotitle" />
+		        	<s:message code='pays.page.note.account.videoprice' var="payment_videoprice" />
+		        	<s:message code='pays.page.note.account.videoinfo' var="payment_videoinfo" />
+        	
+		        	<div class="videoOptionFirstRow">
+			        	<div style="float:left; font-weight: bold;">${payment_videotitle}</div>
+			        	<div style="float:right">
+			        		<label for="videoCheckbox">${payment_videoprice}</label>
+			        		
+			        		<c:set var="readOnlyAttrib" />
+			        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+			        			<c:set var="readOnlyAttrib">disabled="disabled"</c:set>
+			        		</c:if>
+			        		
+			        		<c:set var="checkedAttrib" />
+			        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoPaymentPolicy==true)}">
+			        			<c:set var="checkedAttrib">checked="checked"</c:set>
+			        		</c:if>
+			        		
+			        		<input type="checkbox"  onchange="videoSelected()" id="videoCheckbox" ${readOnlyAttrib} ${checkedAttrib} />
+			        	</div>
+			        	<div>&nbsp;</div>
+		        	</div>
+		        	
+		        	<div class="videoOptionText">${payment_videoinfo}</div>
+		        	
+		        </div>
+		        </c:if>
+		        
                 <div class="setOfButtons">
                 	<c:set var="hasPaymentBaner" value="false" />
                     <c:forEach var="paymentPolicy" items="${paymentPolicies}">
@@ -68,7 +136,7 @@
                             <s:message code='pays.select.iTunesSubscription' var="payment_label" />
                         </c:if>
 
-                        <div class="rel">
+                        <div class="rel" data-hasvideo="${paymentPolicy.videoPaymentPolicy ? '1' : '0'}">
                             <c:choose>
                                 <c:when test="${isIOSDevice && !isO2User}">
                                     <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">

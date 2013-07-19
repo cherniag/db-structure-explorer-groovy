@@ -293,6 +293,10 @@ public class PaymentPolicy {
     public void setTariff(Tariff tariff) {
         this.tariff = tariff;
     }
+    
+    public boolean getVideoPaymentPolicy() {
+    	return Tariff._4G.equals(this.tariff);
+    }
 
     @Override
     public String toString() {
