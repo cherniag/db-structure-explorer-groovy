@@ -783,6 +783,7 @@ input.accounts{
 }
 
 .videoOption {
+	border: 3px solid gray;
 	margin: 5px;
 	padding: 10px;
 }
