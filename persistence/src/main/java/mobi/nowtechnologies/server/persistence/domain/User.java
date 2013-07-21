@@ -1395,9 +1395,9 @@ public class User implements Serializable {
     public boolean is4G(){
         return Tariff._4G.equals(tariff);
     }
-
+    
     public boolean canPlayVideo() {
-        return is4G() && (isOnFreeTrial() || isSubscribed());
+        return is4G() && ((isOnFreeTrial() && has4GVideoAudioSubscription()) || isOn4GVideoAudioBoughtPeriod());
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {

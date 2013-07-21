@@ -21,7 +21,7 @@ import static junit.framework.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-public class DataToDoRefundRepositoryIT {
+public class RefundRepositoryIT {
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;

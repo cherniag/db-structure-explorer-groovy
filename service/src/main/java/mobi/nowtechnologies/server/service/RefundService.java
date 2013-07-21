@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -9,5 +11,5 @@ import mobi.nowtechnologies.server.persistence.domain.User;
  */
 public interface RefundService {
 
-    Refund logOnTariffMigration(User user);
+    Refund logOnTariffMigration(User userWithOldTariffOnOldBoughtPeriod, Tariff newUserTariff, PaymentDetails newPaymentDetails);
 }
