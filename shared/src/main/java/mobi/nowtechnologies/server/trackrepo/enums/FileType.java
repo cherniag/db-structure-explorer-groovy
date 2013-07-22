@@ -11,9 +11,10 @@ public enum FileType {
 	MOBILE_HEADER(1, "header", "hdr", "application/octet-stream"), 
 	MOBILE_AUDIO(2, "audio", "aud", "application/octet-stream"),
 	MOBILE_ENCODED(2, "encoded", "enc", "application/octet-stream"),
-	DOWNLOAD(1, "purchased", "mp3", "audio/mpeg3"), 
-	IMAGE(3, "image", "jpg", "image/jpeg");
-	
+	DOWNLOAD(1, "purchased", "mp3", "audio/mpeg3"),
+    IMAGE(3, "image", "jpg", "image/jpeg"),
+    VIDEO_STREAM(4, "video", "flv", "application/octet-stream");
+
 	private Integer id;
 	private String pack;
 	private String ext;
