@@ -1,12 +1,11 @@
 package com.brightcove.proserve.mediaapi.wrapper.apiobjects;
 
-import java.util.logging.Logger;
-
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.ControllerTypeEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoCodecEnum;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.ControllerTypeEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoCodecEnum;
+import java.util.logging.Logger;
 
 /**
  * <p>Represents a Rendition object to/from the Media API.</p>
@@ -33,7 +32,7 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoCodecEnum;
  * 			<td>controllerType</td>
  * 			<td>enum</td>
  * 			<td>no</td>
- * 			<td>[Optional — required for <a href="http://support.brightcove.com/en/docs/delivering-live-video">live streaming</a> only] Depending on your CDN, one of the following values: LIMELIGHT_LIVE or AKAMAI_LIVE.</td>
+ * 			<td>[Optional  required for <a href="http://support.brightcove.com/en/docs/delivering-live-video">live streaming</a> only] Depending on your CDN, one of the following values: LIMELIGHT_LIVE or AKAMAI_LIVE.</td>
  * 		</tr>
  * 		<tr>
  * 			<td>encodingRate</td>
@@ -282,7 +281,7 @@ public class Rendition {
 	/**
 	 * <p>Sets the Controller Type for this Rendition.</p>
 	 * 
-	 * <p><code>[Optional — required for live streaming only] Depending on your CDN, one of the following values: LIMELIGHT_LIVE or AKAMAI_LIVE.</code></p>
+	 * <p><code>[Optional  required for live streaming only] Depending on your CDN, one of the following values: LIMELIGHT_LIVE or AKAMAI_LIVE.</code></p>
 	 * 
 	 * @param controllerType Enumeration value for the controller type
 	 */
