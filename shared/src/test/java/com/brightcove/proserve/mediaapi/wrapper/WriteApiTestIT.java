@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * Time: 9:18 AM
  * To change this template use File | Settings | File Templates.
  */
-public class WriteApiTest {
+public class WriteApiTestIT {
     public static void main(String[] args) {
         if(args.length != 6){
             usage(new Exception("[ERR] Incorrect number of arguments."));
@@ -218,7 +218,7 @@ public class WriteApiTest {
     }
 
     public static void usage(Exception e, PrintStream out, Integer exitCode){
-        out.println("[USE] Usage: java com.brightcove.proserve.mediaapi.wrapper.WriteApiTest <Write Api Token> <Video Filename> <Account Publisher Id> <Thumbnail Filename> <Video Still Filename> <Child Account Id>");
+        out.println("[USE] Usage: java com.brightcove.proserve.mediaapi.wrapper.WriteApiTestIT <Write Api Token> <Video Filename> <Account Publisher Id> <Thumbnail Filename> <Video Still Filename> <Child Account Id>");
         e.printStackTrace(out);
         System.exit(exitCode);
     }

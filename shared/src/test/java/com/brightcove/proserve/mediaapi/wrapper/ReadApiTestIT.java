@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * Time: 9:14 AM
  * To change this template use File | Settings | File Templates.
  */
-public class ReadApiTest {
+public class ReadApiTestIT {
     public static void main(String[] args) {
         Logger log = Logger.getLogger("ApiTests");
 
