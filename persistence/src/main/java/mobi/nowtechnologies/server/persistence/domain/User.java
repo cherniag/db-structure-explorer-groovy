@@ -300,12 +300,6 @@ public class User implements Serializable {
     @Column(name = "videoFreeTrialHasBeenActivated")
     private Boolean videoFreeTrialHasBeenActivated;
 
-    @Column(name = "hasAllDetails")
-    private Boolean hasAllDetails;
-
-    @Column(name = "showFreeTrial")
-    private Boolean showFreeTrial;
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_successful_payment_details", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
@@ -1409,24 +1403,11 @@ public class User implements Serializable {
     }
 
     public Boolean hasAllDetails() {
-        return  this.hasAllDetails;
-
+        return this.contract != null && this.segment != null && this.tariff != null;
     }
 
     public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
         this.videoFreeTrialHasBeenActivated = videoFreeTrialHasBeenActivated;
-    }
-
-    public Boolean showFreeTrial() {
-        return this.showFreeTrial;
-    }
-
-    public void setHasAllDetails(Boolean hasAllDetails) {
-        this.hasAllDetails = hasAllDetails;
-    }
-
-    public void setShowFreeTrial(Boolean showFreeTrial) {
-        this.showFreeTrial = showFreeTrial;
     }
 
     public PaymentDetails getLastSuccessfulPaymentDetails() {

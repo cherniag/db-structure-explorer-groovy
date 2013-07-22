@@ -108,7 +108,7 @@ public class AccCheckController extends CommonController {
             accountCheck.setCanPlayVideo(user.canPlayVideo());
             accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
             accountCheck.setHasAllDetails(user.hasAllDetails());
-            accountCheck.setShowFreeTrial(user.showFreeTrial());
+            accountCheck.setShowFreeTrial(true);
 
 			return mav;
 		} catch (Exception e) {
