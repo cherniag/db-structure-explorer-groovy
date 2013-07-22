@@ -33,9 +33,8 @@ public class HomeController extends AbstractCommonController {
 			List<CommunityDto> communitiesbyUser = adminUserService.getCommunitiesbyUser(authentication.getName());
 			viewName = "redirect:/?community="+communitiesbyUser.get(0).getUrl();
 		}
-		
-		ModelAndView modelAndView = new ModelAndView(viewName);
-		return modelAndView;
+
+        return new ModelAndView(viewName);
 	}
 
 	public void setAdminUserService(AdminUserService adminUserService) {

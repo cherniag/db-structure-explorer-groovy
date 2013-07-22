@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.DataToDoRefundService;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;

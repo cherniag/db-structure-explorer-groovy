@@ -25,7 +25,8 @@ public class Utils {
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
-	public static final int DAY_MILLISECONDS = 86400000;
+    public static final long EIGHT_WEEK_MILLIS = 8*WEEK_SECONDS*1000L;
+    public static final int DAY_MILLISECONDS = 86400000;
 	public static final int DAY_SECONDS = 86400;
 
     public static int truncatedToSeconds(Date date){

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.domain.DataToDoRefund;
+import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -21,7 +21,7 @@ import static junit.framework.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-public class DataToDoRefundRepositoryIT {
+public class RefundRepositoryIT {
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;
@@ -29,30 +29,30 @@ public class DataToDoRefundRepositoryIT {
     @Resource(name = "paymentDetailsRepository")
     private PaymentDetailsRepository paymentDetailsRepository;
 
-    @Resource(name = "dataToDoRefundRepository")
-    DataToDoRefundRepository dataToDoRefundRepository;
+    @Resource(name = "refundRepository")
+    RefundRepository refundRepository;
 
-    private DataToDoRefund actualDataToDoRefund;
-    private DataToDoRefund dataToDoRefund;
+    private Refund actualRefund;
+    private Refund refund;
 
     private void prepareDataForSave() {
-        dataToDoRefund = new DataToDoRefund();
-        dataToDoRefund.nextSubPaymentMillis = Long.MAX_VALUE;
-        dataToDoRefund.paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-        dataToDoRefund.logTimeMillis = Utils.getEpochMillis();
-        dataToDoRefund.user = UserFactory.createUser();
+        refund = new Refund();
+        refund.nextSubPaymentMillis = Long.MAX_VALUE;
+        refund.paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        refund.logTimeMillis = Utils.getEpochMillis();
+        refund.user = UserFactory.createUser();
 
-        dataToDoRefund.user = userRepository.save(dataToDoRefund.user);
+        refund.user = userRepository.save(refund.user);
 
-        dataToDoRefund.paymentDetails = paymentDetailsRepository.save(dataToDoRefund.paymentDetails);
+        refund.paymentDetails = paymentDetailsRepository.save(refund.paymentDetails);
     }
 
     private void validateSaving() {
-        assertNotNull(actualDataToDoRefund);
-        assertEquals(dataToDoRefund.getPaymentDetailsId(), actualDataToDoRefund.getPaymentDetailsId());
-        assertEquals(dataToDoRefund.getUserId(), actualDataToDoRefund.getUserId());
-        assertEquals(dataToDoRefund.logTimeMillis, actualDataToDoRefund.logTimeMillis);
-        assertEquals(dataToDoRefund.nextSubPaymentMillis, actualDataToDoRefund.nextSubPaymentMillis);
+        assertNotNull(actualRefund);
+        assertEquals(refund.getPaymentDetailsId(), actualRefund.getPaymentDetailsId());
+        assertEquals(refund.getUserId(), actualRefund.getUserId());
+        assertEquals(refund.logTimeMillis, actualRefund.logTimeMillis);
+        assertEquals(refund.nextSubPaymentMillis, actualRefund.nextSubPaymentMillis);
     }
 
     private void validateFindOne() {
@@ -63,14 +63,14 @@ public class DataToDoRefundRepositoryIT {
     private void prepareDateForFindOne() {
         prepareDataForSave();
 
-        actualDataToDoRefund = dataToDoRefundRepository.save(dataToDoRefund);
+        actualRefund = refundRepository.save(refund);
     }
 
     @Test
     public void testSave_Success(){
         prepareDataForSave();
 
-        actualDataToDoRefund = dataToDoRefundRepository.save(dataToDoRefund);
+        actualRefund = refundRepository.save(refund);
 
         validateSaving();
     }
@@ -79,7 +79,7 @@ public class DataToDoRefundRepositoryIT {
     public void testFindOne_Success(){
         prepareDateForFindOne();
 
-        actualDataToDoRefund = dataToDoRefundRepository.findOne(actualDataToDoRefund.id);
+        actualRefund = refundRepository.findOne(actualRefund.id);
 
         validateFindOne();
     }

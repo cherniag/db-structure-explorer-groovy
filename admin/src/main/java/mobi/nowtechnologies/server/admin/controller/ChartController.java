@@ -68,7 +68,7 @@ public class ChartController extends AbstractCommonController {
 	@InitBinder( { ChartItemDto.CHART_ITEM_DTO})
 	public void initChartItemBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, "channel", new StringTrimmerEditor(" ",true));
-		binder.setValidator(new ChartItemDtoValidator());	
+		binder.setValidator(new ChartItemDtoValidator());
 	}
 
 	@InitBinder( {ChartDto.CHART_DTO })
@@ -80,25 +80,17 @@ public class ChartController extends AbstractCommonController {
 
 	@RequestMapping(value = "/charts/list", method = RequestMethod.GET)
 	public ModelAndView getCharts(HttpServletRequest request) {
-		LOGGER.debug("input parameters request [{}]", new Object[] { request });
+        LOGGER.debug("input parameters request [{}]", new Object[]{request});
 
-		String communityURL = RequestUtils.getCommunityURL();
-		List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, null);
-		List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
+        String communityURL = RequestUtils.getCommunityURL();
+        List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, null);
+        List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
 
-		ModelAndView modelAndView = new ModelAndView("charts/charts");
-		modelAndView.addObject(ChartDto.CHART_DTO_LIST, chartDtos);
+        return new ModelAndView("charts/charts")
+                .addObject(ChartDto.CHART_DTO_LIST, chartDtos);
+    }
 
-		return modelAndView;
-	}
-	
-	/**Update properties of selected chart
-	 * 
-	 * @param chartDto dto of chart
-	 * @param chartId id of chart
-	 * @return redirect to the chart calender page
-	 */
-	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
+    @RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
 	public ModelAndView updateChart(
 			@PathVariable("chartId") Integer chartId,
 			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,

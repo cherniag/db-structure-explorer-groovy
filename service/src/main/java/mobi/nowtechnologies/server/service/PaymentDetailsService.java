@@ -70,10 +70,10 @@ public class PaymentDetailsService {
     
     private PaymentDetailsRepository paymentDetailsRepository;
 
-    private DataToDoRefundService dataToDoRefundService;
+    private RefundService refundService;
 
-    public void setDataToDoRefundService(DataToDoRefundService dataToDoRefundService) {
-        this.dataToDoRefundService = dataToDoRefundService;
+    public void setRefundService(RefundService refundService) {
+        this.refundService = refundService;
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -463,7 +463,7 @@ public class PaymentDetailsService {
 			user.setLastPaymentTryInCycleMillis(0L);
 			userService.updateUser(user);
 
-            dataToDoRefundService.logOnTariffMigration(user);
+            //refundService.logOnTariffMigration(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);
