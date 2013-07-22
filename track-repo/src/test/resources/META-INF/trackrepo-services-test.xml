@@ -6,7 +6,7 @@
 http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 	
-<import resource="/WEB-INF/trackrepo-services.xml"/>
+<import resource="../WEB-INF/trackrepo-services.xml"/>
 
     <!-- Application properties     -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

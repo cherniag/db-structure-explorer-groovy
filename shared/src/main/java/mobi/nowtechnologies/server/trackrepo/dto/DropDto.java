@@ -11,10 +11,19 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class DropDto {
+    private String ingestor;
     private String name;
     private Date date;
     private List<DropTrackDto> tracks;
-    private boolean selected;
+    private Boolean selected;
+
+    public String getIngestor() {
+        return ingestor;
+    }
+
+    public void setIngestor(String ingestor) {
+        this.ingestor = ingestor;
+    }
 
     public String getName() {
         return name;
@@ -40,18 +49,28 @@ public class DropDto {
         this.tracks = tracks;
     }
 
-    public boolean isSelected() {
+    public Boolean getSelected() {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(Boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean hasAnySelected() {
+        for (DropTrackDto drop : tracks) {
+            if(drop.getIngest() != null && drop.getIngest())
+                return true;
+        }
+
+        return false;
     }
 
     @Override
     public String toString() {
         return "DropDto{" +
-                "name='" + name + '\'' +
+                "ingestor='" + ingestor + '\'' +
+                ", name='" + name + '\'' +
                 ", date=" + date +
                 ", tracks=" + tracks +
                 ", selected=" + selected +

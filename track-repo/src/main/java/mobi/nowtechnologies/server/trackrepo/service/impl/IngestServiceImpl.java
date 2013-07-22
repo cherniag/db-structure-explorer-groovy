@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import mobi.nowtechnologies.server.trackrepo.domain.*;
+import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
@@ -47,7 +48,7 @@ public class IngestServiceImpl implements IngestService{
 	public IngestWizardData getDrops(String parserName) throws Exception {
 
 		LOG.debug("formBackingObject " + parserName);
-		IngestWizardData wizardData = getIngestData(null, false);
+		IngestWizardData wizardData = updateIngestData(null, false);
 
 		if (parserName != null) {
 
@@ -97,33 +98,33 @@ public class IngestServiceImpl implements IngestService{
     @Transactional(propagation = Propagation.REQUIRED)
 	public boolean commitDrops(IngestWizardData command) throws Exception {
 		LOG.debug("INGEST processFinish");
-        command = getIngestData(command, true);
+        command = updateIngestData(command, true);
 
 		for (Drop drop : ((IngestWizardData) command).getDropdata().getDrops()) {
 
-			if (!drop.isSelected()) {
+			if (!drop.getSelected()) {
 				LOG.debug("Skipping not selected  " + drop.getName());
 				continue;
 			}
 			LOG.info("Loading " + drop.getName() + " with " + drop.getParser().getClass());
 
-			IParser parser = drop.getParser();
-
-			processDrop(drop.getIngestor(), parser, drop.getDrop(), true);
+			processDrop(drop, true);
 		}
 		return true;
 
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-	protected void processDrop(IParserFactory.Ingestors ingestor, IParser parser, DropData drop, boolean updateFiles) throws IOException, InterruptedException {
+	protected void processDrop(Drop drop, boolean updateFiles) throws IOException, InterruptedException {
 		LOG.debug("INGEST processFinish");
+        IParser parser = drop.getParser();
+        IParserFactory.Ingestors ingestor = drop.getIngestor();
 
-		LOG.info("Loading " + drop.getName() + " with " + parser.getClass());
+        LOG.info("Loading " + drop.getName() + " with " + parser.getClass());
 
-		Map<String, DropTrack> tracks = parser.ingest(drop);
+		Map<String, DropTrack> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getTracks() : parser.ingest(drop.getDrop());
 		if (tracks == null || tracks.isEmpty()) {
-			commit(ingestor, parser, drop, null, false, false, "No tracks");
+			commit(ingestor, parser, drop.getDrop(), null, false, false, "No tracks");
 			// parser.commit(drop.getDrop());
 			return;
 		}
@@ -185,7 +186,7 @@ public class IngestServiceImpl implements IngestService{
 				LOG.info("Adding files " + dropFiles.size());
 				for (DropAssetFile file : dropFiles) {
 					if (!AddOrUpdateFile(files, file, updateFiles)) {
-						commit(ingestor, parser, drop, list, false, true, "Drop is updating asset files: to be processed manually");
+						commit(ingestor, parser, drop.getDrop(), list, false, true, "Drop is updating asset files: to be processed manually");
 						return;
 					}
 				}
@@ -209,7 +210,7 @@ public class IngestServiceImpl implements IngestService{
 
 			}
 		}
-		commit(ingestor, parser, drop, list, true, false, "");
+		commit(ingestor, parser, drop.getDrop(), list, true, false, "");
 
 	}
 
@@ -217,6 +218,7 @@ public class IngestServiceImpl implements IngestService{
     @Transactional(propagation = Propagation.REQUIRED)
 	public void processAllDrops() throws Exception {
 
+        DropsData drops = new DropsData();
 		for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
 			LOG.info("Getting drops for " + ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
@@ -224,7 +226,12 @@ public class IngestServiceImpl implements IngestService{
 			List<DropData> parserDrops = parser.getDrops(true);
 			if (parserDrops != null && parserDrops.size() > 0) {
 				for (DropData drop : parserDrops) {
-					processDrop(ingestor, parser, drop, false);
+                    DropsData.Drop data = drops.new Drop();
+                    data.setName(drop.name);
+                    data.setParser(parser);
+                    data.setIngestor(ingestor);
+                    data.setDrop(drop);
+					processDrop(data, false);
 				}
 			}
 
@@ -234,18 +241,20 @@ public class IngestServiceImpl implements IngestService{
     @Override
     @Transactional(readOnly = true)
     public IngestWizardData selectDropTracks(IngestWizardData command) throws Exception {
-        return getIngestData(command, false);
+        command.setStatus(IngestStatus.TRACKS_SELECTED);
+        return updateIngestData(command, false);
     }
 
     @Override
     @Transactional(readOnly = true)
 	public IngestWizardData selectDrops(IngestWizardData command) throws Exception {
-            command = getIngestData(command, false);
+            command.setStatus(IngestStatus.DROPS_SELECTED);
+            command = updateIngestData(command, false);
 
 			for (Drop drop : command.getDropdata().getDrops()) {
 
 				IngestData data = new IngestData();
-				if (!drop.isSelected()) {
+				if (!drop.getSelected()) {
 					continue;
 				}
 
@@ -308,7 +317,7 @@ public class IngestServiceImpl implements IngestService{
             return command;
 	}
 
-    protected IngestWizardData getIngestData(IngestWizardData data, boolean removeAfterGet) throws InvocationTargetException, IllegalAccessException {
+    protected IngestWizardData updateIngestData(IngestWizardData data, boolean removeAfterGet) throws InvocationTargetException, IllegalAccessException {
         if(data == null){
             String suid = String.valueOf(System.currentTimeMillis());
             data = new IngestWizardData();
@@ -337,7 +346,7 @@ public class IngestServiceImpl implements IngestService{
             IngestWizardData suData = removeAfterGet ? ingestDataBuffer.remove(data.getSuid()) : ingestDataBuffer.get(data.getSuid());
 
             if(suData == null){
-                throw new IngestSessionClosed();
+                throw new IngestSessionClosedException();
             }
 
             BeanUtilsBean notNull=new NullAwareBeanUtilsBean();

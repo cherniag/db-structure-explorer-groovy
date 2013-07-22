@@ -26,10 +26,10 @@ public class SonyParser extends IParser {
 	private ArrayList<String> files = new ArrayList<String>();;
 	private String logFile;
 	private String tempLogFile;
-	private String root;
 
-	public SonyParser(String root) {
-		this.root = root;
+
+	public SonyParser(String root) throws FileNotFoundException {
+		super(root);
 		LOG.debug("Sony parser loadin from " + root);
 	}
 

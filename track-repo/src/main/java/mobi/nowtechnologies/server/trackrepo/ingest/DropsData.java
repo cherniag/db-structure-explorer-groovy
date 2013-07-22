@@ -6,7 +6,7 @@ public class DropsData {
 
 	public class Drop {
 		private String name;
-		private boolean selected = false;
+		private Boolean selected = false;
 		private IParser parser;
 		private IParserFactory.Ingestors ingestor;
 		private DropData drop;
@@ -21,11 +21,11 @@ public class DropsData {
 			this.name = name;
 		}
 
-		public boolean isSelected() {
+		public Boolean getSelected() {
 			return selected;
 		}
 
-		public void setSelected(boolean selected) {
+		public void setSelected(Boolean selected) {
 			this.selected = selected;
 		}
 

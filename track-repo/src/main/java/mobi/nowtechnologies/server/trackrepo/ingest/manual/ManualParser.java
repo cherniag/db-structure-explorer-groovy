@@ -12,10 +12,8 @@ import java.util.*;
 public class ManualParser extends IParser {
 	protected static final Log LOG = LogFactory.getLog(ManualParser.class);
 
-	private String root;
-	
-	public ManualParser(String root) {
-        this.root = root;;
+	public ManualParser(String root) throws FileNotFoundException {
+        super(root);
 		LOG.info("Manual parser loadin from " + root);
 	}
 

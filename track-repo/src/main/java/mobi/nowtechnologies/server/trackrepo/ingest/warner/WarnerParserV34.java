@@ -10,16 +10,15 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class WarnerParserV34 extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(WarnerParserV34.class);
 
-	private String root;
-
-	public WarnerParserV34(String root) {
-        this.root = root;;
-		LOG.info("Warner parser loadin from " + root);
+	public WarnerParserV34(String root) throws FileNotFoundException {
+        super(root);
+        LOG.info("Warner parser loadin from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {

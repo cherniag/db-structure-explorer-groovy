@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.springframework.util.ResourceUtils;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +11,12 @@ import java.util.Map;
 public abstract class IParser {
 
 	public abstract Map<String, DropTrack> ingest(DropData drop);
+
+    protected String root;
+
+    protected IParser(String root) throws FileNotFoundException {
+        this.root = ResourceUtils.getFile(root).getAbsolutePath();
+    }
 
 	public void commit(DropData drop, boolean auto) throws IOException, InterruptedException {
 		if (!auto) {

@@ -9,15 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class WarnerParser extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(DDEXParser.class);
 
-	private String root;
-
-	public WarnerParser(String root) {
-        this.root = root;
+	public WarnerParser(String root) throws FileNotFoundException {
+        super(root);
         LOG.info("Warner parser loadin from " + root);
 	}
 

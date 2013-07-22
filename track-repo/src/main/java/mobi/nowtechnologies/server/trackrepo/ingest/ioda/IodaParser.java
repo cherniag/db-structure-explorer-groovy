@@ -13,6 +13,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,10 +23,9 @@ public class IodaParser extends IParser {
 	protected static final Log LOG = LogFactory.getLog(IodaParser.class);
 
 	private ArrayList<String> files = new ArrayList<String>();;
-	private String root;
 
-	public IodaParser(String root) {
-        this.root = root;
+	public IodaParser(String root) throws FileNotFoundException {
+        super(root);
         LOG.info("IODA parser loading from " + root);
 	}
 

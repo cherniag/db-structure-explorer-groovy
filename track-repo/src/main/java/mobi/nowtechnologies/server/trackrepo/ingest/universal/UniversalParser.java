@@ -12,6 +12,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,11 +22,8 @@ public class UniversalParser extends IParser {
 	
 	protected static final Log LOG = LogFactory.getLog(UniversalParser.class);
 
-
-	private String root;
-
-	public UniversalParser(String root) {
-        this.root = root;
+	public UniversalParser(String root) throws FileNotFoundException {
+        super(root);
 		LOG.info("Universal parser loading from " + root);
 	}
 

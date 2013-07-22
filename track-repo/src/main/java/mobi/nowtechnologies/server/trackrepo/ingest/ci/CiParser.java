@@ -9,15 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class CiParser extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(CiParser.class);
 
-	private String root;
-
-	public CiParser(String root) {
-        this.root = root;
+	public CiParser(String root) throws FileNotFoundException {
+        super(root);
         LOG.info("CI parser loading from " + root);
 	}
 

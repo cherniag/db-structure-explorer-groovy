@@ -88,7 +88,7 @@ public class NullAwareBeanUtilsBeanTest {
         fixture.copyProperties(result, data);
 
         Assert.assertNotSame(data.getDropdata(), result.getDropdata());
-        Assert.assertEquals(drop.isSelected(), dropResult.isSelected());
+        Assert.assertEquals(drop.getSelected(), dropResult.getSelected());
         Assert.assertEquals(drop.getName(), dropResult.getName());
     }
 }

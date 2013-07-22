@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
@@ -42,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -83,6 +85,59 @@ public class TrackRepoServiceImplTest {
 	@Mock
 	private MediaFileRepository mediaFileRepository;
 	private TrackRepoServiceImpl fixture;
+
+
+    @Test
+    public void testGetDrops_Success() throws Exception {
+         IngestWizardDataDto data = new IngestWizardDataDto();
+
+         when(client.getDrops()).thenReturn(data);
+
+         IngestWizardDataDto result = fixture.getDrops();
+
+         assertSame(data, result);
+
+         verify(client, times(1)).getDrops();
+    }
+
+    @Test
+    public void testSelectDrops_Success() throws Exception {
+        IngestWizardDataDto data = new IngestWizardDataDto();
+
+        when(client.selectDrops(any(IngestWizardDataDto.class))).thenReturn(data);
+
+        IngestWizardDataDto result = fixture.selectDrops(data);
+
+        assertSame(data, result);
+
+        verify(client, times(1)).selectDrops(any(IngestWizardDataDto.class));
+    }
+
+    @Test
+    public void testSelectTrackDrops_Success() throws Exception {
+        IngestWizardDataDto data = new IngestWizardDataDto();
+
+        when(client.selectTrackDrops(any(IngestWizardDataDto.class))).thenReturn(data);
+
+        IngestWizardDataDto result = fixture.selectTrackDrops(data);
+
+        assertSame(data, result);
+
+        verify(client, times(1)).selectTrackDrops(any(IngestWizardDataDto.class));
+    }
+
+    @Test
+    public void testCommitDrops_Success() throws Exception {
+        IngestWizardDataDto data = new IngestWizardDataDto();
+
+        when(client.commitDrops(any(IngestWizardDataDto.class))).thenReturn(true);
+
+        Boolean result = fixture.commitDrops(data);
+
+        assertEquals(true, result);
+
+        verify(client, times(1)).commitDrops(any(IngestWizardDataDto.class));
+    }
 
 	/**
 	 * Run the TrackDto encode(Long) method test.

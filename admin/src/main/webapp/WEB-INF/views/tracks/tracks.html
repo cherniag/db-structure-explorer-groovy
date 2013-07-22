@@ -53,6 +53,7 @@
 		<div class="clear"></div>
 			<div class="form-actions">
 				<button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco" type="button">Search</button>
+                <a th:text="#{tracks.ingest.page.form.commit}" class="btn btn-primary btn-deco" th:href="@{/drops}">Ingest</a>
 			</div>
 		</form>
 		<div th:if="${#lists.isEmpty(PAGE_LIST_DTO.list)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">

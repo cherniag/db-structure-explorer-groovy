@@ -67,4 +67,18 @@ public interface TrackRepositoryClient {
         * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
         */
     IngestWizardDataDto selectDrops(IngestWizardDataDto data);
+
+    /*
+        * (non-Javadoc)
+        *
+        * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectTrackDrops (java.lang.String)
+        */
+    IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data);
+
+    /*
+        * (non-Javadoc)
+        *
+        * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectTrackDrops (java.lang.String)
+        */
+    Boolean commitDrops(IngestWizardDataDto data);
 }

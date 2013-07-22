@@ -11,6 +11,8 @@ import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 
+import java.io.FileNotFoundException;
+
 public class IParserFactory {
     private String sonyRoot;
     private String warnerOldRoot;
@@ -23,7 +25,7 @@ public class IParserFactory {
     private String warnerRoot;
     private String sonyDDEXRoot;
 
-    public IParser getParser(Ingestors name) {
+    public IParser getParser(Ingestors name) throws FileNotFoundException {
         if (Ingestors.SONY == name) {
             return new SonyParser(sonyRoot);
         } else if (Ingestors.WARNER_OLD == name) {

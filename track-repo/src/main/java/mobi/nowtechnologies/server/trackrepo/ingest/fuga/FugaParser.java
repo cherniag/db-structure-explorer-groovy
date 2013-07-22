@@ -9,15 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class FugaParser extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(FugaParser.class);
 
-	private String root;
-
-	public FugaParser(String root) {
-        this.root = root;
+	public FugaParser(String root) throws FileNotFoundException {
+        super(root);
         LOG.info("Fuga parser loadin from " + root);
 	}
 

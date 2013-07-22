@@ -14,16 +14,16 @@ public class DropTrackDto {
     private String title;
     private String artist;
     private String isrc;
-    private boolean exists;
+    private Boolean exists;
     private DropTrackType type;
-    private boolean selected;
+    private Boolean ingest;
 
-    public boolean isSelected() {
-        return selected;
+    public Boolean getIngest() {
+        return ingest;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setIngest(Boolean ingest) {
+        this.ingest = ingest;
     }
 
     public String getProductCode() {
@@ -58,11 +58,11 @@ public class DropTrackDto {
         this.isrc = isrc;
     }
 
-    public boolean isExists() {
+    public Boolean getExists() {
         return exists;
     }
 
-    public void setExists(boolean exists) {
+    public void setExists(Boolean exists) {
         this.exists = exists;
     }
 
@@ -83,7 +83,7 @@ public class DropTrackDto {
                 ", isrc='" + isrc + '\'' +
                 ", exists=" + exists +
                 ", type=" + type +
-                ", selected=" + selected +
+                ", ingest=" + ingest +
                 "} " + super.toString();
     }
 }

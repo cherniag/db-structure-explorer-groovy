@@ -9,14 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class EmiParser extends DDEXParser {
     protected static final Log LOG = LogFactory.getLog(EmiParser.class);
-    private String root;
 
-    public EmiParser(String root) {
-        this.root = root;
+    public EmiParser(String root) throws FileNotFoundException {
+        super(root);
         LOG.info("EMI parser loadin from " + root);
     }
 

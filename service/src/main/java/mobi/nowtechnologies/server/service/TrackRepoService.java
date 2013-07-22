@@ -4,6 +4,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,34 @@ public interface TrackRepoService {
 	 * @return track representing a track that is in encoding process right now
 	 */
 	public TrackDto encode(TrackDto track);
+
+    /**
+     * Scans all drops of file system and checks, indexes them and then returns.
+     *
+     * @return IngestWizardData drop data without drop tracks
+     */
+    IngestWizardDataDto getDrops();
+
+    /**
+     * Select drops which needs to commit.
+     *
+     * @param data data about selected drops.
+     */
+    IngestWizardDataDto selectDrops(IngestWizardDataDto data);
+
+    /**
+     * Select drop tracks which needs to commit.
+     *
+     * @param data data about selected drop tracks.
+     */
+    IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data);
+
+    /**
+     * Commit all selected tracks to database like indexed tracks with all their assert files, and then mark them like ingested.
+     *
+     * @param data data about selected drops.
+     *
+     * @return whether tracks saved to database or not
+     */
+    Boolean commitDrops(IngestWizardDataDto data);
 }

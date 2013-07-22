@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<echo:ManifestMessage xmlns:echo="http://ddex.net/xml/2011/echo/11"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://ddex.net/xml/2011/echo/11 http://ddex.net/xml/2011/echo/11/echo.xsd"
+                      MessageVersionId="2010/ern-main/312">
+  <MessageHeader>
+    <MessageSender>
+      <PartyId>PADPIDA20090302015</PartyId>
+      <PartyName>
+        <FullName>Consolidated Independent Ltd</FullName>
+      </PartyName>
+    </MessageSender>
+    <MessageRecipient>
+      <PartyId>PADPIDA2010052402A</PartyId>
+      <PartyName>
+        <FullName>Pias UK Limited</FullName>
+      </PartyName>
+    </MessageRecipient>
+    <MessageCreatedDateTime>2013-03-21T10:39:06Z</MessageCreatedDateTime>
+    <!-- Message type echo:ManifestMessage -->
+    <!-- Message version 20110307 -->
+    <!-- Generated using code version 2013031902 -->
+  </MessageHeader>
+  <IsTestFlag>false</IsTestFlag>
+  <DeliveryType UserDefinedValue="Mixed"
+                Namespace="DPID:PADPIDA20090302015">UserDefined</DeliveryType>
+  <BatchProductType UserDefinedValue="Mixed"
+                    Namespace="DPID:PADPIDA20090302015">UserDefined</BatchProductType>
+  <RootDirectory>./</RootDirectory>
+  <NumberOfMessages>1</NumberOfMessages>
+  <MessageInBatch>
+    <MessageType>NewReleaseMessage</MessageType>
+    <MessageId>11205309390266</MessageId>
+    <URL>./5051083069809/5051083069809.xml</URL>
+    <IncludedReleaseId>
+      <GRid></GRid>
+      <ICPN IsEan="true">5051083069809</ICPN>
+      <ProprietaryId Namespace="DPID:PADPIDA20090302015">10052731570032</ProprietaryId>
+    </IncludedReleaseId>
+    <HashSum>
+      <HashSum>8h4udGVuh6B6ye6O0xn1rnGyTZU</HashSum>
+      <HashSumAlgorithmType>SHA1</HashSumAlgorithmType>
+    </HashSum>
+  </MessageInBatch>
+</echo:ManifestMessage>

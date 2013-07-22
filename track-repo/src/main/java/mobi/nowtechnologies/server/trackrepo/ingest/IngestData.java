@@ -9,8 +9,8 @@ public class IngestData {
 		public String ISRC;
 		public String title;
 		public String artist;
-		public boolean exists;
-		public boolean ingest = true;
+		public Boolean exists;
+		public Boolean ingest = true;
 		public DropTrack.Type type;
 		public String productCode;
 
@@ -45,16 +45,16 @@ public class IngestData {
 		public void setArtist(String artist) {
 			this.artist = artist;
 		}
-		public boolean isExists() {
+		public Boolean getExists() {
 			return exists;
 		}
-		public void setExists(boolean exists) {
+		public void setExists(Boolean exists) {
 			this.exists = exists;
 		}
-		public boolean isIngest() {
+		public Boolean getIngest() {
 			return ingest;
 		}
-		public void setIngest(boolean ingest) {
+		public void setIngest(Boolean ingest) {
 			this.ingest = ingest;
 		}
 		

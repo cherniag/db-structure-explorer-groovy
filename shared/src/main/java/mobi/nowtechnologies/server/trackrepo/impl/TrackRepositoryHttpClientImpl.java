@@ -3,11 +3,11 @@
  */
 package mobi.nowtechnologies.server.trackrepo.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
@@ -25,9 +25,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -60,6 +62,15 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	protected DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 	protected DateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
     protected Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+    protected Gson gsonMillis;
+
+    public TrackRepositoryHttpClientImpl(){
+        gsonMillis = new GsonBuilder().registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        }).create();
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -128,20 +139,22 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     */
     @Override
     public IngestWizardDataDto getDrops() {
-        IngestWizardDataDto data = null;
+        IngestWizardDataDto data = new IngestWizardDataDto();
+        data.setDrops(Collections.<DropDto>emptyList());
         try {
                 HttpGet query = new HttpGet(trackRepoUrl.concat("drops.json"));
                 query.setHeaders(getSecuredHeaders());
+                query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
                 HttpResponse response = getHttpClient().execute(query);
                 if (200 == response.getStatusLine().getStatusCode()) {
                     Type type = new TypeToken<IngestWizardDataDto>() {
                     }.getType();
-                    data = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                    data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
                 }
         } catch (ClientProtocolException e) {
-            LOGGER.error("Cannot search in track repository. {}", e);
+            LOGGER.error("Cannot search drops. {}", e);
         } catch (IOException e) {
-            LOGGER.error("Communication exception while searching for track in track repository. {}", e);
+            LOGGER.error("Communication exception while searching drops. {}", e);
         }
         return data;
     }
@@ -149,28 +162,91 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     /*
     * (non-Javadoc)
     *
-    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
+    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectDrops (java.lang.String)
     */
     @Override
     public IngestWizardDataDto selectDrops(IngestWizardDataDto data) {
-        IngestWizardDataDto result = null;
+        IngestWizardDataDto result = new IngestWizardDataDto();
+        result.setDrops(Collections.<DropDto>emptyList());
         try {
-            String jsonBody = gson.toJson(data);
+            String jsonBody = gsonMillis.toJson(data);
 
             HttpPost query = new HttpPost(trackRepoUrl.concat("drops/select.json"));
             HttpEntity entity = new StringEntity(jsonBody);
             query.setEntity(entity);
             query.setHeaders(getSecuredHeaders());
+            query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
             HttpResponse response = getHttpClient().execute(query);
             if (200 == response.getStatusLine().getStatusCode()) {
                 Type type = new TypeToken<IngestWizardDataDto>() {
                 }.getType();
-                result = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
             }
         } catch (ClientProtocolException e) {
-            LOGGER.error("Cannot search in track repository. {}", e);
+            LOGGER.error("Cannot select drops. {}", e);
         } catch (IOException e) {
-            LOGGER.error("Communication exception while searching for track in track repository. {}", e);
+            LOGGER.error("Communication exception while selecting drops. {}", e);
+        }
+        return result;
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectTrackDrops (java.lang.String)
+    */
+    @Override
+    public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data) {
+        IngestWizardDataDto result = new IngestWizardDataDto();
+        result.setDrops(Collections.<DropDto>emptyList());
+        try {
+            String jsonBody = gsonMillis.toJson(data);
+
+            HttpPost query = new HttpPost(trackRepoUrl.concat("drops/tracks/select.json"));
+            HttpEntity entity = new StringEntity(jsonBody);
+            query.setEntity(entity);
+            query.setHeaders(getSecuredHeaders());
+            query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+            HttpResponse response = getHttpClient().execute(query);
+            if (200 == response.getStatusLine().getStatusCode()) {
+                Type type = new TypeToken<IngestWizardDataDto>() {
+                }.getType();
+                result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+            }
+        } catch (ClientProtocolException e) {
+            LOGGER.error("Cannot select tracks of the drops. {}", e);
+        } catch (IOException e) {
+            LOGGER.error("Communication exception while selecting tracks of the drops. {}", e);
+        }
+        return result;
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectTrackDrops (java.lang.String)
+    */
+    @Override
+    public Boolean commitDrops(IngestWizardDataDto data) {
+        Boolean result = false;
+        try {
+            String jsonBody = gsonMillis.toJson(data);
+
+            HttpPost query = new HttpPost(trackRepoUrl.concat("drops/commit.json"));
+            HttpEntity entity = new StringEntity(jsonBody);
+            query.setEntity(entity);
+            query.setHeaders(getSecuredHeaders());
+            query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+            HttpResponse response = getHttpClient().execute(query);
+            if (200 == response.getStatusLine().getStatusCode()) {
+                Type type = new TypeToken<Boolean>() {
+                }.getType();
+                result = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+            }
+        } catch (ClientProtocolException e) {
+            LOGGER.error("Cannot commit drops. {}", e);
+        } catch (IOException e) {
+            LOGGER.error("Communication exception while commiting drops. {}", e);
         }
         return result;
     }

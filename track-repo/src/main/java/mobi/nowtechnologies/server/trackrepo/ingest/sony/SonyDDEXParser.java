@@ -12,16 +12,15 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
 public class SonyDDEXParser extends DDEXParser {
 	protected static final Log LOG = LogFactory.getLog(SonyDDEXParser.class);
 
-	private String root;
-
-	public SonyDDEXParser(String root) {
-        this.root = root;
+	public SonyDDEXParser(String root) throws FileNotFoundException {
+        super(root);
 		LOG.info("EMI parser loadin from " + root);
 	}
 

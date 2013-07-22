@@ -115,6 +115,66 @@ ul.table li {
 	margin-top: -1px;
 }
 
+.newsListWide ul.table li.drops {
+    background-color: #ffffff;
+    padding-left: 7px;
+    border-bottom: 1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+    border-left: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+    margin-top: -1px;
+    margin-bottom: 3px;
+}
+
+.newsListWide ul.table li.subtitle {
+    border: none;
+    margin-bottom: 3px;
+}
+
+.newsListWide ul.table li.none {
+    display: none;
+}
+
+ul.table li div.select_drop {
+    width: 15px;
+}
+
+ul.table li div.ingestor_drop {
+    width: 10%;
+}
+
+ul.table li div.name_drop {
+    width: 70%;
+}
+
+ul.table li div.date_drop {
+    width: 13%;
+}
+
+ul.table li div.product_id_track {
+    width: 10%;
+}
+
+ul.table li div.action_track {
+    width: 10%;
+}
+
+ul.table li div.artist_track {
+    width: 25%;
+}
+
+ul.table li div.title_track {
+    width: 25%;
+}
+
+ul.table li div.isrc_track {
+    width: 13%;
+}
+
+ul.table li div.existing_track {
+    width: 5%;
+}
+
 ul.table li:hover {
 	background-color: #f9f9f9;
 	cursor: n-resize;

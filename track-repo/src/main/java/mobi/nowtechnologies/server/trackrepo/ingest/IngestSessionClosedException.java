@@ -7,8 +7,8 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
  * Time: 10:41 AM
  * To change this template use File | Settings | File Templates.
  */
-public class IngestSessionClosed extends RuntimeException {
-    public IngestSessionClosed(){
+public class IngestSessionClosedException extends RuntimeException {
+    public IngestSessionClosedException(){
         super("Ingest session is closed");
     }
 }

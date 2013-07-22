@@ -1,14 +1,10 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.util.Date;
-
-import javax.validation.Valid;
-
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -17,12 +13,11 @@ import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.Date;
 
 @Controller
 public class TrackRepoController extends AbstractCommonController{
@@ -89,4 +84,54 @@ public class TrackRepoController extends AbstractCommonController{
 
 		return modelAndView;
 	}
+
+	@RequestMapping(value = "/drops", method = RequestMethod.GET)
+	public ModelAndView getDrops() {
+		LOGGER.debug("input getDrops() request");
+
+		IngestWizardDataDto data = trackRepoService.getDrops();
+
+		ModelAndView modelAndView = new ModelAndView("tracks/drops");
+		modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
+		modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/select");
+
+		return modelAndView;
+	}
+
+    @RequestMapping(value = "/drops/select", method = RequestMethod.POST)
+    public ModelAndView selectDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+        LOGGER.debug("input selectDrops(data) request, [{}]", new Object[] { data });
+
+        data = trackRepoService.selectDrops(data);
+
+        ModelAndView modelAndView = new ModelAndView("tracks/drops");
+        modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
+        modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/tracks/select");
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/drops/tracks/select", method = RequestMethod.POST)
+    public ModelAndView selectTrackDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+        LOGGER.debug("input selectDrops(data) request, [{}]", new Object[] { data });
+
+        data = trackRepoService.selectTrackDrops(data);
+
+        ModelAndView modelAndView = new ModelAndView("tracks/drops");
+        modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
+        modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/commit");
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/drops/commit", method = RequestMethod.POST)
+    public ModelAndView commitDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+        LOGGER.debug("input commitDrops(data) request, [{}]", new Object[] { data });
+
+        trackRepoService.commitDrops(data);
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/tracks/list");
+
+        return modelAndView;
+    }
 }

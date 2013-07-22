@@ -11,6 +11,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,10 @@ import java.util.*;
 public abstract class DDEXParser extends IParser {
 
 	protected static final Log LOG = LogFactory.getLog(DDEXParser.class);
+
+    public DDEXParser(String root) throws FileNotFoundException {
+        super(root);
+    }
 
 	@SuppressWarnings("unchecked")
 	protected Map<String, DropTrack> loadXml(String file) {

@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
@@ -63,22 +64,66 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 		this.artistRepository = artistRepository;
 	}
 
-	public void setGenreRepository(GenreRepository genreRepository) {
-		this.genreRepository = genreRepository;
-	}
+    public void setGenreRepository(GenreRepository genreRepository) {
+        this.genreRepository = genreRepository;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public PageListDto<TrackDto> find(String criteria, Pageable page) {
-		LOGGER.debug("input find(criteria, page): [{}]", new Object[] { criteria, page });
+    @Override
+    @Transactional(readOnly = true)
+    public IngestWizardDataDto getDrops() {
+        LOGGER.debug("input getDrops()");
 
-		PageListDto<TrackDto> tracks = client.search(criteria, page);
+        IngestWizardDataDto data = client.getDrops();
 
-		fillTracks(tracks);
+        LOGGER.debug("output getDrops(): [{}]", data);
+        return data;
+    }
 
-		LOGGER.info("output find(criteria): [{}]", tracks);
-		return tracks;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public IngestWizardDataDto selectDrops(IngestWizardDataDto input) {
+        LOGGER.debug("input selectDrops(): [{}]", new Object[] { input });
+
+        IngestWizardDataDto data = client.selectDrops(input);
+
+        LOGGER.debug("output selectDrops(): [{}]", data);
+        return data;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto input) {
+        LOGGER.debug("input selectTrackDrops(): [{}]", new Object[] { input });
+
+        IngestWizardDataDto data = client.selectTrackDrops(input);
+
+        LOGGER.debug("output selectTrackDrops(): [{}]", data);
+        return data;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean commitDrops(IngestWizardDataDto data) {
+        LOGGER.debug("input commitDrops(): [{}]", new Object[] { data });
+
+        Boolean result= client.commitDrops(data);
+
+        LOGGER.debug("output commitDrops(): [{}]", result);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageListDto<TrackDto> find(String criteria, Pageable page) {
+        LOGGER.debug("input find(criteria, page): [{}]", new Object[] { criteria, page });
+
+        PageListDto<TrackDto> tracks = client.search(criteria, page);
+
+        fillTracks(tracks);
+
+        LOGGER.info("output find(criteria): [{}]", tracks);
+        return tracks;
+    }
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)

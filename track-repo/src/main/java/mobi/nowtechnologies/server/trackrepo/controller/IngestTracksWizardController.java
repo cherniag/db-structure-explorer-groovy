@@ -7,7 +7,10 @@ import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class IngestTracksWizardController extends AbstractCommonController {
@@ -22,11 +25,11 @@ public class IngestTracksWizardController extends AbstractCommonController {
     @RequestMapping(value = "/drops", method = RequestMethod.GET)
     public @ResponseBody IngestWizardDataDto getDrops() throws Exception {
 
-		return new IngestWizardDataDtoMapper(ingestService.getDrops(null));
+        return new IngestWizardDataDtoMapper(ingestService.getDrops(null));
 	}
 
     @RequestMapping(value = "/drops/select", method = RequestMethod.POST)
-	protected @ResponseBody IngestWizardDataDto selectDrops(@RequestBody IngestWizardDataDto dto)
+	public @ResponseBody IngestWizardDataDto selectDrops(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
@@ -35,7 +38,7 @@ public class IngestTracksWizardController extends AbstractCommonController {
 	}
 
     @RequestMapping(value = "/drops/tracks/select", method = RequestMethod.POST)
-	protected @ResponseBody IngestWizardDataDto selectDropTracks(@RequestBody IngestWizardDataDto dto)
+	public @ResponseBody IngestWizardDataDto selectDropTracks(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
@@ -44,7 +47,7 @@ public class IngestTracksWizardController extends AbstractCommonController {
 	}
 
     @RequestMapping(value = "/drops/commit", method = RequestMethod.POST)
-	protected @ResponseBody Boolean commitDrops(@RequestBody IngestWizardDataDto dto)
+	public @ResponseBody Boolean commitDrops(@RequestBody IngestWizardDataDto dto)
 			throws Exception {
 
 		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);

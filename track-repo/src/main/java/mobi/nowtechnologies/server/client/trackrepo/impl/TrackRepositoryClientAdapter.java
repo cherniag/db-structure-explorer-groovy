@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.client.trackrepo.impl;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.controller.IngestTracksWizardController;
 import mobi.nowtechnologies.server.trackrepo.controller.TrackController;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
@@ -10,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 
 public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     private TrackController trackController;
+
+    private IngestTracksWizardController ingestTracksWizardController;
+
 
     public void setTrackController(TrackController trackController) {
         this.trackController = trackController;
@@ -41,12 +45,38 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     }
 
     @Override
-    public IngestWizardDataDto getDrops() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public IngestWizardDataDto getDrops(){
+        try {
+            return ingestTracksWizardController.getDrops();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public IngestWizardDataDto selectDrops(IngestWizardDataDto data) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            return ingestTracksWizardController.selectDrops(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto data){
+        try {
+            return ingestTracksWizardController.selectDropTracks(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Boolean commitDrops(IngestWizardDataDto data) {
+        try {
+            return ingestTracksWizardController.commitDrops(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

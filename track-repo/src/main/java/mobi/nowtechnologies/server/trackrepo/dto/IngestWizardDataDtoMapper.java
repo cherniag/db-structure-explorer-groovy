@@ -21,6 +21,7 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
     public IngestWizardDataDtoMapper(IngestWizardData data) {
         this.drops = new ArrayList<DropDto>();
         this.setSuid(data.getSuid());
+        this.setStatus(data.getStatus());
 
         List<DropsData.Drop> drops = data.getDropdata() != null ? data.getDropdata().getDrops() : null;
         if(drops != null){
@@ -28,7 +29,8 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
                 DropDto dropDto = new DropDto();
                 dropDto.setDate(drop.getDrop().getDate());
                 dropDto.setName(drop.getDrop().getName());
-                dropDto.setSelected(drop.isSelected());
+                dropDto.setIngestor(drop.getIngestor().name());
+                dropDto.setSelected(drop.getSelected());
 
                 List<IngestData.Track> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getData() : null;
                 if(tracks != null){
@@ -38,10 +40,10 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
                         DropTrackDto dropTrackDto = new DropTrackDto();
 
                         dropTrackDto.setArtist(track.getArtist());
-                        dropTrackDto.setExists(track.isExists());
+                        dropTrackDto.setExists(track.getExists());
                         dropTrackDto.setIsrc(track.getISRC());
                         dropTrackDto.setProductCode(track.getProductCode());
-                        dropTrackDto.setSelected(track.isIngest());
+                        dropTrackDto.setIngest(track.getIngest());
                         dropTrackDto.setTitle(track.getTitle());
                         dropTrackDto.setType(DropTrackType.valueOf(track.getType().name()));
 
@@ -68,8 +70,8 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
         if(dropDtos != null){
             for (DropDto dropDto : dropDtos) {
                 DropsData.Drop drop = data.getDropdata().new Drop();
-                drop.setName(drop.getDrop().getName());
-                drop.setSelected(drop.isSelected());
+                drop.setName(dropDto.getName());
+                drop.setSelected(dropDto.getSelected());
 
                 List<DropTrackDto> dropTracks = dropDto.getTracks();
                 if(dropTracks != null){
@@ -80,12 +82,12 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
                         IngestData.Track track = drop.getIngestdata().new Track();
 
                         track.setArtist(trackDto.getArtist());
-                        track.setExists(trackDto.isExists());
+                        track.setExists(trackDto.getExists());
                         track.setISRC(trackDto.getIsrc());
                         track.setProductCode(trackDto.getProductCode());
-                        track.setIngest(trackDto.isSelected());
+                        track.setIngest(trackDto.getIngest());
                         track.setTitle(trackDto.getTitle());
-                        track.setType(DropTrack.Type.valueOf(trackDto.getType().name()));
+                        track.setType(trackDto.getType() != null ? DropTrack.Type.valueOf(trackDto.getType().name()) : null);
 
                         tracks.add(track);
                     }
