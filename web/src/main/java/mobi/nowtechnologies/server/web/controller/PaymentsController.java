@@ -74,7 +74,22 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
-        mav.addObject("canGetVideo", user.canGetVideo());
+        
+        boolean userIsOptedInToVideo = false;
+        if ( user.isVideoFreeTrialHasBeenActivated() && user.canGetVideo() ) {
+        	userIsOptedInToVideo = true;
+        }
+        mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
+//        mav.addObject("canGetVideo", user.canGetVideo());
+        
+        int activePolicyId = -1;
+        if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
+        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getId(), activePolicy.getSubweeks());
+        	if ( mirrorPolicy != null ) {
+        		activePolicyId = mirrorPolicy;
+        	}
+        }
+        mav.addObject("mirrorOfActivePolicy", activePolicyId);
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -101,15 +116,29 @@ public class PaymentsController extends CommonController {
     }
     
     /**
+     * Having a list of audio only and audio+video policies, return the policy that's the 'mirror' or the active policy.
+     * For example for a 1week audio only policy, the mirror is 1w audio+video policy
+     *  
+     */
+    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyId, int activePolicyWeeks) {
+    	for ( PaymentPolicyDto pp : paymentPolicies ) {
+    		if ( ((int)pp.getId()) != activePolicyId && pp.getSubweeks() == activePolicyWeeks ) {
+    			return (int)pp.getId();
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
      * If the list of payment policies has videos but the user is not entitled for video, we'll remove
      * the payment policies with video
      */
     private List<PaymentPolicyDto> filterVideo(List<PaymentPolicyDto> paymentPolicyList, User user) {
     	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
     	
-    	boolean videoEnabledUser = user.canGetVideo();
+    	boolean videoEnabledUser = user.canGetVideo() && user.isVideoFreeTrialHasBeenActivated();
     	for ( PaymentPolicyDto pp : paymentPolicyList ) {
-    		if ( pp.getVideoPaymentPolicy() && !videoEnabledUser ) {
+    		if ( pp.isVideoPaymentPolicy() && !videoEnabledUser ) {
     			continue;
     		}
     		ret.add( pp );

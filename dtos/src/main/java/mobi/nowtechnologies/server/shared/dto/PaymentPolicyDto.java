@@ -51,7 +51,7 @@ public class PaymentPolicyDto {
         setPaymentType(policy.getPaymentType());
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
-        setVideoPaymentPolicy(policy.getVideoPaymentPolicy());
+        setVideoPaymentPolicy(policy.isVideoPaymentPolicy());
     }
 
     /*private boolean isPsmsPolicy() {
@@ -146,7 +146,7 @@ public class PaymentPolicyDto {
         return true;
     }*/
     
-    public boolean getVideoPaymentPolicy() {
+    public boolean isVideoPaymentPolicy() {
 		return videoPaymentPolicy;
 	}
 

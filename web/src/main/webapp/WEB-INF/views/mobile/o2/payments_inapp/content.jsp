@@ -8,7 +8,7 @@ $(document).ready( function(){videoSelected()} );
 
 function videoSelected() {
 	var videoCheckbox = $("#videoCheckbox");
-	if ( typeof videoCheckbox == 'undefined' ) {
+	if ( videoCheckbox.length === 0 ) {
 		return;
 	}
 	
@@ -26,12 +26,20 @@ function videoSelected() {
 		if ( typeof attrib === 'undefined' || attrib === false ) {
 			return;
 		}
-		var videoAttr = attrib == "1";
+		var updateButtonShow = ($(this).attr("data-updatesubbutton") == "1");
+		var videoAttr = (attrib == "1");
+		var updateSubscriptionButton = $("#updateSubscriptionButton");
 		
 		if ( videoAttr == isVideoSelected ) {
 			$(this).show();
+			if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
+				updateSubscriptionButton.show();
+			}
 		} else {
 			$(this).hide();
+			if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
+				updateSubscriptionButton.hide();
+			}
 		}
 	});
 }
@@ -76,45 +84,51 @@ function videoSelected() {
         <p>${paymentPoliciesNote}</p>
         <hr />
         
-        <c:if test="${canGetVideo eq true}">
-        <div class="videoOption">
+        <c:choose>
+        <%--we have 2 cases:
+        	(1) user is 4G and opted-in (we display the video options)
+        	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
+        <c:when test="${userIsOptedInToVideo eq true}">
+        	<div class="videoOption">
         	
-        	<s:message code='pays.page.note.account.videotitle' var="payment_videotitle" />
-        	<s:message code='pays.page.note.account.videoprice' var="payment_videoprice" />
-        	<s:message code='pays.page.note.account.videoinfo' var="payment_videoinfo" />
+	        	<s:message code='pays.page.note.account.videotitle' var="payment_videotitle" />
+	        	<s:message code='pays.page.note.account.videoprice' var="payment_videoprice" />
+	        	<s:message code='pays.page.note.account.videoinfo' var="payment_videoinfo" />
+	        	
+	        	<div class="videoOptionFirstRow">
+	        	<div style="float:left; font-weight: bold;">${payment_videotitle}</div>
+	        	<div style="float:right">
+	        		<label for="videoCheckbox">${payment_videoprice}</label>
+	
+	        		<c:set var="checkedAttrib" />
+	        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoPaymentPolicy==true)}">
+	        			<c:set var="checkedAttrib">checked="checked"</c:set>
+	        			<%--Activate the video checkbox if the user has a video subscription --%>
+	        		</c:if>
+	        		<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
+	        			<c:set var="checkedAttrib">checked="checked"</c:set>
+	        			<%--Activate the video checkbox if the user has no subscription --%>
+	        		</c:if>
+	        		
+	        		<input type="checkbox" onchange="videoSelected()" id="videoCheckbox" ${readOnlyAttrib} ${checkedAttrib} />
+	        	</div>
+	        	<div>&nbsp;</div>
+	        	</div>
+	        	
+	        	<div class="videoOptionText">${payment_videoinfo}</div>
         	
-        	<div class="videoOptionFirstRow">
-        	<div style="float:left; font-weight: bold;">${payment_videotitle}</div>
-        	<div style="float:right">
-        		<label for="videoCheckbox">${payment_videoprice}</label>
-        		
-        		<c:set var="readOnlyAttrib" />
-        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
-        			<c:set var="readOnlyAttrib">disabled="disabled"</c:set>
-        		</c:if>
-        		
-        		<c:set var="checkedAttrib" />
-        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoPaymentPolicy==true)}">
-        			<c:set var="checkedAttrib">checked="checked"</c:set>
-        			<%--Activate the video checkbox if the user has a video subscription --%>
-        		</c:if>
-        		<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
-        			<c:set var="checkedAttrib">checked="checked"</c:set>
-        			<%--Activate the video checkbox if the user has no subscription --%>
-        		</c:if>
-        		
-        		<input type="checkbox"  onchange="videoSelected()" id="videoCheckbox" ${readOnlyAttrib} ${checkedAttrib} />
         	</div>
-        	<div>&nbsp;</div>
+        </c:when>
+        <c:when test="${userIsOptedInToVideo eq false}">
+        	<div class="videoOption">
+        		<s:message code='pays.select.payby.o2psms.videoOptIn' />
         	</div>
-        	
-        	<div class="videoOptionText">${payment_videoinfo}</div>
-        	
-        </div>
-        </c:if>
+        </c:when>
+        </c:choose>
         
         <div class="setOfButtons">
         	<c:set var="hasPaymentBaner" value="false" />
+        	<c:set var="updateSubscriptionUrl"></c:set>
             <c:forEach var="paymentPolicy" items="${paymentPolicies}">
                 <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
                     <c:set var="method_name" value="creditcard" />
@@ -139,7 +153,7 @@ function videoSelected() {
                     <s:message code='pays.select.iTunesSubscription' var="payment_label" />
                 </c:if>
 
-                <div class="rel" data-hasvideo="${paymentPolicy.videoPaymentPolicy ? '1' : '0'}">
+                <div class="rel" data-hasvideo="${paymentPolicy.videoPaymentPolicy ? '1' : '0'}" data-updatesubbutton="${mirrorOfActivePolicy==paymentPolicy.id ? '1' : '0'}">
                     <c:choose>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                         && paymentDetails != null
@@ -149,13 +163,22 @@ function videoSelected() {
                         && activePolicy.subweeks == paymentPolicy.subweeks }">
                             <a class="button-disabled pie" disabled="true">
                                 ${payment_label}
+                                
                             	<span class="button-on"/>
                             </a>
                         </c:when>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'}">
                             <a class="button-turquoise pie" href="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" >
                                 ${payment_label}
-                                <span class="button-off"/>
+                                
+                                <%--by default the buttonClass is button-off - it's button-on only when a user has video activated to display the mirror option --%>
+                                <c:set var="buttonClass">button-off</c:set>
+                                <c:if test="${mirrorOfActivePolicy == paymentPolicy.id}">
+                                	<c:set var="buttonClass">button-on</c:set>
+                                	<c:set var="updateSubscriptionUrl">${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}</c:set>
+                                </c:if>
+                                
+                                <span class="${buttonClass}"/>
                             </a>
                         </c:when>
                         <c:otherwise>
@@ -175,6 +198,11 @@ function videoSelected() {
                     </c:if>
         </div>
         <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+        	<c:if test="${userIsOptedInToVideo eq true}">
+	        	<div class="rel" style="display: none" id="updateSubscriptionButton">
+	                <a class="button-grey pie" href="${updateSubscriptionUrl}" ><s:message code='pays.page.note.account.updatesubscription' /></a>
+	            </div>
+            </c:if>
             <div class="rel" >
                 <div class="cross-text"><span>  <s:message code="pays.deactivate.header" />  </span>  </div>
                 <a class="button-grey pie" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>

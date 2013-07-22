@@ -294,7 +294,9 @@ public class PaymentPolicy {
         this.tariff = tariff;
     }
     
-    public boolean getVideoPaymentPolicy() {
+    public boolean isVideoPaymentPolicy() {
+    	// from Mykhailo: Payment policy with 4G tariff could be Audio. I assumes that we will use contentType or contentCategory field to distinguish Audio only and Video Audio payment policies
+    	// this check may change
     	return Tariff._4G.equals(this.tariff);
     }
 

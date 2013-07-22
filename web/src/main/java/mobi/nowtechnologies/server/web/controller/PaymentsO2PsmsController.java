@@ -32,10 +32,12 @@ public class PaymentsO2PsmsController extends CommonController {
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS}, method = RequestMethod.GET)
     public ModelAndView createO2PaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId){
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
+        
         return new ModelAndView(scopePrefix+VIEW_PAYMENTS_O2PSMS)
                 .addObject(PaymentsController.POLICY_REQ_PARAM, policyId)
                 .addObject("subcost", policy.getSubcost())
-                .addObject("suweeks", policy.getSubweeks());
+                .addObject("suweeks", policy.getSubweeks())
+                .addObject("isVideoPaymentPolicy", policy.isVideoPaymentPolicy());
     }
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS_CONFIRM}, method = RequestMethod.GET)
