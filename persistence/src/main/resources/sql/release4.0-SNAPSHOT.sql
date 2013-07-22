@@ -81,7 +81,7 @@ create table refund (
 
  -- http://jira.musicqubed.com/browse/IMP-1794
  -- Remove video access from downgrading users
- insert into tb_accountlogtypes (i, name) value (11, "Trial skipping");
- insert into tb_accountlogtypes (i, name) value (12, "Bought period skipping");
+ insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
+ insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
 
- update tb_paymentpolicy set content_category="other";
+ update tb_paymentPolicy set content_category="other";

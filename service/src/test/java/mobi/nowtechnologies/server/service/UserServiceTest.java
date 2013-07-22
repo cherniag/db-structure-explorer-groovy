@@ -90,6 +90,7 @@ public class UserServiceTest {
 	private FacebookService facebookServiceMock;
 	private ITunesService iTunesServiceMock;
     private UserBannedRepository userBannedRepositoryMock;
+    private RefundService refundServiceMock;
     private User actualUser;
     private User user;
     private Tariff paymentPolicyTariff;
@@ -823,6 +824,7 @@ public class UserServiceTest {
 		MailService mailServiceMock = PowerMockito.mock(MailService.class);
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
+        refundServiceMock = PowerMockito.mock(RefundService.class);
 
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 		
@@ -853,6 +855,7 @@ public class UserServiceTest {
 		userServiceSpy.setUserRepository(userRepositoryMock);
 		userServiceSpy.setiTunesService(iTunesServiceMock);
 		userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
+        userServiceSpy.setRefundService(refundServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
