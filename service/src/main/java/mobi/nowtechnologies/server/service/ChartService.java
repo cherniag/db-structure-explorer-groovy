@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -24,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.Utils.isNotNull;
+import static mobi.nowtechnologies.server.shared.Utils.isNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -267,61 +271,54 @@ public class ChartService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
-		LOGGER.debug("input parameters charts: [{}]", new Object[] { charts });
-		
-		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
-		
-		if(charts == null)
-			return chartDetails;
-		
-		Long choosedPublishTimeMillis = selectedPublishDateTime != null ? selectedPublishDateTime.getTime() : new Date().getTime();
-		
-		for(Chart chart : charts){
-			ChartDetail chartDetail = null;
-			Long lastPublishTimeMillis = choosedPublishTimeMillis;
-			
-			chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
-			if(chartDetail == null){
-				lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(choosedPublishTimeMillis, chart.getI());
-				if (lastPublishTimeMillis != null){
-					chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
-					if(clone && chartDetail!=null){						
-						chartDetail = ChartDetail.newInstance(chartDetail);
-						chartDetail.setPublishTimeMillis(lastPublishTimeMillis);
-					}
-				}	
-			}
-			
-			if(chartDetail == null){
-				chartDetail = new ChartDetail();
-				chartDetail.setChart(chart);
-				chart.setNumTracks((byte)0);
-			}else{
-				Long numTracks = chartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
-				chartDetail.getChart().setNumTracks(numTracks.byteValue());
-			}
-			
-			chartDetails.add(chartDetail);
-		}
-		
-		Collections.sort(chartDetails, new Comparator<ChartDetail>() {
-			@Override
-			public int compare(ChartDetail o1, ChartDetail o2) {
-				if(o1.getPosition() > o2.getPosition())
-					return 1;
-				else if(o1.getPosition() < o2.getPosition())
-					return -1;
-				else 
-					return 0;
-			}
-		});
-		
-		LOGGER.info("Output parameter charts=[{}]", chartDetails);
-		return chartDetails;
-	}
-	
-	@Transactional(readOnly = true)
+    public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
+        LOGGER.debug("input parameters charts: [{}]", new Object[]{charts});
+
+        List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+        if (isNull(charts)) return chartDetails;
+
+        for (Chart chart : charts) {
+            Long lastPublishTimeMillis = isNotNull(selectedPublishDateTime)? selectedPublishDateTime.getTime() : new Date().getTime();
+            ChartDetail chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
+            if (isNull(chartDetail)) {
+                lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(lastPublishTimeMillis, chart.getI());
+                if (isNotNull(lastPublishTimeMillis)) {
+                    chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
+                    if (clone && isNotNull(chartDetail)) {
+                        chartDetail = ChartDetail.newInstance(chartDetail);
+                        chartDetail.setPublishTimeMillis(lastPublishTimeMillis);
+                    }
+                }
+            }
+
+            if (isNull(chartDetail)) {
+                chartDetail = new ChartDetail();
+                chartDetail.setChart(chart);
+                chart.setNumTracks((byte) 0);
+            } else {
+                Long numTracks = chartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(chart.getI(), lastPublishTimeMillis);
+                chartDetail.getChart().setNumTracks(numTracks.byteValue());
+            }
+            chartDetails.add(chartDetail);
+        }
+
+        Collections.sort(chartDetails, new Comparator<ChartDetail>() {
+            @Override
+            public int compare(ChartDetail o1, ChartDetail o2) {
+                if (o1.getPosition() > o2.getPosition())
+                    return 1;
+                else if (o1.getPosition() < o2.getPosition())
+                    return -1;
+                else
+                    return 0;
+            }
+        });
+
+        LOGGER.info("Output parameter charts=[{}]", chartDetails);
+        return chartDetails;
+    }
+
+    @Transactional(readOnly = true)
 	public Chart getChartById(Integer chartId) {
 		LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
 

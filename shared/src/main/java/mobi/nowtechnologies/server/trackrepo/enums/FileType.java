@@ -30,6 +30,9 @@ public enum FileType {
 	public Integer getId() {
 		return id;
 	}
+    public byte getIdAsByte() {
+        return id.byteValue();
+    }
 	public String getPack() {
 		return pack;
 	}

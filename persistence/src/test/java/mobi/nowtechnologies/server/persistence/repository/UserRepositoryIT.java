@@ -15,8 +15,11 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import mobi.nowtechnologies.server.trackrepo.enums.*;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
@@ -357,7 +360,7 @@ public class UserRepositoryIT {
 		assertEquals(testUser.getId(), actualUsers.get(0).getId());
 
 	}
-	
+
 	@Test
 	public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
 		

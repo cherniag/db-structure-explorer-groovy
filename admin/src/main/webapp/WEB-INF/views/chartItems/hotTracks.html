@@ -459,7 +459,7 @@
 		
 		// Search media
 		$("#searchButton").click(function(e) {
-			var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__/media/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
+			var url = /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__/__${chartType}__/list.json}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/media/list.json';
 			$('#searchResult .loading-container').show();
 			$('#mediaList').empty();
 			$.ajax({

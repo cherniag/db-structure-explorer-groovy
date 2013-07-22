@@ -239,18 +239,10 @@ public class ChartItemControllerTest extends TestCase {
 
 		fixture.getChartItemsPage(selectedPublishDateTime, chartId, true, null);
 	}
-	
-	/**
-	 * Run the ModelAndView getMediaList(String,Date,Byte) method test with success expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetMediaList_Successful()
-		throws Exception {
+	public void testGetMediaList_Successful() throws Exception {
 		Date selectedPublishDateTime = new Date();
 		Integer chartId = new Integer((byte) 1);
 		String searchWords = "some words";
@@ -259,46 +251,28 @@ public class ChartItemControllerTest extends TestCase {
 		when(mediaService.getMedias(anyString())).thenReturn(Collections.<Media>emptyList());
 		when(ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyInt(), anyList())).thenReturn(chartItemDtos);
 
-		ModelAndView result = fixture.getMediaList(searchWords, selectedPublishDateTime, chartId);
+		ModelAndView result = fixture.getMediaList(searchWords, selectedPublishDateTime, chartId, "media");
 
 		assertNotNull("ModelAndView should not be null", result);
 		ModelAndViewAssert.assertViewName(result, null);
 		ModelAndViewAssert.assertModelAttributeValue(result, ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
 		
-		verify(mediaService, times(1)).getMedias(anyString());
+		verify(mediaService, times(1)).getMusic(anyString());
 		verifyStatic(times(1));
 		ChartDetailsAsm.toChartItemDtosFromMedia(any(Date.class), anyInt(), anyList());
 	}
 	
-	/**
-	 * Run the ModelAndView getMediaList(String,Date,Byte) method test with service exception expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@Test(expected=ServiceException.class)
-	public void testGetMediaList_ServiceException()
-		throws Exception {
+	public void testGetMediaList_ServiceException() throws Exception {
 		String searchWords = "some words";
 		Date selectedPublishDateTime = new Date();
 		Integer chartId = new Integer((byte) 1);
 		
-		doThrow(ServiceException.getInstance("")).when(mediaService).getMedias(anyString());
+		doThrow(ServiceException.getInstance("")).when(mediaService).getMusic(anyString());
 
-		fixture.getMediaList(searchWords, selectedPublishDateTime, chartId);
+		fixture.getMediaList(searchWords, selectedPublishDateTime, chartId, "media");
 	}
 
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @see TestCase#setUp()
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@Before
 	public void setUp()
 		throws Exception {
