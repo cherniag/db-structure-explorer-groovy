@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AssetFile extends AbstractEntity {
 	 
-	public enum FileType {MOBILE, DOWNLOAD, IMAGE, PREVIEW;}
+	public enum FileType {MOBILE, DOWNLOAD, IMAGE, PREVIEW, VIDEO;}
 
 	@Enumerated(EnumType.ORDINAL) 
 	protected FileType type;

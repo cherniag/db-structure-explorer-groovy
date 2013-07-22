@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +68,8 @@ public abstract class DDEXParser extends IParser {
 				resourceDetail = new DropTrack();
 				String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
 				resourceDetail.isrc = isrc;
+                String parentalWarningType = details.getChildText("ParentalWarningType");
+                resourceDetail.explicit = "Explicit".equals(parentalWarningType);
 				resourceDetails.put(reference, resourceDetail);
 				if (details.getChild("PLine") != null) {
 					resourceDetail.copyright = details.getChild("PLine").getChildText("PLineText");
@@ -86,13 +88,13 @@ public abstract class DDEXParser extends IParser {
 								|| "MP3".equals(codecType)
 								|| ("UserDefined".equals(codecType) && "MP3".equals(techDetail.getChild("AudioCodecType").getAttributeValue(
 										"UserDefinedValue")))) {
-							assetFile.type = AssetFile.FileType.DOWNLOAD;
+							assetFile.type = FileType.DOWNLOAD;
 						} else {
-							assetFile.type = AssetFile.FileType.MOBILE;
+							assetFile.type = FileType.MOBILE;
 						}
 
 					} else {
-						assetFile.type = AssetFile.FileType.PREVIEW;
+						assetFile.type = FileType.PREVIEW;
 					}
 					List<DropAssetFile> resourceFiles = files.get(node.getChildText("ResourceReference"));
 					if (resourceFiles == null) {
@@ -123,7 +125,7 @@ public abstract class DDEXParser extends IParser {
 					String fileName = techDetail.getChild("File").getChildText("FileName");
 					imageFile.file = getAssetFile(fileRoot, fileName);
 					;
-					imageFile.type = AssetFile.FileType.IMAGE;
+					imageFile.type = FileType.IMAGE;
 					// Get Hash
 					Element hash = techDetail.getChild("File").getChild("HashSum");
 					if (hash != null) {
@@ -253,11 +255,12 @@ public abstract class DDEXParser extends IParser {
 					track.files.add(imageFile);
 
 				getIds(release, track, track.files);
+                DropTrack resourceDetail = resourceDetails.get(resourceRef);
 				if (track.isrc == null || "".equals(track.isrc)) {
 					if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
-							&& resourceDetails.get(resourceRef) != null) {
+							&& resourceDetail != null) {
 						LOG.info("Getting ISRC from resource " + resourceRef);
-						track.isrc = resourceDetails.get(resourceRef).isrc;
+						track.isrc = resourceDetail.isrc;
 					}
 				}
 
@@ -269,11 +272,15 @@ public abstract class DDEXParser extends IParser {
 					if (pline != null) {
 						track.year = pline.getChildText("Year");
 						track.copyright = pline.getChildText("PLineText");
-					} else if (resourceDetails.get(resourceRef) != null) {
-						track.year = resourceDetails.get(resourceRef).year;
-						track.copyright = resourceDetails.get(resourceRef).copyright;
+					} else if (resourceDetail != null) {
+						track.year = resourceDetail.year;
+						track.copyright = resourceDetail.copyright;
 
 					}
+
+                    if (resourceDetail != null) {
+                        track.explicit = resourceDetail.explicit;
+                    }
 
 					Element details = release.getChild("ReleaseDetailsByTerritory");
 					String title = release.getChild("ReferenceTitle").getChildText("TitleText");

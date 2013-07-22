@@ -89,15 +89,6 @@ public class ManualParser extends IParser {
 				track.isrc = tokens[3];
 				track.productCode = track.isrc;
 				track.productId = track.isrc;
-				track.files = new ArrayList<DropAssetFile>();
-				DropAssetFile image = new DropAssetFile();
-				image.type = FileType.IMAGE;
-				image.file = dropFile.getParent()+"/"+tokens[5];
-				track.files.add(image);
-				DropAssetFile download = new DropAssetFile();
-				download.type = FileType.DOWNLOAD;
-				download.file = dropFile.getParent()+"/"+tokens[4];
-				track.files.add(download);
 				track.info = tokens[7];
 				track.label = tokens[8];
 				track.territories = new ArrayList<DropTerritory>();
@@ -108,7 +99,20 @@ public class ManualParser extends IParser {
 				territory.reportingId = track.isrc;
 				territory.startdate = new Date();
 				track.territories.add(territory);
-				
+
+                track.files = new ArrayList<DropAssetFile>();
+                DropAssetFile image = new DropAssetFile();
+                image.type = FileType.IMAGE;
+                image.file = dropFile.getParent()+"/"+tokens[5];
+                track.files.add(image);
+
+                if (!"".equals(tokens[4])) {
+                    DropAssetFile download = new DropAssetFile();
+                    download.type = FileType.DOWNLOAD;
+                    download.file = dropFile.getParent()+"/"+tokens[4];
+                    track.files.add(download);
+                }
+
 				if (tokens.length > 9 && !"".equals(tokens[9])) {
 					// Mobile file
 					DropAssetFile mobile = new DropAssetFile();
@@ -116,9 +120,18 @@ public class ManualParser extends IParser {
 					mobile.file = dropFile.getParent()+"/"+tokens[9];
 					track.files.add(mobile);
 				}
-				if (tokens.length > 10) {
+
+                if (tokens.length > 10 && !"".equals(tokens[10])) {
+                    // Video file
+                    DropAssetFile mobile = new DropAssetFile();
+                    mobile.type = FileType.VIDEO;
+                    mobile.file = dropFile.getParent()+"/"+tokens[10];
+                    track.files.add(mobile);
+                }
+
+				if (tokens.length > 11) {
 					// Unlicensed flag
-					if ("no".equalsIgnoreCase(tokens[10])) {
+					if ("no".equalsIgnoreCase(tokens[11])) {
 						track.licensed = false;
 					} else {
 						track.licensed = true;
@@ -137,6 +150,4 @@ public class ManualParser extends IParser {
 		}
 		return result;
 	}
-
-
 }
