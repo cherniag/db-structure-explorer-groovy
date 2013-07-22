@@ -60,6 +60,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userBannedRepository" ref="userBannedRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="iTunesService" ref="service.ITunesService" />
+        <property name="refundService" ref="service.RefundService" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">

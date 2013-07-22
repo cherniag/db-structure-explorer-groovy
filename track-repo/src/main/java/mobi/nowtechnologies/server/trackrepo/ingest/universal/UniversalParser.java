@@ -19,11 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UniversalParser extends IParser {
+    private static final String CLASSPATH_PROTOCOL = "classpath:";
 	
 	protected static final Log LOG = LogFactory.getLog(UniversalParser.class);
 
 	public UniversalParser(String root) throws FileNotFoundException {
-        super(root);
+		super(root);
 		LOG.info("Universal parser loading from " + root);
 	}
 
@@ -92,6 +93,12 @@ public class UniversalParser extends IParser {
 						String title = track.getChildText("track_title");
 						data.title = title;
 						data.subTitle = track.getChildText("track_version_title");
+
+                        String prdExplicit = product.getChildText("prd_explicit");
+                        String trackExplicit = track.getChildText("track_explicit");
+                        data.explicit = "Y".equals(prdExplicit);
+                        data.explicit = !"".equals(trackExplicit) ? "Y".equals(trackExplicit) : data.explicit;
+
 						List<Element> artists = track.getChild("track_contributors").getChildren("artist_name");
 						boolean firstArtist = true;
 						String artist = "";

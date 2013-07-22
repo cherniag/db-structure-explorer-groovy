@@ -17,6 +17,7 @@ import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
@@ -98,7 +99,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public PayPalPaymentDetails commitPaymentDetails(String token, User user, PaymentPolicy paymentPolicy, boolean activated) throws ServiceException {
-		LOGGER.info("Commiting PayPal payment details for user {} ...", user.getUserName());
+		LOGGER.info("Committing PayPal payment details for user {} ...", user.getUserName());
 
 		PayPalResponse response = httpService.makeBillingAgreementRequest(token);
 		if (response.isSuccessful()) {
@@ -106,19 +107,11 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 
 			PayPalPaymentDetails newPaymentDetails = new PayPalPaymentDetails();
 			newPaymentDetails.setBillingAgreementTxId(response.getBillingAgreement());
-			newPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
 			newPaymentDetails.setPaymentPolicy(paymentPolicy);
-			newPaymentDetails.setMadeRetries(0);
-			newPaymentDetails.setRetriesOnError(getRetriesOnError());
-			newPaymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
-			newPaymentDetails.setActivated(activated);
+            newPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
 
-			paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-			
-			user.setCurrentPaymentDetails(newPaymentDetails);
-			newPaymentDetails.setOwner(user);
-
-			newPaymentDetails = (PayPalPaymentDetails) getPaymentDetailsRepository().save(newPaymentDetails);
+            newPaymentDetails = (PayPalPaymentDetails) super.commitPaymentDetails(user, newPaymentDetails);
+            newPaymentDetails.setActivated(activated);
 
 			LOGGER.info("Done creation of PayPal payment details for user {}", user.getUserName());
 			return newPaymentDetails;

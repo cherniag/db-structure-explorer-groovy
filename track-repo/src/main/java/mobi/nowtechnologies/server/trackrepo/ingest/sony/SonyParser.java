@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.sony;
 
-
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
@@ -26,7 +25,6 @@ public class SonyParser extends IParser {
 	private ArrayList<String> files = new ArrayList<String>();;
 	private String logFile;
 	private String tempLogFile;
-
 
 	public SonyParser(String root) throws FileNotFoundException {
 		super(root);
@@ -84,6 +82,8 @@ public class SonyParser extends IParser {
 				result.artist = artist;
 				String genre = metadata.getChild("Genre").getAttributeValue("name");
 				result.genre = genre;
+                String explicit = metadata.getChild("Advisory").getValue();
+				result.explicit = Boolean.valueOf(explicit);
 				String copyright = metadata.getChild("Copyright").getValue();
 				result.copyright = copyright;
 				String label = metadata.getChild("Label").getValue();

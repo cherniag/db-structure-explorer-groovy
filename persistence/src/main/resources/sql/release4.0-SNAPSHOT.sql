@@ -40,10 +40,7 @@ where ch.type='VIDEO_CHART';
 
  -- http://jira.musicqubed.com/browse/IMP-1784
  -- [Server] Adjust payment system and jobs to support new 4G payment options
-alter table tb_paymentpolicy add column tariff char(255) not null default '_3G';
-
-  -- Vova's task
- alter table tb_users add column tariff char(255);
+alter table tb_paymentPolicy add column tariff char(255) not null default '_3G';
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
 alter table tb_users add column tariff char(255);
@@ -81,7 +78,7 @@ create table refund (
 
  -- http://jira.musicqubed.com/browse/IMP-1794
  -- Remove video access from downgrading users
- insert into tb_accountlogtypes (i, name) value (11, "Trial skipping");
- insert into tb_accountlogtypes (i, name) value (12, "Bought period skipping");
+ insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
+ insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
 
- update tb_paymentpolicy set content_category="other";
+ update tb_paymentPolicy set content_category="other";

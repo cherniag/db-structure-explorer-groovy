@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.RefundService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -37,6 +38,8 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	private PaymentDetailsRepository paymentDetailsRepository;
 	
 	private UserService userService;
+
+    private RefundService refundService;
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	@Override
@@ -97,6 +100,23 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		return submittedPayment;
 	}
 
+    @Transactional(propagation=Propagation.REQUIRED)
+    protected PaymentDetails commitPaymentDetails(User user, PaymentDetails newPaymentDetails){
+
+        refundService.logSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(user, newPaymentDetails.getPaymentPolicy());
+
+        paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+
+        user.setCurrentPaymentDetails(newPaymentDetails);
+        newPaymentDetails.setOwner(user);
+        newPaymentDetails.setActivated(true);
+        newPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+        newPaymentDetails.setRetriesOnError(getRetriesOnError());
+        newPaymentDetails.setMadeRetries(0);
+
+        return paymentDetailsRepository.save(newPaymentDetails);
+    }
+
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
@@ -140,4 +160,8 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
+
+    public void setRefundService(RefundService refundService) {
+        this.refundService = refundService;
+    }
 }
