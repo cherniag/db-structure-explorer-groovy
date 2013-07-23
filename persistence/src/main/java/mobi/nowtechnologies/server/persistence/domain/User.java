@@ -301,7 +301,7 @@ public class User implements Serializable {
     private Boolean videoFreeTrialHasBeenActivated;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "last_successful_payment_details", nullable = true)
+    @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
 
 	public User() {
