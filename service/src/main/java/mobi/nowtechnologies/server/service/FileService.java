@@ -43,6 +43,7 @@ public class FileService{
 		IMAGE_RESOLUTION("image"),
 		HEADER("header"),
 		AUDIO("audio"),
+		VIDEO("video"),
 		PURCHASED("purchased");
 
 		private String folderName;

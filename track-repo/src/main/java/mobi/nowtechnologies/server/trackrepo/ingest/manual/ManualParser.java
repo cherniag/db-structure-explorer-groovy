@@ -126,10 +126,13 @@ public class ManualParser extends IParser {
                     DropAssetFile mobile = new DropAssetFile();
                     mobile.type = FileType.VIDEO;
                     mobile.file = dropFile.getParent()+"/"+tokens[10];
+                    if (tokens.length > 11 && !"".equals(tokens[11])) {
+                        mobile.duration = Integer.parseInt(tokens[11]);
+                    }
                     track.files.add(mobile);
                 }
 
-				if (tokens.length > 11) {
+				if (tokens.length > 12) {
 					// Unlicensed flag
 					if ("no".equalsIgnoreCase(tokens[11])) {
 						track.licensed = false;

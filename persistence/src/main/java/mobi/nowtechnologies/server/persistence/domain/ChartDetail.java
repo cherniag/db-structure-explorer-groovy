@@ -302,7 +302,7 @@ public class ChartDetail {
 		chartDetailDto.setTitle(media.getTitle());
 		chartDetailDto.setTrackSize(headerSize + audioSize - 2);
 		chartDetailDto.setChartDetailVersion(version);
-		chartDetailDto.setHeaderVersion(media.getHeaderFile().getVersion());
+		chartDetailDto.setHeaderVersion(media.getHeaderFile() != null ? media.getHeaderFile().getVersion() : null);
 		chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
 		chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());

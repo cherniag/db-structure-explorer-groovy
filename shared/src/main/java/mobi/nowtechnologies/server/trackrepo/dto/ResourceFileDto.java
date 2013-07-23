@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -21,6 +22,7 @@ public class ResourceFileDto {
 	private String md5;
 	private String mediaHash;
 	private Integer size;
+    private Integer duration;
 	
 	public ResourceFileDto()
 	{
@@ -29,7 +31,7 @@ public class ResourceFileDto {
 	public ResourceFileDto(FileType type, Resolution resolution, String filename)
 	{
 		this.type = type.name();
-		this.resolution = resolution.name();
+		this.resolution = resolution != null ? resolution.name() : null;
 		this.filename = filename;
 	}
 	
@@ -43,13 +45,15 @@ public class ResourceFileDto {
 	public String getFullFilename() {
 		FileType type = FileType.valueOf(this.type);
 		Resolution resolution = null;
-		try{
-			resolution = AudioResolution.valueOf(this.resolution);
-		}catch(IllegalArgumentException e){
-			resolution = ImageResolution.valueOf(this.resolution);
-		}		
-		
-		return filename+(resolution != null ? resolution.getSuffix() : "")+"."+(type != null ? type.getExt() : "");
+        if(this.resolution != null){
+            try{
+                resolution = AudioResolution.valueOf(this.resolution);
+            }catch(IllegalArgumentException e){
+                resolution = ImageResolution.valueOf(this.resolution);
+            }
+        }
+
+		return filename+(resolution != null ? resolution.getSuffix() : "")+(!StringUtils.isEmpty(type.getExt()) ? "."+type.getExt() : "");
 	}
 	
 	public String getType() {
@@ -89,8 +93,16 @@ public class ResourceFileDto {
 	public void setResolution(String resolution) {
 		this.resolution = resolution;
 	}
-	
-	@Override
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -145,9 +157,16 @@ public class ResourceFileDto {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "ResourceFileDto [type=" + type + ", filename=" + filename + ", resolution=" + resolution + ", md5=" + md5 + ", mediaHash=" + mediaHash
-				+ ", size=" + size + "]";
-	}
+    @Override
+    public String toString() {
+        return "ResourceFileDto{" +
+                "type='" + type + '\'' +
+                ", filename='" + filename + '\'' +
+                ", resolution='" + resolution + '\'' +
+                ", md5='" + md5 + '\'' +
+                ", mediaHash='" + mediaHash + '\'' +
+                ", size=" + size +
+                ", duration=" + duration +
+                "} " + super.toString();
+    }
 }

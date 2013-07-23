@@ -113,7 +113,8 @@ echo "***** Generating thumbnails *****"
 		mv "files/image/P${ISRC}_6.jpg" "files/image/${ISRC}_6.jpg" || { echo "command failed"; exit 1; } 
 	fi 
 	
-	
+if ["${FULL_AUDIO}" != "" ]; then
+
 echo "***** Generating Download Audio *****"
     echo getting encodding for "${FULL_AUDIO}"
 	INPUT_ENCODING=`getEncoding "${FULL_AUDIO}"`
@@ -184,6 +185,8 @@ echo "***** Generating Mobile Preview Audio *****"
 	${NERO_DIR}/neroAacTag "${ISRC}P.m4a" "-meta:title=${META_TITLE}" "-meta:artist=${META_AUTHOR}" "-meta:album=${META_ALBUM}" "-meta:genre=${META_GENRE}" "-meta:year=${META_DATE}" "-meta:track=${META_TRACK}" "-meta:copyright=${META_COPY}" -meta:isrc=${ISRC} "-add-cover:front:${IMAGE_COVER}"|| { echo "command failed"; exit 1; } 
 
 	mv "${ISRC}P.m4a" files/preview/|| { echo "command failed"; exit 1; } 
+
+fi
 
 # Cleaning: don't clean ! Files are reused to compute the MD5 hash
 	#rm -f ${ISRC}P.m4a

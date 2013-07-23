@@ -13,7 +13,7 @@ public enum FileType {
 	MOBILE_ENCODED(2, "encoded", "enc", "application/octet-stream"),
 	DOWNLOAD(1, "purchased", "mp3", "audio/mpeg3"),
     IMAGE(3, "image", "jpg", "image/jpeg"),
-    VIDEO(4, "video", "flv", "application/octet-stream");
+    VIDEO(4, "video", null, "application/octet-stream");
 
 	private Integer id;
 	private String pack;

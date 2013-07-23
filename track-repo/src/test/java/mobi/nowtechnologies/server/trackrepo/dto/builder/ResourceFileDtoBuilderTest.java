@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
@@ -11,6 +13,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.ServletContextResource;
 
 import javax.servlet.ServletContext;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,10 +42,17 @@ public class ResourceFileDtoBuilderTest {
 	 * @generatedBy CodePro at 11/13/12 2:14 PM
 	 */
 	@Test
-	public void testBuild()
+	public void testBuild_Audio_Success()
 		throws Exception {
+        Track track = new Track();
+        track.setIsrc(ISRC_VALUE);
 
-		List<ResourceFileDto> result = fixture.build(ISRC_VALUE);
+        final AssetFile audioFile = new AssetFile();
+        audioFile.setType(AssetFile.FileType.DOWNLOAD);
+        audioFile.setPath("somepath");
+        track.setFiles(Collections.singleton(audioFile));
+
+		List<ResourceFileDto> result = fixture.build(track);
 
 		assertNotNull(result);
 		
@@ -138,6 +148,82 @@ public class ResourceFileDtoBuilderTest {
 		assertEquals(file.getResolution(), ImageResolution.SIZE_3.name());
 		assertEquals(file.getSize(), new Integer(7550));
 	}
+
+    @Test
+    public void testBuild_Video_Success()
+            throws Exception {
+        Track track = new Track();
+        track.setIsrc(ISRC_VALUE);
+
+        final AssetFile videoFile = new AssetFile();
+        videoFile.setType(AssetFile.FileType.VIDEO);
+        videoFile.setPath("somepath");
+        videoFile.setExternalId("11111111111");
+        videoFile.setDuration(20000);
+        track.setFiles(Collections.singleton(videoFile));
+
+        List<ResourceFileDto> result = fixture.build(track);
+
+        assertNotNull(result);
+
+        Iterator<ResourceFileDto> i = result.iterator();
+
+        ResourceFileDto file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.VIDEO.name());
+        assertEquals(file.getResolution(), AudioResolution.RATE_ORIGINAL.name());
+        assertEquals(file.getSize().intValue(), 0);
+        assertEquals(videoFile.getDuration(), file.getDuration());
+        assertEquals(videoFile.getExternalId(), file.getFilename());
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_ORIGINAL.name());
+        assertEquals(file.getSize(), new Integer(0));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_LARGE.name());
+        assertEquals(file.getSize(), new Integer(6003));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_SMALL.name());
+        assertEquals(file.getSize(), new Integer(1541));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_22.name());
+        assertEquals(file.getSize(), new Integer(6003));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_21.name());
+        assertEquals(file.getSize(), new Integer(2120));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_11.name());
+        assertEquals(file.getSize(), new Integer(2120));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_6.name());
+        assertEquals(file.getSize(), new Integer(1317));
+
+        file = i.next();
+        assertNotNull(file);
+        assertEquals(file.getType(), FileType.IMAGE.name());
+        assertEquals(file.getResolution(), ImageResolution.SIZE_3.name());
+        assertEquals(file.getSize(), new Integer(7550));
+    }
 
 	/**
 	 * Perform pre-test initialization.

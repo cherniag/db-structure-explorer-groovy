@@ -85,3 +85,6 @@ create table refund (
  insert into tb_accountlogtypes (i, name) value (12, "Bought period skipping");
 
  update tb_paymentpolicy set content_category="other";
+
+ -- IMP-1781 [Track Repo] Migrate tracks ingestion from CMS to Track Repo
+ insert into tb_fileTypes (i, name) value (4, 'VIDEO');

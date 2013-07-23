@@ -78,7 +78,7 @@ public class TrackController extends AbstractCommonController{
 			TrackDtoMapper trackDto = new TrackDtoMapper(track);
 			
 			if(track.getStatus() == TrackStatus.ENCODED){
-				trackDto.setFiles(resourceFileDtoBuilder.build(track.getIsrc()));
+				trackDto.setFiles(resourceFileDtoBuilder.build(track));
 				Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
 				if (publishTerritory != null) {
 					trackDto.setPublishDate(publishTerritory.getStartDate());

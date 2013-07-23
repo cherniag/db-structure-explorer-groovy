@@ -1,20 +1,13 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import mobi.nowtechnologies.server.service.CloudFileService;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.factory.TrackFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
-import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
@@ -28,6 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:META-INF/shared.xml", "classpath:META-INF/trackrepo-dao-test.xml", "classpath:META-INF/trackrepo-services-test.xml" })
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
@@ -36,7 +37,7 @@ public class TrackServiceIT {
 	private final String DEFAULT_FILE_NAME = "work/APPCASTP.m4a";
 
 	@Autowired
-	private TrackService trackService;
+	private TrackServiceImpl trackService;
 
 	@Autowired
 	private TrackRepository trackRepository;
@@ -74,6 +75,26 @@ public class TrackServiceIT {
 		assertNotNull(track.getPublishDate());
 		assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
 	}
+
+    @Test
+    public void testCreateVideo_Success() throws Exception {
+        //test preparation
+        URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/hits.mp4");
+        String videoPath = new File(videoURL.toURI()).getAbsolutePath();
+
+        Track anyTrack = TrackFactory.anyTrack();
+        anyTrack.setStatus(TrackStatus.ENCODED);
+        AssetFile videoFile = new AssetFile();
+        videoFile.setType(AssetFile.FileType.VIDEO);
+        videoFile.setPath(videoPath);
+        anyTrack.setFiles(Collections.singleton(videoFile));
+
+        //call test method
+        AssetFile result = trackService.createVideo(anyTrack);
+
+        //assertion
+        assertNotNull(result.getExternalId());
+    }
 	
 	private MultipartFile createTestFile(String fileName) throws IOException{
 		InputStream srcFile = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE_NAME);

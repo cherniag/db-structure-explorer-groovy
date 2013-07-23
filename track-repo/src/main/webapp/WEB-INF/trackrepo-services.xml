@@ -28,6 +28,8 @@
 		<property name="cloudFileService" ref="trackRepo.CloudFileService" />		
 		<property name="srcPullContainer" value="${trackRepo.pull.cdn.container.src}" />
 		<property name="destPullContainer" value="${trackRepo.pull.cdn.container.dest}" />
+		<property name="brightcoveWriteToken" value="${brightcove.token.write}" />
+		<property name="brightcoveGeoFiltering" value="${brightcove.geo.filter}" />
 	</bean>
 
     <bean id="trackRepo.ParserFactory" class="mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory">

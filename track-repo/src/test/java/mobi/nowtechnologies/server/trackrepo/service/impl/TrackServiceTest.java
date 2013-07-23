@@ -1,7 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import mobi.nowtechnologies.server.service.CloudFileService;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
@@ -9,6 +14,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -30,9 +36,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -57,6 +60,9 @@ public class TrackServiceTest {
 	private TrackServiceImpl service;
 	private Track track;
 	private ExternalCommandThread command;
+
+    @Mock
+    private CloudFileService cloudFileServiceMock;
 
 	@Before
 	public void before() throws Exception {
@@ -129,7 +135,8 @@ public class TrackServiceTest {
 		});
 
 		ServletContext servletContext = new MockServletContext();
-		service = new TrackServiceImpl();
+		service = spy(new TrackServiceImpl());
+        service.setCloudFileService(cloudFileServiceMock);
 		service.setWorkDir(new ServletContextResource(servletContext, WORKDIR_PATH));
 		service.setPublishDir(new ServletContextResource(servletContext, ENCODE_DIST_PATH));
 		service.setEncodeScript(new ServletContextResource(servletContext, ENCODE_SCRIPT_PATH));
@@ -211,4 +218,42 @@ public class TrackServiceTest {
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
 		assertEquals(track.getStatus(), TrackStatus.ENCODED);
 	}
+
+    @Test
+    public void testPull_Video_Success() throws BrightcoveException {
+        track.setStatus(TrackStatus.ENCODED);
+        final AssetFile videoFile = new AssetFile();
+        videoFile.setType(AssetFile.FileType.VIDEO);
+        videoFile.setPath("somepath");
+        track.setFiles(Collections.singleton(videoFile));
+
+        when(cloudFileServiceMock.copyFile(eq(track.getIsrc() + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt()), anyString(), anyString(), anyString())).thenReturn(true);
+        when(cloudFileServiceMock.copyFile(eq(track.getIsrc() + ImageResolution.SIZE_21.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString())).thenReturn(true);
+        when(cloudFileServiceMock.copyFile(eq(track.getIsrc() + "."+ FileType.MOBILE_AUDIO.getExt()), anyString(), anyString(), anyString())).thenReturn(true);
+        when(cloudFileServiceMock.copyFile(eq(track.getIsrc() + "."+ FileType.MOBILE_ENCODED.getExt()), anyString(), anyString(), anyString())).thenReturn(true);
+        doAnswer(new Answer<AssetFile>() {
+            @Override
+            public AssetFile answer(InvocationOnMock invocationOnMock) throws Throwable {
+                videoFile.setExternalId("343434977432");
+                return videoFile;
+            }
+        }).when(service).createVideo(any(Track.class));
+
+        Track track = service.pull(ID_VALUE);
+        assertNotNull(track);
+        assertEquals(track.getId(), ID_VALUE);
+        assertEquals(track.getTitle(), TITLE_VALUE);
+        assertEquals(track.getArtist(), ARTIST_VALUE);
+        assertEquals(track.getIsrc(), ISRC_VALUE);
+        assertEquals(track.getIngestor(), INGESTOR_VALUE);
+        assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
+        assertEquals(track.getStatus(), TrackStatus.ENCODED);
+        assertNotNull(videoFile.getExternalId());
+
+        verify(service, times(1)).createVideo(any(Track.class));
+        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getIsrc() + ImageResolution.SIZE_22.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getIsrc() + ImageResolution.SIZE_21.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_AUDIO.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_ENCODED.getExt()), anyString(), anyString(), anyString());
+    }
 }

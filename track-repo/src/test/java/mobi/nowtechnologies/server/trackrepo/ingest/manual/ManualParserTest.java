@@ -40,5 +40,6 @@ public class ManualParserTest {
         Assert.assertNotNull(videoTrack.getFiles());
         Assert.assertEquals(2, videoTrack.getFiles().size());
         Assert.assertEquals(AssetFile.FileType.VIDEO, videoTrack.getFiles().get(1).type);
+        Assert.assertEquals(20000, videoTrack.getFiles().get(1).duration.intValue());
     }
 }
