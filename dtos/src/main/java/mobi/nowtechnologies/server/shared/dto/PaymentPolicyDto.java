@@ -55,7 +55,7 @@ public class PaymentPolicyDto {
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
         setFourGPaymentPolicy(Tariff._4G.equals(policy.getTariff()));
-        setPaymentPolicyMediaType(policy.getPaymentPolicyMediaTypeEnum());
+        setPaymentPolicyMediaType(policy.getPaymentPolicyMediaType());
     }
 
     /*private boolean isPsmsPolicy() {

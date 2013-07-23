@@ -76,7 +76,8 @@ public class PaymentPolicy {
     @Transient
     private ProviderType providerType;
     
-    @Transient
+    @Enumerated(EnumType.STRING)
+    @Column(name="mediatype", columnDefinition = "varchar(25)")
     private PaymentPolicyMediaType paymentPolicyMediaType;
 
     @Enumerated(EnumType.STRING)
@@ -276,27 +277,12 @@ public class PaymentPolicy {
         this.providerType = providerType;
     }
 
-    public PaymentPolicyMediaType getPaymentPolicyMediaTypeEnum() {
+    public PaymentPolicyMediaType getPaymentPolicyMediaType() {
     	return paymentPolicyMediaType;
     }
     
-    public void getPaymentPolicyMediaTypeEnum(PaymentPolicyMediaType ppmd) {
+    public void getPaymentPolicyMediaType(PaymentPolicyMediaType ppmd) {
     	paymentPolicyMediaType = ppmd;
-    }
-    
-    @Access(AccessType.PROPERTY)
-    @Column(name="mediatype", columnDefinition = "varchar(25)")
-    public String getPaymentPolicyMediaType() {
-    	return paymentPolicyMediaType != null ? paymentPolicyMediaType.toString() : null;
-    }
-    
-    public void setPaymentPolicyMediaType(String mediaType) {
-    	for ( PaymentPolicyMediaType ppmediaType : PaymentPolicyMediaType.values() ) {
-    		if ( ppmediaType.toString().equals(mediaType) ) {
-    			this.paymentPolicyMediaType = ppmediaType;
-    			break;
-    		}
-    	}
     }
     
     @Access(AccessType.PROPERTY)

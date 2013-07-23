@@ -85,7 +85,7 @@ public class PaymentsController extends CommonController {
         
         int activePolicyId = -1;
         if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
-        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getPaymentPolicyMediaTypeEnum());
+        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getPaymentPolicyMediaType());
         	if ( mirrorPolicy != null ) {
         		activePolicyId = mirrorPolicy;
         	}
