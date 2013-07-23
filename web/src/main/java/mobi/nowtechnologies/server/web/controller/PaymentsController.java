@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyMediaType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -76,15 +77,15 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         
         boolean userIsOptedInToVideo = false;
-        if ( user.isVideoFreeTrialHasBeenActivated() && user.canGetVideo() ) {
+        if ( user.isOptedInForVideo() && user.canGetVideo() ) {
         	userIsOptedInToVideo = true;
         }
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
-//        mav.addObject("canGetVideo", user.canGetVideo());
+        mav.addObject("userCanGetVideo", user.canGetVideo());
         
         int activePolicyId = -1;
         if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
-        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getId(), activePolicy.getSubweeks());
+        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getPaymentPolicyMediaTypeEnum());
         	if ( mirrorPolicy != null ) {
         		activePolicyId = mirrorPolicy;
         	}
@@ -104,13 +105,12 @@ public class PaymentsController extends CommonController {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         } else {
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
+            paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
         }
         
         if(isEmpty(paymentPolicy)) {
             return Collections.emptyList();
         }
-        
-        paymentPolicy = filterVideo(paymentPolicy, user);
         
         return paymentPolicy;
     }
@@ -120,9 +120,9 @@ public class PaymentsController extends CommonController {
      * For example for a 1week audio only policy, the mirror is 1w audio+video policy
      *  
      */
-    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyId, int activePolicyWeeks) {
+    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyWeeks, PaymentPolicyMediaType activePaymentPolicyMediaType) {
     	for ( PaymentPolicyDto pp : paymentPolicies ) {
-    		if ( ((int)pp.getId()) != activePolicyId && pp.getSubweeks() == activePolicyWeeks ) {
+    		if ( pp.getPaymentPolicyMediaType() != activePaymentPolicyMediaType && pp.getSubweeks() == activePolicyWeeks ) {
     			return (int)pp.getId();
     		}
     	}
@@ -130,18 +130,20 @@ public class PaymentsController extends CommonController {
     }
     
     /**
-     * If the list of payment policies has videos but the user is not entitled for video, we'll remove
-     * the payment policies with video
+     * For 3G users we'll only display 3G payment options, for 4G users, we'll display only 4G payment options
      */
-    private List<PaymentPolicyDto> filterVideo(List<PaymentPolicyDto> paymentPolicyList, User user) {
+    private List<PaymentPolicyDto> filterPaymentPoliciesForUser(List<PaymentPolicyDto> paymentPolicyList, User user) {
     	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
     	
-    	boolean videoEnabledUser = user.canGetVideo() && user.isVideoFreeTrialHasBeenActivated();
+    	if ( paymentPolicyList == null || user == null ) {
+    		return ret;
+    	}
+    	
+    	boolean videoEnabledUser = user.canGetVideo() && user.isOptedInForVideo();
     	for ( PaymentPolicyDto pp : paymentPolicyList ) {
-    		if ( pp.isVideoPaymentPolicy() && !videoEnabledUser ) {
-    			continue;
+    		if ( (videoEnabledUser && pp.isFourGPaymentPolicy()) || (!videoEnabledUser && !pp.isFourGPaymentPolicy()) ) {
+    			ret.add( pp );
     		}
-    		ret.add( pp );
     	}
     	
     	return ret;

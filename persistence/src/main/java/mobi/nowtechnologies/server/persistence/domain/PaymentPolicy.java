@@ -75,6 +75,9 @@ public class PaymentPolicy {
 
     @Transient
     private ProviderType providerType;
+    
+    @Transient
+    private PaymentPolicyMediaType paymentPolicyMediaType;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -273,6 +276,29 @@ public class PaymentPolicy {
         this.providerType = providerType;
     }
 
+    public PaymentPolicyMediaType getPaymentPolicyMediaTypeEnum() {
+    	return paymentPolicyMediaType;
+    }
+    
+    public void getPaymentPolicyMediaTypeEnum(PaymentPolicyMediaType ppmd) {
+    	paymentPolicyMediaType = ppmd;
+    }
+    
+    @Access(AccessType.PROPERTY)
+    @Column(name="mediatype", columnDefinition = "varchar(25)")
+    public String getPaymentPolicyMediaType() {
+    	return paymentPolicyMediaType != null ? paymentPolicyMediaType.toString() : null;
+    }
+    
+    public void setPaymentPolicyMediaType(String mediaType) {
+    	for ( PaymentPolicyMediaType ppmediaType : PaymentPolicyMediaType.values() ) {
+    		if ( ppmediaType.toString().equals(mediaType) ) {
+    			this.paymentPolicyMediaType = ppmediaType;
+    			break;
+    		}
+    	}
+    }
+    
     @Access(AccessType.PROPERTY)
     @Column(name="provider", columnDefinition = "char(255)")
     public String getProvider() {
@@ -295,9 +321,7 @@ public class PaymentPolicy {
     }
     
     public boolean isVideoPaymentPolicy() {
-    	// from Mykhailo: Payment policy with 4G tariff could be Audio. I assumes that we will use contentType or contentCategory field to distinguish Audio only and Video Audio payment policies
-    	// this check may change
-    	return Tariff._4G.equals(this.tariff);
+    	return PaymentPolicyMediaType.AUDIOPLUSVIDEO.equals(paymentPolicyMediaType);
     }
 
     @Override

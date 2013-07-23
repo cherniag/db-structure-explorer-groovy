@@ -289,6 +289,9 @@ public class User implements Serializable {
 
     @Column(name = "showFreeTrial")
     private Boolean showFreeTrial;
+    
+    @Column(name = "optedInForVideo")
+    private Boolean optedInForVideo;
 
 	public User() {
 		setDisplayName("");
@@ -1459,7 +1462,18 @@ public class User implements Serializable {
         this.videoFreeTrialHasBeenActivated = videoFreeTrialHasBeenActivated;
     }
 
-    public Boolean showFreeTrial() {
+    public boolean isOptedInForVideo() {
+    	if ( optedInForVideo == null ) {
+    		return false;
+    	}
+		return optedInForVideo;
+	}
+
+	public void setOptedInForVideo(Boolean optedInForVideo) {
+		this.optedInForVideo = optedInForVideo;
+	}
+
+	public Boolean showFreeTrial() {
         return this.showFreeTrial;
     }
 

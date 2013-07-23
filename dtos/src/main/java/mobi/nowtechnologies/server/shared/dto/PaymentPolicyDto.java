@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto;
 
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyMediaType;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import java.math.BigDecimal;
 
@@ -25,7 +27,8 @@ public class PaymentPolicyDto {
     private BigDecimal oldSubcost;
     private Integer oldSubweeks;
     private String currencyISO;
-    private boolean videoPaymentPolicy;
+    private boolean fourGPaymentPolicy;
+    private PaymentPolicyMediaType paymentPolicyMediaType;
 
     public PaymentPolicyDto() { }
 
@@ -51,7 +54,8 @@ public class PaymentPolicyDto {
         setPaymentType(policy.getPaymentType());
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
-        setVideoPaymentPolicy(policy.isVideoPaymentPolicy());
+        setFourGPaymentPolicy(Tariff._4G.equals(policy.getTariff()));
+        setPaymentPolicyMediaType(policy.getPaymentPolicyMediaTypeEnum());
     }
 
     /*private boolean isPsmsPolicy() {
@@ -146,12 +150,25 @@ public class PaymentPolicyDto {
         return true;
     }*/
     
-    public boolean isVideoPaymentPolicy() {
-		return videoPaymentPolicy;
+    public boolean isFourGPaymentPolicy() {
+		return fourGPaymentPolicy;
 	}
 
-	public void setVideoPaymentPolicy(boolean videoPaymentPolicy) {
-		this.videoPaymentPolicy = videoPaymentPolicy;
+	public void setFourGPaymentPolicy(boolean fourGPaymentPolicy) {
+		this.fourGPaymentPolicy = fourGPaymentPolicy;
+	}
+
+	public PaymentPolicyMediaType getPaymentPolicyMediaType() {
+		return paymentPolicyMediaType;
+	}
+
+	public void setPaymentPolicyMediaType(
+			PaymentPolicyMediaType paymentPolicyMediaType) {
+		this.paymentPolicyMediaType = paymentPolicyMediaType;
+	}
+	
+	public boolean isVideoPaymentPolicy() {
+		return PaymentPolicyMediaType.AUDIOPLUSVIDEO.equals(this.paymentPolicyMediaType);
 	}
 
 	@Override
@@ -159,5 +176,6 @@ public class PaymentPolicyDto {
 		return "PaymentPolicyDto [id=" + id + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorName=" + operatorName + ", paymentType=" + paymentType
 				+ ", shortCode=" + shortCode + ", oldSubcost=" + oldSubcost + ", oldSubweeks=" + oldSubweeks + ", currencyISO=" + currencyISO + "]";
 	}
+
     
 }

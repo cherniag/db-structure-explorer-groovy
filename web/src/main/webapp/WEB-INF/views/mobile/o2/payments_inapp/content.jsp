@@ -84,6 +84,7 @@ function videoSelected() {
         <p>${paymentPoliciesNote}</p>
         <hr />
         
+        <c:if test="${userCanGetVideo eq true}">
         <c:choose>
         <%--we have 2 cases:
         	(1) user is 4G and opted-in (we display the video options)
@@ -125,6 +126,7 @@ function videoSelected() {
         	</div>
         </c:when>
         </c:choose>
+        </c:if>
         
         <div class="setOfButtons">
         	<c:set var="hasPaymentBaner" value="false" />
