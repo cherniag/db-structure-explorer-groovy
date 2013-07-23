@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class TrackDto {
 	public static final String TRACK_DTO_LIST = "TRACK_DTO_LIST";
 	public static final String TRACK_DTO = "TRACK_DTO";
+    protected static final String URL_DATE_FORMAT = "yyyy-MM-dd";
 
 	// ------------------basic properties-----------------------//
 	private Long id;
@@ -39,8 +41,11 @@ public class TrackDto {
 	private String info;
 	private Boolean licensed;
 	private Boolean explicit;
+    @DateTimeFormat(pattern=URL_DATE_FORMAT)
 	private Date ingestionUpdateDate;
-	private Date publishDate;
+    @DateTimeFormat(pattern=URL_DATE_FORMAT)
+    private Date publishDate;
+    @DateTimeFormat(pattern=URL_DATE_FORMAT)
 	private Date releaseDate;
 	private String publishTitle;
 	private String publishArtist;
