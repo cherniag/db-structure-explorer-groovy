@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLogType;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,43 +47,6 @@ public class MediaService {
 		this.mediaRepository = mediaRepository;
 	}
 
-//	@Deprecated
-//	public Object[] buyTrack(int userId, int mediaId, String communityName) {
-//		if (mediaId < 0)
-//			throw new ServiceException(
-//					"The parameter mediaId < 0");
-//		if (communityName == null)
-//			throw new ServiceException(
-//					"The parameter communityName is null");
-//
-//		AccountCheckDTO accountCheck = userService.proceessAccountCheckCommand(userId);
-//		BuyTrack buyTrack = new BuyTrack();
-//
-//		try {			
-//			List<String> mediaLogTypeList = mediaLogTypeService
-//					.findNameByUserIdAndMediaId(userId, mediaId);
-//			if (mediaLogTypeList.contains(MediaLogTypeDao.PURCHASE)) {
-//				buyTrack.setStatus(BuyTrack.Status.ALREADYPURCHASED);
-//				return new Object[] { accountCheck, buyTrack };
-//			}
-//			if (!mediaLogTypeList.contains(MediaLogTypeDao.DOWNLOAD)) {
-//				buyTrack.setStatus(BuyTrack.Status.NOTDOWNLOAD);
-//				return new Object[] { accountCheck, buyTrack };
-//			}
-//			if (!mediaDao.isBalanceOk(userId, mediaId)) {
-//				buyTrack.setStatus(BuyTrack.Status.BALANCE);
-//				return new Object[] { accountCheck, buyTrack };
-//			}
-//			logMediaEvent(userId, mediaId, MediaLogTypeDao.PURCHASE);
-//			buyTrack.setStatus(BuyTrack.Status.OK);
-//			return new Object[] { accountCheck, buyTrack };
-//		} catch (Exception e) {
-//			LOGGER.error(e.getMessage(),e);
-//			buyTrack.setStatus(BuyTrack.Status.FAIL);
-//			return new Object[] { accountCheck, buyTrack };
-//		}
-//	}
-	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void logMediaEvent(int userId, Media media, String mediaLogType) {
 		final Map<String,MediaLogType> MEDIA_LOG_TYPES = mediaLogTypeService.getMediaLogTypes();
@@ -101,13 +65,18 @@ public class MediaService {
 	
 	@Transactional(readOnly = true)
 	public List<Media> getMedias(String searchWords) {
-		LOGGER.debug("input parameters searchWords: [{}]", searchWords);
-		
-		List<Media> medias = mediaRepository.getMedias("%"+searchWords+"%"); 
-		
-		LOGGER.info("Output parameter medias=[{}]", medias);
-		return medias;
+        return mediaRepository.getMedias("%"+searchWords+"%");
 	}
+
+    @Transactional(readOnly = true)
+    public List<Media> getVideo(String searchWords) {
+        return mediaRepository.getMedias("%"+searchWords+"%", FileType.VIDEO.getIdAsByte());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Media> getMusic(String searchWords) {
+        return mediaRepository.getMedias("%"+searchWords+"%", FileType.MOBILE_AUDIO.getIdAsByte());
+    }
 	
 	@Transactional(readOnly = true)
 	public Media findById(Integer id) {

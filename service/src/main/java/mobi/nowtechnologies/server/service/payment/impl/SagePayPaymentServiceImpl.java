@@ -18,6 +18,7 @@ import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
@@ -142,18 +143,10 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 		SagePayCreditCardPaymentDetails newPaymentDetails = createPaymentDetailsFromResponse(response, activated);
 
 		newPaymentDetails.setVendorTxCode(paymentDto.getVendorTxCode());
-		newPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-		newPaymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
+		newPaymentDetails.setCreationTimestampMillis(Utils.getEpochMillis());
 		newPaymentDetails.setPaymentPolicy(paymentPolicy);
-		newPaymentDetails.setMadeRetries(0);
-		newPaymentDetails.setRetriesOnError(getRetriesOnError());
 
-		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-		
-		user.setCurrentPaymentDetails(newPaymentDetails);
-		newPaymentDetails.setOwner(user);
-
-		newPaymentDetails = (SagePayCreditCardPaymentDetails) getPaymentDetailsRepository().save(newPaymentDetails);
+        newPaymentDetails = (SagePayCreditCardPaymentDetails) super.commitPaymentDetails(user, newPaymentDetails);
 
 		LOGGER.info("Credit card payment details was created");
 		return newPaymentDetails;

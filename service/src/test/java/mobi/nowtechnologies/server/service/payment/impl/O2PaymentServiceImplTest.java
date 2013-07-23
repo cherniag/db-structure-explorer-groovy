@@ -39,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
@@ -62,6 +63,7 @@ public class O2PaymentServiceImplTest {
 	private O2PaymentServiceImpl o2PaymentServiceImplSpy;
 	private ApplicationEventPublisher mockApplicationEventPublisher;
 	private PaymentDetailsRepository mockPaymentDetailsRepository;
+    private RefundService refundServiceMock;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -95,6 +97,7 @@ public class O2PaymentServiceImplTest {
 		mockUserRepository = mock(UserRepository.class);
 		MailService mockMailService = mock(MailService.class);
 		mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
+        refundServiceMock = PowerMockito.mock(RefundService.class);
 
 		when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 
@@ -109,11 +112,12 @@ public class O2PaymentServiceImplTest {
 		o2PaymentServiceImplSpy.setEntityService(mockEntityService);
 		o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
 		o2PaymentServiceImplSpy.setPaymentDetailsService(mockPaymentDetailsService);
+        o2PaymentServiceImplSpy.setRefundService(refundServiceMock);
 	}
 	
 	
 	@Test
-	public void testStartPayment_SuccessfullO2Response_Success() throws Exception{
+	public void testStartPayment_SuccessfulO2Response_Success() throws Exception{
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();

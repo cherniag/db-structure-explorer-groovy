@@ -238,4 +238,8 @@ public class Utils {
             buf.append(s);
         return buf.toString().toLowerCase();
     }
+
+    public static boolean isNotNull(Object o) {
+        return o != null ? true : false;
+    }
 }

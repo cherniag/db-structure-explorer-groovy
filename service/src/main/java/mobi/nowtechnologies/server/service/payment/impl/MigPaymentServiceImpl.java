@@ -69,21 +69,21 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 				User user = pendingPayment.getUser();
 				LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity().getName()), this.getClass());
 				
-				LOGGER.info("Commiting payment transaction with MIG for PendingPayment with internalTxId  {} ", messageId);
+				LOGGER.info("Committing payment transaction with MIG for PendingPayment with internalTxId  {} ", messageId);
 				
 				if (MIG_DELIVERED.equals(status)) {
 					response = MigResponse.successfulMigResponse();
 				} else {
 					response = MigResponse.failMigResponse("Pending payment with internalTxId ".concat(messageId).concat(" was not delivered to user cause: ").concat(descriptionError).concat(" Status code ").concat(status));
 				}
-				LOGGER.info("MIG responsed {} for pending payment {}", response, messageId);
+				LOGGER.info("MIG responded {} for pending payment {}", response, messageId);
 				if (null != pendingPayment && null != response)
 					return super.commitPayment(pendingPayment, response);
 			} else {
 				LOGGER.info("MIG response for free sms {} ", messageId);
 			}
 		} catch (Exception e) {
-			LOGGER.error("Exception while commiting MIG payment", e);
+			LOGGER.error("Exception while committing MIG payment", e);
 			return null;
 		} finally {
 			LogUtils.removePaymentMDC();
@@ -119,18 +119,13 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 	@Override
 	public MigPaymentDetails commitPaymnetDetails(User user, String verificationPin) throws ServiceException {
 		
-		LOGGER.info("Verifing pin from mig...");
+		LOGGER.info("Verifying pin from mig...");
 		if(StringUtils.hasText(verificationPin) && user.getPin().equals(verificationPin) ) {
-			
-			paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
-			
+
 			MigPaymentDetails paymentDetails = (MigPaymentDetails) user.getPendingPaymentDetails();
-			paymentDetails.setActivated(true);
-			paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-			user.setCurrentPaymentDetails(paymentDetails);
 			user.setPin("");
 			
-			paymentDetails = (MigPaymentDetails) getPaymentDetailsRepository().save(paymentDetails);
+			paymentDetails = (MigPaymentDetails) super.commitPaymentDetails(user, paymentDetails);
 
 			LOGGER.info("Verification passed. Mig payment details has been created.");
 			return paymentDetails;

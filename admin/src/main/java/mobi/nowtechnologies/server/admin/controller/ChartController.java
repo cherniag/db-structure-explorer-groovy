@@ -116,13 +116,6 @@ public class ChartController extends AbstractCommonController {
 		return modelAndView;
 	}
 
-	/**
-	 * Getting calendar look for picking up a date and list of chart items for
-	 * current date
-	 * 
-	 * @param request
-	 * @return
-	 */
 	@RequestMapping(value = "/charts/{chartId}", method = RequestMethod.GET)
 	public ModelAndView getChartCalendarPage(
 			HttpServletRequest request,
@@ -147,16 +140,14 @@ public class ChartController extends AbstractCommonController {
 			selectedPublishDateString = dateTimeFormat.format(chartItemDtos.get(0).getPublishTime());
 		}
 
-		ModelAndView modelAndView = new ModelAndView(viewByChartType.get(chart.getType().name()));
-		modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
-		modelAndView.addObject("selectedPublishDateTime", selectedPublishDateString);
-		modelAndView.addObject("selectedDateTime", selectedPublishDateTime);
-		modelAndView.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId));
-		modelAndView.addObject("filesURL", filesURL);
-		modelAndView.addObject("chartFilesURL", chartFilesURL);
-		modelAndView.addObject("chart", chartDto);
-
-		return modelAndView;
+        return new ModelAndView(viewByChartType.get(chart.getType().name()))
+		.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos)
+		.addObject("selectedPublishDateTime", selectedPublishDateString)
+		.addObject("selectedDateTime", selectedPublishDateTime)
+		.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId))
+		.addObject("filesURL", filesURL)
+		.addObject("chartFilesURL", chartFilesURL)
+		.addObject("chart", chartDto);
 	}
 	
 	/**

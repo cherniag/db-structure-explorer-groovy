@@ -43,16 +43,16 @@ public class MessageDtoValidatorTest {
 
     @Test
 	public void shouldValidateAsNoErrorsNews() {
-        given().news().bodyLenghtIs(255);
+        given().news().bodyLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
 
     @Test
 	public void shouldValidateAsWrongNewsBodySize() {
-        given().news().and().bodyLenghtIs(256);
+        given().news().and().bodyLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongNewsBodyLenghtError().and().theseErrorsAreOnly(1);
+        then().validateAsFalse().and().returnWrongNewsBodyLengthError().and().theseErrorsAreOnly(1);
 	}
 
     @Test
@@ -64,118 +64,118 @@ public class MessageDtoValidatorTest {
 
     @Test
     public void shouldValidateAsWrongNewsFrequenceValue() {
-        given().news().and().bodyLenghtIs(255).and().onceAfterFirstDownloadFrequence();
+        given().news().and().bodyLengthIs(255).and().onceAfterFirstDownloadFrequence();
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongFrequenceError().and().theseErrorsAreOnly(1);
     }
     
     @Test
     public void shouldValidateAsWrongNewsFrequenceValueAndWrongBodySize() {
-        given().news().and().bodyLenghtIs(256).and().onceAfterFirstDownloadFrequence();
+        given().news().and().bodyLengthIs(256).and().onceAfterFirstDownloadFrequence();
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongFrequenceError().and().returnWrongNewsBodyLenghtError().and().theseErrorsAreOnly(2);
+        then().validateAsFalse().and().returnWrongFrequenceError().and().returnWrongNewsBodyLengthError().and().theseErrorsAreOnly(2);
     }
     
     @Test
 	public void shouldValidateAsNoErrorsRichPopup() {
-        given().richPopup().bodyLenghtIs(1000).and().actionLenghtIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLenghtIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
     
     @Test
-	public void shouldValidateAsWrongRichPopupBodyLenght() {
-        given().richPopup().bodyLenghtIs(1001).and().actionLenghtIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLenghtIs(255);
+	public void shouldValidateAsWrongRichPopupBodyLength() {
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().theseErrorsAreOnly(1);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().theseErrorsAreOnly(1);
 	}
     
     @Test
-	public void shouldValidateAsWrongRichPopupBodyAndActionLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionLenghtIs(256).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLenghtIs(255);
+	public void shouldValidateAsWrongRichPopupBodyAndActionLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(256).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnWrongActionLenght().theseErrorsAreOnly(2);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionLength().theseErrorsAreOnly(2);
 	}
     
     @Test
-	public void shouldValidateAsWrongRichPopupBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionLenghtIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLenghtIs(256);
+	public void shouldValidateAsWrongRichPopupBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnWrongActionButtonTextLenght().theseErrorsAreOnly(2);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionButtonTextLength().theseErrorsAreOnly(2);
 	}
     
     @Test
-	public void shouldValidateAsWrongRichPopupBodyLenghtAndActionButtonIsNull() {
-        given().richPopup().bodyLenghtIs(1001).and().actionLenghtIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextIsNull();
+	public void shouldValidateAsWrongRichPopupBodyLengthAndActionButtonIsNull() {
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextIsNull();
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnWrongActionButtonTextValue().theseErrorsAreOnly(2);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionButtonTextValue().theseErrorsAreOnly(2);
 	}
     
     public void shouldValidateAsNoErrorsMobileWebPortalRichPopup() {
-        given().richPopup().bodyLenghtIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLenghtIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
     
     public void shouldValidateAsNoErrorsExternalUrlRichPopup() {
-        given().richPopup().bodyLenghtIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLenghtIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
     
     public void shouldValidateAsWrongMobileWebPortalRichPopupActionUri() {
-        given().richPopup().bodyLenghtIs(1000).and().actionIs("notUri").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLenghtIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionIs("notUri").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnNotUriActionError().and().theseErrorsAreOnly(1);
 	}
     
     public void shouldValidateAsWrongExternalActionRichPopupActionUri() {
-        given().richPopup().bodyLenghtIs(1000).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLenghtIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnNotUriActionError().and().theseErrorsAreOnly(1);
 	}
     
-    public void shouldValidateAsWrongExternalActionRichPopupActionUriWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongExternalActionRichPopupActionUriWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnNotUriActionError().and().returnWrongActionButtonTextLenght().and().theseErrorsAreOnly(3);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNotUriActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
     
-    public void shouldValidateAsWrongExternalActionRichPopupActionValueWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs(null).and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongExternalActionRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnNullActionError().and().returnWrongActionButtonTextLenght().and().theseErrorsAreOnly(3);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
     
-    public void shouldValidateAsWrongMobileWebPortalRichPopupActionValueWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs(null).and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongMobileWebPortalRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnNullActionError().and().returnWrongActionButtonTextLenght().and().theseErrorsAreOnly(3);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
     
-    public void shouldValidateAsWrongSpecificNewsStoryRichPopupActionValueWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_NEWS_STORY).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongSpecificNewsStoryRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_NEWS_STORY).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnNullActionError().and().theseErrorsAreOnly(3);
 	}
     
-    public void shouldValidateAsWrongSpecificTrackRichPopupActionValueWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongSpecificTrackRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnNullActionError().and().returnWrongActionButtonTextLenght().and().theseErrorsAreOnly(3);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
     
-    public void shouldValidateAsWrongOfficialTop40PlaylistRichPopupActionValueWithWrongBodyAndActionButtonTextLenghts() {
-        given().richPopup().bodyLenghtIs(1001).and().actionIs(null).and().actionTypeIs(OFFICIAL_TOP_40_PLAYLIST).and().actionButtonTextLenghtIs(256);
+    public void shouldValidateAsWrongOfficialTop40PlaylistRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
+        given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(OFFICIAL_TOP_40_PLAYLIST).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
-        then().validateAsFalse().and().returnWrongRichPopupBodyLenghtError().and().returnWrongActionButtonTextLenght().theseErrorsAreOnly(2);
+        then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionButtonTextLength().theseErrorsAreOnly(2);
 	}
 
     private void whenCustomValidate() {
         actualHasErrors = messageDtoValidator.customValidate(messageDto, errors);
     }
     
-    private MessageDtoValidatorTest actionButtonTextLenghtIs(int size) {
+    private MessageDtoValidatorTest actionButtonTextLengthIs(int size) {
 		messageDto.setActionButtonText(getChars(size));
 		return this;
 	}
@@ -195,7 +195,7 @@ public class MessageDtoValidatorTest {
 		return this;
 	}
   
-    private MessageDtoValidatorTest actionLenghtIs(int size) {
+    private MessageDtoValidatorTest actionLengthIs(int size) {
     	messageDto.setAction(getChars(size));	
     	return this;
     }
@@ -224,7 +224,7 @@ public class MessageDtoValidatorTest {
         return this;
     }
 
-    private MessageDtoValidatorTest bodyLenghtIs(int size) {
+    private MessageDtoValidatorTest bodyLengthIs(int size) {
         messageDto.setBody(getChars(size));
         return this;
     }
@@ -251,7 +251,7 @@ public class MessageDtoValidatorTest {
         return this;
     }
 
-    private MessageDtoValidatorTest returnWrongNewsBodyLenghtError() {
+    private MessageDtoValidatorTest returnWrongNewsBodyLengthError() {
         FieldError fieldError = errors.getFieldError(BODY);
 
         assertEquals(MESSAGE_BODY_WRONG_SIZE, fieldError.getCode());
@@ -260,7 +260,7 @@ public class MessageDtoValidatorTest {
         return this;
     }
     
-    private MessageDtoValidatorTest returnWrongRichPopupBodyLenghtError() {
+    private MessageDtoValidatorTest returnWrongRichPopupBodyLengthError() {
         FieldError fieldError = errors.getFieldError(BODY);
 
         assertEquals(RICH_POPUP_BODY_WRONG_SIZE, fieldError.getCode());
@@ -287,7 +287,7 @@ public class MessageDtoValidatorTest {
 		return this;
     }
     
-    private MessageDtoValidatorTest returnWrongActionLenght() {
+    private MessageDtoValidatorTest returnWrongActionLength() {
     	FieldError fieldError = errors.getFieldError(ACTION);
     	
     	assertEquals(RICH_POPUP_ACTION_WRONG_SIZE, fieldError.getCode());
@@ -296,7 +296,7 @@ public class MessageDtoValidatorTest {
 		return this;
     }
     
-    private MessageDtoValidatorTest returnWrongActionButtonTextLenght() {
+    private MessageDtoValidatorTest returnWrongActionButtonTextLength() {
     	FieldError fieldError = errors.getFieldError(ACTION_BUTTON_TEXT);
     	
     	assertEquals(RICH_POPUP_ACTION_BUTTON_TEXT_WRONG_SIZE, fieldError.getCode());

@@ -93,24 +93,16 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	}
 
 	@Override
+    @Transactional(propagation = Propagation.REQUIRED)
 	public O2PSMSPaymentDetails commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
-		LOGGER.info("Commiting o2Psms payment details for user {} ...", user.getUserName());
+		LOGGER.info("Committing o2Psms payment details for user {} ...", user.getUserName());
 		
 		O2PSMSPaymentDetails details = new O2PSMSPaymentDetails();
-		details.setLastPaymentStatus(PaymentDetailsStatus.NONE);
 		details.setPaymentPolicy(paymentPolicy);
-		details.setMadeRetries(0);
         details.setPhoneNumber(user.getMobile());
-		details.setRetriesOnError(getRetriesOnError());
-		details.setCreationTimestampMillis(Utils.getEpochMillis());
-		details.setActivated(true);
-		
-		paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
+        details.setCreationTimestampMillis(Utils.getEpochMillis());
 
-		user.setCurrentPaymentDetails(details);
-		details.setOwner(user);
-
-		details = (O2PSMSPaymentDetails) getPaymentDetailsRepository().save(details);
+		details = (O2PSMSPaymentDetails) super.commitPaymentDetails(user, details);
 		
 		LOGGER.info("Done creation of o2Psms payment details for user {}", user.getUserName());
 		

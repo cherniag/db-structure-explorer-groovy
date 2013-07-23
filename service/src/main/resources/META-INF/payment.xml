@@ -26,6 +26,7 @@
 		<property name="entityService" ref="service.EntityService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
+        <property name="refundService" ref="service.RefundService" />
 	</bean>
 	
 	<!-- SagePay Service -->

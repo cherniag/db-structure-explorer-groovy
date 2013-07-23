@@ -40,10 +40,7 @@ where ch.type='VIDEO_CHART';
 
  -- http://jira.musicqubed.com/browse/IMP-1784
  -- [Server] Adjust payment system and jobs to support new 4G payment options
-alter table tb_paymentpolicy add column tariff char(255) not null default '_3G';
-
-  -- Vova's task
- alter table tb_users add column tariff char(255);
+alter table tb_paymentPolicy add column tariff char(255) not null default '_3G';
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
 alter table tb_users add column tariff char(255);
@@ -58,15 +55,15 @@ create table refund (
   log_time_millis bigint,
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
-  user_id int(11) not null,
+  user_id int(10) not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
  alter table refund add index refund_PK_payment_details_id (payment_details_id), add constraint refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
  alter table refund add index refund_PK_user_id (user_id), add constraint refund_U_user_id foreign key (user_id) references tb_users (i);
 
- alter table tb_users add column last_successful_payment_details bigint(20);
- alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details), add constraint tb_users_U_last_successful_payment_details foreign key (payment_details_id) references tb_paymentDetails (i);
+ alter table tb_users add column last_successful_payment_details_id bigint(20);
+ alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details_id), add constraint tb_users_U_last_successful_payment_details foreign key (last_successful_payment_details_id) references tb_paymentDetails (i);
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
@@ -81,8 +78,8 @@ create table refund (
 
  -- http://jira.musicqubed.com/browse/IMP-1794
  -- Remove video access from downgrading users
- insert into tb_accountlogtypes (i, name) value (11, "Trial skipping");
- insert into tb_accountlogtypes (i, name) value (12, "Bought period skipping");
+ insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
+ insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
 
  update tb_paymentpolicy set content_category="other";
 
