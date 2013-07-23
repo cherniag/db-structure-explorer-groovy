@@ -55,15 +55,15 @@ create table refund (
   log_time_millis bigint,
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
-  user_id int(11) not null,
+  user_id int(10) not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
  alter table refund add index refund_PK_payment_details_id (payment_details_id), add constraint refund_U_payment_details_id foreign key (payment_details_id) references tb_paymentDetails (i);
  alter table refund add index refund_PK_user_id (user_id), add constraint refund_U_user_id foreign key (user_id) references tb_users (i);
 
- alter table tb_users add column last_successful_payment_details bigint(20);
- alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details), add constraint tb_users_U_last_successful_payment_details foreign key (payment_details_id) references tb_paymentDetails (i);
+ alter table tb_users add column last_successful_payment_details_id bigint(20);
+ alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details_id), add constraint tb_users_U_last_successful_payment_details foreign key (last_successful_payment_details_id) references tb_paymentDetails (i);
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
