@@ -782,6 +782,24 @@ input.accounts{
 	display: block;
 }
 
+.videoOption {
+	border: 3px solid gray;
+	margin: 5px;
+	padding: 10px;
+}
+
+.videoOptionHighlight {
+	background-color: #ccc;
+}
+
+.videoOptionFirstRow {
+	margin-bottom: 10px;
+}
+
+.videoOptionText {
+	font-size: 80%;
+}
+
 .setOfButtons  { margin-bottom: 17px; }
 .setOfButtons .formButton{
 	margin-top: 10px;	

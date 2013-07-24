@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="service.xml" />
+
+    <bean id="service.VersionService" class="java.lang.Object" />
+    <bean id="service.DeviceUserDataService" class="java.lang.Object" />
+    <bean id="service.EntityService" class="java.lang.Object" />
+    <bean id="service.UserService" class="java.lang.Object" />
+    <bean id="service.PaymentDetailsService" class="java.lang.Object" />
+    <bean id="service.DeviceService" class="java.lang.Object" />
+    <bean id="service.DrmService" class="java.lang.Object" />
+    <bean id="service.AccountLogService" class="java.lang.Object" />
+    <bean id="service.NewsDetailService" class="java.lang.Object" />
+    <bean id="service.MediaLogService" class="java.lang.Object" />
+    <bean id="service.MediaLogTypeService" class="java.lang.Object" />
+    <bean id="service.PromotionService" class="java.lang.Object" />
+    <bean id="service.ChartService" class="java.lang.Object" />
+    <bean id="service.ChartDetailService" class="java.lang.Object" />
+    <bean id="service.MediaService" class="java.lang.Object" />
+    <bean id="service.FileService" class="java.lang.Object" />
+    <bean id="service.CountryAppVersionService" class="java.lang.Object" />
+    <bean id="service.CountryService" class="java.lang.Object" />
+    <bean id="service.PaymentPolicyService" class="java.lang.Object" />
+    <bean id="service.PaymentService" class="java.lang.Object" />
+    <bean id="service.SagePayService" class="java.lang.Object" />
+    <bean id="service.MigService" class="java.lang.Object" />
+    <bean id="service.FacebookService" class="java.lang.Object" />
+    <bean id="service.WeeklyUpdateService" class="java.lang.Object" />
+    <bean id="service.UserDeviceDetailsService" class="java.lang.Object" />
+    <bean id="service.UserIPhoneDetailsService" class="java.lang.Object" />
+    <bean id="service.UserAndroidDetailsService" class="java.lang.Object" />
+    <bean id="mailNotificationAspect" class="java.lang.Object" />
+    <bean id="smsNotificationAspect" class="java.lang.Object" />
+    <bean id="service.communityService" class="java.lang.Object" />
+    <bean id="service.MessageService" class="java.lang.Object" />
+    <bean id="service.OfferService" class="java.lang.Object" />
+    <bean id="service.TrackRepoService" class="java.lang.Object" />
+    <bean id="service.FilterService" class="java.lang.Object" />
+    <bean id="service.IPaymentService" class="java.lang.Object" />
+    <bean id="service.UserNotificationService" class="java.lang.Object" />
+    <bean id="service.O2ClientService" class="java.lang.Object" />
+    <bean id="service.ITunesService" class="java.lang.Object" />
+    <bean id="service.DataToDoRefundService" class="java.lang.Object" />
+    <bean id="service.PendingPaymentService" class="java.lang.Object" />
+    <bean id="service.SubmitedPaymentService" class="java.lang.Object" />
+    <bean id="service.sagePayPaymentService" class="java.lang.Object" />
+    <bean id="service.payPalPaymentService" class="java.lang.Object" />
+    <bean id="service.migHttpService" class="java.lang.Object" />
+    <bean id="service.migPaymentService" class="java.lang.Object" />
+    <bean id="service.o2PaymentService" class="java.lang.Object" />
+    <bean id="service.subBalancePaymentService" class="java.lang.Object" />
+    <bean id="subBalancePaymentListener" class="java.lang.Object" />
+    <bean id="offerPaymentListener" class="java.lang.Object" />
+    <!--<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>-->
+
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:application-test.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+	
+	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
+		<property name="mailSession" ref="service.MailSession" />
+	</bean>
+
+	<bean id="service.MailSession"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass">
+			<value>javax.mail.Session</value>
+		</property>
+		<property name="targetMethod">
+			<value>getDefaultInstance</value>
+		</property>
+		<property name="arguments">
+			<list>
+				<props>
+					<prop key="mail.debug">false</prop>
+					<prop key="mail.transport.protocol">smtp</prop>
+					<prop key="mail.smtp.auth">false</prop>
+					<prop key="mail.smtp.user"></prop>
+					<prop key="mail.smtp.password"></prop>
+					<prop key="mail.smtp.host">panda</prop>
+					<prop key="mail.smtp.port">25</prop>
+					<prop key="mail.smtp.from">info@chartsnow.mobi</prop>
+				</props>
+			</list>
+		</property>
+	</bean>
+
+</beans>

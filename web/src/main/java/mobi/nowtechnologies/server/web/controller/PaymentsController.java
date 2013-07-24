@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyMediaType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +75,22 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
+        
+        boolean userIsOptedInToVideo = false;
+        if ( user.isOptedInForVideo() && user.canGetVideo() ) {
+        	userIsOptedInToVideo = true;
+        }
+        mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
+        mav.addObject("userCanGetVideo", user.canGetVideo());
+        
+        int activePolicyId = -1;
+        if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
+        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getPaymentPolicyMediaType());
+        	if ( mirrorPolicy != null ) {
+        		activePolicyId = mirrorPolicy;
+        	}
+        }
+        mav.addObject("mirrorOfActivePolicy", activePolicyId);
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -82,13 +100,53 @@ public class PaymentsController extends CommonController {
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
         List<PaymentPolicyDto> paymentPolicy;
-        if(user.isnonO2User())
+        
+        if(user.isnonO2User()) {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
-        else
+        } else {
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-        if(isEmpty(paymentPolicy))
+            paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
+        }
+        
+        if(isEmpty(paymentPolicy)) {
             return Collections.emptyList();
+        }
+        
         return paymentPolicy;
+    }
+    
+    /**
+     * Having a list of audio only and audio+video policies, return the policy that's the 'mirror' or the active policy.
+     * For example for a 1week audio only policy, the mirror is 1w audio+video policy
+     *  
+     */
+    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyWeeks, PaymentPolicyMediaType activePaymentPolicyMediaType) {
+    	for ( PaymentPolicyDto pp : paymentPolicies ) {
+    		if ( pp.getPaymentPolicyMediaType() != activePaymentPolicyMediaType && pp.getSubweeks() == activePolicyWeeks ) {
+    			return (int)pp.getId();
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * For 3G users we'll only display 3G payment options, for 4G users, we'll display only 4G payment options
+     */
+    private List<PaymentPolicyDto> filterPaymentPoliciesForUser(List<PaymentPolicyDto> paymentPolicyList, User user) {
+    	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
+    	
+    	if ( paymentPolicyList == null || user == null ) {
+    		return ret;
+    	}
+    	
+    	boolean videoEnabledUser = user.canGetVideo() && user.isOptedInForVideo();
+    	for ( PaymentPolicyDto pp : paymentPolicyList ) {
+    		if ( (videoEnabledUser && pp.isFourGPaymentPolicy()) || (!videoEnabledUser && !pp.isFourGPaymentPolicy()) ) {
+    			ret.add( pp );
+    		}
+    	}
+    	
+    	return ret;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {

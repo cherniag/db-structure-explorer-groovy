@@ -303,6 +303,9 @@ public class User implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
+    
+    @Column(name = "optedInForVideo")
+    private Boolean optedInForVideo;
 
 	public User() {
 		setDisplayName("");
@@ -1413,6 +1416,17 @@ public class User implements Serializable {
     public PaymentDetails getLastSuccessfulPaymentDetails() {
         return lastSuccessfulPaymentDetails;
     }
+
+    public boolean isOptedInForVideo() {
+    	if ( optedInForVideo == null ) {
+    		return false;
+    	}
+		return optedInForVideo;
+	}
+
+	public void setOptedInForVideo(Boolean optedInForVideo) {
+		this.optedInForVideo = optedInForVideo;
+	}
 
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;

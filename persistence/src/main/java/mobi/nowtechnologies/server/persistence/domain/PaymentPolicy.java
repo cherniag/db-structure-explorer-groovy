@@ -78,6 +78,10 @@ public class PaymentPolicy {
 
     @Transient
     private ProviderType providerType;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name="mediatype", columnDefinition = "varchar(25)")
+    private PaymentPolicyMediaType paymentPolicyMediaType;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -276,6 +280,14 @@ public class PaymentPolicy {
         this.providerType = providerType;
     }
 
+    public PaymentPolicyMediaType getPaymentPolicyMediaType() {
+    	return paymentPolicyMediaType;
+    }
+    
+    public void setPaymentPolicyMediaType(PaymentPolicyMediaType ppmd) {
+    	paymentPolicyMediaType = ppmd;
+    }
+    
     @Access(AccessType.PROPERTY)
     @Column(name="provider", columnDefinition = "char(255)")
     public String getProvider() {
@@ -295,6 +307,10 @@ public class PaymentPolicy {
 
     public void setTariff(Tariff tariff) {
         this.tariff = tariff;
+    }
+    
+    public boolean isVideoPaymentPolicy() {
+    	return PaymentPolicyMediaType.AUDIOPLUSVIDEO.equals(paymentPolicyMediaType);
     }
 
     @Override

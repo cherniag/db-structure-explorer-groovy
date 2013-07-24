@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 													            						
+	Date			Change		Author			Change Description      						
+	25/01/2011     	2.0.1	    Subramanyam		Internally reviewed
+	20/01/2011     	2.0.0	    shivaji    		Initial Version   	
+-->
+<xsd:schema targetNamespace="http://soa.o2.co.uk/manageprepaytariffdata_2"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xcore="http://soa.o2.co.uk/coredata_1"
+	xmlns:mpd="http://soa.o2.co.uk/manageprepaytariffdata_2" xmlns:cmd="http://soa.o2.co.uk/pscommonmanageprepaydata_1">
+	<xsd:import namespace="http://soa.o2.co.uk/coredata_1"
+		schemaLocation="coredata_1_1.xsd" />
+	<xsd:import namespace="http://soa.o2.co.uk/pscommonmanageprepaydata_1"
+		schemaLocation="pscommonmanageprepaydata_1_0.xsd" />
+	<xsd:element name="getTariff_1" type="mpd:getTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request current tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getTariff_1Response" type="mpd:getTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is the current tariff for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getTariff_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for get Tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getCurrentAndPendingTariff_1" type="mpd:getCurrentAndPendingTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request current and pending tariff for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getCurrentAndPendingTariff_1Response"
+		type="mpd:getCurrentAndPendingTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is the current and pending
+				tariff info for a subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getCurrentAndPendingTariff_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for get current and pending Tariff
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getBusinessPolicies_1" type="mpd:getBusinessPolicies_1">
+		<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in
+				force on the current tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getBusinessPolicies_1Response" type="mpd:getBusinessPolicies_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is the set of policies on the current
+				tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getBusinessPolicies_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for getting Business Policies
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateParameters_1" type="mpd:validateParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request to validate change of parameters prior to
+				requesting the change.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateParameters_1Response" type="mpd:validateParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is the result of parameter validation.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateParameters_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for validate Change Parameter
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateTariff_1" type="mpd:validateTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request to validate parameters prior to changing
+				tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateTariff_1Response" type="mpd:validateTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is whether parameters are valid prior to
+				changing tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="validateTariff_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for validate Change Parameter
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariff_1" type="mpd:changeTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request change tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariff_1Response" type="mpd:changeTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is changed tariff for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariff_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for change tariff</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getTariffParameters_1" type="mpd:getTariffParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request get tariff parameter for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getTariffParameters_1Response" type="mpd:getTariffParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is tariff parameter for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getTariffParameters_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for get tariff parameter</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariffParameters_1" type="mpd:changeTariffParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request change tariff parameter for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariffParameters_1Response" type="mpd:changeTariffParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response for change tariff parameter for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="changeTariffParameters_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for change tariff parameter
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getValidTariffs_1" type="mpd:getValidTariffs_1">
+		<xsd:annotation>
+			<xsd:documentation>Request for valid tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getValidTariffs_1Response" type="mpd:getValidTariffs_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is list of valid tariffs for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="getValidTariffs_1Fault" type="xcore:SOAFaultType">
+		<xsd:annotation>
+			<xsd:documentation>Fault for get valid tariff parameter
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="getTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request current tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is the current tariff for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="accountBalance" type="cmd:accountBalance" />
+			<xsd:element name="accountStatusDescription" type="cmd:accountStatusDescription" />
+			<xsd:element name="currentTariff" type="mpd:subscriberTariffType" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getCurrentAndPendingTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request current and pending tariff info for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getCurrentAndPendingTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is the current and pending
+				tariff info for a subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="accountBalance" type="cmd:accountBalance" />
+			<xsd:element name="accountStatusDescription" type="cmd:accountStatusDescription" />
+			<xsd:element name="currentTariff" type="mpd:subscriberTariffType" />
+			<xsd:element name="pendingTariff" type="mpd:subscriberTariffType"
+				minOccurs="0" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getBusinessPolicies_1">
+		<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in
+				force on the current tariff</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getBusinessPolicies_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is the set of policies on the current
+				tariff</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="businessPolicies" type="cmd:businessPolicy"
+				minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>A list of policies active against the current
+						contract.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="validateParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request to validate change of parameters prior to
+				requesting the change parameters</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType" />
+			<xsd:element name="validateParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="validateParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is the result of parameter validation.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="validateParameterResult" type="xcore:ServiceResultType" />
+			<xsd:element name="invalidParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="validateTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request to validate change of parameters prior to
+				requesting the change tariff</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType" />
+			<xsd:element name="tariffId" type="cmd:tariffId" />
+			<xsd:element name="validateParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="validateTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is the result of parameter validation.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="validateParameterResult" type="xcore:ServiceResultType" />
+			<xsd:element name="invalidParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="changeTariff_1">
+		<xsd:annotation>
+			<xsd:documentation>Request change tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tariffId" type="cmd:tariffId" />
+			<xsd:element name="addParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="overrideRules" type="xsd:boolean" minOccurs="0"/>								
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="changeTariff_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is changed tariff for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="successResult" type="xcore:ServiceResultType" />
+			<xsd:element name="startDate" type="xsd:date" minOccurs="0" />
+			<xsd:element name="invalidParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getTariffParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request get tariff parameter for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tariffid" type="cmd:tariffId"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getTariffParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response returned is tariff parameter for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tariffParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="changeTariffParameters_1">
+		<xsd:annotation>
+			<xsd:documentation>Request change tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tariffId" type="cmd:tariffId"
+				minOccurs="0" />
+			<xsd:element name="deleteParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="addParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="overrideRules" type="xsd:boolean" minOccurs="0"/>								
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="changeTariffParameters_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response for change tariff parameter for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="successResult" type="xcore:ServiceResultType" />
+			<xsd:element name="invalidParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getValidTariffs_1">
+		<xsd:annotation>
+			<xsd:documentation>Request for valid tariff for a subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="customerId" type="xcore:accountType">
+				<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tariffType" type="cmd:tariffType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="getValidTariffs_1Response">
+		<xsd:annotation>
+			<xsd:documentation>Response is list of valid tariffs for a
+				subscriber.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tariffDetail" type="mpd:tariffDetailType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="generateDateTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time at which the response is valid.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="tariffAllowanceType">
+		<xsd:annotation>
+			<xsd:documentation>Allowance info associated with a tariff.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="allowanceId" type="cmd:allowanceId" />
+			<xsd:element name="allowanceDescription" type="cmd:allowanceDescription" />
+			<xsd:element name="allowanceURL" type="cmd:allowanceURL"
+				minOccurs="0" />
+			<xsd:element name="orderIndex" type="cmd:orderIndex" />
+			<xsd:element name="paymentType" type="cmd:paymentType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="rateDetailType">
+		<xsd:annotation>
+			<xsd:documentation>Rate detail associated with the tariff.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="rateId" type="cmd:rateId" />
+			<xsd:element name="rateDescription" type="cmd:rateDescription" />
+			<xsd:element name="rateValue" type="cmd:rateValue" />
+			<xsd:element name="orderIndex" type="cmd:orderIndex" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="tariffDetailType">
+		<xsd:annotation>
+			<xsd:documentation>General tariff information</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tariffId" type="cmd:tariffId" />
+			<xsd:element name="tariffName" type="cmd:tariffName"/>
+			<xsd:element name="tariffDescription" type="cmd:tariffDescription"/>
+			<xsd:element name="tariffType" type="cmd:tariffType" />
+			<xsd:element name="tariffStatus" type="cmd:tariffStatus" />
+			<xsd:element name="tariffGroupDetails" type="mpd:tariffGroupDetailsType"
+				minOccurs="0" />
+			<xsd:element name="tariffAllowance" type="mpd:tariffAllowanceType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="ratePackage" type="mpd:rateDetailType"
+				maxOccurs="unbounded" />
+			<xsd:element name="orderIndex" type="cmd:orderIndex" />
+			<xsd:element name="maxParameters" type="cmd:maxParameters" />
+			<xsd:element name="parameterType" type="cmd:parameterType"
+				minOccurs="0" />
+			<xsd:element name="parameterCategory" type="cmd:parameterCategory"
+				minOccurs="0" />
+			<xsd:element name="parameterDefaultsAvailable" type="xsd:boolean"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="tariffParameterType">
+		<xsd:annotation>
+			<xsd:documentation>Specific subscriber information associated with
+				the tariff</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="parameterType" type="cmd:parameterType" />
+			<xsd:element name="parameterCategory" type="cmd:parameterCategory" />
+			<xsd:element name="parameterValue" type="cmd:parameterValue" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="subscriberTariffType">
+		<xsd:annotation>
+			<xsd:documentation>Tariff information specific to the subscriber.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="startDate" type="xsd:dateTime"
+				minOccurs="0" />
+			<xsd:element name="endDate" type="xsd:dateTime"
+				minOccurs="0" />
+			<xsd:element name="lastPaymentDate" type="xsd:dateTime"
+				minOccurs="0" />
+			<xsd:element name="nextPaymentDate" type="xsd:dateTime"
+				minOccurs="0" />
+			<xsd:element name="allowanceStatusExternal" type="cmd:allowanceStatusExternal" />
+			<xsd:element name="allowanceStatusInternal" type="cmd:allowanceStatusInternal" />
+			<xsd:element name="allowanceText" type="cmd:allowanceText"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="tariffDetail" type="mpd:tariffDetailType" />
+			<xsd:element name="tariffParameter" type="mpd:tariffParameterType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="tariffGroupDetailsType">
+		<xsd:annotation>
+			<xsd:documentation>Tariff group details specific to the subscriber</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tariffGroupId" type="cmd:tariffGroupId" />
+			<xsd:element name="tariffGroupName" type="cmd:tariffGroupName" />
+			<xsd:element name="tariffGroupDescription" type="cmd:tariffGroupDescription" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
