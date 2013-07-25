@@ -86,3 +86,4 @@ create table refund (
  alter table tb_media modify column headerFile int unsigned null;
  alter table tb_media modify column audioPreviewFile int unsigned null;
  alter table tb_media modify column headerPreviewFile int unsigned null;
+ alter table tb_media modify column purchasedFile int unsigned null;
