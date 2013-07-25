@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -63,7 +62,7 @@ public class SingUpDeviceController extends CommonController {
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
 			final Object[] objects = new Object[]{accountCheckDTO};
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
@@ -99,7 +98,7 @@ public class SingUpDeviceController extends CommonController {
 			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 
 			final Object[] objects = new Object[] { accountCheckDTO };
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
@@ -142,7 +141,7 @@ public class SingUpDeviceController extends CommonController {
 		        user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 
 		        final Object[] objects = new Object[] { accountCheckDTO };
-		        proccessRememberMeToken(objects);
+		        precessRememberMeToken(objects);
 
 		        return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (ValidationException ve){

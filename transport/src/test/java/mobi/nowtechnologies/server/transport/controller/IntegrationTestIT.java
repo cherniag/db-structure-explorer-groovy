@@ -4268,6 +4268,6 @@ public class IntegrationTestIT {
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		assertEquals(HttpStatus.OK.value(), aHttpServletResponse.getStatus());
-	}
-	
+    }
+
 }

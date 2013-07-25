@@ -65,7 +65,7 @@ public class GetNewsController extends CommonController {
 			// communityName);
 
 			Object[] objects = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis, false);
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
 		} catch (Exception e) {
@@ -116,7 +116,7 @@ public class GetNewsController extends CommonController {
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
 			Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			ex = e;

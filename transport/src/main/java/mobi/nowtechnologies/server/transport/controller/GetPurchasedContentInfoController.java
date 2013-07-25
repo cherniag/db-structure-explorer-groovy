@@ -62,7 +62,7 @@ public class GetPurchasedContentInfoController extends CommonController {
 						timestamp, communityName);
 
 			Object[] objects = drmService.getPurchasedContentInfo(user, communityName);
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 
 			return new ModelAndView(view, Response.class.toString(), new Response(
 						objects));

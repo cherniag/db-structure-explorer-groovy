@@ -6,14 +6,19 @@ import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -23,9 +28,13 @@ import static org.apache.commons.lang.Validate.notNull;
 public class PromotionService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
+
+    private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
 	
 	private PromotionDao promotionDao;
 	private EntityService entityService;
+    private UserService userService;
+    private CommunityResourceBundleMessageSource messageSource;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -35,7 +44,15 @@ public class PromotionService {
 		this.promotionDao = promotionDao;
 	}
 
-	public boolean isPromoCodeActivePromotionExsist(
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    public boolean isPromoCodeActivePromotionExsist(
 			String communityName) {
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
@@ -141,4 +158,46 @@ public class PromotionService {
 		}
 		return null;
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
+        boolean isPromotionApplied = false;
+        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| user.getContractChannel() == null)) {
+            isPromotionApplied = applyPromotionForO24GConsumer(user);
+        }else /*if(user.isO23GConsumer())*/{
+            isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
+        }
+        return isPromotionApplied;
+    }
+
+    private boolean applyPromotionForO24GConsumer(User user){
+        Promotion promotion = getPromotionForO24GConsumer(user);
+        return userService.applyPromotionByPromoCode(user, promotion);
+    }
+
+    private Promotion getPromotionForO24GConsumer(User user){
+        final Promotion promotion;
+        final String messageCodeForPromoCode = getMessageCodeForO24GConsumer(user);
+        if(StringUtils.hasText(messageCodeForPromoCode)){
+            String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
+            promotion = userService.setPotentialPromo(user, promoCode);
+        }else{
+            promotion = null;
+            LOGGER.error("Couldn't find promotion code [{}]", messageCodeForPromoCode);
+        }
+        return promotion;
+    }
+
+    private String getMessageCodeForO24GConsumer(User user) {
+        final String messageCodeForPromoCode;
+        ContractChannel contractChannel = user.getContractChannel();
+        String contract = user.getContract().name();
+        if (contractChannel == null){
+            messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
+            LOGGER.info("The user contract channel is null, so the message code for getting promo code will be default [{}]", messageCodeForPromoCode);
+        }else{
+            messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
+        }
+        return messageCodeForPromoCode;
+    }
 }

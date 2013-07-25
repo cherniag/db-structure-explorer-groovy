@@ -87,11 +87,6 @@ public class UserService {
         return  false;
     }
 
-    public void applyPromotion(User user, String promoCode) {
-        Promotion promotion = setPotentialPromo(user, promoCode);
-        applyPromotionByPromoCode(user, promotion);
-    }
-
     @Deprecated
 	public static class AmountCurrencyWeeks {
 		BigDecimal amount;
@@ -280,7 +275,7 @@ public class UserService {
 			if (localUserToken.equalsIgnoreCase(userToken) || deviceUserToken.equalsIgnoreCase(userToken)) {
 				PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 				if (null == currentPaymentDetails && user.getStatus().getI() == UserStatusDao.getEulaUserStatus().getI())
-					LOGGER.info("The user [{}] coudn't login in while he has no payment details and he is in status [{}]",
+					LOGGER.info("The user [{}] couldn't login in while he has no payment details and he is in status [{}]",
 							new Object[] { user, UserStatus.EULA.name() });
 				else
 					return user;
@@ -319,52 +314,13 @@ public class UserService {
 		return user;
 	}
 
-	@Deprecated
-	public boolean userCanLogin(String userName, String storedToken,
-			String communityName) {
-		if (userName == null)
-			throw new ServiceException("The parameter userName is null");
-		if (storedToken == null)
-			throw new ServiceException("The parameter storedToken is null");
-		if (communityName == null)
-			throw new NullPointerException(
-					"The parameter communityName is null");
-		boolean userExists = userExists(userName, communityName);
-		if (!userExists) {
-			LOGGER.info(
-					"Login failed. Couldn't find user '{}' for community '{}' in the database",
-					userName, communityName);
-			return false;
-		}
-
-		boolean areTheStoredTokenTheSame = isUserExist(userName, storedToken, communityName);
-		if (areTheStoredTokenTheSame)
-			return true;
-		else {
-			LOGGER.info("Login failed. The stored token in the database for user '{}' in community {} is other than was passed '{}'",
-					new String[] { userName, communityName, storedToken });
-			return false;
-		}
-	}
-
     public UserBanned getUserBanned(Integer userId) {
          return userBannedRepository.findOne(userId);
     }
 
 	@Deprecated
-	public boolean isUserExist(String userName, String storedToken, String communityName) {
-		return userDao.userExists(userName,
-				storedToken, communityName);
-	}
-
-	@Deprecated
 	public boolean userExists(String userName, String communityName) {
 		return userDao.userExists(userName, communityName);
-	}
-
-	@Deprecated
-	public boolean facebookUserExists(String facebookId, String communityName) {
-		return userDao.facebookserExists(facebookId, communityName);
 	}
 
 	public User findByName(String userName) {
@@ -518,6 +474,11 @@ public class UserService {
 	}
 
     public synchronized boolean applyO2PotentialPromo(boolean isO2User, User user, Community community) {
+        int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
+        return applyO2PotentialPromo(isO2User, user, community, freeTrialStartedTimestampSeconds);
+    }
+
+    public synchronized boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
         Promotion promotion = null;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
@@ -532,56 +493,61 @@ public class UserService {
         else
             promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
 
-        applyPromotionByPromoCode(user, promotion);
-
-        return true;
+        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public synchronized AccountCheckDTO applyPromotionByPromoCode(User user, Promotion promotion) {
-		LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[] { user, promotion });
-		if (promotion != null) {
-            UserBanned userBanned = getUserBanned(user.getId());
-            if(userBanned == null || userBanned.isGiveAnyPromotion()){
-                int curTimeSeconds;
-                if (user.getFreeTrialStartedTimestampMillis()!=null){
-                    curTimeSeconds = (int)(user.getFreeTrialStartedTimestampMillis()/1000);
-                }else{
-                    curTimeSeconds = Utils.getEpochSeconds();
-                }
-                int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate()-curTimeSeconds)/(7*24*60*60) : promotion.getFreeWeeks();
-                int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : curTimeSeconds + freeWeeks * Utils.WEEK_SECONDS;
-
-                user.setNextSubPayment(nextSubPayment);
-                user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
-
-                final PromoCode promoCode = promotion.getPromoCode();
-                user.setPotentialPromoCodePromotion(null);
-
-                user.setStatus(UserStatusDao.getSubscribedUserStatus());
-                user.setFreeTrialStartedTimestampMillis(curTimeSeconds*1000L);
-                user = entityService.updateEntity(user);
-
-                promotion.setNumUsers(promotion.getNumUsers() + 1);
-                promotion = entityService.updateEntity(promotion);
-                AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
-                        TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED);
-                accountLog.setPromoCode(promoCode.getCode());
-                entityService.saveEntity(accountLog);
-                for (byte i = 1; i <= freeWeeks; i++) {
-                    entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
-                            TransactionType.SUBSCRIPTION_CHARGE));
-                }
-            } else {
-                user.setPotentialPromoCodePromotion(null);
-                user = entityService.updateEntity(user);
-            }
-			return proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
-		}
-		throw new IllegalArgumentException("No promotion found");
+	public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion) {
+        int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
+        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
 	}
 
-	private void setPaymentStatusAccoringToPaymentType(User user) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
+        LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[]{user, promotion});
+
+        LOGGER.info("Attempt to apply promotion [{}]", promotion);
+
+        boolean isPromotionApplied = false;
+        if (promotion == null) {
+            throw new IllegalArgumentException("No promotion found");
+        }
+        UserBanned userBanned = getUserBanned(user.getId());
+        if (userBanned == null || userBanned.isGiveAnyPromotion()) {
+            int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
+            int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
+
+            user.setNextSubPayment(nextSubPayment);
+            user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
+
+            final PromoCode promoCode = promotion.getPromoCode();
+            user.setPotentialPromoCodePromotion(null);
+
+            user.setStatus(UserStatusDao.getSubscribedUserStatus());
+            user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampSeconds * 1000L);
+            user = entityService.updateEntity(user);
+
+            promotion.setNumUsers(promotion.getNumUsers() + 1);
+            promotion = entityService.updateEntity(promotion);
+            AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
+                    TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED);
+            accountLog.setPromoCode(promoCode.getCode());
+            entityService.saveEntity(accountLog);
+            for (byte i = 1; i <= freeWeeks; i++) {
+                entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
+                        TransactionType.SUBSCRIPTION_CHARGE));
+            }
+            isPromotionApplied = true;
+        } else {
+            user.setPotentialPromoCodePromotion(null);
+            user = entityService.updateEntity(user);
+            LOGGER.info("The promotion wasn't applied because of user is banned");
+        }
+
+        return isPromotionApplied;
+    }
+
+	private void setPaymentStatusAccordingToPaymentType(User user) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -605,7 +571,7 @@ public class UserService {
 		PhoneNumberValidator.validate(mobile);
 
 		if (!Operator.getMapAsIds().containsKey(operator))
-			throw new ServiceException("Uknown operator parameter value: ["
+			throw new ServiceException("Unknown operator parameter value: ["
 					+ operator + "]");
 
 		Community community = CommunityDao.getMapAsNames().get(communityName);
@@ -1078,7 +1044,11 @@ public class UserService {
 			throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
 		}
 
-		applyPromotionByPromoCode(user, userPromotion);
+		boolean isPromotionApplied = applyPromotionByPromoCode(user, userPromotion);
+        if (isPromotionApplied){
+            proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
+        }
+
 	}
 
 	private String communityName(User user) {
@@ -1971,37 +1941,37 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public String getRedeemServerO2Url(User user) {
-
 		return o2ClientService.getRedeemServerO2Url(user.getMobile());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
-		boolean hasPromo = false;
-		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-		if (null != mobileUser) {
-			if (mobileUser.getId() != user.getId()) {
-				mergeUser(mobileUser, user);
-				user = mobileUser;
-			}
-		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
-				Community community = communityService.getCommunityByName(communityName);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
+        boolean hasPromo = false;
+        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+        if (null != mobileUser) {
+            if (mobileUser.getId() != user.getId()) {
+                mergeUser(mobileUser, user);
+                user = mobileUser;
+            }
+        } else {
+            if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
+                Community community = communityService.getCommunityByName(communityName);
 
-				hasPromo = applyO2PotentialPromo(o2UserDetails, user, community);
-			}
-		}
-		user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-		user.setProvider(o2UserDetails.getOperator());
-		user.setActivationStatus(ActivationStatus.ACTIVATED);
-		user.setUserName(user.getMobile());
-		userRepository.save(user);
+                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
+            }
+        }
 
-		AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
-		dto.setFullyRegistred(true);
-		dto.setHasPotentialPromoCodePromotion(hasPromo);
-		return dto;
-	}
+        user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
+        user.setProvider(o2UserDetails.getOperator());
+        user.setActivationStatus(ActivationStatus.ACTIVATED);
+        user.setUserName(user.getMobile());
+        userRepository.save(user);
+
+        AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+        dto.setFullyRegistred(true);
+        dto.setHasPotentialPromoCodePromotion(hasPromo);
+        return dto;
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveWeeklyPayment(User user) throws Exception {
@@ -2085,25 +2055,25 @@ public class UserService {
         if (Tariff._4G.equals(oldTariff) &&_3G.equals(newTariff)){
             if (userWithOldTariff.has4GVideoAudioSubscription()){
                 if(userWithOldTariff.isOn4GVideoAudioBoughtPeriod()){
-                    LOGGER.info("Attempt to unsubscribe userWithOldTariffOnOldBoughtPeriod and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
+                    LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                     userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 }else if (userWithOldTariff.isOnFreeTrial()){
-                    LOGGER.info("Attempt to unsubscribe userWithOldTariffOnOldBoughtPeriod, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
+                    LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                     userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 }else{
-                    LOGGER.info("Attempt to unsubscribe already paid userWithOldTariffOnOldBoughtPeriod because of tariff downgraded from [{}] Free Trial Video Audio with nextSubPayment [{}] in the past to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
+                    LOGGER.info("Attempt to unsubscribe already paid user because of tariff downgraded from [{}] Free Trial Video Audio with nextSubPayment [{}] in the past to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
                     userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
                 }
             }else{
                 if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()){
-                    LOGGER.info("Attempt to unsubscribe userWithOldTariffOnOldBoughtPeriod and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] BUT NOT Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);;
+                    LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (nextSubPayment = [{}]) because of tariff downgraded from [{}] BUT NOT Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);;
                     userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 }else{
-                    LOGGER.info("The payment details leaves as is because of userWithOldTariffOnOldBoughtPeriod hasn't Video Audio Subscription on tariff downgrading from [{}] to [{}]", oldTariff, newTariff);
+                    LOGGER.info("The payment details leaves as is because of user hasn't Video Audio Subscription on tariff downgrading from [{}] to [{}]", oldTariff, newTariff);
                 }
             }
         }else{
-            LOGGER.info("The payment details leaves as is because of old userWithOldTariffOnOldBoughtPeriod tariff [{}] isn't 4G or new userWithOldTariffOnOldBoughtPeriod tariff [{}] isn't 3G", oldTariff, newTariff);
+            LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
         }
         return userWithOldTariff;
     }
@@ -2111,7 +2081,7 @@ public class UserService {
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
         user = skipFreeTrial(user);
-        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity());
+        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int)(user.getFreeTrialStartedTimestampMillis()/1000L));
         return user;
     }
 
@@ -2146,5 +2116,18 @@ public class UserService {
         accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
 
         return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO processActivateTrialCommand(User user) {
+        AccountCheckDTO accountCheckDTO;
+
+        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        if (isPromotionApplied){
+            accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
+        }else{
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
+        return accountCheckDTO;
     }
 }

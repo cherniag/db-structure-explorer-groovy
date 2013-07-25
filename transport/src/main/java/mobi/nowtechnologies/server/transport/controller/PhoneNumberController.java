@@ -22,6 +22,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class PhoneNumberController extends CommonController {
 		
 	private UserService userService;
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 	
 	@RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER"})
 	public ModelAndView activatePhoneNumber(
@@ -49,9 +53,5 @@ public class PhoneNumberController extends CommonController {
 			logProfileData(null, community, null, phone, user, ex);
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
 	}
 }

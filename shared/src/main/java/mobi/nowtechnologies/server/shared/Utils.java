@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
@@ -28,6 +30,8 @@ public class Utils {
     public static final long EIGHT_WEEK_MILLIS = 8*WEEK_SECONDS*1000L;
     public static final int DAY_MILLISECONDS = 86400000;
 	public static final int DAY_SECONDS = 86400;
+    
+    private static Pattern MAJOR_VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\..*");
 
     public static int truncatedToSeconds(Date date){
         return (int)(date.getTime()/1000);
@@ -241,5 +245,23 @@ public class Utils {
 
     public static boolean isNotNull(Object o) {
         return o != null ? true : false;
+    }
+
+    public static int getMajorVersionNumber(String version){
+        int majorVersionNumber;
+        Matcher matcher = MAJOR_VERSION_NUMBER_PATTERN.matcher(version);
+
+        if(matcher.matches()){
+            majorVersionNumber = Integer.valueOf(matcher.group());
+        }else{
+            throw new RuntimeException("Couldn't get major version number");
+        }
+
+        return majorVersionNumber;
+    }
+
+    public static boolean isMajorVersionNumberLessThan(int majorVersionNumber, String version){
+        int parsedMajorVersionNumber = Utils.getMajorVersionNumber(version);
+        return parsedMajorVersionNumber < majorVersionNumber;
     }
 }

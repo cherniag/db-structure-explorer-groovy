@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -53,6 +54,7 @@ public abstract class CommonController extends ProfileController{
 
 	protected View view;
 	protected CommunityResourceBundleMessageSource messageSource;
+    protected UserService userService;
 	protected Jaxb2Marshaller jaxb2Marshaller;
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
@@ -78,7 +80,15 @@ public abstract class CommonController extends ProfileController{
 		this.nowTechTokenBasedRememberMeServices = nowTechTokenBasedRememberMeServices;
 	}
 
-	@ExceptionHandler(Exception.class)
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
@@ -197,8 +207,8 @@ public abstract class CommonController extends ProfileController{
 			LOGGER.error(message);
 		} else if (errorCodeForMessageLocalization != null) {
 			Locale locale = httpServletRequest.getLocale();
-			String commnityUri = getCommunityUrl(httpServletRequest);
-			String localizedMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
+			String communityUri = getCommunityUrl(httpServletRequest);
+			String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
 			message = serviceException.getLocalizedMessage();
 			errorMessage = getErrorMessage(localizedMessage, message, null);
 			LOGGER.error(message);
@@ -240,7 +250,7 @@ public abstract class CommonController extends ProfileController{
 	 * Returns an auth token that is generated for web portal SSO
 	 * @return rememberMe auth token
 	 */
-	public Object[] proccessRememberMeToken(Object[] objects) {
+	public Object[] precessRememberMeToken(Object[] objects) {
 		LOGGER.debug("input parameters objects: [{}], [{}]", objects);
 		for (Object object : objects) {
 			if (!(object instanceof AccountCheckDTO)) continue;
@@ -262,23 +272,4 @@ public abstract class CommonController extends ProfileController{
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
 	}
-
-    protected SecurityContextDetails getSecurityContextDetails() {
-        return (SecurityContextDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
-
-    protected int getUserId() {
-        SecurityContextDetails securityContextDetails = getSecurityContextDetails();
-        return securityContextDetails.getUserId();
-    }
-
-    protected User getUser(){
-        return userRepository.findOne(getUserId());
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 }

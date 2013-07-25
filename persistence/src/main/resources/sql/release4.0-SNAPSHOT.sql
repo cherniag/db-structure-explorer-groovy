@@ -41,9 +41,10 @@ where ch.type='VIDEO_CHART';
  -- http://jira.musicqubed.com/browse/IMP-1784
  -- [Server] Adjust payment system and jobs to support new 4G payment options
 alter table tb_paymentPolicy add column tariff char(255) not null default '_3G';
+alter table tb_paymentPolicy add column media_type char(255) not null default 'AUDIO';
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
-alter table tb_users add column tariff char(255);
+alter table tb_users add column tariff char(255) not null default '_3G';
 alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
 alter table tb_users add column hasAllDetails boolean;
 alter table tb_users add column showFreeTrial boolean;
@@ -74,11 +75,9 @@ create table refund (
  insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2_indirect';
 
  --
- alter table tb_users add column contractChannel varchar(255) default 'DIRECT';
+ alter table tb_users add column contract_channel varchar(255) default 'DIRECT';
 
  -- http://jira.musicqubed.com/browse/IMP-1794
  -- Remove video access from downgrading users
  insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
  insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
-
- update tb_paymentPolicy set content_category="other";

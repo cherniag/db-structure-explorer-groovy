@@ -67,7 +67,7 @@ public class AccCheckController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
@@ -90,7 +90,7 @@ public class AccCheckController extends CommonController {
 			accountCheck.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
 			
 			final Object[] objects = new Object[] { accountCheck };
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 
 			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
 			
@@ -162,7 +162,7 @@ public class AccCheckController extends CommonController {
 					pushNotificationToken, deviceType, transactionReceipt);
 			
 			final Object[] objects = new Object[] { accountCheckDTO };
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 
 			ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
 			

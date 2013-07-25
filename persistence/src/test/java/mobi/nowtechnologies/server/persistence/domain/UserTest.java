@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -27,7 +29,7 @@ public class UserTest {
     PaymentPolicy detachedPaymentPolicy;
     private PaymentPolicy paymentPolicy;
     private Tariff paymentPolicyTariff;
-    private String contentCategory;
+    private MediaType mediaType;
     private int nextSubPayment;
     private int epochSeconds;
 
@@ -379,7 +381,7 @@ public class UserTest {
     @Test
      public void testIsOn4GVideoAudioBoughtPeriod_Success() throws Exception {
         paymentPolicyTariff = Tariff._4G;
-        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        mediaType = VIDEO_AND_AUDIO;
         epochSeconds = 0;
         nextSubPayment = epochSeconds + 10;
 
@@ -393,7 +395,7 @@ public class UserTest {
     @Test
     public void testIsOn4GVideoAudioBoughtPeriod_NextSubPaymentInThePast_Success() throws Exception {
         paymentPolicyTariff = Tariff._4G;
-        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        mediaType = VIDEO_AND_AUDIO;
         epochSeconds = Integer.MAX_VALUE;
         nextSubPayment = epochSeconds - 10;
 
@@ -407,7 +409,7 @@ public class UserTest {
     @Test
     public void testIsOn4GVideoAudioBoughtPeriod_WrongTariff_Success() throws Exception {
         paymentPolicyTariff = Tariff._3G;
-        contentCategory = PaymentPolicy.VIDEO_AND_AUDIO;
+        mediaType = VIDEO_AND_AUDIO;
         epochSeconds = 0;
         nextSubPayment = epochSeconds + 10;
         prepareDataToIsOn4GVideoAudioBoughtPeriod();
@@ -421,7 +423,7 @@ public class UserTest {
     public void testIsOn4GVideoAudioBoughtPeriod_WrongContentCategory_Success() throws Exception {
 
         paymentPolicyTariff = Tariff._4G;
-        contentCategory = PaymentPolicy.AUDIO;
+        mediaType = AUDIO;
         epochSeconds = 0;
         nextSubPayment = epochSeconds + 10;
         prepareDataToIsOn4GVideoAudioBoughtPeriod();
@@ -437,7 +439,7 @@ public class UserTest {
         when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
 
         paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(paymentPolicyTariff);
-        paymentPolicy.setContentCategory(contentCategory);
+        paymentPolicy.setMediaType(mediaType);
 
         O2PSMSPaymentDetails o2PSMSPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         o2PSMSPaymentDetails.setPaymentPolicy(paymentPolicy);
