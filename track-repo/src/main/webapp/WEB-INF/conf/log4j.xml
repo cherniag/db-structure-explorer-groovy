@@ -96,6 +96,7 @@
 	<logger name="mobi.nowtechnologies.server.trackrepo">
 		<level value="INFO"/>
 		<appender-ref ref="track-repo-RollingFileAppender" />
+        <appender-ref ref="errors-track-repo-RollingFileAppender" />
 	</logger>
 	
 	<root>

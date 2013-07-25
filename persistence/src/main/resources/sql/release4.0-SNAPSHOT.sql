@@ -46,8 +46,6 @@ alter table tb_paymentPolicy add column media_type char(255) not null default 'A
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
 alter table tb_users add column tariff char(255) not null default '_3G';
 alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
-alter table tb_users add column hasAllDetails boolean;
-alter table tb_users add column showFreeTrial boolean;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
@@ -81,3 +79,12 @@ create table refund (
  -- Remove video access from downgrading users
  insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
  insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
+
+ -- IMP-1781 [Track Repo] Migrate tracks ingestion from CMS to Track Repo
+ insert into tb_fileTypes (i, name) value (4, 'VIDEO');
+ alter table tb_media modify column headerFile int unsigned null;
+ alter table tb_media modify column audioPreviewFile int unsigned null;
+ alter table tb_media modify column headerPreviewFile int unsigned null;
+ alter table tb_media modify column purchasedFile int unsigned null;
+
+ alter table tb_users add column on_video_free_trial boolean not null default false;

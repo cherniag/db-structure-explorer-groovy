@@ -1,21 +1,28 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
+import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
+import com.brightcove.proserve.mediaapi.wrapper.WriteApi;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.enums.*;
+import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.*;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -25,6 +32,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * 
  * @author Alexander Kolpakov (akolpakov)
@@ -32,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class TrackServiceImpl implements TrackService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
+    private static final java.util.logging.Logger BRIGHTCOVE_LOGGER  = java.util.logging.Logger.getLogger("BrightcoveLog");
 
 	private CloudFileService cloudFileService;
 	
@@ -46,7 +58,14 @@ public class TrackServiceImpl implements TrackService {
 	private String srcPullContainer;
 	private String destPullContainer;
 
+    private String brightcoveWriteToken;
+    private String brightcoveReadToken;
+    private Boolean brightcoveGeoFiltering;
+
 	private TrackRepository trackRepository;
+
+    private WriteApi brightcoveWriteService;
+    private ReadApi brightcoveReadService;
 
 	public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
@@ -67,7 +86,10 @@ public class TrackServiceImpl implements TrackService {
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
 		if (classpath == null || !classpath.exists())
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.classpath");
-	}
+
+        brightcoveWriteService = new WriteApi(BRIGHTCOVE_LOGGER);
+        brightcoveReadService = new ReadApi(BRIGHTCOVE_LOGGER);
+    }
 
 	@Override
 	public Track encode(Long trackId, Boolean isHighRate, Boolean licensed) {
@@ -143,17 +165,22 @@ public class TrackServiceImpl implements TrackService {
 		try {
 			
 			String isrc = track.getIsrc();
-			
+
+            AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
 			String[] pullFiles = new String[]{
-						isrc+"."+FileType.MOBILE_AUDIO.getExt(),
-						isrc+"."+FileType.MOBILE_ENCODED.getExt(),
+						audioFile != null ? isrc+"."+FileType.MOBILE_AUDIO.getExt() : null,
+                        audioFile != null ? isrc+"."+FileType.MOBILE_ENCODED.getExt() : null,
 						isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt(),
 						isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
 					};
 			
-			for (int i = 0; i < pullFiles.length; i++) {				
-				cloudFileService.copyFile(pullFiles[i], destPullContainer, trackId+"_"+pullFiles[i], srcPullContainer);
+			for (int i = 0; i < pullFiles.length; i++) {
+                if(pullFiles[i] != null)
+				    cloudFileService.copyFile(pullFiles[i], destPullContainer, trackId+"_"+pullFiles[i], srcPullContainer);
 			}
+
+            //upload video on brightcove if it exists
+            createVideo(track);
 			
 			moveFiles(workDir.getFile(), publishDir.getFile());
 			
@@ -237,6 +264,94 @@ public class TrackServiceImpl implements TrackService {
 		
 	}
 
+    protected AssetFile createVideo(Track track) throws BrightcoveException {
+        AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+
+        if(videoFile == null)
+            return null;
+
+        Video video = new Video();
+
+        LOGGER.info("Setting up video object to write");
+
+        // --------------------- Video Write API Methods ------------------
+        Boolean createMultipleRenditions = true;
+        Boolean preserveSourceRendition  = true;
+        Boolean h264NoProcessing         = false;
+
+        // ---- Required fields ----
+        video.setName(track.getTitle());
+        video.setShortDescription(track.getArtist()+(track.getAlbum() != null ? "/"+track.getAlbum() : ""));
+
+        // ---- Optional fields ----
+        video.setAccountId(null);
+        video.setEconomics(EconomicsEnum.FREE);
+        video.setItemState(ItemStateEnum.ACTIVE);
+        video.setLinkText("Brightcove");
+        video.setLinkUrl("http://www.brightcove.com");
+        video.setLongDescription(track.getInfo());
+        video.setReferenceId(track.getIsrc());
+        video.setStartDate(track.getIngestionDate()); // 30 minutes ago
+
+        // ---- Complex (and optional) fields ----
+        // End date must be in the future - add 30 minutes to "now"
+        Date endDate = null;
+        video.setEndDate(endDate);
+
+        // Geo-filtering must be combined with filtered countries
+        if(brightcoveGeoFiltering){
+            video.setGeoFiltered(true);
+            List<GeoFilterCodeEnum> geoFilteredCountries = new ArrayList<GeoFilterCodeEnum>();
+            for (Territory territory : track.getTerritories()) {
+                GeoFilterCodeEnum code = Territory.WWW_TERRITORY.equalsIgnoreCase(territory.getCode()) ? GeoFilterCodeEnum.GB : GeoFilterCodeEnum.valueOf(territory.getCode());
+                geoFilteredCountries.add(code);
+            }
+            video.setGeoFilteredCountries(geoFilteredCountries);
+            video.setGeoFilteredExclude(true);
+        }
+
+        // Tags must be added as a list of strings
+        List<String> tags = new ArrayList<String>();
+        tags.add(track.getIngestor());
+        video.setTags(tags);
+
+
+        Long videoId = null;
+        try{
+            videoId =  brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+            LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[]{video.getReferenceId(), videoId});
+        } catch (MediaApiException e) {
+            String error = e.getResponseMessage();
+            if(error.equals("Reference ID "+video.getReferenceId()+" is already in use")){
+                brightcoveWriteService.DeleteVideo(brightcoveWriteToken, video.getId(), video.getReferenceId(), true, true);
+                LOGGER.info("This video is not new. Video with referenceId=[{}] has been deleted",video.getReferenceId());
+                videoId =  brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+                LOGGER.info("This video is new. Video with referenceId=[{}] doesn't exist",video.getReferenceId());
+            } else {
+                throw e;
+            }
+        }
+
+
+        videoFile.setExternalId(videoId.toString());
+        if(videoFile.getDuration() == null){
+            UploadStatusEnum status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
+            while(status != UploadStatusEnum.COMPLETE){
+                status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+
+            video = brightcoveReadService.FindVideoById(brightcoveReadToken, videoId, EnumSet.of(VideoFieldEnum.LENGTH), Collections.<String>emptySet());
+            videoFile.setDuration(video.getLength().intValue());
+        }
+
+        return videoFile;
+    }
+
 	private String getITunesUrl(String artist, String title) throws IOException, InterruptedException {
 		File itunesScriptFile = itunesScript.getFile();
 		ExternalCommandThread thread = new ExternalCommandThread();
@@ -290,4 +405,16 @@ public class TrackServiceImpl implements TrackService {
 	public void setDestPullContainer(String destPullContainer) {
 		this.destPullContainer = destPullContainer;
 	}
+
+    public void setBrightcoveWriteToken(String brightcoveWriteToken) {
+        this.brightcoveWriteToken = brightcoveWriteToken;
+    }
+
+    public void setBrightcoveGeoFiltering(Boolean brightcoveGeoFiltering) {
+        this.brightcoveGeoFiltering = brightcoveGeoFiltering;
+    }
+
+    public void setBrightcoveReadToken(String brightcoveReadToken) {
+        this.brightcoveReadToken = brightcoveReadToken;
+    }
 }

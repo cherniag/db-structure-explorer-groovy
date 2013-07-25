@@ -4,13 +4,14 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.service.UserService;
-
+import mobi.nowtechnologies.server.shared.web.servlet.PlainTextModalAndView;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +20,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
@@ -32,8 +32,7 @@ import java.util.Map;
  */
 @Controller
 public class FileController extends CommonController {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FileController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
 
 	private UserService userService;
 	private FileService fileService;
@@ -47,10 +46,10 @@ public class FileController extends CommonController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "**/GET_FILE"})
+	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
 	public ModelAndView getFile(
 			@RequestParam("ID") final String mediaId,
-			@RequestParam("TYPE") String fileType,
+			@RequestParam("TYPE") String fileTypeName,
 			@RequestParam("APP_VERSION") String appVersion,
 			@RequestParam("API_VERSION") String apiVersion,
 			@RequestParam("COMMUNITY_NAME") String communityName,
@@ -64,42 +63,10 @@ public class FileController extends CommonController {
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			if (userName == null)
-				throw new NullPointerException("The parameter userName is null");
-			if (communityName == null)
-				throw new NullPointerException("The parameter communityName is null");
-			
-			user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-			final File file = fileService.getFile(mediaId, FileType
-					.valueOf(fileType), resolution, user);
-			final String contentType = getContentType(file.getName());
-			return new ModelAndView(new View() {
-				@Override
-				public void render(Map<String, ?> arg0,
-						HttpServletRequest arg1, HttpServletResponse response)
-						throws Exception {
-					// uitsService.process(userName, mediaId, "distributor", new
-					// FileInputStream(file), response
-					// .getOutputStream());
-					FileInputStream fileInputStream = new FileInputStream(file);
-					String rangeAttribute = (String)request.getAttribute(HttpHeaders.RANGE);
-					if (StringUtils.hasText(rangeAttribute)) {
-						Long range = Long.valueOf(rangeAttribute);
-						IOUtils.skipFully(fileInputStream, range);
-						response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-					}
-					try {
-						IOUtils.copy(fileInputStream, response.getOutputStream());
-					} finally {
-						fileInputStream.close();
-					}
-				}
+			user = checkCredentials(userName, userToken, timestamp, communityName);
 
-				@Override
-				public String getContentType() {
-					return contentType;
-				}
-			}, "EMPTY", new Object());
+            FileType fileType = FileType.valueOf(fileTypeName);
+            return processGetFile(user, mediaId, fileType, resolution, request);
 		} catch (Exception e) {
 			ex = e;
 			throw e;
@@ -108,6 +75,82 @@ public class FileController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
+
+    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
+    public ModelAndView getFile(
+            @PathVariable("community") String communityName,
+            @RequestParam("ID") final String mediaId,
+            @RequestParam("TYPE") String fileTypeName,
+            @RequestParam("USER_NAME") final String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "RESOLUTION", required = false) String resolution,
+            final HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        User user = null;
+        Exception ex = null;
+        try {
+            LOGGER.info("command proccessing started");
+
+            user = checkCredentials(userName, userToken, timestamp, communityName);
+
+            FileType fileType = FileType.valueOf(fileTypeName);
+            if(fileType == FileType.VIDEO){
+                final String videoURL = fileService.getVideoURL(mediaId);
+
+                return new PlainTextModalAndView(videoURL);
+            } else {
+                return processGetFile(user, mediaId, fileType, resolution, request);
+            }
+        } catch (Exception e) {
+            ex = e;
+            throw e;
+        } finally {
+            logProfileData(null, communityName, null, null, user, ex);
+            LOGGER.info("command processing finished");
+        }
+    }
+
+    protected User checkCredentials(String userName, String userToken, String timestamp, String communityName){
+        if (userName == null)
+            throw new NullPointerException("The parameter userName is null");
+        if (communityName == null)
+            throw new NullPointerException("The parameter communityName is null");
+        return userService.checkCredentials(userName, userToken, timestamp, communityName);
+    }
+
+    protected ModelAndView processGetFile(User user, String mediaId, FileType fileType, String resolution,final HttpServletRequest request){
+
+        final File file = fileService.getFile(mediaId, fileType, resolution, user);
+        final String contentType = getContentType(file.getName());
+        return new ModelAndView(new View() {
+            @Override
+            public void render(Map<String, ?> arg0,
+                               HttpServletRequest arg1, HttpServletResponse response)
+                    throws Exception {
+                // uitsService.process(userName, mediaId, "distributor", new
+                // FileInputStream(file), response
+                // .getOutputStream());
+                FileInputStream fileInputStream = new FileInputStream(file);
+                String rangeAttribute = (String)request.getAttribute(HttpHeaders.RANGE);
+                if (StringUtils.hasText(rangeAttribute)) {
+                    Long range = Long.valueOf(rangeAttribute);
+                    IOUtils.skipFully(fileInputStream, range);
+                    response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+                }
+                try {
+                    IOUtils.copy(fileInputStream, response.getOutputStream());
+                } finally {
+                    fileInputStream.close();
+                }
+            }
+
+            @Override
+            public String getContentType() {
+                return contentType;
+            }
+        }, "EMPTY", new Object());
+    }
 
 	private String getContentType(String name) {
 		return fileService.getContentType(name);

@@ -42,7 +42,7 @@ public class TrackController extends AbstractCommonController{
 		this.resourceFileDtoBuilder = resourceFileDtoBuilder;
 	}
 
-	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO})
+	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
@@ -62,13 +62,7 @@ public class TrackController extends AbstractCommonController{
 
         List<TrackDto> trackDtos = new LinkedList<TrackDto>();
 
-        TrackDto track = new TrackDto();
-        track.setPublishDate(new Date());
-        track.setIngestionDate(new Date());
-        trackDtos.add(track);
-
-        return new PageListDto<TrackDto>(trackDtos, 20, 5, 10);
-//		return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
+		return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
 	}
 	
 	@RequestMapping(value = "/tracks/{trackId}/pull", method = RequestMethod.GET)
@@ -78,7 +72,7 @@ public class TrackController extends AbstractCommonController{
 			TrackDtoMapper trackDto = new TrackDtoMapper(track);
 			
 			if(track.getStatus() == TrackStatus.ENCODED){
-				trackDto.setFiles(resourceFileDtoBuilder.build(track.getIsrc()));
+				trackDto.setFiles(resourceFileDtoBuilder.build(track));
 				Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
 				if (publishTerritory != null) {
 					trackDto.setPublishDate(publishTerritory.getStartDate());

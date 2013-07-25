@@ -292,6 +292,19 @@ public class Track extends AbstractEntity {
 		
 		return "";
 	}
+
+    public AssetFile getFile(AssetFile.FileType type) {
+        if(files != null)
+        {
+            for (AssetFile file : files) {
+                if (file.getType() == type) {
+                    return file;
+                }
+            }
+        }
+
+        return null;
+    }
 	
 	public Long getFileId(AssetFile.FileType type) {
 		if(files != null)

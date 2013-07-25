@@ -7,5 +7,5 @@ public class DropAssetFile {
 	public AssetFile.FileType type;
 	public String md5;
 	public String isrc;
-
+    public Integer duration;
 }

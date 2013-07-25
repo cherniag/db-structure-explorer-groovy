@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
+import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.util.EnumSet;
 
 import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 import static org.apache.commons.lang.StringUtils.containsAny;
@@ -26,8 +31,8 @@ import static org.apache.commons.lang.Validate.notNull;
  * 
  */
 public class FileService{
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FileService.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class.getName());
+    private static final java.util.logging.Logger BRIGHTCOVE_LOGGER  = java.util.logging.Logger.getLogger("BrightcoveLog");
 	
 	private UserService userService;
 
@@ -37,12 +42,16 @@ public class FileService{
 	private Resource storePath;
 	private MediaService mediaService;
 
+    private ReadApi brightcoveReadService;
+    private String brightcoveReadToken;
+
 	public static enum FileType {
 		IMAGE_LARGE("image"),
 		IMAGE_SMALL("image"),
 		IMAGE_RESOLUTION("image"),
 		HEADER("header"),
 		AUDIO("audio"),
+		VIDEO("video"),
 		PURCHASED("purchased");
 
 		private String folderName;
@@ -58,7 +67,13 @@ public class FileService{
 	
 	public void init() {
 		notNull(storePath, "The parameter storePath is null");
+
+        this.brightcoveReadService = new ReadApi(BRIGHTCOVE_LOGGER);
 	}
+
+    public void setBrightcoveReadToken(String brightcoveReadToken) {
+        this.brightcoveReadToken = brightcoveReadToken;
+    }
 
     public void setStorePath(Resource storePath) {
         try {
@@ -213,4 +228,14 @@ public class FileService{
 		}
 		return file;
 	}
+
+    @Transactional(readOnly = true)
+    public String getVideoURL(String mediaIsrc) throws BrightcoveException {
+       LOGGER.debug("Get video url for isrc="+mediaIsrc);
+
+       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.FLVFULLLENGTH), null);
+
+       LOGGER.debug("Return video url=[{}] for isrc=[{}]",new Object[]{video.getFlvUrl(), mediaIsrc});
+       return video.getFlvUrl();
+    }
 }

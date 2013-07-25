@@ -175,6 +175,7 @@ public class IngestServiceImpl implements IngestService{
 				track.setXml(value.xml.getBytes());
 				track.setInfo(value.info);
 				track.setLicensed(value.licensed);
+                track.setExplicit(value.explicit);
 
 				Set<AssetFile> files = track.getFiles();
 				if (files == null) {

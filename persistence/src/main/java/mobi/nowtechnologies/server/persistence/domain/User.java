@@ -82,6 +82,14 @@ public class User implements Serializable {
         this.contractChannel = contractChannel;
     }
 
+    public boolean isOnVideoAudioFreeTrial() {
+        return onVideoAudioFreeTrial;
+    }
+
+    public void setOnVideoAudioFreeTrial(boolean onVideoAudioFreeTrial) {
+        this.onVideoAudioFreeTrial = onVideoAudioFreeTrial;
+    }
+
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
@@ -90,6 +98,10 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "i")
 	private int id;
+
+    
+    @Column(name = "on_video_free_trial")
+    private boolean onVideoAudioFreeTrial;
 
     @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
@@ -1401,7 +1413,7 @@ public class User implements Serializable {
     }
     
     public boolean canPlayVideo() {
-        return is4G() && ((isOnFreeTrial() && has4GVideoAudioSubscription()) || isOn4GVideoAudioBoughtPeriod());
+        return  is4G() && (isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod());
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {

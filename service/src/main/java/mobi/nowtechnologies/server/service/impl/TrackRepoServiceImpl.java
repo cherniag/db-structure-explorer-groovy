@@ -197,22 +197,30 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			media.setAreArtistUrls(config.getAreArtistUrls());
 
 			// Building media files
-			media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
-			media.setHeaderPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW)));
+            ResourceFileDto audioFileDto = track.getFile(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL);
+            if(audioFileDto != null){
+                media.setPurchasedFile(createMediaFile(audioFileDto));
 
-			if (track.getLicensed() == null || !track.getLicensed()) {
-				media.setAudioFile(media.getAudioPreviewFile());
-				media.setHeaderFile(media.getHeaderPreviewFile());
-			} else {
-				media.setAudioFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, track.getResolution())));
-				media.setHeaderFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, track.getResolution())));
-			}
+                media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
+                media.setHeaderPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW)));
+
+                if (track.getLicensed() == null || !track.getLicensed()) {
+                    media.setAudioFile(media.getAudioPreviewFile());
+                    media.setHeaderFile(media.getHeaderPreviewFile());
+                } else {
+                    media.setAudioFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, track.getResolution())));
+                    media.setHeaderFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, track.getResolution())));
+                }
+            }
+
+            ResourceFileDto videoFileDto = track.getFile(FileType.VIDEO, AudioResolution.RATE_ORIGINAL);
+            if(videoFileDto != null){
+                media.setAudioFile(createMediaFile(videoFileDto));
+            }
 
 			media.setImageFIleLarge(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_LARGE)));
 			media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_SMALL)));
 			media.setImgFileResolution(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL)));
-
-			media.setPurchasedFile(createMediaFile(track.getFile(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL)));
 
 			Date publishDate = track.getPublishDate() != null ? track.getPublishDate() : new Date();
 			media.setPublishDate((int) (publishDate.getTime() / 1000));
@@ -285,6 +293,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			mobi.nowtechnologies.server.persistence.domain.FileType fileType = new mobi.nowtechnologies.server.persistence.domain.FileType();
 			fileType.setI(FileType.valueOf(fileDto.getType()).getId().byteValue());
 			file.setFileType(fileType);
+
+            file.setDuration(fileDto.getDuration() != null ? fileDto.getDuration() : 0);
 		}
 
 		file.setSize(fileDto.getSize());

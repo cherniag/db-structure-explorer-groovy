@@ -3,10 +3,13 @@ package mobi.nowtechnologies.server.trackrepo.dto.builder;
 import mobi.nowtechnologies.java.server.uits.MP3Manager;
 import mobi.nowtechnologies.java.server.uits.MP4Manager;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.VideoResolution;
 import mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +46,9 @@ public class ResourceFileDtoBuilder {
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
 	}
 	
-	public List<ResourceFileDto> build(String isrc) throws IOException{
+	public List<ResourceFileDto> build(Track track) throws IOException{
+        String isrc = track.getIsrc();
+
 		String workDirPath = workDir.getFile().getAbsolutePath();
 		String distDirPath = publishDir.getFile().getAbsolutePath();
 		
@@ -52,13 +57,25 @@ public class ResourceFileDtoBuilder {
 		String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, isrc));
 
 		List<ResourceFileDto> files = new ArrayList<ResourceFileDto>(15);
-		files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, isrc, null));
-		files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, isrc, null));
-		files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
-		files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, isrc, aac48hash));
-		files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, isrc, aac96hash));
-		files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
-		files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, isrc, mp3hash));
+
+        AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
+		if(audioFile != null){
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, isrc, null));
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, isrc, null));
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, isrc, aac48hash));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, isrc, aac96hash));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
+            files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, isrc, mp3hash));
+        }
+
+        AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+        if(videoFile != null){
+            ResourceFileDto videoFileDto = build(FileType.VIDEO, VideoResolution.RATE_ORIGINAL, null, videoFile.getExternalId(), null);
+            videoFileDto.setDuration(videoFile.getDuration());
+            files.add(videoFileDto);
+        }
+
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL, distDirPath, isrc, null));
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_LARGE, distDirPath, isrc, null));
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_SMALL, distDirPath, isrc, null));
@@ -71,11 +88,15 @@ public class ResourceFileDtoBuilder {
 		return files;
 	}
 	
-	public ResourceFileDto build(FileType type, Resolution resolution, String dir, String isrc, String mediaHash) throws IOException {
-		ResourceFileDto resourceFileDto = new ResourceFileDto(type, resolution, isrc, mediaHash);
+	public ResourceFileDto build(FileType type, Resolution resolution, String dir, String filename, String mediaHash) throws IOException {
+		ResourceFileDto resourceFileDto = new ResourceFileDto(type, resolution, filename, mediaHash);
 
-		Integer fileSize = getFileSize(getFilePath(type, resolution, dir, isrc));
-		resourceFileDto.setSize(fileSize);
+        if(dir != null){
+            Integer fileSize = getFileSize(getFilePath(type, resolution, dir, filename));
+            resourceFileDto.setSize(fileSize);
+        } else {
+            resourceFileDto.setSize(0);
+        }
 
 		return resourceFileDto;
 	}
