@@ -32,7 +32,10 @@ public class NullAwareBeanUtilsBean extends BeanUtilsBean {
                         }
                     }
                 } else {
-                    super.copyProperties(oldval, value);
+                    if(oldval != null)
+                        super.copyProperties(oldval, value);
+                    else
+                        super.setProperty(dest, name, value);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

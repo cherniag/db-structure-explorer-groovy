@@ -104,11 +104,11 @@ public class AccCheckController extends CommonController {
 			accountCheck.setActivation(activationStatus);
 			accountCheck.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
 
-            accountCheck.setCanGetVideo(user.canGetVideo());
+            accountCheck.setCanGetVideo(true);
             accountCheck.setCanPlayVideo(user.canPlayVideo());
             accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
             accountCheck.setHasAllDetails(user.hasAllDetails());
-            accountCheck.setShowFreeTrial(true);
+            accountCheck.setShowFreeTrial(false);
 
 			return mav;
 		} catch (Exception e) {

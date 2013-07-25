@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 
+import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
 import com.brightcove.proserve.mediaapi.wrapper.WriteApi;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.EconomicsEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.GeoFilterCodeEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.ItemStateEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -60,11 +59,13 @@ public class TrackServiceImpl implements TrackService {
 	private String destPullContainer;
 
     private String brightcoveWriteToken;
+    private String brightcoveReadToken;
     private Boolean brightcoveGeoFiltering;
 
 	private TrackRepository trackRepository;
 
     private WriteApi brightcoveWriteService;
+    private ReadApi brightcoveReadService;
 
 	public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
@@ -87,6 +88,7 @@ public class TrackServiceImpl implements TrackService {
 			throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.classpath");
 
         brightcoveWriteService = new WriteApi(BRIGHTCOVE_LOGGER);
+        brightcoveReadService = new ReadApi(BRIGHTCOVE_LOGGER);
     }
 
 	@Override
@@ -313,11 +315,38 @@ public class TrackServiceImpl implements TrackService {
         tags.add(track.getIngestor());
         video.setTags(tags);
 
-        Long videoId =  brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+
+        Long videoId = null;
+        try{
+            videoId =  brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+            LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[]{video.getReferenceId(), videoId});
+        } catch (MediaApiException e) {
+            String error = e.getResponseMessage();
+            if(error.equals("Reference ID "+video.getReferenceId()+" is already in use")){
+                brightcoveWriteService.DeleteVideo(brightcoveWriteToken, video.getId(), video.getReferenceId(), true, true);
+                LOGGER.info("This video is not new. Video with referenceId=[{}] has been deleted",video.getReferenceId());
+                videoId =  brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+                LOGGER.info("This video is new. Video with referenceId=[{}] doesn't exist",video.getReferenceId());
+            } else {
+                throw e;
+            }
+        }
+
 
         videoFile.setExternalId(videoId.toString());
         if(videoFile.getDuration() == null){
-             videoFile.setDuration(0);
+            UploadStatusEnum status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
+            while(status != UploadStatusEnum.COMPLETE){
+                status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+
+            video = brightcoveReadService.FindVideoById(brightcoveReadToken, videoId, EnumSet.of(VideoFieldEnum.LENGTH), Collections.<String>emptySet());
+            videoFile.setDuration(video.getLength().intValue());
         }
 
         return videoFile;
@@ -383,5 +412,9 @@ public class TrackServiceImpl implements TrackService {
 
     public void setBrightcoveGeoFiltering(Boolean brightcoveGeoFiltering) {
         this.brightcoveGeoFiltering = brightcoveGeoFiltering;
+    }
+
+    public void setBrightcoveReadToken(String brightcoveReadToken) {
+        this.brightcoveReadToken = brightcoveReadToken;
     }
 }
