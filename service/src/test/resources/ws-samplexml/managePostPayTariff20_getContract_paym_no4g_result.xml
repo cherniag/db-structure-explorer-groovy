@@ -1,0 +1,37 @@
+
+      <man:getContractResponse xmlns:man="http://soa.o2.co.uk/managepostpaytariffdata_2">
+         <man:currentContract>
+            <man:startDate>2008-10-20</man:startDate>
+            <man:endDate>2009-10-19</man:endDate>
+            <man:minimumTerm>12</man:minimumTerm>
+            <man:tariff>
+               <psc:ProductId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9521</psc:ProductId>
+               <psc:ProductEquivalenceId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9521</psc:ProductEquivalenceId>
+               <psc:TariffName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">O2 simplicity 600 12 month (CR4243)</psc:TariffName>
+               <psc:ProductName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">O2 simplicity 600 12 month</psc:ProductName>
+               <psc:ProductFamily xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">12M SIMO</psc:ProductFamily>
+               <psc:MonthlyFee xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">1599</psc:MonthlyFee>
+               <psc:ProductDescription xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">600 any-network mins, unlimited texts</psc:ProductDescription>
+               <psc:ProductClassification xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">SIMO</psc:ProductClassification>
+               <psc:ProductRequestDateAlignment xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">BILLDATE-1</psc:ProductRequestDateAlignment>
+               <psc:StartDate xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2011-05-28</psc:StartDate>
+               <psc:ProductStatus xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:ProductStatus>
+               <psc:InclusiveProducts xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">
+                  <psc:ProductId>9480</psc:ProductId>
+                  <psc:ProductEquivalenceId>9480</psc:ProductEquivalenceId>
+                  <psc:ProductName>The All Rounder for iPhone</psc:ProductName>
+                  <psc:MonthlyFee>600</psc:MonthlyFee>
+                  <psc:ProductDescription>UK data allowance of 500MB to use on your iPhone or for Internet Tethering usage and 20 picture messages per month, plus unlimited Wi-Fi</psc:ProductDescription>
+                  <psc:ProductClassification>Data Option</psc:ProductClassification>
+                  <psc:ExclusiveGroup>DataBoltOns</psc:ExclusiveGroup>
+                  <psc:ExclusiveGroup>UnlimitedWiFi</psc:ExclusiveGroup>
+                  <psc:ProductDefault>false</psc:ProductDefault>
+                  <psc:ProductRequestDateAlignment>BILLDATE-1</psc:ProductRequestDateAlignment>
+                  <psc:StartDate>2011-05-28</psc:StartDate>
+                  <psc:ProductStatus>0</psc:ProductStatus>
+               </psc:InclusiveProducts>
+            </man:tariff>
+            <man:billingAccountNumber>2000063169</man:billingAccountNumber>
+            <man:MSISDN>447709408222</man:MSISDN>
+         </man:currentContract>
+      </man:getContractResponse>

@@ -1,0 +1,22 @@
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+    xmlns:cor="http://soa.o2.co.uk/coredata_1"
+    xmlns:man="http://soa.o2.co.uk/managepostpayboltonsdata_2"
+    xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <soapenv:Header>
+        <wsse:Security>
+            <wsse:UsernameToken>
+                <wsse:Username>musicQubed_1001</wsse:Username>
+                <wsse:Password>xxxx</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+        <cor:SOAConsumerTransactionID>201306261620:musicqubed.london.test</cor:SOAConsumerTransactionID>
+    </soapenv:Header>
+    <soapenv:Body>
+        <man:getCurrentBoltons>
+            <man:customerId>
+                <cor:msisdn>447764119980</cor:msisdn>
+            </man:customerId>
+        </man:getCurrentBoltons>
+    </soapenv:Body>
+</soapenv:Envelope>

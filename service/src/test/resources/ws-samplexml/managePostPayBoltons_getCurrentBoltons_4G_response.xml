@@ -1,0 +1,47 @@
+     <man:getCurrentBoltonsResponse xmlns:man="http://soa.o2.co.uk/managepostpayboltonsdata_2">
+         <man:MSISDN>447764119980</man:MSISDN>
+         <man:myCurrentBoltons>
+            <man:bolton>
+               <psc:ProductId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9003</psc:ProductId>
+               <psc:ProductEquivalenceId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9003</psc:ProductEquivalenceId>
+               <psc:ProductName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Standard Rates in Europe</psc:ProductName>
+               <psc:MonthlyFee xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:MonthlyFee>
+               <psc:ProductDescription xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Pay standard rates for calling when in Europe and pay for the data that you use. £40 monthly spending limit for data.</psc:ProductDescription>
+               <psc:ProductClassification xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Data Roaming</psc:ProductClassification>
+               <psc:ExclusiveGroup xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">DataRoaming</psc:ExclusiveGroup>
+               <psc:ProductDefault xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">true</psc:ProductDefault>
+               <psc:ProductRequestDateAlignment xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">NONE</psc:ProductRequestDateAlignment>
+               <psc:StartDate xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2013-06-05</psc:StartDate>
+               <psc:ProductStatus xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:ProductStatus>
+            </man:bolton>
+            <man:bolton>
+               <psc:ProductId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9736</psc:ProductId>
+               <psc:ProductEquivalenceId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9478</psc:ProductEquivalenceId>
+               <psc:ProductName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">1GB UK Data</psc:ProductName>
+               <psc:ProductFamily xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">CORESMART</psc:ProductFamily>
+               <psc:MonthlyFee xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:MonthlyFee>
+               <psc:ProductDescription xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">UK data allowance of 1GB per month to use on your mobile or for tethering usage, plus unlimited Wi-Fi</psc:ProductDescription>
+               <psc:ProductClassification xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Data Option</psc:ProductClassification>
+               <psc:ExclusiveGroup xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">DataBoltOns</psc:ExclusiveGroup>
+               <psc:ExclusiveGroup xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">UnlimitedWiFi</psc:ExclusiveGroup>
+               <psc:ProductDefault xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">true</psc:ProductDefault>
+               <psc:ProductRequestDateAlignment xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">BILLDATE-1</psc:ProductRequestDateAlignment>
+               <psc:StartDate xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2013-06-05</psc:StartDate>
+               <psc:ProductStatus xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:ProductStatus>
+            </man:bolton>
+            <man:bolton>
+               <psc:ProductId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9945</psc:ProductId>
+               <psc:ProductEquivalenceId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">9944</psc:ProductEquivalenceId>
+               <psc:ProductName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">4G access</psc:ProductName>
+               <psc:MonthlyFee xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:MonthlyFee>
+               <psc:ProductDescription xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Gives you 4G network access to use your UK data allowance</psc:ProductDescription>
+               <psc:ProductClassification xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">4G Bolt On</psc:ProductClassification>
+               <psc:ExclusiveGroup xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">4GAccessBoltOns</psc:ExclusiveGroup>
+               <psc:ProductDefault xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">false</psc:ProductDefault>
+               <psc:ProductRequestDateAlignment xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">NONE</psc:ProductRequestDateAlignment>
+               <psc:StartDate xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2013-06-05</psc:StartDate>
+               <psc:ProductStatus xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:ProductStatus>
+            </man:bolton>
+         </man:myCurrentBoltons>
+      </man:getCurrentBoltonsResponse>
+   

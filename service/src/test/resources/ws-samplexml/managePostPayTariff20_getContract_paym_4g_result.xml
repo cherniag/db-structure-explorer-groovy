@@ -1,0 +1,36 @@
+      <man:getContractResponse xmlns:man="http://soa.o2.co.uk/managepostpaytariffdata_2">
+         <man:currentContract>
+            <man:startDate>2013-06-06</man:startDate>
+            <man:endDate>2015-06-05</man:endDate>
+            <man:minimumTerm>24</man:minimumTerm>
+            <man:tariff>
+               <psc:ProductId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">10048</psc:ProductId>
+               <psc:ProductEquivalenceId xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">10048</psc:ProductEquivalenceId>
+               <psc:TariffName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">O2 4G Unlimited 24 month £29 (CR5560)</psc:TariffName>
+               <psc:ProductName xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">O2 4G Unlimited 24 month</psc:ProductName>
+               <psc:ProductFamily xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">24M L1</psc:ProductFamily>
+               <psc:MonthlyFee xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2900</psc:MonthlyFee>
+               <psc:ProductDescription xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">Unlimited any-network mins, unlimited texts, access to 4G</psc:ProductDescription>
+               <psc:ProductClassification xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">4G_VOICE</psc:ProductClassification>
+               <psc:ProductRequestDateAlignment xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">ANY</psc:ProductRequestDateAlignment>
+               <psc:StartDate xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">2013-06-06</psc:StartDate>
+               <psc:ProductStatus xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">0</psc:ProductStatus>
+               <psc:InclusiveProducts xmlns:psc="http://soa.o2.co.uk/pscommonpostpaydata_2">
+                  <psc:ProductId>9958</psc:ProductId>
+                  <psc:ProductEquivalenceId>9767</psc:ProductEquivalenceId>
+                  <psc:ProductName>1GB UK Data</psc:ProductName>
+                  <psc:MonthlyFee>0</psc:MonthlyFee>
+                  <psc:ProductDescription>UK data allowance of 1GB per month to use on your mobile and unlimited Wi-Fi</psc:ProductDescription>
+                  <psc:ProductClassification>Data Option</psc:ProductClassification>
+                  <psc:ExclusiveGroup>DataBoltOns</psc:ExclusiveGroup>
+                  <psc:ExclusiveGroup>UnlimitedWiFi</psc:ExclusiveGroup>
+                  <psc:ProductDefault>true</psc:ProductDefault>
+                  <psc:ProductRequestDateAlignment>BILLDATE-1</psc:ProductRequestDateAlignment>
+                  <psc:StartDate>2013-06-06</psc:StartDate>
+                  <psc:ProductStatus>0</psc:ProductStatus>
+               </psc:InclusiveProducts>
+            </man:tariff>
+            <man:billingAccountNumber>2000094648</man:billingAccountNumber>
+            <man:MSISDN>447764119970</man:MSISDN>
+         </man:currentContract>
+      </man:getContractResponse>

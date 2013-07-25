@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Date         Change#       		Author      Change Description
+	04/09/2012		2.0.6		  Shivaji Rao		Added new operation getConsignmentDetails_1 for Stock Management Project -Release 4.
+	01/08/2012		2.0.5		  Shivaji Rao		Added new operation setConsignmentStateInOrder_1 for Stock Management Project -Release 4.
+	12/08/2011		2.0.4		  Raghu Ugare		Added new operations getDeliveryOptions_1 and submitUpgradeOrder_1 as part of the OATC CCS Upgrade project.
+	15/03/2011		2.0.3		  Amit Kumar		Added new operations getOrderList_2 and getOrderDetails_2 operation for the modular tariff project.
+	23/04/2010		2.0.2		  Arjun B			Changed major version to 2.x to align with the service version.
+	12/04/2010  	2.0.1         Venkata Karthik	Updated service namespace and endpoint address
+	15/02/2010  	2.0.0         Venkata Karthik	Initial Version-->
+<wsdl:definitions name="ManageOrder" targetNamespace="http://soa.o2.co.uk/manageorderservice_2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mod="http://soa.o2.co.uk/manageorderdata_2" xmlns:mos="http://soa.o2.co.uk/manageorderservice_2">
+   <wsdl:types>
+      <xsd:schema>
+         <xsd:import namespace="http://soa.o2.co.uk/manageorderdata_2" schemaLocation="manageorderdata_2_0.xsd"/>
+      </xsd:schema>
+   </wsdl:types>
+   <wsdl:message name="getOrderList">
+      <wsdl:part name="getOrderList" element="mod:getOrderList"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderListResponse">
+      <wsdl:part name="getOrderListResponse" element="mod:getOrderListResponse"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderListFault">
+      <wsdl:part name="getOrderListFault" element="mod:getOrderListFault"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetails">
+      <wsdl:part name="getOrderDetails" element="mod:getOrderDetails"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetailsResponse">
+      <wsdl:part name="getOrderDetailsResponse" element="mod:getOrderDetailsResponse"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetailsFault">
+      <wsdl:part name="getOrderDetailsFault" element="mod:getOrderDetailsFault"/>
+   </wsdl:message>
+   <wsdl:message name="submitOrder">
+      <wsdl:part name="submitOrder" element="mod:submitOrder"/>
+   </wsdl:message>
+   <wsdl:message name="submitOrderResponse">
+      <wsdl:part name="submitOrderResponse" element="mod:submitOrderResponse"/>
+   </wsdl:message>
+   <wsdl:message name="submitOrderFault">
+      <wsdl:part name="submitOrderFault" element="mod:submitOrderFault"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderList_2">
+      <wsdl:part name="getOrderList_2" element="mod:getOrderList_2"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderList_2Response">
+      <wsdl:part name="getOrderList_2Response" element="mod:getOrderList_2Response"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderList_2Fault">
+      <wsdl:part name="getOrderList_2Fault" element="mod:getOrderList_2Fault"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetails_2">
+      <wsdl:part name="getOrderDetails_2" element="mod:getOrderDetails_2"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetails_2Response">
+      <wsdl:part name="getOrderDetails_2Response" element="mod:getOrderDetails_2Response"/>
+   </wsdl:message>
+   <wsdl:message name="getOrderDetails_2Fault">
+      <wsdl:part name="getOrderDetails_2Fault" element="mod:getOrderDetails_2Fault"/>
+   </wsdl:message>
+   <wsdl:message name="getDeliveryOptions_1">
+      <wsdl:part name="getDeliveryOptions_1" element="mod:getDeliveryOptions_1"/>
+   </wsdl:message>
+   <wsdl:message name="getDeliveryOptions_1Response">
+      <wsdl:part name="getDeliveryOptions_1Response" element="mod:getDeliveryOptions_1Response"/>
+   </wsdl:message>
+   <wsdl:message name="getDeliveryOptions_1Fault">
+      <wsdl:part name="getDeliveryOptions_1Fault" element="mod:getDeliveryOptions_1Fault"/>
+   </wsdl:message>
+   <wsdl:message name="submitUpgradeOrder_1">
+      <wsdl:part name="submitUpgradeOrder_1" element="mod:submitUpgradeOrder_1"/>
+   </wsdl:message>
+   <wsdl:message name="submitUpgradeOrder_1Response">
+      <wsdl:part name="submitUpgradeOrder_1Response" element="mod:submitUpgradeOrder_1Response"/>
+   </wsdl:message>
+   <wsdl:message name="submitUpgradeOrder_1Fault">
+      <wsdl:part name="submitUpgradeOrder_1Fault" element="mod:submitUpgradeOrder_1Fault"/>
+   </wsdl:message>
+   <wsdl:message name="setConsignmentStateInOrder_1">
+      <wsdl:part name="setConsignmentStateInOrder_1" element="mod:setConsignmentStateInOrder_1"/>
+   </wsdl:message>
+   <wsdl:message name="setConsignmentStateInOrder_1Response">
+      <wsdl:part name="setConsignmentStateInOrder_1Response" element="mod:setConsignmentStateInOrder_1Response"/>
+   </wsdl:message>
+   <wsdl:message name="setConsignmentStateInOrder_1Fault">
+      <wsdl:part name="setConsignmentStateInOrder_1Fault" element="mod:setConsignmentStateInOrder_1Fault"/>
+   </wsdl:message>
+   <wsdl:message name="getConsignmentDetails_1">
+      <wsdl:part name="getConsignmentDetails_1" element="mod:getConsignmentDetails_1"/>
+   </wsdl:message>
+   <wsdl:message name="getConsignmentDetails_1Response">
+      <wsdl:part name="getConsignmentDetails_1Response" element="mod:getConsignmentDetails_1Response"/>
+   </wsdl:message>
+   <wsdl:message name="getConsignmentDetails_1Fault">
+      <wsdl:part name="getConsignmentDetails_1Fault" element="mod:getConsignmentDetails_1Fault"/>
+   </wsdl:message>
+   <wsdl:portType name="ManageOrderPortType">
+      <wsdl:operation name="getOrderList">
+         <wsdl:input name="getOrderList" message="mos:getOrderList"/>
+         <wsdl:output name="getOrderListResponse" message="mos:getOrderListResponse"/>
+         <wsdl:fault name="getOrderListFault" message="mos:getOrderListFault"/>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderDetails">
+         <wsdl:input name="getOrderDetails" message="mos:getOrderDetails"/>
+         <wsdl:output name="getOrderDetailsResponse" message="mos:getOrderDetailsResponse"/>
+         <wsdl:fault name="getOrderDetailsFault" message="mos:getOrderDetailsFault"/>
+      </wsdl:operation>
+      <wsdl:operation name="submitOrder">
+         <wsdl:input name="submitOrder" message="mos:submitOrder"/>
+         <wsdl:output name="submitOrderResponse" message="mos:submitOrderResponse"/>
+         <wsdl:fault name="submitOrderFault" message="mos:submitOrderFault"/>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderList_2">
+         <wsdl:input name="getOrderList_2" message="mos:getOrderList_2"/>
+         <wsdl:output name="getOrderList_2Response" message="mos:getOrderList_2Response"/>
+         <wsdl:fault name="getOrderList_2Fault" message="mos:getOrderList_2Fault"/>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderDetails_2">
+         <wsdl:input name="getOrderDetails_2" message="mos:getOrderDetails_2"/>
+         <wsdl:output name="getOrderDetails_2Response" message="mos:getOrderDetails_2Response"/>
+         <wsdl:fault name="getOrderDetails_2Fault" message="mos:getOrderDetails_2Fault"/>
+      </wsdl:operation>
+      <wsdl:operation name="getDeliveryOptions_1">
+         <wsdl:input name="getDeliveryOptions_1" message="mos:getDeliveryOptions_1"/>
+         <wsdl:output name="getDeliveryOptions_1Response" message="mos:getDeliveryOptions_1Response"/>
+         <wsdl:fault name="getDeliveryOptions_1Fault" message="mos:getDeliveryOptions_1Fault"/>
+      </wsdl:operation>
+      <wsdl:operation name="submitUpgradeOrder_1">
+         <wsdl:input name="submitUpgradeOrder_1" message="mos:submitUpgradeOrder_1"/>
+         <wsdl:output name="submitUpgradeOrder_1Response" message="mos:submitUpgradeOrder_1Response"/>
+         <wsdl:fault name="submitUpgradeOrder_1Fault" message="mos:submitUpgradeOrder_1Fault"/>
+      </wsdl:operation>
+      <wsdl:operation name="setConsignmentStateInOrder_1">
+         <wsdl:input name="setConsignmentStateInOrder_1" message="mos:setConsignmentStateInOrder_1"/>
+         <wsdl:output name="setConsignmentStateInOrder_1Response" message="mos:setConsignmentStateInOrder_1Response"/>
+         <wsdl:fault name="setConsignmentStateInOrder_1Fault" message="mos:setConsignmentStateInOrder_1Fault"/>
+      </wsdl:operation>
+      <wsdl:operation name="getConsignmentDetails_1">
+         <wsdl:input name="getConsignmentDetails_1" message="mos:getConsignmentDetails_1"/>
+         <wsdl:output name="getConsignmentDetails_1Response" message="mos:getConsignmentDetails_1Response"/>
+         <wsdl:fault name="getConsignmentDetails_1Fault" message="mos:getConsignmentDetails_1Fault"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="ManageOrderBinding" type="mos:ManageOrderPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="getOrderList">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getOrderList">
+            <soap:body parts="getOrderList" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getOrderListResponse">
+            <soap:body parts="getOrderListResponse" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getOrderListFault">
+            <soap:fault name="getOrderListFault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderDetails">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getOrderDetails">
+            <soap:body parts="getOrderDetails" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getOrderDetailsResponse">
+            <soap:body parts="getOrderDetailsResponse" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getOrderDetailsFault">
+            <soap:fault name="getOrderDetailsFault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="submitOrder">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="submitOrder">
+            <soap:body parts="submitOrder" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="submitOrderResponse">
+            <soap:body parts="submitOrderResponse" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="submitOrderFault">
+            <soap:fault name="submitOrderFault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderList_2">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getOrderList_2">
+            <soap:body parts="getOrderList_2" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getOrderList_2Response">
+            <soap:body parts="getOrderList_2Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getOrderList_2Fault">
+            <soap:fault name="getOrderList_2Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="getOrderDetails_2">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getOrderDetails_2">
+            <soap:body parts="getOrderDetails_2" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getOrderDetails_2Response">
+            <soap:body parts="getOrderDetails_2Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getOrderDetails_2Fault">
+            <soap:fault name="getOrderDetails_2Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="getDeliveryOptions_1">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getDeliveryOptions_1">
+            <soap:body parts="getDeliveryOptions_1" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getDeliveryOptions_1Response">
+            <soap:body parts="getDeliveryOptions_1Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getDeliveryOptions_1Fault">
+            <soap:fault name="getDeliveryOptions_1Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="submitUpgradeOrder_1">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="submitUpgradeOrder_1">
+            <soap:body parts="submitUpgradeOrder_1" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="submitUpgradeOrder_1Response">
+            <soap:body parts="submitUpgradeOrder_1Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="submitUpgradeOrder_1Fault">
+            <soap:fault name="submitUpgradeOrder_1Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="setConsignmentStateInOrder_1">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="setConsignmentStateInOrder_1">
+            <soap:body parts="setConsignmentStateInOrder_1" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="setConsignmentStateInOrder_1Response">
+            <soap:body parts="setConsignmentStateInOrder_1Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="setConsignmentStateInOrder_1Fault">
+            <soap:fault name="setConsignmentStateInOrder_1Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="getConsignmentDetails_1">
+         <soap:operation soapAction=""/>
+         <wsdl:input name="getConsignmentDetails_1">
+            <soap:body parts="getConsignmentDetails_1" use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="getConsignmentDetails_1Response">
+            <soap:body parts="getConsignmentDetails_1Response" use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="getConsignmentDetails_1Fault">
+            <soap:fault name="getConsignmentDetails_1Fault" use="literal"/>
+         </wsdl:fault>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="ManageOrder">
+      <wsdl:port name="ManageOrderPort" binding="mos:ManageOrderBinding">
+         <soap:address location="https://sdpapi.o2.co.uk/services/ManageOrder_2_0"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>
