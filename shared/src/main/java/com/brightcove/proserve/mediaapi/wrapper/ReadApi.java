@@ -297,7 +297,9 @@ public class ReadApi {
 		if(!("".equals(customFieldsString))){
 			parameters.add(new BasicNameValuePair("custom_fields", customFieldsString));
 		}
-		
+
+        parameters.add(new BasicNameValuePair("media_delivery", "http"));
+
 		JSONObject response = executeCommand(parameters);
 		if(response == null){
 			throw new WrapperException(WrapperExceptionCode.MAPI_VIDEO_NOT_FOUND, "Couldn't find video by Brightcove Id '" + videoId + "'.");
@@ -526,6 +528,8 @@ public class ReadApi {
 		if(!("".equals(customFieldsString))){
 			parameters.add(new BasicNameValuePair("custom_fields", customFieldsString));
 		}
+
+        parameters.add(new BasicNameValuePair("media_delivery", "http"));
 		
 		JSONObject response = executeCommand(parameters);
 		if(response == null){

@@ -175,6 +175,7 @@ public class IngestServiceImpl implements IngestService{
 				track.setXml(value.xml.getBytes());
 				track.setInfo(value.info);
 				track.setLicensed(value.licensed);
+                track.setExplicit(value.explicit);
 
 				Set<AssetFile> files = track.getFiles();
 				if (files == null) {
@@ -365,7 +366,6 @@ public class IngestServiceImpl implements IngestService{
 				if (!force)
 					return false; // Do not update existing file
 				file.setPath(dropFile.file);
-				// trackRepository.persist(file);
 				file.setMd5(dropFile.md5);
 				found = true;
 			}
@@ -376,7 +376,7 @@ public class IngestServiceImpl implements IngestService{
 			file.setType(dropFile.type);
 			file.setPath(dropFile.file);
 			file.setMd5(dropFile.md5);
-			// trackRepository.persist(file);
+            file.setDuration(dropFile.duration);
 			files.add(file);
 		}
 		return true;

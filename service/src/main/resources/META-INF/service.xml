@@ -176,6 +176,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="storePath" value="${store.path}" />
+		<property name="brightcoveReadToken" value="${brightcove.token.read}" />
 	</bean>
 
 	<bean id="service.CountryAppVersionService" class="mobi.nowtechnologies.server.service.CountryAppVersionService">

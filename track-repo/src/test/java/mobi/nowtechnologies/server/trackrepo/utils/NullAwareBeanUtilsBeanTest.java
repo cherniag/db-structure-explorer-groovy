@@ -91,4 +91,29 @@ public class NullAwareBeanUtilsBeanTest {
         Assert.assertEquals(drop.getSelected(), dropResult.getSelected());
         Assert.assertEquals(drop.getName(), dropResult.getName());
     }
+
+    @Test
+    public void testCopyProperty_NullDestObject_Success() throws Exception {
+        IngestWizardData data = new IngestWizardData();
+        data.setSuid("Suidffffaaaaa");
+        data.setDropdata(new DropsData());
+        data.getDropdata().setDrops(new ArrayList<DropsData.Drop>());
+        List<DropsData.Drop> drops = data.getDropdata().getDrops();
+
+        DropsData.Drop drop = data.getDropdata().new Drop();
+        drop.setSelected(true);
+        drop.setName("aaaaa");
+        drops.add(drop);
+
+        IngestWizardData result = new IngestWizardData();
+        result.setSuid("Suidffffbbbbb");
+        result.setDropdata(null);
+
+        Map<String, Object> introspected = new org.apache.commons.beanutils.BeanMap(result);
+
+        Map map = fixture.describe(result);
+        fixture.copyProperties(result, data);
+
+        Assert.assertSame(data.getDropdata(), result.getDropdata());
+    }
 }

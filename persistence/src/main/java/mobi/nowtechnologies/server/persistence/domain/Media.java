@@ -245,7 +245,7 @@ public class Media extends Item implements Serializable {
 	}
 
 	public int getHeaderSize() {
-		return headerFile.getSize();
+		return headerFile != null ? headerFile.getSize() : 0;
 	}
 
 	public String getPrice_currency() {
