@@ -43,8 +43,9 @@ where ch.type='VIDEO_CHART';
 alter table tb_paymentPolicy add column tariff char(255) not null default '_3G';
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
-alter table tb_users add column tariff char(255);
-alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
+alter table tb_users add column tariff char(255) default '_3G';
+ update tb_users set  tariff='_3G';
+ alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
