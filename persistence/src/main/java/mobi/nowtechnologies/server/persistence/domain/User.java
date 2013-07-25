@@ -304,9 +304,6 @@ public class User implements Serializable {
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
     
-    @Column(name = "optedInForVideo")
-    private Boolean optedInForVideo;
-
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -1416,17 +1413,6 @@ public class User implements Serializable {
     public PaymentDetails getLastSuccessfulPaymentDetails() {
         return lastSuccessfulPaymentDetails;
     }
-
-    public boolean isOptedInForVideo() {
-    	if ( optedInForVideo == null ) {
-    		return false;
-    	}
-		return optedInForVideo;
-	}
-
-	public void setOptedInForVideo(Boolean optedInForVideo) {
-		this.optedInForVideo = optedInForVideo;
-	}
 
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;

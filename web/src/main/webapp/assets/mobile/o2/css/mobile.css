@@ -788,6 +788,12 @@ input.accounts{
 	padding: 10px;
 }
 
+.videoOptionOptin {
+	cursor: pointer;
+	font-size: 90%;
+	text-align: center;
+}
+
 .videoOptionHighlight {
 	background-color: #ccc;
 }

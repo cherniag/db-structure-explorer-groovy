@@ -77,7 +77,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         
         boolean userIsOptedInToVideo = false;
-        if ( user.isOptedInForVideo() && user.canGetVideo() ) {
+        if ( user.isVideoFreeTrialHasBeenActivated() && user.canGetVideo() ) {
         	userIsOptedInToVideo = true;
         }
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
@@ -139,7 +139,7 @@ public class PaymentsController extends CommonController {
     		return ret;
     	}
     	
-    	boolean videoEnabledUser = user.canGetVideo() && user.isOptedInForVideo();
+    	boolean videoEnabledUser = user.canGetVideo() && user.isVideoFreeTrialHasBeenActivated();
     	for ( PaymentPolicyDto pp : paymentPolicyList ) {
     		if ( (videoEnabledUser && pp.isFourGPaymentPolicy()) || (!videoEnabledUser && !pp.isFourGPaymentPolicy()) ) {
     			ret.add( pp );

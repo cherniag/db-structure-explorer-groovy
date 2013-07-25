@@ -121,8 +121,10 @@ function videoSelected() {
         	</div>
         </c:when>
         <c:when test="${userIsOptedInToVideo eq false}">
-        	<div class="videoOption">
-        		<s:message code='pays.select.payby.o2psms.videoOptIn' />
+        	<div class="videoOption videoOptionHighlight">
+        		<div class="videoOptionOptin"  onclick="">
+        			<s:message code='pays.select.payby.o2psms.videoOptIn' />
+        		</div>
         	</div>
         </c:when>
         </c:choose>

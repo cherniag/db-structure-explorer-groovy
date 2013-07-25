@@ -116,6 +116,3 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 (10,1,'1.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','o2','_4G','AUDIOPLUSVIDEO');
 
 
-
--- add a new column to Users to see if the user subscribes/unsubscribes to 4G
-ALTER TABLE tb_users ADD COLUMN optedInForVideo TINYINT(1) NULL DEFAULT NULL;
