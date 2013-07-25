@@ -274,35 +274,37 @@ public class ChartDetail {
 		int drmSize = drms.size();
 		if (drmSize == 1) {
 			drm = drms.get(0);
-		} else
-			throw new IllegalArgumentException("There are [" + drmSize + "] of drm found but 1 expected");
+        } else {
+            throw new IllegalArgumentException("There are [" + drmSize + "] of drm found but 1 expected");
+        }
 
-		Integer audioSize = media.getAudioSize();
-		int headerSize = media.getHeaderSize();
-		ChartType chartType = chart.getType();
+        MediaFile headerFile = media.getHeaderFile();
+        Integer audioSize = media.getAudioSize();
+        int headerSize = media.getHeaderSize();
+        ChartType chartType = chart.getType();
 
-		byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte) (position + 40) : position;
-		pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte) (position + 50) : pos;
+        byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte) (position + 40) : position;
+        pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte) (position + 50) : pos;
 
-		chartDetailDto.setPosition(pos);
+        chartDetailDto.setPosition(pos);
 
-		chartDetailDto.setPlaylistId(chart.getI().intValue());
-		chartDetailDto.setArtist(media.getArtistName());
-		chartDetailDto.setAudioSize(audioSize);
-		chartDetailDto.setDrmType(drm.getDrmType().getName());
-		chartDetailDto.setDrmValue(drm.getDrmValue());
-		chartDetailDto.setGenre1(chart.getGenre().getName());
-		chartDetailDto.setGenre2(media.getGenre().getName());
+        chartDetailDto.setPlaylistId(chart.getI().intValue());
+        chartDetailDto.setArtist(media.getArtistName());
+        chartDetailDto.setAudioSize(audioSize);
+        chartDetailDto.setDrmType(drm.getDrmType().getName());
+        chartDetailDto.setDrmValue(drm.getDrmValue());
+        chartDetailDto.setGenre1(chart.getGenre().getName());
+        chartDetailDto.setGenre2(media.getGenre().getName());
 
-		chartDetailDto.setHeaderSize(headerSize);
-		chartDetailDto.setImageLargeSize(media.getImageLargeSize());
-		chartDetailDto.setImageSmallSize(media.getImageSmallSize());
-		chartDetailDto.setInfo(info);
-		chartDetailDto.setMedia(media.getIsrc());
-		chartDetailDto.setTitle(media.getTitle());
-		chartDetailDto.setTrackSize(headerSize + audioSize - 2);
-		chartDetailDto.setChartDetailVersion(version);
-		chartDetailDto.setHeaderVersion(media.getHeaderFile() != null ? media.getHeaderFile().getVersion() : null);
+        chartDetailDto.setHeaderSize(headerSize);
+        chartDetailDto.setImageLargeSize(media.getImageLargeSize());
+        chartDetailDto.setImageSmallSize(media.getImageSmallSize());
+        chartDetailDto.setInfo(info);
+        chartDetailDto.setMedia(media.getIsrc());
+        chartDetailDto.setTitle(media.getTitle());
+        chartDetailDto.setTrackSize(headerSize + audioSize - 2);
+        chartDetailDto.setChartDetailVersion(version);
+		chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersion() : 0);
 		chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
 		chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());

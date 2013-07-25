@@ -406,6 +406,7 @@ public class ChartServiceTest {
 		ChartDetail otherChartDetail1 = getChartDetailInstance(0, 3, media, otherChart1.getChart());
 		ChartDetail otherChartDetail2 = getChartDetailInstance(0, 3, media, otherChart2.getChart());
 		ChartDetail videoChartDetail = getChartDetailInstance(0, 5, media, videoChart3.getChart());
+        videoChartDetail.getMedia().setHeaderFile(null);
 
 		doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(1), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
