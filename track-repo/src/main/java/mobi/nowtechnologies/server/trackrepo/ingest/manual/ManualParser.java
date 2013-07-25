@@ -134,7 +134,7 @@ public class ManualParser extends IParser {
 
 				if (tokens.length > 12) {
 					// Unlicensed flag
-					if ("no".equalsIgnoreCase(tokens[11])) {
+					if ("no".equalsIgnoreCase(tokens[12])) {
 						track.licensed = false;
 					} else {
 						track.licensed = true;
