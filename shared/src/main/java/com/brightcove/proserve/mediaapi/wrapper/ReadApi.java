@@ -528,6 +528,8 @@ public class ReadApi {
 		if(!("".equals(customFieldsString))){
 			parameters.add(new BasicNameValuePair("custom_fields", customFieldsString));
 		}
+
+        parameters.add(new BasicNameValuePair("media_delivery", "http"));
 		
 		JSONObject response = executeCommand(parameters);
 		if(response == null){
