@@ -197,7 +197,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldApplyPromotionForO2Payg4GDirectConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
 
         promotion = new Promotion();
 
@@ -221,7 +221,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldApplyPromotionForO2Payg4GIndirectConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(INDIRECT);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(INDIRECT).and().promotion();
 
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_INDIRECT, null);
@@ -240,10 +240,14 @@ public class PromotionServiceTest {
         verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
     }
 
+    private void promotion() {
+        promotion = new Promotion();
+    }
+
     @Test
     public void shouldApplyPromotionForO2Payg4GUnknownContractChanelConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(null);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYG).withSegment(CONSUMER).withContractChannel(null).and().promotion();
 
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
@@ -265,7 +269,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldApplyPromotionForO2Paym4GDirectConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(DIRECT);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
 
         promotion = new Promotion();
 
@@ -289,7 +293,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldApplyPromotionForO2Paym4GIndirectConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(INDIRECT);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(INDIRECT).and().promotion();
 
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_INDIRECT, null);
@@ -311,7 +315,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldApplyPromotionForO2Paym4GUnknownContractChanelConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(null);
+        given().userWithCommunity("o2").withTariff(_4G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(null).and().promotion();
 
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_DIRECT, null);
@@ -333,7 +337,7 @@ public class PromotionServiceTest {
     @Test
     public void shouldDoNotApplyPromotionForNonO2Paym3GUnknownContractChanelConsumer(){
 
-        given().userWithCommunity("o2").withTariff(_3G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(null);
+        given().userWithCommunity("o2").withTariff(_3G).withProvider("o2").withContract(PAYM).withSegment(CONSUMER).withContractChannel(null).and().promotion();
 
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(any(String.class), any(String.class));
