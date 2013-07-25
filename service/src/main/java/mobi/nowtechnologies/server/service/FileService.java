@@ -232,10 +232,8 @@ public class FileService{
     @Transactional(readOnly = true)
     public String getVideoURL(String mediaIsrc) throws BrightcoveException {
        LOGGER.debug("Get video url for isrc="+mediaIsrc);
-       Media media = mediaService.findByIsrc(mediaIsrc);
-       Long videoId = new Long(media.getAudioFile().getFilename());
 
-       Video video =  brightcoveReadService.FindVideoById(brightcoveReadToken, videoId, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.FLVFULLLENGTH), null);
+       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.FLVFULLLENGTH), null);
 
        LOGGER.debug("Return video url=[{}] for isrc=[{}]",new Object[]{video.getFlvUrl(), mediaIsrc});
        return video.getFlvUrl();

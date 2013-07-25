@@ -84,3 +84,7 @@ create table refund (
 
  -- IMP-1781 [Track Repo] Migrate tracks ingestion from CMS to Track Repo
  insert into tb_fileTypes (i, name) value (4, 'VIDEO');
+ alter table tb_media modify column headerFile int unsigned null;
+ alter table tb_media modify column audioPreviewFile int unsigned null;
+ alter table tb_media modify column headerPreviewFile int unsigned null;
+ alter table tb_media modify column purchasedFile int unsigned null;

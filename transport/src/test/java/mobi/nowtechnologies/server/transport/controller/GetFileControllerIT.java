@@ -96,7 +96,7 @@ public class GetFileControllerIT {
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
-        assertTrue(resultXml.endsWith("2560690503001_hits.mp4"));
+        assertTrue(resultXml.endsWith("_hits.mp4"));
     }
     
     private String generateVideoMedia(){

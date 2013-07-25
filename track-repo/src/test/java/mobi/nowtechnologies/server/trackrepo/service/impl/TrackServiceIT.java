@@ -83,6 +83,7 @@ public class TrackServiceIT {
         String videoPath = new File(videoURL.toURI()).getAbsolutePath();
 
         Track anyTrack = TrackFactory.anyTrack();
+        anyTrack.setIsrc("US-UM7-11-00061");
         anyTrack.setStatus(TrackStatus.ENCODED);
         AssetFile videoFile = new AssetFile();
         videoFile.setType(AssetFile.FileType.VIDEO);

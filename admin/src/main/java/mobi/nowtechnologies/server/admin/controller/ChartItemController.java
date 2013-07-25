@@ -15,14 +15,11 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
-import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,10 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.Utils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
-import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
-import static mobi.nowtechnologies.server.trackrepo.enums.FileType.VIDEO;
 import static org.springframework.util.StringUtils.hasText;
 
 @Controller
@@ -160,7 +154,7 @@ public class ChartItemController extends AbstractCommonController {
      * @param searchWords - search criteria of media by general propeties
      * @return only model of media list in chart item list structure
      */
-    @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{mediaType:media}/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{mediaType}/list", method = RequestMethod.GET)
     public ModelAndView getMediaList(
             @RequestParam(value = "q", required = false) String searchWords,
             @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
