@@ -68,11 +68,11 @@ create table refund (
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Free Trial for direct users', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2_direct', 0, 0, 0, false);
+   value('o2 Video Audio Free Trial for 4G direct consumers', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2.consumer.4g.direct', 0, 0, 0, false);
  insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Free Trial for indirect users', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2_indirect', 0, 0, 0, false);
- insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2_direct';
- insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2_indirect';
+   value('o2 Video Audio Free Trial for 4G indirect consumers', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2.consumer.4g.indirect', 0, 0, 0, false);
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2.consumer.4g.direct';
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2.consumer.4g.indirect';
 
  --
  alter table tb_users add column contract_channel varchar(255) default 'DIRECT';
