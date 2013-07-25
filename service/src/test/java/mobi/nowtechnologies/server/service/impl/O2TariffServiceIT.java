@@ -1,21 +1,24 @@
 package mobi.nowtechnologies.server.service.impl;
 
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import mobi.nowtechnologies.server.service.O2TariffService;
+import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
-import uk.co.o2.soa.manageprepaytariffdata_2.GetTariff1Response;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
 
-import javax.annotation.Resource;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * lach : 17/07/2013 : 11:41
@@ -24,30 +27,26 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = {"/META-INF/service-test-ws.xml" })
 public class O2TariffServiceIT {
 
-    @Resource(name = "service.O2TariffService")
+	
+	@Resource(name = "service.O2TariffService")
     private O2TariffService o2TariffService;
 
     @Test
     public void testGetManagePostpayContractDirectToO2TestServer() throws Exception {
 
-//        447764119970 – with 4G tariff
-//        447764119969 – with 4G tariff
-//        447764119984 – with 3G Tariff
-//        447764119989 – with 3G Tariff
-
-        GetContractResponse contractResponse = o2TariffService.getManagePostpayContract("447764119970");
+        GetContractResponse contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT);
 
         assertEquals("4G_VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
-        contractResponse = o2TariffService.getManagePostpayContract("447764119969");
+        contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT2);
 
         assertEquals("4G_VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
-        contractResponse = o2TariffService.getManagePostpayContract("447764119984");
+        contractResponse = o2TariffService.getManagePostpayContract(O2_3G_CONTRACT);
 
         assertEquals("VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
-        contractResponse = o2TariffService.getManagePostpayContract("447764119984");
+        contractResponse = o2TariffService.getManagePostpayContract(O2_3G_CONTRACT);
 
         assertEquals("VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
@@ -57,32 +56,20 @@ public class O2TariffServiceIT {
     @Test
     public void testGetManagePostpayCurrentBoltonsDirectToO2TestServer() throws Exception {
 
-//        447764119970 – with 4G tariff
-//        447764119980 – with 4G Bolton
-//        447764119984 – with 3G Tariff
-
-        GetCurrentBoltonsResponse getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons("447764119970");
+        GetCurrentBoltonsResponse getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_CONTRACT);
 
         assertEquals("Data Option", getProductClassification(getCurrentBoltonsResponse));
 
-        getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons("447764119980");
+        getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_BOLTON);
 
         assertEquals("4G Bolt On", getProductClassification(getCurrentBoltonsResponse));
 
-        getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons("447764119984");
+        getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_3G_CONTRACT);
 
         assertEquals("Data Option", getProductClassification(getCurrentBoltonsResponse));
 
-
     }
 
-    @Test
-    public void testGetManagePrepayTariffDirectToO2TestServer() throws Exception {
-
-        //TODO LH some prepay phone numbers are
-
-
-    }
 
     private String getProductClassification(GetCurrentBoltonsResponse getCurrentBoltonsResponse) {
         List<ProductType> productTypes = getCurrentBoltonsResponse.getMyCurrentBoltons().getBolton();

@@ -2,80 +2,90 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import mobi.nowtechnologies.server.service.O2Service;
+import mobi.nowtechnologies.server.service.O2UserDetailsUpdater;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
-import uk.co.o2.soa.subscriberservice.GetSubscriberProfileFault;
-import uk.co.o2.soa.utils.SubscriberPortDecorator;
-
-import static mobi.nowtechnologies.server.shared.Utils.different;
-import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
 public class UpdateO2UserTask {
 
-    private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
-	private transient SubscriberPortDecorator port;
-	private transient UserRepository userRepository;
+	private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserTask.class);
 	private transient UserLogRepository userLogRepository;
+	private transient O2Service o2Service;
+	private transient UserService userService;
+	private transient O2UserDetailsUpdater o2UserDetailsUpdater = new O2UserDetailsUpdater();
 
 	@Transactional
 	public void handleUserUpdate(User u) {
+		long beforeExecutionTimeNano = System.nanoTime();
+		Throwable error = null;
 		try {
 			updateUser(u);
-		} catch (GetSubscriberProfileFault e) {
-			makeUserLog(u, UserLogStatus.O2_FAIL, e.getFaultInfo().toString());
 		} catch (Throwable t) {
+			error = t;
+			LOG.error("Can't update user id=[{}] phone=[{}] error=[{}]", u.getId(), u.getMobile(), t, t);
 			makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
 		} finally {
-			LOG.info("Finished update user[{}]", u.getMobile());
+			long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - beforeExecutionTimeNano);
+			String result = "OK";
+			if (error != null) {
+				result = "Error:" + error;
+			}
+			LOG.info("updateUser completed in [{}]ms user id=[{}] phone [{}] result: [{}]", executionDurationMillis,
+					u.getId(), u.getMobile(), result);
 		}
 	}
 
-	private void updateUser(User u) throws GetSubscriberProfileFault {
-			SubscriberProfileType profile = port.getSubscriberProfile(u.getMobile());
+	private void updateUser(User u) {
+		LOG.info("getting subscriber data for phone [{}], id=[{}]", u.getMobile(), u.getId());
+		O2SubscriberData o2SubscriberData = o2Service.getSubscriberData(u.getMobile());
+		LOG.debug("subscriber data: [{}] ", o2SubscriberData);
 
-        String newProvider = profile.getProvider().toString();
-        SegmentType newSegment = profile.getSegmentType();
-        Contract newCotract = profile.getCotract();
-
-			makeUserLog(u, UserLogStatus.SUCCESS, null);
-
-        if(different(newProvider, u.getProvider()) || different(newCotract, u.getContract()) || different(newSegment, u.getSegment())){
-            u.setProvider(newProvider);
-            u.setSegment(newSegment);
-            u.setContract(newCotract);
-			userRepository.save(u);
+		makeUserLog(u, UserLogStatus.SUCCESS, null);
+		
+		Collection<String> changes = o2UserDetailsUpdater.getDifferences(o2SubscriberData, u);
+		if (changes.isEmpty()) {
+			LOG.debug("no changes for user:[{}] mobile:[{}]", u.getId(), u.getMobile());
+		} else {
+			LOG.info("updating user:[{}] mobile:[{}] changes:[{}]", u.getId(), u.getMobile(), changes);
+			userService.o2SubscriberDataChanged(u, o2SubscriberData);
+			LOG.info("user o2 details updated:[{}] mobile:[{}] changes:[{}]", u.getId(), u.getMobile(), changes);
 		}
 	}
 
 	private void makeUserLog(User u, UserLogStatus status, String description) {
+		long beforeExecutionTimeNano = System.nanoTime();
 		UserLog oldLog = userLogRepository.findByUser(u.getId(), UserLogType.UPDATE_O2_USER);
 		UserLog userLog = new UserLog(oldLog, u, status, UserLogType.UPDATE_O2_USER, description);
 
 		userLogRepository.save(userLog);
+		long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - beforeExecutionTimeNano);
+		
 		if (UserLogStatus.SUCCESS == status)
-			LOG.info("User[{}] segment[{}] updated.", u.getMobile(), u.getSegment());
+			LOG.info("User[{}] segment[{}] updated in [{}]ms.", u.getMobile(), u.getSegment(), executionDurationMillis);
 		else
-			LOG.error("Error on update user[{}]. [{}]. {}", u.getMobile(), userLog, description);
-	}
-
-	public void setPort(SubscriberPortDecorator port) {
-		this.port = port;
-	}
-
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
+			LOG.error("Error on update user[{}]. [{}]. {} in [{}]ms", u.getMobile(), userLog, description, executionDurationMillis);
 	}
 
 	public void setUserLogRepository(UserLogRepository userLogRepository) {
 		this.userLogRepository = userLogRepository;
+	}
+
+	public void setO2Service(O2Service o2Service) {
+		this.o2Service = o2Service;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 }

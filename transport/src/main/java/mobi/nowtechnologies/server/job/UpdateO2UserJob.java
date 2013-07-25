@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.service.HazelcastService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -24,7 +23,6 @@ public class UpdateO2UserJob extends QuartzJobBean {
     private transient static int POOL_SIZE;
     private transient static int TASK_COUNT;
 
-
     private transient CommunityResourceBundleMessageSource messageSource;
     private transient ExecutorService executor;
     private transient BlockingQueue<List<Integer>> usersIdQueue;
@@ -39,7 +37,7 @@ public class UpdateO2UserJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        LOG.info("starting ...");
+        LOG.info("starting ...TASK_COUNT: [{}]", TASK_COUNT);
         try {
             for (int i = 0; i <= TASK_COUNT; i++) {
                 List<Integer> usersId = usersIdQueue.poll();

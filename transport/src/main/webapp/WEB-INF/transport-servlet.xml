@@ -342,23 +342,26 @@
         <property name="jobClass" value="mobi.nowtechnologies.server.job.UpdateO2UserJob" />
     </bean>
     <bean id="job.UpdateO2UserTask" class="mobi.nowtechnologies.server.job.UpdateO2UserTask">
-        <property name="port" ref="soap.SubscriberPortDecorator"/>
         <property name="userLogRepository" ref="userLogRepository"/>
-        <property name="userRepository" ref="userRepository" />
+        <property name="userService" ref="service.UserService"/>
+        <property name="o2Service" ref="service.O2Service"/>
     </bean>
+     
     <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="job.updateO2User" />
         <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
-
+    
     <!-- Fork users job -->
     <bean id="job.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="mobi.nowtechnologies.server.job.ForkO2UsersForUpdateJob"/>
     </bean>
+    
     <bean id="jobTrigger.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="job.ForkO2UsersForUpdateJob"/>
         <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
+     
 
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
         <property name="applicationContextSchedulerContextKey" value="applicationContext" />
@@ -423,6 +426,6 @@
 				</constructor-arg>
 			</bean>
 		</property>
-	</bean>
+	</bean> 
 	<import resource="classpath:controllers.xml" />
 </beans>

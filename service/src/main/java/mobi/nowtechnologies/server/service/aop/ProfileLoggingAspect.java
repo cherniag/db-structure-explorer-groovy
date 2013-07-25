@@ -251,4 +251,25 @@ public class ProfileLoggingAspect {
 
 	}
 
+	/** logs third party request to CSV file*/
+	public static void logThirdPartyRequest(long beforeExecutionTimeNano, Throwable throwable, String body, Object responseMessage, String url) {
+		try {
+			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
+				String errorMessage = null;
+				String result = "success";
+				if (throwable != null) {
+					errorMessage = throwable.getMessage();
+					result = "fail";
+				}
+				long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()
+						- beforeExecutionTimeNano);
+				Object nameValuePairs = null;
+				LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url,
+						nameValuePairs, body, responseMessage);
+				THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Can't log request ", ex);
+		}
+	}
 }

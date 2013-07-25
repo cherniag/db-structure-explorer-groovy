@@ -61,6 +61,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="iTunesService" ref="service.ITunesService" />
         <property name="refundService" ref="service.RefundService" />
+        <property name="o2Service" ref="service.O2Service"/>
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
@@ -396,6 +397,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="managePostpayTariffEndpoint" value="${o2.service.endpoint.managepostpaytariffdata_2}" />
         <property name="managePrepayTariffEndpoint" value="${o2.service.endpoint.manageprepaytariffdata_2}" />
         <property name="managePostpayBoltonEndpoint" value="${o2.service.endpoint.managepostpayboltonsdata_2}" />
+        <property name="manageOrderEndpoint" value="${o2.service.endpoint.manageorder_2}" />
+		<property name="subscriberEndpoint" value="${o2.service.endpoint.subscriber_2_0}" />
     </bean>
 
     <bean id="service.O2TariffGateway" class="mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway">
@@ -413,6 +416,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                 <value>uk.co.o2.soa.managepostpaytariffdata_2</value>
                 <value>uk.co.o2.soa.manageprepaytariffdata_2</value>
                 <value>uk.co.o2.soa.managepostpayboltonsdata_2</value>
+				<value>uk.co.o2.soa.manageorderdata_2</value>
+                <value>uk.co.o2.soa.subscriberdata_2</value>                
             </list>
         </property>
     </bean>
@@ -436,6 +441,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="username" value="${o2.service.security.token.username}"/>
 		<property name="password" value="${o2.service.security.token.password}"/>        
 		<property name="soaConsumerTransactionID" value="${o2.service.security.costumerTransactionId}"/>        
+	</bean>
+
+	<bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
+	     <property name="O2TariffService" ref="service.O2TariffService"/>
 	</bean>
 
 	<task:annotation-driven executor="service.Executor"/>

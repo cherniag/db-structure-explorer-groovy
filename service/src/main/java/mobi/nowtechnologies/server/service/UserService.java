@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -150,6 +151,7 @@ public class UserService {
 	private AccountLogService accountLogService;
 	private UserRepository userRepository;
 	private O2ClientService o2ClientService;
+	private O2Service o2Service;
 	private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
@@ -159,6 +161,10 @@ public class UserService {
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
+    
+    public void setO2Service(O2Service o2Service) {
+    	this.o2Service = o2Service;
+    }
 
     public void setUserBannedRepository(UserBannedRepository userBannedRepository) {
         this.userBannedRepository = userBannedRepository;
@@ -1958,10 +1964,20 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User activatePhoneNumber(User user, String phone) {
+		boolean check4G = true;//TODO: should be a parameter
+		
+		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}]", phone, user.getId(),
+				user.getActivationStatus());
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
-
+        
+		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
+				user.getMobile());
+        if(check4G){
+        	populateO2subscriberData(user, msisdn);
+        }
+        
 		user.setMobile(msisdn);
 		user.setActivationStatus(ENTERED_NUMBER);
 		userRepository.save(user);
@@ -1969,6 +1985,16 @@ public class UserService {
 		return user;
 	}
 
+	private void populateO2subscriberData(User user, String phoneNumber) {
+		try {
+			O2SubscriberData o2SubscriberData = o2Service.getSubscriberData(phoneNumber);
+			new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
+		} catch (Exception ex) {
+			// intentionally swallowing the exception to enable user to continue with activation
+			LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
+		}
+	}
+	
 	@Transactional(readOnly = true)
 	public String getRedeemServerO2Url(User user) {
 
@@ -1977,8 +2003,19 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
+		LOGGER.info("apply init promo o2 " + user.getId() + " "
+				+ user.getMobile() + " " + user.getActivationStatus());
+
+		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+		
+		LOGGER.info("o2 user details " + o2UserDetails.getOperator() + " "
+				+ o2UserDetails.getTariff() + " u.contract="
+				+ user.getContract() + " " + user.getMobile() + " "
+				+ user.getOperator());
+
+		
 		if (null != mobileUser) {
 			if (mobileUser.getId() != user.getId()) {
 				mergeUser(mobileUser, user);
@@ -2146,5 +2183,16 @@ public class UserService {
         accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
 
         return user;
+    }
+
+    /** called by UpdateO2User job when provider/segment/contract/4G/channel have been changed*/
+    public void o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
+		Tariff newTariff = o2SubscriberData.isTariff4G() ? Tariff._4G : Tariff._3G;
+		if (newTariff != user.getTariff()) {
+			LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(),  newTariff);
+			downgradeUserTariff(user, newTariff);
+		}
+        new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
+        userRepository.save(user);
     }
 }

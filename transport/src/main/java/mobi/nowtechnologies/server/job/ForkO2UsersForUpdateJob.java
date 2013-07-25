@@ -49,13 +49,21 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
     }
 
     public void forkUsers() {
-        if (!userIdsQueue.isEmpty()) return;
+		LOG.info("fork O2 user starts [{}]", userIdsQueue.size());
 
-        List<Integer> users = selectUsersForUpdate();
-        List<List<Integer>> partitions = Lists.partition(users, BATCH_SIZE);
-
-        for (List<Integer> p : partitions)
-            userIdsQueue.offer(new ArrayList<Integer>(p));
+		if (!userIdsQueue.isEmpty()) {
+			LOG.info("queue is not empty, skipping");
+			return;
+		}
+		
+		List<Integer> users = selectUsersForUpdate();
+		
+		LOG.info("found [{}] users, batch size [{}]", users.size(), BATCH_SIZE);
+		List<List<Integer>> partitions = Lists.partition(users, BATCH_SIZE);
+		for (List<Integer> p : partitions){ 
+			userIdsQueue.offer(new ArrayList<Integer>(p));
+		}
+		LOG.info("fork O2 user completed, offered [{}] partitions", partitions.size());
     }
 
     public List<Integer> selectUsersForUpdate() {
