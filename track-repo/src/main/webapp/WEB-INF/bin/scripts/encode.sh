@@ -113,7 +113,7 @@ echo "***** Generating thumbnails *****"
 		mv "files/image/P${ISRC}_6.jpg" "files/image/${ISRC}_6.jpg" || { echo "command failed"; exit 1; } 
 	fi 
 	
-if ["${FULL_AUDIO}" != "" ]; then
+if [ "${FULL_AUDIO}" != "" ]; then
 
 echo "***** Generating Download Audio *****"
     echo getting encodding for "${FULL_AUDIO}"
@@ -200,44 +200,46 @@ fi
 	URL=`grep "X-Storage-Url:" auth | cut -f2- -d':' | sed "s/\r//g"`
 	TOKEN=`grep "X-Storage-Token:" auth | cut -f2- -d':' | sed "s/\r//g"`
 
-	curl -X PUT -T files/audio/${ISRC}${BIT_RATE}.aud  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.aud
-	curl -X PUT -T files/encoded/${ISRC}${BIT_RATE}.enc  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.enc
+    if [ "${FULL_AUDIO}" != "" ]; then
+	    curl -X PUT -T files/audio/${ISRC}${BIT_RATE}.aud  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.aud
+	    curl -X PUT -T files/encoded/${ISRC}${BIT_RATE}.enc  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_${ISRC}.enc
 
-	for i in files/audio/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-	done
+        for i in files/audio/${ISRC}*
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+        done
+
+        for i in files/encoded/${ISRC}*
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+        done
+
+        for i in files/header/${ISRC}*
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+        done
+
+        for i in files/purchased/${ISRC}*
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+        done
+
+        for i in files/preview/${ISRC}*
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
+        done
+
+        for i in ${ISRC}*.m4a;
+        do
+            curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
+        done
+    fi
 
 	for i in files/image/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-	done
-	
-	for i in files/encoded/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-	done
-	
-	for i in files/header/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-	done
-	
-	for i in files/purchased/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
-	done
-	
-	for i in files/preview/${ISRC}*
-	do
-		curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/data/`basename $i`
-	done
-	
-	for i in ${ISRC}*.m4a; 
     do
         curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
     done
-	
+
 	# Don't push to public directory
 	#mv files/image/* ${PUBLISH_DIR}/image|| { echo "command failed"; exit 1; } 
 	#mv files/header/* ${PUBLISH_DIR}/header|| { echo "command failed"; exit 1; } 
