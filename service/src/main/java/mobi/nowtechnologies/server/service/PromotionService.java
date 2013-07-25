@@ -171,8 +171,13 @@ public class PromotionService {
     }
 
     private boolean applyPromotionForO24GConsumer(User user){
+        boolean isPromotionApplied = false;
         Promotion promotion = getPromotionForO24GConsumer(user);
-        return userService.applyPromotionByPromoCode(user, promotion);
+        if (promotion != null){
+            user.setOnVideoAudioFreeTrial(true);
+            isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
+        }
+        return isPromotionApplied;
     }
 
     private Promotion getPromotionForO24GConsumer(User user){

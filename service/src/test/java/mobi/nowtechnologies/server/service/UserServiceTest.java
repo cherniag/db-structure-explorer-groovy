@@ -106,6 +106,7 @@ public class UserServiceTest {
     private Tariff currentUserTariff;
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
+    private boolean onVideoAudioFreeTrial;
 
     /**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -3048,7 +3049,7 @@ public class UserServiceTest {
         currentUserTariff = Tariff._4G;
         newUserTariff = Tariff._3G;
 
-        create4GVideoAudioSubscribedUserOnFreeTrial();
+        create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial();
 
         mockDowngradeUserTariffMethodsCalls();
 
@@ -3117,7 +3118,7 @@ public class UserServiceTest {
         currentUserTariff = Tariff._4G;
         newUserTariff = Tariff._4G;
 
-        create4GVideoAudioSubscribedUserOnFreeTrial();
+        create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial();
 
         mockDowngradeUserTariffMethodsCalls();
 
@@ -3177,13 +3178,14 @@ public class UserServiceTest {
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
     }
 
-    private void create4GVideoAudioSubscribedUserOnFreeTrial() {
+    private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = Tariff._4G;
         mediaType = VIDEO_AND_AUDIO;
 
         freeTrialStartedTimestampMillis = currentTimeMillis;
         freeTrialExpiredMillis = freeTrialStartedTimestampMillis + YEAR_SECONDS * 1000L;
         nextSubPayment = (int)(freeTrialExpiredMillis/1000);
+        onVideoAudioFreeTrial = true;
 
         createUserWithO2PaymentDetails();
     }
@@ -3269,6 +3271,7 @@ public class UserServiceTest {
         user.setUserGroup(userGroup);
         user.setProvider("o2");
         user.setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
+        user.setOnVideoAudioFreeTrial(onVideoAudioFreeTrial);
     }
 
     private void createLastSuccessfulPaymentDetailsWithPaymentPolicy() {

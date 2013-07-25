@@ -252,7 +252,7 @@ public class Utils {
         Matcher matcher = MAJOR_VERSION_NUMBER_PATTERN.matcher(version);
 
         if(matcher.matches()){
-            majorVersionNumber = Integer.valueOf(matcher.group());
+            majorVersionNumber = Integer.valueOf(matcher.group(1));
         }else{
             throw new RuntimeException("Couldn't get major version number");
         }

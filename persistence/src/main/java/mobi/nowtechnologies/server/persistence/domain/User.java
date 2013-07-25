@@ -1392,10 +1392,6 @@ public class User implements Serializable {
         return isAudioPaymentDetails;
     }
 
-    public boolean canGetVideo() {
-        return isO2Consumer() && is4G();
-    }
-
     public Tariff getTariff() {
         return tariff;
     }
