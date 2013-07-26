@@ -1239,11 +1239,6 @@ public class User implements Serializable {
 				.add("contract", contract).toString();
 	}
 
-	/**
-	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 *
-	 * @return
-	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
