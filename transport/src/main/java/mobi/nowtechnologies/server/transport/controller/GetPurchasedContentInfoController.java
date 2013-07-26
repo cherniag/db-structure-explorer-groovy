@@ -31,8 +31,13 @@ public class GetPurchasedContentInfoController extends CommonController {
 		this.drmService = drmService;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO", "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
-			"*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO", "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO"})
+	@RequestMapping(method = RequestMethod.POST, value = {
+            "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO",
+            "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
+			"*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:4\\.0}/GET_PURCHASED_CONTENT_INFO"
+    })
 	public ModelAndView getPurchasedContentInfo(
 				HttpServletRequest request,
 				@RequestParam("APP_VERSION") String appVersion,
@@ -44,7 +49,7 @@ public class GetPurchasedContentInfoController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			if (userName == null)
 				throw new NullPointerException("The parameter userName is null");
 			if (communityName == null)
@@ -62,7 +67,7 @@ public class GetPurchasedContentInfoController extends CommonController {
 						timestamp, communityName);
 
 			Object[] objects = drmService.getPurchasedContentInfo(user, communityName);
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 
 			return new ModelAndView(view, Response.class.toString(), new Response(
 						objects));

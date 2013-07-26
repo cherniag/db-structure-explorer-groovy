@@ -74,6 +74,6 @@ public class DrmServiceTestIT {
 //	@Test
 //	public void testBuyTrack() {
 //		
-//		drmService.buyTrack(user, isrc);
+//		drmService.buyTrack(userWithCommunity, isrc);
 //	}
 }

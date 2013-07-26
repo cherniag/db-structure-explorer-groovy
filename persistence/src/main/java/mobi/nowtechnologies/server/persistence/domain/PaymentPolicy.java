@@ -13,9 +13,13 @@ import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
@@ -23,9 +27,6 @@ import org.slf4j.LoggerFactory;
         @NamedQuery(name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-
-    public static final String VIDEO_AND_AUDIO = "videoAndAudio";
-    public static final String AUDIO = "other";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
 
@@ -102,6 +103,10 @@ public class PaymentPolicy {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)", nullable = false)
     private Tariff tariff;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
+    private MediaType mediaType;
 
     public void setId(short id) {
         this.id = id;
@@ -297,12 +302,21 @@ public class PaymentPolicy {
         this.tariff = tariff;
     }
 
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+    }
+
     @Override
     public String toString() {
         return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
                 + ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
-                + ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", tariff="+ tariff + ", contentCategory=" + contentCategory
-                + ", contentType=" + contentType + ", subMerchantId=" + subMerchantId + ", contentDescription=" + contentDescription + "]";
+                + ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", tariff="+ tariff
+                + ", contentCategory=" + contentCategory+ ", contentType=" + contentType + ", subMerchantId=" + subMerchantId +
+                ", contentDescription=" + contentDescription + ", mediaType="+ mediaType + "]";
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
@@ -328,10 +342,10 @@ public class PaymentPolicy {
     }
 
     public boolean is4GVideoAudioSubscription(){
-        return tariff.equals(Tariff._4G) && VIDEO_AND_AUDIO.equals(contentCategory);
+        return tariff.equals(Tariff._4G) && VIDEO_AND_AUDIO.equals(mediaType);
     }
 
     public boolean isAudioSubscription() {
-        return AUDIO.equals(contentCategory);
+        return AUDIO.equals(mediaType);
     }
 }

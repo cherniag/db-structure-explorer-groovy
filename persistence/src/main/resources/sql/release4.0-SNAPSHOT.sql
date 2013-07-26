@@ -41,11 +41,11 @@ where ch.type='VIDEO_CHART';
  -- http://jira.musicqubed.com/browse/IMP-1784
  -- [Server] Adjust payment system and jobs to support new 4G payment options
 alter table tb_paymentPolicy add column tariff char(255) not null default '_3G';
+alter table tb_paymentPolicy add column media_type char(255) not null default 'AUDIO';
 
 -- IMP-1774 [Server] Update the Account Check command to include the Video access flags
-alter table tb_users add column tariff char(255) default '_3G';
- update tb_users set  tariff='_3G';
- alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
+alter table tb_users add column tariff char(255) not null default '_3G';
+alter table tb_users add column videoFreeTrialHasBeenActivated boolean;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
@@ -66,21 +66,19 @@ create table refund (
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Free Trial for direct users', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2_direct', 0, 0, 0, false);
+   value('o2 Video Audio Free Trial for 4G direct consumers', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2.consumer.4g.direct', 0, 0, 0, false);
  insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Free Trial for indirect users', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2_indirect', 0, 0, 0, false);
- insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2_direct';
- insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2_indirect';
+   value('o2 Video Audio Free Trial for 4G indirect consumers', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2.consumer.4g.indirect', 0, 0, 0, false);
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2.consumer.4g.direct';
+ insert into tb_promoCode(code, promotionId) select label, i from tb_promotions where label = 'o2.consumer.4g.indirect';
 
  --
- alter table tb_users add column contractChannel varchar(255) default 'DIRECT';
+ alter table tb_users add column contract_channel varchar(255) default 'DIRECT';
 
  -- http://jira.musicqubed.com/browse/IMP-1794
  -- Remove video access from downgrading users
  insert into tb_accountLogTypes (i, name) value (11, "Trial skipping");
  insert into tb_accountLogTypes (i, name) value (12, "Bought period skipping");
-
- update tb_paymentpolicy set content_category="other";
 
  -- IMP-1781 [Track Repo] Migrate tracks ingestion from CMS to Track Repo
  insert into tb_fileTypes (i, name) value (4, 'VIDEO');

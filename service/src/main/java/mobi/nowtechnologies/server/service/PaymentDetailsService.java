@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -20,7 +18,10 @@ import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.*;
 import static mobi.nowtechnologies.server.shared.Utils.isNull;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -88,22 +90,22 @@ public class PaymentDetailsService {
 
 		PaymentDetails paymentDetails = null;
 		if (null != paymentPolicy) {
-			if (dto.getPaymentType().equals(PaymentType.CREDIT_CARD)) {
+			if (dto.getPaymentType().equals(CREDIT_CARD)) {
 				dto.setCurrency(paymentPolicy.getCurrencyISO());
 				dto.setAmount(paymentPolicy.getSubcost().toString());
 				dto.setVendorTxCode(UUID.randomUUID().toString());
 				dto.setDescription("Creating payment details for user " + user.getUserName());
 				paymentDetails = sagePayPaymentService.createPaymentDetails(dto, user, paymentPolicy);
-			} else if (dto.getPaymentType().equals(PaymentType.PAY_PAL)) {
+			} else if (dto.getPaymentType().equals(PAY_PAL)) {
 				paymentDetails = payPalPaymentService.createPaymentDetails(dto.getBillingAgreementDescription(), dto.getSuccessUrl(), dto.getFailUrl(), user, paymentPolicy);
-			} else if (dto.getPaymentType().equals(PaymentType.PREMIUM_USER)) {
+			} else if (dto.getPaymentType().equals(PREMIUM_USER)) {
 				PaymentDetails pendingPaymentDetails = user.getPendingPaymentDetails();
 				if (null != pendingPaymentDetails) {
 					pendingPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
 					pendingPaymentDetails.setDescriptionError("Was not verified and replaced by another payment details");
 				}
 				paymentDetails = migPaymentService.createPaymentDetails(dto.getPhoneNumber(), user, community, paymentPolicy);
-			}else if(dto.getPaymentType().equals(PaymentType.O2_PSMS)){
+			}else if(dto.getPaymentType().equals(O2_PSMS)){
 				paymentDetails = o2PaymentService.commitPaymentDetails(user, paymentPolicy);
 			}
 
@@ -220,11 +222,11 @@ public class PaymentDetailsService {
 		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",paymentType, token );
 
 		PaymentDetails paymentDetails;
-		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {
+		if (paymentType.equals(CREDIT_CARD)) {
 			paymentDetails = new SagePayCreditCardPaymentDetails();
-		} else if (paymentType.equals(UserRegInfo.PaymentType.PREMIUM_USER)) {
+		} else if (paymentType.equals(PREMIUM_USER)) {
 			paymentDetails = new MigPaymentDetails();
-		} else if (paymentType.equals(UserRegInfo.PaymentType.PAY_PAL)) {
+		} else if (paymentType.equals(PAY_PAL)) {
 			paymentDetails = new PayPalPaymentDetails();
 		} else
 			throw new ServiceException("Unknown payment type: [" + paymentType
@@ -256,12 +258,12 @@ public class PaymentDetailsService {
 		LOGGER.debug("input parameters paymentDetails, paymentType, token, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
 						paymentDetails, paymentType, token, operator, phoneNumber);
 
-		if (paymentType.equals(UserRegInfo.PaymentType.CREDIT_CARD)) {
+		if (paymentType.equals(CREDIT_CARD)) {
 			SagePayCreditCardPaymentDetails creditCardPaymentDetails = (SagePayCreditCardPaymentDetails) paymentDetails;
 
             notNull(token, "The parameter token is null");
 			creditCardPaymentDetails.setVPSTxId(token);
-		} else if (paymentType.equals(UserRegInfo.PaymentType.PREMIUM_USER)) {
+		} else if (paymentType.equals(PREMIUM_USER)) {
 			MigPaymentDetails premiumSmsPaymentDetails = (MigPaymentDetails) paymentDetails;
 
             notNull(operator, "The parameter operator is null");
@@ -269,7 +271,7 @@ public class PaymentDetailsService {
 
 			premiumSmsPaymentDetails.setMigPhoneNumber(operator.getMigName() + "." + phoneNumber);
 
-		} else if (paymentType.equals(UserRegInfo.PaymentType.PAY_PAL)) {
+		} else if (paymentType.equals(PAY_PAL)) {
 			PayPalPaymentDetails payPalPaymentDetails = (PayPalPaymentDetails) paymentDetails;
 
             notNull(token, "The parameter token is null");
@@ -343,7 +345,7 @@ public class PaymentDetailsService {
 		
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PaymentType.PAY_PAL, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(user.getOperator(), PAY_PAL, community.getId());
 		
 		if (null != paymentPolicy) {
 			Offer offer = offerService.getOffer(offerId);
@@ -364,7 +366,7 @@ public class PaymentDetailsService {
 		
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), PaymentType.CREDIT_CARD, community.getId());
+		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(user.getOperator(), CREDIT_CARD, community.getId());
 
 		if (null != paymentPolicy) {
 			Offer offer = offerService.getOffer(offerId);
@@ -462,8 +464,6 @@ public class PaymentDetailsService {
 			
 			user.setLastPaymentTryInCycleMillis(0L);
 			userService.updateUser(user);
-
-            //refundService.logOnTariffMigration(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);

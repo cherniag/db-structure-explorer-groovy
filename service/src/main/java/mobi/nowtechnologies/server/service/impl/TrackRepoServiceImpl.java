@@ -218,8 +218,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                 media.setAudioFile(createMediaFile(videoFileDto));
             }
 
-			media.setImageFIleLarge(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_LARGE)));
-			media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_SMALL)));
+			media.setImageFIleLarge(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_22)));
+			media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_21)));
 			media.setImgFileResolution(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL)));
 
 			Date publishDate = track.getPublishDate() != null ? track.getPublishDate() : new Date();
