@@ -92,6 +92,11 @@ public class UserService {
         applyPromotionByPromoCode(user, promotion);
     }
 
+    public boolean canPlayVideo(User user) {
+        messageSource.getMessage("", null);
+        return user.is4G() && (user.isOnVideoAudioFreeTrial() || user.isOn4GVideoAudioBoughtPeriod());
+    }
+
     @Deprecated
 	public static class AmountCurrencyWeeks {
 		BigDecimal amount;
