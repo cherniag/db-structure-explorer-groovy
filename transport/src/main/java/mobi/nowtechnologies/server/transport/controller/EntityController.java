@@ -19,8 +19,6 @@ import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.joda.time.DateTime;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -36,7 +34,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -111,20 +108,6 @@ public class EntityController extends CommonController {
         return modelAndView;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACTIVATE_TRIAL", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACTIVATE_TRIAL"})
-    public void activateFreeTrial(HttpServletResponse response) {
-        User user = getUser();
-        if (user.isO24GConsumer() && (user.isO2Indirect() || user.isO2Direct())) {
-            String promoCode = messageSource.getMessage(concatLowerCase("promotion.for.o2.cunsumer.4g.", user.getContractChannel().name()), "o2_direct");
-            userService.applyPromotion(user, promoCode);
-            // create PaymentDetails
-            response.setStatus(HttpStatus.OK.value());
-        } else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.addHeader("reason", "Unsatisfied user state.");
-        }
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = "/REGISTER_USER")
     public void registerUser(@RequestBody String body,
                              HttpServletResponse response,
@@ -136,7 +119,7 @@ public class EntityController extends CommonController {
         String userName = userRegInfo.getEmail();
         String communityName = userRegInfo.getCommunityName();
         try {
-            LOGGER.info("command proccessing for [{}] user, [{}] community", userName, communityName);
+            LOGGER.info("command processing for [{}] user, [{}] community", userName, communityName);
             notNull(userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
 
@@ -188,7 +171,7 @@ public class EntityController extends CommonController {
 
             Object[] objects = drmService.processSetDrmCommand(mediaIsrc, newDrmValue, user.getId(),
                     communityName);
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
             return new ModelAndView(view, MODEL_NAME, new Response(
                     objects));
         } finally {
@@ -220,7 +203,7 @@ public class EntityController extends CommonController {
                     timestamp, communityName);
             Object[] objects = drmService.processBuyTrackCommand(user, isrc,
                     communityName);
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
             return new ModelAndView(view, Response.class.getSimpleName(),
                     new Response(objects));
         } catch (Exception e) {
@@ -256,7 +239,7 @@ public class EntityController extends CommonController {
             Object[] objects = userService.processSetPasswordCommand(user.getId(), newToken,
                     communityName);
 
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
 
             return new ModelAndView(view, Response.class.getSimpleName(),
                     new Response(objects));
@@ -535,7 +518,7 @@ public class EntityController extends CommonController {
             final Object[] objects = new Object[]{userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(), pushNotificationToken,
                     deviceType, null)};
 
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
             return new ModelAndView(view, MODEL_NAME, new Response(objects));
         } finally {
             LOGGER.info("command processing finished");
@@ -598,7 +581,7 @@ public class EntityController extends CommonController {
             }
 
             final Object[] objects = new Object[]{accountCheckDTO};
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
 
             return new ModelAndView(view, MODEL_NAME, new Response(objects));
         } catch (Exception e) {

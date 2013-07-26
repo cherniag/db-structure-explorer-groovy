@@ -32,7 +32,7 @@ public class FileServiceIT {
 	
 	static {
 		user.setId(1);
-		//user.setDeviceType((byte) 0);
+		//userWithCommunity.setDeviceType((byte) 0);
 	}
 
     @Test

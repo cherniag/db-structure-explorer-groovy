@@ -301,7 +301,7 @@ public class UserServiceIT {
 
 		boolean isExpectedO2User = SegmentType.CONSUMER.equals(user.getSegment())
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
-				//&& Contract.PAYG.equals(user.getContract())
+				//&& Contract.PAYG.equals(userWithCommunity.getContract())
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
 				&& currentPaymentDetails.getPaymentType().equals(PaymentDetails.O2_PSMS_TYPE)

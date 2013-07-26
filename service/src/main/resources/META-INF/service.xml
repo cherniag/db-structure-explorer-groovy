@@ -124,6 +124,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="promotionDao" ref="persistence.PromotionDao" />
+        <property name="userService" ref="service.UserService" />
+        <property name="messageSource" ref="serviceMessageSource" />
 	</bean>
 
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">

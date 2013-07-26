@@ -2,30 +2,22 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.error.ThrottlingException;
-import mobi.nowtechnologies.server.interceptor.LoggerInterceptor;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
-import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -53,10 +45,13 @@ public abstract class CommonController extends ProfileController{
 
 	protected View view;
 	protected CommunityResourceBundleMessageSource messageSource;
+    protected UserService userService;
 	protected Jaxb2Marshaller jaxb2Marshaller;
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
+
+    protected String apiVersion;
 
 	public void setView(View view) {
 		this.view = view;
@@ -78,7 +73,15 @@ public abstract class CommonController extends ProfileController{
 		this.nowTechTokenBasedRememberMeServices = nowTechTokenBasedRememberMeServices;
 	}
 
-	@ExceptionHandler(Exception.class)
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
@@ -197,8 +200,8 @@ public abstract class CommonController extends ProfileController{
 			LOGGER.error(message);
 		} else if (errorCodeForMessageLocalization != null) {
 			Locale locale = httpServletRequest.getLocale();
-			String commnityUri = getCommunityUrl(httpServletRequest);
-			String localizedMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
+			String communityUri = getCommunityUrl(httpServletRequest);
+			String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
 			message = serviceException.getLocalizedMessage();
 			errorMessage = getErrorMessage(localizedMessage, message, null);
 			LOGGER.error(message);
@@ -240,7 +243,7 @@ public abstract class CommonController extends ProfileController{
 	 * Returns an auth token that is generated for web portal SSO
 	 * @return rememberMe auth token
 	 */
-	public Object[] proccessRememberMeToken(Object[] objects) {
+	public Object[] precessRememberMeToken(Object[] objects) {
 		LOGGER.debug("input parameters objects: [{}], [{}]", objects);
 		for (Object object : objects) {
 			if (!(object instanceof AccountCheckDTO)) continue;
@@ -263,22 +266,12 @@ public abstract class CommonController extends ProfileController{
 		return rememberMeToken;
 	}
 
-    protected SecurityContextDetails getSecurityContextDetails() {
-        return (SecurityContextDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
-
-    protected int getUserId() {
-        SecurityContextDetails securityContextDetails = getSecurityContextDetails();
-        return securityContextDetails.getUserId();
-    }
-
-    protected User getUser(){
-        return userRepository.findOne(getUserId());
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber) {
+        try {
+            return Utils.isMajorVersionNumberLessThan(4, apiVersion);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
+        }
     }
 }

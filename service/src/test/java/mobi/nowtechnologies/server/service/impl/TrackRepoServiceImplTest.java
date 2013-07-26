@@ -274,8 +274,8 @@ public class TrackRepoServiceImplTest {
         verify(mediaRepository, times(1)).save(any(Media.class));
         verify(genreRepository, times(1)).getByName(anyString());
         verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_LARGE.getSuffix()+"."+FileType.IMAGE.getExt()));
-        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_SMALL.getSuffix()+"."+FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()));
+        verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt()));
         verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()+ImageResolution.SIZE_ORIGINAL.getSuffix()+"."+FileType.IMAGE.getExt()));
         verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc()+AudioResolution.RATE_ORIGINAL.getSuffix()+"."+FileType.DOWNLOAD.getExt()));
         verify(mediaFileRepository, times(0)).getByName(eq(expectedTrack.getIsrc()+AudioResolution.RATE_PREVIEW.getSuffix()+"."+FileType.MOBILE_AUDIO.getExt()));
