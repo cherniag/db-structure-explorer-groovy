@@ -11,8 +11,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.sun.org.apache.bcel.internal.classfile.PMGClass;
-
 import static org.junit.Assert.*;
 
 /**

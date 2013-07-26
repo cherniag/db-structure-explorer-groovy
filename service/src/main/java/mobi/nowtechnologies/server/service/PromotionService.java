@@ -164,7 +164,7 @@ public class PromotionService {
         boolean isPromotionApplied = false;
         if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| user.getContractChannel() == null)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
-        }else /*if(user.isO23GConsumer())*/{
+        }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;

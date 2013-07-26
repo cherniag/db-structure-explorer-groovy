@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
@@ -16,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * ApplyInitPromoConroller
@@ -98,7 +94,8 @@ public class ApplyInitPromoController extends CommonController {
 
     	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
 
-                if (Utils.isMajorVersionNumberLessThan(4, apiVersion) ){
+                this.apiVersion = apiVersion;
+                if (isMajorApiVersionNumberLessThan(4) ){
                         updateO2UserTask.handleUserUpdate(user);
                 }
 

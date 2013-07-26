@@ -504,7 +504,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
-        LOGGER.debug("input parameters user, promotion: [{}], [{}], [{}]", new Object[]{user, promotion});
+        LOGGER.debug("input parameters user, promotion, freeTrialStartedTimestampSeconds: [{}], [{}], [{}]", new Object[]{user, promotion, freeTrialStartedTimestampSeconds});
 
         LOGGER.info("Attempt to apply promotion [{}]", promotion);
 
@@ -541,7 +541,7 @@ public class UserService {
         } else {
             user.setPotentialPromoCodePromotion(null);
             user = entityService.updateEntity(user);
-            LOGGER.info("The promotion wasn't applied because of user is banned");
+            LOGGER.info("The promotion [{}] wasn't applied because of user is banned", promotion);
         }
 
         return isPromotionApplied;
@@ -1983,7 +1983,7 @@ public class UserService {
 			user.setStatus(UserStatusDao.getLimitedUserStatus());
 			userRepository.save(user);
 			LOGGER.info("Unable to make weekly update balance is " + subBalance + ", user id [" + user.getId()
-					+ "]. So the user subscribtion status was changed on LIMITED");
+					+ "]. So the user subscription status was changed on LIMITED");
 		} else {
 
 			user.setSubBalance((byte) (subBalance - 1));
@@ -2108,18 +2108,5 @@ public class UserService {
         accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
 
         return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public AccountCheckDTO processActivateTrialCommand(User user) {
-        AccountCheckDTO accountCheckDTO;
-
-        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
-        if (isPromotionApplied){
-            accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
-        }else{
-            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
-        }
-        return accountCheckDTO;
     }
 }
