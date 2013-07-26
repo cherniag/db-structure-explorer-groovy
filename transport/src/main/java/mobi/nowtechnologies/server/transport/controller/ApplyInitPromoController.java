@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
 /**
  * ApplyInitPromoConroller
@@ -59,7 +56,7 @@ public class ApplyInitPromoController extends CommonController {
 
             AccountCheckDTO accountCheckDTO = userService.applyInitialPromotion(user);
             final Object[] objects = new Object[]{accountCheckDTO};
-            proccessRememberMeToken(objects);
+            precessRememberMeToken(objects);
 
             return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		}catch(Exception e){
@@ -78,7 +75,8 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
-            @PathVariable("community") String community) {
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) {
     	
     	Exception ex = null;
  		User user = null; 
@@ -92,9 +90,15 @@ public class ApplyInitPromoController extends CommonController {
             	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community);
 
     	        final Object[] objects = new Object[]{accountCheckDTO};
-    	        proccessRememberMeToken(objects);
+    	        precessRememberMeToken(objects);
 
     	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
+
+                this.apiVersion = apiVersion;
+                if (isMajorApiVersionNumberLessThan(4) ){
+                        updateO2UserTask.handleUserUpdate(user);
+                }
+
                 updateO2UserTask.handleUserUpdate(user);
     	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
             }

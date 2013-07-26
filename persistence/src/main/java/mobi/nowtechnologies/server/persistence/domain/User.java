@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -58,15 +59,19 @@ public class User implements Serializable {
 	public static final String NONE = "NONE";
 
     public boolean isO2Direct() {
-        return false;
+        return DIRECT.equals(contractChannel);
     }
 
     public boolean isO24GConsumer() {
         return isO2Consumer() && is4G();
     }
 
+    public boolean isO23GConsumer() {
+        return isO2Consumer() && is3G();
+    }
+
     public boolean isO2Indirect() {
-        return false;
+        return INDIRECT.equals(contractChannel);
     }
 
     public ContractChannel getContractChannel() {
@@ -94,9 +99,11 @@ public class User implements Serializable {
 	@Column(name = "i")
 	private int id;
 
+    
     @Column(name = "on_video_free_trial")
     private boolean onVideoAudioFreeTrial;
 
+    @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
     private ContractChannel contractChannel;
 
@@ -1232,11 +1239,6 @@ public class User implements Serializable {
 				.add("contract", contract).toString();
 	}
 
-	/**
-	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 *
-	 * @return
-	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
@@ -1395,6 +1397,10 @@ public class User implements Serializable {
 
     public boolean is4G(){
         return Tariff._4G.equals(tariff);
+    }
+
+    public boolean is3G(){
+        return Tariff._3G.equals(tariff);
     }
     
     public boolean canPlayVideo() {

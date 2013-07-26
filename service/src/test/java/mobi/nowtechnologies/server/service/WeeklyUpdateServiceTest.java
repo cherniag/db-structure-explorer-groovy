@@ -50,7 +50,7 @@ public class WeeklyUpdateServiceTest {
 	public final void testSaveWeeklyPaymentBalanceException() throws Exception {
 		User user = new User();
 		user.setSubBalance((byte) -1);
-		//weeklyUpdateService.saveWeeklyPayment(user);
+		//weeklyUpdateService.saveWeeklyPayment(userWithCommunity);
 	}
 
 	@Test(expected = NullPointerException.class)

@@ -1,9 +1,5 @@
 package mobi.nowtechnologies.server.shared;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,7 +11,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.sun.org.apache.bcel.internal.classfile.PMGClass;
+import static org.junit.Assert.*;
 
 /**
  * The class <code>UtilsTest</code> contains tests for the class
@@ -741,4 +737,25 @@ public class UtilsTest {
 		int expectedMontlyNextSubPayment = (int) (calendar.getTimeInMillis()/ 1000);
 		assertEquals(expectedMontlyNextSubPayment, actualMontlyNextSubPayment);
 	}
+
+    @Test
+    public void shouldReturnMajorVersionNumber(){
+        int majorVersionNumber = Utils.getMajorVersionNumber("5.0");
+        assertEquals(5, majorVersionNumber);
+    }
+
+    @Test(expected = Exception.class)
+    public void shouldNotReturnMajorVersionNumber(){
+        Utils.getMajorVersionNumber(".0");
+    }
+
+    @Test
+    public void shouldReturnMajorVersionNumberIsLess(){
+        assertTrue(Utils.isMajorVersionNumberLessThan(4, "3.9"));
+    }
+
+    @Test
+    public void shouldReturnMajorVersionNumberIsMore(){
+        assertFalse(Utils.isMajorVersionNumberLessThan(2, "3.9"));
+    }
 }

@@ -97,7 +97,7 @@ public class GetChartController extends CommonController{
 					break;
 				}
 			}
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
 		} catch (Exception e) {
@@ -142,7 +142,7 @@ public class GetChartController extends CommonController{
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 
 			return new ModelAndView(view, Response.class.toString(), new Response(
 					objects));
@@ -177,7 +177,7 @@ public class GetChartController extends CommonController{
 			Object[] objects = chartService.processGetChartCommand(user, community, true, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			ex = e;
@@ -210,7 +210,7 @@ public class GetChartController extends CommonController{
 			Object[] objects = chartService.processGetChartCommand(user, community, false, false);
 			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			ex = e;
@@ -221,7 +221,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[8-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[8-9]{1,3}}/GET_CHART" })
+	@RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART" })
 	public ModelAndView getChart_O2_v3d8(
 			HttpServletRequest request,
 			@RequestParam("APP_VERSION") String appVersion,
@@ -243,7 +243,7 @@ public class GetChartController extends CommonController{
             Object[] objects = chartService.processGetChartCommand(user, community, false, true);
             objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
 
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			ex = e;
@@ -274,7 +274,7 @@ public class GetChartController extends CommonController{
 
 			Object[] objects = chartService.processGetChartCommand(user, community, false, true);
 
-			proccessRememberMeToken(objects);
+			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
 		} catch (Exception e) {
 			ex = e;

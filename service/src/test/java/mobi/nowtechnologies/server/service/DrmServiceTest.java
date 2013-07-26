@@ -66,7 +66,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test with not null search result by media and user.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test with not null search result by media and userWithCommunity.
 	 *
 	 * @throws Exception
 	 *
@@ -89,7 +89,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test with not null drms of user.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test with not null drms of userWithCommunity.
 	 *
 	 * @throws Exception
 	 *
@@ -114,7 +114,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test with null search result by media and user and not null drmPolicy.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test with null search result by media and userWithCommunity and not null drmPolicy.
 	 *
 	 * @throws Exception
 	 *
@@ -185,7 +185,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test with null search result by media and user and null drmPolicy.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test with null search result by media and userWithCommunity and null drmPolicy.
 	 *
 	 * @throws Exception
 	 *
@@ -206,7 +206,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test by null media.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test by null media.
 	 *
 	 * @throws Exception
 	 *
@@ -221,7 +221,7 @@ public class DrmServiceTest {
 	}
 	
 	/**
-	 * Run the Drm findDrmByUserAndMedia(User user, Media media, DrmPolicy drmPolicy) method test by null user.
+	 * Run the Drm findDrmByUserAndMedia(User userWithCommunity, Media media, DrmPolicy drmPolicy) method test by null userWithCommunity.
 	 *
 	 * @throws Exception
 	 *
