@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,7 @@ import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
 import uk.co.o2.soa.subscriberservice.GetSubscriberProfileFault;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
-import static mobi.nowtechnologies.server.shared.Utils.different;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.different;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
 public class UpdateO2UserTask {

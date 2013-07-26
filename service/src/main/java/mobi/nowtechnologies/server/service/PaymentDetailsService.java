@@ -18,10 +18,7 @@ import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.slf4j.Logger;
@@ -34,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.*;
-import static mobi.nowtechnologies.server.shared.Utils.isNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
