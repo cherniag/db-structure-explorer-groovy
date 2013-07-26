@@ -439,7 +439,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		final Contract contract = user.getContract();
 		final DeviceType deviceType = user.getDeviceType();
 		String deviceTypeName = null;
-
+		
 		if (deviceType != null) {
 			deviceTypeName = deviceType.getName();
 		}
@@ -456,6 +456,10 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 				if (StringUtils.isNotEmpty(msg))
 					break;
 			}
+		}
+		
+		if ( msg == null ) {
+			LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
 		}
 
 		LOGGER.debug("Output parameter msg=[{}]", msg);

@@ -27,7 +27,9 @@ public class PaymentPolicyDto {
     private BigDecimal oldSubcost;
     private Integer oldSubweeks;
     private String currencyISO;
-    private boolean fourGPaymentPolicy;
+    private boolean videoAndAudio4GSubscription;
+    private boolean fourG;
+    private boolean threeG;
     private MediaType paymentPolicyMediaType;
 
     public PaymentPolicyDto() { }
@@ -54,8 +56,10 @@ public class PaymentPolicyDto {
         setPaymentType(policy.getPaymentType());
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
-        setFourGPaymentPolicy(Tariff._4G.equals(policy.getTariff()));
+        setVideoAndAudio4GSubscription(policy.is4GVideoAudioSubscription());
         setPaymentPolicyMediaType(policy.getMediaType());
+        setFourG( Tariff._4G == policy.getTariff() );
+        setThreeG( Tariff._3G == policy.getTariff() );
     }
 
     /*private boolean isPsmsPolicy() {
@@ -150,12 +154,12 @@ public class PaymentPolicyDto {
         return true;
     }*/
     
-    public boolean isFourGPaymentPolicy() {
-		return fourGPaymentPolicy;
+    public boolean isVideoAndAudio4GSubscription() {
+		return videoAndAudio4GSubscription;
 	}
 
-	public void setFourGPaymentPolicy(boolean fourGPaymentPolicy) {
-		this.fourGPaymentPolicy = fourGPaymentPolicy;
+	public void setVideoAndAudio4GSubscription(boolean fourGPaymentPolicy) {
+		this.videoAndAudio4GSubscription = fourGPaymentPolicy;
 	}
 
 	public MediaType getPaymentPolicyMediaType() {
@@ -166,15 +170,35 @@ public class PaymentPolicyDto {
 			MediaType paymentPolicyMediaType) {
 		this.paymentPolicyMediaType = paymentPolicyMediaType;
 	}
-	
-	public boolean isVideoPaymentPolicy() {
-		return MediaType.VIDEO_AND_AUDIO.equals(this.paymentPolicyMediaType);
+
+	public boolean isFourG() {
+		return fourG;
+	}
+
+	public void setFourG(boolean fourG) {
+		this.fourG = fourG;
+	}
+
+	public boolean isThreeG() {
+		return threeG;
+	}
+
+	public void setThreeG(boolean threeG) {
+		this.threeG = threeG;
 	}
 
 	@Override
 	public String toString() {
-		return "PaymentPolicyDto [id=" + id + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorName=" + operatorName + ", paymentType=" + paymentType
-				+ ", shortCode=" + shortCode + ", oldSubcost=" + oldSubcost + ", oldSubweeks=" + oldSubweeks + ", currencyISO=" + currencyISO + "]";
+		return "PaymentPolicyDto [id=" + id + ", subcost=" + subcost
+				+ ", subweeks=" + subweeks + ", operator=" + operator
+				+ ", operatorName=" + operatorName + ", paymentType="
+				+ paymentType + ", shortCode=" + shortCode + ", oldSubcost="
+				+ oldSubcost + ", oldSubweeks=" + oldSubweeks
+				+ ", currencyISO=" + currencyISO
+				+ ", videoAndAudio4GSubscription="
+				+ videoAndAudio4GSubscription + ", fourG=" + fourG
+				+ ", threeG=" + threeG + ", paymentPolicyMediaType="
+				+ paymentPolicyMediaType + "]";
 	}
 
     

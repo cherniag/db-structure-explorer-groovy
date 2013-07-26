@@ -76,7 +76,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         
-        boolean userIsOptedInToVideo = user.isVideoFreeTrialHasBeenActivated();
+        boolean userIsOptedInToVideo = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
         
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
         mav.addObject("userCanGetVideo", user.is4G());
@@ -137,11 +137,17 @@ public class PaymentsController extends CommonController {
     		return ret;
     	}
     	
-    	boolean videoEnabledUser = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
     	for ( PaymentPolicyDto pp : paymentPolicyList ) {
-    		if ( (videoEnabledUser && pp.isFourGPaymentPolicy()) || (!videoEnabledUser && !pp.isFourGPaymentPolicy()) ) {
+    		if ( user.is3G() && pp.isThreeG() ) {
     			ret.add( pp );
+    		} else if ( user.is4G() && pp.isFourG() ) {
+    			if ( !pp.isVideoAndAudio4GSubscription() || (pp.isVideoAndAudio4GSubscription() && user.isVideoFreeTrialHasBeenActivated()) ) {
+    				ret.add( pp );
+    			}
     		}
+/*    		if ( (videoEnabledUser && pp.isVideoAndAudio4GSubscription()) || (!videoEnabledUser && !pp.isVideoAndAudio4GSubscription()) ) {
+    			ret.add( pp );
+    		}*/
     	}
     	
     	return ret;

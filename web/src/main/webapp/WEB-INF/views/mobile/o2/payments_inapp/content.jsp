@@ -102,7 +102,7 @@ function videoSelected() {
 	        		<label for="videoCheckbox">${payment_videoprice}</label>
 	
 	        		<c:set var="checkedAttrib" />
-	        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoPaymentPolicy==true)}">
+	        		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
 	        			<c:set var="checkedAttrib">checked="checked"</c:set>
 	        			<%--Activate the video checkbox if the user has a video subscription --%>
 	        		</c:if>
@@ -157,7 +157,7 @@ function videoSelected() {
                     <s:message code='pays.select.iTunesSubscription' var="payment_label" />
                 </c:if>
 
-                <div class="rel" data-hasvideo="${paymentPolicy.videoPaymentPolicy ? '1' : '0'}" data-updatesubbutton="${mirrorOfActivePolicy==paymentPolicy.id ? '1' : '0'}">
+                <div class="rel" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" data-updatesubbutton="${mirrorOfActivePolicy==paymentPolicy.id ? '1' : '0'}">
                     <c:choose>
                         <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                         && paymentDetails != null

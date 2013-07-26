@@ -343,6 +343,10 @@ public class PaymentPolicy {
     public boolean is4GVideoAudioSubscription(){
         return tariff.equals(Tariff._4G) && VIDEO_AND_AUDIO.equals(mediaType);
     }
+    
+    public boolean isVideoAndAudio4GSubscription() {// jstl can not call methods starting with numbers
+    	return is4GVideoAudioSubscription();
+    }
 
     public boolean isAudioSubscription() {
         return AUDIO.equals(mediaType);
