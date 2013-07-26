@@ -51,8 +51,6 @@ public abstract class CommonController extends ProfileController{
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
 
-    protected String apiVersion;
-
 	public void setView(View view) {
 		this.view = view;
 	}
@@ -266,7 +264,7 @@ public abstract class CommonController extends ProfileController{
 		return rememberMeToken;
 	}
 
-    protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber) {
+    protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {
             return Utils.isMajorVersionNumberLessThan(4, apiVersion);
         } catch (Exception e) {
