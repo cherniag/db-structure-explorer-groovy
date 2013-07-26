@@ -37,7 +37,7 @@ public class PaymentsO2PsmsController extends CommonController {
                 .addObject(PaymentsController.POLICY_REQ_PARAM, policyId)
                 .addObject("subcost", policy.getSubcost())
                 .addObject("suweeks", policy.getSubweeks())
-                .addObject("isVideoPaymentPolicy", policy.isVideoPaymentPolicy());
+                .addObject("isVideoPaymentPolicy", policy.is4GVideoAudioSubscription());
     }
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS_CONFIRM}, method = RequestMethod.GET)

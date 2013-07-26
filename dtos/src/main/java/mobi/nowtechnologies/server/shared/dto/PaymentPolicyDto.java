@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto;
 
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyMediaType;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import java.math.BigDecimal;
@@ -28,7 +28,7 @@ public class PaymentPolicyDto {
     private Integer oldSubweeks;
     private String currencyISO;
     private boolean fourGPaymentPolicy;
-    private PaymentPolicyMediaType paymentPolicyMediaType;
+    private MediaType paymentPolicyMediaType;
 
     public PaymentPolicyDto() { }
 
@@ -55,7 +55,7 @@ public class PaymentPolicyDto {
         setShortCode(policy.getShortCode());
         setCurrencyISO(policy.getCurrencyISO());
         setFourGPaymentPolicy(Tariff._4G.equals(policy.getTariff()));
-        setPaymentPolicyMediaType(policy.getPaymentPolicyMediaType());
+        setPaymentPolicyMediaType(policy.getMediaType());
     }
 
     /*private boolean isPsmsPolicy() {
@@ -158,17 +158,17 @@ public class PaymentPolicyDto {
 		this.fourGPaymentPolicy = fourGPaymentPolicy;
 	}
 
-	public PaymentPolicyMediaType getPaymentPolicyMediaType() {
+	public MediaType getPaymentPolicyMediaType() {
 		return paymentPolicyMediaType;
 	}
 
 	public void setPaymentPolicyMediaType(
-			PaymentPolicyMediaType paymentPolicyMediaType) {
+			MediaType paymentPolicyMediaType) {
 		this.paymentPolicyMediaType = paymentPolicyMediaType;
 	}
 	
 	public boolean isVideoPaymentPolicy() {
-		return PaymentPolicyMediaType.AUDIOPLUSVIDEO.equals(this.paymentPolicyMediaType);
+		return MediaType.VIDEO_AND_AUDIO.equals(this.paymentPolicyMediaType);
 	}
 
 	@Override

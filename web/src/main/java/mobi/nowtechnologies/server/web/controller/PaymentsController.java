@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyMediaType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -11,6 +10,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class PaymentsController extends CommonController {
         
         int activePolicyId = -1;
         if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
-        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getPaymentPolicyMediaType());
+        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getMediaType());
         	if ( mirrorPolicy != null ) {
         		activePolicyId = mirrorPolicy;
         	}
@@ -118,7 +118,7 @@ public class PaymentsController extends CommonController {
      * For example for a 1week audio only policy, the mirror is 1w audio+video policy
      *  
      */
-    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyWeeks, PaymentPolicyMediaType activePaymentPolicyMediaType) {
+    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyWeeks, MediaType activePaymentPolicyMediaType) {
     	for ( PaymentPolicyDto pp : paymentPolicies ) {
     		if ( pp.getPaymentPolicyMediaType() != activePaymentPolicyMediaType && pp.getSubweeks() == activePolicyWeeks ) {
     			return (int)pp.getId();
