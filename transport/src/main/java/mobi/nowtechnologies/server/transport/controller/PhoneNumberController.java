@@ -36,15 +36,17 @@ public class PhoneNumberController extends CommonController {
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
-			@PathVariable("community") String community) throws Exception {
+			@PathVariable("community") String community,
+			@PathVariable("apiVersion") String apiVersion) throws Exception {
 		LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 		
 		Exception ex = null;
 		User user = null; 
 		try {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
-
-			user = userService.activatePhoneNumber(user, phone);
+			
+			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
+			user = userService.activatePhoneNumber(user, phone, populateO2SubscriberData);
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			

@@ -5,12 +5,16 @@ import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.impl.o2.O2ServiceIT;
+import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+import mobi.nowtechnologies.server.service.o2.impl.O2WebServiceResultsProcessor;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -86,6 +90,7 @@ public class UserServiceTest {
 	private CommunityService communityServiceMock;
 	private CountryService countryServiceMock;
 	private O2ClientService o2ClientServiceMock;
+	private O2Service o2ServiceMock;
 	private DeviceService deviceServiceMock;
 	private FacebookService facebookServiceMock;
 	private ITunesService iTunesServiceMock;
@@ -823,6 +828,7 @@ public class UserServiceTest {
 		PaymentService paymentServiceMock = PowerMockito.mock(PaymentService.class);
 		accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
 		o2ClientServiceMock = PowerMockito.mock(O2ClientService.class);
+		o2ServiceMock = PowerMockito.mock(O2Service.class);
 		MailService mailServiceMock = PowerMockito.mock(MailService.class);
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
@@ -854,6 +860,7 @@ public class UserServiceTest {
 		userServiceSpy.setAccountLogService(accountLogServiceMock);
 		userServiceSpy.setMailService(mailServiceMock);
 		userServiceSpy.setO2ClientService(o2ClientServiceMock);
+		userServiceSpy.setO2Service(o2ServiceMock);
 		userServiceSpy.setUserRepository(userRepositoryMock);
 		userServiceSpy.setiTunesService(iTunesServiceMock);
 		userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
@@ -1428,7 +1435,8 @@ public class UserServiceTest {
 
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn("+447870111111");
 
-		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
+		boolean populateO2SubscriberData = false;
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone, populateO2SubscriberData);
 
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
@@ -1452,8 +1460,8 @@ public class UserServiceTest {
 				return "+447870111111";
 			}
 		});
-
-		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
+		boolean populateO2SubscriberData = false;
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone, populateO2SubscriberData);
 
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
@@ -1462,7 +1470,7 @@ public class UserServiceTest {
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
 	}
-	
+
 	@Test
 	public void testIsnonO2User_nonO2User_Success() throws Exception{
 		final User user = UserFactory.createUser();

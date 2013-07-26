@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import com.google.common.collect.Lists;
@@ -19,13 +20,11 @@ public class O2UserDetailsUpdater {
 
 	/** Updates given user */
 	public void setUserFieldsFromSubscriberData(User user, O2SubscriberData data) {
-
 		user.setProvider((data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2).toString());
 		user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
 		user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
 		user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
-
-		// TODO: user.setDirectChannel4G(data.isDirect4GChannel());
+		user.setContractChannel(data.isDirect4GChannel() ? ContractChannel.DIRECT : ContractChannel.INDIRECT);
 	}
 
 	/** @return list of fields that differ */
@@ -63,7 +62,7 @@ public class O2UserDetailsUpdater {
 		data.setContractPostPayOrPrePay(user.getContract() == Contract.PAYM);
 		data.setProviderO2(ProviderType.O2.toString().equals(user.getProvider()));
 		data.setTariff4G(user.getTariff() == Tariff._4G);
-		// TODO: data.setDirectOrIndirect4GChannel(directOrIndirect4GChannel);
+		data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
 		return data;
 	}
 

@@ -94,8 +94,8 @@ public class ApplyInitPromoController extends CommonController {
 
     	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
 
-                if (isMajorApiVersionNumberLessThan(4, apiVersion) ){
-                        updateO2UserTask.handleUserUpdate(user);
+                if (isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+                    updateO2UserTask.handleUserUpdate(user);
                 }
 
                 updateO2UserTask.handleUserUpdate(user);

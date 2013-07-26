@@ -1934,18 +1934,16 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public User activatePhoneNumber(User user, String phone) {
-		boolean check4G = true;//TODO: should be a parameter
-		
-		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}]", phone, user.getId(),
-				user.getActivationStatus());
+	public User activatePhoneNumber(User user, String phone, boolean populateO2SubscriberData) {
+		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
+				user.getActivationStatus(), populateO2SubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
         
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
 				user.getMobile());
-        if(check4G){
+        if(populateO2SubscriberData){
         	populateO2subscriberData(user, msisdn);
         }
         
