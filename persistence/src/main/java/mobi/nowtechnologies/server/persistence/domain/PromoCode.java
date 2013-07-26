@@ -43,6 +43,11 @@ public class PromoCode {
 		this.code = code;
 	}
 
+    public PromoCode withCode(String code) {
+        this.code = code;
+        return this;
+    }
+
 	public byte getPromotionId() {
 		return promotionId;
 	}

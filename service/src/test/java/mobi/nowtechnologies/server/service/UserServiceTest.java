@@ -106,7 +106,6 @@ public class UserServiceTest {
     private Tariff currentUserTariff;
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
-    private boolean onVideoAudioFreeTrial;
 
     /**
 	 * Run the User changePassword(userId, password) method test with success result.
@@ -1043,7 +1042,7 @@ public class UserServiceTest {
 
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void unsubscribeUser_Failure() {
 		long epochMillis = 12354L;
 		User mockedUser = null;
@@ -3185,7 +3184,6 @@ public class UserServiceTest {
         freeTrialStartedTimestampMillis = currentTimeMillis;
         freeTrialExpiredMillis = freeTrialStartedTimestampMillis + YEAR_SECONDS * 1000L;
         nextSubPayment = (int)(freeTrialExpiredMillis/1000);
-        onVideoAudioFreeTrial = true;
 
         createUserWithO2PaymentDetails();
     }
@@ -3262,6 +3260,7 @@ public class UserServiceTest {
 
         user = UserFactory.createUser();
         user.setTariff(currentUserTariff);
+        user.setLastPromo(new PromoCode().withCode("testCode"));
 
         user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampMillis);
         user.setFreeTrialExpiredMillis(freeTrialExpiredMillis);
@@ -3271,7 +3270,6 @@ public class UserServiceTest {
         user.setUserGroup(userGroup);
         user.setProvider("o2");
         user.setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
-        user.setOnVideoAudioFreeTrial(onVideoAudioFreeTrial);
     }
 
     private void createLastSuccessfulPaymentDetailsWithPaymentPolicy() {
@@ -3290,6 +3288,7 @@ public class UserServiceTest {
         currentTimeSeconds = (int) (currentTimeMillis / 1000);
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
+        Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
         Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
         Mockito.doReturn(true).when(userServiceSpy).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         //when(userServiceSpy, method(UserService.class,"applyO2PotentialPromo", boolean.class, User.class, Community.class, int.class)).withArguments(true, userWithCommunity, userWithCommunity.getUserGroup().getCommunity(), currentTimeSeconds).thenReturn(true);

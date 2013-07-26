@@ -105,7 +105,7 @@ public class AccCheckController extends CommonController {
 			accountCheck.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
 
             accountCheck.setCanGetVideo(true);
-            accountCheck.setCanPlayVideo(user.canPlayVideo());
+            accountCheck.setCanPlayVideo(userService.canPlayVideo(user));
             accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
             accountCheck.setHasAllDetails(user.hasAllDetails());
             accountCheck.setShowFreeTrial(false);

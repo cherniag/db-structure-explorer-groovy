@@ -191,29 +191,8 @@ public class Utils {
 		LOGGER.debug("Output parameter montlyNextSubPayment=[{}]", montlyNextSubPayment);
 		return montlyNextSubPayment;
 	}
-
-	
-	public static void main(String[] args) {
-		final String USER_NAME =
-				"test@test.com";
-		final String PASSWORD = "test@test.com";
-		final String TIMESTAMP = "2013-06-01 09:33+0200";
-
-		System.out.println(createStoredToken(USER_NAME, PASSWORD));
-		System.out.println(createTimestampToken("18b56228b14fda6633ae0551a04b5250", TIMESTAMP));
-
-		// System.out.println(getOTACode(132,"richard.monday@chartsnow.mobi"));
-		//f701af8d07e5c95d3f5cf3bd9a62344d
-	}
-
 	public static boolean datesNotEquals(Date oldTime, Date newTimet) {
         return newTimet.getTime() != oldTime.getTime();
-    }
-
-    public static <T> String toStringIfNull(T obj) {
-        if(obj == null)
-            return  null;
-        return obj.toString();
     }
 
     public static String substring(String s, int i) {
@@ -222,29 +201,11 @@ public class Utils {
         return s.substring(0,i);
     }
 
-    public static <T> boolean  isNull(T o) {
-        return o == null ? true : false;
-    }
-
-    public static <T> boolean different(T one, T two) {
-        if(one == null && two == null)
-            return false;
-        if(one == null && two != null)
-            return true;
-        if(one.equals(two))
-            return false;
-        return true;
-    }
-
     public static String concatLowerCase(String... strs) {
         StringBuilder buf = new StringBuilder();
         for(String s: strs)
             buf.append(s);
         return buf.toString().toLowerCase();
-    }
-
-    public static boolean isNotNull(Object o) {
-        return o != null ? true : false;
     }
 
     public static int getMajorVersionNumber(String version){

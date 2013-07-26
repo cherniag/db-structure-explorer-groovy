@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -26,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.Utils.isNotNull;
-import static mobi.nowtechnologies.server.shared.Utils.isNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 /**
  * @author Titov Mykhaylo (titov)

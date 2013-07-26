@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -82,12 +82,17 @@ public class User implements Serializable {
         this.contractChannel = contractChannel;
     }
 
-    public boolean isOnVideoAudioFreeTrial() {
-        return onVideoAudioFreeTrial;
+    public PromoCode getLastPromo() {
+        return lastPromo;
     }
 
-    public void setOnVideoAudioFreeTrial(boolean onVideoAudioFreeTrial) {
-        this.onVideoAudioFreeTrial = onVideoAudioFreeTrial;
+    public void setLastPromo(PromoCode lastPromo) {
+        this.lastPromo = lastPromo;
+    }
+
+    public boolean lastPromoEqualsTo(String promo) {
+        if(isNull(lastPromo) || isNull(lastPromo.getCode())) return false;
+        return lastPromo.getCode().equals(promo);
     }
 
     public static enum Fields {
@@ -99,12 +104,12 @@ public class User implements Serializable {
 	@Column(name = "i")
 	private int id;
 
-    
-    @Column(name = "on_video_free_trial")
-    private boolean onVideoAudioFreeTrial;
+    @ManyToOne
+    @JoinColumn(name = "last_promo")
+    private PromoCode lastPromo;
 
-    @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
+    @Column(name = "contract_channel")
     private ContractChannel contractChannel;
 
     @Enumerated(EnumType.STRING)
@@ -1239,6 +1244,11 @@ public class User implements Serializable {
 				.add("contract", contract).toString();
 	}
 
+	/**
+	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
+	 *
+	 * @return
+	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
@@ -1401,10 +1411,6 @@ public class User implements Serializable {
 
     public boolean is3G(){
         return Tariff._3G.equals(tariff);
-    }
-    
-    public boolean canPlayVideo() {
-        return  is4G() && (isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod());
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {

@@ -73,9 +73,13 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author Maksym Chernolevskyi (maksym)
  */
 public class UserService {
-    private static final String PAYD_CC_ERROR = "payd.cc.error";
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
+
+    public boolean canPlayVideo(User user){
+        String promo = promotionService.getVideoCodeForO24GConsumer(user);
+        return user.is4G() && (user.lastPromoEqualsTo(promo) || user.isOn4GVideoAudioBoughtPeriod());
+    }
 
     public Boolean canActivateVideoTrial(User u) {
         Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
@@ -470,21 +474,19 @@ public class UserService {
 		return user;
 	}
 
-	public synchronized boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
+	public boolean applyO2PotentialPromo(O2UserDetails o2UserDetails, User user, Community community) {
 
         boolean isO2User = o2ClientService.isO2User(o2UserDetails);
 
-        boolean promotionApplied = applyO2PotentialPromo(isO2User, user, community);
-
-        return promotionApplied;
+        return applyO2PotentialPromo(isO2User, user, community);
 	}
 
-    public synchronized boolean applyO2PotentialPromo(boolean isO2User, User user, Community community) {
+    public boolean applyO2PotentialPromo(boolean isO2User, User user, Community community) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         return applyO2PotentialPromo(isO2User, user, community, freeTrialStartedTimestampSeconds);
     }
 
-    public synchronized boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
+    public boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
         Promotion promotion = null;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
@@ -503,7 +505,7 @@ public class UserService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion) {
+	public boolean applyPromotionByPromoCode(User user, Promotion promotion) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
 	}
@@ -742,8 +744,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(User user, final String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-		if (user == null)
-			throw new NullPointerException("The parameter user is null");
+		notNull(user , "The parameter user is null");
 
 		user.setPaymentEnabled(false);
 
@@ -771,8 +772,8 @@ public class UserService {
 			throw new ServiceException("The parameter communityName is null");
 		Byte communityId = Community.getMapAsNames().get(communityName).getId();
 		List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
-				PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
-				communityId);
+                PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
+                communityId);
 		for (PaymentPolicy paymentPolicy : paymentPolicies) {
 			Operator operator = paymentPolicy.getOperator();
 			if (null != operator)
@@ -789,7 +790,7 @@ public class UserService {
 			throw new ServiceException("The parameter paymentType is null");
 
 		return userDao.getPaymentPoliciesForPasseadOperatorOrOperatorIs0(
-				communityName, paymentType, operator);
+                communityName, paymentType, operator);
 	}
 
 	public List<Integer> getOperatorsAccordingToPaymentPoliciesForPremiumUser(
@@ -841,7 +842,7 @@ public class UserService {
 		String[] args = { migHttpService.getOtaUrl() + "&CODE=" + user.getCode() };
 		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(user.getMobile());
 		migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-				messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
+                messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
 	}
 
 	public User findById(int id) {
@@ -2092,7 +2093,7 @@ public class UserService {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
-            } else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
+            } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
@@ -2103,6 +2104,11 @@ public class UserService {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
         }
         return userWithOldTariff;
+    }
+
+    private boolean isOnVideoAudioFreeTrial(User user) {
+        String promo = promotionService.getVideoCodeForO24GConsumer(user);
+        return user.is4G() && user.lastPromoEqualsTo(promo) && user.isOnFreeTrial();
     }
 
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
@@ -2139,7 +2145,6 @@ public class UserService {
 
         user.setNextSubPayment(currentTimeSeconds);
         user.setFreeTrialExpiredMillis(currentTimeMillis);
-        user.setOnVideoAudioFreeTrial(false);
 
         accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
 
