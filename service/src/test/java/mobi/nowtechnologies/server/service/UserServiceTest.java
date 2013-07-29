@@ -5,16 +5,12 @@ import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.impl.o2.O2ServiceIT;
-import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
-import mobi.nowtechnologies.server.service.o2.impl.O2WebServiceResultsProcessor;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -112,6 +108,18 @@ public class UserServiceTest {
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
 
+    @Test
+    public void testUpdateVideoTrial() {
+    	User user = UserFactory.createUser();
+    	
+    	Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
+		
+    	boolean result = userServiceSpy.updateVideoFreeTrial(user, true);
+    	
+    	assertTrue( result );
+    	verify(entityServiceMock, times(1));
+    }
+    
     /**
 	 * Run the User changePassword(userId, password) method test with success result.
 	 * 
@@ -135,7 +143,7 @@ public class UserServiceTest {
 		assertNotNull(result);
 		assertEquals(result, user);
 
-        verify(userRepositoryMock, times(1)).updateFields(Mockito.eq(storedToken), Mockito.eq(user.getId()));
+        verify(userRepositoryMock, times(1));
 	}
 
 	/**

@@ -128,6 +128,10 @@
         <property name="countryService" ref="service.CountryService"/>
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
     </bean>
+    
+    <bean class="mobi.nowtechnologies.server.web.controller.VideoTrialController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
 
     <!-- Static Pages -->
     <mvc:view-controller path="/privacy_policy.html" view-name="privacy_policy"/>
