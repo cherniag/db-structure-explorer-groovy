@@ -1,32 +1,53 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+
 @Entity
 @Table(name="tb_promoCode")
 public class PromoCode {
-	
-	public static enum Fields {
-		id, code, promotionId
-	}
-	
-	
+
+
+
+    public static enum Fields {
+		id, code, promotionId;
+    }
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-	private String code;
-	
+
+
+    private String code;
 	@Column(insertable=false, updatable=false)
 	private byte promotionId;
-	 
+
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="promotionId")
 	private Promotion promotion;
-	
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
+    private MediaType mediaType;
+
+    public boolean forVideoAndMusic() {
+        return isNotNull(mediaType) && VIDEO_AND_AUDIO.equals(mediaType);
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+    }
+
 	public int getId() {
 		return id;
 	}

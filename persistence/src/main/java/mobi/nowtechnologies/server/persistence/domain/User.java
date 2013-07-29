@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
@@ -21,6 +22,7 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -93,6 +95,10 @@ public class User implements Serializable {
     public boolean lastPromoEqualsTo(String promo) {
         if(isNull(lastPromo) || isNull(lastPromo.getCode())) return false;
         return lastPromo.getCode().equals(promo);
+    }
+
+    public boolean isLastPromoForVideo() {
+        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
     }
 
     public static enum Fields {

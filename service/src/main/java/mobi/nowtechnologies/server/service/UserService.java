@@ -77,8 +77,7 @@ public class UserService {
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
 
     public boolean canPlayVideo(User user){
-        String promo = promotionService.getVideoCodeForO24GConsumer(user);
-        return user.is4G() && (user.lastPromoEqualsTo(promo) || user.isOn4GVideoAudioBoughtPeriod());
+        return user.is4G() && (user.isLastPromoForVideo() || user.isOn4GVideoAudioBoughtPeriod());
     }
 
     public Boolean canActivateVideoTrial(User u) {
