@@ -55,6 +55,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.subBalancePaymentService" class="java.lang.Object" />
     <bean id="subBalancePaymentListener" class="java.lang.Object" />
     <bean id="offerPaymentListener" class="java.lang.Object" />
+    <bean id="service.RefundService" class="java.lang.Object"/>
+  
     <!--<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>-->
 
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
