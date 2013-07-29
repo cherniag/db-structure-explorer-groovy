@@ -597,6 +597,19 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
+	public boolean updateVideoFreeTrial(User user, boolean userAcceptedVideoTrial) {
+		user = findById( user.getId() );
+		if ( user == null ) {
+			return false;
+		}
+		
+		user.setVideoFreeTrialHasBeenActivated(userAcceptedVideoTrial);
+		entityService.updateEntity(user);
+		
+		return true;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void updatePaymentDetails(User user, UserRegInfo userRegInfo) {
 
 		if (userRegInfo == null)

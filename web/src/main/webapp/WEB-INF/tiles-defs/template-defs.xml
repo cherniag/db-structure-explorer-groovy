@@ -85,6 +85,15 @@
 	  <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/purchased_tracks/content.jsp"/>
   </definition>
 
+  <definition name="videotrial" extends="mainTemplate" preparer="web.CommunityViewPreparer">
+  	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/videotrial/headSection.jsp"/>
+	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
+	<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/videotrial/content.jsp"/>
+  </definition>
+  		<definition name="videotrial/confirmation" extends="videotrial" preparer="web.CommunityViewPreparer">
+			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/videotrial/confirmation/content.jsp"/>
+		</definition>
+
   <definition name="payments" extends="inappTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payments/headSection.jsp"/>
 	  <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
