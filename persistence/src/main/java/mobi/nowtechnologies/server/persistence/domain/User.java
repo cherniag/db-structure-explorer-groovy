@@ -321,7 +321,7 @@ public class User implements Serializable {
 	private List<Chart> selectedCharts = new ArrayList<Chart>();
 
     @Column(name = "videoFreeTrialHasBeenActivated")
-    private Boolean videoFreeTrialHasBeenActivated;
+    private boolean videoFreeTrialHasBeenActivated;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
