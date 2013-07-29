@@ -520,11 +520,13 @@ public class UserService {
         if (promotion == null) {
             throw new IllegalArgumentException("No promotion found");
         }
+
         UserBanned userBanned = getUserBanned(user.getId());
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
 
+            user.setLastPromo(promotion.getPromoCode());
             user.setNextSubPayment(nextSubPayment);
             user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
 
