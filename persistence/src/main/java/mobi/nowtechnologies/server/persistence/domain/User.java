@@ -101,7 +101,7 @@ public class User implements Serializable {
 
     
     @Column(name = "on_video_free_trial")
-    private boolean onVideoAudioFreeTrial;
+    private Boolean onVideoAudioFreeTrial;
 
     @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)

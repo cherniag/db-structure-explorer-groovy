@@ -12,10 +12,15 @@ import javax.persistence.*;
 @Table(name="tb_deviceTypes")
 public class DeviceType implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	//TODO remove
-	public static final byte IOS = (byte) 5;
-	
+
+    public static final String NONE = "NONE";
+    public static final String ANDROID = "ANDROID";
+    public static final String J2ME = "J2ME";
+    public static final String IOS = "IOS";
+    public static final String BLACKBERRY = "BLACKBERRY";
+    public static final String SYMBIAN = "SYMBIAN";
+    public static final String WINDOWS_PHONE = "WINDOWS_PHONE";
+
 	public static enum Fields{
 		name();
 	}

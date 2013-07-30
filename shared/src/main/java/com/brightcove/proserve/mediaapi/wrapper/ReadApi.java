@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,11 +27,6 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Playlist;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Playlists;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Videos;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.PlaylistFieldEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.SortByTypeEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.SortOrderTypeEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoStateFilterEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.WrapperException;
@@ -512,7 +508,7 @@ public class ReadApi {
 	 * 	<li>Response from the Media API couldn't be parsed</li>
 	 * </ul>
 	 */
-	public Video FindVideoByReferenceId(String readToken, String referenceId, EnumSet<VideoFieldEnum> videoFields, Set<String> customFields) throws BrightcoveException {
+	public Video FindVideoByReferenceId(String readToken, String referenceId, EnumSet<VideoFieldEnum> videoFields, Set<String> customFields, MediaDeliveryEnum mediaDelivery) throws BrightcoveException {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		
 		parameters.add(new BasicNameValuePair("command",  "find_video_by_reference_id"));
@@ -529,7 +525,7 @@ public class ReadApi {
 			parameters.add(new BasicNameValuePair("custom_fields", customFieldsString));
 		}
 
-        parameters.add(new BasicNameValuePair("media_delivery", "http"));
+        parameters.add(new BasicNameValuePair("media_delivery", mediaDelivery.name().toLowerCase()));
 		
 		JSONObject response = executeCommand(parameters);
 		if(response == null){

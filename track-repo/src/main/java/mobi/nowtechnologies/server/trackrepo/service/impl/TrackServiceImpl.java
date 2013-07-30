@@ -222,7 +222,7 @@ public class TrackServiceImpl implements TrackService {
 		Page<Track> pagelist = new PageImpl<Track>(Collections.<Track> emptyList(), page, 0L);
 		try {
 			if (searchTrackCriteria != null) {
-				pagelist = trackRepository.find(searchTrackCriteria, page, true, true);
+				pagelist = trackRepository.find(searchTrackCriteria, page, false, false);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot find tracks.", e);

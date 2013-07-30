@@ -96,7 +96,7 @@ public class FileController extends CommonController {
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){
-                final String videoURL = fileService.getVideoURL(mediaId);
+                final String videoURL = fileService.getVideoURL(user, mediaId);
 
                 return new PlainTextModalAndView(videoURL);
             } else {

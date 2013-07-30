@@ -96,8 +96,35 @@ public class Track extends AbstractEntity {
 	@Basic(optional=true)
 	@Enumerated(EnumType.STRING)
 	protected AudioResolution resolution; 
-	protected String itunesUrl; 
-	
+	protected String itunesUrl;
+
+    @Basic(optional=true)
+    @Column(name="territoryCodes", length=1024)
+    protected String territoryCodes;
+
+    @Basic(optional=true)
+    @Column(name="label")
+    protected String label;
+
+    @Temporal(TemporalType.DATE)
+    @Basic(optional=true)
+    @Column(name="releaseDate")
+    protected Date releaseDate;
+
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="mediaFile")
+    protected AssetFile mediaFile;
+
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="coverFile")
+    protected AssetFile coverFile;
+
+    @Column(name = "coverFile", insertable = false, updatable = false)
+    private Long coverFileId;
+
+    @Column(name = "mediaFile", insertable = false, updatable = false)
+    private Long mediaFileId;
+
 	public Track()
 	{
 		status = TrackStatus.NONE;
@@ -355,12 +382,60 @@ public class Track extends AbstractEntity {
         this.explicit = explicit;
     }
 
+    public String getTerritoryCodes() {
+        return territoryCodes;
+    }
+
+    public void setTerritoryCodes(String territoryCodes) {
+        this.territoryCodes = territoryCodes;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Date startDate) {
+        this.releaseDate = startDate;
+    }
+
+    public AssetFile getMediaFile() {
+        return mediaFile;
+    }
+
+    public void setMediaFile(AssetFile mediaFile) {
+        this.mediaFile = mediaFile;
+    }
+
+    public AssetFile getCoverFile() {
+        return coverFile;
+    }
+
+    public void setCoverFile(AssetFile coverFile) {
+        this.coverFile = coverFile;
+    }
+
+    public Long getCoverFileId() {
+        return coverFileId;
+    }
+
+    public Long getMediaFileId() {
+        return mediaFileId;
+    }
+
     @Override
     public String toString() {
         return "Track{" +
-                "title='" + title + '\'' +
-                ", ingestor='" + ingestor + '\'' +
+                "ingestor='" + ingestor + '\'' +
                 ", isrc='" + isrc + '\'' +
+                ", title='" + title + '\'' +
                 ", artist='" + artist + '\'' +
                 ", ingestionDate=" + ingestionDate +
                 ", status=" + status +
@@ -377,10 +452,11 @@ public class Track extends AbstractEntity {
                 ", ingestionUpdateDate=" + ingestionUpdateDate +
                 ", publishDate=" + publishDate +
                 ", xml=" + Arrays.toString(xml) +
-                ", territories=" + territories +
-                ", files=" + files +
                 ", resolution=" + resolution +
                 ", itunesUrl='" + itunesUrl + '\'' +
+                ", territoryCodes='" + territoryCodes + '\'' +
+                ", label='" + label + '\'' +
+                ", startDate=" + releaseDate +
                 "} " + super.toString();
     }
 }

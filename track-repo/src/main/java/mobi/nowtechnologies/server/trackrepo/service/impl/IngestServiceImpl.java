@@ -157,7 +157,6 @@ public class IngestServiceImpl implements IngestService{
 					}
 					track = new Track();
 					track.setIngestionDate(new Date());
-					// track.setIngestor(getIngestionProcess());
 				} else {
 					track.setIngestionUpdateDate(new Date());
 				}
@@ -177,30 +176,12 @@ public class IngestServiceImpl implements IngestService{
 				track.setLicensed(value.licensed);
                 track.setExplicit(value.explicit);
 
-				Set<AssetFile> files = track.getFiles();
-				if (files == null) {
-					files = new HashSet<AssetFile>();
-					track.setFiles(files);
-				}
+                if (!addOrUpdateFiles(track, value.files, updateFiles)) {
+                    commit(ingestor, parser, drop.getDrop(), list, false, true, "Drop is updating asset files: to be processed manually");
+                    return;
+                }
 
-				List<DropAssetFile> dropFiles = value.files;
-				LOG.info("Adding files " + dropFiles.size());
-				for (DropAssetFile file : dropFiles) {
-					if (!AddOrUpdateFile(files, file, updateFiles)) {
-						commit(ingestor, parser, drop.getDrop(), list, false, true, "Drop is updating asset files: to be processed manually");
-						return;
-					}
-				}
-
-				Set<Territory> territories = track.getTerritories();
-				if (territories == null) {
-					territories = new HashSet<Territory>();
-					track.setTerritories(territories);
-				}
-				boolean takeDown = false;
-				for (DropTerritory territoryData : value.territories) {
-					takeDown |= AddOrUpdateTerritory(territories, territoryData);
-				}
+                addOrUpdateTerritories(track, value.territories);
 
 				trackRepository.save(track);
 			} else if (value.type == Type.DELETE) {
@@ -359,7 +340,64 @@ public class IngestServiceImpl implements IngestService{
         return data;
     }
 
-	private boolean AddOrUpdateFile(Set<AssetFile> files, DropAssetFile dropFile, boolean force) {
+    protected boolean addOrUpdateTerritories(Track track, List<DropTerritory> dropTerritories){
+        Set<Territory> territories = track.getTerritories();
+        if (territories == null) {
+            territories = new HashSet<Territory>();
+            track.setTerritories(territories);
+        }
+
+        StringBuilder territoryCodes = new StringBuilder();
+        Date releaseDate = null;
+        String label = null;
+
+        boolean takeDown = false;
+        for (DropTerritory territoryData : dropTerritories) {
+
+            boolean result = addOrUpdateTerritory(territories, territoryData);
+            takeDown |= result;
+
+            if(result){
+                if (territoryCodes.length() > 0){
+                    territoryCodes.append(", ");
+                }else{
+                    releaseDate = territoryData.startdate;
+                    label = territoryData.label;
+                }
+                territoryCodes.append(territoryData.country);
+            }
+        }
+
+        track.setLabel(label);
+        track.setReleaseDate(releaseDate);
+        track.setTerritoryCodes(territoryCodes.toString());
+
+        return takeDown;
+    }
+
+    protected boolean addOrUpdateFiles(Track track, List<DropAssetFile> dropFiles, boolean updateFiles){
+        Set<AssetFile> files = track.getFiles();
+        if (files == null) {
+            files = new HashSet<AssetFile>();
+            track.setFiles(files);
+        }
+
+        LOG.info("Adding files " + dropFiles.size());
+        for (DropAssetFile file : dropFiles) {
+            if (!addOrUpdateFile(files, file, updateFiles)) {
+                return false;
+            }
+        }
+
+        track.setCoverFile(track.getFile(AssetFile.FileType.IMAGE));
+        track.setMediaFile(track.getFile(AssetFile.FileType.DOWNLOAD));
+        if(track.getMediaFile() == null)
+            track.setMediaFile(track.getFile(AssetFile.FileType.VIDEO));
+
+        return true;
+    }
+
+    protected boolean addOrUpdateFile(Set<AssetFile> files, DropAssetFile dropFile, boolean force) {
 		boolean found = false;
 		for (AssetFile file : files) {
 			if (file.getType() == dropFile.type) {
@@ -386,7 +424,7 @@ public class IngestServiceImpl implements IngestService{
 	 * Return false if the territory is removed (take down) Return true if the
 	 * territory is added or updated.
 	 */
-	private boolean AddOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
+	protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
 		LOG.debug("Adding territory " + value.country + " " + value.label);
 		if (value.country != null) {
 			boolean found = false;
@@ -399,7 +437,6 @@ public class IngestServiceImpl implements IngestService{
 						LOG.info("Takedown for " + value.country + " on " + territory.getReportingId());
 						territory.setDeleted(true);
 						territory.setDeleteDate(new Date());
-						// territories.remove(data);
 						return false;
 					}
 				}
