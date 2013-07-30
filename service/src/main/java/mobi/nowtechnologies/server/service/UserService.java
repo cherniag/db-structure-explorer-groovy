@@ -83,7 +83,7 @@ public class UserService {
     public Boolean canActivateVideoTrial(User u) {
         Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
 
-        if(u.is4G() && u.isO2PAYGConsumer() && u.isVideoFreeTrialHasBeenActivated()) return true;
+        if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
         boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
         if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnFreeTrial() && !u.isSubscribed() && lessMagicDate) return true;

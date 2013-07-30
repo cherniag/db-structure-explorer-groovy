@@ -101,6 +101,10 @@ public class User implements Serializable {
         return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
     }
 
+    public boolean isShowFreeTrial() {
+        return isO24GConsumer() && isO2PAYMConsumer();
+    }
+
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
