@@ -17,7 +17,7 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 	@Query(value = "select media from Media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords")
 	List<Media> getMedias(@Param("searchWords") String searchWords);
 
-    @Query(value = "select media from Media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where media.audioFile.fileType.i = :type and media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords")
+    @Query(value = "select media from Media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where media.audioFile.fileType.i = :type and (media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords)")
     List<Media> getMedias(@Param("searchWords") String searchWords, @Param("type")Byte type);
 
 	@Query(value = "select media from Media media where media.isrc = :isrc")
