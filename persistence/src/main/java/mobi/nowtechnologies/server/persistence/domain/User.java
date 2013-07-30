@@ -101,7 +101,7 @@ public class User implements Serializable {
 
     
     @Column(name = "on_video_free_trial")
-    private Boolean onVideoAudioFreeTrial;
+    private boolean onVideoAudioFreeTrial;
 
     @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
@@ -1239,6 +1239,11 @@ public class User implements Serializable {
 				.add("contract", contract).toString();
 	}
 
+	/**
+	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
+	 *
+	 * @return
+	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
@@ -1401,10 +1406,6 @@ public class User implements Serializable {
 
     public boolean is3G(){
         return Tariff._3G.equals(tariff);
-    }
-    
-    public boolean canPlayVideo() {
-        return  is4G() && (isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod());
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {

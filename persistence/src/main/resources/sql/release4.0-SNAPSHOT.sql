@@ -87,4 +87,5 @@ create table refund (
  alter table tb_media modify column headerPreviewFile int unsigned null;
  alter table tb_media modify column purchasedFile int unsigned null;
 
- alter table tb_users add column on_video_free_trial boolean not null default false;
+ alter table tb_users add column last_promo int(10);
+ alter table tb_users add constraint user_promo_code_fk foreign key (i) references tb_promoCode(id);

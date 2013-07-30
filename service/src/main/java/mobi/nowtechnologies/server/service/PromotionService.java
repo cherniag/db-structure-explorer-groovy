@@ -174,7 +174,7 @@ public class PromotionService {
         boolean isPromotionApplied = false;
         Promotion promotion = getPromotionForO24GConsumer(user);
         if (promotion != null){
-            user.setOnVideoAudioFreeTrial(true);
+            user.setLastPromo(promotion.getPromoCode());
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
@@ -182,7 +182,7 @@ public class PromotionService {
 
     private Promotion getPromotionForO24GConsumer(User user){
         final Promotion promotion;
-        final String messageCodeForPromoCode = getMessageCodeForO24GConsumer(user);
+        final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
             String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
             promotion = userService.setPotentialPromo(user, promoCode);
@@ -193,7 +193,7 @@ public class PromotionService {
         return promotion;
     }
 
-    private String getMessageCodeForO24GConsumer(User user) {
+    public String getVideoCodeForO24GConsumer(User user) {
         final String messageCodeForPromoCode;
         ContractChannel contractChannel = user.getContractChannel();
         String contract = user.getContract().name();
