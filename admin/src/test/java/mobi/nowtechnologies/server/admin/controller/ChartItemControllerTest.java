@@ -36,13 +36,6 @@ import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
-/**
- * The class <code>ChartItemControllerTest</code> contains tests for the class <code>{@link ChartItemController}</code>.
- *
- * @generatedBy CodePro at 9/3/12 5:14 PM, using the Spring generator
- * @author Alexander Kolpakov (akolpakov)
- * @version $Revision: 1.0 $
- */
 @RunWith( PowerMockRunner.class )
 @PrepareForTest(ChartDetailsAsm.class)
 public class ChartItemControllerTest extends TestCase {
@@ -55,13 +48,6 @@ public class ChartItemControllerTest extends TestCase {
 	@Mock
 	private ChartService chartService;
 	
-	/**
-	 * Run the ModelAndView updateChartItems(String,Date,Byte) method test with success expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUpdateChartItems_Successful()
@@ -80,13 +66,6 @@ public class ChartItemControllerTest extends TestCase {
 		verify(chartDetailService, times(1)).saveChartItems(any(List.class));
 	}
 	
-	/**
-	 * Run the ModelAndView updateChartItems(String,Date,Byte) method test with service exception expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@SuppressWarnings("unchecked")
 	@Test(expected=ServiceException.class)
 	public void testUpdateChartItems_ServiceException()
@@ -100,13 +79,6 @@ public class ChartItemControllerTest extends TestCase {
 		fixture.updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId);
 	}
 	
-	/**
-	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with success expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetChartItemsPage_BasicChart_Successful()
@@ -140,13 +112,6 @@ public class ChartItemControllerTest extends TestCase {
 
 	}
 	
-	/**
-	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with success expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetChartItemsPage_HotChart_Successful()
@@ -180,13 +145,6 @@ public class ChartItemControllerTest extends TestCase {
 
 	}
 	
-	/**
-	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with success expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetChartItemsPage_OtherChart_Successful()
@@ -220,13 +178,6 @@ public class ChartItemControllerTest extends TestCase {
 
 	}
 	
-	/**
-	 * Run the ModelAndView getChartItemsByDate(Date,Byte) method test with service exception expected result.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@Test(expected=ServiceException.class)
 	public void testGetChartItemsPage_ServiceException()
 		throws Exception {
@@ -296,16 +247,6 @@ public class ChartItemControllerTest extends TestCase {
 		fixture.messageSource = mock(MessageSource.class);
 	}
 
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	 * @see TestCase#tearDown()
-	 *
-	 * @generatedBy CodePro at 9/3/12 5:14 PM
-	 */
 	@After
 	public void tearDown()
 		throws Exception {

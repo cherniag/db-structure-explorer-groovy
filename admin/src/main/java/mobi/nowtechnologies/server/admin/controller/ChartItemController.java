@@ -72,13 +72,6 @@ public class ChartItemController extends AbstractCommonController {
         return chartFilesURL;
     }
 
-    /**
-     * Getting chart item list for selected date
-     *
-     * @param selectedPublishDateTime - selected date and time represented in URI
-     * @param chartId                 - chart identifier of selected chart
-     * @return madel and view name of chart item list page
-     */
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.GET)
     public ModelAndView getChartItemsPage(
             @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
@@ -124,13 +117,6 @@ public class ChartItemController extends AbstractCommonController {
         return channelList;
     }
 
-    /**
-     * Updating or creating chart item list for selected date
-     *
-     * @param selectedPublishDateTime - selected date and time represented in URI
-     * @param chartId                 - chart identifier of selected chart
-     * @return redirect to current chart page
-     */
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
     public ModelAndView updateChartItems(@RequestBody String chartItemListJSON,
                                          @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
@@ -144,16 +130,9 @@ public class ChartItemController extends AbstractCommonController {
 
         chartDetailService.saveChartItems(chartItems);
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
-        return modelAndView;
+        return new ModelAndView("redirect:/charts/" + chartId);
     }
 
-    /**
-     * Returning a page for creating a new chart item
-     *
-     * @param searchWords - search criteria of media by general propeties
-     * @return only model of media list in chart item list structure
-     */
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{mediaType}/list", method = RequestMethod.GET)
     public ModelAndView getMediaList(
             @RequestParam(value = "q", required = false) String searchWords,
@@ -161,17 +140,16 @@ public class ChartItemController extends AbstractCommonController {
             @PathVariable("chartId") Integer chartId,
             @PathVariable("mediaType") String mediaType) {
 
-        LOGGER.debug("input parameters request getMediaList(searchWords, selectedPublishDateTime, chartId): [{}], [{}], [{}]", searchWords, selectedPublishDateTime, chartId);
+        LOGGER.debug("input parameters request getMediaList(searchWords, selectedPublishDateTime, chartId): [{}], [{}], [{}], [{}]", searchWords, selectedPublishDateTime, chartId, mediaType);
 
         List<Media> medias = getMedias(searchWords, mediaType);
-
         List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtosFromMedia(selectedPublishDateTime, chartId, medias);
 
         return new ModelAndView()
                 .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
     }
 
-    private List<Media> getMedias(String searchWords, String mediaType) {
+    public List<Media> getMedias(String searchWords, String mediaType) {
         if(!hasText(searchWords)) return Collections.<Media>emptyList();
         if("media".equals(mediaType))
             return mediaService.getMusic(searchWords);
@@ -179,14 +157,6 @@ public class ChartItemController extends AbstractCommonController {
             return mediaService.getVideo(searchWords);
     }
 
-    /**
-     * Update the chart items publishTime
-     *
-     * @param selectedPublishDateTime - selected date and time of chart items publishTime
-     * @param newPublishDateTime      - new date and time of chart items publishTime
-     * @param chartId                 - selected chart id
-     * @return - returns the user to a list of the chart items for selected date
-     */
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}/{newPublishDateTime}", method = RequestMethod.POST)
     public ModelAndView updateChartItems(HttpServletResponse response,
                                          @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
