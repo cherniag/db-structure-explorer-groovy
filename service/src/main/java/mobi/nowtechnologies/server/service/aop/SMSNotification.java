@@ -190,7 +190,7 @@ public class SMSNotification {
 		return object;
 	}
 	
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForSubscribed(...))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForSubscribed(mobi.nowtechnologies.server.persistence.domain.User))")
 	public Object userDowngradeFrom4GWithRefund(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
@@ -202,7 +202,7 @@ public class SMSNotification {
 		return object;
 	}
 	
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForFreeTrial(...))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForFreeTrial(mobi.nowtechnologies.server.persistence.domain.User))")
 	public Object userDowngradeFrom4GWithoutRefound(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
