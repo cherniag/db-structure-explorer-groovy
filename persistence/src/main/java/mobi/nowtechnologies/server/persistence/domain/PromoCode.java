@@ -1,10 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
 @Entity
 @Table(name="tb_promoCode")
@@ -26,6 +30,10 @@ public class PromoCode {
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="promotionId")
 	private Promotion promotion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
+    private MediaType mediaType;
 	
 	public int getId() {
 		return id;
@@ -73,6 +81,10 @@ public class PromoCode {
 			}
 		return dtoList ;
 	}
+
+    public boolean forVideoAndMusic() {
+        return isNotNull(mediaType) && VIDEO_AND_AUDIO.equals(mediaType);
+    }
 
 	@Override
 	public String toString() {

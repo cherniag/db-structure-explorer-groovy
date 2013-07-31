@@ -3,8 +3,9 @@ package mobi.nowtechnologies.server.persistence.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
-import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -91,6 +92,23 @@ public class User implements Serializable {
         this.onVideoAudioFreeTrial = onVideoAudioFreeTrial;
     }
 
+    public PromoCode getLastPromo() {
+        return lastPromo;
+    }
+
+    public void setLastPromo(PromoCode lastPromo) {
+        this.lastPromo = lastPromo;
+    }
+
+    public boolean lastPromoEqualsTo(String promo) {
+        if(isNull(lastPromo) || isNull(lastPromo.getCode())) return false;
+        return lastPromo.getCode().equals(promo);
+    }
+
+    public boolean isLastPromoForVideo() {
+        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
+    }
+
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
@@ -100,6 +118,9 @@ public class User implements Serializable {
 	@Column(name = "i")
 	private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "last_promo")
+    private PromoCode lastPromo;
     
     @Column(name = "on_video_free_trial")
     private boolean onVideoAudioFreeTrial;

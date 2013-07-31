@@ -55,7 +55,7 @@ public class IParserFactory {
     public String getName(Ingestors name) {
         if (Ingestors.SONY_DDEX == name) {
             return Ingestors.SONY.name();
-        } else if (Ingestors.WARNER == name) {
+        } else if (Ingestors.WARNER_OLD == name) {
             return Ingestors.WARNER.name();
         }
         return name.name();
