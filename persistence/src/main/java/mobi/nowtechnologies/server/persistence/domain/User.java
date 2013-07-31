@@ -102,7 +102,8 @@ public class User implements Serializable {
     }
 
     public boolean isShowFreeTrial() {
-        return isO24GConsumer() && isO2PAYMConsumer();
+        if(isO24GConsumer() && isO2PAYMConsumer()) return false;
+        return true;
     }
 
     public static enum Fields {
