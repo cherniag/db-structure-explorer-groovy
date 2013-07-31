@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -31,7 +30,6 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactor
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -40,9 +38,8 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusFactory;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.MigService;
+import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.aop.SMSNotification;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -50,7 +47,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,11 +55,8 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -203,6 +196,47 @@ public class UserNotificationServiceImplTest {
 
 		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
+	
+	@Test
+	public void testSend4GDowngradeSMS_Success() throws Exception {
+		User user = UserFactory.createUser();
+		
+		String deviceTypeName = "ANDROID";
+		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
+		
+		user.setDeviceType( androidDeviceType );
+		
+		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.downgrade.not.for.device.type");
+		
+		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+
+			@Override
+			public boolean matches(Object argument) {
+				assertNotNull(argument);
+				Object[] args = (Object[]) argument;
+
+				assertEquals(1, args.length);
+
+				String pUrl = (String) args[0];
+
+				assertEquals(userNotificationImplSpy.getPaymentsUrl(), pUrl);
+
+				return true;
+			}
+		};
+		
+		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.downgrade.freetrial.text"), argThat(matcher));
+		Future<Boolean> result = userNotificationImplSpy.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL);
+		
+		assertNotNull(result);
+		assertEquals(true, result.get());
+		
+		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user), eq("sms.downgrade.subscriber.text"), argThat(matcher));
+		result = userNotificationImplSpy.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_SUBSCRIBED);
+		
+		assertNotNull(result);
+		assertEquals(true, result.get());
+	}
 
 	@Test
 	public void testSendUnsubscribeAfterSMS_Success() throws Exception {
@@ -257,7 +291,7 @@ public class UserNotificationServiceImplTest {
 		verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text"), argThat(matcher));
 	}
-
+	
 	@Test
 	public void testSendUnsubscribeAfterSMS_wasSmsSentSuccessfullyIsFalse_Failure() throws Exception {
 		int nextSubPayment = 100;
@@ -420,7 +454,7 @@ public class UserNotificationServiceImplTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testSendUnsubscribeAfterSMS_UserIsNull_Failure() throws Exception {
-		String deviceTypeName = "ANDROID";
+//		String deviceTypeName = "ANDROID";
 
 		User user = null;
 
@@ -705,7 +739,7 @@ public class UserNotificationServiceImplTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testSendUnsubscribePotentialSMS_UserIsNull_Failure() throws Exception {
-		String deviceTypeName = "ANDROID";
+//		String deviceTypeName = "ANDROID";
 
 		User user = null;
 
@@ -1032,7 +1066,7 @@ public class UserNotificationServiceImplTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testSendSmsOnFreeTrialExpired_UserIsNull_Failure() throws Exception {
-		String deviceTypeName = "ANDROID";
+//		String deviceTypeName = "ANDROID";
 
 		User user = null;
 

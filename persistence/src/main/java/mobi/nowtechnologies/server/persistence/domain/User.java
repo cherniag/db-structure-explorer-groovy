@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -22,7 +23,6 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -84,6 +84,14 @@ public class User implements Serializable {
         this.contractChannel = contractChannel;
     }
 
+    public boolean isOnVideoAudioFreeTrial() {
+        return onVideoAudioFreeTrial;
+    }
+
+    public void setOnVideoAudioFreeTrial(boolean onVideoAudioFreeTrial) {
+        this.onVideoAudioFreeTrial = onVideoAudioFreeTrial;
+    }
+
     public PromoCode getLastPromo() {
         return lastPromo;
     }
@@ -101,11 +109,6 @@ public class User implements Serializable {
         return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
     }
 
-    public boolean isShowFreeTrial() {
-        if(isO24GConsumer() && isO2PAYMConsumer()) return false;
-        return true;
-    }
-
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
 	}
@@ -118,9 +121,12 @@ public class User implements Serializable {
     @ManyToOne
     @JoinColumn(name = "last_promo")
     private PromoCode lastPromo;
+    
+    @Column(name = "on_video_free_trial")
+    private boolean onVideoAudioFreeTrial;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "contract_channel")
+    @Enumerated(EnumType.STRING)
     private ContractChannel contractChannel;
 
     @Enumerated(EnumType.STRING)
@@ -331,13 +337,13 @@ public class User implements Serializable {
     )
 	private List<Chart> selectedCharts = new ArrayList<Chart>();
 
-    @Column(name = "videoFreeTrialHasBeenActivated")
+    @Column(name = "video_free_trial_has_been_activated", columnDefinition = "boolean default false")
     private boolean videoFreeTrialHasBeenActivated;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
-    
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -359,7 +365,11 @@ public class User implements Serializable {
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
 	}
 
-	public boolean isIOsnonO2ItunesSubscribedUser() {
+    public boolean isShowFreeTrial() {
+        return isO24GConsumer() && isO2PAYMConsumer();
+    }
+
+    public boolean isIOsnonO2ItunesSubscribedUser() {
 		return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
 

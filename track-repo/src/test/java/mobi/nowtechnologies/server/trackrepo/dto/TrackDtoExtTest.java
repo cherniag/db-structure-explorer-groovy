@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
@@ -33,8 +34,13 @@ public class TrackDtoExtTest {
 	 * @generatedBy CodePro at 11/13/12 3:16 PM
 	 */
 	@Test
-	public void testTrackDtoExt_NoneTrritories()
+	public void testTrackDtoExt_NotNullFiles()
 		throws Exception {
+        AssetFile mediaFile = new AssetFile();
+        mediaFile.setId(1L);
+        AssetFile coverFile = new AssetFile();
+        coverFile.setId(2L);
+
 		Track track = new Track();
 		track.setLicensed(new Boolean(true));
 		track.setExplicit(new Boolean(true));
@@ -56,6 +62,9 @@ public class TrackDtoExtTest {
 		track.setArtist("");
 		track.setInfo("");
 		track.setProductId("");
+        track.setTerritoryCodes("GB, UA, US, NL");
+        track.setCoverFile(coverFile);
+        track.setMediaFile(mediaFile);
 
 		TrackDtoMapper result = new TrackDtoMapper(track);
 
@@ -77,63 +86,29 @@ public class TrackDtoExtTest {
 		assertEquals(track.getIngestor(), result.getIngestor());
 		assertEquals(track.getSubTitle(), result.getSubTitle());
 		assertEquals(track.getProductCode(), result.getProductCode());
-		assertEquals("", result.getTerritories());
+		assertEquals(track.getTerritoryCodes(), result.getTerritories());
+		assertEquals(track.getCoverFile().getId().toString(), result.getCoverFileName());
+		assertEquals(track.getMediaFile().getId().toString(), result.getMediaFileName());
 		assertEquals(track.getItunesUrl(), result.getItunesUrl());
-		assertEquals("0", result.getCoverFileName());
 		assertEquals(null, result.getReleaseDate());
 	}
-	
-	/**
-	 * Run the TrackDtoMapper(Track) constructor test one territory.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 11/13/12 3:16 PM
-	 */
-	@Test
-	public void testTrackDtoExt_OneTrritory()
-		throws Exception {
-		Territory territory = new Territory();
-		territory.setCode("GB");
-		territory.setLabel("EMI");
-		territory.setStartDate(new Date());
-		
-		Track track = new Track();
-		track.setTerritories(Collections.singleton(territory));
 
-		TrackDtoMapper result = new TrackDtoMapper(track);
-		assertEquals("GB", result.getTerritories());
-		assertEquals(territory.getLabel(), result.getLabel());
-		assertEquals(territory.getStartDate(), result.getReleaseDate());
-	}
-	
-	/**
-	 * Run the TrackDtoMapper(Track) constructor test one territory.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 11/13/12 3:16 PM
-	 */
-	@Test
-	public void testTrackDtoExt_MoreOneTrritory()
-		throws Exception {
-		Territory territory = new Territory();
-		territory.setCode("GB");
-		territory.setLabel("EMI");
-		territory.setStartDate(new Date());
-		Territory territory1 = new Territory();
-		territory1.setCode("US");
-		territory1.setLabel(territory.getLabel());
-		territory1.setStartDate(territory.getStartDate());
-		
-		Track track = new Track();
-		track.setTerritories(new HashSet<Territory>(Arrays.asList(territory, territory1)));
+    @Test
+    public void testTrackDtoExt_NullFiles_Success()
+            throws Exception {
+        AssetFile mediaFile = null;
+        AssetFile coverFile = null;
 
-		TrackDtoMapper result = new TrackDtoMapper(track);
-		assertEquals(true, "GB, US".equals(result.getTerritories()) || "US, GB".equals(result.getTerritories()));
-		assertEquals(territory.getLabel(), result.getLabel());
-		assertEquals(territory.getStartDate(), result.getReleaseDate());
-	}
+        Track track = new Track();
+        track.setCoverFile(coverFile);
+        track.setMediaFile(mediaFile);
+
+        TrackDtoMapper result = new TrackDtoMapper(track);
+
+        assertNotNull(result);
+        assertEquals("0", result.getCoverFileName());
+        assertEquals("0", result.getMediaFileName());
+    }
 
 	/**
 	 * Run the List<TrackDtoMapper> toList(List<Track>) method test.

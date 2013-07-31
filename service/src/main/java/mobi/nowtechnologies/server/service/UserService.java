@@ -22,6 +22,7 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
@@ -60,6 +61,7 @@ import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
@@ -525,12 +527,15 @@ public class UserService {
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
 
-            user.setLastPromo(promotion.getPromoCode());
+            final PromoCode promoCode = promotion.getPromoCode();
+            user.setLastPromo(promoCode);
             user.setNextSubPayment(nextSubPayment);
             user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
-
-            final PromoCode promoCode = promotion.getPromoCode();
             user.setPotentialPromoCodePromotion(null);
+
+            if(isVideoAndMusicPromoCode(promoCode)){
+                user.setVideoFreeTrialHasBeenActivated(true);
+            }
 
             user.setStatus(UserStatusDao.getSubscribedUserStatus());
             user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampSeconds * 1000L);
@@ -556,7 +561,11 @@ public class UserService {
         return isPromotionApplied;
     }
 
-	private void setPaymentStatusAccordingToPaymentType(User user) {
+    private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
+        return isNotNull(promoCode) && promoCode.forVideoAndMusic();
+    }
+
+    private void setPaymentStatusAccordingToPaymentType(User user) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -2105,19 +2114,25 @@ public class UserService {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
+                
+                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
+                
+                sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
+                
+                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             }
         } else {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
         }
         return userWithOldTariff;
     }
-
+    
     private boolean isOnVideoAudioFreeTrial(User user) {
         String promo = promotionService.getVideoCodeForO24GConsumer(user);
         return user.is4G() && user.lastPromoEqualsTo(promo) && user.isOnFreeTrial();
@@ -2172,5 +2187,13 @@ public class UserService {
 		}
         new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
         userRepository.save(user);
+    }
+    
+    public void sendSmsFor4GDowngradeForFreeTrial(User user) {
+    	// this method call is intercepted with AOP and a message will be sent to the user
+    }
+
+    public void sendSmsFor4GDowngradeForSubscribed(User user) {
+    	// this method call is intercepted with AOP and a message will be sent to the user
     }
 }

@@ -209,7 +209,7 @@ public class ReadApiTestIT {
 
         try{
             log.info("Looking up video by reference id - '" + referenceId + "'.");
-            Video video = rapi.FindVideoByReferenceId(readToken, referenceId, videoFields, customFields);
+            Video video = rapi.FindVideoByReferenceId(readToken, referenceId, videoFields, customFields, MediaDeliveryEnum.DEFAULT);
             log.info("Video: '" + video + "'.");
             log.info("----------------------------------------");
         }
