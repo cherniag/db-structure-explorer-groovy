@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.Query;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,32 +21,36 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pagable, boolean withTerritories, boolean withFiles) {
-		
+
 		String suffixWithoutFetchQuery = createSuffixQuery(searchTrackCreateria, false, false);
 		
-		Query countQuery = buildQuery("SELECT count(distinct t) FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
-		Long count = (Long) countQuery.getSingleResult();
+		Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
+        countQuery.setFirstResult(pagable.getOffset());
+        countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
+        List<Integer> ids = countQuery.getResultList();
+        Long count = new Long(ids.size() + pagable.getOffset());
 
-//		Query listQuery = buildQuery("SELECT distinct t.id FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
-//		listQuery.setFirstResult(pagable.getOffset());
-//		listQuery.setMaxResults(pagable.getPageSize());
-//		List<Integer> limitedTrackIdList = (List<Integer>) listQuery.getResultList();
-//		searchTrackCreateria.setTrackIds(limitedTrackIdList);
-		
 		String suffixQuery = createSuffixQuery(searchTrackCreateria, withTerritories, withFiles);
-		Query listQuery = buildQuery("SELECT distinct t FROM Track t " + suffixQuery, searchTrackCreateria);
+		Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCreateria);
         listQuery.setFirstResult(pagable.getOffset());
         listQuery.setMaxResults(pagable.getPageSize());
 
 		List<Track> limitedTrackList = (List<Track>) listQuery.getResultList();
-        for(Track track : limitedTrackList){
-            if(withTerritories)
-                track.getTerritories().size();
-            if(withFiles)
-                track.getFiles().size();
+        if(withFiles || withTerritories){
+            Iterator<Track> i = limitedTrackList.iterator();
+            int j = 0;
+            while(i.hasNext() && j < pagable.getPageSize()){
+                Track track = i.next();
+                if(withTerritories)
+                    track.getTerritories().size();
+                if(withFiles)
+                    track.getFiles().size();
+
+                j++;
+            }
         }
 
-		PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, count);
+        PageImpl <Track> page = new PageImpl<Track>(limitedTrackList, pagable, count);
 		return page;
 	}
 
@@ -57,29 +62,22 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
 		Query query = getEntityManager().createQuery(queryText);
 
-        if (trackCriteria.getTrackIds() != null) {
-            query = query.setParameter("limitedTrackIdList", trackCriteria.getTrackIds());
+        if (trackCriteria.getTrackIds() != null && trackCriteria.getTrackIds().size() > 0) {
+            query = query.setParameter("id", trackCriteria.getTrackIds().get(0));
         }
         else{
             setParamLike("genre", trackCriteria.getGenre(), query);
             setParamLike("album", trackCriteria.getAlbum(), query);
             setParamLike("artist", trackCriteria.getArtist(), query);
             setParamLike("title", trackCriteria.getTitle(), query);
-            setParamLike("isrc", trackCriteria.getIsrc(), query);
             setParamLike("label", trackCriteria.getLabel(), query);
             setParamLike("ingestor", trackCriteria.getIngestor(), query);
 
-            if (trackCriteria.getIngestFrom() != null) {
-                query = query.setParameter("from", trackCriteria.getIngestFrom());
-            }
-            if (trackCriteria.getIngestTo() != null)
-                query = query.setParameter("to", trackCriteria.getIngestTo());
-            if (trackCriteria.getReleaseFrom() != null)
-                query = query.setParameter("releaseFrom", trackCriteria.getReleaseFrom());
-            if (trackCriteria.getReleaseTo() != null)
-                query = query.setParameter("releaseTo", trackCriteria.getReleaseTo());
-            if (trackCriteria.getTrackIds() != null)
-                query = query.setParameter("limitedTrackIdList", trackCriteria.getTrackIds());
+            setParam("isrc", trackCriteria.getIsrc(), query);
+            setParam("from", trackCriteria.getIngestFrom(), query);
+            setParam("to", trackCriteria.getIngestTo(), query);
+            setParam("releaseFrom", trackCriteria.getReleaseFrom(), query);
+            setParam("releaseTo", trackCriteria.getReleaseTo(), query);
         }
 
 		return query;
@@ -91,21 +89,13 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		
 		StringBuilder join = new StringBuilder();
 
-//		if (withFiles) {
-//			join.append(" left join FETCH t.files files");
-//		}
-//
-//		if (withTerritories) {
-//			join.append(" left join FETCH t.territories ter");
-//		}
-
 		if (!withTerritories && (trackCriteria.getLabel() != null || trackCriteria.getReleaseFrom() != null || trackCriteria.getReleaseTo() != null)) {
 			join.append(" left join t.territories ter");
 		}
 
 		StringBuilder criteria = new StringBuilder();
-        if (trackCriteria.getTrackIds() != null)
-            addCriteria(criteria, " t.id in :limitedTrackIdList");
+        if (trackCriteria.getTrackIds() != null && trackCriteria.getTrackIds().size() > 0)
+            addCriteria(criteria, " t.id = :id");
         else{
             if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty())
                 addCriteria(criteria, " (ter.label like :label or ter.distributor like :label)");
@@ -122,7 +112,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             if (trackCriteria.getTitle() != null && !trackCriteria.getTitle().isEmpty())
                 addCriteria(criteria, " lower(t.title) like :title");
             if (trackCriteria.getIsrc() != null && !trackCriteria.getIsrc().isEmpty())
-                addCriteria(criteria, " lower(t.isrc) like :isrc");
+                addCriteria(criteria, " t.isrc = :isrc");
             if (trackCriteria.getIngestFrom() != null)
                 addCriteria(criteria, " t.ingestionDate >= :from");
             if (trackCriteria.getIngestTo() != null)
@@ -139,4 +129,14 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 		if (paramVal != null && !paramVal.isEmpty())
 			query.setParameter(paramKey, "%" + paramVal.toLowerCase() + "%");
 	}
+
+    private void setParam(String paramKey, String paramVal, Query query) {
+		if (paramVal != null && !paramVal.isEmpty())
+			query.setParameter(paramKey, paramVal);
+	}
+
+    private void setParam(String paramKey, Object paramVal, Query query) {
+        if (paramVal != null)
+            query.setParameter(paramKey, paramVal);
+    }
 }

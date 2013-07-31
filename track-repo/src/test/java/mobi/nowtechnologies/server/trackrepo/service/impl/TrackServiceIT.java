@@ -79,7 +79,7 @@ public class TrackServiceIT {
     @Test
     public void testCreateVideo_Success() throws Exception {
         //test preparation
-        URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/hits.mp4");
+        URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/o2Tracks.mp4");
         String videoPath = new File(videoURL.toURI()).getAbsolutePath();
 
         Track anyTrack = TrackFactory.anyTrack();

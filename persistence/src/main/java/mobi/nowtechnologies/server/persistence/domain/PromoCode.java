@@ -13,21 +13,20 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO
 @Entity
 @Table(name="tb_promoCode")
 public class PromoCode {
-
-
-
-    public static enum Fields {
-		id, code, promotionId;
-    }
+	
+	public static enum Fields {
+		id, code, promotionId
+	}
+	
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-
-
-    private String code;
+	private String code;
+	
 	@Column(insertable=false, updatable=false)
 	private byte promotionId;
-
+	 
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="promotionId")
 	private Promotion promotion;

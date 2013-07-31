@@ -4,20 +4,18 @@ import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,10 +48,6 @@ public class GetChartControllerIT {
 
 	@Autowired
 	private ApplicationContext applicationContext;
-	
-	@Autowired
-	@Qualifier("service.UserService")
-	private UserService userService;
 	
 	@Autowired
 	private ChartRepository chartRepository;

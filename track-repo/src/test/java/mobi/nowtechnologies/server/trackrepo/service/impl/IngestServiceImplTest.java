@@ -1,10 +1,27 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import junit.framework.Assert;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.Territory;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.factory.TrackFactory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.*;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,12 +30,208 @@ import org.junit.Test;
  * Time: 12:25 PM
  * To change this template use File | Settings | File Templates.
  */
+@RunWith(PowerMockRunner.class)
 public class IngestServiceImplTest {
     private IngestServiceImpl fixture;
 
     @Before
     public void setUp() throws Exception {
-        fixture = new IngestServiceImpl();
+        fixture = spy(new IngestServiceImpl());
+    }
+
+    @Test
+    public void testAddOrUpdateTerritories_NotNullTers_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setTerritories(new HashSet<Territory>());
+
+        List<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label1";
+        dropTerritory.country = "GB";
+        dropTerritories.add(dropTerritory);
+        dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label2";
+        dropTerritory.country = "UA";
+        dropTerritories.add(dropTerritory);
+
+        doReturn(true).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+
+        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals("GB, UA", track.getTerritoryCodes());
+        Assert.assertEquals("Label1", track.getLabel());
+
+        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+    }
+
+    @Test
+    public void testAddOrUpdateTerritories_NullTers_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+
+        List<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label1";
+        dropTerritory.country = "GB";
+        dropTerritories.add(dropTerritory);
+        dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label2";
+        dropTerritory.country = "UA";
+        dropTerritories.add(dropTerritory);
+
+        doReturn(true).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+
+        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals("GB, UA", track.getTerritoryCodes());
+        Assert.assertEquals("Label1", track.getLabel());
+
+        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+    }
+
+    @Test
+    public void testAddOrUpdateFiles_NullFilesAndAudioTrack_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+
+        List<DropAssetFile> dropFiles = new ArrayList<DropAssetFile>();
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/image";
+        dropFile.type = AssetFile.FileType.IMAGE;
+        dropFile.isrc = "dffffff";
+        dropFiles.add(dropFile);
+        DropAssetFile audioDropFile = new DropAssetFile();
+        audioDropFile.file = "path/audio";
+        audioDropFile.type = AssetFile.FileType.DOWNLOAD;
+        audioDropFile.isrc = "dffffff";
+        dropFiles.add(audioDropFile);
+
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
+
+        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+    }
+
+    @Test
+    public void testAddOrUpdateFiles_NotNullFilesAndAudioTrack_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+
+        List<DropAssetFile> dropFiles = new ArrayList<DropAssetFile>();
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/image";
+        dropFile.type = AssetFile.FileType.IMAGE;
+        dropFile.isrc = "dffffff";
+        dropFiles.add(dropFile);
+        DropAssetFile audioDropFile = new DropAssetFile();
+        audioDropFile.file = "path/audio";
+        audioDropFile.type = AssetFile.FileType.DOWNLOAD;
+        audioDropFile.isrc = "dffffff";
+        dropFiles.add(audioDropFile);
+        DropAssetFile videoDropFile = new DropAssetFile();
+        videoDropFile.file = "path/video";
+        videoDropFile.type = AssetFile.FileType.VIDEO;
+        videoDropFile.isrc = "dffffff";
+        dropFiles.add(videoDropFile);
+
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
+
+        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+    }
+
+    @Test
+    public void testAddOrUpdateFiles_NotNullFilesAndVideoTrack_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+
+        List<DropAssetFile> dropFiles = new ArrayList<DropAssetFile>();
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/image";
+        dropFile.type = AssetFile.FileType.IMAGE;
+        dropFile.isrc = "dffffff";
+        dropFiles.add(dropFile);
+        DropAssetFile videoDropFile = new DropAssetFile();
+        videoDropFile.file = "path/video";
+        videoDropFile.type = AssetFile.FileType.VIDEO;
+        videoDropFile.isrc = "dffffff";
+        dropFiles.add(videoDropFile);
+
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
+
+        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+    }
+
+    @Test
+    public void testAddOrUpdateFiles_DontUpdateFile_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+        AssetFile assetFile = new AssetFile();
+        assetFile.setPath("path/image");
+        assetFile.setType(AssetFile.FileType.IMAGE);
+        track.getFiles().add(assetFile);
+
+        List<DropAssetFile> dropFiles = new ArrayList<DropAssetFile>();
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/image";
+        dropFile.type = AssetFile.FileType.IMAGE;
+        dropFile.isrc = "dffffff";
+        dropFiles.add(dropFile);
+        DropAssetFile videoDropFile = new DropAssetFile();
+        videoDropFile.file = "path/video";
+        videoDropFile.type = AssetFile.FileType.VIDEO;
+        videoDropFile.isrc = "dffffff";
+        dropFiles.add(videoDropFile);
+
+        boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
+
+        Assert.assertFalse(result);
+        Assert.assertEquals(null, track.getMediaFile());
+        Assert.assertEquals(null, track.getCoverFile());
+
+        verify(fixture, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+    }
+
+    @Test
+    public void testAddOrUpdateTerritories_WithTakeDown_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setTerritories(new HashSet<Territory>());
+
+        List<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        DropTerritory dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label1";
+        dropTerritory.country = "GB";
+        dropTerritories.add(dropTerritory);
+        dropTerritory = new DropTerritory();
+        dropTerritory.startdate = new Date();
+        dropTerritory.label = "Label2";
+        dropTerritory.country = "UA";
+        dropTerritories.add(dropTerritory);
+
+        doReturn(false).when(fixture).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
+
+        boolean result = fixture.addOrUpdateTerritories(track, dropTerritories);
+
+        Assert.assertFalse(result);
+        Assert.assertEquals("", track.getTerritoryCodes());
+        Assert.assertEquals(null, track.getLabel());
+
+        verify(fixture, times(2)).addOrUpdateTerritory(any(Set.class), any(DropTerritory.class));
     }
 
     @Test

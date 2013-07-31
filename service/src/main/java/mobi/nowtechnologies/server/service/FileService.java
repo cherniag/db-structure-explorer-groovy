@@ -2,9 +2,11 @@ package mobi.nowtechnologies.server.service;
 
 import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEnum;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -230,10 +232,12 @@ public class FileService{
 	}
 
     @Transactional(readOnly = true)
-    public String getVideoURL(String mediaIsrc) throws BrightcoveException {
+    public String getVideoURL(User user, String mediaIsrc) throws BrightcoveException {
        LOGGER.debug("Get video url for isrc="+mediaIsrc);
 
-       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.FLVFULLLENGTH), null);
+       MediaDeliveryEnum mediaDelivery = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName()) ? MediaDeliveryEnum.HTTP : MediaDeliveryEnum.HTTP_IOS;
+
+       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL), null, mediaDelivery);
 
        LOGGER.debug("Return video url=[{}] for isrc=[{}]",new Object[]{video.getFlvUrl(), mediaIsrc});
        return video.getFlvUrl();

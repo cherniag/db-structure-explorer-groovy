@@ -28,6 +28,7 @@ public class TrackDto {
 	private Date ingestionDate;
 	private TrackStatus status;
 	private String coverFileName;
+	private String mediaFileName;
 
 	// ------------------additional properties------------------//
 	private String label;
@@ -343,9 +344,15 @@ public class TrackDto {
 		this.areArtistUrls = areArtistUrls;
 	}
 
+    public String getMediaFileName() {
+        return mediaFileName;
+    }
 
+    public void setMediaFileName(String mediaFileName) {
+        this.mediaFileName = mediaFileName;
+    }
 
-	@Override
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
