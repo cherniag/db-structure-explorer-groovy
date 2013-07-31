@@ -12,6 +12,9 @@ import java.util.concurrent.Future;
  */
 public interface UserNotificationService {
 
+	String DOWNGRADE_FROM_4G_SUBSCRIBED = "DOWNGRADE_FROM_4G_SUBSCRIBED";
+	String DOWNGRADE_FROM_4G_FREETRIAL = "DOWNGRADE_FROM_4G_FREETRIAL";
+	
 	Future<Boolean> notifyUserAboutSuccesfullPayment(User user);
 
 	Future<Boolean> sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException;
@@ -23,4 +26,7 @@ public interface UserNotificationService {
 	Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException;
 
 	Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException;
+	
+	Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException;
+
 }

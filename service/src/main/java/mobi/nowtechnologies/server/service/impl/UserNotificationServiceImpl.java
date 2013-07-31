@@ -353,6 +353,52 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 			LogUtils.removeGlobalMDC();
 		}
 	}
+	
+	@Async
+	@Override
+	public Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException {
+		try {
+			LOGGER.debug("send4GDowngradeSMS [{}, {}]", user, smsType);
+			if ( user == null ) {
+				throw new NullPointerException("The parameter user is null");
+			}
+			if ( smsType == null ) {
+				throw new NullPointerException("smsType is null");
+			}
+
+			final UserGroup userGroup = user.getUserGroup();
+			final Community community = userGroup.getCommunity();
+
+			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+
+			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+
+			LOGGER.info("Attempt to send downgrade sms async in memory");
+
+			if (!rejectDevice(user, "sms.notification.downgrade.not.for.device.type")) {
+				
+				String smsPrefix = "sms.downgrade.subscriber.text";
+				if ( UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL.equals(smsType) ) {
+					smsPrefix = "sms.downgrade.freetrial.text";
+				}
+
+				boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] { paymentsUrl });
+
+				if (wasSmsSentSuccessfully) {
+					LOGGER.info("The downgrade sms was sent successfully");
+					result = new AsyncResult<Boolean>(Boolean.TRUE);
+				} else {
+					LOGGER.info("The downgrade sms wasn't sent");
+				}
+			} else {
+				LOGGER.info("The downgrade sms wasn't sent cause rejecting");
+			}
+			LOGGER.debug("Output parameter result=[{}]", result);
+			return result;
+		} finally {
+			LogUtils.removeGlobalMDC();
+		}
+	}
 
 	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);

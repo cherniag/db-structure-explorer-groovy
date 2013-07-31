@@ -189,4 +189,28 @@ public class SMSNotification {
 		}
 		return object;
 	}
+	
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForSubscribed(...))")
+	public Object userDowngradeFrom4GWithRefund(ProceedingJoinPoint joinPoint) throws Throwable {
+		Object object = joinPoint.proceed();
+		User user = (User) joinPoint.getArgs()[0];
+		try {
+			userNotificationService.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_SUBSCRIBED);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return object;
+	}
+	
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.sendSmsFor4GDowngradeForFreeTrial(...))")
+	public Object userDowngradeFrom4GWithoutRefound(ProceedingJoinPoint joinPoint) throws Throwable {
+		Object object = joinPoint.proceed();
+		User user = (User) joinPoint.getArgs()[0];
+		try {
+			userNotificationService.send4GDowngradeSMS(user, UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return object;
+	}
 }
