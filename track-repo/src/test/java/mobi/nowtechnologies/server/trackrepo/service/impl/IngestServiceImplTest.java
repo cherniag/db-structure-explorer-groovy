@@ -144,10 +144,10 @@ public class IngestServiceImplTest {
         boolean result = fixture.addOrUpdateFiles(track, dropFiles, false);
 
         Assert.assertTrue(result);
-        Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
-        verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+        verify(fixture, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
     }
 
     @Test

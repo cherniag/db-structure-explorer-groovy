@@ -412,6 +412,8 @@ public class Track extends AbstractEntity {
 
     public void setMediaFile(AssetFile mediaFile) {
         this.mediaFile = mediaFile;
+
+        this.mediaFileId = mediaFile != null ? mediaFile.getId() : null;
     }
 
     public AssetFile getCoverFile() {
@@ -420,6 +422,8 @@ public class Track extends AbstractEntity {
 
     public void setCoverFile(AssetFile coverFile) {
         this.coverFile = coverFile;
+
+        this.coverFileId = coverFile != null ? coverFile.getId() : null;
     }
 
     public Long getCoverFileId() {

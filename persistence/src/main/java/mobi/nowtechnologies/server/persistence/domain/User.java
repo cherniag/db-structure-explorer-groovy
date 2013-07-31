@@ -365,7 +365,11 @@ public class User implements Serializable {
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
 	}
 
-	public boolean isIOsnonO2ItunesSubscribedUser() {
+    public boolean isShowFreeTrial() {
+        return isO24GConsumer() && isO2PAYMConsumer();
+    }
+
+    public boolean isIOsnonO2ItunesSubscribedUser() {
 		return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
 

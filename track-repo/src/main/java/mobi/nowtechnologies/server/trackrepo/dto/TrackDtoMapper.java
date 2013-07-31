@@ -39,8 +39,8 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 		this.setTerritories(track.getTerritoryCodes());
         this.setLabel(track.getLabel());
         this.setReleaseDate(track.getReleaseDate());
-        this.setCoverFileName(track.getCoverFile() != null ? track.getCoverFileId().toString() : "0");
-        this.setMediaFileName(track.getMediaFile() != null ? track.getMediaFileId().toString() : "0");
+        this.setCoverFileName(track.getCoverFileId() != null ? track.getCoverFileId().toString() : "0");
+        this.setMediaFileName(track.getMediaFileId() != null ? track.getMediaFileId().toString() : "0");
 	}
 	
 	public static List<TrackDtoMapper> toList(List<Track> tracks) {
