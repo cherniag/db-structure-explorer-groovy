@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.Utils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
