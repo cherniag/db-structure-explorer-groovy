@@ -1893,14 +1893,25 @@ public class UserService {
 	public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
 		try {
 			LOGGER.debug("input parameters user: [{}]", user);
+			
+			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			Community community = user.getUserGroup().getCommunity();
 			PaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
 			PaymentPolicy paymentPolicy = currentActivePaymentDetails.getPaymentPolicy();
 
 			final String upperCaseCommunityName = community.getRewriteUrlParameter().toUpperCase();
-			final String message = messageSource.getMessage(upperCaseCommunityName, "sms.succesfullPayment.text", new Object[] { community.getDisplayName(),
+			String smsMessage = "sms.succesfullPayment.text";
+			if ( user.has4GVideoAudioSubscription() ) {
+				smsMessage = new StringBuilder().append(smsMessage).append(".video").toString();
+			}
+			final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage, new Object[] { community.getDisplayName(),
 					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+			
+			if ( message == null || message.isEmpty() ) {
+				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());
+				return result;
+			}
 
 			MigResponse migResponse = migHttpService.makeFreeSMSRequest(((MigPaymentDetails) currentActivePaymentDetails).getMigPhoneNumber(), message);
 
@@ -1915,7 +1926,7 @@ public class UserService {
 			if (user.getLastSuccesfullPaymentSmsSendingTimestampMillis() == 0)
 				resetLastSuccesfullPaymentSmsSendingTimestampMillis(user.getId());
 
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.TRUE);
+			result = new AsyncResult<Boolean>(Boolean.TRUE);
 
 			LOGGER.debug("Output parameter result=[{}]", result);
 			return result;
