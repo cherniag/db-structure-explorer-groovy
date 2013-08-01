@@ -55,7 +55,7 @@ create table refund (
   log_time_millis bigint,
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
-  user_id int(10) not null,
+  user_id int(10) unsigned not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
@@ -66,12 +66,15 @@ create table refund (
  alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details_id), add constraint tb_users_U_last_successful_payment_details foreign key (last_successful_payment_details_id) references tb_paymentDetails (i);
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
+ ALTER TABLE tb_promotions MODIFY COLUMN description char(100) NOT NULL;
+ ALTER TABLE tb_promotions MODIFY COLUMN label varchar(30);
+
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
    value('o2 Video Audio Free Trial for 4G direct consumers', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2.consumer.4g.direct', 0, 0, 0, false);
- insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
+ insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
    value('o2 Video Audio Free Trial for 4G indirect consumers', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2.consumer.4g.indirect', 0, 0, 0, false);
- insert into tb_promoCode(code, promotionId, 'VIDEO_AND_AUDIO') select label, i from tb_promotions where label = 'o2.consumer.4g.direct';
- insert into tb_promoCode(code, promotionId, 'VIDEO_AND_AUDIO') select label, i from tb_promotions where label = 'o2.consumer.4g.indirect';
+ insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.direct';
+ insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.indirect';
 
  --
  alter table tb_users add column contract_channel varchar(255) default 'DIRECT';
@@ -91,9 +94,6 @@ create table refund (
  alter table tb_users add column last_promo int(10);
  alter table tb_users add constraint user_promo_code_fk foreign key (i) references tb_promoCode(id);
  
- 
- -- ALTER TABLE tb_paymentPolicy ADD COLUMN media_type VARCHAR(25) NULL DEFAULT 'AUDIO';
-
 -- insert 3 new audio payment policies for o2 consumer group
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
