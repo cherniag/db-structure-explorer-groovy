@@ -31,7 +31,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * 
  * Testing to see if we have messages for all users - the idea is to have all user types from app
- * and to see messages sent to the migservice
+ * and to see messages sent to migservice
  *
  */
 @RunWith(PowerMockRunner.class)
@@ -60,6 +60,7 @@ public class UserNotificationServiceImplIT {
 		
 		Mockito.when(migResponse.getHttpStatus()).thenReturn(200);
 		Mockito.when(migResponse.getMessage()).thenReturn("000=[GEN] OK ");
+		Mockito.when(migResponse.isSuccessful()).thenReturn(true);
 		Mockito.when(migHttpService.makeFreeSMSRequest(anyString(), anyString(), anyString())).thenReturn(migResponse);
 		
 		audioOnlyUsers = new ArrayList<User>();

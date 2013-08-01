@@ -107,6 +107,7 @@ public class UserServiceTest {
     private Tariff currentUserTariff;
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
+    private UserServiceNotification userServiceNotification;
 
     @Test
     public void testUpdateVideoTrial() {
@@ -841,6 +842,7 @@ public class UserServiceTest {
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
+        userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
 
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 		
@@ -873,6 +875,7 @@ public class UserServiceTest {
 		userServiceSpy.setiTunesService(iTunesServiceMock);
 		userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
+        userServiceSpy.setUserServiceNotification(userServiceNotification);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}

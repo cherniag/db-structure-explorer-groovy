@@ -88,7 +88,7 @@ public class UserService {
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
         boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnFreeTrial() && !u.isSubscribed() && lessMagicDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && !u.isOnVideoAudioSubscription() && lessMagicDate) return true;
         if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
         return  false;
     }
@@ -155,6 +155,7 @@ public class UserService {
 	private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
+    private UserServiceNotification userServiceNotification;
 
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
@@ -162,7 +163,7 @@ public class UserService {
 		this.o2ClientService = o2ClientService;
 	}
     
-    public void setO2Service(O2Service o2Service) {
+	public void setO2Service(O2Service o2Service) {
     	this.o2Service = o2Service;
     }
 
@@ -267,6 +268,11 @@ public class UserService {
     public void setRefundService(RefundService refundService) {
         this.refundService = refundService;
     }
+    
+    public void setUserServiceNotification(
+			UserServiceNotification userServiceNotification) {
+		this.userServiceNotification = userServiceNotification;
+	}
 
     @Deprecated
 	public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
@@ -2126,17 +2132,17 @@ public class UserService {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             }
         } else {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
@@ -2200,11 +2206,4 @@ public class UserService {
         userRepository.save(user);
     }
     
-    public void sendSmsFor4GDowngradeForFreeTrial(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
-
-    public void sendSmsFor4GDowngradeForSubscribed(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
 }
