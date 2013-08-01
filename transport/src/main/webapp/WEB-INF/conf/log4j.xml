@@ -43,7 +43,7 @@
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
-			<param name="classNames" value="mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartController, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" />
+			<param name="classNames" value="mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartControllerTestIT, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" />
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>

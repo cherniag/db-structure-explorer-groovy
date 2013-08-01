@@ -123,4 +123,4 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 (10,1,'1.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
 
  -- insert new windows phone device type to database
-INSERT INTO tb_deviceTypes (i, name) VALUES (7,'WINDOWS_PHONE');
+INSERT INTO tb_deviceTypes (name) VALUES ('WINDOWS_PHONE');

@@ -38,7 +38,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class GetFileControllerIT {
+public class GetFileControllerTestIT {
 	
 	private MockMvc mockMvc;
 
