@@ -20,6 +20,7 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -478,7 +479,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 		String msg = null;
 
-		String[] codes = new String[5];
+		String[] codes = new String[6];
 
 		final String provider = user.getProvider();
 		final SegmentType segment = user.getSegment();
@@ -495,7 +496,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		codes[2] = getCode(codes, 1, segment);
 		codes[3] = getCode(codes, 2, contract);
 		codes[4] = getCode(codes, 3, deviceTypeName);
-
+		codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
+		
 		for (int i = codes.length - 1; i >= 0; i--) {
 			if (codes[i] != null) {
 				msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
