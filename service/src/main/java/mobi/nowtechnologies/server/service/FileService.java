@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
 import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Rendition;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.EnumSet;
+import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.AppConstants.SEPARATOR;
 import static org.apache.commons.lang.StringUtils.containsAny;
@@ -233,13 +236,28 @@ public class FileService{
 
     @Transactional(readOnly = true)
     public String getVideoURL(User user, String mediaIsrc) throws BrightcoveException {
-       LOGGER.debug("Get video url for isrc="+mediaIsrc);
+       LOGGER.debug("Get video url for isrc=" + mediaIsrc);
 
-       MediaDeliveryEnum mediaDelivery = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName()) ? MediaDeliveryEnum.HTTP : MediaDeliveryEnum.HTTP_IOS;
+       boolean isWindowsPhoneUser = DeviceType.WINDOWS_PHONE.equals(user.getDeviceType().getName());
+       MediaDeliveryEnum mediaDelivery = isWindowsPhoneUser ? MediaDeliveryEnum.HTTP : MediaDeliveryEnum.HTTP_IOS;
 
-       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL), null, mediaDelivery);
+       Video video =  brightcoveReadService.FindVideoByReferenceId(brightcoveReadToken, mediaIsrc, EnumSet.of(VideoFieldEnum.FLVURL, VideoFieldEnum.RENDITIONS), null, mediaDelivery);
+       String url = video.getFlvUrl();
+       if(isWindowsPhoneUser){
+           url = url != null && url.endsWith(TranscodeEncodeToEnum.MP4.name().toLowerCase()) ? url : null;
+           if(url == null){
+               List<Rendition> renditions =  video.getRenditions();
+               if(renditions != null){
+                   for(Rendition rendition : renditions){
+                        if(rendition.getVideoContainer().equals(TranscodeEncodeToEnum.MP4.name())){
+                            url = rendition.getUrl();
+                        }
+                   }
+               }
+           }
+       }
 
        LOGGER.debug("Return video url=[{}] for isrc=[{}]",new Object[]{video.getFlvUrl(), mediaIsrc});
-       return video.getFlvUrl();
+       return url;
     }
 }

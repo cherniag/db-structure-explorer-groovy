@@ -15,14 +15,14 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * CommandsTest
+ * CommandsTestIT
  * 
  * @author Maksym Chernolevskyi (maksym)
  * 
  */
 @Ignore
-public class CommandsTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CommandsTest.class);
+public class CommandsTestIT {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommandsTestIT.class);
 
 	private static final String URL = "http://localhost:8080/transport/service/";
 	

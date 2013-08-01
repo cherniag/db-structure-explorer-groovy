@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.shared;
 
-import static org.mockito.Mockito.spy;
-
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import static org.mockito.Mockito.spy;
 
 @SuppressWarnings("rawtypes")
 public class MockitoSpyFactoryBean implements FactoryBean, InitializingBean {
@@ -35,7 +35,7 @@ public class MockitoSpyFactoryBean implements FactoryBean, InitializingBean {
 
 	@Override
 	public Class getObjectType() {
-		return realObject.getClass();
+		return realObject != null ? realObject.getClass() : Object.class;
 	}
 
 	@Override

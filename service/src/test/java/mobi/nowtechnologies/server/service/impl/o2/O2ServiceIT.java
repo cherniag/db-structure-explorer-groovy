@@ -36,14 +36,14 @@ public class O2ServiceIT {
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertTrue(res.isContractPostPayOrPrePay());
-		assertFalse(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
+		assertTrue(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
 		assertTrue(res.isTariff4G());
 		
 		res=o2service.getSubscriberData(PhoneNumbers.O2_4G_BOLTON);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertTrue(res.isContractPostPayOrPrePay());
-		assertFalse(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
+		assertTrue(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
 		assertTrue(res.isTariff4G());
 		
 		//TODO: pay as you go numbers!!!???

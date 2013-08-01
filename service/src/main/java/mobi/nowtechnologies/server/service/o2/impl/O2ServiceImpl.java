@@ -56,7 +56,7 @@ public class O2ServiceImpl implements O2Service {
 		String digitOnlyPhoneNumber = getDigits(originalPhoneNumber);
 
 		O2SubscriberData data = createSubscriberData(digitOnlyPhoneNumber);
-		LOGGER.info("busness: {}, contract:{}, provider O2:{}", data.isBusinessOrConsumerSegment(),
+		LOGGER.info("business:{}, contract:{}, provider O2:{}", data.isBusinessOrConsumerSegment(),
 				data.isContractPostPay(), data.isProviderO2());
 
 		if (data.isProviderO2() && data.isConsumerSegment()) {
@@ -66,6 +66,9 @@ public class O2ServiceImpl implements O2Service {
 				if (data.isTariff4G()) {
 					if (CALL_GET_ORDER_LIST) {
 						data.setDirectOrIndirect4GChannel(isPostPayDirectChannel(digitOnlyPhoneNumber));
+					}else{
+						//assume direct channel before O2 is ready 
+						data.setDirectOrIndirect4GChannel(true);
 					}
 				}
 			} else {

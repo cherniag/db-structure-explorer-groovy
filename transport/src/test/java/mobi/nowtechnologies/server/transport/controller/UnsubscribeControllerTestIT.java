@@ -59,10 +59,10 @@ import org.xml.sax.InputSource;
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.EntityController")
+@MockWebApplication(name = "transport.EntityController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class UnsubscribeControllerIT {
+public class UnsubscribeControllerTestIT {
 
 	private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
 	private static final XPathExpression OPERATOR_XPATHEXPRESSION;

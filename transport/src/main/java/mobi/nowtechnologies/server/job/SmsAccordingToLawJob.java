@@ -107,7 +107,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			for (User user : users) {
 				final MigPaymentDetails currentActivePaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
 				final PaymentPolicy paymentPolicy = currentActivePaymentDetails.getPaymentPolicy();
-
+				
 				if (user.getAmountOfMoneyToUserNotification().compareTo(amountOfMoneyToUserNotification) >= 0) {
 					proccess(upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy,
 							amountOfMoneyToUserNotificationIsReachedMessageCode);
@@ -123,19 +123,31 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 		}
 	}
 
-	private User proccess(final String upperCaseCommunityName, Community community, User user, final MigPaymentDetails currentActivePaymentDetails,
+	// TODO Investigate why this method is not in UserNotificationService class
+	private void proccess(final String upperCaseCommunityName, Community community, User user, final MigPaymentDetails currentActivePaymentDetails,
 			final PaymentPolicy paymentPolicy, final String messageCode) {
+		
+		String messageToSearch = messageCode;
+		if ( user.has4GVideoAudioSubscription() ) {
+			messageToSearch = new StringBuilder().append(messageCode).append(".video").toString();
+		}
+		
 		LOGGER
 				.debug(
 						"input parameters upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageCode: [{}], [{}], [{}], {{}}, [{}], [{}]",
-						new Object[] { upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageCode });
+						new Object[] { upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageToSearch });
 		try {
 			LogUtils.putSpecificMDC(user.getUserName(), community.getName());
 			
 			LOGGER.info("Processing started for user with id [{}], userName [{}], communityName [{}]", new Object[] { user.getId(), user.getUserName(), community.getName() });
-			String message = messageSource.getMessage(upperCaseCommunityName, messageCode, new Object[] { community.getDisplayName(),
+			String message = messageSource.getMessage(upperCaseCommunityName, messageToSearch, new Object[] { community.getDisplayName(),
 					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
 
+			if ( message == null || message.isEmpty() ) {
+				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. The sms message was not sent for user [{}]", messageToSearch, user.getId());
+				return;
+			}
+			
 			MigResponse migResponse = migHttpService.makeFreeSMSRequest(currentActivePaymentDetails.getMigPhoneNumber(), message);
 			
 			if (migResponse.isSuccessful()) {
@@ -155,7 +167,6 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			LogUtils.removeSpecificMDC();
 		}
 		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
 	}
 
 }

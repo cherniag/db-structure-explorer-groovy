@@ -155,6 +155,7 @@ public class UserService {
 	private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
+    private UserServiceNotification userServiceNotification;
 
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
@@ -162,7 +163,7 @@ public class UserService {
 		this.o2ClientService = o2ClientService;
 	}
     
-    public void setO2Service(O2Service o2Service) {
+	public void setO2Service(O2Service o2Service) {
     	this.o2Service = o2Service;
     }
 
@@ -267,6 +268,11 @@ public class UserService {
     public void setRefundService(RefundService refundService) {
         this.refundService = refundService;
     }
+    
+    public void setUserServiceNotification(
+			UserServiceNotification userServiceNotification) {
+		this.userServiceNotification = userServiceNotification;
+	}
 
     @Deprecated
 	public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
@@ -1893,14 +1899,25 @@ public class UserService {
 	public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
 		try {
 			LOGGER.debug("input parameters user: [{}]", user);
+			
+			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			Community community = user.getUserGroup().getCommunity();
 			PaymentDetails currentActivePaymentDetails = user.getCurrentPaymentDetails();
 			PaymentPolicy paymentPolicy = currentActivePaymentDetails.getPaymentPolicy();
 
 			final String upperCaseCommunityName = community.getRewriteUrlParameter().toUpperCase();
-			final String message = messageSource.getMessage(upperCaseCommunityName, "sms.succesfullPayment.text", new Object[] { community.getDisplayName(),
+			String smsMessage = "sms.succesfullPayment.text";
+			if ( user.has4GVideoAudioSubscription() ) {
+				smsMessage = new StringBuilder().append(smsMessage).append(".video").toString();
+			}
+			final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage, new Object[] { community.getDisplayName(),
 					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+			
+			if ( message == null || message.isEmpty() ) {
+				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());
+				return result;
+			}
 
 			MigResponse migResponse = migHttpService.makeFreeSMSRequest(((MigPaymentDetails) currentActivePaymentDetails).getMigPhoneNumber(), message);
 
@@ -1915,7 +1932,7 @@ public class UserService {
 			if (user.getLastSuccesfullPaymentSmsSendingTimestampMillis() == 0)
 				resetLastSuccesfullPaymentSmsSendingTimestampMillis(user.getId());
 
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.TRUE);
+			result = new AsyncResult<Boolean>(Boolean.TRUE);
 
 			LOGGER.debug("Output parameter result=[{}]", result);
 			return result;
@@ -2115,17 +2132,17 @@ public class UserService {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             }
         } else {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
@@ -2189,11 +2206,4 @@ public class UserService {
         userRepository.save(user);
     }
     
-    public void sendSmsFor4GDowngradeForFreeTrial(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
-
-    public void sendSmsFor4GDowngradeForSubscribed(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
 }
