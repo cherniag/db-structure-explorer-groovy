@@ -124,7 +124,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 	}
 
 	// TODO Investigate why this method is not in UserNotificationService class
-	private User proccess(final String upperCaseCommunityName, Community community, User user, final MigPaymentDetails currentActivePaymentDetails,
+	private void proccess(final String upperCaseCommunityName, Community community, User user, final MigPaymentDetails currentActivePaymentDetails,
 			final PaymentPolicy paymentPolicy, final String messageCode) {
 		
 		String messageToSearch = messageCode;
@@ -144,8 +144,8 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
 
 			if ( message == null || message.isEmpty() ) {
-//				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", messageToSearch, user.getId());
-				throw new RuntimeException("No message found in services.properties file. Key:" + messageToSearch);
+				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. The sms message was not sent for user [{}]", messageToSearch, user.getId());
+				return;
 			}
 			
 			MigResponse migResponse = migHttpService.makeFreeSMSRequest(currentActivePaymentDetails.getMigPhoneNumber(), message);
@@ -167,7 +167,6 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			LogUtils.removeSpecificMDC();
 		}
 		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
 	}
 
 }
