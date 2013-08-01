@@ -298,9 +298,9 @@ public class WriteApi {
 		if(video.getVideoFullLength() != null){
 			throw new WrapperException(WrapperExceptionCode.USER_REQUESTED_INCORRECT_PARAMETERS, "Video has the Video Full Length field set, which can not be written to a video in the initial create_video call to the Media API.");
 		}
-		if(video.getRenditions() != null){
-			throw new WrapperException(WrapperExceptionCode.USER_REQUESTED_INCORRECT_PARAMETERS, "Video contains renditions, which can not be written to a video in the initial create_video call to the Media API.");
-		}
+//		if(video.getRenditions() != null){
+//			throw new WrapperException(WrapperExceptionCode.USER_REQUESTED_INCORRECT_PARAMETERS, "Video contains renditions, which can not be written to a video in the initial create_video call to the Media API.");
+//		}
 		
 		File file    = null;
 		Long maxSize = 0l;
@@ -333,6 +333,7 @@ public class WriteApi {
 			paramObj.put("filename",                   file.getName());
 			paramObj.put("maxsize",                    maxSize);
 			paramObj.put("file_checksum",              fileChecksum);
+			paramObj.put("encode_to",                  encodeTo);
 			paramObj.put("create_multiple_renditions", createMultipleRenditions);
 			paramObj.put("preserve_source_rendition",  preserveSourceRendition);
 			paramObj.put("H264NoProcessing",           h264NoProcessing);

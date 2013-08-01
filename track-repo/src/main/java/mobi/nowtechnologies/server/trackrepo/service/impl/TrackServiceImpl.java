@@ -291,7 +291,7 @@ public class TrackServiceImpl implements TrackService {
         video.setLinkUrl("http://www.brightcove.com");
         video.setLongDescription(track.getInfo());
         video.setReferenceId(track.getIsrc());
-        video.setStartDate(track.getIngestionDate()); // 30 minutes ago
+        video.setStartDate(track.getIngestionDate());
 
         // ---- Complex (and optional) fields ----
         // End date must be in the future - add 30 minutes to "now"

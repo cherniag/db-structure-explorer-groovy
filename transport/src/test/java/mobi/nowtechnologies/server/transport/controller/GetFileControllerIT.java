@@ -123,7 +123,7 @@ public class GetFileControllerIT {
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("o2Tracks.flv"));
+        assertTrue(resultXml.contains("o2Tracks.mp4"));
     }
     
     private String generateVideoMedia(){
