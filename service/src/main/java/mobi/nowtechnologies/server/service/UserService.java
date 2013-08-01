@@ -88,7 +88,7 @@ public class UserService {
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
         boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnFreeTrial() && !u.isSubscribed() && lessMagicDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && !u.isOnVideoAudioSubscription() && lessMagicDate) return true;
         if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
         return  false;
     }

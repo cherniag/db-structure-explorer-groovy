@@ -1401,22 +1401,24 @@ public class User implements Serializable {
         return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
+    public boolean isOnVideoAudioSubscription(){
+        return new DateTime(getNextSubPaymentAsDate()).isAfterNow() && is4GVideoAudioPaymentDetails(currentPaymentDetails);
+    }
+
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
-        boolean is4GVideoAudioPaymentDetails = false;
         if (paymentDetails != null ){
             PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-            is4GVideoAudioPaymentDetails = paymentPolicy.is4GVideoAudioSubscription();
+            return paymentPolicy.is4GVideoAudioSubscription();
         }
-        return is4GVideoAudioPaymentDetails;
+        return false;
     }
 
     private boolean isAudioPaymentDetails(PaymentDetails paymentDetails){
-        boolean isAudioPaymentDetails = false;
         if (paymentDetails != null ){
             PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-            isAudioPaymentDetails = paymentPolicy.isAudioSubscription();
+            return paymentPolicy.isAudioSubscription();
         }
-        return isAudioPaymentDetails;
+        return false;
     }
 
     public Tariff getTariff() {
