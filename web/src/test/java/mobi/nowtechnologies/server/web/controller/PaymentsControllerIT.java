@@ -13,7 +13,9 @@ import junit.framework.TestCase;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 
@@ -90,8 +92,9 @@ public class PaymentsControllerIT extends TestCase {
 
 		assertEquals("payments", viewName);
 		assertNotNull(paymentPolicies);
-		assertEquals(3, paymentPolicies.size());
-		assertEquals("Get ongoing unlimited access to all the hits all the time for just &pound;1 a week! (You will not lose your remaining free trial)", paymentPoliciesNote);
+		assertEquals(4, paymentPolicies.size());
+		assertEquals("<b>Instant access to new music every day.<br>Just &pound;4.99 a month.</b><br>Keep your free days. <br><br>Switch plans. No contract.<br>Your music. Your choice.<br>Choose how to play below:<br><br><i>iPhone users: Use your iTunes account to subscribe at the end of your trial.</i>", paymentPoliciesNote);
+		assertNull(modelMap.get("paymentDetailsType"));
 	}
 
 	/**
@@ -120,8 +123,8 @@ public class PaymentsControllerIT extends TestCase {
 
 		assertEquals("payments", viewName);
 		assertNotNull(paymentPolicies);
-		assertEquals(0, paymentPolicies.size());
-		assertEquals("Please come back after your trial!", paymentPoliciesNote);
+		assertEquals(1, paymentPolicies.size());
+		assertEquals("<strong>You are on a free trial and have full access to O2 Tracks.</strong><br /><br />We want you to get the most out of your trial so there's no need to upgrade yet.<br /><br />Don't worry, we'll let you know when it's time.", paymentPoliciesNote);
 	}
 	
 	/**
@@ -150,8 +153,8 @@ public class PaymentsControllerIT extends TestCase {
 
 		assertEquals("payments", viewName);
 		assertNotNull(paymentPolicies);
-		assertEquals(0, paymentPolicies.size());
-		assertEquals("Please come back after your trial", paymentPoliciesNote);
+		assertEquals(1, paymentPolicies.size());
+		assertEquals("<strong>You are on a free trial and have full access to O2 Tracks.</strong><br /><br />We want you to get the most out of your trial so there's no need to upgrade yet.<br /><br />Don't worry, we'll let you know when it's time.", paymentPoliciesNote);
 	}
 
 	/**
@@ -183,6 +186,11 @@ public class PaymentsControllerIT extends TestCase {
 	private SecurityContext createSecurityContext(int userId) {
 		User user = new User();
 		user.setId(userId);
+		if ( userId == 101 ) {
+			user.setProvider("o2");
+			user.setContract(Contract.PAYM);
+			user.setSegment(SegmentType.CONSUMER);
+		}
 		Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
 		SecurityContext securityContext = new SecurityContextImpl();
 		securityContext.setAuthentication(authentication);

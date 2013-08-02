@@ -98,7 +98,6 @@ public class ApplyInitPromoController extends CommonController {
                     updateO2UserTask.handleUserUpdate(user);
                 }
 
-                updateO2UserTask.handleUserUpdate(user);
     	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
             }
             throw new UserCredentialsException("Bad user credentials");
