@@ -15,7 +15,7 @@ public class O2SubscriberData {
 	 * true if customer got 4G through the O2 directly, false if he got 4G
 	 * through third party (CarPhoneWarehouse/etc)
 	 */
-	private boolean directOrIndirect4GChannel;
+	private boolean directOrIndirect4GChannel = true;
 
 	public boolean isConsumerSegment() {
 		return !isBusinessOrConsumerSegment();
