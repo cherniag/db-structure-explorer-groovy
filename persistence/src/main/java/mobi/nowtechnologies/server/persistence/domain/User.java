@@ -7,6 +7,10 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -1459,5 +1463,31 @@ public class User implements Serializable {
 
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
+    }
+    public SubscriptionDirection getSubscriptionDirection() {
+
+        PaymentDetails currentDetails = getCurrentPaymentDetails();
+        PaymentDetails successfulDetails = getLastSuccessfulPaymentDetails();
+        if (isNull(currentDetails) || isNull(successfulDetails)) return null;
+
+        PaymentPolicy currentPolicy = currentDetails.getPaymentPolicy();
+        PaymentPolicy successPolicy = successfulDetails.getPaymentPolicy();
+        if (isNull(currentPolicy) || isNull(successPolicy)) return null;
+
+        boolean activeCPD = currentDetails.isActivated();
+
+        MediaType lastSuccessMediaType = successPolicy.getMediaType();
+        MediaType currentMediaType = currentPolicy.getMediaType();
+        if (activeCPD
+                && currentMediaType == VIDEO_AND_AUDIO
+                && lastSuccessMediaType == AUDIO
+                && !isOnVideoAudioFreeTrial()
+                && is4G()) return UPGRADE;
+        if(activeCPD
+                && currentMediaType == AUDIO
+                && lastSuccessMediaType == VIDEO_AND_AUDIO
+                && !isOnVideoAudioFreeTrial()
+                && is4G()) return DOWNGRADE;
+        return null;
     }
 }

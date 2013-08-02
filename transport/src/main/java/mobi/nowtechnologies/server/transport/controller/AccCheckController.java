@@ -109,6 +109,7 @@ public class AccCheckController extends CommonController {
             accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
             accountCheck.setHasAllDetails(user.hasAllDetails());
             accountCheck.setShowFreeTrial(user.isShowFreeTrial());
+            accountCheck.setSubscriptionChanged(user.getSubscriptionDirection());
 
 			return mav;
 		} catch (Exception e) {

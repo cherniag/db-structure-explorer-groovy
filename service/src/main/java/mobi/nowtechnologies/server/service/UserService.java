@@ -64,16 +64,13 @@ import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.apache.commons.lang.Validate.notNull;
 
-/**
- * UserService
- *
- * @author Titov Mykhaylo (titov)
- * @author Alexander Kollpakov (akolpakov)
- * @author Maksym Chernolevskyi (maksym)
- */
 public class UserService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
@@ -1017,7 +1014,7 @@ public class UserService {
 			throw new ServiceException("The parameter userRegInfo is null");
 
 		LOGGER.debug("input parameters userRegInfo: [{}]",
-				new Object[] { userRegInfo });
+                new Object[]{userRegInfo});
 
 		final String userName = userRegInfo.getEmail().toLowerCase();
 		final String communityName = userRegInfo.getCommunityName();
@@ -2012,7 +2009,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
 		LOGGER.info("apply init promo o2 " + user.getId() + " "
-				+ user.getMobile() + " " + user.getActivationStatus());
+                + user.getMobile() + " " + user.getActivationStatus());
 		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
@@ -2158,7 +2155,7 @@ public class UserService {
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
         user = skipVideoAudioFreeTrial(user);
-        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int)(user.getFreeTrialStartedTimestampMillis()/1000L));
+        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
         return user;
     }
 
