@@ -67,7 +67,7 @@ create table refund (
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
  ALTER TABLE tb_promotions MODIFY COLUMN description char(100) NOT NULL;
- ALTER TABLE tb_promotions MODIFY COLUMN label varchar(30);
+ ALTER TABLE tb_promotions MODIFY COLUMN label varchar(50);
 
  ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F753C7738F;
  ALTER TABLE tb_promocode DROP FOREIGN KEY FKF393230B3BEC8C9E;

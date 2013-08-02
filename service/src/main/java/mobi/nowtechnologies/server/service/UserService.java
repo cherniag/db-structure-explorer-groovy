@@ -85,7 +85,7 @@ public class UserService {
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
         boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && !u.isOnVideoAudioSubscription() && lessMagicDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOn4GVideoAudioFreeTrial() && !u.isOnVideoAudioSubscription() && lessMagicDate) return true;
         if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
         return  false;
     }
@@ -2128,7 +2128,7 @@ public class UserService {
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
-            } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
+            } else if (userWithOldTariff.isOn4GVideoAudioFreeTrial()) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 
@@ -2145,11 +2145,6 @@ public class UserService {
         return userWithOldTariff;
     }
     
-    private boolean isOnVideoAudioFreeTrial(User user) {
-        String promo = promotionService.getVideoCodeForO24GConsumer(user);
-        return user.is4G() && user.lastPromoEqualsTo(promo) && user.isOnFreeTrial();
-    }
-
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
         user = skipVideoAudioFreeTrial(user);

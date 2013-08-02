@@ -88,14 +88,6 @@ public class User implements Serializable {
         this.contractChannel = contractChannel;
     }
 
-    public boolean isOnVideoAudioFreeTrial() {
-        return onVideoAudioFreeTrial;
-    }
-
-    public void setOnVideoAudioFreeTrial(boolean onVideoAudioFreeTrial) {
-        this.onVideoAudioFreeTrial = onVideoAudioFreeTrial;
-    }
-
     public PromoCode getLastPromo() {
         return lastPromo;
     }
@@ -125,9 +117,6 @@ public class User implements Serializable {
     @ManyToOne
     @JoinColumn(name = "last_promo")
     private PromoCode lastPromo;
-    
-    @Column(name = "on_video_free_trial")
-    private boolean onVideoAudioFreeTrial;
 
     @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
@@ -1481,13 +1470,17 @@ public class User implements Serializable {
         if (activeCPD
                 && currentMediaType == VIDEO_AND_AUDIO
                 && lastSuccessMediaType == AUDIO
-                && !isOnVideoAudioFreeTrial()
+                && !isOn4GVideoAudioFreeTrial()
                 && is4G()) return UPGRADE;
         if(activeCPD
                 && currentMediaType == AUDIO
                 && lastSuccessMediaType == VIDEO_AND_AUDIO
-                && !isOnVideoAudioFreeTrial()
+                && !isOn4GVideoAudioFreeTrial()
                 && is4G()) return DOWNGRADE;
         return null;
+    }
+
+    public boolean isOn4GVideoAudioFreeTrial() {
+        return is4G() && isNotNull(lastPromo) && VIDEO_AND_AUDIO.equals(lastPromo.getMediaType()) && isOnFreeTrial();
     }
 }
