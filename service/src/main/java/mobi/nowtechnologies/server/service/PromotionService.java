@@ -5,7 +5,10 @@ import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
@@ -17,6 +20,8 @@ import org.springframework.util.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.Validate.notNull;
@@ -35,6 +40,7 @@ public class PromotionService {
 	private EntityService entityService;
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
+    private PromotionRepository promotionRepository;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -50,6 +56,10 @@ public class PromotionService {
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    public void setPromotionRepository(PromotionRepository promotionRepository) {
+        this.promotionRepository = promotionRepository;
     }
 
     public boolean isPromoCodeActivePromotionExsist(
@@ -75,8 +85,8 @@ public class PromotionService {
 		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
 				UserGroup.Fields.communityId.toString(), community.getId());
 
-        Promotion promoCode = promotionDao.getActivePromoCodePromotion(promotionCode, userGroup.getI());
-        return promoCode;
+        Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
+        return promotion;
 	}
 	
 	public List<PromoCode> getPromoCodes(final String communityName) {
@@ -162,7 +172,7 @@ public class PromotionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
         boolean isPromotionApplied = false;
-        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| user.getContractChannel() == null)) {
+        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| isNull(user.getContractChannel()))) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());

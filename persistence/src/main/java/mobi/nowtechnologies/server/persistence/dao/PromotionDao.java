@@ -44,65 +44,6 @@ public class PromotionDao extends JpaDaoSupport {
 
 		return Long.valueOf(1L).equals(count);
 	}
-
-	public Promotion getActivePromoCodePromotion(final String promotionCode, final byte userGroupId) {
-		Promotion outPromo = null;
-		notNull(promotionCode, "The parameter promotionCode is null");
-
-		final String promotionId = PromoCode.Fields.promotionId.toString();
-
-		List<?> promotionIds = getJpaTemplate().executeFind(new JpaCallback<List>() {
-			@Override
-			public List doInJpa(EntityManager em)
-					throws javax.persistence.PersistenceException {
-				// TODO Auto-generated method stub
-				return em.createNativeQuery(
-				"select " + promotionId + " from tb_promoCode promoCode "
-						+ " inner join "
-						+ " tb_promotions promotions "
-						+ " on promotions.i = promoCode.promotionId"
-						+ " and promotions.userGroup = " + userGroupId
-						+ " where promoCode.code='" + promotionCode + "'").getResultList();
-			}
-		});
-				
-				
-		if(promotionIds.isEmpty()) return null;
-		int size = promotionIds.size();
-		if (size>1) throw new PersistenceException("The promotion code ["+promotionCode+"] references on ["+size+"] promotions");
-		
-		Byte returnedPromotionId = (Byte) promotionIds.get(0);
-		
-		if (returnedPromotionId==null) return null;
-		
-		String startDate = Promotion.Fields.startDate.toString();
-		String endDate = Promotion.Fields.endDate.toString();
-		String numUsers = Promotion.Fields.numUsers.toString();
-		String maxUsers = Promotion.Fields.maxUsers.toString();
-		String isActive = Promotion.Fields.isActive.toString();
-		String userGroup = Promotion.Fields.userGroup.toString();
-		String type = Promotion.Fields.type.toString();
-		String i = Promotion.Fields.i.toString();
-
-		
-		List<?> promoList = getJpaTemplate().find(
-				"select promotion from " + Promotion.class.getSimpleName()
-				+ " promotion where promotion." + startDate
-				+ "<?1 and promotion." + endDate
-				+ ">?1 and (promotion." + numUsers + "<" + maxUsers
-				+ " or promotion." + maxUsers + "=0) and promotion."
-				+ isActive + "=true and promotion." + userGroup
-				+ "=?2 and " + i + "=?3 and " + type + "='"
-				+ Promotion.ADD_FREE_WEEKS_PROMOTION + "'", Utils.getEpochSeconds(),
-		userGroupId, returnedPromotionId.byteValue());
-		
-		if (promoList.size() == 1)
-			outPromo = (Promotion)promoList.get(0);
-		else if (promoList.size() > 1)
-			throw new PersistenceException( "More than one promotion was find for [" + promotionCode + "] promotion code" );
-			
-		return outPromo;
-	}
 	
 	@SuppressWarnings("unchecked")
 	 public List<PromoCode> getActivePromoCodePromotion(final byte userGroupId) {

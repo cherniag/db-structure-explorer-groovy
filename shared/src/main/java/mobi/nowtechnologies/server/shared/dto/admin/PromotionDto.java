@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class PromotionDto {
 	
-	private byte i;
+	private int i;
 
 	private String description;
 
@@ -32,11 +32,11 @@ public class PromotionDto {
 
 	private String label;
 
-	public byte getI() {
+	public int getI() {
 		return i;
 	}
 
-	public void setI(byte i) {
+	public void setI(int i) {
 		this.i = i;
 	}
 

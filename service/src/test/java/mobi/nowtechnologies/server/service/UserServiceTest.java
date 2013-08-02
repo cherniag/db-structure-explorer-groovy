@@ -2785,7 +2785,6 @@ public class UserServiceTest {
 		
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
 		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
-		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(promotionServiceMock,times(1) ).applyO2PotentialPromoOf4ApiVersion(user, false);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);

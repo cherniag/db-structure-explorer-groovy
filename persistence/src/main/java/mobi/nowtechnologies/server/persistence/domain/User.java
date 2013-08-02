@@ -264,14 +264,14 @@ public class User implements Serializable {
 	private Promotion potentialPromotion;
 
 	@Column(name = "potentialPromotion_i", insertable = false, updatable = false)
-	private Byte potentialPromotionId;
+	private Integer potentialPromotionId;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "potentialPromoCodePromotion_i", nullable = true)
 	private Promotion potentialPromoCodePromotion;
 
 	@Column(name = "potentialPromoCodePromotion_i", insertable = false, updatable = false)
-	private Byte potentialPromoCodePromotionId;
+	private Integer potentialPromoCodePromotionId;
 
 	@Transient
 	@XmlTransient
@@ -859,7 +859,7 @@ public class User implements Serializable {
 		return potentialPromotion;
 	}
 
-	public Byte getPotentialPromotionId() {
+	public Integer getPotentialPromotionId() {
 		return potentialPromotionId;
 	}
 

@@ -2030,8 +2030,6 @@ public class UserService {
 			}
 		} else {
 			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
-				Community community = communityService.getCommunityByName(communityName);
-
                 hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
             }
         }
