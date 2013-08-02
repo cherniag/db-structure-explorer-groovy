@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
@@ -89,6 +90,22 @@ public class PaymentsController extends CommonController {
         	}
         }
         mav.addObject("mirrorOfActivePolicy", activePolicyId);
+        
+        String paymentType = null;
+        if ( paymentDetails != null ) {
+        	if ( PaymentDetails.PAYPAL_TYPE.equalsIgnoreCase(paymentDetails.getPaymentType()) ) {
+        		paymentType = "paypal";
+        	} else if ( PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equalsIgnoreCase( paymentDetails.getPaymentType()) ) {
+        		paymentType = "creditcard";
+        	}
+        }
+        mav.addObject("paymentDetailsType", paymentType);
+        
+        boolean isBussinesUser =  SegmentType.BUSINESS == user.getSegment();
+        boolean isPayMonthlyUser =  Contract.PAYM == user.getContract();
+        
+        mav.addObject("isBussinesUser", isBussinesUser);
+        mav.addObject("isPayMonthlyUser", isPayMonthlyUser);
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
