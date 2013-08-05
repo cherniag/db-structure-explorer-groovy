@@ -711,6 +711,7 @@ form .formButton  {
 .subscription-selector.option-1 .title { color:#952d98; }
 .subscription-selector.option-2 .title { color:#00a9a9; }
 .subscription-selector.option-3 .title { color:#3399cc; }
+.subscription-selector.option-4 .title { color:#952d98; }
 
 .subscription-selector .price {
     font-size:30px;
