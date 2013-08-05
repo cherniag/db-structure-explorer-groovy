@@ -30,20 +30,20 @@ var CheckboxElement = (function(){
 			if ( typeof attrib === 'undefined' || attrib === false ) {
 				return;
 			}
-			var updateButtonShow = ($(this).attr("data-updatesubbutton") == "1");
+			//var updateButtonShow = ($(this).attr("data-updatesubbutton") == "1");
 			var videoAttr = (attrib == "1");
-			var updateSubscriptionButton = $("#updateSubscriptionButton");
+			//var updateSubscriptionButton = $("#updateSubscriptionButton");
 			
 			if ( videoAttr == checkboxSelected ) {
 				$(this).show();
-				if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
+				/* if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
 					updateSubscriptionButton.show();
-				}
+				} */
 			} else {
 				$(this).hide();
-				if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
+				/* if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
 					updateSubscriptionButton.hide();
-				}
+				} */
 			}
 		});
 	}
@@ -217,7 +217,7 @@ var CheckboxElement = (function(){
                         </c:otherwise>
                     </c:choose>
                                         
-                    <div class="rel" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" data-updatesubbutton="${mirrorOfActivePolicy==paymentPolicy.id ? '1' : '0'}">
+                    <div class="rel" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
                         <c:choose>
                             <c:when test="${isIOSDevice && !isO2User}">
                                 <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
@@ -270,15 +270,7 @@ var CheckboxElement = (function(){
                                         <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
                                         <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
                                     </div>
-                                    
-									<%--by default the buttonClass is button-off - it's button-on only when a user has video activated to display the mirror option --%>
-	                                <c:set var="buttonClass">button-off</c:set>
-	                                <c:if test="${mirrorOfActivePolicy == paymentPolicy.id}">
-	                                	<c:set var="buttonClass">button-on</c:set>
-	                                	<c:set var="updateSubscriptionUrl">${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}</c:set>
-	                                </c:if>
-	                                
-                                    <span class="${buttonClass}"></span>
+                                    <span class="button-off"></span>
                         		</a>
                             </c:when>
                             <c:otherwise>
@@ -327,11 +319,6 @@ var CheckboxElement = (function(){
             <div class="content no-bg">
 
                 <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
-                	<c:if test="${userIsOptedInToVideo eq true}">
-			        	<div class="rel" style="display: none; margin-top: 5px" id="updateSubscriptionButton">
-			                <a class="button-grey no-margin pie" href="${updateSubscriptionUrl}" ><s:message code='pays.page.note.account.updatesubscription' /></a>
-			            </div>
-		            </c:if>
                     <div class="rel" style="margin-top: 5px;">
                         <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
                     </div>
