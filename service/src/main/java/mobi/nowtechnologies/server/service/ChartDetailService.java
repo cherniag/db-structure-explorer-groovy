@@ -32,7 +32,6 @@ public class ChartDetailService {
 	private DrmService drmService;
 	private ChartDetailDao chartDetailDao;
 	private EntityService entityService;
-	private MediaLogTypeService mediaLogTypeService;
 	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 
@@ -46,10 +45,6 @@ public class ChartDetailService {
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
-	}
-
-	public void setMediaLogTypeService(MediaLogTypeService mediaLogTypeService) {
-		this.mediaLogTypeService = mediaLogTypeService;
 	}
 
 	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {

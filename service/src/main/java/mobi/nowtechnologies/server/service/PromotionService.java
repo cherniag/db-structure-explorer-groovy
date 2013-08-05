@@ -62,20 +62,6 @@ public class PromotionService {
         this.promotionRepository = promotionRepository;
     }
 
-    public boolean isPromoCodeActivePromotionExsist(
-			String communityName) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-
-		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
-				UserGroup.Fields.communityId.toString(), community.getId());
-
-		return promotionDao.isPromoCodeActivePromotionExsist(userGroup
-				.getI());
-	}
-
 	public Promotion getActivePromotion(String promotionCode, String communityName) {
 		notNull(promotionCode, "The parameter promotionCode is null");
 		notNull(communityName, "The parameter communityName is null");
@@ -92,11 +78,6 @@ public class PromotionService {
 	public List<PromoCode> getPromoCodes(final String communityName) {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
-	}
-
-	public Promotion getNoPromoCodePromotion(final String communityName) {
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-		return promotionDao.getActiveNoPromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
 	}
 	
 	/***
@@ -142,10 +123,6 @@ public class PromotionService {
 		return resPromotion;
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public User applyPromotion(User user) {
 		if (null != user.getPotentialPromotion()) {
@@ -161,7 +138,7 @@ public class PromotionService {
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Promotion incrementUserNumber(Promotion promotion) {
+	public synchronized Promotion incrementUserNumber(Promotion promotion) {
 		if (null != promotion) {
 			promotion.setNumUsers(promotion.getNumUsers()+1);
 			return entityService.updateEntity(promotion);
@@ -171,7 +148,7 @@ public class PromotionService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
-        boolean isPromotionApplied = false;
+        boolean isPromotionApplied;
         if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| isNull(user.getContractChannel()))) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
@@ -184,7 +161,6 @@ public class PromotionService {
         boolean isPromotionApplied = false;
         Promotion promotion = getPromotionForO24GConsumer(user);
         if (promotion != null){
-            user.setLastPromo(promotion.getPromoCode());
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;

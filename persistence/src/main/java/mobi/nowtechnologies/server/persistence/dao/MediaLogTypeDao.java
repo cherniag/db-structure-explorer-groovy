@@ -27,22 +27,6 @@ public class MediaLogTypeDao extends JpaDaoSupport {
 		this.entityDao = entityDao;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<String> findStatusNamesByUserIdAndMediaId(int userId,
-			int mediaId) {
-		if (mediaId < 0)
-			throw new PersistenceException("The parameter mediaId < 0");
-		return (List<String>) getJpaTemplate()
-				.find(
-						"select mediaLogType.name from "
-								+ MediaLogType.class.getSimpleName()
-								+ " mediaLogType, "
-								+ MediaLog.class.getSimpleName()
-								+ " mediaLog where mediaLogType.i = mediaLog.logType and "
-								+ " mediaLog.userUID = ?1 and mediaLog.mediaUID = ?2)",
-						userId, mediaId);
-	}
-
 	public Map<String, MediaLogType> getMediaLogTypes() {
 		if (unmodifableMapMediaLogTypes == null) {
 			Map<String, MediaLogType> mediaLogTypes = new HashMap<String, MediaLogType>();

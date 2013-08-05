@@ -42,11 +42,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
 	</bean>
 
-	<bean id="persistence.NewsDetailDao"
-		class="mobi.nowtechnologies.server.persistence.dao.NewsDetailDao">
-		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-	</bean>
-
 	<bean id="persistence.ChartDetailDao"
 		class="mobi.nowtechnologies.server.persistence.dao.ChartDetailDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />

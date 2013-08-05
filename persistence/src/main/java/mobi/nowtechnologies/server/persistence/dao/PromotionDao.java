@@ -23,68 +23,12 @@ public class PromotionDao extends JpaDaoSupport {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionDao.class);
 
-	public boolean isPromoCodeActivePromotionExsist(byte userGroupId) {
-		String startDate = Promotion.Fields.startDate.toString();
-		String endDate = Promotion.Fields.endDate.toString();
-		String numUsers = Promotion.Fields.numUsers.toString();
-		String maxUsers = Promotion.Fields.maxUsers.toString();
-		String isActive = Promotion.Fields.isActive.toString();
-		String userGroup = Promotion.Fields.userGroup.toString();
-		String type = Promotion.Fields.type.toString();
-
-		Long count = (Long) getJpaTemplate().find(
-				"select count(promotion) from " + Promotion.class.getName()
-						+ " promotion where promotion." + startDate
-						+ "<?1 and promotion." + endDate
-						+ ">?1 and (promotion." + numUsers + "<" + maxUsers
-						+ " or promotion." + maxUsers + "=0) and promotion."
-						+ isActive + "=true and promotion." + userGroup
-						+ "=?2 and " + type + "='" + Promotion.ADD_FREE_WEEKS_PROMOTION+"'",
-						Utils.getEpochSeconds(), userGroupId).get(0);
-
-		return Long.valueOf(1L).equals(count);
-	}
-	
 	@SuppressWarnings("unchecked")
 	 public List<PromoCode> getActivePromoCodePromotion(final byte userGroupId) {
 		  List<PromoCode> promotions = getJpaTemplate().find(
 				  "select promoCode from  PromoCode promoCode join promoCode.promotion p where p.showPromotion=true and (p.numUsers < p.maxUsers or p.maxUsers=0) and p.isActive=true and p.userGroup=?1 and p.type=?2 and p.startDate<?3 and p.endDate>?3",
 				  userGroupId, Promotion.ADD_FREE_WEEKS_PROMOTION, Utils.getEpochSeconds());
 		  return promotions;
-	 }
-	
-	public Promotion getActiveNoPromoCodePromotion(final byte userGroupId) {
-		Promotion outPromo = null;
-		
-		String startDate = Promotion.Fields.startDate.toString();
-		String endDate = Promotion.Fields.endDate.toString();
-		String numUsers = Promotion.Fields.numUsers.toString();
-		String maxUsers = Promotion.Fields.maxUsers.toString();
-		String isActive = Promotion.Fields.isActive.toString();
-		String userGroup = Promotion.Fields.userGroup.toString();
-		String type = Promotion.Fields.type.toString();
-		
-		List<?> promoList = getJpaTemplate().find(
-				"select promotion from " + Promotion.class.getSimpleName()
-				+ " promotion where promotion." + startDate
-				+ "<?1 and promotion." + endDate
-				+ ">?1 and (promotion." + numUsers + "<" + maxUsers
-				+ " or promotion." + maxUsers + "=0) and promotion."
-				+ isActive + "=true and promotion." + userGroup
-				+ "=?2 and " + type + "='"
-				+ Promotion.ADD_SUBBALANCE_PROMOTION + "'", Utils.getEpochSeconds(),
-		userGroupId);
-		
-		if (promoList.size() == 1)
-			outPromo = (Promotion)promoList.get(0);
-		else if (promoList.size() > 1)
-			throw new PersistenceException( "More than one promotion was find for [" + userGroupId + "] user group" );
-		return outPromo;
-	 }
-	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	public Promotion getActivePromotionByType(byte userGroup, String type) {
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")

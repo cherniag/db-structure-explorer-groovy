@@ -140,60 +140,6 @@ public class PromotionServiceTest {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the boolean isPromoCodeActivePromotionExsist(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
-	@Test
-	@Ignore
-	public void testIsPromoCodeActivePromotionExsist_WhenPromotionExsist()
-		throws Exception {
-		String communityName = "Now Music";
-
-		boolean result = promotionService.isPromoCodeActivePromotionExsist(communityName);
-		assertTrue(result);
-	}
-
-	/**
-	 * Run the boolean isPromoCodeActivePromotionExsist(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
-	@Test(expected = NullPointerException.class)
-	@Ignore
-	public void testIsPromoCodeActivePromotionExsist_WhenCommunityNameIsEmpty()
-		throws Exception {
-		String communityName = "";
-
-		boolean result = promotionService.isPromoCodeActivePromotionExsist(communityName);
-
-		assertFalse(result);
-	}
-
-	/**
-	 * Run the boolean isPromoCodeActivePromotionExsist(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
-	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-	@Ignore
-	public void testIsPromoCodeActivePromotionExsist_WhenCommunityNameIsNull()
-		throws Exception {
-		String communityName = null;
-
-		boolean result = promotionService.isPromoCodeActivePromotionExsist(communityName);
-
-		// add additional test code here
-		assertTrue(result);
-	}
-
     @Test
     public void shouldApplyPromotionForO2Payg4GDirectConsumer(){
 

@@ -19,13 +19,6 @@ public class MediaLogTypeService {
 		this.mediaLogTypeDao = mediaLogTypeDao;
 	}
 
-	public List<String> findNameByUserIdAndMediaId(int userId, int mediaId) {
-		if (mediaId < 0)
-			throw new ServiceException("The parameter mediaId < 0");
-		return mediaLogTypeDao.findStatusNamesByUserIdAndMediaId(userId,
-				mediaId);
-	}
-
 	public Map<String, MediaLogType> getMediaLogTypes() {
 		return mediaLogTypeDao.getMediaLogTypes();
 	}

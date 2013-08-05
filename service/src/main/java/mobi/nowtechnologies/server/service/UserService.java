@@ -140,7 +140,7 @@ public class UserService {
 	private UserDeviceDetailsService userDeviceDetailsService;
 	private CommunityService communityService;
 	private MailService mailService;
-	//private NowTechTokenBasedRememberMeServices ipTokenBasedRememberMeServices;
+
 	private FacebookService facebookService;
 	private DeviceService deviceService;
 	private OfferService offerService;
@@ -568,23 +568,6 @@ public class UserService {
         return isNotNull(promoCode) && promoCode.forVideoAndMusic();
     }
 
-    private void setPaymentStatusAccordingToPaymentType(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		String paymentType = user.getPaymentType();
-		if (paymentType.equals(UserRegInfoServer.PaymentType.PREMIUM_USER))
-			user.setPaymentStatus(PaymentStatusDao.getPIN_PENDING().getId());
-		else if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.FREEMIUM) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.PAY_PAL) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.UNKNOWN))
-			user.setPaymentStatus(PaymentStatusDao.getNULL().getId());
-		else
-			throw new ServiceException("Unknown payment type: [" + paymentType
-					+ "]");
-	}
-
 	public void updateMobile(User user, String mobile, Integer operator, String communityName) {
 		if (communityName == null)
 			throw new NullPointerException(
@@ -600,12 +583,6 @@ public class UserService {
 
 		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(mobile);
 		migPaymentService.createPaymentDetails(getMigPhoneNumber(operator, migPhone), user, community, paymentPolicy);
-		/*
-		 * if (mobile!=null&&mobile.startsWith(MigService._0044)) user .setMobile(MigService .convertPhoneNumberFromInternationalToGreatBritainFormat(mobile)); else user.setMobile(mobile);
-		 * user.setOperator(operator); user.setPaymentStatus(PaymentStatusDao.getPIN_PENDING().getId()); updateUser(user);
-		 * 
-		 * sendPinToUser(communityName, user.getPaymentType(), user.getOperator(), user.getMobile(), user, user.getPin());
-		 */
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -629,7 +606,6 @@ public class UserService {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
-		Locale locale = null;
 
 		PaymentDetailsValidator.validate(userRegInfo);
 
@@ -781,16 +757,6 @@ public class UserService {
 		return user;
 	}
 
-	protected List<User> findUser(String mobile, String operatorMigName) {
-		Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-		fieldNameValueMap.put(User.Fields.mobile.toString(), mobile);
-		// fieldNameValueMap.put(User.Fields.operator.toString(),
-		// Operator.getMapAsMigNames().get(operatorMigName).getName());
-		fieldNameValueMap.put(User.Fields.paymentType.toString(), "PSMS");
-		fieldNameValueMap.put(User.Fields.paymentEnabled.toString(), true);
-		return entityService.findListByProperties(User.class, fieldNameValueMap);
-	}
-
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 	public List<PaymentPolicy> getPaymentPolicies(
 			String communityName) {
@@ -806,27 +772,6 @@ public class UserService {
 				paymentPolicy.setOperatorName(operator.getName());
 		}
 		return paymentPolicies;
-	}
-
-	public List<PaymentPolicy> getPaymentPoliciesForPasseadOperatorOrOperatorIs0(
-			String communityName, String paymentType, final int operator) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		return userDao.getPaymentPoliciesForPasseadOperatorOrOperatorIs0(
-                communityName, paymentType, operator);
-	}
-
-	public List<Integer> getOperatorsAccordingToPaymentPoliciesForPremiumUser(
-			String communityName, String paymentType) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		return userDao.getOperatorsAccordingToPaymentPolicies(communityName, paymentType);
 	}
 
 	public AmountCurrencyWeeks getUpdateAmountCurrencyWeeks(User user) {
@@ -853,22 +798,6 @@ public class UserService {
 			throw new ServiceException("The parameter user is null");
 		user.setLastDeviceLogin(Utils.getEpochSeconds());
 		updateUser(user);
-	}
-
-	/**
-	 * Deprecated due to new portal implementation Use sendSMSWithOTALink(String phone, int userId)
-	 *
-	 * @param user
-	 */
-	@Deprecated
-	public void sendSMSWithOTALink(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		String[] args = { migHttpService.getOtaUrl() + "&CODE=" + user.getCode() };
-		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(user.getMobile());
-		migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-                messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
 	}
 
 	public User findById(int id) {
@@ -974,40 +903,6 @@ public class UserService {
 
 	}
 
-	private void updateUserOTALink(User user, String code) {
-		if (user == null)
-			throw new NullPointerException("The parameter user is null");
-		if (code == null)
-			throw new NullPointerException("The parameter code is null");
-
-		LOGGER.debug("input parameters user: [{}], code: [{}] ", new Object[] { user, code });
-
-		user.setCode(code);
-	}
-
-	@Deprecated
-	private boolean deleteUserInPinPendingPaymentStatus(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		LOGGER.debug("input parameters user: [{}]", new Object[] { user });
-
-		boolean deleted = false;
-		if (PaymentStatusDao.getPIN_PENDING().getId() == user
-				.getPaymentStatus()) {
-			LOGGER
-					.info(
-                            "Removing user [{}] in PIN_PENDING status during registration",
-                            user.getId());
-			entityService.removeEntity(User.class, user.getId());
-			deleted = true;
-		}
-
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return deleted;
-
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	private User continueRegistration(UserRegInfo userRegInfo) {
 		if (userRegInfo == null)
@@ -1088,34 +983,6 @@ public class UserService {
 		UserGroup userGroup = user.getUserGroup();
 		Community community = userGroup.getCommunity();
 		return community.getName();
-	}
-
-	// TODO remove this method
-	@Deprecated
-	PaymentDetails getPaymentDetailsForUserUpdate(final User user,
-			final String token, String paymentType, final Operator operator,
-			String phoneNumber) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-						new Object[] { user, token, paymentType, operator,
-								phoneNumber });
-
-		PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
-
-		if (paymentDetails == null)
-			paymentDetails = PaymentDetailsService.getPaymentDetails(
-					paymentType, token, operator, phoneNumber);
-		else {
-			entityService.removeEntity(PaymentDetails.class, paymentDetails.getI());
-			paymentDetails = PaymentDetailsService.getPaymentDetails(
-					paymentType, token, operator, phoneNumber);
-		}
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
