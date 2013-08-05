@@ -35,7 +35,6 @@ public class UserAsmTest {
 		assertEquals((int)(userDto.getNextSubPayment().getTime()/1000), result.getNextSubPayment());
 		assertEquals(result.getNextSubPayment()*1000L, result.getFreeTrialExpiredMillis().longValue());
 		assertEquals(userDto.getUserType(), result.getUserType());
-		assertEquals(userDto.getPaymentEnabled(), result.isPaymentEnabled());		
 	}
 	
 	@Test
@@ -58,6 +57,5 @@ public class UserAsmTest {
 		assertEquals((int)(userDto.getNextSubPayment().getTime()/1000), result.getNextSubPayment());
 		assertEquals(user.getFreeTrialExpiredMillis().longValue(), result.getFreeTrialExpiredMillis().longValue());
 		assertEquals(userDto.getUserType(), result.getUserType());
-		assertEquals(userDto.getPaymentEnabled(), result.isPaymentEnabled());		
 	}
 }

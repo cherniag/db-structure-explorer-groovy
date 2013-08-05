@@ -95,12 +95,7 @@ public class User implements Serializable {
         this.lastPromo = lastPromo;
     }
 
-    public boolean lastPromoEqualsTo(String promo) {
-        if(isNull(lastPromo) || isNull(lastPromo.getCode())) return false;
-        return lastPromo.getCode().equals(promo);
-    }
-
-    public boolean isLastPromoForVideo() {
+    private boolean isLastPromoForVideo() {
         return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
     }
 
@@ -236,9 +231,6 @@ public class User implements Serializable {
 	@Column(columnDefinition = "char(255)")
 	private Contract contract;
 
-	@Deprecated
-	private boolean paymentEnabled;
-
 	private int numPsmsRetries;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
@@ -358,8 +350,7 @@ public class User implements Serializable {
 	}
 
     public boolean isShowFreeTrial() {
-        if(isO24GConsumer() && isO2PAYMConsumer()) return false;
-        return true;
+        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
     }
 
     public boolean isIOsnonO2ItunesSubscribedUser() {
@@ -791,21 +782,45 @@ public class User implements Serializable {
 		return this;
 	}
 
-	/*
-	 * @deprecated Unused column
-	 */
-	@Deprecated
-	public boolean isPaymentEnabled() {
-		return paymentEnabled;
-	}
+    public User withTariff(Tariff tariff){
+        setTariff(tariff);
+        return this;
+    }
 
-	/*
-	 * @deprecated Unused column
-	 */
-	@Deprecated
-	public void setPaymentEnabled(boolean paymentEnabled) {
-		this.paymentEnabled = paymentEnabled;
-	}
+    public User withLastPromo(PromoCode lastPromo){
+        setLastPromo(lastPromo);
+        return this;
+    }
+
+    public User withLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails){
+        setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
+        return this;
+    }
+
+    public User withCurrentPaymentDetails(PaymentDetails currentPaymentDetails){
+        setCurrentPaymentDetails(currentPaymentDetails);
+        return this;
+    }
+
+    public User withContract(Contract contract){
+        setContract(contract);
+        return this;
+    }
+
+    public User withUserGroup(UserGroup userGroup){
+        setUserGroup(userGroup);
+        return this;
+    }
+
+    public User withProvider(String provider){
+        setProvider(provider);
+        return this;
+    }
+
+    public User withSegment(SegmentType segment){
+        setSegment(segment);
+        return this;
+    }
 
 	public int getPaymentStatus() {
 		return paymentStatus;
@@ -1255,14 +1270,11 @@ public class User implements Serializable {
 				.add("activationStatus", activationStatus)
 				.add("segment", segment)
 				.add("provider", provider)
+                .add("tariff", tariff)
+                .add("contractChannel", contractChannel)
 				.add("contract", contract).toString();
 	}
 
-	/**
-	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 *
-	 * @return
-	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
@@ -1357,6 +1369,16 @@ public class User implements Serializable {
 		return this;
 	}
 
+    public User withVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated){
+        setVideoFreeTrialHasBeenActivated(videoFreeTrialHasBeenActivated);
+        return this;
+    }
+
+    public User withContractChanel(ContractChannel contractChanel){
+        setContractChannel(contractChanel);
+        return this;
+    }
+
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
 		Chart sameTypeChart = null;
 		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
@@ -1391,10 +1413,6 @@ public class User implements Serializable {
 
     public boolean isOnAudioBoughtPeriod() {
         return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
-    }
-
-    public boolean isOnVideoAudioSubscription(){
-        return new DateTime(getNextSubPaymentAsDate()).isAfterNow() && is4GVideoAudioPaymentDetails(currentPaymentDetails);
     }
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
@@ -1469,17 +1487,17 @@ public class User implements Serializable {
         if (activeCPD
                 && currentMediaType == VIDEO_AND_AUDIO
                 && lastSuccessMediaType == AUDIO
-                && !isOn4GVideoAudioFreeTrial()
+                && !isOnVideoAudioFreeTrial()
                 && is4G()) return UPGRADE;
         if(activeCPD
                 && currentMediaType == AUDIO
                 && lastSuccessMediaType == VIDEO_AND_AUDIO
-                && !isOn4GVideoAudioFreeTrial()
+                && !isOnVideoAudioFreeTrial()
                 && is4G()) return DOWNGRADE;
         return null;
     }
 
-    public boolean isOn4GVideoAudioFreeTrial() {
-        return is4G() && isNotNull(lastPromo) && VIDEO_AND_AUDIO.equals(lastPromo.getMediaType()) && isOnFreeTrial();
+    public boolean isOnVideoAudioFreeTrial() {
+        return isLastPromoForVideo() && isOnFreeTrial();
     }
 }

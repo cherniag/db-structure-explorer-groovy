@@ -109,7 +109,6 @@ public class UserDaoTestIT {
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-		testUser.setPaymentEnabled(true);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -156,7 +155,6 @@ public class UserDaoTestIT {
 		testUser.setPin("pin");
         testUser.setSegment(SegmentType.CONSUMER);
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PAYMENT().getId());
-		testUser.setPaymentEnabled(true);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -169,7 +167,6 @@ public class UserDaoTestIT {
 			{
 				assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getId(),user.getPaymentStatus());
 			}
-			assertTrue(user.isPaymentEnabled());
 			assertEquals(0, user.getSubBalance());
 		}
 	}
@@ -221,7 +218,6 @@ public class UserDaoTestIT {
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-		testUser.setPaymentEnabled(true);
 		
 		return testUser;
 	}

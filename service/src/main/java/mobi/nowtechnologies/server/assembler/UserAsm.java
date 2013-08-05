@@ -154,7 +154,6 @@ public class UserAsm {
 		user.setSubBalance(userDto.getSubBalance());
 		user.setNextSubPayment((int) (userDto.getNextSubPayment().getTime() / 1000));
 		user.setUserType(userDto.getUserType());
-		user.setPaymentEnabled(userDto.getPaymentEnabled());
         if(userDto.getFreeTrialExpiredMillis() != 0)
         user.setFreeTrialExpired(userDto.getFreeTrialExpiredAsDate());
 

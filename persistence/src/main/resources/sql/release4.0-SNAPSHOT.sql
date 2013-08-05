@@ -47,6 +47,7 @@ alter table tb_paymentPolicy add column media_type char(255) not null default 'A
 alter table tb_users add column tariff char(255) not null default '_3G';
 alter table tb_users add column video_free_trial_has_been_activated boolean not null default false;
 alter table tb_promoCode add column media_type char(255) not null default 'AUDIO';
+alter table tb_users drop column paymentEnabled;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
@@ -95,7 +96,8 @@ create table refund (
    value('o2 Video Audio Free Trial for 4G PAYG consumers', unix_timestamp(), 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.payg', 0, 0, 0, false);
 
  insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.before2014';
- insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.after20134';
+ insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.after2013';
+ insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.indirect';
  insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.payg';
 
  --
@@ -128,7 +130,6 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
 (10,1,1,'o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107054','Description of content','O2 Tracks','o2','_4G','AUDIO');
-
 
 
 -- insert 3 new audio+video payment policies for o2 consumer group

@@ -89,7 +89,6 @@ public class UserFactory
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(paymentStatus.getId());
-		testUser.setPaymentEnabled(true);
 		testUser.setProvider("o2");
 		testUser.setContract(PAYG);
 		testUser.setSegment(CONSUMER);

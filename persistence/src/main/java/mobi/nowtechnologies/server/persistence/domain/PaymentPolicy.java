@@ -309,6 +309,16 @@ public class PaymentPolicy {
         this.mediaType = mediaType;
     }
 
+    public PaymentPolicy withTariff(Tariff tariff){
+        setTariff(tariff);
+        return this;
+    }
+
+    public PaymentPolicy withMediaType(MediaType mediaType){
+        setMediaType(mediaType);
+        return this;
+    }
+
     @Override
     public String toString() {
         return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
@@ -324,8 +334,6 @@ public class PaymentPolicy {
         PaymentPolicyDto paymentPolicyDto = paymentDetailsByPaymentDto.new PaymentPolicyDto();
 
         paymentPolicyDto.setCurrencyISO(currencyISO);
-        //paymentPolicyDto.setOldSubcost(oldSubcost);
-        //paymentPolicyDto.setOldSubweeks(oldSubweeks);
         if (operator!=null) {
             paymentPolicyDto.setOperator(operator.getId());
             paymentPolicyDto.setOperatorName(operatorName);

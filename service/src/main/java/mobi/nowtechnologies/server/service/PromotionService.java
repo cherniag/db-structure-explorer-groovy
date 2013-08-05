@@ -6,8 +6,6 @@ import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -159,14 +157,14 @@ public class PromotionService {
 
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
-        Promotion promotion = getPromotionForO24GConsumer(user);
+        Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
         if (promotion != null){
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
     }
 
-    private Promotion getPromotionForO24GConsumer(User user){
+    private Promotion setVideoAudioPromotionForO24GConsumer(User user){
         final Promotion promotion;
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
