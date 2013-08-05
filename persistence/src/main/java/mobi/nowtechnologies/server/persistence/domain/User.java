@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -358,7 +359,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isSubscribedByITunes() {
-		return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION);
+		return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION);
 	}
 
 	public boolean isIOSDevice() {
@@ -910,7 +911,7 @@ public class User implements Serializable {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated() && (currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) || currentPaymentDetails
 				.getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
-				&& lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+				&& lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
 		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
 		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -980,18 +981,18 @@ public class User implements Serializable {
 
 	// TODO Review this code after client refactoring
 	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
+		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
 				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
 			return "ITUNES_SUBSCRIPTION";
 		} else if (null == paymentDetails)
 			return "UNKNOWN";
-		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
+		if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			return "creditCard";
-		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			return "PAY_PAL";
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return "PSMS";
-		} else if (PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			return "O2_PSMS";
 		}
 		return "UNKNOWN";
@@ -1000,7 +1001,7 @@ public class User implements Serializable {
 	protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
 		if (null == paymentDetails)
 			return PaymentStatus.NULL;
-		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
+		if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
 				return PaymentStatus.AWAITING_PAYMENT;
@@ -1012,7 +1013,7 @@ public class User implements Serializable {
 			case NONE:
 				return PaymentStatus.NULL;
 			}
-		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
 				return PaymentStatus.AWAITING_PAY_PAL;
@@ -1024,7 +1025,7 @@ public class User implements Serializable {
 			case NONE:
 				return PaymentStatus.NULL;
 			}
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+		} else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
 			switch (paymentDetails.getLastPaymentStatus()) {
 			case AWAITING:
 				return PaymentStatus.AWAITING_PSMS;
@@ -1326,7 +1327,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isSubscribedViaInApp() {
-		return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
+		return ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
 				new DateTime(getNextSubPaymentAsDate()).isAfterNow();
 	}
 
@@ -1455,7 +1456,7 @@ public class User implements Serializable {
         return isO2Consumer() && Contract.PAYM.equals(contract);
     }
 
-    public Boolean hasAllDetails() {
+    public boolean hasAllDetails() {
         return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
     }
 
@@ -1475,6 +1476,11 @@ public class User implements Serializable {
         PaymentDetails currentDetails = getCurrentPaymentDetails();
         PaymentDetails successfulDetails = getLastSuccessfulPaymentDetails();
         if (isNull(currentDetails) || isNull(successfulDetails)) return null;
+
+        String currentPaymentDetailsPaymentType = currentPaymentDetails.getPaymentType();
+
+        String successfulDetailsPaymentType = successfulDetails.getPaymentType();
+        if (!(currentPaymentDetailsPaymentType.equals(O2_PSMS_TYPE) && successfulDetailsPaymentType.equals(O2_PSMS_TYPE))) return null;
 
         PaymentPolicy currentPolicy = currentDetails.getPaymentPolicy();
         PaymentPolicy successPolicy = successfulDetails.getPaymentPolicy();
