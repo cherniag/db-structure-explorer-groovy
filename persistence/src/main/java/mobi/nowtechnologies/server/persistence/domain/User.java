@@ -1456,7 +1456,7 @@ public class User implements Serializable {
     }
 
     public Boolean hasAllDetails() {
-        return this.contract != null && this.segment != null && this.tariff != null;
+        return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
     }
 
     public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
