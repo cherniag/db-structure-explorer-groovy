@@ -255,7 +255,11 @@ public class GetChartController extends CommonController{
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART" }, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART",
+            "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART",
+            "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART.json"
+    }, produces = "application/json")
     public @ResponseBody Response getChart_O2_v3d8Json(
             HttpServletRequest request,
             @RequestParam("APP_VERSION") String appVersion,
@@ -301,7 +305,11 @@ public class GetChartController extends CommonController{
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART" }, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART",
+            "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART",
+            "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART.json"
+    }, produces = "application/json")
     public @ResponseBody Response getChart_O2_v4d0Json(
             HttpServletRequest request,
             @RequestParam("USER_NAME") String userName,
