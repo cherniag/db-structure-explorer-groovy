@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -306,6 +307,88 @@ public class PromotionServiceTest {
         verify(userServiceMock, times(0)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(0)).applyPromotionByPromoCode(user, promotion);
         verify(userServiceMock, times(1)).applyO2PotentialPromo(user.isO2User(), user, community);
+    }
+
+    @Test
+    public void shouldActivateVideoAudioFreeTrial(){
+        //given
+        String userName = "userName";
+        String userToken = "";
+        String timestamp = "";
+        String communityUri = "o2";
+        String deviceUID = "deviceUid";
+
+        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(communityUri).withContract(PAYG).withSegment(CONSUMER);
+        promotion = new Promotion();
+
+        promoCode = "promoCode";
+
+        doReturn(promoCode).when(messageSourceMock).getMessage("promocode.for.o2.consumer.4g.payg.direct", null);
+        when(userServiceMock.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID)).thenReturn(user);
+        when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
+
+        doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
+        doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
+
+        //when
+        User actualUser = promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
+
+       //then
+        assertEquals(user, actualUser);
+
+        verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
+        verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
+        verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotActivateVideoAudioFreeTrialWhenNoPromotion(){
+        //given
+        String userName = "userName";
+        String userToken = "";
+        String timestamp = "";
+        String communityUri = "o2";
+        String deviceUID = "deviceUid";
+
+        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(communityUri).withContract(PAYG).withSegment(CONSUMER);
+        promotion = new Promotion();
+
+        promoCode = "promoCode";
+
+        doReturn(promoCode).when(messageSourceMock).getMessage("promocode.for.o2.consumer.4g.payg.direct", null);
+        when(userServiceMock.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID)).thenReturn(user);
+        when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
+
+        doReturn(null).when(userServiceMock).setPotentialPromo(user, promoCode);
+        doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
+
+        //when
+        promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotActivateVideoAudioFreeTrialWhenUserIsNotEligibled(){
+        //given
+        String userName = "userName";
+        String userToken = "";
+        String timestamp = "";
+        String communityUri = "o2";
+        String deviceUID = "deviceUid";
+
+        user = new User().withUserName(userName).withDeviceUID(deviceUID).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(communityUri))).withTariff(_4G).withProvider(communityUri).withContract(PAYG).withSegment(CONSUMER);
+        promotion = new Promotion();
+
+        promoCode = "promoCode";
+
+        doReturn(promoCode).when(messageSourceMock).getMessage("promocode.for.o2.consumer.4g.payg.direct", null);
+        when(userServiceMock.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID)).thenReturn(user);
+        when(userServiceMock.canActivateVideoTrial(user)).thenReturn(false);
+
+        doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
+        doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
+
+        //when
+        promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
     }
 
     private PromotionServiceTest validateAs(boolean b) {

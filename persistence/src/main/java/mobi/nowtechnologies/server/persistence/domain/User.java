@@ -823,6 +823,21 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withUserName(String userName){
+        setUserName(userName);
+        return this;
+    }
+
+    public User withContractChannel(ContractChannel contractChannel){
+        setContractChannel(contractChannel);
+        return this;
+    }
+
+    public User withDeviceUID(String deviceUID){
+        setDeviceUID(deviceUID);
+        return this;
+    }
+
 	public int getPaymentStatus() {
 		return paymentStatus;
 	}
