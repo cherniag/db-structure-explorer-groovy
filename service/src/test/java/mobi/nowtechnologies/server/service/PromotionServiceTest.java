@@ -150,6 +150,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
@@ -172,6 +173,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_INDIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
@@ -198,6 +200,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
@@ -222,6 +225,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_DIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
@@ -244,6 +248,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_INDIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
@@ -266,6 +271,7 @@ public class PromotionServiceTest {
         promoCode = "promoCode";
         doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_DIRECT, null);
 
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
