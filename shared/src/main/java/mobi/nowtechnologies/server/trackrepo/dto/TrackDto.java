@@ -29,6 +29,8 @@ public class TrackDto {
 	private TrackStatus status;
 	private String coverFileName;
 	private String mediaFileName;
+    private FileType mediaType;
+
 
 	// ------------------additional properties------------------//
 	private String label;
@@ -352,6 +354,14 @@ public class TrackDto {
         this.mediaFileName = mediaFileName;
     }
 
+    public FileType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(FileType mediaType) {
+        this.mediaType = mediaType;
+    }
+
     @Override
 	public int hashCode() {
 		final int prime = 31;
@@ -537,6 +547,8 @@ public class TrackDto {
                 ", ingestionDate=" + ingestionDate +
                 ", status=" + status +
                 ", coverFileName='" + coverFileName + '\'' +
+                ", mediaFileName='" + mediaFileName + '\'' +
+                ", mediaType=" + mediaType +
                 ", label='" + label + '\'' +
                 ", subTitle='" + subTitle + '\'' +
                 ", productId='" + productId + '\'' +

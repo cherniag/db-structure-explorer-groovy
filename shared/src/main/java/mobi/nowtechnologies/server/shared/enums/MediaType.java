@@ -6,5 +6,5 @@ package mobi.nowtechnologies.server.shared.enums;
  */
 public enum MediaType {
     VIDEO_AND_AUDIO,
-    AUDIO
+    AUDIO,
 }

@@ -38,6 +38,9 @@ public class Track extends AbstractEntity {
 	@Basic(optional=false)
 	@Enumerated(EnumType.STRING)
 	protected TrackStatus status;
+    @Basic(optional=false)
+    @Enumerated(EnumType.STRING)
+    protected AssetFile.FileType mediaType;
 	
 	//-------------optional properties---------------//
 	@Basic(optional=true)
@@ -434,6 +437,14 @@ public class Track extends AbstractEntity {
         return mediaFileId;
     }
 
+    public AssetFile.FileType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(AssetFile.FileType mediaType) {
+        this.mediaType = mediaType;
+    }
+
     @Override
     public String toString() {
         return "Track{" +
@@ -461,6 +472,7 @@ public class Track extends AbstractEntity {
                 ", territoryCodes='" + territoryCodes + '\'' +
                 ", label='" + label + '\'' +
                 ", startDate=" + releaseDate +
+                ", mediaType=" + mediaType +
                 "} " + super.toString();
     }
 }

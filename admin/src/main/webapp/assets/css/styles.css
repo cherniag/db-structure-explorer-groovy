@@ -1,5 +1,26 @@
 .table_width, .nav_width, .edit_width { width: 50%; margin: 10px;}
 
+.video {
+    display: block;
+    position: relative;
+    top: -33px;
+    width: 320px;
+    height: 240px;
+    z-index: 100;
+}
+
+.play-icon {
+    background: url("../img/play-icon.png") no-repeat;
+    display: block;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: 30px;
+    top: 30px;
+    background-size: 50px 50px;
+    /*background-size: contain;*/
+}
+
 .hasError{
 	color:red;
 }
@@ -691,7 +712,8 @@ ul.table li div.repo_columns {
 }
 
 ul.table li div.image_repo_columns {
-	width: 10%;
+    position: relative;
+	width: 100px;
 	border: none;
 }
 
@@ -896,4 +918,24 @@ table.hor-minimalist-a td {
 
 .nav-pills > li > a {
     color: #0088CC;
+}
+
+.videoContainer{
+    position: fixed;
+    background-color: transparent;
+    box-shadow: 0 0px 0px;
+    -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0px 0px rgba(0, 0, 0, 0.3);
+}
+
+ul.table li .videoContainer div.modal-header {
+    padding: 0px 0px 0px 0px;
+    height: auto;
+    width: 100%;
+}
+
+ul.table li .videoContainer div.modal-header .close{
+    position: relative;
+    margin-top: 0px;
+    z-index: 200;
 }

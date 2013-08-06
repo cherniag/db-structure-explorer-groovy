@@ -393,6 +393,8 @@ public class IngestServiceImpl implements IngestService{
         track.setMediaFile(track.getFile(AssetFile.FileType.DOWNLOAD));
         if(track.getMediaFile() == null)
             track.setMediaFile(track.getFile(AssetFile.FileType.VIDEO));
+        if(track.getMediaFile() != null)
+            track.setMediaType(track.getMediaFile().getType());
 
         return true;
     }
@@ -405,6 +407,7 @@ public class IngestServiceImpl implements IngestService{
 					return false; // Do not update existing file
 				file.setPath(dropFile.file);
 				file.setMd5(dropFile.md5);
+                file.setDuration(dropFile.duration);
 				found = true;
 			}
 		}
