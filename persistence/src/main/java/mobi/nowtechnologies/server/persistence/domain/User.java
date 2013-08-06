@@ -903,147 +903,6 @@ public class User implements Serializable {
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
 	}
 
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
-		Chart chart = userGroup.getChart();
-		News news = userGroup.getNews();
-		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-
-		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated() && (currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) || currentPaymentDetails
-				.getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
-				&& lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
-				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
-		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
-
-		AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
-		accountCheckDTO.setChartTimestamp(chart.getTimestamp());
-		accountCheckDTO.setChartItems(chart.getNumTracks());
-		setNewsItemsAndTimestamp(news, accountCheckDTO);
-
-		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0));
-		if (null != getCurrentPaymentDetails())
-			accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
-
-		accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
-		accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
-		accountCheckDTO.setStatus(status.getName());
-		accountCheckDTO.setDisplayName(displayName);
-		accountCheckDTO.setSubBalance((byte) subBalance);
-		accountCheckDTO.setDeviceType(deviceType.getName());
-		accountCheckDTO.setDeviceUID(deviceString);
-		accountCheckDTO.setPaymentType(oldPaymentType);
-		accountCheckDTO.setPaymentEnabled(paymentEnabled);
-		accountCheckDTO.setPhoneNumber(mobile);
-		accountCheckDTO.setOperator(operator);
-		accountCheckDTO.setPaymentStatus(oldPaymentStatus);
-		accountCheckDTO.setUserName(userName);
-		accountCheckDTO.setUserToken(token);
-		accountCheckDTO.setRememberMeToken(rememberMeToken);
-		accountCheckDTO.setFreeTrial(isOnFreeTrial());
-		accountCheckDTO.setProvider(provider);
-		accountCheckDTO.setContract(toStringIfNull(contract));
-		accountCheckDTO.setSegment(toStringIfNull(segment));
-		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
-
-		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
-
-		accountCheckDTO.setoAuthProvider((StringUtils.hasText(facebookId)) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
-		accountCheckDTO.setNextSubPaymentSeconds(getNextSubPayment());
-
-		if (potentialPromotion != null)
-			accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
-		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
-
-		accountCheckDTO.setActivation(getActivationStatus());
-
-		if (appStoreProductIds != null) {
-			StringBuilder temp = new StringBuilder();
-			for (String appStoreProductId : appStoreProductIds) {
-				if (appStoreProductId != null) {
-					temp.append("," + appStoreProductId);
-				}
-			}
-			if (temp.length() != 0)
-				accountCheckDTO.setAppStoreProductId(temp.substring(1));
-		}
-
-		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
-		return accountCheckDTO;
-	}
-
-	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-		if (news == null)
-			return;
-		accountCheckDTO.setNewsTimestamp(news.getTimestamp());
-		accountCheckDTO.setNewsItems(news.getNumEntries());
-	}
-
-	// TODO Review this code after client refactoring
-	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
-				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
-			return "ITUNES_SUBSCRIPTION";
-		} else if (null == paymentDetails)
-			return "UNKNOWN";
-		if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "creditCard";
-		} else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "PAY_PAL";
-		} else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "PSMS";
-		} else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "O2_PSMS";
-		}
-		return "UNKNOWN";
-	}
-
-	protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
-		if (null == paymentDetails)
-			return PaymentStatus.NULL;
-		if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PAYMENT;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.OK;
-			case NONE:
-				return PaymentStatus.NULL;
-			}
-		} else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PAY_PAL;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.PAY_PAL_ERROR;
-			case NONE:
-				return PaymentStatus.NULL;
-			}
-		} else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PSMS;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.PSMS_ERROR;
-			}
-			if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
-				return PaymentStatus.PIN_PENDING;
-			} else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
-				return PaymentStatus.NULL;
-			}
-		}
-		return null;
-	}
-
 	public AccountDto toAccountDto() {
 		AccountDto accountDto = new AccountDto();
 		accountDto.setEmail(userName);
@@ -1505,5 +1364,9 @@ public class User implements Serializable {
 
     public boolean isOnVideoAudioFreeTrial() {
         return isLastPromoForVideo() && isOnFreeTrial();
+    }
+
+    public boolean canPlayVideo(){
+        return isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod();
     }
 }

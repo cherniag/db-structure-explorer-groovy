@@ -59,6 +59,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
@@ -72,10 +73,6 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
-
-    public boolean canPlayVideo(User user){
-        return user.isOnVideoAudioFreeTrial() || user.isOn4GVideoAudioBoughtPeriod();
-    }
 
     public Boolean canActivateVideoTrial(User u) {
         Date multipleFreeTrialsStopDate = messageSource.readDate(MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
@@ -1084,7 +1081,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week

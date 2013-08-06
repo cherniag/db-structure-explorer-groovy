@@ -484,6 +484,102 @@ public class UserTest {
         assertEquals(true, isShowPromotion);
     }
 
+    @Test
+    public void shouldReturnCanPlayVideoTrueForUserOn4GVideoAudioFreeTrial(){
+        //given
+        user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(true, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoTrueForUserOn4GVideoAudioBoughtPeriod() {
+        //given
+        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(true, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserWith4GVideoAudioFreeTrialExpiredAndNotOnBoughtVideoAudioPeriod(){
+        //given
+        user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(0L).withNextSubPayment(0).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserOn3GAudioFreeTrial(){
+        //given
+        user = new User().withTariff(_3G).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserOn4GAudioFreeTrial(){
+        //given
+        user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserO3GAudioBoughtPeriod() {
+        //given
+        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_3G).withMediaType(AUDIO)));
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserO4GAudioBoughtPeriod() {
+        //given
+        user = new User().withTariff(_4G).withNextSubPayment(Integer.MAX_VALUE).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(AUDIO)));
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void shouldReturnCanPlayVideoFalseForUserOn4GVideoAudioSubscriptionWithNextSubPaymentInThePast() {
+        //given
+        user = new User().withTariff(_4G).withNextSubPayment(0).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
+
+        //when
+        boolean canPlayVideo = user.canPlayVideo();
+
+        //then
+        org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
 
         mockStatic(Utils.class);

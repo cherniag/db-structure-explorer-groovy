@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
@@ -84,7 +85,7 @@ public class ChartService {
 
 		user = userService.findUserTree(userId);
 
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
+		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 		
