@@ -34,7 +34,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
-                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+                              @RequestParam("DEVICE_UID") String deviceUID,
                               @PathVariable("communityUri") String communityUri) throws Exception {
         User user = null;
         Exception ex = null;
