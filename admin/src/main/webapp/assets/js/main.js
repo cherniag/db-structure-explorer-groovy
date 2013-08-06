@@ -16,6 +16,62 @@ $.fn.descendantOf = function(element) {
 };
 //---------------------------------------------------//
 $(function() {
+    //------------------Play Video and Audio-----------//
+    var player = null;
+    $(".play").mouseover(function(){
+           var modalEl = $(this).parent().find(".modal");
+
+           setAbsPosition(modalEl, $(this).parent().offset());
+
+           modalEl.modal({backdrop:false});
+           modalEl.mouseout(function(){
+               if(player == null || player[0] !== $(this)[0]){
+                   $(this).modal("hide");
+               }
+           });
+
+           var videoEl = modalEl.find("video");
+           var closeEl = modalEl.find(".close");
+           closeEl.hide();
+           closeEl.click(function(){
+               player.stop();
+           });
+           videoEl[0].addEventListener('ended', function(){
+               modalEl.modal("hide");
+               player = null;
+           });
+           videoEl[0].addEventListener('play', function(){
+               stop();
+
+               player = modalEl;
+               closeEl.show();
+           });
+    });
+
+    var stop = function(){
+        if(player){
+            player.modal("hide");
+//            var videoEl = player.find("video");
+//            videoEl[0].pause();
+//            videoEl[0].load();
+            player = null;
+        }
+    }
+
+    $(window).scroll(function () {
+        if(player){
+            setAbsPosition(player, player.parent().offset());
+        }
+    });
+
+    var setAbsPosition = function (el, offset) {
+            var pos = offset;
+            pos.top = pos.top - $(window).scrollTop();
+            pos.left = pos.left - $(window).scrollLeft();
+            el.css("top",pos.top+234);
+            el.css("left",pos.left+280);
+    }
+
     //-----------------Select All Checkbox------------//
     var checkAllInput = $("input#selectAll[type=checkbox]");
     var otherCheckboxes = $("input[id!='selectAll'][type='checkbox']");

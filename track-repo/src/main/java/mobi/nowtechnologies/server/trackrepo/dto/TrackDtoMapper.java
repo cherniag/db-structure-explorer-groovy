@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.springframework.data.domain.Page;
 
 import java.util.LinkedList;
@@ -41,6 +42,7 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
         this.setReleaseDate(track.getReleaseDate());
         this.setCoverFileName(track.getCoverFileId() != null ? track.getCoverFileId().toString() : "0");
         this.setMediaFileName(track.getMediaFileId() != null ? track.getMediaFileId().toString() : "0");
+        this.setMediaType(FileType.valueOf(track.getMediaType().name()));
 	}
 	
 	public static List<TrackDtoMapper> toList(List<Track> tracks) {

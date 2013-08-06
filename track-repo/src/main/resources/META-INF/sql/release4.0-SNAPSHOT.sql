@@ -33,4 +33,10 @@ set
   t.label = tr.label,
   t.releaseDate = tr.startdate
 
+alter table cn_cms.Track add column mediaType VARCHAR(255) not null DEFAULT 'DOWNLOAD';
+
+update cn_cms.Track t
+  join cn_cms.AssetFile af on t.mediaFile = af.id and af.type = 4
+set t.mediaType = 'VIDEO';
+
 

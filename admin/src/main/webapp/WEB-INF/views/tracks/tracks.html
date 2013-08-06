@@ -87,7 +87,14 @@
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
 						<img alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
-					</div>
+                        <audio controls="controls" th:if="${trackDto.mediaType.name() != 'VIDEO'}" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}"/>
+                        <div th:if="${trackDto.mediaType.name() == 'VIDEO'}" class="modal hide fade videoContainer" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" style="width: 320px; height: 240px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            </div>
+                            <video class="video" controls="controls" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}"/>
+                        </div>
+                    </div>
 					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
 					<div class="repo_columns" th:text="${trackDto.explicit != null and trackDto.explicit ? (trackDto.subTitle == null ? '' : trackDto.subTitle) + ' (EXPLICIT)' : trackDto.subTitle}">SubTitle</div>
@@ -107,7 +114,6 @@
 								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showPullDialog(this.name);">Pull</button>
 						</form>
 					</div>
-				</li>
 			</ul>
 		</div>
 	</div>
@@ -183,7 +189,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/	
+	    <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
 	                                          
 		function showEncodeDialog(trackId) {
 			var id = $("#idDiv_" + trackId).text();
