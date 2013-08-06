@@ -92,10 +92,10 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentDetailsType", paymentType);
         
         boolean isBussinesUser =  SegmentType.BUSINESS == user.getSegment();
-        boolean isPayMonthlyUser =  Contract.PAYM == user.getContract();
         
+        mav.addObject("isBussinesOrNonO2User", isBussinesUser || user.isnonO2User());
         mav.addObject("isBussinesUser", isBussinesUser);
-        mav.addObject("isPayMonthlyUser", isPayMonthlyUser);
+        mav.addObject("isPayMonthlyUser", Contract.PAYM == user.getContract());
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -186,30 +186,48 @@ public class PaymentsController extends CommonController {
         return "";
     }
     
-    /*private String getMessageCodeForAccountNotes2(User user) {
+    private String getMessageCodeForAccountNotes2(User user) {
+    	String message = null;
+    	if ( user.is3G() ) {
+    		message = getMessageCodeForAudio( user );
+    	} else if ( user.is4G() ) {
+    		message = getMessageCodeForVideo( user );
+    	}
     	
-    	return null;
+    	return message;
     }
     
     private String getMessageCodeForVideo(User user) {
+    	String message = null;
     	
+    	if ( user.isOnVideoAudioFreeTrial() ) {
+    		
+    	}
     	
-    	return null;
+    	return message;
     }
     
     private String getMessageCodeForAudio(User user) {
+    	String message = null;
     	if ( user.isOnFreeTrial() ) {
-    		
+//    		message = "You have 12 days left on your free trial";
+    		if ( user.isSubscribed() ) {
+//    			message = "Due to subscribe after free trial (12 days left)";
+    		}
     	} else if ( user.isSubscribed() ) {
-    		
+    		if ( user.isActivePaymentDetails() ) {
+//    			message = "Next billing cycle: 2 August 2013";
+    		} else {
+//    			message = "Ending on: 2 August 2013";
+    		}
     	} else if ( user.isLimited() ) {
-    		
+//    		message = "Consider subscribing to gain full access!";
     	} else {
     		LOGGER.warn("No banner for user [{}]", user);
     	}
 
-    	return null;
-    }*/
+    	return message;
+    }
 
     public String getMessageCodeForAccountNotes(User user) {
         String messageCode = "pays.page.note.account";
