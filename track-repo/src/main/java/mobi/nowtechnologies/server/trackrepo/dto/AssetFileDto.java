@@ -68,6 +68,8 @@ public class AssetFileDto {
 			return FileType.IMAGE;
 		case PREVIEW:
 			return FileType.ORIGINAL_ACC;
+        case VIDEO:
+			return FileType.VIDEO;
 		}
 
 		return null;

@@ -240,7 +240,7 @@ public class TrackServiceImpl implements TrackService {
 		return str.toString();
 	}
 	
-	private void moveFiles(File srcDir, File destDir) throws IOException{
+	private void moveFiles(File srcDir, File destDir) {
 		String destPath = destDir.getAbsolutePath();
 		Collection<File> moveDirs = FileUtils.listFilesAndDirs(srcDir, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
 		Iterator<File> i = moveDirs.iterator();
@@ -257,8 +257,12 @@ public class TrackServiceImpl implements TrackService {
 				
 				File destFile = new File(newDestSubDir, file.getName());
 				FileUtils.deleteQuietly(destFile);
-				
-				FileUtils.moveFileToDirectory(file, newDestSubDir, true);
+
+                try{
+                    FileUtils.moveFileToDirectory(file, newDestSubDir, true);
+                }catch(IOException e){
+                    LOGGER.error(e.getMessage(), e);
+                }
 			}
 		}
 		

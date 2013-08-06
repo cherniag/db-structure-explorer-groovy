@@ -145,6 +145,7 @@ public class IngestServiceImplTest {
 
         Assert.assertTrue(result);
         Assert.assertEquals(audioDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(audioDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
         verify(fixture, times(3)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
@@ -171,6 +172,7 @@ public class IngestServiceImplTest {
 
         Assert.assertTrue(result);
         Assert.assertEquals(videoDropFile.file, track.getMediaFile().getPath());
+        Assert.assertEquals(videoDropFile.type, track.getMediaType());
         Assert.assertEquals(dropFile.file, track.getCoverFile().getPath());
 
         verify(fixture, times(2)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
@@ -204,6 +206,86 @@ public class IngestServiceImplTest {
         Assert.assertEquals(null, track.getCoverFile());
 
         verify(fixture, times(1)).addOrUpdateFile(any(Set.class), any(DropAssetFile.class), anyBoolean());
+    }
+
+    @Test
+    public void testAddOrUpdateFile_FileFound_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+        AssetFile assetFile = new AssetFile();
+        assetFile.setId(1L);
+        assetFile.setPath("path/video");
+        assetFile.setDuration(1000);
+        assetFile.setType(AssetFile.FileType.VIDEO);
+
+        track.getFiles().add(assetFile);
+
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/video1";
+        dropFile.type = AssetFile.FileType.VIDEO;
+        dropFile.isrc = "dffffff";
+        dropFile.duration = 100;
+
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+
+        Assert.assertTrue(result);
+        AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+        Assert.assertNotNull(videoFile.getId());
+        Assert.assertEquals(dropFile.duration, videoFile.getDuration());
+        Assert.assertEquals(dropFile.file, videoFile.getPath());
+    }
+
+    @Test
+    public void testAddOrUpdateFile_FileFoundNotUpdate_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+        AssetFile assetFile = new AssetFile();
+        assetFile.setId(1L);
+        assetFile.setPath("path/video");
+        assetFile.setDuration(1000);
+        assetFile.setType(AssetFile.FileType.VIDEO);
+
+        track.getFiles().add(assetFile);
+
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/video1";
+        dropFile.type = AssetFile.FileType.VIDEO;
+        dropFile.isrc = "dffffff";
+        dropFile.duration = 100;
+
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, false);
+
+        Assert.assertFalse(result);
+        AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+        Assert.assertNotNull(videoFile.getId());
+        Assert.assertEquals("path/video", videoFile.getPath());
+        Assert.assertEquals(1000, videoFile.getDuration().intValue());
+    }
+
+    @Test
+    public void testAddOrUpdateFile_FileNotFound_Success() throws Exception {
+        Track track = TrackFactory.anyTrack();
+        track.setFiles(new HashSet<AssetFile>());
+        AssetFile assetFile = new AssetFile();
+        assetFile.setId(1L);
+        assetFile.setPath("path/image");
+        assetFile.setType(AssetFile.FileType.IMAGE);
+
+        track.getFiles().add(assetFile);
+
+        DropAssetFile dropFile = new DropAssetFile();
+        dropFile.file = "path/video1";
+        dropFile.type = AssetFile.FileType.VIDEO;
+        dropFile.isrc = "dffffff";
+        dropFile.duration = 100;
+
+        boolean result = fixture.addOrUpdateFile(track.getFiles(), dropFile, true);
+
+        Assert.assertTrue(result);
+        AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+        Assert.assertNull(videoFile.getId());
+        Assert.assertEquals(dropFile.duration, videoFile.getDuration());
+        Assert.assertEquals(dropFile.file, videoFile.getPath());
     }
 
     @Test

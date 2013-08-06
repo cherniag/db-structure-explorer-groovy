@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
+
 /**
  * @author Alexander Kolpakov (akolpakov)
  * @author Titov Mykhaylo (titov)
@@ -297,7 +299,7 @@ public class DrmService {
 		int userId = user.getId();
 
 		user = userService.findUserTree(userId);
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
+		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
 
 		List<Drm> drms = drmDao.findByUserAndDrmType(user.getId(), DrmTypeDao.getPURCHASED_DRM_TYPE());
 

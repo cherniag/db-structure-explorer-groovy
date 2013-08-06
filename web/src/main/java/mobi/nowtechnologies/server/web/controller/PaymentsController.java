@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,16 +80,7 @@ public class PaymentsController extends CommonController {
         
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
         mav.addObject("userCanGetVideo", user.is4G());
-        
-        int activePolicyId = -1;
-        if ( userIsOptedInToVideo && paymentDetails !=null && paymentDetails.isActivated() ) {
-        	Integer mirrorPolicy = getMirrorPaymentPolicy(paymentPolicies, activePolicy.getSubweeks(), activePolicy.getMediaType());
-        	if ( mirrorPolicy != null ) {
-        		activePolicyId = mirrorPolicy;
-        	}
-        }
-        mav.addObject("mirrorOfActivePolicy", activePolicyId);
-        
+
         String paymentType = null;
         if ( paymentDetails != null ) {
         	if ( PaymentDetails.PAYPAL_TYPE.equalsIgnoreCase(paymentDetails.getPaymentType()) ) {
@@ -131,20 +121,6 @@ public class PaymentsController extends CommonController {
     }
     
     /**
-     * Having a list of audio only and audio+video policies, return the policy that's the 'mirror' or the active policy.
-     * For example for a 1week audio only policy, the mirror is 1w audio+video policy
-     *  
-     */
-    private Integer getMirrorPaymentPolicy(List<PaymentPolicyDto> paymentPolicies, int activePolicyWeeks, MediaType activePaymentPolicyMediaType) {
-    	for ( PaymentPolicyDto pp : paymentPolicies ) {
-    		if ( pp.getPaymentPolicyMediaType() != activePaymentPolicyMediaType && pp.getSubweeks() == activePolicyWeeks ) {
-    			return (int)pp.getId();
-    		}
-    	}
-    	return null;
-    }
-    
-    /**
      * For 3G users we'll only display 3G payment options, for 4G users, we'll display only 4G payment options
      */
     private List<PaymentPolicyDto> filterPaymentPoliciesForUser(List<PaymentPolicyDto> paymentPolicyList, User user) {
@@ -162,9 +138,6 @@ public class PaymentsController extends CommonController {
     				ret.add( pp );
     			}
     		}
-/*    		if ( (videoEnabledUser && pp.isVideoAndAudio4GSubscription()) || (!videoEnabledUser && !pp.isVideoAndAudio4GSubscription()) ) {
-    			ret.add( pp );
-    		}*/
     	}
     	
     	return ret;
@@ -212,6 +185,31 @@ public class PaymentsController extends CommonController {
         }
         return "";
     }
+    
+    /*private String getMessageCodeForAccountNotes2(User user) {
+    	
+    	return null;
+    }
+    
+    private String getMessageCodeForVideo(User user) {
+    	
+    	
+    	return null;
+    }
+    
+    private String getMessageCodeForAudio(User user) {
+    	if ( user.isOnFreeTrial() ) {
+    		
+    	} else if ( user.isSubscribed() ) {
+    		
+    	} else if ( user.isLimited() ) {
+    		
+    	} else {
+    		LOGGER.warn("No banner for user [{}]", user);
+    	}
+
+    	return null;
+    }*/
 
     public String getMessageCodeForAccountNotes(User user) {
         String messageCode = "pays.page.note.account";

@@ -15,9 +15,9 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
     private final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
-    public Date readDate(String code, Date defaults) {
+    public Date readDate(String community, String code, Date defaults) {
         try {
-            String dateString = trim(getMessage(null, code, null, null));
+            String dateString = trim(getMessage(community, code, null, null));
             Date date = format.parse(dateString);
             return date;
         } catch (Exception e) {

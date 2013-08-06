@@ -1061,7 +1061,6 @@ public class IntegrationTestIT {
 		final int userId = user.getId();
 
 		assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-		assertFalse(user.isPaymentEnabled());
 
 		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
 		assertNull(lastPremiumUserPayment);
@@ -1989,7 +1988,6 @@ public class IntegrationTestIT {
 		final int userId = user.getId();
 
 		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertFalse(user.isPaymentEnabled());
 
 		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
 		assertNull(lastPremiumUserPayment);
@@ -2061,7 +2059,6 @@ public class IntegrationTestIT {
 		final int userId = user.getId();
 
 		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertFalse(user.isPaymentEnabled());
 
 		assertEquals(0, user.getSubBalance());
 
@@ -2268,7 +2265,6 @@ public class IntegrationTestIT {
 		final int userId = user.getId();
 
 		assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-		assertTrue(user.isPaymentEnabled());
 
 		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
 		assertNull(lastPremiumUserPayment);
@@ -2381,7 +2377,6 @@ public class IntegrationTestIT {
 			assertNotNull(user);
 
 			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-			assertFalse(user.isPaymentEnabled());
 
 			String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
 			assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);

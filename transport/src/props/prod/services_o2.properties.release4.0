@@ -1,0 +1,9 @@
+promocode.for.o2.consumer.4g.paym.direct=o2.consumer.4g.paym.direct
+promocode.for.o2.consumer.4g.paym.indirect=o2.consumer.4g.paym.indirect
+promocode.for.o2.consumer.4g.payg.direct=o2.consumer.4g.payg
+promocode.for.o2.consumer.4g.payg.indirect=o2.consumer.4g.payg
+multiple.free.trial.stop.date=01-01-2014
+
+# Activate Video Audio Free Trial Promotion
+user.is.not.eligible.for.this.action=The user isn't eligible for this action
+could.not.apply.promotion=Couldn't apply promotion

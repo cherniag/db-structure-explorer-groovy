@@ -13,5 +13,5 @@ public interface CommunityResourceBundleMessageSource {
 
     int readInt(String code, int defaults);
 
-    Date readDate(String code, Date defaults);
+    Date readDate(String community, String code, Date defaults);
 }

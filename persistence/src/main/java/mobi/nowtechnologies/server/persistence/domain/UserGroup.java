@@ -123,6 +123,11 @@ public class UserGroup implements Serializable {
 		return drmPolicyId;
 	}
 
+    public UserGroup withCommunity(Community community){
+        setCommunity(community);
+        return this;
+    }
+
 	@Override
 	public String toString() {
 		return "UserGroup [chartId=" + chartId + ", communityId=" + communityId + ", drmPolicyId=" + drmPolicyId + ", i=" + i + ", name=" + name

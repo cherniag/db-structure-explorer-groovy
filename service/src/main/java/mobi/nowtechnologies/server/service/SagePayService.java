@@ -216,7 +216,6 @@ public class SagePayService {
 
 		int statusCode = reply.getStatusCode();
 		if (statusCode != HttpServletResponse.SC_OK) {
-			user.setPaymentEnabled(false);
 			userService.updateUser(user);
 			throw new ServiceException("Sage pay error [" + reply.toString() + "]");
 		}
@@ -226,7 +225,6 @@ public class SagePayService {
 			properties.load(new StringReader(reply.getMessage()));
 		} catch (IOException e) {
 			LOGGER.error("can't parse sage pay reply");
-			user.setPaymentEnabled(false);
 			userService.updateUser(user);
 			throw new ServiceException("can't parse sage pay reply", e);
 		}
@@ -288,7 +286,6 @@ public class SagePayService {
 		LOGGER.info("Sage pay system response is [{}]", reply.toString());
 
 		if (reply.getStatusCode() != HttpServletResponse.SC_OK) {
-			user.setPaymentEnabled(false);
 			userService.updateUser(user);
 			throw new ServiceException("Sage pay error [" + reply.toString() + "]");
 		}
@@ -298,7 +295,6 @@ public class SagePayService {
 			properties.load(new StringReader(reply.getMessage()));
 		} catch (IOException e) {
 			LOGGER.error("can't parse sage pay reply");
-			user.setPaymentEnabled(false);
 			userService.updateUser(user);
 			throw new ServiceException("can't parse sage pay reply", e);
 		}

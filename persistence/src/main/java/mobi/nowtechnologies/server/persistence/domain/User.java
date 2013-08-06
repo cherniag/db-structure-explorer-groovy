@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -95,12 +96,7 @@ public class User implements Serializable {
         this.lastPromo = lastPromo;
     }
 
-    public boolean lastPromoEqualsTo(String promo) {
-        if(isNull(lastPromo) || isNull(lastPromo.getCode())) return false;
-        return lastPromo.getCode().equals(promo);
-    }
-
-    public boolean isLastPromoForVideo() {
+    private boolean isLastPromoForVideo() {
         return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
     }
 
@@ -236,9 +232,6 @@ public class User implements Serializable {
 	@Column(columnDefinition = "char(255)")
 	private Contract contract;
 
-	@Deprecated
-	private boolean paymentEnabled;
-
 	private int numPsmsRetries;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
@@ -358,8 +351,7 @@ public class User implements Serializable {
 	}
 
     public boolean isShowFreeTrial() {
-        if(isO24GConsumer() && isO2PAYMConsumer()) return false;
-        return true;
+        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
     }
 
     public boolean isIOsnonO2ItunesSubscribedUser() {
@@ -367,7 +359,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isSubscribedByITunes() {
-		return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION);
+		return isNotEmpty(lastSubscribedPaymentSystem) && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION);
 	}
 
 	public boolean isIOSDevice() {
@@ -791,21 +783,60 @@ public class User implements Serializable {
 		return this;
 	}
 
-	/*
-	 * @deprecated Unused column
-	 */
-	@Deprecated
-	public boolean isPaymentEnabled() {
-		return paymentEnabled;
-	}
+    public User withTariff(Tariff tariff){
+        setTariff(tariff);
+        return this;
+    }
 
-	/*
-	 * @deprecated Unused column
-	 */
-	@Deprecated
-	public void setPaymentEnabled(boolean paymentEnabled) {
-		this.paymentEnabled = paymentEnabled;
-	}
+    public User withLastPromo(PromoCode lastPromo){
+        setLastPromo(lastPromo);
+        return this;
+    }
+
+    public User withLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails){
+        setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
+        return this;
+    }
+
+    public User withCurrentPaymentDetails(PaymentDetails currentPaymentDetails){
+        setCurrentPaymentDetails(currentPaymentDetails);
+        return this;
+    }
+
+    public User withContract(Contract contract){
+        setContract(contract);
+        return this;
+    }
+
+    public User withUserGroup(UserGroup userGroup){
+        setUserGroup(userGroup);
+        return this;
+    }
+
+    public User withProvider(String provider){
+        setProvider(provider);
+        return this;
+    }
+
+    public User withSegment(SegmentType segment){
+        setSegment(segment);
+        return this;
+    }
+
+    public User withUserName(String userName){
+        setUserName(userName);
+        return this;
+    }
+
+    public User withContractChannel(ContractChannel contractChannel){
+        setContractChannel(contractChannel);
+        return this;
+    }
+
+    public User withDeviceUID(String deviceUID){
+        setDeviceUID(deviceUID);
+        return this;
+    }
 
 	public int getPaymentStatus() {
 		return paymentStatus;
@@ -885,147 +916,6 @@ public class User implements Serializable {
 		this.potentialPromoCodePromotion = potentialPromoCodePromotion;
 		if (potentialPromoCodePromotion != null)
 			potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
-	}
-
-	public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
-		Chart chart = userGroup.getChart();
-		News news = userGroup.getNews();
-		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-
-		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
-		boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated() && (currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) || currentPaymentDetails
-				.getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
-				&& lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
-				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-		String oldPaymentType = getOldPaymentType(currentPaymentDetails);
-		String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
-
-		AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
-		accountCheckDTO.setChartTimestamp(chart.getTimestamp());
-		accountCheckDTO.setChartItems(chart.getNumTracks());
-		setNewsItemsAndTimestamp(news, accountCheckDTO);
-
-		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0));
-		if (null != getCurrentPaymentDetails())
-			accountCheckDTO.setLastPaymentStatus(getCurrentPaymentDetails().getLastPaymentStatus());
-
-		accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
-		accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
-		accountCheckDTO.setStatus(status.getName());
-		accountCheckDTO.setDisplayName(displayName);
-		accountCheckDTO.setSubBalance((byte) subBalance);
-		accountCheckDTO.setDeviceType(deviceType.getName());
-		accountCheckDTO.setDeviceUID(deviceString);
-		accountCheckDTO.setPaymentType(oldPaymentType);
-		accountCheckDTO.setPaymentEnabled(paymentEnabled);
-		accountCheckDTO.setPhoneNumber(mobile);
-		accountCheckDTO.setOperator(operator);
-		accountCheckDTO.setPaymentStatus(oldPaymentStatus);
-		accountCheckDTO.setUserName(userName);
-		accountCheckDTO.setUserToken(token);
-		accountCheckDTO.setRememberMeToken(rememberMeToken);
-		accountCheckDTO.setFreeTrial(isOnFreeTrial());
-		accountCheckDTO.setProvider(provider);
-		accountCheckDTO.setContract(toStringIfNull(contract));
-		accountCheckDTO.setSegment(toStringIfNull(segment));
-		accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
-
-		accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
-
-		accountCheckDTO.setoAuthProvider((StringUtils.hasText(facebookId)) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
-		accountCheckDTO.setNextSubPaymentSeconds(getNextSubPayment());
-
-		if (potentialPromotion != null)
-			accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
-		accountCheckDTO.setHasPotentialPromoCodePromotion(potentialPromoCodePromotion != null);
-
-		accountCheckDTO.setActivation(getActivationStatus());
-
-		if (appStoreProductIds != null) {
-			StringBuilder temp = new StringBuilder();
-			for (String appStoreProductId : appStoreProductIds) {
-				if (appStoreProductId != null) {
-					temp.append("," + appStoreProductId);
-				}
-			}
-			if (temp.length() != 0)
-				accountCheckDTO.setAppStoreProductId(temp.substring(1));
-		}
-
-		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
-		return accountCheckDTO;
-	}
-
-	private void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-		if (news == null)
-			return;
-		accountCheckDTO.setNewsTimestamp(news.getTimestamp());
-		accountCheckDTO.setNewsItems(news.getNumEntries());
-	}
-
-	// TODO Review this code after client refactoring
-	protected String getOldPaymentType(PaymentDetails paymentDetails) {
-		if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION) && status != null
-				&& status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
-			return "ITUNES_SUBSCRIPTION";
-		} else if (null == paymentDetails)
-			return "UNKNOWN";
-		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "creditCard";
-		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "PAY_PAL";
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "PSMS";
-		} else if (PaymentDetails.O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			return "O2_PSMS";
-		}
-		return "UNKNOWN";
-	}
-
-	protected String getOldPaymentStatus(PaymentDetails paymentDetails) {
-		if (null == paymentDetails)
-			return PaymentStatus.NULL;
-		if (PaymentDetails.SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PAYMENT;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.OK;
-			case NONE:
-				return PaymentStatus.NULL;
-			}
-		} else if (PaymentDetails.PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PAY_PAL;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.PAY_PAL_ERROR;
-			case NONE:
-				return PaymentStatus.NULL;
-			}
-		} else if (PaymentDetails.MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-			switch (paymentDetails.getLastPaymentStatus()) {
-			case AWAITING:
-				return PaymentStatus.AWAITING_PSMS;
-			case SUCCESSFUL:
-				return PaymentStatus.OK;
-			case ERROR:
-			case EXTERNAL_ERROR:
-				return PaymentStatus.PSMS_ERROR;
-			}
-			if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
-				return PaymentStatus.PIN_PENDING;
-			} else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
-				return PaymentStatus.NULL;
-			}
-		}
-		return null;
 	}
 
 	public AccountDto toAccountDto() {
@@ -1255,14 +1145,11 @@ public class User implements Serializable {
 				.add("activationStatus", activationStatus)
 				.add("segment", segment)
 				.add("provider", provider)
+                .add("tariff", tariff)
+                .add("contractChannel", contractChannel)
 				.add("contract", contract).toString();
 	}
 
-	/**
-	 * Returns true only if lastSuccessfulPaymentMillis == 0 and nextSubpaymentMillis > System.currentMillis
-	 *
-	 * @return
-	 */
 	public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
@@ -1314,7 +1201,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isSubscribedViaInApp() {
-		return PaymentDetails.ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
+		return ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
 				new DateTime(getNextSubPaymentAsDate()).isAfterNow();
 	}
 
@@ -1357,6 +1244,16 @@ public class User implements Serializable {
 		return this;
 	}
 
+    public User withVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated){
+        setVideoFreeTrialHasBeenActivated(videoFreeTrialHasBeenActivated);
+        return this;
+    }
+
+    public User withContractChanel(ContractChannel contractChanel){
+        setContractChannel(contractChanel);
+        return this;
+    }
+
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
 		Chart sameTypeChart = null;
 		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
@@ -1391,10 +1288,6 @@ public class User implements Serializable {
 
     public boolean isOnAudioBoughtPeriod() {
         return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
-    }
-
-    public boolean isOnVideoAudioSubscription(){
-        return new DateTime(getNextSubPaymentAsDate()).isAfterNow() && is4GVideoAudioPaymentDetails(currentPaymentDetails);
     }
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
@@ -1437,8 +1330,8 @@ public class User implements Serializable {
         return isO2Consumer() && Contract.PAYM.equals(contract);
     }
 
-    public Boolean hasAllDetails() {
-        return this.contract != null && this.segment != null && this.tariff != null;
+    public boolean hasAllDetails() {
+        return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
     }
 
     public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
@@ -1458,6 +1351,11 @@ public class User implements Serializable {
         PaymentDetails successfulDetails = getLastSuccessfulPaymentDetails();
         if (isNull(currentDetails) || isNull(successfulDetails)) return null;
 
+        String currentPaymentDetailsPaymentType = currentPaymentDetails.getPaymentType();
+
+        String successfulDetailsPaymentType = successfulDetails.getPaymentType();
+        if (!(currentPaymentDetailsPaymentType.equals(O2_PSMS_TYPE) && successfulDetailsPaymentType.equals(O2_PSMS_TYPE))) return null;
+
         PaymentPolicy currentPolicy = currentDetails.getPaymentPolicy();
         PaymentPolicy successPolicy = successfulDetails.getPaymentPolicy();
         if (isNull(currentPolicy) || isNull(successPolicy)) return null;
@@ -1469,17 +1367,21 @@ public class User implements Serializable {
         if (activeCPD
                 && currentMediaType == VIDEO_AND_AUDIO
                 && lastSuccessMediaType == AUDIO
-                && !isOn4GVideoAudioFreeTrial()
+                && !isOnVideoAudioFreeTrial()
                 && is4G()) return UPGRADE;
         if(activeCPD
                 && currentMediaType == AUDIO
                 && lastSuccessMediaType == VIDEO_AND_AUDIO
-                && !isOn4GVideoAudioFreeTrial()
+                && !isOnVideoAudioFreeTrial()
                 && is4G()) return DOWNGRADE;
         return null;
     }
 
-    public boolean isOn4GVideoAudioFreeTrial() {
-        return is4G() && isNotNull(lastPromo) && VIDEO_AND_AUDIO.equals(lastPromo.getMediaType()) && isOnFreeTrial();
+    public boolean isOnVideoAudioFreeTrial() {
+        return isLastPromoForVideo() && isOnFreeTrial();
+    }
+
+    public boolean canPlayVideo(){
+        return isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod();
     }
 }

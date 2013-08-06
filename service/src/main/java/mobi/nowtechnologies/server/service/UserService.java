@@ -22,7 +22,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
@@ -60,33 +59,31 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
-
-    public boolean canPlayVideo(User user){
-        return user.is4G() && (user.isLastPromoForVideo() || user.isOn4GVideoAudioBoughtPeriod());
-    }
+    public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
     public Boolean canActivateVideoTrial(User u) {
-        Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
+        String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
+        Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
-        boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOn4GVideoAudioFreeTrial() && !u.isOnVideoAudioSubscription() && lessMagicDate) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
+        boolean beforeMultipleFreeTrialsStopDate = new DateTime().isBefore(multipleFreeTrialsStopDate.getTime());
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel())) && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate) return true;
         return  false;
     }
 
@@ -128,7 +125,7 @@ public class UserService {
 	private DeviceTypeService deviceTypeService;
 	private CountryService countryService;
 	private SagePayService sagePayService;
-	// private MigService migService;
+
 	private PaymentService paymentService;
 	private PromotionService promotionService;
 	private CommunityResourceBundleMessageSource messageSource;
@@ -748,8 +745,6 @@ public class UserService {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
 		notNull(user , "The parameter user is null");
 
-		user.setPaymentEnabled(false);
-
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
 		user = entityService.updateEntity(user);
@@ -814,7 +809,6 @@ public class UserService {
 					+ PaymentStatusDao.getMapIdAsKey().get(paymentStatus)
 					+ "] to update payment details");
 		user.setPaymentType(UserRegInfo.PaymentType.PAY_PAL);
-		user.setPaymentEnabled(true);
 
 		updateUser(user);
 	}
@@ -888,8 +882,6 @@ public class UserService {
 		user.setIpAddress(userRegInfo.getIpAddress());
 		user.setTempToken("");
 		user.setCanContact(userRegInfo.getNewsByEmail());
-
-		user.setPaymentEnabled(false);
 
 		user.setOperator(userRegInfo.getOperator());
 		// TODO operator should not be a primitive type
@@ -1090,7 +1082,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
@@ -1200,7 +1192,6 @@ public class UserService {
 		user.setCountry(countryService.findIdByFullName("Great Britain"));
 		user.setIpAddress(userRegDetailsDto.getIpAddress());
 		user.setCanContact(userRegDetailsDto.isNewsDeliveringConfirmed());
-		user.setPaymentEnabled(false);
 		Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
 		user.setOperator(entry.getKey());
 		user.setStatus(UserStatusDao.getEulaUserStatus());
@@ -1540,7 +1531,6 @@ public class UserService {
 		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
 		user.setCountry(countryService.findIdByFullName("Great Britain"));
 		user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
-		user.setPaymentEnabled(false);
 		Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
 		user.setOperator(entry.getKey());
 		user.setStatus(UserStatusDao.getLimitedUserStatus());
@@ -1995,7 +1985,7 @@ public class UserService {
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
-            } else if (userWithOldTariff.isOn4GVideoAudioFreeTrial()) {
+            } else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 
@@ -2062,5 +2052,5 @@ public class UserService {
         new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
         userRepository.save(user);
     }
-    
+
 }

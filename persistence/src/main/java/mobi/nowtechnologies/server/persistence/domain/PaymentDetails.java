@@ -202,6 +202,11 @@ public abstract class PaymentDetails {
 		LOGGER.debug("Output parameter [{}]", paymentDetailsByPaymentDto);
 		return paymentDetailsByPaymentDto;
 	}
+
+    public PaymentDetails withPaymentPolicy(PaymentPolicy paymentPolicy){
+        setPaymentPolicy(paymentPolicy);
+        return this;
+    }
 	
 	@Override
 	public String toString() {

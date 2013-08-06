@@ -115,6 +115,17 @@ public class AssetFileDtoTest {
 		assertEquals(FileType.ORIGINAL_ACC, result);
 	}
 
+	@Test
+	public void testToFileType_Video()
+		throws Exception {
+		mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType fileType = AssetFile.FileType.VIDEO;
+
+		FileType result = AssetFileDto.toFileType(fileType);
+
+		assertNotNull(result);
+		assertEquals(FileType.VIDEO, result);
+	}
+
 	/**
 	 * Run the List<AssetFileDto> toList(List<AssetFile>) method test.
 	 *

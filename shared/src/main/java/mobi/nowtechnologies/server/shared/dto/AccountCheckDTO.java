@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
+import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -116,6 +118,18 @@ public class AccountCheckDTO {
 	    this.segment = accountCheckDTO.segment;
 	    this.graceCreditSeconds = accountCheckDTO.graceCreditSeconds;
 	    this.lastSubscribedPaymentSystem = accountCheckDTO.lastSubscribedPaymentSystem;
+
+        this.canGetVideo = accountCheckDTO.getCanGetVideo();
+        this.canPlayVideo = accountCheckDTO.getCanPlayVideo();
+        this.canActivateVideoTrial = accountCheckDTO.getCanActivateVideoTrial();
+        this.hasAllDetails = accountCheckDTO.getHasAllDetails();
+        this.showFreeTrial = accountCheckDTO.getShowFreeTrial();
+        this.subscriptionChanged = accountCheckDTO.getSubscriptionChanged();
+
+        this.activation = accountCheckDTO.getActivation();
+        this.fullyRegistred = accountCheckDTO.isFullyRegistred();
+
+        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 	}
 
 	public int getGraceCreditSeconds() {

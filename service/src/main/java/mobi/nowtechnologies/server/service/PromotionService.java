@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -149,7 +148,7 @@ public class PromotionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
         boolean isPromotionApplied;
-        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| isNull(user.getContractChannel()))) {
+        if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
@@ -157,16 +156,32 @@ public class PromotionService {
         return isPromotionApplied;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User activateVideoAudioFreeTrial(String userName, String userToken, String timestamp, String communityUri, String deviceUID){
+        User user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+
+        boolean isPromotionApplied = false;
+        if (userService.canActivateVideoTrial(user)) {
+            isPromotionApplied = applyPromotionForO24GConsumer(user);
+        }else{
+            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");
+        }
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
+        return user;
+    }
+
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
-        Promotion promotion = getPromotionForO24GConsumer(user);
+        Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
         if (promotion != null){
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
     }
 
-    private Promotion getPromotionForO24GConsumer(User user){
+    private Promotion setVideoAudioPromotionForO24GConsumer(User user){
         final Promotion promotion;
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){

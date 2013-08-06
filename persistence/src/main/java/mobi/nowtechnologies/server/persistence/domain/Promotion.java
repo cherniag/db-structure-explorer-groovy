@@ -23,12 +23,6 @@ public class Promotion implements Serializable {
 
 	public static final String ADD_FREE_WEEKS_PROMOTION = "promoCode";
 	public static final String ADD_SUBBALANCE_PROMOTION = "noPromoCode";
-	public static final String UPDATE_PAYMENTPOLICY_PROMOTION = "updatePaymentPolicy";
-	public static final String UPDATE_PAYMENTPOLICY_FREE_TRIAL_PERIOD_PROMOTION = "updatePPFreeTPeriod";
-
-	public static enum Fields {
-		i, description, endDate, freeWeeks, isActive, maxUsers, numUsers, startDate, subWeeks, userGroup, type, showPromotion
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
@@ -11,6 +12,9 @@
 <img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
 
 <c:choose>
+	<c:when test="${suweeks == 3}">
+        <c:set var="paymentPolicyOptionNo" value="4" />
+    </c:when>
     <c:when test="${suweeks == 1}">
         <c:set var="paymentPolicyOptionNo" value="3" />
     </c:when>
@@ -31,7 +35,7 @@
             <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${suweeks}.png" />
             <div class="rel" style="padding-top:8px;">
                 <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
-                <span class="price">&#163;${subcost}.00</span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
+                <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
             </div>
         </a>
         
