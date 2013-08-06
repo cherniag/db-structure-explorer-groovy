@@ -2051,5 +2051,5 @@ public class UserService {
         new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
         userRepository.save(user);
     }
-    
+
 }
