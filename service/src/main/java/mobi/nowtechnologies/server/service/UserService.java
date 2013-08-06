@@ -75,7 +75,8 @@ public class UserService {
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
     public Boolean canActivateVideoTrial(User u) {
-        Date multipleFreeTrialsStopDate = messageSource.readDate(MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
+        String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
+        Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
         if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()) return true;
