@@ -84,10 +84,10 @@ create table refund (
  alter table tb_promocode add index tb_promocode_PK_promotionId (promotionId), add constraint tb_promocode_U_promotionId foreign key (promotionId) references tb_promotions (i);
 
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Video Audio Free Trial for 4G PAYM direct consumers before 2014', unix_timestamp(), 1388527200, true, 52, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.before2014', 0, 0, 0, false);
+   value('o2 Video Audio Free Trial for 4G PAYM direct consumers before 2014', unix_timestamp(), 1388527200, true, 52, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.till.end.of.2013', 0, 0, 0, false);
 
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Video Audio Free Trial for 4G PAYM direct consumers after 2013', 1388527200, 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.after2013', 0, 0, 0, false);
+   value('o2 Video Audio Free Trial for 4G PAYM direct consumers after 2013', 1388527200, 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.after.end.of.2013', 0, 0, 0, false);
 
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
    value('o2 Video Audio Free Trial for 4G PAYM indirect consumers', unix_timestamp(), 1388527200, true, 8, 10, 'PromoCode', 'o2.consumer.4g.paym.indirect', 0, 0, 0, false);
@@ -95,8 +95,8 @@ create table refund (
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
    value('o2 Video Audio Free Trial for 4G PAYG consumers', unix_timestamp(), 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.payg', 0, 0, 0, false);
 
- insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.before2014';
- insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.after2013';
+ insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.till.end.of.2013';
+ insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.after.end.of.2013';
  insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.indirect';
  insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.payg';
 
