@@ -37,15 +37,15 @@ import org.slf4j.LoggerFactory;
 @Table(name = "tb_mediaLog")
 @NamedQueries({
 	@NamedQuery(name=MediaLog.NQ_GET_PURCHASED_TRACKS_BY_USER_ID, query="select mediaLog from MediaLog mediaLog join FETCH mediaLog.media media where mediaLog.logType=? and mediaLog.userUID=?"),
-	@NamedQuery(name=MediaLog.NQ_GET_PURCHASED_TRACK_BY_USER_ID, query="select mediaLog from MediaLog mediaLog join FETCH mediaLog.media media where mediaLog.logType=? and mediaLog.userUID=?"),
 	@NamedQuery(name=MediaLog.NQ_IS_DOWNLOADED_ORIGINAL, query="select count(mediaLog) from MediaLog mediaLog where mediaLog.logType=? and mediaLog.userUID=? and mediaLog.mediaUID=?")
 })
 public class MediaLog implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaLog.class);
+
 	public static final String NQ_GET_PURCHASED_TRACKS_BY_USER_ID = "getPurchasedTracksByUserId";
-	public static final String NQ_GET_PURCHASED_TRACK_BY_USER_ID = "getPurchasedTrackByUserId";
 	public static final String NQ_IS_DOWNLOADED_ORIGINAL = "isDowloadedOriginal";
+
 	private static final long serialVersionUID = 1L;
 
 	public static enum Fields {

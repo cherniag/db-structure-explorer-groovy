@@ -32,6 +32,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
+	
+	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification">
+	</bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
@@ -62,6 +65,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="iTunesService" ref="service.ITunesService" />
         <property name="refundService" ref="service.RefundService" />
         <property name="o2Service" ref="service.O2Service"/>
+        <property name="userServiceNotification" ref="service.UserServiceNotification"/>
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
@@ -108,11 +112,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="accountLogRepository" ref="accountLogRepository" />
 	</bean>
 
-	<bean id="service.NewsDetailService" class="mobi.nowtechnologies.server.service.NewsDetailService">
-		<property name="userService" ref="service.UserService" />
-		<property name="newsDetailDao" ref="persistence.NewsDetailDao" />
-	</bean>
-
 	<bean id="service.MediaLogService" class="mobi.nowtechnologies.server.service.MediaLogService">
 		<property name="mediaLogDao" ref="persistence.MediaLogDao" />
 	</bean>
@@ -124,6 +123,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="promotionDao" ref="persistence.PromotionDao" />
+        <property name="promotionRepository" ref="promotionRepository" />
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
 	</bean>
@@ -146,7 +146,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
 		<property name="drmService" ref="service.DrmService" />
-		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
 	</bean>

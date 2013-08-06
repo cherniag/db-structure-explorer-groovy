@@ -30,7 +30,7 @@ public class O2UserUpdateProcessorTest {
 		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);
 		assertEquals(user.getContract(), Contract.PAYG);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
 		
 
 		data.setBusinessOrConsumerSegment(true);
@@ -39,7 +39,7 @@ public class O2UserUpdateProcessorTest {
 		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);
 		assertEquals(user.getContract(), Contract.PAYG);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
 
 		data.setContractPostPayOrPrePay(true);
 		p.setUserFieldsFromSubscriberData(user, data);
@@ -47,7 +47,7 @@ public class O2UserUpdateProcessorTest {
 		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);
 		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
 
 		data.setProviderO2(true);
 		p.setUserFieldsFromSubscriberData(user, data);
@@ -55,7 +55,7 @@ public class O2UserUpdateProcessorTest {
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);
 		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
 
 		data.setTariff4G(true);
 		p.setUserFieldsFromSubscriberData(user, data);
@@ -63,15 +63,15 @@ public class O2UserUpdateProcessorTest {
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._4G);
 		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
 
-		data.setDirectOrIndirect4GChannel(true);
+		data.setDirectOrIndirect4GChannel(false);
 		p.setUserFieldsFromSubscriberData(user, data);
 		assertEquals(user.getSegment(), SegmentType.BUSINESS);
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._4G);
 		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
 		
 	}
 
@@ -110,7 +110,7 @@ public class O2UserUpdateProcessorTest {
 		data.setContractPostPayOrPrePay(true);
 		data.setProviderO2(true);
 		data.setTariff4G(true);
-		data.setDirectOrIndirect4GChannel(true);
+		data.setDirectOrIndirect4GChannel(false);
 		differences = getDifferences(data, data2);
 		assertEquals(differences.size(), 4);
 		assertEquals(differences.get(0), "contract");

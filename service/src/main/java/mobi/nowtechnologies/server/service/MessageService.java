@@ -6,6 +6,7 @@ import java.util.*;
 
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
+import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import static mobi.nowtechnologies.server.assembler.UserAsm.*;
 
 public class MessageService {
 
@@ -49,7 +52,7 @@ public class MessageService {
 		int userId = user.getId();
 		user = userService.findUserTree(userId);
 
-		AccountCheckDTO accountCheck = user.toAccountCheckDTO(null, null);
+		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
 		Community community = user.getUserGroup().getCommunity();
 
 		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withAds);

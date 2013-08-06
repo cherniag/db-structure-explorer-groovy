@@ -47,6 +47,7 @@ alter table tb_paymentPolicy add column media_type char(255) not null default 'A
 alter table tb_users add column tariff char(255) not null default '_3G';
 alter table tb_users add column video_free_trial_has_been_activated boolean not null default false;
 alter table tb_promoCode add column media_type char(255) not null default 'AUDIO';
+alter table tb_users drop column paymentEnabled;
 
  -- http://jira.musicqubed.com/browse/IMP-1782
  -- [Server] Calculate and store the Refund when user activates Video
@@ -55,7 +56,7 @@ create table refund (
   log_time_millis bigint,
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
-  user_id int(10) not null,
+  user_id int(10) unsigned not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
@@ -66,12 +67,38 @@ create table refund (
  alter table tb_users add index tb_users_PK_last_successful_payment_details (last_successful_payment_details_id), add constraint tb_users_U_last_successful_payment_details foreign key (last_successful_payment_details_id) references tb_paymentDetails (i);
 
  -- IMP-1785: [Server] Add new promotion types for 4G users
+ ALTER TABLE tb_promotions MODIFY COLUMN description char(100) NOT NULL;
+ ALTER TABLE tb_promotions MODIFY COLUMN label varchar(50);
+
+ ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F753C7738F;
+ ALTER TABLE tb_promocode DROP FOREIGN KEY FKF393230B3BEC8C9E;
+
+ ALTER TABLE tb_users MODIFY COLUMN potentialPromotion_i INT;
+ ALTER TABLE tb_promotions_tb_filter MODIFY COLUMN tb_promotions_i INT NOT NULL;
+ ALTER TABLE tb_promotionpaymentpolicy MODIFY COLUMN promotion_i INT;
+ ALTER TABLE tb_promotions MODIFY COLUMN i INT NOT NULL AUTO_INCREMENT;
+ ALTER TABLE tb_promocode MODIFY COLUMN promotionId INT;
+ ALTER TABLE tb_users MODIFY COLUMN potentialPromoCodePromotion_i INT;
+
+ alter table tb_users add index tb_users_PK_potentialPromoCodePromotion_i (potentialPromoCodePromotion_i), add constraint tb_users_U_potentialPromoCodePromotion_i foreign key (potentialPromoCodePromotion_i) references tb_promotions (i);
+ alter table tb_promocode add index tb_promocode_PK_promotionId (promotionId), add constraint tb_promocode_U_promotionId foreign key (promotionId) references tb_promotions (i);
+
  insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Video Audio Free Trial for 4G direct consumers', unix_timestamp(), 1606780800, true, 52, 10, 'PromoCode', 'o2.consumer.4g.direct', 0, 0, 0, false);
- insert into tb_promotions(i, description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
-   value('o2 Video Audio Free Trial for 4G indirect consumers', unix_timestamp(), 1606780800, true, 8, 10, 'PromoCode', 'o2.consumer.4g.indirect', 0, 0, 0, false);
- insert into tb_promoCode(code, promotionId, 'VIDEO_AND_AUDIO') select label, i from tb_promotions where label = 'o2.consumer.4g.direct';
- insert into tb_promoCode(code, promotionId, 'VIDEO_AND_AUDIO') select label, i from tb_promotions where label = 'o2.consumer.4g.indirect';
+   value('o2 Video Audio Free Trial for 4G PAYM direct consumers before 2014', unix_timestamp(), 1388527200, true, 52, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.till.end.of.2013', 0, 0, 0, false);
+
+ insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
+   value('o2 Video Audio Free Trial for 4G PAYM direct consumers after 2013', 1388527200, 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.paym.direct.after.end.of.2013', 0, 0, 0, false);
+
+ insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label, numUsers, maxUsers, subWeeks, showPromotion)
+   value('o2 Video Audio Free Trial for 4G PAYM indirect consumers', unix_timestamp(), 1388527200, true, 8, 10, 'PromoCode', 'o2.consumer.4g.paym.indirect', 0, 0, 0, false);
+
+ insert into tb_promotions(description, startDate, endDate, isActive, freeWeeks, userGroup, type, label,  numUsers, maxUsers, subWeeks, showPromotion)
+   value('o2 Video Audio Free Trial for 4G PAYG consumers', unix_timestamp(), 2147483647, true, 8, 10, 'PromoCode', 'o2.consumer.4g.payg', 0, 0, 0, false);
+
+ insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.till.end.of.2013';
+ insert into tb_promoCode(code, promotionId, media_type) select 'o2.consumer.4g.paym.direct', i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.direct.after.end.of.2013';
+ insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.paym.indirect';
+ insert into tb_promoCode(code, promotionId, media_type) select label, i, 'VIDEO_AND_AUDIO' from tb_promotions where label = 'o2.consumer.4g.payg';
 
  --
  alter table tb_users add column contract_channel varchar(255) default 'DIRECT';
@@ -91,9 +118,6 @@ create table refund (
  alter table tb_users add column last_promo int(10);
  alter table tb_users add constraint user_promo_code_fk foreign key (i) references tb_promoCode(id);
  
- 
- -- ALTER TABLE tb_paymentPolicy ADD COLUMN media_type VARCHAR(25) NULL DEFAULT 'AUDIO';
-
 -- insert 3 new audio payment policies for o2 consumer group
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
@@ -106,7 +130,6 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
 (10,1,1,'o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107054','Description of content','O2 Tracks','o2','_4G','AUDIO');
-
 
 
 -- insert 3 new audio+video payment policies for o2 consumer group

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 
@@ -10,24 +11,19 @@ import java.util.List;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
+
+// @deprecated The 'code', 'mediaType' columns should be moved into Promotion class
+@Deprecated
 @Entity
 @Table(name="tb_promoCode")
 public class PromoCode {
-	
-	public static enum Fields {
-		id, code, promotionId
-	}
-	
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private String code;
-	
-	@Column(insertable=false, updatable=false)
-	private byte promotionId;
 	 
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="promotionId")
 	private Promotion promotion;
 
@@ -63,13 +59,11 @@ public class PromoCode {
 		this.code = code;
 	}
 
-    public PromoCode withCode(String code) {
-        this.code = code;
-        return this;
-    }
-
-	public byte getPromotionId() {
-		return promotionId;
+	public Integer getPromotionId() {
+        if (ObjectUtils.isNotNull(promotion)){
+            return promotion.getI();
+        }
+		return null;
 	}
 	
 	public Promotion getPromotion() {
@@ -94,9 +88,24 @@ public class PromoCode {
 		return dtoList ;
 	}
 
+    public PromoCode withMediaType(MediaType mediaType){
+        setMediaType(mediaType);
+        return this;
+    }
+
+    public PromoCode withCode(String code){
+        setCode(code);
+        return this;
+    }
+
+    public PromoCode withPromotion(Promotion promotion){
+        setPromotion(promotion);
+        return this;
+    }
+
 	@Override
 	public String toString() {
 		return "PromoCode [code=" + code + ", id=" + id + ", promotionId="
-				+ promotionId + "]";
+				+ getPromotionId() + "]";
 	}
 }

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.shared.dto;
 
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -70,8 +71,9 @@ public class AccountCheckDTO {
     private Boolean canActivateVideoTrial;
 
 	private String lastSubscribedPaymentSystem;
+    private SubscriptionDirection subscriptionChanged;
 
-	public AccountCheckDTO(){
+    public AccountCheckDTO(){
 		
 	}
 	
@@ -468,5 +470,13 @@ public class AccountCheckDTO {
 
     public void setCanActivateVideoTrial(Boolean canActivateVideoTrial) {
         this.canActivateVideoTrial = canActivateVideoTrial;
+    }
+
+    public void setSubscriptionChanged(SubscriptionDirection subscriptionChanged) {
+        this.subscriptionChanged = subscriptionChanged;
+    }
+
+    public SubscriptionDirection getSubscriptionChanged() {
+        return subscriptionChanged;
     }
 }

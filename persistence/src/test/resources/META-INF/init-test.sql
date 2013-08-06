@@ -266,7 +266,3 @@ insert into offer_items ( offer_id, item_id) values (1, 49);
 insert into offer_items ( offer_id, item_id) values (1, 50);
 insert into offer_items ( offer_id, item_id) values (2, 49);
 insert into offer_items ( offer_id, item_id) values (2, 50);
-
--- insert into grace_period(community_id, contract, segment, provider, duration_millis) values (1, 'PAYG', 'CONSUMER', 'o2', 172800000);
-
--- insert into grace_period(user_group_id, contract, segment, provider, duration_millis) values (7, 'PAYG', 'CONSUMER', 'o2', 172800000);

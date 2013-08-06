@@ -22,7 +22,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
@@ -60,36 +59,30 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.AppConstants.CURRENCY_GBP;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
 import static org.apache.commons.lang.Validate.notNull;
 
-/**
- * UserService
- *
- * @author Titov Mykhaylo (titov)
- * @author Alexander Kollpakov (akolpakov)
- * @author Maksym Chernolevskyi (maksym)
- */
 public class UserService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
-
-    public boolean canPlayVideo(User user){
-        return user.is4G() && (user.isLastPromoForVideo() || user.isOn4GVideoAudioBoughtPeriod());
-    }
+    public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
     public Boolean canActivateVideoTrial(User u) {
-        Date magicDate = messageSource.readDate("can.activate.video.trial.after.date", DateUtils.newDate(1, 1, 2014));
+        Date multipleFreeTrialsStopDate = messageSource.readDate(MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
         if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()) return true;
 
-        boolean lessMagicDate = new DateTime().isBefore(magicDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnFreeTrial() && !u.isSubscribed() && lessMagicDate) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !lessMagicDate) return true;
+        boolean beforeMultipleFreeTrialsStopDate = new DateTime().isBefore(multipleFreeTrialsStopDate.getTime());
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel())) && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate) return true;
         return  false;
     }
 
@@ -131,7 +124,7 @@ public class UserService {
 	private DeviceTypeService deviceTypeService;
 	private CountryService countryService;
 	private SagePayService sagePayService;
-	// private MigService migService;
+
 	private PaymentService paymentService;
 	private PromotionService promotionService;
 	private CommunityResourceBundleMessageSource messageSource;
@@ -143,7 +136,7 @@ public class UserService {
 	private UserDeviceDetailsService userDeviceDetailsService;
 	private CommunityService communityService;
 	private MailService mailService;
-	//private NowTechTokenBasedRememberMeServices ipTokenBasedRememberMeServices;
+
 	private FacebookService facebookService;
 	private DeviceService deviceService;
 	private OfferService offerService;
@@ -155,6 +148,7 @@ public class UserService {
 	private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
+    private UserServiceNotification userServiceNotification;
 
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
@@ -162,7 +156,7 @@ public class UserService {
 		this.o2ClientService = o2ClientService;
 	}
     
-    public void setO2Service(O2Service o2Service) {
+	public void setO2Service(O2Service o2Service) {
     	this.o2Service = o2Service;
     }
 
@@ -267,6 +261,11 @@ public class UserService {
     public void setRefundService(RefundService refundService) {
         this.refundService = refundService;
     }
+    
+    public void setUserServiceNotification(
+			UserServiceNotification userServiceNotification) {
+		this.userServiceNotification = userServiceNotification;
+	}
 
     @Deprecated
 	public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
@@ -565,23 +564,6 @@ public class UserService {
         return isNotNull(promoCode) && promoCode.forVideoAndMusic();
     }
 
-    private void setPaymentStatusAccordingToPaymentType(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		String paymentType = user.getPaymentType();
-		if (paymentType.equals(UserRegInfoServer.PaymentType.PREMIUM_USER))
-			user.setPaymentStatus(PaymentStatusDao.getPIN_PENDING().getId());
-		else if (paymentType.equals(UserRegInfoServer.PaymentType.CREDIT_CARD) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.FREEMIUM) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.PAY_PAL) ||
-				paymentType.equals(UserRegInfoServer.PaymentType.UNKNOWN))
-			user.setPaymentStatus(PaymentStatusDao.getNULL().getId());
-		else
-			throw new ServiceException("Unknown payment type: [" + paymentType
-					+ "]");
-	}
-
 	public void updateMobile(User user, String mobile, Integer operator, String communityName) {
 		if (communityName == null)
 			throw new NullPointerException(
@@ -597,12 +579,6 @@ public class UserService {
 
 		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(mobile);
 		migPaymentService.createPaymentDetails(getMigPhoneNumber(operator, migPhone), user, community, paymentPolicy);
-		/*
-		 * if (mobile!=null&&mobile.startsWith(MigService._0044)) user .setMobile(MigService .convertPhoneNumberFromInternationalToGreatBritainFormat(mobile)); else user.setMobile(mobile);
-		 * user.setOperator(operator); user.setPaymentStatus(PaymentStatusDao.getPIN_PENDING().getId()); updateUser(user);
-		 * 
-		 * sendPinToUser(communityName, user.getPaymentType(), user.getOperator(), user.getMobile(), user, user.getPin());
-		 */
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -626,7 +602,6 @@ public class UserService {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
-		Locale locale = null;
 
 		PaymentDetailsValidator.validate(userRegInfo);
 
@@ -769,23 +744,11 @@ public class UserService {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
 		notNull(user , "The parameter user is null");
 
-		user.setPaymentEnabled(false);
-
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
 		user = entityService.updateEntity(user);
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
-	}
-
-	protected List<User> findUser(String mobile, String operatorMigName) {
-		Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-		fieldNameValueMap.put(User.Fields.mobile.toString(), mobile);
-		// fieldNameValueMap.put(User.Fields.operator.toString(),
-		// Operator.getMapAsMigNames().get(operatorMigName).getName());
-		fieldNameValueMap.put(User.Fields.paymentType.toString(), "PSMS");
-		fieldNameValueMap.put(User.Fields.paymentEnabled.toString(), true);
-		return entityService.findListByProperties(User.class, fieldNameValueMap);
 	}
 
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
@@ -803,27 +766,6 @@ public class UserService {
 				paymentPolicy.setOperatorName(operator.getName());
 		}
 		return paymentPolicies;
-	}
-
-	public List<PaymentPolicy> getPaymentPoliciesForPasseadOperatorOrOperatorIs0(
-			String communityName, String paymentType, final int operator) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		return userDao.getPaymentPoliciesForPasseadOperatorOrOperatorIs0(
-                communityName, paymentType, operator);
-	}
-
-	public List<Integer> getOperatorsAccordingToPaymentPoliciesForPremiumUser(
-			String communityName, String paymentType) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		return userDao.getOperatorsAccordingToPaymentPolicies(communityName, paymentType);
 	}
 
 	public AmountCurrencyWeeks getUpdateAmountCurrencyWeeks(User user) {
@@ -852,22 +794,6 @@ public class UserService {
 		updateUser(user);
 	}
 
-	/**
-	 * Deprecated due to new portal implementation Use sendSMSWithOTALink(String phone, int userId)
-	 *
-	 * @param user
-	 */
-	@Deprecated
-	public void sendSMSWithOTALink(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		String[] args = { migHttpService.getOtaUrl() + "&CODE=" + user.getCode() };
-		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(user.getMobile());
-		migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
-                messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter(), "sms.otalink.text", args, null));
-	}
-
 	public User findById(int id) {
 		return entityService.findById(User.class, id);
 	}
@@ -882,7 +808,6 @@ public class UserService {
 					+ PaymentStatusDao.getMapIdAsKey().get(paymentStatus)
 					+ "] to update payment details");
 		user.setPaymentType(UserRegInfo.PaymentType.PAY_PAL);
-		user.setPaymentEnabled(true);
 
 		updateUser(user);
 	}
@@ -957,8 +882,6 @@ public class UserService {
 		user.setTempToken("");
 		user.setCanContact(userRegInfo.getNewsByEmail());
 
-		user.setPaymentEnabled(false);
-
 		user.setOperator(userRegInfo.getOperator());
 		// TODO operator should not be a primitive type
 		if (0 == user.getOperator()) {
@@ -971,47 +894,13 @@ public class UserService {
 
 	}
 
-	private void updateUserOTALink(User user, String code) {
-		if (user == null)
-			throw new NullPointerException("The parameter user is null");
-		if (code == null)
-			throw new NullPointerException("The parameter code is null");
-
-		LOGGER.debug("input parameters user: [{}], code: [{}] ", new Object[] { user, code });
-
-		user.setCode(code);
-	}
-
-	@Deprecated
-	private boolean deleteUserInPinPendingPaymentStatus(User user) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		LOGGER.debug("input parameters user: [{}]", new Object[] { user });
-
-		boolean deleted = false;
-		if (PaymentStatusDao.getPIN_PENDING().getId() == user
-				.getPaymentStatus()) {
-			LOGGER
-					.info(
-                            "Removing user [{}] in PIN_PENDING status during registration",
-                            user.getId());
-			entityService.removeEntity(User.class, user.getId());
-			deleted = true;
-		}
-
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return deleted;
-
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	private User continueRegistration(UserRegInfo userRegInfo) {
 		if (userRegInfo == null)
 			throw new ServiceException("The parameter userRegInfo is null");
 
 		LOGGER.debug("input parameters userRegInfo: [{}]",
-				new Object[] { userRegInfo });
+                new Object[]{userRegInfo});
 
 		final String userName = userRegInfo.getEmail().toLowerCase();
 		final String communityName = userRegInfo.getCommunityName();
@@ -1085,34 +974,6 @@ public class UserService {
 		UserGroup userGroup = user.getUserGroup();
 		Community community = userGroup.getCommunity();
 		return community.getName();
-	}
-
-	// TODO remove this method
-	@Deprecated
-	PaymentDetails getPaymentDetailsForUserUpdate(final User user,
-			final String token, String paymentType, final Operator operator,
-			String phoneNumber) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters user, token, paymentType, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-						new Object[] { user, token, paymentType, operator,
-								phoneNumber });
-
-		PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
-
-		if (paymentDetails == null)
-			paymentDetails = PaymentDetailsService.getPaymentDetails(
-					paymentType, token, operator, phoneNumber);
-		else {
-			entityService.removeEntity(PaymentDetails.class, paymentDetails.getI());
-			paymentDetails = PaymentDetailsService.getPaymentDetails(
-					paymentType, token, operator, phoneNumber);
-		}
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -1220,7 +1081,7 @@ public class UserService {
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 
-		AccountCheckDTO accountCheckDTO = user.toAccountCheckDTO(null, appStoreProductIds);
+		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
 		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
 		// NextSubPayment stores date of next payment -1 week
@@ -1330,7 +1191,6 @@ public class UserService {
 		user.setCountry(countryService.findIdByFullName("Great Britain"));
 		user.setIpAddress(userRegDetailsDto.getIpAddress());
 		user.setCanContact(userRegDetailsDto.isNewsDeliveringConfirmed());
-		user.setPaymentEnabled(false);
 		Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
 		user.setOperator(entry.getKey());
 		user.setStatus(UserStatusDao.getEulaUserStatus());
@@ -1670,7 +1530,6 @@ public class UserService {
 		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
 		user.setCountry(countryService.findIdByFullName("Great Britain"));
 		user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
-		user.setPaymentEnabled(false);
 		Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
 		user.setOperator(entry.getKey());
 		user.setStatus(UserStatusDao.getLimitedUserStatus());
@@ -2006,7 +1865,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
 		LOGGER.info("apply init promo o2 " + user.getId() + " "
-				+ user.getMobile() + " " + user.getActivationStatus());
+                + user.getMobile() + " " + user.getActivationStatus());
 		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
@@ -2024,8 +1883,6 @@ public class UserService {
 			}
 		} else {
 			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
-				Community community = communityService.getCommunityByName(communityName);
-
                 hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
             }
         }
@@ -2126,17 +1983,17 @@ public class UserService {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
-            } else if (isOnVideoAudioFreeTrial(userWithOldTariff)) {
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+            } else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
                 LOGGER.info("Attempt to unsubscribe user, skip Free Trial and apply O2 Potential Promo because of tariff downgraded from [{}] Free Trial Video Audio to [{}]", oldTariff, newTariff);
                 userWithOldTariff = downgradeUserOn4GFreeTrialVideoAudioSubscription(userWithOldTariff);
                 
-                sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
                 userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
                 
-                sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
+                userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             }
         } else {
             LOGGER.info("The payment details leaves as is because of old user tariff [{}] isn't 4G or new user tariff [{}] isn't 3G", oldTariff, newTariff);
@@ -2144,15 +2001,10 @@ public class UserService {
         return userWithOldTariff;
     }
     
-    private boolean isOnVideoAudioFreeTrial(User user) {
-        String promo = promotionService.getVideoCodeForO24GConsumer(user);
-        return user.is4G() && user.lastPromoEqualsTo(promo) && user.isOnFreeTrial();
-    }
-
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
         user = skipVideoAudioFreeTrial(user);
-        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int)(user.getFreeTrialStartedTimestampMillis()/1000L));
+        applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
         return user;
     }
 
@@ -2200,11 +2052,4 @@ public class UserService {
         userRepository.save(user);
     }
     
-    public void sendSmsFor4GDowngradeForFreeTrial(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
-
-    public void sendSmsFor4GDowngradeForSubscribed(User user) {
-    	// this method call is intercepted with AOP and a message will be sent to the user
-    }
 }

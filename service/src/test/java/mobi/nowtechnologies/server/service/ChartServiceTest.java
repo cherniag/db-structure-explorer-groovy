@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
@@ -18,6 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +36,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(UserAsm.class)
 public class ChartServiceTest {
 
 	private ChartService fixture;
@@ -742,16 +747,14 @@ public class ChartServiceTest {
 	public void setUp()
 		throws Exception {
 		
-		testUser = new User(){
-			private static final long serialVersionUID = 1L;
-
-			public AccountCheckDTO toAccountCheckDTO(String rememberMeToken, List<String> appStoreProductIds) {
-				return new AccountCheckDTO();
-			}
-		};
+		testUser = new User();
 		testUser.setId(1);
+
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-		
+
+        PowerMockito.mockStatic(UserAsm.class);
+        when(UserAsm.toAccountCheckDTO(eq(testUser), anyString(), any(List.class), anyBoolean())).thenReturn(new AccountCheckDTO());
+
 		fixture = spy(new ChartService());
 		fixture.setChartRepository(mockChartRepository);	
 		fixture.setUserService(mockUserService);

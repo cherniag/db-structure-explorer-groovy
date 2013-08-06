@@ -1,9 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.ObjectUtils;
+
 import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.*;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 
 /**
  * The persistent class for the tb_promotions database table.
@@ -19,16 +23,10 @@ public class Promotion implements Serializable {
 
 	public static final String ADD_FREE_WEEKS_PROMOTION = "promoCode";
 	public static final String ADD_SUBBALANCE_PROMOTION = "noPromoCode";
-	public static final String UPDATE_PAYMENTPOLICY_PROMOTION = "updatePaymentPolicy";
-	public static final String UPDATE_PAYMENTPOLICY_FREE_TRIAL_PERIOD_PROMOTION = "updatePPFreeTPeriod";
-
-	public static enum Fields {
-		i, description, endDate, freeWeeks, isActive, maxUsers, numUsers, startDate, subWeeks, userGroup, type, showPromotion
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private byte i;
+	private Integer i;
 
 	@Column(name = "description", columnDefinition = "char(100)")
 	private String description;
@@ -50,7 +48,9 @@ public class Promotion implements Serializable {
 
 	private byte subWeeks;
 
-	private byte userGroup;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userGroup", nullable = false)
+    private UserGroup userGroup;
 
 	private boolean showPromotion;
 
@@ -69,11 +69,11 @@ public class Promotion implements Serializable {
 	public Promotion() {
 	}
 
-	public byte getI() {
+    public Integer getI() {
 		return this.i;
 	}
 
-	public void setI(byte i) {
+	public void setI(Integer i) {
 		this.i = i;
 	}
 
@@ -141,14 +141,6 @@ public class Promotion implements Serializable {
 		this.subWeeks = subWeeks;
 	}
 
-	public byte getUserGroup() {
-		return this.userGroup;
-	}
-
-	public void setUserGroup(byte userGroup) {
-		this.userGroup = userGroup;
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -189,6 +181,13 @@ public class Promotion implements Serializable {
 		this.label = label;
 	}
 
+    public Integer getPromoCodeId() {
+        if (ObjectUtils.isNotNull(promoCode)){
+            return promoCode.getId();
+        }
+        return null;
+    }
+
 	public PromoCode getPromoCode() {
 		return promoCode;
 	}
@@ -197,11 +196,91 @@ public class Promotion implements Serializable {
 		this.promoCode = promoCode;
 	}
 
-	@Override
+    public Byte getUserGroupId() {
+        if(isNotNull(userGroup)){
+            return userGroup.getI();
+        }
+        return null;
+    }
+
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
+    }
+
+    public Promotion withDescription(String description){
+        setDescription(description);
+        return this;
+    }
+
+    public Promotion withType(String type){
+        setType(type);
+        return this;
+    }
+
+    public Promotion withEndDate(int endDate){
+        setEndDate(endDate);
+        return this;
+    }
+
+    public Promotion withStartDate(int startDate){
+        setStartDate(startDate);
+        return this;
+    }
+
+    public Promotion withFreeWeeks(byte freeWeeks){
+        setFreeWeeks(freeWeeks);
+        return this;
+    }
+
+    public Promotion withIsActive(boolean isActive){
+        setIsActive(isActive);
+        return this;
+    }
+
+    public Promotion withMaxUsers(int maxUsers){
+        setMaxUsers(maxUsers);
+        return this;
+    }
+
+    public Promotion withNumUsers(int numUsers){
+        setNumUsers(numUsers);
+        return this;
+    }
+
+    public Promotion withSubWeeks(byte subWeeks){
+        setSubWeeks(subWeeks);
+        return this;
+    }
+
+    public Promotion withUserGroup(UserGroup userGroup){
+        setUserGroup(userGroup);
+        return this;
+    }
+
+    public Promotion withShowPromotion(boolean showPromotion){
+        setShowPromotion(showPromotion);
+        return this;
+    }
+
+    public Promotion withLabel(String label){
+        setLabel(label);
+        return this;
+    }
+
+    public Promotion withPromoCode(PromoCode promoCode){
+        setPromoCode(promoCode);
+        return this;
+    }
+
+    @Override
 	public String toString() {
 		return "Promotion [i=" + i + ", description=" + description + ", type=" + type + ", endDate=" + endDate + ", freeWeeks=" + freeWeeks + ", isActive="
-				+ isActive + ", maxUsers=" + maxUsers + ", numUsers=" + numUsers + ", startDate=" + startDate + ", subWeeks=" + subWeeks + ", userGroup="
-				+ userGroup + ", showPromotion=" + showPromotion + ", label=" + label + ", promoCode=" + promoCode + "]";
+				+ isActive + ", maxUsers=" + maxUsers + ", numUsers=" + numUsers + ", startDate=" + startDate + ", subWeeks=" + subWeeks + ", userGroupId="
+				+ getUserGroupId() + ", showPromotion=" + showPromotion + ", label=" + label + ", promoCodeId=" + getPromoCodeId() + "]";
 	}
 
 }

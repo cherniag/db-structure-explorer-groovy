@@ -107,7 +107,7 @@ public class UserDto {
 
 	private PromotionDto potentialPromoCodePromotionDto;
 
-	private Byte potentialPromoCodePromotionId;
+	private Integer potentialPromoCodePromotionId;
 
 	// TODO: added for release 3.4.1 for Samsung. This field should be deleted
 	// in next releases.
@@ -133,7 +133,7 @@ public class UserDto {
 
 	private BigDecimal amountOfMoneyToUserNotification;
 
-	private Byte potentialPromotionId;
+	private Integer potentialPromotionId;
 
 	private Date lastSuccesfullPaymentSmsSendingTimestamp;
     private int freeTrialExpiredMillis;
@@ -144,9 +144,9 @@ public class UserDto {
 			byte userStatusId, UserStatus userStatus, int subBalance, String tempToken, String title, String token, byte userGroupId, String userGroup,
 			String userName, UserType userType, int operator, String pin, String paymentType, boolean paymentEnabled, int numPsmsRetries,
 			List<PaymentDetailsDto> paymentDetailsDtos, PaymentDetailsDto currentPaymentDetailsDto, PromotionDto potentialPromotionDto,
-			PromotionDto potentialPromoCodePromotionDto, Byte potentialPromoCodePromotionId, boolean isFreeTrial, String newStoredToken,
+			PromotionDto potentialPromoCodePromotionDto, Integer potentialPromoCodePromotionId, boolean isFreeTrial, String newStoredToken,
 			String conformStoredToken, int paymentStatus, Date lastSuccessfulPaymentTime, String facebookId, String deviceUID, Date firstDeviceLogin,
-			Date firstUserLogin, Long currentPaymentDetailsId, BigDecimal amountOfMoneyToUserNotification, Byte potentialPromotionId, Date lastSuccesfullPaymentSmsSendingTimestamp) {
+			Date firstUserLogin, Long currentPaymentDetailsId, BigDecimal amountOfMoneyToUserNotification, Integer potentialPromotionId, Date lastSuccesfullPaymentSmsSendingTimestamp) {
 		super();
 		this.id = id;
 		this.address1 = address1;
@@ -554,11 +554,11 @@ public class UserDto {
 		this.potentialPromoCodePromotionDto = potentialPromoCodePromotionDto;
 	}
 
-	public Byte getPotentialPromoCodePromotionId() {
+	public Integer getPotentialPromoCodePromotionId() {
 		return potentialPromoCodePromotionId;
 	}
 
-	public void setPotentialPromoCodePromotionId(Byte potentialPromoCodePromotionId) {
+	public void setPotentialPromoCodePromotionId(Integer potentialPromoCodePromotionId) {
 		this.potentialPromoCodePromotionId = potentialPromoCodePromotionId;
 	}
 
@@ -650,11 +650,11 @@ public class UserDto {
 		this.amountOfMoneyToUserNotification = amountOfMoneyToUserNotification;
 	}
 
-	public Byte getPotentialPromotionId() {
+	public Integer getPotentialPromotionId() {
 		return potentialPromotionId;
 	}
 
-	public void setPotentialPromotionId(Byte potentialPromotionId) {
+	public void setPotentialPromotionId(Integer potentialPromotionId) {
 		this.potentialPromotionId = potentialPromotionId;
 	}
 

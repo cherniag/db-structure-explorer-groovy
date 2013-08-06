@@ -76,27 +76,6 @@ public class UserDaoTestIT {
 	
 	@Test
 	@Ignore
-	public void testGetActivePromotion() {
-//		int startDate = Utils.getEpochSeconds();
-//		int endDate = 300 + startDate;
-
-		byte userGroup = (byte) 5;
-
-		Promotion promotion = userDao.getActivePromotion(userGroup);
-		assertNotNull(promotion);
-
-		assertEquals(0, promotion.getStartDate());
-		assertEquals(1655270400, promotion.getEndDate());
-		assertTrue(promotion.getIsActive());
-		assertEquals(userGroup, promotion.getUserGroup());
-		assertTrue(promotion.getNumUsers() < promotion.getMaxUsers());
-		assertEquals(2, promotion.getFreeWeeks());
-		//assertEquals(18, promotion.getNumUsers());
-		//assertEquals(300, promotion.getMaxUsers());
-	}
-	
-	@Test
-	@Ignore
 	public void test_getListOfUsersForPsmsRetry() {
 		User testUser= new User();
 		testUser.setAddress1("678");
@@ -130,7 +109,6 @@ public class UserDaoTestIT {
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-		testUser.setPaymentEnabled(true);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -177,7 +155,6 @@ public class UserDaoTestIT {
 		testUser.setPin("pin");
         testUser.setSegment(SegmentType.CONSUMER);
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PAYMENT().getId());
-		testUser.setPaymentEnabled(true);
 		
 		entityDao.saveEntity(testUser);
 		
@@ -190,7 +167,6 @@ public class UserDaoTestIT {
 			{
 				assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getId(),user.getPaymentStatus());
 			}
-			assertTrue(user.isPaymentEnabled());
 			assertEquals(0, user.getSubBalance());
 		}
 	}
@@ -242,7 +218,6 @@ public class UserDaoTestIT {
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-		testUser.setPaymentEnabled(true);
 		
 		return testUser;
 	}

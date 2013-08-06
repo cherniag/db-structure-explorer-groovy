@@ -1676,7 +1676,6 @@ public class ChartDetailServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		fixtureChartDetailService = new ChartDetailService();
-		fixtureChartDetailService.setMediaLogTypeService(new MediaLogTypeService());
 		mockDrmService = PowerMockito.mock(DrmService.class);
 		fixtureChartDetailService.setDrmService(mockDrmService);
 		mockChartDetailRepository = PowerMockito.mock(ChartDetailRepository.class);

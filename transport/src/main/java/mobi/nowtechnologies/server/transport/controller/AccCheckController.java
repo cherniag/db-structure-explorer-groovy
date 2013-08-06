@@ -98,18 +98,6 @@ public class AccCheckController extends CommonController {
 				user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
 			}
 
-			user = userService.findByNameAndCommunity(userName, community);
-			
-			ActivationStatus activationStatus = user.getActivationStatus();
-			accountCheck.setActivation(activationStatus);
-			accountCheck.setFullyRegistred(activationStatus == ActivationStatus.ACTIVATED);
-
-            accountCheck.setCanGetVideo(true);
-            accountCheck.setCanPlayVideo(userService.canPlayVideo(user));
-            accountCheck.setCanActivateVideoTrial(userService.canActivateVideoTrial(user));
-            accountCheck.setHasAllDetails(user.hasAllDetails());
-            accountCheck.setShowFreeTrial(user.isShowFreeTrial());
-
 			return mav;
 		} catch (Exception e) {
 			ex = e;

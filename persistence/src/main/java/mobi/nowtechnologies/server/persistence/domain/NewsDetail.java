@@ -39,15 +39,10 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name="tb_newsDetail")
-@NamedQueries({
-	@NamedQuery(name=NewsDetail.NQ_GET_NEWS_DETAIL, query="select newsDetail from NewsDetail newsDetail where newsDetail.newsId=? and newsDetail.online=true")
-})
 public class NewsDetail implements Serializable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewsDetail.class);
 	
 	private static final long serialVersionUID = 1L;
-	
-	public static final String NQ_GET_NEWS_DETAIL = "getNewsDetail"; 
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

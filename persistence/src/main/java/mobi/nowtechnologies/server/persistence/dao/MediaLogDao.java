@@ -57,28 +57,6 @@ public class MediaLogDao extends JpaDaoSupport {
 		return mediaLogShallows;
 	}
 
-	/** @deprecated  As of release 3.2 replaced by {@link #isUserAlreadyDownloadOriginal(int mediaId, int userId)}
-	 * 
-	 * @param selectedMediaIsrc
-	 * @param userId
-	 * @return
-	 */
-	@Deprecated
-	public boolean isUserAlreadyDownloadOriginal(String selectedMediaIsrc, int userId) {
-		if (selectedMediaIsrc == null)
-			throw new PersistenceException(
-					"The parameter selectedMediaIsrc is null");
-		int downloadOriginalId = mediaLogTypeDao.getMediaLogTypes().get(
-				MediaLogTypeDao.DOWNLOAD_ORIGINAL).getI();
-		Long count = (Long) getJpaTemplate().find(
-				"select count(*) from "
-				+ MediaLog.class.getSimpleName()
-				+ " mediaLogShallow where mediaLogShallow.userUID = ?1 and"
-				+ " mediaLogShallow.mediaShallow.isrc=?2 and mediaLogShallow.mediaLogType.i=?3",
-					userId, selectedMediaIsrc, downloadOriginalId).get(0);
-		return count == 1L;
-	}
-	
 	@SuppressWarnings("unused")
 	public boolean isUserAlreadyDownloadOriginal(int mediaId, int userId) {
 		LOGGER.debug("input parameters mediaId, userId: [{}], [{}]", mediaId, userId);
@@ -91,9 +69,5 @@ public class MediaLogDao extends JpaDaoSupport {
 		boolean isUserAlreadyDownloadOriginal = (count == 1L);
 		LOGGER.debug("Output parameter isUserAlreadyDownloadOriginal=[{}]", isUserAlreadyDownloadOriginal);
 		return isUserAlreadyDownloadOriginal;
-	}
-	
-	public void removeMediaLog() {
-		
 	}
 }

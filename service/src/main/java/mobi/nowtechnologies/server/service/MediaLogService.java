@@ -35,18 +35,6 @@ public class MediaLogService {
 		mediaLogDao.logMediaEvent(userId, media, mediaLogType);
 	}
 	
-	public void removeLogMediaEvent(int userId, Media media, byte mediaLogType) {
-		//mediaLogDao.
-	}
-
-	/**
-	 * @deprecated  As of release 3.2, replaced by {@link #getPurchasedTracksByUserId(int userId)}
-	 */
-	@Deprecated
-	public List<MediaLog> findPurchasedTracksByUserId(int userId) {
-		return mediaLogDao.findPurchasedTracksByUserId(userId);
-	}
-	
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public List<PurchasedTrackDto> getPurchasedTracksByUserId(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
@@ -55,20 +43,6 @@ public class MediaLogService {
 		List<PurchasedTrackDto> purchasedTrackDtos=MediaLog.toPurchasedTrackDtoList(mediaLogShallows);
 		LOGGER.debug("Output parameter purchasedTrackDtos=[{}]", purchasedTrackDtos);
 		return purchasedTrackDtos;
-	}
-
-	/** @deprecated  As of release 3.2 replaced by {@link #isUserAlreadyDownloadOriginal(int mediaId, int userId)}
-	 * 
-	 * @param selectedMediaIsrc
-	 * @param userId
-	 * @return
-	 */
-	@Deprecated
-	public boolean isUserAlreadyDownloadOriginal(String selectedMediaIsrc, int userId) {
-		if (selectedMediaIsrc == null)
-			throw new NullPointerException(
-					"The parameter selectedMediaIsrc is null");
-		return mediaLogDao.isUserAlreadyDownloadOriginal(selectedMediaIsrc, userId);
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)

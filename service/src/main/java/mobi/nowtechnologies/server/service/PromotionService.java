@@ -5,7 +5,8 @@ import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.springframework.util.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static org.apache.commons.lang.Validate.notNull;
@@ -35,6 +38,7 @@ public class PromotionService {
 	private EntityService entityService;
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
+    private PromotionRepository promotionRepository;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -52,19 +56,9 @@ public class PromotionService {
         this.messageSource = messageSource;
     }
 
-    public boolean isPromoCodeActivePromotionExsist(
-			String communityName) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
-
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-
-		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
-				UserGroup.Fields.communityId.toString(), community.getId());
-
-		return promotionDao.isPromoCodeActivePromotionExsist(userGroup
-				.getI());
-	}
+    public void setPromotionRepository(PromotionRepository promotionRepository) {
+        this.promotionRepository = promotionRepository;
+    }
 
 	public Promotion getActivePromotion(String promotionCode, String communityName) {
 		notNull(promotionCode, "The parameter promotionCode is null");
@@ -75,18 +69,13 @@ public class PromotionService {
 		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
 				UserGroup.Fields.communityId.toString(), community.getId());
 
-        Promotion promoCode = promotionDao.getActivePromoCodePromotion(promotionCode, userGroup.getI());
-        return promoCode;
+        Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
+        return promotion;
 	}
 	
 	public List<PromoCode> getPromoCodes(final String communityName) {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
-	}
-
-	public Promotion getNoPromoCodePromotion(final String communityName) {
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-		return promotionDao.getActiveNoPromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
 	}
 	
 	/***
@@ -132,10 +121,6 @@ public class PromotionService {
 		return resPromotion;
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public User applyPromotion(User user) {
 		if (null != user.getPotentialPromotion()) {
@@ -151,7 +136,7 @@ public class PromotionService {
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Promotion incrementUserNumber(Promotion promotion) {
+	public synchronized Promotion incrementUserNumber(Promotion promotion) {
 		if (null != promotion) {
 			promotion.setNumUsers(promotion.getNumUsers()+1);
 			return entityService.updateEntity(promotion);
@@ -161,8 +146,8 @@ public class PromotionService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
-        boolean isPromotionApplied = false;
-        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| user.getContractChannel() == null)) {
+        boolean isPromotionApplied;
+        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| isNull(user.getContractChannel()))) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
@@ -172,15 +157,14 @@ public class PromotionService {
 
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
-        Promotion promotion = getPromotionForO24GConsumer(user);
+        Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
         if (promotion != null){
-            user.setLastPromo(promotion.getPromoCode());
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
     }
 
-    private Promotion getPromotionForO24GConsumer(User user){
+    private Promotion setVideoAudioPromotionForO24GConsumer(User user){
         final Promotion promotion;
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){

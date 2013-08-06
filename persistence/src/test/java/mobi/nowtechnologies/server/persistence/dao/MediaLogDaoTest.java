@@ -38,55 +38,6 @@ public class MediaLogDaoTest {
 	}
 
 	/**
-	 * Run the boolean isUserAlreadyDownloadOriginal(String,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 */
-	@Test
-	@Ignore
-	public void testIsUserAlreadyDownloadOriginalTrue()
-		throws Exception {
-		
-		String selectedMediaIsrc = "GB-GFL-89-12345";
-		int userId = 98781;
-
-		boolean result = mediaLogDao.isUserAlreadyDownloadOriginal(selectedMediaIsrc, userId);
-		assertTrue(result);
-	}
-
-	/**
-	 * Run the boolean isUserAlreadyDownloadOriginal(String,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 */
-	@Test
-	public void testIsUserAlreadyDownloadOriginalFalse()
-		throws Exception {
-		String selectedMediaIsrc = "US-UM7-11-00061";
-		int userId = 98781;
-
-		boolean result = mediaLogDao.isUserAlreadyDownloadOriginal(selectedMediaIsrc, userId);
-		assertFalse(result);
-	}
-
-	/**
-	 * Run the boolean isUserAlreadyDownloadOriginal(String,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 */
-	@Test(expected = PersistenceException.class)
-	public void testIsUserAlreadyDownloadOriginalWrongSelectedMediaIsrc()
-		throws Exception {
-		String selectedMediaIsrc = null;
-		int userId = 1;
-
-		mediaLogDao.isUserAlreadyDownloadOriginal(selectedMediaIsrc, userId);
-	}
-
-	/**
 	 * Run the void logMediaEvent(int,int,byte) method test.
 	 *
 	 * @throws Exception

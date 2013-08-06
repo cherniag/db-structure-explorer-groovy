@@ -23,9 +23,6 @@ public class O2WebServiceResulstsProcessorTest {
 
 	private static final String XML_DIR = "./src/test/resources/ws-samplexml/";
 
-//	private final Logger LOGGER = LoggerFactory
-//			.getLogger(O2WebServiceResulstsProcessorTest.class);
-
 	private O2WebServiceResultsProcessor p = new O2WebServiceResultsProcessor();
 
 	@Test
