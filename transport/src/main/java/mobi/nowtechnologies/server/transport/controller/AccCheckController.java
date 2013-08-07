@@ -109,9 +109,7 @@ public class AccCheckController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK.json"
+            "*/{community:o2}/{apiVersion:4\\.0}/ACC_CHECK.json"
     }, produces = "application/json")
     public @ResponseBody Response accountCheckForO2ClientJson(
             HttpServletRequest httpServletRequest,

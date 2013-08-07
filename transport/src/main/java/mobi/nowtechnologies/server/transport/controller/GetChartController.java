@@ -255,24 +255,7 @@ public class GetChartController extends CommonController{
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART",
-            "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART",
-            "*/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART.json"
-    }, produces = "application/json")
-    public @ResponseBody Response getChart_O2_v3d8Json(
-            HttpServletRequest request,
-            @RequestParam("APP_VERSION") String appVersion,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @PathVariable("apiVersion") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @PathVariable("community") String community) throws Exception {
 
-        return (Response) getChart_O2_v3d8(request, appVersion, communityName, apiVersion, userName, userToken, timestamp, deviceUID, community).getModelMap().get(MODEL_NAME);
-    }
 
     @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART" })
 	public ModelAndView getChart_O2_v4d0(
@@ -306,9 +289,7 @@ public class GetChartController extends CommonController{
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART",
-            "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART",
-            "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART.json"
+            "*/{community:o2}/{apiVersion:4\\.0}/GET_CHART.json"
     }, produces = "application/json")
     public @ResponseBody Response getChart_O2_v4d0Json(
             HttpServletRequest request,
