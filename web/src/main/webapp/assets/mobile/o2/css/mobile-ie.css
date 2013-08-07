@@ -199,9 +199,15 @@ img.centered{
     width: 175px;
 }
 
+.tapArea {
+	border: 1px solid #003399;
+	border-radius: 5px;
+	margin-bottom: 5px;
+}
+
 .container {
-	background-color: #003399;
-	padding: 0 6px;
+	background-color: #fff;
+	padding: 0 5px;
 }
 
 .pane-red span{
@@ -654,7 +660,7 @@ form .formButton  {
 
 .subscription-selector {
     display: block;
-    height: 66px;
+    height: 60px;
     border-width: 0;
     font-weight: lighter;
     text-align: left;
@@ -675,8 +681,8 @@ form .formButton  {
     position: absolute;
     top: 19px;
     right: 12px;
-    width: 39px;
-    height: 39px;
+    width: 37px;
+    height: 37px;
     background-size: 39px 39px;
 }
 
@@ -706,7 +712,8 @@ form .formButton  {
     border:none;
 }
 .subscription-selector .title {
-    font-family: frutigerBold, Helvetica, Arial, sans-serif;
+    font-family: frutigerLight, Helvetica, Arial, sans-serif;
+    font-size: 10px;
 }
 .subscription-selector.option-1 .title { color:#952d98; }
 .subscription-selector.option-2 .title { color:#00a9a9; }
@@ -714,7 +721,7 @@ form .formButton  {
 .subscription-selector.option-4 .title { color:#952d98; }
 
 .subscription-selector .price {
-    font-size:30px;
+    font-size:16px;
     margin-right:5px;
 }
 

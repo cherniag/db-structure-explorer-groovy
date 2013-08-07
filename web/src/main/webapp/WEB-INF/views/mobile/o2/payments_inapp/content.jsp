@@ -30,20 +30,12 @@ var CheckboxElement = (function(){
 			if ( typeof attrib === 'undefined' || attrib === false ) {
 				return;
 			}
-			//var updateButtonShow = ($(this).attr("data-updatesubbutton") == "1");
 			var videoAttr = (attrib == "1");
-			//var updateSubscriptionButton = $("#updateSubscriptionButton");
 			
 			if ( videoAttr == checkboxSelected ) {
 				$(this).show();
-				/* if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
-					updateSubscriptionButton.show();
-				} */
 			} else {
 				$(this).hide();
-				/* if ( updateButtonShow == true && updateSubscriptionButton.length > 0 ) {
-					updateSubscriptionButton.hide();
-				} */
 			}
 		});
 	}
@@ -89,6 +81,9 @@ var CheckboxElement = (function(){
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png"/></span>
 </div>
 
+<div style="margin: 0 14px">
+
+<%--
 <div class="container" style="padding-top:6px;">
 
             <c:set var="accountBannerON"> <s:message code="pays.page.note.account.on"/> </c:set>
@@ -121,61 +116,131 @@ var CheckboxElement = (function(){
 
             </c:if>
 </div>
+ --%>
 
-<img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
+<img style="width:100%;display: block" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
 
 <div class="container">
            
-           
-           
-           
-           
-			<c:if test="${userCanGetVideo eq true}">
-                <c:choose>
-		        <%--we have 2 cases:
-		        	(1) user is 4G and opted-in (we display the video options)
-		        	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
-		        <c:when test="${userIsOptedInToVideo eq true}">
-		        
-		        <div class="rel">
-		           <a class="subscription-selector" href="javascript: void(0)" onclick="videoCheckbox.switchState()" type="button">
-		                <div class="rel" style="padding-top: 23px;">
-		                	<span style="font-size: 15px"><s:message code='pays.page.note.account.videotitle' /></span>
-		                	<span style="font-size: 15px; float: right; margin-right: 60px; color: #3399CC"><s:message code='pays.page.note.account.videoprice' /></span>
-		                </div>
+           <c:choose>
+           <c:when test="${isIOSDevice eq true && isO2Consumer eq false}">
+				<div style="padding-top: 16px; padding-left: 10px; padding-bottom: 20px">
+					<c:set var="optionPrice" />
+					<c:set var="iTunesUrl" />
+					<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+						<c:if test="${isIOSDevice && !isO2User}">
+							<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
+							<c:set var="iTunesUrl" value="${pageContext.request.contextPath}/payments_inapp/iTunesSubscription.html?paymentPolicyId=${paymentPolicy.id}" />
+						</c:if>
+					</c:forEach>
+					
+					<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;">
+							O2 Tracks Music - iTunes
+					</div>
+					
+					<hr style="color: #ddd; margin: 10px 0 12px 0" />
+					
+					<div style="font-family: frutigerLight,Helvetica,Arial,sans-serif; color: #003399; font-size: 11px; line-height: 16px; margin-bottom: 17px;">The biggest hits. Brand new music. Exclusive playlists.<br />
+					Celebrity gossip. Don't miss a beat.</div>
+					
+					<input class="button-turquoise no-margin pie" title="${iTunesUrl}" type="button" onClick="location.href=this.title" value="&#163;${optionPrice}/month" />
+				</div>
+           </c:when>
+           <c:when test="${isO2User eq true and isBussinesUser eq false}">
+				<div style="padding-top: 16px; padding-left: 10px;">
+					<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;">
+						O2 Tracks Music  &#163;1.00 <span style="font-size: 12px">/ week</span>
+					</div>
+				</div>
 
-		                <c:set var="buttonClass" value="button-off" />
-				        <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
-				        	<c:set var="buttonClass" value="button-on" />
-				        	<%-- Activate the video checkbox if the user has a video subscription --%>
-				        </c:if>
-				        <c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
-		        			<c:set var="buttonClass" value="button-on" />
-		        			<%--Activate the video checkbox if the user has no subscription --%>
-		        		</c:if>
-		                <span class="${buttonClass}" id="videoCheckbox"></span>
-		           </a>
-	            </div>
-		        </c:when>
-		        <c:when test="${userIsOptedInToVideo eq false}">
-		        	<div class="rel">
-			           <a class="subscription-selector" href="videotrial.html?return_url=payments_inapp.html" type="button">
-			                <div class="rel" style="padding-top: 8px; text-align: center;">
-			                	<span class="title"><s:message code='pays.select.payby.o2psms.videoOptIn' /></span>
-			                </div>
-			           </a>
+				<c:if test="${userCanGetVideo eq true}">
+	                <c:choose>
+			        <%--we have 2 cases:
+			        	(1) user is 4G and opted-in (we display the video options)
+			        	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
+			        <c:when test="${userIsOptedInToVideo eq true}">
+			        
+			        <div class="rel tapArea" style="margin-top: 20px">
+			        	<a class="subscription-selector" href="javascript: void(0)" onclick="videoCheckbox.switchState()" type="button" style="height: 105px;padding: 12px 6px 6px 10px">
+                          		<div>
+                           		<img style="width:34px; height:32px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
+                                <div class="rel" style="padding-top: 1px;">
+                                	<div>
+                                    	<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;margin-bottom: 7px"><s:message code='pays.page.note.account.videotitle' /></div>
+                                    	<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px; color: #3399cc;"><s:message code='pays.page.note.account.videoprice' /></div>
+                                    </div>
+                                </div>
+                                <div style="clear: both">&nbsp;</div>
+                               </div>
+                               <div style="font-family: frutigerLight,Helvetica,Arial,sans-serif; font-size: 11px; line-height: 16px; color: #003399; margin-right: 70px;">For all the best music videos straight to your phone everyday. Only with O2. Only on 4G.</div>
+                               
+                               <c:set var="buttonClass" value="button-off" />
+					        <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
+					        	<c:set var="buttonClass" value="button-on" />
+					        	<%-- Activate the video checkbox if the user has a video subscription --%>
+					        </c:if>
+					        <c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
+			        			<c:set var="buttonClass" value="button-on" />
+			        			<%--Activate the video checkbox if the user has no subscription --%>
+			        		</c:if>
+			                <span class="${buttonClass}" id="videoCheckbox"></span>
+                      	</a>
 		            </div>
-		        </c:when>
-		        </c:choose>
-		    </c:if>
+			        </c:when>
+			        <c:when test="${userIsOptedInToVideo eq false}">
+			        	<div class="rel tapArea" style="margin-top: 20px">
+			        		<div class="subscription-selector" style="height: 135px;padding: 12px 6px 6px 10px">
+				           <!-- <a class="subscription-selector" href="videotrial.html?return_url=payments_inapp.html" type="button" style="height: 105px;padding: 12px 6px 6px 10px"> -->
+				                <%-- <div class="rel" style="padding-top: 8px; text-align: center;">
+				                	<span class="title"><s:message code='pays.select.payby.o2psms.videoOptIn' /></span>
+				                </div> --%>
+				                
+				                <div>
+                           		<img style="width:34px; height:32px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
+                                <div class="rel" style="padding-top: 1px;">
+                                	<div>
+                                    	<div style="font-family: frutigerBold,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;">Congratulations</div>
+                                    	<div style="font-family: frutigerBold,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;">You qualify for O2 Tracks Video</div>
+                                    </div>
+                                </div>
+                                <div style="clear: both">&nbsp;</div>
+                               </div>
+                               <div style="font-family: frutigerLight,Helvetica,Arial,sans-serif; font-size: 11px; line-height: 16px; color: #003399; margin-right: 70px; margin-bottom: 10px">Why not upgrade now and get yourself a free trial<br />Tap the button bellow</div>
+                               <input class="button-turquoise no-margin pie" title="${pageContext.request.contextPath}/videotrial.html?return_url=payments_inapp.html" type="button" onClick="location.href=this.title" value="Yes, I want a free trial" />
+				           <!-- </a> -->
+				           </div>
+			            </div>
+			        </c:when>
+			        </c:choose>
+			    </c:if>
+			    
+				<div style="padding-left: 10px; padding-bottom: 20px">
+					<hr style="color: #ddd; margin: 10px 0 10px 0" />
+					
+					<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; color: #003399; font-size: 15px; line-height: 16px">Billing options</div>
+					<div style="font-family: frutigerLight,Helvetica,Arial,sans-serif; color: #003399; font-size: 11px; margin-top: 7px;">Pick a payment cycle to get started</div>
+				</div>
+           </c:when>
+           <c:when test="${isBussinesOrNonO2User eq true}">
+				<%--for business/non-o2 users --%>
+				<c:set var="optionPrice" />
+				<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+				<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
+				</c:forEach>
+				<div style="padding-top: 16px; padding-left: 10px; padding-bottom: 20px">
+					<div style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px; color: #003399;">
+							O2 Tracks Music for &#163;<fmt:formatNumber pattern="0.00" value="${optionPrice}" /> <span style="font-size: 12px">/ month</span>
+					</div>
+					
+					<hr style="color: #ddd; margin: 7px 0 9px 0" />
+					
+					<div style="font-family: frutigerLight,Helvetica,Arial,sans-serif; color: #003399; font-size: 11px; line-height: 16px">The biggest hits. Brand new music. Exclusive playlists.<br />
+					Celebrity gossip. Don't miss a beat.</div>
+				</div>
+           </c:when>
+           </c:choose>
            
-           
-           
-           
-           
-           
-           
-           
+				<c:if test="${not (isIOSDevice eq true && isO2Consumer eq false)}">
             	<c:set var="hasPaymentBaner" value="false" />
                 <c:forEach var="paymentPolicy" items="${paymentPolicies}">
                     <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
@@ -217,10 +282,11 @@ var CheckboxElement = (function(){
                         </c:otherwise>
                     </c:choose>
                                         
-                    <div class="rel" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
+                    <div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
                         <c:choose>
                             <c:when test="${isIOSDevice && !isO2User}">
-                                <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
+                            	<%--we do not need iTunes button here - this button will be at the top --%>
+                                <%-- <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
                                     <div class="subscription-container">
                                         <div class="subscription-selector option-3">
                                             <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_apple_in_app_payment.png" />
@@ -234,7 +300,7 @@ var CheckboxElement = (function(){
                                             <input class="button-turquoise no-margin pie" title="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" onClick="location.href=this.title" value="Subscribe via iTunes" />
                                         </div>
                                     </div>
-                                </c:if>
+                                </c:if> --%>
                             </c:when>
                             <c:when test="${paymentPolicy.paymentType == 'o2Psms'
                     && paymentDetails != null
@@ -249,7 +315,7 @@ var CheckboxElement = (function(){
                                 		<c:set var="imageWeeks" value="5" />
                                 	</c:if>
                                 	
-                            		<img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
+                            		<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
                                     <div class="rel" style="padding-top: 8px;">
                                         <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
                                         <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
@@ -265,9 +331,9 @@ var CheckboxElement = (function(){
                                	</c:if>
                                	
                                 <a class="subscription-selector option-${paymentPolicyOptionNo}" href="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
-                            		<img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
+                            		<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
                                     <div class="rel" style="padding-top: 8px;">
-                                        <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
+                                        <div class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></div>
                                         <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
                                     </div>
                                     <span class="button-off"></span>
@@ -278,10 +344,10 @@ var CheckboxElement = (function(){
 
                                 <div class="subscription-container" style="margin-bottom: 5px;">
                                     <a class="subscription-selector option-3" style="margin-bottom: 0px;" href="${pageContext.request.contextPath}/payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
-                                		<img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${method_name}.png" />
-                                        <div class="rel" style="padding-top: 8px;">
-                                            <span class="title"><s:message code="${payment_label}" /></span><br />
-                                            <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> 
+                                		<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
+                                        <div class="rel" style="padding-top: 20px;">
+                                            <span style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px"><s:message code="${payment_label}" /></span>
+                                            <%-- <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> 
                                             <c:choose>
                                                 <c:when test="${isBussinesUser eq 'true'}">
                                                     <s:message code='pays.select.payby.creditcard.business.subterm' />
@@ -289,7 +355,7 @@ var CheckboxElement = (function(){
                                                 <c:otherwise>
                                                     <s:message code='pays.select.payby.creditcard.consumer.subterm' />
                                                 </c:otherwise>
-                                            </c:choose>
+                                            </c:choose> --%>
 
                                             
                                         </div>
@@ -314,6 +380,8 @@ var CheckboxElement = (function(){
                     </div>
 
                 </c:forEach>
+                <div style="height: 5px">&nbsp;</div><%--clearfix --%>
+                </c:if>
             </div>
 
             <div class="content no-bg">

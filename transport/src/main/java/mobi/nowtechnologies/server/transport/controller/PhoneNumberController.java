@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -59,4 +60,20 @@ public class PhoneNumberController extends CommonController {
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
 	}
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER.json"
+    }, produces = "application/json")
+    public @ResponseBody Response activatePhoneNumberJson(
+            @RequestParam(value = "PHONE", required = false) String phone,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) throws Exception {
+
+        return (Response)activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion).getModelMap().get(MODEL_NAME);
+    }
 }

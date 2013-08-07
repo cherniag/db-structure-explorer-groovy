@@ -163,6 +163,21 @@ public class SingUpDeviceController extends CommonController {
 		}
 	}
 
+    @RequestMapping(method = RequestMethod.POST, value =
+            {
+                    "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
+                    "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
+                    "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
+                    "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/SIGN_UP_DEVICE",
+                    "*/{community:o2}/{apiVersion:4\\.0}/SIGN_UP_DEVICE",
+                    "*/{community:o2}/{apiVersion:4\\.0}/SIGN_UP_DEVICE.json"
+            }, produces = "application/json")
+    public @ResponseBody Response signUpDevice_O2Json(HttpServletRequest request,
+                                 @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
+                                 @PathVariable("community") String community) {
+        return (Response)signUpDevice_O2(request, userDeviceDetailsDto, result, community).getModelMap().get(MODEL_NAME);
+    }
+
     public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}
