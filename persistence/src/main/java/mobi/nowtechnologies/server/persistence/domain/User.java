@@ -11,6 +11,7 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -118,7 +119,7 @@ public class User implements Serializable {
     private ContractChannel contractChannel;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tariff", columnDefinition = "char(255)")
+    @Column(name = "tariff", columnDefinition = "char(255)", nullable = false)
     private Tariff tariff;
 
 	@Column(name = "address1", columnDefinition = "char(50)")
@@ -348,6 +349,7 @@ public class User implements Serializable {
 		setPaymentDetailsList(new ArrayList<PaymentDetails>());
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+        setTariff(_3G);
 	}
 
     public boolean isShowFreeTrial() {
@@ -1315,11 +1317,11 @@ public class User implements Serializable {
     }
 
     public boolean is4G(){
-        return Tariff._4G.equals(tariff);
+        return _4G.equals(tariff);
     }
 
     public boolean is3G(){
-        return Tariff._3G.equals(tariff);
+        return _3G.equals(tariff);
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {

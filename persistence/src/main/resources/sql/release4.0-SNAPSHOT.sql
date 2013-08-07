@@ -116,7 +116,8 @@ create table refund (
  alter table tb_media modify column purchasedFile int unsigned null;
 
  alter table tb_users add column last_promo int(10);
- alter table tb_users add constraint user_promo_code_fk foreign key (i) references tb_promoCode(id);
+ ALTER TABLE tb_promoCode MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT;
+ alter table tb_users add constraint user_promo_code_fk foreign key (last_promo) references tb_promoCode(id);
  
 -- insert 3 new audio payment policies for o2 consumer group
 
