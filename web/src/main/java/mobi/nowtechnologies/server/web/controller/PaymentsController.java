@@ -12,6 +12,12 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionStateFactory;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -81,6 +87,12 @@ public class PaymentsController extends CommonController {
         
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
         mav.addObject("userCanGetVideo", user.is4G());
+        
+        SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
+        SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
+        
+        PaymentPageData paymentPageData = new PaymentPageData(subscriptionState, subscriptionTexts);
+        mav.addObject("paymentPageData", paymentPageData);
 
         String paymentType = null;
         if ( paymentDetails != null ) {
