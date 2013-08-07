@@ -111,7 +111,7 @@ public class User implements Serializable {
 	private int id;
 
     @ManyToOne
-    @JoinColumn(name = "last_promo")
+    @JoinColumn(name = "last_promo", columnDefinition = "INT default NULL")
     private PromoCode lastPromo;
 
     @Column(name = "contract_channel")
