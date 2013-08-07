@@ -82,6 +82,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
+        mav.addObject("mobilePhoneNumber", user.getMobile());
         
         boolean userIsOptedInToVideo = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
         
