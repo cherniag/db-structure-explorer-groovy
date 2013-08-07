@@ -23,14 +23,15 @@ public class SubscriptionStateFactory {
 			return state;
 		}
 
-		state.setFreeTrial(user.isOnFreeTrial());
-		if (!state.isFreeTrial()) {
-			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-			if ((currentPaymentDetails != null) && (currentPaymentDetails.isActivated())) {
-				state.setPaySubscription(true);
-			}
+		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+		if ((currentPaymentDetails != null) && (currentPaymentDetails.isActivated())) {
+			state.setPaySubscription(true);
 		}
-
+		if(!state.isPaySubscription()){
+			state.setFreeTrial(user.isOnFreeTrial());
+		}
+		
+		
 		if (state.isFreeTrial()) {
 			if (state.isEligibleForVideo()) {
 				state.setUnlimitedFreeTrialFor4G(true);
