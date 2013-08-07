@@ -848,7 +848,7 @@ form .formButton  {
 .button-off, .button-on, .button-arrow{
     display: block;
     position: absolute;
-    top: 8px;
+    top: 14px;
     right: 10px;
     width: 25px;
     height: 25px;
@@ -969,7 +969,7 @@ form .formButton  {
 }
 .subscription-selector {
     display: block;
-    height: 60px;
+    height: 53px;
     border-width: 0;
     font-weight: lighter;
     text-align: left;
@@ -988,7 +988,7 @@ form .formButton  {
 .subscription-selector .button-on {
     display: block;
     position: absolute;
-    top: 19px;
+    top: 14px;
     right: 12px;
     width: 37px;
     height: 37px;
@@ -1017,12 +1017,13 @@ form .formButton  {
 .subscription-selected img {
     display:block;
     float:left;
-    margin-right: 18px;
+    margin-right: 10px;
 }
 .subscription-selector .title {
     font-family: frutigerLight, Helvetica, Arial, sans-serif;
     font-size: 10px;
-    margin-bottom: 9px;
+    /* margin-bottom: 9px; */
+    margin-bottom: 3px;
 }
 .subscription-selector.option-1 .title { color:#952d98; }
 .subscription-selector.option-2 .title { color:#00a9a9; }
@@ -1900,4 +1901,22 @@ p.itemsTrackName {
 .validationNotes {
 	padding: 20px;
 	padding-left: 0px;
+}
+
+.frR15 {
+	color: #003399;
+	font-family: frutigerRoman, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+}
+
+.frL11 {
+	color: #003399;
+	font-family: frutigerLight, Helvetica, Arial, sans-serif;
+	font-size: 11px;
+}
+
+.frB15 {
+	color: #003399;
+	font-family: frutigerBold, Helvetica, Arial, sans-serif;
+	font-size: 15px;
 }
