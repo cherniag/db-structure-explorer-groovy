@@ -38,12 +38,14 @@
 	   	
 	   	<c:set var="disabledAttrib" />
 	   	<c:set var="buttonStyle" value="button-off" />
+	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
 	   	<c:if test="${paymentDetails != null && activePolicy != null && paymentDetails.activated && activePolicy.subcost == paymentPolicy.subcost && activePolicy.subweeks == paymentPolicy.subweeks}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
 	   		<c:set var="buttonStyle" value="button-on" />
+	   		<c:set var="hrefValue" value="" />
 	   	</c:if>
 	   	
-	    <a style="height: 46px;" class="subscription-selector option-${paymentPolicyOptionNo}" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" ${disabledAttrib}>
+	    <a style="height: 46px;" class="subscription-selector option-${paymentPolicyOptionNo}" type="button" ${disabledAttrib} ${hrefValue}>
 			<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
 	        <div class="rel" style="padding-top: 8px;">
 	            <div class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></div>
