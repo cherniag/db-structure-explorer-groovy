@@ -62,9 +62,7 @@ public class PhoneNumberController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER.json"
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
     }, produces = "application/json")
     public @ResponseBody Response activatePhoneNumberJson(
             @RequestParam(value = "PHONE", required = false) String phone,

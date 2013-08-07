@@ -114,9 +114,7 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO.json"
+            "*/{community:o2}/{apiVersion:4\\.0}/APPLY_INIT_PROMO.json"
     }, produces = "application/json")
     public @ResponseBody Response applyO2PromotionJson(
             @RequestParam("COMMUNITY_NAME") String communityName,
