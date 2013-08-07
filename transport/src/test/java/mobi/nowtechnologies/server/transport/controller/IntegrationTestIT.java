@@ -381,7 +381,7 @@ public class IntegrationTestIT {
 			// nameValueMap);
 
 			byte freeWeeks = 0;
-			Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
+			Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
 			if (promotion != null)
 				freeWeeks = promotion.getFreeWeeks();
 			assertTrue(freeWeeks >= 0);
@@ -1147,7 +1147,7 @@ public class IntegrationTestIT {
 		// nameValueMap);
 
 		byte freeWeeks = 0;
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
+		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
 		if (promotion != null)
 			freeWeeks = promotion.getFreeWeeks();
 		assertTrue(freeWeeks >= 0);
@@ -2183,7 +2183,7 @@ public class IntegrationTestIT {
 		assertEquals(PaymentStatusDao.getOK().getId(), user.getPaymentStatus());
 
 		byte freeWeeks = 0;
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
+		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
 		if (promotion != null)
 			freeWeeks = promotion.getFreeWeeks();
 		assertTrue(freeWeeks >= 0);
