@@ -691,7 +691,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public synchronized void applyPromotion(User user) {
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
+		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
 		LOGGER.info("promotion [{}]", promotion);
 		if (promotion != null) {
 			user.setSubBalance((byte) (user.getSubBalance() + promotion.getFreeWeeks()));

@@ -159,7 +159,7 @@ public class UserDao extends JpaDaoSupport {
 		return userCount != 0;
 	}
 
-	public Promotion getActivePromotion(byte userGroup) {
+	public Promotion getActivePromotion(UserGroup userGroup) {
 		List<?> list = getJpaTemplate().find(
 				"select o from " + Promotion.class.getSimpleName() +
 				" o where (o.numUsers < o.maxUsers or o.maxUsers=0) and o.startDate < ?1 " +
