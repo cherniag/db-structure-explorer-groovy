@@ -43,7 +43,7 @@
 	   		<c:set var="buttonStyle" value="button-on" />
 	   	</c:if>
 	   	
-	    <a class="subscription-selector option-${paymentPolicyOptionNo}" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" ${disabledAttrib}>
+	    <a style="height: 46px;" class="subscription-selector option-${paymentPolicyOptionNo}" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button" ${disabledAttrib}>
 			<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
 	        <div class="rel" style="padding-top: 8px;">
 	            <div class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></div>
