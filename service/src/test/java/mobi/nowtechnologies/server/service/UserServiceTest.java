@@ -113,18 +113,6 @@ public class UserServiceTest {
     private PromotionService promotionServiceMock;
     private UserServiceNotification userServiceNotification;
 
-    @Test
-    public void testUpdateVideoTrial() {
-    	User user = UserFactory.createUser();
-    	
-    	Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
-		
-    	boolean result = userServiceSpy.updateVideoFreeTrial(user, true);
-    	
-    	assertTrue( result );
-    	verify(entityServiceMock, times(1));
-    }
-
 	@Test
 	public void testChangePassword_Success() throws Exception {
 		String password = "newPa$$1";
