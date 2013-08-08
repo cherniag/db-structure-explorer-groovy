@@ -11,6 +11,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static mobi.nowtechnologies.server.shared.Utils.*;
 import static org.junit.Assert.*;
 
 /**
@@ -25,75 +26,44 @@ import static org.junit.Assert.*;
 @PrepareForTest(Utils.class)
 public class UtilsTest {
 
-	private static final long MILISECONDS_IN_SECONDS = 1000L;
 	private static final int ONE_DAY_SECONDS = 24 * 60 * 60;
 	private static final int WEEK_SECONDS = 7 * ONE_DAY_SECONDS;
 
-	/**
-	 * Run the Utils() constructor test.
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testUtils_1() throws Exception {
 		Utils result = new Utils();
 		assertNotNull(result);
-		// add additional test code here
 	}
 
-	/**
-	 * Run the String createStoredToken(String,String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testCreateStoredToken_1() throws Exception {
 		String username = "";
 		String password = "";
 
-		String result = Utils.createStoredToken(username, password);
+		String result = createStoredToken(username, password);
 
-		// add additional test code here
 		assertEquals("4320fb73e5deb16a98f78bec9e522d36", result);
 	}
 
-	/**
-	 * Run the String createTimestampToken(String,String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testCreateTimestampToken_1() throws Exception {
 		String token = "";
 		String timestamp = "";
 
-		String result = Utils.createTimestampToken(token, timestamp);
+		String result = createTimestampToken(token, timestamp);
 
-		// add additional test code here
 		assertEquals("4320fb73e5deb16a98f78bec9e522d36", result);
 	}
 
-	/**
-	 * Run the Integer generateRandomPIN() method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGenerateRandomPIN_1() throws Exception {
 
-		Integer result = Utils.generateRandomPIN();
+		Integer result = generateRandomPIN();
 
-		// add additional test code here
 		assertNotNull(result);
 		assertEquals("7113", result.toString());
 		assertEquals((byte) -55, result.byteValue());
@@ -104,20 +74,12 @@ public class UtilsTest {
 		assertEquals((short) 7113, result.shortValue());
 	}
 
-	/**
-	 * Run the Integer getBigRandomInt() method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetBigRandomInt_1() throws Exception {
 
-		Integer result = Utils.getBigRandomInt();
+		Integer result = getBigRandomInt();
 
-		// add additional test code here
 		assertNotNull(result);
 		assertEquals("17816073", result.toString());
 		assertEquals((byte) 9, result.byteValue());
@@ -128,304 +90,173 @@ public class UtilsTest {
 		assertEquals((short) -9719, result.shortValue());
 	}
 
-	/**
-	 * Run the Date getDateFromInt(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetDateFromInt_1() throws Exception {
 		int intDate = 1;
 
-		Date result = Utils.getDateFromInt(intDate);
+		Date result = getDateFromInt(intDate);
 
-		// add additional test code here
 		assertNotNull(result);
 		assertEquals(DateFormat.getInstance().format(new Date(1000L)), DateFormat.getInstance().format(result));
 		assertEquals(1000L, result.getTime());
 	}
 
-	/**
-	 * Run the int getEpochSeconds() method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetEpochSeconds_1() throws Exception {
 
-		int result = Utils.getEpochSeconds();
+		int result = getEpochSeconds();
 
-		// add additional test code here
 		assertEquals(1330681906, result);
 	}
 
-	/**
-	 * Run the int getNewNextSubPayment(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetNewNextSubPayment_WhenNextSubPaymentIs0_Success() throws Exception {
 
 		int nextSubPayment = 0;
 
-		int timeBeforeProcessingSeconds = Utils.getEpochSeconds();
-		int result = Utils.getNewNextSubPayment(nextSubPayment);
+		int timeBeforeProcessingSeconds = getEpochSeconds();
+		int result = getNewNextSubPayment(nextSubPayment);
 
 		assertTrue(timeBeforeProcessingSeconds + WEEK_SECONDS <= result);
-		assertTrue(Utils.getEpochSeconds() + WEEK_SECONDS >= result);
+		assertTrue(getEpochSeconds() + WEEK_SECONDS >= result);
 	}
 
-	/**
-	 * Run the int getNewNextSubPayment(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	public void testGetNewNextSubPayment_WhenNextSubPaymentOver1Day_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
+		int nextSubPayment = getEpochSeconds() + ONE_DAY_SECONDS;
 
-		int timeBeforeProcessingSeconds = Utils.getEpochSeconds();
-		int result = Utils.getNewNextSubPayment(nextSubPayment);
+		int timeBeforeProcessingSeconds = getEpochSeconds();
+		int result = getNewNextSubPayment(nextSubPayment);
 
 		assertTrue(timeBeforeProcessingSeconds + ONE_DAY_SECONDS <= result);
-		assertTrue(Utils.getEpochSeconds() + ONE_DAY_SECONDS >= result);
+		assertTrue(getEpochSeconds() + ONE_DAY_SECONDS >= result);
 	}
 
-	/**
-	 * Run the int getNewNextSubPayment(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	public void testGetNewNextSubPayment_WhenNextSubPaymentWas5DayAgo_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds()-5 * ONE_DAY_SECONDS;
+		int nextSubPayment = getEpochSeconds()-5 * ONE_DAY_SECONDS;
 
-		int timeBeforeProcessingSeconds = Utils.getEpochSeconds();
+		int timeBeforeProcessingSeconds = getEpochSeconds();
 		
-		int result = Utils.getNewNextSubPayment(nextSubPayment);
+		int result = getNewNextSubPayment(nextSubPayment);
 
 		assertTrue(timeBeforeProcessingSeconds + WEEK_SECONDS <= result);
-		assertTrue(Utils.getEpochSeconds() + WEEK_SECONDS >= result);
+		assertTrue(getEpochSeconds() + WEEK_SECONDS >= result);
 	}
 
-	/**
-	 * Run the String getOTACode(int,String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetOTACode_1() throws Exception {
 		int userId = 1;
 		String userName = "";
 
-		String result = Utils.getOTACode(userId, userName);
+		String result = getOTACode(userId, userName);
 
-		// add additional test code here
 		assertEquals("dd5dacb0ac2a83b510ef8f6197e8f6ad", result);
 	}
 
-	/**
-	 * Run the String getOTACode(int,String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test(expected = java.lang.NullPointerException.class)
 	@Ignore
 	public void testGetOTACode_2() throws Exception {
 		int userId = 1;
 		String userName = null;
 
-		String result = Utils.getOTACode(userId, userName);
+		String result = getOTACode(userId, userName);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the String getRandomString(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetRandomString_1() throws Exception {
 		int length = 1;
 
-		String result = Utils.getRandomString(length);
+		String result = getRandomString(length);
 
-		// add additional test code here
 		assertEquals("3", result);
 	}
 
-	/**
-	 * Run the String getRandomString(int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testGetRandomString_2() throws Exception {
 		int length = 0;
 
-		String result = Utils.getRandomString(length);
+		String result = getRandomString(length);
 
-		// add additional test code here
 		assertEquals("", result);
 	}
 
-	/**
-	 * Run the int getTimeOfMovingToLimitedStatus(int,int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentWasOneDayAgo() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() - ONE_DAY_SECONDS;
+		int nextSubPayment = getEpochSeconds() - ONE_DAY_SECONDS;
 		int subBalance = 0;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
+		int result = getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
 
-		// add additional test code here
 		assertEquals(nextSubPayment, result);
 	}
 
-	/**
-	 * Run the int getTimeOfMovingToLimitedStatus(int,int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentOverOneDay_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
+		int nextSubPayment = getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 1;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
+		int result = getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
 
-		// add additional test code here
 		assertEquals(nextSubPayment+WEEK_SECONDS, result);
 	}
 
-	/**
-	 * Run the int getTimeOfMovingToLimitedStatus(int,int) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentOverOneDayAndSubBalanceIs5_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
+		int nextSubPayment = getEpochSeconds() + ONE_DAY_SECONDS;
 		int subBalance = 5;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0);
+		int result = getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
 
-		// add additional test code here
 		assertTrue((nextSubPayment +(subBalance) * WEEK_SECONDS) <= result);
 		assertTrue((nextSubPayment +(subBalance) * WEEK_SECONDS) >= result);
 	}
 	
 	@Test
-	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentOverOneDayAndSubBalanceIs5GraceDurationSecondsIs3_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() + ONE_DAY_SECONDS;
+	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentWasOneDayAgoAndSubBalanceIs5_Success() throws Exception {
+		int nextSubPayment = getEpochSeconds() - ONE_DAY_SECONDS;
 		int subBalance = 5;
-		int graceDurationSeconds = 3;
 
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds);
+		int result = getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
 
-		// add additional test code here
-		assertEquals((nextSubPayment +(subBalance) * WEEK_SECONDS + graceDurationSeconds), result);
-	}
-	
-	@Test
-	public void testGetTimeOfMovingToLimitedStatus_WhenNextSubPaymentWasOneDayAgoAndSubBalanceIs5GraceDurationSecondsIs3_Success() throws Exception {
-		int nextSubPayment = Utils.getEpochSeconds() - ONE_DAY_SECONDS;
-		int subBalance = 5;
-		int graceDurationSeconds = 3;
-
-		int result = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, graceDurationSeconds);
-
-		// add additional test code here
-		assertEquals((nextSubPayment + graceDurationSeconds), result);
+		assertEquals((nextSubPayment), result);
 	}
 
-	/**
-	 * Run the String md5(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testMd5_1() throws Exception {
 		String input = "";
 
-		String result = Utils.md5(input);
+		String result = md5(input);
 
-		// add additional test code here
 		assertEquals("d41d8cd98f00b204e9800998ecf8427e", result);
 	}
 
-	/**
-	 * Run the String md5(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testMd5_2() throws Exception {
 		String input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-		String result = Utils.md5(input);
+		String result = md5(input);
 
-		// add additional test code here
 		assertEquals("5eca9bd3eb07c006cd43ae48dfde7fd3", result);
 	}
 
-	/**
-	 * Run the String md5(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 02.03.12 11:51
-	 */
 	@Test
 	@Ignore
 	public void testMd5_3() throws Exception {
 		String input = "";
 
-		String result = Utils.md5(input);
+		String result = md5(input);
 
-		// add additional test code here
 		assertEquals("d41d8cd98f00b204e9800998ecf8427e", result);
 	}
 	
@@ -445,9 +276,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -478,9 +309,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -511,9 +342,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -544,9 +375,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(nextSubPayment);
+		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -588,9 +419,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -632,9 +463,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -676,9 +507,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -721,9 +552,9 @@ public class UtilsTest {
 
 		PowerMockito.spy(Utils.class);
 		
-		PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = Utils.getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -740,22 +571,22 @@ public class UtilsTest {
 
     @Test
     public void shouldReturnMajorVersionNumber(){
-        int majorVersionNumber = Utils.getMajorVersionNumber("5.0");
+        int majorVersionNumber = getMajorVersionNumber("5.0");
         assertEquals(5, majorVersionNumber);
     }
 
     @Test(expected = Exception.class)
     public void shouldNotReturnMajorVersionNumber(){
-        Utils.getMajorVersionNumber(".0");
+        getMajorVersionNumber(".0");
     }
 
     @Test
     public void shouldReturnMajorVersionNumberIsLess(){
-        assertTrue(Utils.isMajorVersionNumberLessThan(4, "3.9"));
+        assertTrue(isMajorVersionNumberLessThan(4, "3.9"));
     }
 
     @Test
     public void shouldReturnMajorVersionNumberIsMore(){
-        assertFalse(Utils.isMajorVersionNumberLessThan(2, "3.9"));
+        assertFalse(isMajorVersionNumberLessThan(2, "3.9"));
     }
 }

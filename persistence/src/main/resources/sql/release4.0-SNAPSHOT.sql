@@ -148,3 +148,6 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 
  -- insert new windows phone device type to database
 INSERT INTO tb_deviceTypes (name) VALUES ('WINDOWS_PHONE');
+
+-- Remove unused column
+ alter table tb_users drop column deactivated_grace_credit_millis;

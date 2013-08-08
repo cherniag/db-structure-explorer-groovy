@@ -14,7 +14,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import java.util.Locale;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.service.UserServiceTest.O2_PAYG_CONSUMER_GRACE_DURATION_CODE;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
@@ -71,35 +70,20 @@ public class O2PaymentServiceImplTest {
 		
 		userServiceMock = mock(UserService.class);
 
-		SagePayService mockSagePayService = mock(SagePayService.class);
-		PaymentPolicyService mockPaymentPolicyService = mock(PaymentPolicyService.class);
 		mockCountryService = mock(CountryService.class);
 		mockCommunityResourceBundleMessageSource = mock(CommunityResourceBundleMessageSource.class);
-		DeviceTypeService mockDeviceTypeService = mock(DeviceTypeService.class);
 		mockUserRepository = mock(UserRepository.class);
-		CountryByIpService mockCountryByIpService = mock(CountryByIpService.class);
-		OfferService mockOfferService = mock(OfferService.class);
 		mockPaymentDetailsService = mock(PaymentDetailsService.class);
-		UserDeviceDetailsService mockUserDeviceDetailsService = mock(UserDeviceDetailsService.class);
-		PromotionService mockPromotionService = mock(PromotionService.class);
 		mockUserDao = mock(UserDao.class);
-		CountryAppVersionService mocCountryAppVersionService = mock(CountryAppVersionService.class);
 		mockEntityService = mock(EntityService.class);
-		MigPaymentService mockMigPaymentService = mock(MigPaymentService.class);
-		DrmService mockDrmService = mock(DrmService.class);
-		FacebookService mockFacebookService = mock(FacebookService.class);
 		mockCommunityService = mock(CommunityService.class);
 		mockDeviceService = mock(DeviceService.class);
 		mockMigHttpService = mock(MigHttpService.class);
-		PaymentService mockPaymentService = mock(PaymentService.class);
 		mockAccountLogService = mock(AccountLogService.class);
 		mockO2ClientService = mock(O2ClientService.class);
 		mockUserRepository = mock(UserRepository.class);
-		MailService mockMailService = mock(MailService.class);
 		mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
-
-		when(mockCommunityResourceBundleMessageSource.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null, null)).thenReturn(48*60*60+"");
 
 		mockStatic(UserStatusDao.class);
 		
@@ -496,116 +480,6 @@ public class O2PaymentServiceImplTest {
 		verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
 		
-	}
-
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisBeforeNextSubPayment_Success(){		
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-
-		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_CurrentTimeEqNextSubPayment_Success(){		
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
-		
-		mockStatic(Utils.class);
-		when(Utils.getEpochSeconds()).thenReturn(user.getNextSubPayment());
-		
-		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertTrue(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisEqGracePeriodEnding_Success(){		
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment());
-
-		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertFalse(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_LastPaymentTryMillisAfterGracePeriodEnding_Success(){		
-		final int graceDurationSeconds = 2*Utils.WEEK_SECONDS;
-
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds+1)*1000L);
-
-		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertFalse(mustTheAttemptsOfPaymentContinue);
-	}
-	
-	@Test
-	public void testMustTheAttemptsOfPaymentContinue_graceDurationSecondsIs0_Success(){		
-		final int graceDurationSeconds = 0;
-
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		final GracePeriod gracePeriod = GracePeriodFactory.createGracePeriod();
-		
-		gracePeriod.setDurationMillis(graceDurationSeconds*1000L);
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()+graceDurationSeconds)*1000L);
-
-		boolean mustTheAttemptsOfPaymentContinue = o2PaymentServiceImplSpy.mustTheAttemptsOfPaymentContinue(user);
-		assertFalse(mustTheAttemptsOfPaymentContinue);
 	}
 	
 	@Test

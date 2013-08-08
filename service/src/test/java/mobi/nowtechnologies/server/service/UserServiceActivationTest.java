@@ -45,9 +45,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 		OperatorDao.class, AccountLog.class, EmailValidator.class })
 public class UserServiceActivationTest {
 
-	public static final String O2_PAYG_CONSUMER_GRACE_DURATION_CODE = ("o2.provider." + SegmentType.CONSUMER
-			+ ".segment." + Contract.PAYG + ".contract." + PaymentDetails.O2_PSMS_TYPE + ".payment.grace.duration.seconds")
-			.toLowerCase();
 	public static final long EIGHT_WEEKS_MILLIS = 8 * 7 * 24 * 60 * 60 * 1000L;
 
 	public static final int YEAR_SECONDS = 365 * 24 * 60 * 60;
@@ -104,10 +101,6 @@ public class UserServiceActivationTest {
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
 		userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
 		refundServiceMock = PowerMockito.mock(RefundService.class);
-
-		Mockito.when(
-				communityResourceBundleMessageSourceMock.getMessage("o2", O2_PAYG_CONSUMER_GRACE_DURATION_CODE, null,
-						null)).thenReturn(48 * 60 * 60 + "");
 
 		userServiceSpy.setSagePayService(sagePayServiceMock);
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);

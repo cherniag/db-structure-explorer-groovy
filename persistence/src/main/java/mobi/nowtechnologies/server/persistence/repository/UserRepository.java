@@ -140,15 +140,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 
-	@Modifying
-	@Query(value="update User user " +
-			"set " +
-			"user.nextSubPayment=:nextSubPaymentSeconds, " +
-			"user.deactivatedGraceCreditMillis=:deactivatedGraceCreditMillis " +
-			"where " +
-			"user.id=:id")
-	int payOffDebt(@Param("nextSubPaymentSeconds") int nextSubPaymentSeconds, @Param("deactivatedGraceCreditMillis") long deactivatedGraceCreditMillis, @Param("id") int id);
-
     @Query(nativeQuery = true, value = "select u.i " +
             " from tb_users u " +
             " where u.activation_status = 'ACTIVATED' " +

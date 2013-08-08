@@ -139,13 +139,13 @@ public class Utils {
 		return result;
 	}
 
-	public static int getTimeOfMovingToLimitedStatus(int nextSubPayment, int subBalance, int actualGraceDurationSeconds) {
-		LOGGER.debug("input parameters nextSubPayment, subBalance, int actualGraceDurationSeconds: [{}], [{}], [{}]", nextSubPayment, subBalance, actualGraceDurationSeconds);
+	public static int getTimeOfMovingToLimitedStatus(int nextSubPayment, int subBalance) {
+		LOGGER.debug("input parameters nextSubPayment, subBalance: [{}], [{}]", nextSubPayment, subBalance);
 
 		if (nextSubPayment < Utils.getEpochSeconds())
-			return nextSubPayment + actualGraceDurationSeconds;
+			return nextSubPayment;
 
-		int timeOfMovingToLimitedStatusSeconds = nextSubPayment + subBalance * WEEK_SECONDS + actualGraceDurationSeconds;
+		int timeOfMovingToLimitedStatusSeconds = nextSubPayment + subBalance * WEEK_SECONDS;
 		/*
 		 * PRO-710: add all balance weeks to the chart subscription end date for
 		 * (int i = 0; i < subBalance-1; i++) {
