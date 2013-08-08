@@ -24,5 +24,11 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
             implementor="com.example.customerservice.server.SubscriberPortImpl">
     </jaxws:endpoint>
 
+    <jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/managepostpaytariffdata_2/"
+                    id="ManagePostpayTariffHTTP" address="/ManagePostpayTariffPort"
+                    serviceName="subscriber:ManagePostpayTariffService" endpointName="subscriber:ManagePostpayTariffPort"
+                    implementor="com.example.customerservice.server.ManagePostpayTariffServiceImpl">
+    </jaxws:endpoint>
+
 
 </beans>

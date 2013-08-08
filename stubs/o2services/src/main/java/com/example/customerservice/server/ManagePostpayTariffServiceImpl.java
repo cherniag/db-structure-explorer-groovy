@@ -39,6 +39,8 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebServiceContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.o2.soa.coredata_1.AccountType;
 import uk.co.o2.soa.managepostpaytariffdata_2.BusinessPoliciesType;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetTariffCompatibleProducts;
@@ -57,7 +59,9 @@ import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
 
 public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortType {
 	@Resource WebServiceContext wsContext;
-	
+
+    Logger logger = LoggerFactory.getLogger(ManagePostpayTariffServiceImpl.class);
+
 	@Override
 	@RequestWrapper(localName = "getValidTariffs", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2", className = "uk.co.o2.soa.managepostpaytariffdata_2.GetValidTariffs")
 	@WebMethod
@@ -69,9 +73,8 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 			@WebParam(mode = Mode.OUT, name = "MSISDN", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<String> msisdn,
 			@WebParam(mode = Mode.OUT, name = "validTariffs", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<ValidTariffsType> validTariffs)
 			throws GetValidTariffsFault {
-		// TODO Auto-generated method stub
-		
-	}
+        logger.debug("getValidTariffs CALLED");
+    }
 
 	@Override
 	@WebResult(name = "currentContract", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2")
@@ -81,8 +84,12 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 	public ServiceContractType getContract(
 			@WebParam(name = "customerId", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") AccountType customerId)
 			throws GetContractFault {
-		// TODO Auto-generated method stub
-		return null;
+        logger.debug("getContract CALLED");
+		ServiceContractType contract = new ServiceContractType();
+        ProductType productType = new ProductType();
+        productType.setProductClassification("4G");
+        contract.setTariff(productType);
+        return contract;
 	}
 
 	@Override
@@ -100,8 +107,7 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 			@WebParam(mode = Mode.OUT, name = "serviceRequestId", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<String> serviceRequestId,
 			@WebParam(mode = Mode.OUT, name = "isRulesOverridable", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<Boolean> isRulesOverridable)
 			throws ChangeContractFault {
-		// TODO Auto-generated method stub
-		
+        logger.debug("changeContract CALLED");
 	}
 
 	@Override
@@ -115,8 +121,7 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 			@WebParam(mode = Mode.OUT, name = "serviceRequestId", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<String> serviceRequestId,
 			@WebParam(mode = Mode.OUT, name = "isRulesOverridable", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<Boolean> isRulesOverridable)
 			throws CancelContractChangeFault {
-		// TODO Auto-generated method stub
-		
+        logger.debug("cancelContractChange CALLED");
 	}
 
 	@Override
@@ -130,8 +135,7 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 			@WebParam(mode = Mode.OUT, name = "effectiveDate", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<XMLGregorianCalendar> effectiveDate,
 			@WebParam(mode = Mode.OUT, name = "cancelToken", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") Holder<BigInteger> cancelToken)
 			throws GetContractRevisionsFault {
-		// TODO Auto-generated method stub
-		
+        logger.debug("getContractRevisions CALLED");
 	}
 
 	@Override
@@ -141,7 +145,7 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 	public GetTariffCompatibleProductsResponse getTariffCompatibleProducts(
 			@WebParam(partName = "getTariffCompatibleProducts", name = "getTariffCompatibleProducts", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") GetTariffCompatibleProducts getTariffCompatibleProducts)
 			throws GetTariffCompatibleProductsFault {
-		// TODO Auto-generated method stub
+        logger.debug("getTariffCompatibleProducts CALLED");
 		return null;
 	}
 
@@ -153,7 +157,7 @@ public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortTy
 	public BusinessPoliciesType getBusinessPolicies(
 			@WebParam(name = "customerId", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2") AccountType customerId)
 			throws GetBusinessPoliciesFault {
-		// TODO Auto-generated method stub
+        logger.debug("getBusinessPolicies CALLED");
 		return null;
 	}
 
