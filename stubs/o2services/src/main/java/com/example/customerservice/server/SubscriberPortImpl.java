@@ -42,6 +42,10 @@ public class SubscriberPortImpl implements SubscriberPort{
 	public SubscriberProfileType getSubscriberProfile(
 			@WebParam(name = "subscriberID", targetNamespace = "http://soa.o2.co.uk/subscriberdata_2") String subscriberID)
 			throws GetSubscriberProfileFault {
+		return getSubscriberProfileInternal(subscriberID);
+	}
+
+	private SubscriberProfileType getSubscriberProfileInternal(String subscriberID) {
 		System.err.println("getSubscriber profile "+subscriberID);
 		SubscriberProfileType s=new SubscriberProfileType();
 		s.setOperator("o2");
