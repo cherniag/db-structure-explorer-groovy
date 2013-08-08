@@ -55,7 +55,7 @@
 					</div>
 					<div style="clear: both">&nbsp;</div>
 				</div>
-				<div class="frL11" style="line-height: 16px;margin-right: 70px; margin-bottom: 10px">
+				<div class="frL11" style="line-height: 16px;margin-right: 20px; margin-bottom: 10px">
 					<s:message code='pays.page.header.txt.o2consumer.video_2' />
 				</div>
 				<input class="button-turquoise no-margin pie"

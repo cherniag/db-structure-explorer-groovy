@@ -200,7 +200,7 @@ public class PaymentsController extends CommonController {
         return "";
     }
     
-    private String getMessageCodeForAccountNotes2(User user) {
+    /*private String getMessageCodeForAccountNotes2(User user) {
     	String message = null;
     	if ( user.is3G() ) {
     		message = getMessageCodeForAudio( user );
@@ -241,7 +241,7 @@ public class PaymentsController extends CommonController {
     	}
 
     	return message;
-    }
+    }*/
 
     public String getMessageCodeForAccountNotes(User user) {
         String messageCode = "pays.page.note.account";
