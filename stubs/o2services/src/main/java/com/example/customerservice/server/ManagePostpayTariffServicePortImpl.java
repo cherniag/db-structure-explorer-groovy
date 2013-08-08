@@ -57,10 +57,10 @@ import uk.co.o2.soa.managepostpaytariffservice_2.GetValidTariffsFault;
 import uk.co.o2.soa.managepostpaytariffservice_2.ManagePostpayTariffPortType;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
 
-public class ManagePostpayTariffServiceImpl implements ManagePostpayTariffPortType {
+public class ManagePostpayTariffServicePortImpl implements ManagePostpayTariffPortType {
 	@Resource WebServiceContext wsContext;
 
-    Logger logger = LoggerFactory.getLogger(ManagePostpayTariffServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(ManagePostpayTariffServicePortImpl.class);
 
 	@Override
 	@RequestWrapper(localName = "getValidTariffs", targetNamespace = "http://soa.o2.co.uk/managepostpaytariffdata_2", className = "uk.co.o2.soa.managepostpaytariffdata_2.GetValidTariffs")
