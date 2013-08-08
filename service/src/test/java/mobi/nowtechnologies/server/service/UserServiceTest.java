@@ -114,18 +114,6 @@ public class UserServiceTest {
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
     private UserServiceNotification userServiceNotification;
-
-    @Test
-    public void testUpdateVideoTrial() {
-    	User user = UserFactory.createUser();
-    	
-    	Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
-		
-    	boolean result = userServiceSpy.updateVideoFreeTrial(user, true);
-    	
-    	assertTrue( result );
-    	verify(entityServiceMock, times(1));
-    }
     
     /**
 	 * Run the User changePassword(userId, password) method test with success result.
