@@ -32,6 +32,8 @@ import uk.co.o2.soa.subscriberservice_2.GetSubscriberProfileFault;
 import uk.co.o2.soa.subscriberservice_2.GetSubscriberSegmentFault;
 import uk.co.o2.soa.subscriberservice_2.SubscriberPort;
 
+import com.example.customerservice.server.impl.SubscriberImpl;
+
 public class SubscriberPortImpl implements SubscriberPort{
 
 	@Override
