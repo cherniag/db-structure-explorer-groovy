@@ -1386,4 +1386,8 @@ public class User implements Serializable {
     public boolean canPlayVideo(){
         return isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod();
     }
+
+    public boolean isEligibleForVideo(){
+        return isO24GConsumer();
+    }
 }

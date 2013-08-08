@@ -72,7 +72,9 @@ public class AccountCheckDTO {
     private Boolean showFreeTrial;
     private Boolean canActivateVideoTrial;
 
-	private String lastSubscribedPaymentSystem;
+    private boolean eligibleForVideo;
+
+    private String lastSubscribedPaymentSystem;
     private SubscriptionDirection subscriptionChanged;
 
     public AccountCheckDTO(){
@@ -128,6 +130,7 @@ public class AccountCheckDTO {
 
         this.activation = accountCheckDTO.getActivation();
         this.fullyRegistred = accountCheckDTO.isFullyRegistred();
+        this.eligibleForVideo = accountCheckDTO.isEligibleForVideo();
 
         accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 	}
@@ -434,6 +437,14 @@ public class AccountCheckDTO {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 	}
 
+    public boolean isEligibleForVideo() {
+        return eligibleForVideo;
+    }
+
+    public void setEligibleForVideo(boolean eligibleForVideo) {
+        this.eligibleForVideo = eligibleForVideo;
+    }
+
 	@Override
 	public String toString() {
 		return "AccountCheckDTO [displayName=" + displayName + ", subBalance=" + subBalance + ", status=" + status + ", deviceType=" + deviceType + ", deviceUID=" + deviceUID + ", chartTimestamp="
@@ -443,7 +454,9 @@ public class AccountCheckDTO {
 				+ ", promotionLabel=" + promotionLabel + ", fullyRegistred=" + fullyRegistred + ", oAuthProvider=" + oAuthProvider + ", isPromotedDevice=" + isPromotedDevice + ", promotedWeeks="
 				+ promotedWeeks + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", hasOffers=" + hasOffers + ", isFreeTrial=" + isFreeTrial + ", lastPaymentStatus="
 				+ lastPaymentStatus + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", activation=" + activation + ", appStoreProductId=" + appStoreProductId + ", provider=" + provider
-				+ ", contract=" + contract + ", segment=" + segment + ", graceCreditSeconds=" + graceCreditSeconds + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem + "]";
+				+ ", contract=" + contract + ", segment=" + segment + ", graceCreditSeconds=" + graceCreditSeconds + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
+                + ", eligibleForVideo=" + eligibleForVideo + ", canPlayVideo=" + canPlayVideo +", canGetVideo=" + canGetVideo +", canActivateVideoTrial =" + canActivateVideoTrial
+                + ", hasAllDetails=" + hasAllDetails + ", showFreeTrial" + showFreeTrial + ", subscriptionChanged" + subscriptionChanged + "]";
 	}
 
     public Boolean getCanGetVideo() {

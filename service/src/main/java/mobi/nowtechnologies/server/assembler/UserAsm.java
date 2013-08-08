@@ -224,6 +224,7 @@ public class UserAsm {
         accountCheckDTO.setHasAllDetails(user.hasAllDetails());
         accountCheckDTO.setShowFreeTrial(user.isShowFreeTrial());
         accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
+        accountCheckDTO.setEligibleForVideo(user.isEligibleForVideo());
 
         accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 
