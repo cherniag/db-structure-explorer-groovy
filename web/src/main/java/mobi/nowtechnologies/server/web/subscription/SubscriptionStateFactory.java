@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.web.subscription;
 
 import java.util.Date;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
@@ -10,28 +9,34 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SubscriptionStateFactory {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionStateFactory.class);
 
 	public SubscriptionState getInstance(User user) {
 		SubscriptionState state = new SubscriptionState();
 
 		state.setEligibleForVideo(user.getTariff() == Tariff._4G);
 
-		if (!user.isSubscribedStatus()) {
+		boolean userInLimitedStatus = !user.isSubscribedStatus();
+		if (user.isTrialExpired() && (userInLimitedStatus || !user.isNextSubPaymentInTheFuture())) {
 			//preview mode
 			return state;
 		}
 
-		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		if ((currentPaymentDetails != null) && (currentPaymentDetails.isActivated())) {
+		if (user.isSubscribedStatus() && user.isNextSubPaymentInTheFuture() && (user.getCurrentPaymentDetails()!=null)) {
 			state.setPaySubscription(true);
+		} else {
+			state.setFreeTrial(true);
+			
+			if (!user.isOnFreeTrial()) {
+				LOGGER.warn("Expecting user to be on free trial! {} {} {} {} ", user.getUserName(), user.getStatus(),
+						user.getNextSubPayment(), user.getFreeTrialExpiredMillis());
+			}
 		}
-		if(!state.isPaySubscription()){
-			state.setFreeTrial(user.isOnFreeTrial());
-		}
-		
-		
+
 		if (state.isFreeTrial()) {
 			if (state.isEligibleForVideo()) {
 				state.setUnlimitedFreeTrialFor4G(true);
@@ -62,12 +67,6 @@ public class SubscriptionStateFactory {
 			state.setNextBillingDate(Utils.getDateFromInt(user.getNextSubPayment()));
 		}
 		state.setDaysToNextBillingDate(calculateDaysTillNextBilling(state.getNextBillingDate()));
-
-		// accountCheckDTO.setCanPlayVideo(user.canPlayVideo());
-		// accountCheckDTO.setCanActivateVideoTrial(canActivateVideoTrial);
-		// accountCheckDTO.setHasAllDetails(user.hasAllDetails());
-		// accountCheckDTO.setShowFreeTrial(user.isShowFreeTrial());
-		// accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
 		return state;
 	}
 

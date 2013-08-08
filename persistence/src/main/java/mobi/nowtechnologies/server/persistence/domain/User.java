@@ -1260,12 +1260,16 @@ public class User implements Serializable {
     }
 
     public boolean isOn4GVideoAudioBoughtPeriod(){
-        return nextSubPayment > Utils.getEpochSeconds() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isNextSubPaymentInTheFuture() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
     public boolean isOnAudioBoughtPeriod() {
-        return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isNextSubPaymentInTheFuture() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
+
+	public boolean isNextSubPaymentInTheFuture() {
+		return nextSubPayment > Utils.getEpochSeconds();
+	}
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
         if (paymentDetails != null ){
