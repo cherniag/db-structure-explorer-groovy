@@ -308,9 +308,6 @@ public class User implements Serializable {
 	@Column(name = "segment", columnDefinition = "char(255)")
 	private SegmentType segment;
 
-	@Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")
-	private long deactivatedGraceCreditMillis;
-
 	@Column(name = "last_before48_sms_millis", columnDefinition = "BIGINT default 0")
 	private long lastBefore48SmsMillis;
 
@@ -379,12 +376,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isnonO2User() {
-		Community community = this.userGroup.getCommunity();
-
-		if (!"o2".equals(this.provider))
-			return true;
-
-		return false;
+		return !"o2".equals(this.provider);
 	}
 
 	public boolean isO2CommunityUser() {
@@ -940,7 +932,7 @@ public class User implements Serializable {
 
 		accountDto.setSubscription(subscription);
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
@@ -1065,22 +1057,6 @@ public class User implements Serializable {
 		return (int) (lastPaymentTryInCycleMillis / 1000);
 	}
 
-	public long getDeactivatedGraceCreditMillis() {
-		return deactivatedGraceCreditMillis;
-	}
-
-	public void setDeactivatedGraceCreditMillis(long deactivatedGraceCreditMillis) {
-		this.deactivatedGraceCreditMillis = deactivatedGraceCreditMillis;
-	}
-
-	public int getDeactivatedGraceCreditSeconds() {
-		return (int) (deactivatedGraceCreditMillis / 1000L);
-	}
-
-	public void setDeactivatedGraceCreditSeconds(int deactivatedGraceCreditSeconds) {
-		this.deactivatedGraceCreditMillis = deactivatedGraceCreditSeconds * 1000L;
-	}
-
 	public long getLastBefore48SmsMillis() {
 		return lastBefore48SmsMillis;
 	}
@@ -1115,7 +1091,6 @@ public class User implements Serializable {
 				.add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
 				.add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
 				.add("potentialPromotionId", potentialPromotionId)
-				.add("deactivatedGraceCreditMillis", deactivatedGraceCreditMillis)
 				.add("pin", pin)
 				.add("code", code)
 				.add("operator", operator)
