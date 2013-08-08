@@ -2,17 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apache.cxf.samples</groupId>
-	<artifactId>wsdl_first</artifactId>
-	<version>2.7.6</version>
+	<groupId>server.stubs</groupId>
+	<artifactId>o2services</artifactId>
+	<version>1.0</version>
 	<packaging>war</packaging>
-	<name>WSDL first demo using Document/Literal Style</name>
-	<description>WSDL first demo using Document/Literal Style</description>
+	<name>o2services</name>
 
-	<!-- <parent> <groupId>org.apache.cxf.samples</groupId> <artifactId>cxf-samples</artifactId> 
-		<version>2.7.6</version> </parent> -->
 	<properties>
-		<cxf.version>${project.version}</cxf.version>
+		<cxf.version>2.7.6</cxf.version>
 		<cxf.xjc-utils.version>2.6.0</cxf.xjc-utils.version>
 		<!-- <cxf.release.base>${basedir}/../..</cxf.release.base> -->
 		<maven.deploy.skip>true</maven.deploy.skip>
@@ -90,7 +87,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>${cxf.version}</version>
 				<executions>
 					<execution>
 						<id>generate-sources</id>
@@ -120,7 +117,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>wsdl_first</finalName>
+		<finalName>o2services</finalName>
 	</build>
 	<profiles>
 		<profile>
@@ -149,7 +146,7 @@
 				<dependency>
 					<groupId>org.apache.cxf</groupId>
 					<artifactId>cxf-rt-transports-http-jetty</artifactId>
-					<version>${project.version}</version>
+					<version>${cxf.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -185,14 +182,14 @@
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-parent</artifactId>
-			<version>${project.version}</version>
+			<version>${cxf.version}</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf</artifactId>
-			<version>${project.version}</version>
+			<version>${cxf.version}</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
