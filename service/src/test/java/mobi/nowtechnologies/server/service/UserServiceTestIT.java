@@ -218,7 +218,6 @@ public class UserServiceTestIT {
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(1);
-		testUser.setDeactivatedGraceCreditMillis(Long.MAX_VALUE);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()-100);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		testUser.setLastSubscribedPaymentSystem(null);
@@ -243,12 +242,9 @@ public class UserServiceTestIT {
 	@Test
 	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactiveMigPaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsPSMS_Success() {
-		final int gracePeriodSeconds = TWO_DAY_SECONDS;
-		
-		User testUser = UserFactory.createUser();
+        User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
-		testUser.setDeactivatedGraceCreditMillis(gracePeriodSeconds*1000L);
-		testUser.setNextSubPayment(Utils.getEpochSeconds()-gracePeriodSeconds - 10);
+		testUser.setNextSubPayment(Utils.getEpochSeconds()- TWO_DAY_SECONDS - 10);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		
 		entityDao.saveEntity(testUser);
@@ -273,7 +269,6 @@ public class UserServiceTestIT {
 	public void testGetListOfUsersForWeeklyUpdate_FreeTrial_Success() {
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
-		testUser.setDeactivatedGraceCreditMillis(0L);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()- 10);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		testUser.setCurrentPaymentDetails(null);
@@ -292,7 +287,6 @@ public class UserServiceTestIT {
 		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
-		testUser.setDeactivatedGraceCreditMillis(0L);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
@@ -319,7 +313,6 @@ public class UserServiceTestIT {
 		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
-		testUser.setDeactivatedGraceCreditMillis(0L);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		testUser.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
@@ -347,7 +340,6 @@ public class UserServiceTestIT {
 		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
-		testUser.setDeactivatedGraceCreditMillis(0L);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
 		testUser.setLastSubscribedPaymentSystem(PaymentDetails.MIG_SMS_TYPE);

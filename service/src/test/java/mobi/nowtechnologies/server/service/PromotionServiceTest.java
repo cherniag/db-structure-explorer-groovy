@@ -81,14 +81,7 @@ public class PromotionServiceTest {
 		assertNull(userAfterPromotion.getPotentialPromotion());
 		assertNull(user.getCurrentPaymentDetails().getPromotionPaymentPolicy());
 	}
-	
-	/**
-	 * Run the Promotion getActivePromotion(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
+
 	@Test
 	@Ignore
 	public void testGetActivePromotion_Success()
@@ -101,13 +94,6 @@ public class PromotionServiceTest {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Promotion getActivePromotion(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	@Ignore
 	public void testGetActivePromotion_WhenPromotionCodeIsNull()
@@ -117,17 +103,9 @@ public class PromotionServiceTest {
 
 		Promotion result = promotionService.getActivePromotion(promotionCode, communityName);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Promotion getActivePromotion(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 04.10.11 15:37
-	 */
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	@Ignore
 	public void testGetActivePromotion_WhenCommunityNameIsNull()
@@ -137,7 +115,6 @@ public class PromotionServiceTest {
 
 		Promotion result = promotionService.getActivePromotion(promotionCode, communityName);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 
