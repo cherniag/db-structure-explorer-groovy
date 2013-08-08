@@ -68,6 +68,7 @@ public class PaymentsController extends CommonController {
         List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator());
         mav.addObject("paymentPolicies", paymentPolicies);
 
+        //TODO cleanup flags
         mav.addObject("nonIOSDevice", !user.isIOSDevice())
         .addObject("isIOSDevice", user.isIOSDevice())
         .addObject("trialExpiredOrLimited", user.isTrialExpired() || user.isLimited())
@@ -75,11 +76,11 @@ public class PaymentsController extends CommonController {
         .addObject("isO2Consumer", user.isO2Consumer());
         PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
         mav.addObject("paymentDetails", paymentDetails);
-        String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
+//        String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         PaymentPolicy activePolicy = paymentDetails != null ? paymentDetails.getPaymentPolicy() : null;
         mav.addObject("activePolicy", activePolicy);
-        mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
-        mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
+//        mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
+//        mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         mav.addObject("mobilePhoneNumber", user.getMobile());
@@ -198,67 +199,6 @@ public class PaymentsController extends CommonController {
         	}
         }
         return "";
-    }
-    
-    /*private String getMessageCodeForAccountNotes2(User user) {
-    	String message = null;
-    	if ( user.is3G() ) {
-    		message = getMessageCodeForAudio( user );
-    	} else if ( user.is4G() ) {
-    		message = getMessageCodeForVideo( user );
-    	}
-    	
-    	return message;
-    }
-    
-    private String getMessageCodeForVideo(User user) {
-    	String message = null;
-    	
-    	if ( user.isOnVideoAudioFreeTrial() ) {
-    		
-    	}
-    	
-    	return message;
-    }
-    
-    private String getMessageCodeForAudio(User user) {
-    	String message = null;
-    	if ( user.isOnFreeTrial() ) {
-//    		message = "You have 12 days left on your free trial";
-    		if ( user.isSubscribed() ) {
-//    			message = "Due to subscribe after free trial (12 days left)";
-    		}
-    	} else if ( user.isSubscribed() ) {
-    		if ( user.isActivePaymentDetails() ) {
-//    			message = "Next billing cycle: 2 August 2013";
-    		} else {
-//    			message = "Ending on: 2 August 2013";
-    		}
-    	} else if ( user.isLimited() ) {
-//    		message = "Consider subscribing to gain full access!";
-    	} else {
-    		LOGGER.warn("No banner for user [{}]", user);
-    	}
-
-    	return message;
-    }*/
-
-    public String getMessageCodeForAccountNotes(User user) {
-        String messageCode = "pays.page.note.account";
-        if (user.isLimited())
-            messageCode = "pays.page.note.account.limited";
-        else if (user.isOnFreeTrial())
-            messageCode = "pays.page.note.account.freetrial";
-        else if (user.isSubscribed())
-            messageCode = "pays.page.note.account.subscribed";
-        else if (user.isSubscribedViaInApp())
-            messageCode = "pays.page.note.account.subscribed_via_inapp";
-        else if (user.isTrialExpired())
-            messageCode = "pays.page.note.account.trial_expired";
-        else if (user.isUnsubscribedWithFullAccess())
-            messageCode = "pays.page.note.account.unsubscribed_with_full_access";
-
-        return messageCode;
     }
 
     private String message(Locale locale, String messageCode) {

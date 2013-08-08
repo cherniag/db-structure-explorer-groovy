@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div style="padding-top: 16px; padding-left: 10px; padding-bottom: 20px">
+<div class="itunesheader">
 	<c:set var="optionPrice" />
 	<c:set var="iTunesUrl" />
 	<c:forEach var="paymentPolicy" items="${paymentPolicies}">
@@ -16,9 +16,9 @@
 
 	<div class="frR15"><s:message code='pays.page.header.txt.itunes' /></div>
 
-	<hr style="color: #ddd; margin: 10px 0 12px 0" />
+	<hr class="itunesHr" />
 
-	<div class="frL11" style="line-height: 16px; margin-bottom: 17px;">
+	<div class="frL11 iTunesHeader">
 		<s:message code='pays.page.header.txt' />
 	</div>
 

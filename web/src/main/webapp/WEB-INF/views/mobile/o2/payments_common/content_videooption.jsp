@@ -10,12 +10,12 @@
 	<c:when test="${userIsOptedInToVideo eq true}">
 
 		<div class="rel tapArea" style="margin-top: 20px">
-			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button"	style="height: 105px; padding: 12px 6px 6px 10px">
-				<div>
-					<img style="width: 34px; height: 32px;"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
-					<div class="rel" style="padding-top: 1px;">
+			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button"	style="height: 105px; padding: 10px 6px 6px 10px">
+				<div class="clr">
+					<img style="width: 34px; height: 32px;margin-top: 2px"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
+					<div class="rel">
 						<div class="frR15">
-							<div style="margin-bottom: 7px">
+							<div style="margin-bottom: 3px">
 								<s:message code='pays.page.note.account.videotitle' />
 							</div>
 							<div style="color: #3399cc;">
@@ -23,29 +23,28 @@
 							</div>
 						</div>
 					</div>
-					<div style="clear: both">&nbsp;</div>
 				</div>
-				<div class="frL11" style="line-height: 16px;margin-right: 70px;">
-					For all the best music videos straight to your phone everyday. Only	with O2. Only on 4G.</div>
+				<div class="frL11" style="line-height: 16px;margin-right: 70px;margin-top: 9px">
+					<s:message code='pays.page.note.account.videoinfo' />
+				</div>
 					
-					<c:set var="buttonClass" value="button-off" />
-					<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
-						<c:set var="buttonClass" value="button-on" />
-						<%-- Activate the video checkbox if the user has a video subscription --%>
-					</c:if>
-					<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
-						<c:set var="buttonClass" value="button-on" />
-						<%--Activate the video checkbox if the user has no subscription --%>
-					</c:if>
-					
-					<span class="${buttonClass}" id="videoCheckbox" style="top:35px;"></span>
+				<c:set var="buttonClass" value="button-off" />
+				<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
+					<c:set var="buttonClass" value="button-on" />
+					<%-- Activate the video checkbox if the user has a video subscription --%>
+				</c:if>
+				<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
+					<c:set var="buttonClass" value="button-on" />
+					<%--Activate the video checkbox if the user has no subscription --%>
+				</c:if>
+				
+				<span class="${buttonClass}" id="videoCheckbox" style="top:35px;"></span>
 			</a>
 		</div>
 	</c:when>
 	<c:when test="${userIsOptedInToVideo eq false}">
 		<div class="rel tapArea" style="margin-top: 20px">
-			<div class="subscription-selector"
-				style="height: 135px; padding: 12px 6px 6px 10px">
+			<div class="subscription-selector" style="height: 135px; padding: 12px 6px 6px 10px">
 				<div>
 					<img style="width: 34px; height: 32px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
 					<div class="rel" style="padding-top: 1px;">

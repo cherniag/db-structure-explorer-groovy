@@ -47,7 +47,7 @@
 	   	
 	    <a style="height: 46px;" class="subscription-selector option-${paymentPolicyOptionNo}" type="button" ${disabledAttrib} ${hrefValue}>
 			<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
-	        <div class="rel" style="padding-top: 8px;">
+	        <div class="rel" style="padding-top: 8px; color: #3399cc">
 	            <div class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></div>
 	            <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
 	        </div>
