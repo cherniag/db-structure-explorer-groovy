@@ -687,7 +687,8 @@ form .formButton  {
 }
 
 .subscription-selector .button-on {
-    background: transparent url(../imgs/icon_plan_selected.png) no-repeat;
+    /* background: transparent url(../imgs/icon_plan_selected.png) no-repeat; */
+    background: transparent url(../imgs/ic_tick_selected.png) no-repeat;
     background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
@@ -696,7 +697,8 @@ form .formButton  {
 }
 
 .subscription-selector .button-off{
-    background: transparent url(../imgs/icon_plan_normal.png) no-repeat;
+    /*background: transparent url(../imgs/icon_plan_normal.png) no-repeat;*/
+    background: transparent url(../imgs/ic_tick_normal.png) no-repeat;
     background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
@@ -714,10 +716,15 @@ form .formButton  {
     font-family: frutigerLight, Helvetica, Arial, sans-serif;
     font-size: 10px;
 }
-.subscription-selector.option-1 .title { color:#952d98; }
+/* .subscription-selector.option-1 .title { color:#952d98; }
 .subscription-selector.option-2 .title { color:#00a9a9; }
 .subscription-selector.option-3 .title { color:#3399cc; }
-.subscription-selector.option-4 .title { color:#952d98; }
+.subscription-selector.option-4 .title { color:#952d98; } */
+
+.subscription-selector.option-1 .title { color:#003399; }
+.subscription-selector.option-2 .title { color:#003399; }
+.subscription-selector.option-3 .title { color:#003399; }
+.subscription-selector.option-4 .title { color:#003399; }
 
 .subscription-selector .price {
     font-size:16px;
@@ -1572,4 +1579,63 @@ p.itemsTrackName {
 	color: #003399;
 	font-family: frutigerLight, Helvetica, Arial, sans-serif;
 	font-size: 11px;
+}
+.frB15 {
+	color: #003399;
+	font-family: frutigerBold, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+}
+
+.userStatusText {
+	color: #66ccff;
+	font-family: frutigerRoman, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	margin-bottom: 6px;
+	line-height: 18px;
+}
+
+.userStatusPhone {
+	font-family: frutigerLight, Helvetica, Arial, sans-serif;
+	color: #ffffff;
+	font-size: 15px;
+}
+
+.itunesheader {
+	padding-top: 16px;
+	padding-left: 10px;
+	padding-bottom: 20px
+}
+
+.itunesHr {
+	color: #ddd;
+	margin: 10px 0 12px 0
+}
+
+.iTunesHeader {
+	line-height: 16px;
+	margin-bottom: 17px;
+}
+
+.o2Businesshr {
+	color: #ddd;
+	margin: 7px 0 9px 0;
+}
+
+.o2BusinessHeader {
+	padding: 16px 0 20px 10px;
+}
+
+.o2UserHeader1 {
+	padding-top: 4px;
+	padding-left: 5px;
+}
+
+.o2UserHeader2 {
+	padding-left: 5px;
+	padding-bottom: 20px
+}
+
+.o2Userhr {
+	color: #ddd;
+	margin: 10px 0 10px 0;
 }

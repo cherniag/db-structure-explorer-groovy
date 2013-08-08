@@ -53,7 +53,7 @@
     </div>
 
     <div class="rel" style="text-align: center; margin-top: 15px;">
-        <img style="width:33%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
+        <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
     </div>
     
 </div>

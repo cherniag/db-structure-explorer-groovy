@@ -22,6 +22,9 @@ function submitUserConfirmation() {
 	<h1>
 		<p class="centered"><s:message code="videfreetrial.page.header" /></p>
 	</h1>
+	
+	<p class="centered"><img style="width: 34px; height: 32px;"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" /></p>
+	
 	<p class="centered" style="margin-bottom: 20px">
 		<s:message code="videfreetrial.page.subheader" />
 	</p>
@@ -33,6 +36,10 @@ function submitUserConfirmation() {
 	<p class="centered" style="margin-bottom: 20px">
 		<s:message code="videfreetrial.page.text2" /><br />
 		<a href="terms.html"><s:message code="videfreetrial.page.text_tc" /></a>
+	</p>
+	
+	<p class="centered" style="margin-bottom: 20px">
+		<a href="contact_us.html"><s:message code="page.header.link.contactus" /></a>
 	</p>
 	
 	<div class="rel" >

@@ -19,13 +19,13 @@
 <div class="container">
 
 	<c:choose>
-		<c:when test="${isIOSDevice eq true && isO2User eq false}">
-			<jsp:include page="../payments_common/content_header_itunes.jsp">
+		<c:when test="${isO2Consumer eq true}">
+			<jsp:include page="../payments_common/content_header_o2user.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isO2User eq true and isBussinesUser eq false}">
-			<jsp:include page="../payments_common/content_header_o2user.jsp">
+		<c:when test="${isIOSDevice eq true}">
+			<jsp:include page="../payments_common/content_header_itunes.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
@@ -38,13 +38,13 @@
 	</c:choose>
            
 	<c:choose>
-		<c:when test="${isIOSDevice eq true && isO2User eq false}">
-			<%-- for iTunes is already displayed --%>
-		</c:when>
-		<c:when test="${isO2User eq true and isBussinesUser eq false}">
+		<c:when test="${isO2Consumer eq true}">
 			<jsp:include page="../payments_common/content_paymentoptions_o2user.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
+		</c:when>
+		<c:when test="${isIOSDevice eq true}">
+			<%-- for iTunes is already displayed --%>
 		</c:when>
 		<c:otherwise>
 			<%--isBussinesOrNonO2User --%>
@@ -65,7 +65,7 @@
          </c:if>
          
          <div class="rel" style="text-align: center; margin-top: 10px;">
-             <img style="width:33%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
+             <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
          </div>
 
      </div>

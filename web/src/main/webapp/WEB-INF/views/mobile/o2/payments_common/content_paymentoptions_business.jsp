@@ -22,10 +22,6 @@
         <c:set var="method_name" value="o2psms" />
         <s:message code='pays.select.payby.o2psms.${paymentPolicy.subweeks}weeks.${paymentPolicy.subcost}subcost' var="payment_label" />
     </c:if>
-    <c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
-        <c:set var="method_name" value="iTunesSubscription" />
-        <s:message code='pays.select.iTunesSubscription' var="payment_label" />
-    </c:if>
 
 	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
 		<div class="subscription-container" style="margin-bottom: 5px;">
@@ -44,7 +40,12 @@
 			</a>
 		
 		    <div class="rel" style="margin:0 6px; padding-top:3px; border-top: 1px solid #a0a0a0; text-align: center;">
-				<img style="height:13px;" src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_${method_name}.png" />
+		    <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
+		    	<img width="117px" height="15px" src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_debit_credit_card.png" />
+		    </c:if>
+		    <c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
+		    	<img width="37px" height="15px"  src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_paypal.png" />
+		    </c:if>
 		    </div>
 		</div>
 	</div>
