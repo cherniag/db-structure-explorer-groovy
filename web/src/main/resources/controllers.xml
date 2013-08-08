@@ -131,6 +131,7 @@
     
     <bean class="mobi.nowtechnologies.server.web.controller.VideoTrialController">
         <property name="userService" ref="service.UserService"/>
+        <property name="promotionService" ref="service.PromotionService"/>
     </bean>
 
     <!-- Static Pages -->

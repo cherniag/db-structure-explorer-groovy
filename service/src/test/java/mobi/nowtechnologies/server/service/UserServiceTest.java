@@ -209,7 +209,7 @@ public class UserServiceTest {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
 		final int originalSubBalance = 2;
-		int nextSubPayment = getEpochSeconds() + 24 * 60 * 60;
+		int nextSubPayment = Utils.getEpochSeconds() + 24 * 60 * 60;
 
 		userDto.setId(5);
 		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);

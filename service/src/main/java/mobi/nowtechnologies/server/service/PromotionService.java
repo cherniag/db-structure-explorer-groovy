@@ -171,6 +171,20 @@ public class PromotionService {
         }
         return user;
     }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User activateVideoAudioFreeTrial(User user){
+        boolean isPromotionApplied = false;
+        if (userService.canActivateVideoTrial(user)) {
+            isPromotionApplied = applyPromotionForO24GConsumer(user);
+        }else{
+            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");
+        }
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
+        return user;
+    }
 
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
