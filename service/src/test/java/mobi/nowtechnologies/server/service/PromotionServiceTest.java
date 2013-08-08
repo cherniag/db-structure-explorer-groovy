@@ -367,7 +367,7 @@ public class PromotionServiceTest {
     }
 
     @Test(expected = ServiceException.class)
-    public void shouldDoNotActivateVideoAudioFreeTrialWhenUserIsNotEligibled(){
+    public void shouldDoNotActivateVideoAudioFreeTrialWhenUserIsNotEligible(){
         //given
         String userName = "userName";
         String userToken = "";
