@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -241,7 +242,7 @@ public abstract class CommonController extends ProfileController{
 
         String apiVersion = apiVersionThreadLocal.get();
 
-        if (isNotEmpty(apiVersion) && isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+        if (isEmpty(apiVersion) || isNotEmpty(apiVersion) && isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
             return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
         }
 
