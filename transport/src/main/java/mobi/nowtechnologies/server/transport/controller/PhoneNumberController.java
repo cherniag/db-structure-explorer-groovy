@@ -72,6 +72,8 @@ public class PhoneNumberController extends CommonController {
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) throws Exception {
 
+        apiVersionThreadLocal.set(apiVersion);
+
         ModelAndView modelAndView = activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion);
         modelAndView.setViewName(defaultViewName);
 

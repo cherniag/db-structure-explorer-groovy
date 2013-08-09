@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -52,6 +53,7 @@ public abstract class CommonController extends ProfileController{
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
     protected String defaultViewName = "default";
+    protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
 
     public void setView(View view) {
 		this.view = view;
@@ -236,6 +238,13 @@ public abstract class CommonController extends ProfileController{
 		notNull(status , "The parameter httpStatus is null");
         notNull(errorMessage , "The parameter errorMessage is null");
 		response.setStatus(status.value());
+
+        String apiVersion = apiVersionThreadLocal.get();
+
+        if (isNotEmpty(apiVersion) && isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+            return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
+        }
+
         return new ModelAndView(defaultViewName, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
 	}
 
@@ -268,7 +277,7 @@ public abstract class CommonController extends ProfileController{
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {
-            return Utils.isMajorVersionNumberLessThan(4, apiVersion);
+            return Utils.isMajorVersionNumberLessThan(majorVersionNumber, apiVersion);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
