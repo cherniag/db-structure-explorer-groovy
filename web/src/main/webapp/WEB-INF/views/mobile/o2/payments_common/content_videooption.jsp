@@ -9,22 +9,20 @@
 	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
 	<c:when test="${userIsOptedInToVideo eq true}">
 
-		<div class="rel tapArea" style="margin-top: 10px">
-			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button"	style="height: 105px; padding: 10px 6px 6px 10px">
+		<div class="rel tapArea videoOption">
+			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button">
 				<div class="clr">
-					<img style="width: 34px; height: 32px;margin-top: 2px"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
-					<div class="rel">
-						<div class="frR15">
-							<div style="margin-bottom: 3px">
-								<s:message code='pays.page.note.account.videotitle' />
-							</div>
-							<div style="color: #3399cc;">
-								<s:message code='pays.page.note.account.videoprice' />
-							</div>
+					<img width="34px" height="32px" style="margin-top: 2px"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
+					<div class="rel frR15">
+						<div style="margin-bottom: 3px">
+							<s:message code='pays.page.note.account.videotitle' />
+						</div>
+						<div style="color: #3399cc;">
+							<s:message code='pays.page.note.account.videoprice' />
 						</div>
 					</div>
 				</div>
-				<div class="frL11" style="line-height: 16px;margin-right: 70px;margin-top: 9px">
+				<div class="frL11 videoInfo">
 					<s:message code='pays.page.note.account.videoinfo' />
 				</div>
 					
@@ -42,21 +40,16 @@
 			</a>
 		</div>
 	</c:when>
+	
+	
 	<c:when test="${userIsOptedInToVideo eq false}">
 		<div class="rel tapArea" style="margin-top: 10px">
-			<div class="subscription-selector" style="height: 135px; padding: 12px 6px 6px 10px">
-				<div>
-					<img style="width: 34px; height: 32px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
-					<div class="rel" style="padding-top: 1px;">
-						<div  class="frB15">
-							<s:message code='pays.page.header.txt.o2consumer.video_1' />
-						</div>
-					</div>
-					<div style="clear: both">&nbsp;</div>
+			<div class="subscription-selector videoNotOptedIn">
+				<div class="clr videoNotOptedInHeader">
+					<img width="34px" height="32px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
+					<div class="rel frB15"><s:message code='pays.page.header.txt.o2consumer.video_1' /></div>
 				</div>
-				<div class="frL11" style="line-height: 16px;margin-right: 20px; margin-bottom: 10px">
-					<s:message code='pays.page.header.txt.o2consumer.video_2' />
-				</div>
+				<div class="frL11 videoNotOptedInHeaderSmall"><s:message code='pays.page.header.txt.o2consumer.video_2' /></div>
 				<input class="button-turquoise no-margin pie"
 					title="${pageContext.request.contextPath}/videotrial.html?return_url=<%=request.getParameter("callingPage")%>.html"
 					type="button" onClick="location.href=this.title"

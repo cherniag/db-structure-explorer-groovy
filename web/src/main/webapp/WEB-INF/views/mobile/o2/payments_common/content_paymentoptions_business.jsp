@@ -9,26 +9,22 @@
 	<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
         <c:set var="method_name" value="creditcard" />
         <s:message code='pays.select.payby.creditcard' var="payment_label" />
+        <c:set var="image_name" value="ic_debit_credit_card.png" />
+        <c:set var="image_width" value="117px" />
     </c:if>
     <c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
         <c:set var="method_name" value="paypal" />
         <s:message code='pays.select.payby.paypal' var="payment_label" />
-    </c:if>
-    <c:if test="${paymentPolicy.paymentType == 'PSMS'}">
-        <c:set var="method_name" value="psms" />
-        <s:message code='pays.select.payby.psms' var="payment_label" />
-    </c:if>
-    <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
-        <c:set var="method_name" value="o2psms" />
-        <s:message code='pays.select.payby.o2psms.${paymentPolicy.subweeks}weeks.${paymentPolicy.subcost}subcost' var="payment_label" />
+        <c:set var="image_name" value="ic_paypal.png" />
+        <c:set var="image_width" value="37px" />
     </c:if>
 
-	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
+	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" id="paymentOption${paymentPolicy.id}">
 		<div class="subscription-container">
 		    <a class="subscription-selector option-3" style="margin-bottom: 0px;" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
-		 		<img style="width:51px; height:51px;margin-right: 6px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
+		 		<img width="51px" height="51px" style="margin-right: 6px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
 		         <div class="rel" style="padding-top: 14px;">
-		             <span style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px"><s:message code="${payment_label}" /></span>
+		             <span class="frR15"><s:message code="${payment_label}" /></span>
 		         </div>
 		
 		         <c:set var="cssClass" value="button-off" />
@@ -39,13 +35,8 @@
 		         <span class="${cssClass}"></span>
 			</a>
 		
-		    <div class="rel" style="margin:0 6px; padding-top:2px; border-top: 1px solid #a0a0a0; text-align: center;">
-		    <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
-		    	<img width="117px" height="15px" src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_debit_credit_card.png" />
-		    </c:if>
-		    <c:if test="${paymentPolicy.paymentType == 'PAY_PAL'}">
-		    	<img width="37px" height="15px"  src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_paypal.png" />
-		    </c:if>
+		    <div class="rel o2businessPaymentType">
+		    	<img height="15px" width="${image_width}" src="${requestScope.assetsPathAccordingToCommunity}imgs/${image_name}" />
 		    </div>
 		</div>
 	</div>
