@@ -228,6 +228,11 @@ img.centered{
 }
 
 .container {
+	background-color: #003399;
+	padding: 10px;
+}
+
+.paymentscontainer {
 	padding: 0 5px;
 }
 .pane-red span{ padding-left: 35px; }

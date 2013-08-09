@@ -35,7 +35,7 @@
 		</c:otherwise>
 	</c:choose>
 		
-	<div class="container">
+	<div class="paymentscontainer">
 		<c:choose>
 			<c:when test="${isO2Consumer eq true}">
 				<jsp:include page="../payments_common/content_paymentoptions_o2user.jsp">

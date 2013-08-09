@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
-<div class="container" style="background-color: inherit;margin-top: 20px; margin-bottom: 17px;">
+<div class="paymentscontainer" style="background-color: inherit;margin-top: 20px; margin-bottom: 17px;">
 	<div class="userStatusText">
 		<c:if test="${not empty paymentPageData and not empty paymentPageData.subscriptionTexts and not empty paymentPageData.subscriptionTexts.statusText}">
 			<c:out value="${paymentPageData.subscriptionTexts.statusText}" />
