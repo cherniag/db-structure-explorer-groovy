@@ -30,7 +30,7 @@
 	    </c:otherwise>
 	</c:choose>
 	
-	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
+	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" id="paymentOption${paymentPolicy.id}">
 		<c:set var="imageWeeks" value="${paymentPolicy.subweeks}" />
 	   	<c:if test="${paymentPolicy.subweeks == 3}">
 	   		<c:set var="imageWeeks" value="5" />
