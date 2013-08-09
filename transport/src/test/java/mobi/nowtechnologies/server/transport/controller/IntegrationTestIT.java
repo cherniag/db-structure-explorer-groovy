@@ -144,9 +144,6 @@ public class IntegrationTestIT {
 
 	@Resource(name = "service.WeeklyUpdateService")
 	private WeeklyUpdateService weeklyUpdateService;
-
-	// @Resource(name = "transport.EntityController")
-	// private EntityController entityController;
 	
 	@Resource(name = "service.ITunesService")
 	private ITunesServiceImpl iTunesServiceImpl;
@@ -166,9 +163,6 @@ public class IntegrationTestIT {
 	@Resource
 	private EntityController entityController;
 
-	//@Rule
-	//public PowerMockRule powerMockRule = new PowerMockRule();
-	
 	@PostConstruct
 	public void setUp() {
 		XMLUnit.setControlParser(
@@ -1065,11 +1059,6 @@ public class IntegrationTestIT {
 		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
 		assertNull(lastPremiumUserPayment);
 
-		// String
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getPIN_PENDING().getName(),
-		// paymentStatus);
-
 		aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
 				userName, communityName, appVersion, user.getPin());
 
@@ -1084,37 +1073,10 @@ public class IntegrationTestIT {
 		String responseBody = aHttpServletResponse.getContentAsString();
 
 		assertNotNull(responseBody);
-		// assertEquals(
-		// "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-		// +"<response>"
-		// +"<user>"
-		// +"<chartItems>40</chartItems>"
-		// +"<chartTimestamp>1321452650</chartTimestamp>"
-		// +"<deviceType>"+deviceType+"</deviceType>"
-		// +"<deviceUID>"+deviceString+"</deviceUID>"
-		// +"<displayName>"+displayName+"</displayName>"
-		// +"<drmType>PLAYS</drmType>"
-		// +"<drmValue>100</drmValue>"
-		// +"<newsItems>10</newsItems>"
-		// +"<newsTimestamp>1317300123</newsTimestamp>"
-		// +"<operator>"+operator+"</operator>"
-		// +"<paymentEnabled>true</paymentEnabled>"
-		// +"<paymentStatus>AWAITING_PAYMENT</paymentStatus>"
-		// +"<paymentType>PSMS</paymentType>"
-		// +"<phoneNumber>"+phoneNumber+"</phoneNumber>"
-		// +"<status>EULA</status>"
-		// +"<subBalance>0</subBalance>"
-		// +"</user>"
-		// +"</response>",responseBody);
 
 		user = userService.findByNameAndCommunity(userName, communityName);
 		assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
 
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getName(),
-		// paymentStatus);
-
-		// accountUpdateService.makePayment(user);
 		createPendingPaymentJob.execute();
 
 		lastPremiumUserPayment = findLastPremiumUserPayment(userId);
@@ -1126,9 +1088,6 @@ public class IntegrationTestIT {
 		assertEquals(200, aHttpServletResponse.getStatus());
 
 		lastPremiumUserPayment = entityService.findById(PremiumUserPayment.class, lastPremiumUserPayment.getI());
-
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
 
 		aHttpServletResponse = acc_check(timestamp, userToken, userName,
 				apiVersion, communityName, appVersion, null, null, null, null);
@@ -1142,9 +1101,6 @@ public class IntegrationTestIT {
 				user.getOperator());
 		nameValueMap.put(PaymentPolicy.Fields.communityId.toString(),
 				CommunityDao.getMapAsNames().get(communityName).getId());
-		// PaymentPolicy
-		// paymentPolicy=entityService.findByProperties(PaymentPolicy.class,
-		// nameValueMap);
 
 		byte freeWeeks = 0;
 		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());

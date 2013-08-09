@@ -89,11 +89,4 @@ public class AccountCheckTest {
 		userService = (UserService) appContext.getBean("service.UserService");
 	}
 
-	/**
-	 * Stops the Jetty container.
-	 */
-	@AfterClass
-	public static void cleanupServletContainer() throws Exception {
-	}
-
 }
