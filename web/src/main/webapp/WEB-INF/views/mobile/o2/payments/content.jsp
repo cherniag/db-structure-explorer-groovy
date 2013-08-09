@@ -23,7 +23,7 @@
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isIOSDevice eq true}">
+		<c:when test="${isNonO2OnIOS eq true}">
 			<jsp:include page="../payments_common/content_header_itunes.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
@@ -43,7 +43,7 @@
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isIOSDevice eq true}">
+		<c:when test="${isNonO2OnIOS eq true}">
 			<%-- for iTunes is already displayed --%>
 		</c:when>
 		<c:otherwise>

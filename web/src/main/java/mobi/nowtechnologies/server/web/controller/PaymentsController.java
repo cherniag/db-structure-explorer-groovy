@@ -84,6 +84,7 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         mav.addObject("mobilePhoneNumber", user.getMobile());
+        mav.addObject("isNonO2OnIOS", user.isIOSDevice()&&user.isnonO2User());
         
         boolean userIsOptedInToVideo = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
         
