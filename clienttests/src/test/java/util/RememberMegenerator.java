@@ -1,5 +1,7 @@
 package util;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.util.DigestUtils;
 
@@ -16,9 +18,9 @@ public class RememberMegenerator {
     public static void main(String[] args) {
         try {
 //            String username = "+447544259145";//CharMatcher.isNot('\'').retainFrom(args[0]);
-            String username = "+447788995599";//CharMatcher.isNot('\'').retainFrom(args[0]);
+            String username = "+447731293075";//CharMatcher.isNot('\'').retainFrom(args[0]);
 //            String userToken = "de8e7cf99db049013c6b6ae770aeeb71";//CharMatcher.isNot('\'').retainFrom(args[1]);
-            String userToken = "ab90da624e970e5865887c5f6d0dc044";//CharMatcher.isNot('\'').retainFrom(args[1]);
+            String userToken = "530cfe53f868ec33eab25e34d7fa4015";//CharMatcher.isNot('\'').retainFrom(args[1]);
             String expiredMillis = getExpiredMillis(args);
             String signature = makeTokenSignature(username, Long.parseLong(expiredMillis), userToken);
 
@@ -63,5 +65,12 @@ public class RememberMegenerator {
 
     public static String makeTokenSignature(String username, long tokenExpiryTime, String password) {
         return DigestUtils.md5DigestAsHex((username + ":" + tokenExpiryTime + ":" + password + ":" + "web").getBytes());
+    }
+    
+    public static String getRememberMeCookie(String username, String userToken) {
+    	long expireTime = System.currentTimeMillis()+TimeUnit.DAYS.toMillis(30);
+    	String signature = makeTokenSignature(username, expireTime, userToken);
+
+        return encodeCookie(new String[]{username, Long.toString(expireTime), signature});
     }
 }
