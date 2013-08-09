@@ -44,7 +44,9 @@
 			</jsp:include>
 		</c:when>
 		<c:when test="${isNonO2OnIOS eq true}">
-			<%-- for iTunes is already displayed --%>
+			<jsp:include page="../payments_common/content_paymentoptions_itunes.jsp">
+				<jsp:param name="callingPage" value="payments" />
+			</jsp:include>
 		</c:when>
 		<c:otherwise>
 			<%--isBussinesOrNonO2User --%>

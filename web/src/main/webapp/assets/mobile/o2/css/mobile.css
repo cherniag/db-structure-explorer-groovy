@@ -1923,9 +1923,12 @@ p.itemsTrackName {
 }
 
 .itunesheader {
-	padding: 0 5px 20px;
+	padding: 0 5px 0;
 }
 
+.itunespaymentheader {
+	padding-bottom: 20px;
+}
 .itunesHr {
 	color: #ddd;
 	margin: 10px 0 12px 0
