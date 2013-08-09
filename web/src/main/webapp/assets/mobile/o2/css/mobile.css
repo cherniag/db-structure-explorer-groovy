@@ -1947,8 +1947,8 @@ p.itemsTrackName {
 }
 
 .itunesheader {
-	padding-top: 16px;
-	padding-left: 10px;
+	/* padding-top: 16px; */
+	/* padding-left: 10px; */
 	padding-bottom: 20px
 }
 
@@ -1957,7 +1957,7 @@ p.itemsTrackName {
 	margin: 10px 0 12px 0
 }
 
-.iTunesHeader {
+.iTunesHeaderText {
 	line-height: 16px;
 	margin-bottom: 17px;
 }

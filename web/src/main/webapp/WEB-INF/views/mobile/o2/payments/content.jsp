@@ -56,17 +56,17 @@
 </div>
 </div>
 
-<div class="content no-bg">
+ <div class="content no-bg">
 
-    <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
-        <div class="rel" style="margin-top: 5px;">
-            <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
-        </div>
-    </c:if>
-    
-    <div class="rel" style="text-align: center; margin-top: 10px;">
-        <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
-    </div>
+     <c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+         <div class="rel" style="margin-top: 5px;">
+             <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
+         </div>
+     </c:if>
+     
+     <div class="rel" style="text-align: center; margin-top: 10px;">
+         <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
+     </div>
 
-</div>
+ </div>
 </div>

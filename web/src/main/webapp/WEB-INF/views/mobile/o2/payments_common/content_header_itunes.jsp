@@ -2,9 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="container">
 
-<div class="itunesheader">
 	<c:set var="optionPrice" />
 	<c:set var="iTunesUrl" />
 	<c:forEach var="paymentPolicy" items="${paymentPolicies}">
@@ -15,15 +13,18 @@
 		</c:if>
 	</c:forEach>
 
-	<div class="frR15"><s:message code='pays.page.header.txt.itunes' /></div>
+<div class="container">
+	<div class="frR15" style="padding-top: 4px"><s:message code='pays.page.header.txt.itunes' /></div>
+</div>
 
-	<hr class="itunesHr" />
+<hr class="itunesHr" />
 
-	<div class="frL11 iTunesHeader">
+<div class="container">
+<div class="itunesheader">
+	<div class="frL11 iTunesHeaderText">
 		<s:message code='pays.page.header.txt' />
 	</div>
 
 	<input class="button-turquoise no-margin pie" title="${iTunesUrl}" type="button" onClick="location.href=this.title"	value="&#163;${optionPrice}/month" />
 </div>
-
 </div>
