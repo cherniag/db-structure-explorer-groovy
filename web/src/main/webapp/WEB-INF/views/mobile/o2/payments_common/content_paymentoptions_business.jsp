@@ -24,9 +24,9 @@
     </c:if>
 
 	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}">
-		<div class="subscription-container" style="margin-bottom: 5px;">
+		<div class="subscription-container">
 		    <a class="subscription-selector option-3" style="margin-bottom: 0px;" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
-		 		<img style="width:51px; height:51px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
+		 		<img style="width:51px; height:51px;margin-right: 6px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
 		         <div class="rel" style="padding-top: 14px;">
 		             <span style="font-family: frutigerRoman,Helvetica,Arial,sans-serif; font-size: 15px"><s:message code="${payment_label}" /></span>
 		         </div>
@@ -39,7 +39,7 @@
 		         <span class="${cssClass}"></span>
 			</a>
 		
-		    <div class="rel" style="margin:0 6px; padding-top:3px; border-top: 1px solid #a0a0a0; text-align: center;">
+		    <div class="rel" style="margin:0 6px; padding-top:2px; border-top: 1px solid #a0a0a0; text-align: center;">
 		    <c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 		    	<img width="117px" height="15px" src="${requestScope.assetsPathAccordingToCommunity}imgs/ic_debit_credit_card.png" />
 		    </c:if>

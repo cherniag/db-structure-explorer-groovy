@@ -9,7 +9,7 @@
 	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
 	<c:when test="${userIsOptedInToVideo eq true}">
 
-		<div class="rel tapArea" style="margin-top: 20px">
+		<div class="rel tapArea" style="margin-top: 10px">
 			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button"	style="height: 105px; padding: 10px 6px 6px 10px">
 				<div class="clr">
 					<img style="width: 34px; height: 32px;margin-top: 2px"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />
@@ -43,7 +43,7 @@
 		</div>
 	</c:when>
 	<c:when test="${userIsOptedInToVideo eq false}">
-		<div class="rel tapArea" style="margin-top: 20px">
+		<div class="rel tapArea" style="margin-top: 10px">
 			<div class="subscription-selector" style="height: 135px; padding: 12px 6px 6px 10px">
 				<div>
 					<img style="width: 34px; height: 32px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" />

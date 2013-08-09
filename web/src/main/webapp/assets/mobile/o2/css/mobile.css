@@ -223,8 +223,11 @@ img.centered{
 	margin-bottom: 5px;
 }
 
-.container {
+.maincontainer {
 	background-color: #fff;
+}
+
+.container {
 	padding: 0 5px;
 }
 .pane-red span{ padding-left: 35px; }
@@ -990,7 +993,7 @@ form .formButton  {
     display: block;
     position: absolute;
     top: 14px;
-    right: 12px;
+    right: 9px;
     width: 37px;
     height: 37px;
     background-size: 39px 39px;
@@ -1965,7 +1968,11 @@ p.itemsTrackName {
 }
 
 .o2BusinessHeader {
-	padding: 16px 0 20px 10px;
+	padding: 0px 5px 20px 5px;
+}
+
+.o2BusinessTitle {
+	padding: 4px 5px 0 5px;
 }
 
 .o2UserHeader1 {
@@ -1975,7 +1982,7 @@ p.itemsTrackName {
 
 .o2UserHeader2 {
 	padding-left: 5px;
-	padding-bottom: 20px
+	padding-bottom: 9px
 }
 
 .o2Userhr {
