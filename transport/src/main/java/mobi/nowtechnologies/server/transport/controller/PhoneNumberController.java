@@ -30,7 +30,8 @@ public class PhoneNumberController extends CommonController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = {
             "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER"
+            "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER"
     })
 	public ModelAndView activatePhoneNumber(
 			@RequestParam(value = "PHONE", required = false) String phone,
@@ -51,7 +52,7 @@ public class PhoneNumberController extends CommonController {
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
-			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
+			return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -60,18 +61,4 @@ public class PhoneNumberController extends CommonController {
             LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
 		}
 	}
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
-    }, produces = "application/json")
-    public @ResponseBody Response activatePhoneNumberJson(
-            @RequestParam(value = "PHONE", required = false) String phone,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) throws Exception {
-
-        return (Response)activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion).getModelMap().get(MODEL_NAME);
-    }
 }

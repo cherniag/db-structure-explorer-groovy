@@ -51,8 +51,9 @@ public abstract class CommonController extends ProfileController{
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
+    protected String defaultViewName = "default";
 
-	public void setView(View view) {
+    public void setView(View view) {
 		this.view = view;
 	}
 
@@ -235,7 +236,7 @@ public abstract class CommonController extends ProfileController{
 		notNull(status , "The parameter httpStatus is null");
         notNull(errorMessage , "The parameter errorMessage is null");
 		response.setStatus(status.value());
-		return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
+        return new ModelAndView(defaultViewName, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
 	}
 
 	/**
