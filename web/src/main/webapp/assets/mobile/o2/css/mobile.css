@@ -804,30 +804,6 @@ input.accounts{
 	display: block;
 }
 
-.videoOption {
-	border: 3px solid gray;
-	margin: 5px;
-	padding: 10px;
-}
-
-.videoOptionOptin {
-	cursor: pointer;
-	font-size: 90%;
-	text-align: center;
-}
-
-.videoOptionHighlight {
-	background-color: #ccc;
-}
-
-.videoOptionFirstRow {
-	margin-bottom: 10px;
-}
-
-.videoOptionText {
-	font-size: 80%;
-}
-
 .setOfButtons  { margin-bottom: 0; }
 .setOfButtons .formButton{
 	margin-top: 10px;	
@@ -1947,9 +1923,7 @@ p.itemsTrackName {
 }
 
 .itunesheader {
-	/* padding-top: 16px; */
-	/* padding-left: 10px; */
-	padding-bottom: 20px
+	padding: 0 5px 20px;
 }
 
 .itunesHr {
@@ -1957,7 +1931,7 @@ p.itemsTrackName {
 	margin: 10px 0 12px 0
 }
 
-.iTunesHeaderText {
+.itunesheader div {
 	line-height: 16px;
 	margin-bottom: 17px;
 }
@@ -1969,23 +1943,71 @@ p.itemsTrackName {
 
 .o2BusinessHeader {
 	padding: 0px 5px 20px 5px;
-}
-
-.o2BusinessTitle {
-	padding: 4px 5px 0 5px;
-}
-
-.o2UserHeader1 {
-	padding-top: 4px;
-	padding-left: 5px;
+	line-height: 16px;
 }
 
 .o2UserHeader2 {
-	padding-left: 5px;
-	padding-bottom: 9px
+	padding: 0 5px 9px;
+}
+
+.o2UserHeader2 > div.frR15 {
+	line-height: 16px;
+}
+
+.o2UserHeader2 > div.frL11 {
+	margin-top: 7px;
 }
 
 .o2Userhr {
 	color: #ddd;
 	margin: 10px 0 10px 0;
+}
+
+.o2UserPaymentOption {
+	color: #3399cc;
+	padding-top: 8px;
+}
+
+.o2TracksHeader {
+	padding: 4px 5px 0;
+}
+
+.o2businessPaymentType {
+	border-top: 1px solid #a0a0a0;
+	margin:0 6px;
+	padding-top:2px;
+	text-align: center;
+}
+
+.videoNotOptedIn {
+	height: 130px;
+	padding: 12px 10px 6px 10px;
+}
+
+.videoNotOptedInHeader {
+	margin-bottom: 10px;
+}
+
+.videoNotOptedInHeader > div {
+	padding-top: 1px;
+}
+
+.videoNotOptedInHeaderSmall {
+	line-height: 16px;
+	margin-bottom: 10px;
+}
+
+.videoInfo {
+	line-height: 16px;
+	margin-right: 70px;
+	margin-top: 9px;
+}
+
+.videoOption {
+	margin-top: 10px;
+}
+
+.videoOption a {
+	height: 105px;
+	padding: 10px 6px 6px 10px;
 }

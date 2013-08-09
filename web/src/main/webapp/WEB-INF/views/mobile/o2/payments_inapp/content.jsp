@@ -16,24 +16,24 @@
 <img style="width:100%;display: block" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
 
 <div class="maincontainer">
-		<c:choose>
-			<c:when test="${isO2Consumer eq true}">
-				<jsp:include page="../payments_common/content_header_o2user.jsp">
-					<jsp:param name="callingPage" value="payments_inapp" />
-				</jsp:include>
-			</c:when>
-			<c:when test="${isNonO2OnIOS eq true}">
-				<jsp:include page="../payments_common/content_header_itunes.jsp">
-					<jsp:param name="callingPage" value="payments_inapp" />
-				</jsp:include>
-			</c:when>
-			<c:otherwise>
-				<%--isBussinesOrNonO2User --%>
-				<jsp:include page="../payments_common/content_header_o2business.jsp">
-					<jsp:param name="callingPage" value="payments_inapp" />
-				</jsp:include>
-			</c:otherwise>
-		</c:choose>
+	<c:choose>
+		<c:when test="${isO2Consumer eq true}">
+			<jsp:include page="../payments_common/content_header_o2user.jsp">
+				<jsp:param name="callingPage" value="payments_inapp" />
+			</jsp:include>
+		</c:when>
+		<c:when test="${isNonO2OnIOS eq true}">
+			<jsp:include page="../payments_common/content_header_itunes.jsp">
+				<jsp:param name="callingPage" value="payments_inapp" />
+			</jsp:include>
+		</c:when>
+		<c:otherwise>
+			<%--isBussinesOrNonO2User --%>
+			<jsp:include page="../payments_common/content_header_o2business.jsp">
+				<jsp:param name="callingPage" value="payments_inapp" />
+			</jsp:include>
+		</c:otherwise>
+	</c:choose>
 		
 	<div class="container">
 		<c:choose>

@@ -9,19 +9,15 @@
 </c:forEach>
 
 <div class="container">
-	<div class="o2BusinessTitle">
-		<div class="frR15">
+	<div class="o2TracksHeader frR15">
 			<s:message code='pays.page.header.txt.business_1' /><fmt:formatNumber pattern="0.00" value="${optionPrice}" /><span style="font-size: 12px"><s:message code='pays.page.header.txt.business_2' /></span>
-		</div>
 	</div>
 </div>
 	
 <hr class="o2Businesshr" />
 
 <div class="container">
-	<div class="o2BusinessHeader">
-		<div class="frL11" style="line-height: 16px">
-			<s:message code='pays.page.header.txt' />
-		</div>
+	<div class="frL11 o2BusinessHeader">
+		<s:message code='pays.page.header.txt' />
 	</div>
 </div>

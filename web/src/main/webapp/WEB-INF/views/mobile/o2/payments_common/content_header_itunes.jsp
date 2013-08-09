@@ -13,18 +13,14 @@
 		</c:if>
 	</c:forEach>
 
-<div class="container">
-	<div class="frR15" style="padding-top: 4px"><s:message code='pays.page.header.txt.itunes' /></div>
+<div class="o2TracksHeader frR15">
+	<s:message code='pays.page.header.txt.itunes' />
 </div>
 
 <hr class="itunesHr" />
 
-<div class="container">
-<div class="itunesheader">
-	<div class="frL11 iTunesHeaderText">
-		<s:message code='pays.page.header.txt' />
-	</div>
+<div class="itunesheader frL11">
+	<div><s:message code='pays.page.header.txt' /></div>
 
 	<input class="button-turquoise no-margin pie" title="${iTunesUrl}" type="button" onClick="location.href=this.title"	value="&#163;${optionPrice}/month" />
-</div>
 </div>
