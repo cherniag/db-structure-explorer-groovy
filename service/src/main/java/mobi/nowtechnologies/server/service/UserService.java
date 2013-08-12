@@ -1991,9 +1991,9 @@ public class UserService {
         final int nextSubPayment = userWithOldTariffOnOldBoughtPeriod.getNextSubPayment();
 
         LOGGER.info("Attempt to skip nextSubPayment [{}] by assigning current time [{}]", nextSubPayment, epochSeconds);
-        userWithOldTariffOnOldBoughtPeriod.setNextSubPayment(epochSeconds);
-
         refundService.logSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(userWithOldTariffOnOldBoughtPeriod, newTariff);
+
+        userWithOldTariffOnOldBoughtPeriod.setNextSubPayment(epochSeconds);
 
         accountLogService.logAccountEvent(userWithOldTariffOnOldBoughtPeriod.getId(), userWithOldTariffOnOldBoughtPeriod.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         return userWithOldTariffOnOldBoughtPeriod;

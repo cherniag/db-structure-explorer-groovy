@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+
 /**
  * User: Titov Mykhaylo (titov)
  * 15.07.13 18:57
@@ -53,7 +55,7 @@ public class RefundServiceImpl implements RefundService {
 
         boolean isOn4gVideoAudioBoughtPeriod = userWithOldTariffOnOldBoughtPeriod.isOn4GVideoAudioBoughtPeriod();
 
-        if (Tariff._4G.equals(olUserTariff) && Tariff._3G.equals(newUserTariff) && isOn4gVideoAudioBoughtPeriod) {
+        if (_4G.equals(olUserTariff) && _3G.equals(newUserTariff) && isOn4gVideoAudioBoughtPeriod) {
             LOGGER.info("Attempt to log about skipping Video Audio bought period [{}] on tariff migration from 4G to 3G. The nextSubPayment was [{}]", isOn4gVideoAudioBoughtPeriod, userWithOldTariffOnOldBoughtPeriod.getNextSubPayment());
 
             resultRefund = logSkippedBoughtPeriod(userWithOldTariffOnOldBoughtPeriod);
