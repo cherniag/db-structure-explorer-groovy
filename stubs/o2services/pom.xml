@@ -92,17 +92,11 @@
 					<execution>
 						<id>generate-sources</id>
 						<phase>generate-sources</phase>
-
-						<!-- <configuration> <wsdlOptions> <wsdlOption> <wsdl>src/main/resources/CustomerService.wsdl</wsdl> 
-							<frontEnd>jaxws21</frontEnd> <faultSerialVersionUID>1</faultSerialVersionUID> 
-							<bindingFiles> <bindingFile>src/main/resources/binding.xml</bindingFile> 
-							</bindingFiles> </wsdlOption> </wsdlOptions> </configuration> -->
 						<configuration>
 							<defaultOptions>
-								<!-- <bindingFiles>
-									<bindingFile>${basedir}/src/main/jaxb/bindings.xml</bindingFile>
-								</bindingFiles>
-								 -->
+								<extraargs>
+									<extraarg>-impl</extraarg>
+								</extraargs>
 								<noAddressBinding>true</noAddressBinding>
 							</defaultOptions>
 							<wsdlRoot>${basedir}/src/main/resources/wsdl</wsdlRoot>

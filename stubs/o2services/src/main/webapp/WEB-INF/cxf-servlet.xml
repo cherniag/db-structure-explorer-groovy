@@ -19,16 +19,17 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
     </jaxws:endpoint>-->
     
     <jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/subscriberservice_2/"
-            id="SubscriberHTTP" address="/SubscriberPort"
+            id="SubscriberHTTP" address="/Subscriber_2_0"
             serviceName="subscriber:SubscriberService" endpointName="subscriber:SubscriberPort"
             implementor="com.example.customerservice.server.SubscriberPortImpl">
     </jaxws:endpoint>
 
+<!-- 
     <jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/managepostpaytariffdata_2/"
                     id="ManagePostpayTariffHTTP" address="/ManagePostpayTariffPort"
                     serviceName="subscriber:ManagePostpayTariffService" endpointName="subscriber:ManagePostpayTariffPort"
                     implementor="com.example.customerservice.server.ManagePostpayTariffServiceImpl">
     </jaxws:endpoint>
-
+ -->
 
 </beans>
