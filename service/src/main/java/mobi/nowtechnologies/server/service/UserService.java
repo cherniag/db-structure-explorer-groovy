@@ -2018,7 +2018,7 @@ public class UserService {
 		Tariff newTariff = o2SubscriberData.isTariff4G() ? Tariff._4G : Tariff._3G;
 		if (newTariff != user.getTariff()) {
 			LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(),  newTariff);
-			downgradeUserTariff(user, newTariff);
+			user = downgradeUserTariff(user, newTariff);
 		}
         new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
         userRepository.save(user);

@@ -110,7 +110,7 @@ public class User implements Serializable {
 	@Column(name = "i")
 	private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_promo", columnDefinition = "INT default NULL")
     private PromoCode lastPromo;
 
@@ -1119,15 +1119,22 @@ public class User implements Serializable {
 				.add("canContact", canContact)
 				.add("deviceString", deviceString)
 				.add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
 				.add("activationStatus", activationStatus)
 				.add("segment", segment)
 				.add("provider", provider)
                 .add("tariff", tariff)
                 .add("contractChannel", contractChannel)
+                .add("lastPromoId", getLastPromoId())
 				.add("contract", contract).toString();
 	}
 
-	public boolean isOnFreeTrial() {
+    private Integer getLastPromoId() {
+        if (isNotNull(lastPromo)) return lastPromo.getId();
+        return null;
+    }
+
+    public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
 
