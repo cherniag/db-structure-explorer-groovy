@@ -444,22 +444,6 @@ public class UserService {
 		return mobile.replaceFirst("0044", "0");
 	}
 
-	private void validateUserName(String userName, String communityName) {
-		if (userName == null)
-			throw new ServiceException(
-					"The parameter userName is null");
-		if (communityName == null)
-			throw new ServiceException(
-					"The parameter communityName is null");
-		boolean userExists = userExists(userName, communityName);
-		if (userExists) {
-			LOGGER.error("The user [{}] is already present in community [{}]",
-					userName, communityName);
-			throw new ServiceException(MessageFormat.format(
-					"The user [{0}] is already present", userName));
-		}
-	}
-
 	@Transactional(readOnly=true)
 	public User getUserWithSelectedCharts(Integer userId){
 		User user = userRepository.findOne(userId);
