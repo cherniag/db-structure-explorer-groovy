@@ -21,7 +21,7 @@ public class SubscriptionStateFactory {
 		state.setEligibleForVideo(user.getTariff() == Tariff._4G);
 
 		boolean userInLimitedStatus = !user.isSubscribedStatus();
-		if (user.isTrialExpired() && (userInLimitedStatus || !user.isNextSubPaymentInTheFuture())) {
+		if ((!user.isOnFreeTrial()) && (userInLimitedStatus || !user.isNextSubPaymentInTheFuture())) {
 			//preview mode
 			return state;
 		}
