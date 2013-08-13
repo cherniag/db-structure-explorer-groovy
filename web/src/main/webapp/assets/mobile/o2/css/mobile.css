@@ -1977,7 +1977,8 @@ p.itemsTrackName {
 }
 
 .o2TracksHeader {
-	padding: 4px 5px 0;
+	/*padding: 4px 5px 0; */
+	padding: 10px 5px 0;
 }
 
 .o2businessPaymentType {
