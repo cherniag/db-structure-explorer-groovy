@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -40,6 +40,7 @@ public class PromotionService {
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
+    private RefundService refundService;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -61,7 +62,11 @@ public class PromotionService {
         this.promotionRepository = promotionRepository;
     }
 
-	public Promotion getActivePromotion(String promotionCode, String communityName) {
+    public void setRefundService(RefundService refundService) {
+        this.refundService = refundService;
+    }
+
+    public Promotion getActivePromotion(String promotionCode, String communityName) {
 		notNull(promotionCode, "The parameter promotionCode is null");
 		notNull(communityName, "The parameter communityName is null");
 
@@ -159,23 +164,16 @@ public class PromotionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public User activateVideoAudioFreeTrial(String userName, String userToken, String timestamp, String communityUri, String deviceUID){
         User user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-
-        boolean isPromotionApplied = false;
-        if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
-        }else{
-            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");
-        }
-        if (!isPromotionApplied){
-            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
-        }
-        return user;
+        return activateVideoAudioFreeTrial(user);
     }
     
     @Transactional(propagation = Propagation.REQUIRED)
     public User activateVideoAudioFreeTrial(User user){
         boolean isPromotionApplied = false;
         if (userService.canActivateVideoTrial(user)) {
+            if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+            else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else{
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");

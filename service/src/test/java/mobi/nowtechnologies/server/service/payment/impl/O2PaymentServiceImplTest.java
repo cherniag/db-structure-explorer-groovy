@@ -121,7 +121,6 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		
@@ -225,7 +224,7 @@ public class O2PaymentServiceImplTest {
 	}
 	
 	@Test
-	public void testStartPayment_FailureO2ResponseAndMedeRetriesEqRetriesOnErrorAndNextSubPaymentInThePast_Success() throws Exception{
+	public void testStartPayment_FailureO2ResponseAndMadeRetriesEqRetriesOnErrorAndNextSubPaymentInThePast_Success() throws Exception{
 		final int epochSeconds = 55555;
 
 		final User user = UserFactory.createUser();
@@ -249,7 +248,6 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(epochSeconds - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleSeconds(user.getNextSubPayment()-10);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		
@@ -378,7 +376,6 @@ public class O2PaymentServiceImplTest {
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setLastPaymentTryInCycleMillis((user.getNextSubPayment()-10)*1000L);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
 		

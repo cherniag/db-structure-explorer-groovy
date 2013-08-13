@@ -207,6 +207,11 @@ public abstract class PaymentDetails {
         setPaymentPolicy(paymentPolicy);
         return this;
     }
+
+    public PaymentDetails withActivated(boolean activated) {
+        setActivated(activated);
+        return this;
+    }
 	
 	@Override
 	public String toString() {

@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.enums.ActionReason;
+
 import javax.persistence.*;
 
 /**
@@ -27,6 +29,10 @@ public class Refund {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "payment_details_id")
     public PaymentDetails paymentDetails;
+
+    @Column(name = "reason", nullable = false)
+    @Enumerated(EnumType.STRING)
+    public ActionReason actionReason;
 
     public Integer getUserId() {
         Integer userId = null;
@@ -58,6 +64,7 @@ public class Refund {
                 ", getPaymentDetailsId()=" + getPaymentDetailsId() +
                 ", logTimeMillis=" + logTimeMillis +
                 ", nextSubPaymentMillis=" + nextSubPaymentMillis +
+                ", actionReason=" + actionReason +
                 ']';
     }
 }

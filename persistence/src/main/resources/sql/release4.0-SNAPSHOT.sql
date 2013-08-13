@@ -57,6 +57,7 @@ create table refund (
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
   user_id int(10) unsigned not null,
+  reason varchar(255) not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
@@ -151,3 +152,4 @@ INSERT INTO tb_deviceTypes (name) VALUES ('WINDOWS_PHONE');
 
 -- Remove unused column
  alter table tb_users drop column deactivated_grace_credit_millis;
+ alter table tb_users drop column last_payment_try_in_cycle_millis;

@@ -36,7 +36,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
@@ -65,13 +64,13 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    public static final String USER_DOWNGRADED_TARIFF = "User downgraded tariff";
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
     public Boolean canActivateVideoTrial(User u) {
@@ -1953,7 +1952,7 @@ public class UserService {
         if (Tariff._4G.equals(oldTariff) && _3G.equals(newTariff)) {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
-                userWithOldTariff = downgradeUserOn4GVideoAudioBoughPeriodTo3G(userWithOldTariff);
+                userWithOldTariff = skipBoughtPeriodAndUnsubscribe(userWithOldTariff, USER_DOWNGRADED_TARIFF);
                 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             } else if (userWithOldTariff.isOnVideoAudioFreeTrial()) {
@@ -1963,7 +1962,7 @@ public class UserService {
                 userServiceNotification.sendSmsFor4GDowngradeForFreeTrial( userWithOldTariff );
             } else if(userWithOldTariff.has4GVideoAudioSubscription()){
                 LOGGER.info("Attempt to unsubscribe user subscribed to Video Audio because of tariff downgraded from [{}] Video Audio with old nextSubPayment [{}] to [{}]", oldTariff, userWithOldTariff.getNextSubPayment(), newTariff);
-                userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF);
+                userWithOldTariff = unsubscribeUser(userWithOldTariff, USER_DOWNGRADED_TARIFF.getDescription());
                 
                 userServiceNotification.sendSmsFor4GDowngradeForSubscribed( userWithOldTariff );
             }
@@ -1974,24 +1973,25 @@ public class UserService {
     }
     
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
-        user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        user = unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         user = skipVideoAudioFreeTrial(user);
         applyO2PotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
         return user;
     }
 
-    private User downgradeUserOn4GVideoAudioBoughPeriodTo3G(User userWithOldTariffOnOldBoughtPeriod) {
-        userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, USER_DOWNGRADED_TARIFF);
-        userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, _3G);
+    public User skipBoughtPeriodAndUnsubscribe(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
+        userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, actionReason.getDescription());
+        userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);
         return userWithOldTariffOnOldBoughtPeriod;
     }
 
-    private User skipBoughtPeriod(User userWithOldTariffOnOldBoughtPeriod, Tariff newTariff) {
+    private User skipBoughtPeriod(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
         int epochSeconds = Utils.getEpochSeconds();
         final int nextSubPayment = userWithOldTariffOnOldBoughtPeriod.getNextSubPayment();
 
         LOGGER.info("Attempt to skip nextSubPayment [{}] by assigning current time [{}]", nextSubPayment, epochSeconds);
-        refundService.logSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(userWithOldTariffOnOldBoughtPeriod, newTariff);
+
+        refundService.logSkippedBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);
 
         userWithOldTariffOnOldBoughtPeriod.setNextSubPayment(epochSeconds);
 

@@ -27,7 +27,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.joda.time.DateTime;
-import org.joda.time.ReadableDuration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,12 +46,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.service.UserService.*;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.junit.Assert.*;
@@ -2795,6 +2794,27 @@ public class UserServiceTest {
 	}
 
     @Test
+    public void testSkipBoughtPeriodAndUnsubscribe_4GVideoAudioFreeTrialTo3G_Success() throws Exception {
+
+        currentTimeMillis = 0L;
+        currentUserTariff = _4G;
+        newUserTariff = _3G;
+
+        create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial();
+
+        mockDowngradeUserTariffMethodsCalls();
+
+        actualUser = userServiceSpy.skipBoughtPeriodAndUnsubscribe(user, USER_DOWNGRADED_TARIFF);
+
+        assertNotNull(actualUser);
+        assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
+
+        verify(refundServiceMock, times(1)).logSkippedBoughtPeriod(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
+    }
+
+    @Test
     public void testDowngradeUserTariff_4GVideoAudioFreeTrialTo3G_Success() throws Exception {
 
         currentTimeMillis = 0L;
@@ -2811,7 +2831,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
         assertEquals(currentTimeMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(1)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -2834,7 +2854,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -2857,7 +2877,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -2879,7 +2899,7 @@ public class UserServiceTest {
         assertEquals(nextSubPayment, actualUser.getNextSubPayment());
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -2901,7 +2921,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -2923,7 +2943,7 @@ public class UserServiceTest {
         assertEquals(nextSubPayment, actualUser.getNextSubPayment());
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
-        verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
@@ -3177,7 +3197,7 @@ public class UserServiceTest {
         PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 
         Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
-        Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF);
+        Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         Mockito.doReturn(true).when(userServiceSpy).applyO2PotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);

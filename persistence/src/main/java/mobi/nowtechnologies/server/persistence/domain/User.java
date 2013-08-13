@@ -5,7 +5,6 @@ import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
@@ -29,18 +28,14 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.google.common.base.Objects;
 
@@ -300,9 +295,6 @@ public class User implements Serializable {
 
 	@Column(name = "last_subscribed_payment_system")
 	private String lastSubscribedPaymentSystem;
-
-	@Column(name = "last_payment_try_in_cycle_millis", columnDefinition = "BIGINT default 0")
-	private long lastPaymentTryInCycleMillis;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "segment", columnDefinition = "char(255)")
@@ -1041,22 +1033,6 @@ public class User implements Serializable {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 	}
 
-	public long getLastPaymentTryInCycleMillis() {
-		return lastPaymentTryInCycleMillis;
-	}
-
-	public void setLastPaymentTryInCycleMillis(long lastPaymentTryInCycleMillis) {
-		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleMillis;
-	}
-
-	public void setLastPaymentTryInCycleSeconds(int lastPaymentTryInCycleSeconds) {
-		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleSeconds * 1000L;
-	}
-
-	public int getLastPaymentTryInCycleSeconds() {
-		return (int) (lastPaymentTryInCycleMillis / 1000);
-	}
-
 	public long getLastBefore48SmsMillis() {
 		return lastBefore48SmsMillis;
 	}
@@ -1147,7 +1123,7 @@ public class User implements Serializable {
 		return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
 				|| (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
 						&& getLastSubscribedPaymentSystem() != null
-						&& !isActivePaymentDetails());
+						&& !hasActivePaymentDetails());
 	}
 
 	public boolean isSubscribedStatus() {
@@ -1167,7 +1143,7 @@ public class User implements Serializable {
 	public boolean isSubscribed() {
 		return isSubscribedStatus()
 				&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-				&& isActivePaymentDetails();
+				&& hasActivePaymentDetails();
 	}
 
 	public boolean isNotActivePaymentDetails() {
@@ -1175,7 +1151,7 @@ public class User implements Serializable {
 		return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
 	}
 
-	public boolean isActivePaymentDetails() {
+	public boolean hasActivePaymentDetails() {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && currentPaymentDetails.isActivated();
 	}
@@ -1259,7 +1235,7 @@ public class User implements Serializable {
 
 	public boolean isExpiring() {
 		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
-				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
+				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
     public boolean has4GVideoAudioSubscription(){

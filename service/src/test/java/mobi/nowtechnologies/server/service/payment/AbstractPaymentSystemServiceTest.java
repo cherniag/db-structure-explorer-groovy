@@ -117,8 +117,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, actualSubmittedPayment.getStatus());
-		
-		assertEquals(curremtTimeSeconds, user.getLastPaymentTryInCycleSeconds());
+
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, paymentDetails.getLastPaymentStatus());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
@@ -179,8 +178,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
 		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
-		
-		assertEquals(curremtTimeSeconds, user.getLastPaymentTryInCycleSeconds());
+
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
@@ -243,8 +241,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(submittedPayment, actualSubmittedPayment);
 		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
-		
-		assertEquals(curremtTimeSeconds, user.getLastPaymentTryInCycleSeconds());
+
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
@@ -312,8 +309,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
 		assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
-		
-		assertEquals(curremtTimeSeconds, user.getLastPaymentTryInCycleSeconds());
+
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
 		assertEquals(3, paymentDetails.getRetriesOnError());
 		assertEquals(descriptionError, paymentDetails.getDescriptionError());

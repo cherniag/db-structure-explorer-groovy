@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.RefundRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActionReason;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import java.util.Date;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -39,6 +41,7 @@ public class RefundServiceImplTest {
     private PaymentDetails lastSuccessfulPaymentDetails;
     private Date nextSubPaymentDate;
     private Tariff newUserTariff;
+    private ActionReason actionReason;
 
     @Before
     public void setUp(){
@@ -53,80 +56,66 @@ public class RefundServiceImplTest {
     @Test
     public void shouldLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(){
 
-        given().userOnAudionOldBoughtPeriod().and().with4GVideoAudioSubscription(true);
-        whenLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio();
+        given().userOnAudionOldBoughtPeriod().and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        whenLogSkippedBoughtPeriod();
         then().logSkippedBoughtPeriod();
     }
 
     @Test
     public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(){
 
-        given().userNotOnAudionOldBoughtPeriod().and().with4GVideoAudioSubscription(true);
-        whenLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio();
+        given().userNotOnAudionOldBoughtPeriod().and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void shouldDoNotLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GNotVideoAudio(){
 
-        given().userOnAudionOldBoughtPeriod().and().with4GVideoAudioSubscription(false);
-        whenLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio();
+        given().userOnAudionOldBoughtPeriod().and().refundDirection(null);
+        whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
     public void shouldLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(){
-        given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().newUserTariff(_3G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
+        given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().refundDirection(USER_DOWNGRADED_TARIFF);
+        whenLogSkippedBoughtPeriod();
         then().logSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldDoNotLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo4G(){
-        given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().newUserTariff(_4G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
-        then().doNotLogSkippedBoughtPeriod();
-    }
-
-    @Test
-     public void shouldDoNotLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom3GTo3G(){
-        given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_3G).and().newUserTariff(_3G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
+    public void shouldDoNotLogSkippedVideoAudioBoughtPeriodOnVideoAudioActivation(){
+        given().userOn4GVideoAudioBoughtPeriod().and().oldTariff(_4G).and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
     public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom4GTo3G(){
-        given().userOnAudionOldBoughtPeriod().and().oldTariff(_4G).and().newUserTariff(_3G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
-        then().doNotLogSkippedBoughtPeriod();
-    }
-
-    @Test
-    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom4GTo4G(){
-        given().userOnAudionOldBoughtPeriod().and().oldTariff(_4G).and().newUserTariff(_4G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
+        given().userOnAudionOldBoughtPeriod().and().oldTariff(_4G).and().refundDirection(USER_DOWNGRADED_TARIFF);
+        whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
     public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo3G(){
-        given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().newUserTariff(_3G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
+        given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().refundDirection(USER_DOWNGRADED_TARIFF);
+        whenLogSkippedBoughtPeriod();
         then().doNotLogSkippedBoughtPeriod();
     }
 
     @Test
-    public void shouldDoNotLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4G(){
-        given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().newUserTariff(_4G);
-        whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G();
-        then().doNotLogSkippedBoughtPeriod();
+    public void shouldLogSkippedBoughtPeriodOnTariffMigrationFrom3GTo4G(){
+        given().userOnAudionOldBoughtPeriod().and().oldTariff(_3G).and().refundDirection(VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        whenLogSkippedBoughtPeriod();
+        then().logSkippedBoughtPeriod();
     }
 
-    private void whenLogSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G() {
+    private void whenLogSkippedBoughtPeriod() {
         mockSaveMethodOfRefundRepository();
 
-        resultRefund = refundService.logSkippedVideoAudioBoughtPeriodOnTariffMigrationFrom4GTo3G(userOnOldBoughtPeriodMock, newUserTariff);
+        resultRefund = refundService.logSkippedBoughtPeriod(userOnOldBoughtPeriodMock, actionReason);
     }
 
     private RefundServiceImplTest userOn4GVideoAudioBoughtPeriod() {
@@ -141,8 +130,14 @@ public class RefundServiceImplTest {
         doReturn(oldTariff).when(userOnOldBoughtPeriodMock).getTariff();
         return this;
     }
+
     private RefundServiceImplTest newUserTariff(Tariff newTariff) {
         this.newUserTariff = newTariff;
+        return this;
+    }
+
+    private RefundServiceImplTest refundDirection(ActionReason actionReason) {
+        this.actionReason = actionReason;
         return this;
     }
 
@@ -160,13 +155,6 @@ public class RefundServiceImplTest {
         assertEquals(Refund.NullObjectRefund.class, resultRefund.getClass());
 
         verify(refundRepositoryMock, times(0)).save(any(Refund.class));
-    }
-
-
-    private void whenLogSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio() {
-        mockSaveMethodOfRefundRepository();
-
-        resultRefund = refundService.logSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(userOnOldBoughtPeriodMock, newPaymentPolicyMock);
     }
 
     private void mockSaveMethodOfRefundRepository() {
