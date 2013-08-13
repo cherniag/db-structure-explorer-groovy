@@ -12,9 +12,21 @@ public class BrowserStarter {
 
 		//String url="http://rage.musicqubed.com/web/payments_inapp.html";
 		String url = "http://localhost:8080/web/payments_inapp.html";
-		String username = "+447408831838";
-		String userToken = "c7213cd89f51597428f6bce9cf9d6cac";
+		//String url = "http://kiwi.musicqubed.com/web/payments_inapp.html";
+		
+		//String username = "+447779836075";
+		//String userToken = "83fd31553b331fcf6475caaa7f25eabe";
+		
+		//localhost/kiwi
+		String username = "+447852365884";
+		String userToken = "675d00beb25eb8c7c503d6aa8eb69442";
 
+		//rage
+		//String username = "+447731293078";
+		//String userToken = "a47674eea93c97592d3c80fe99428af0";
+
+		
+		
 		String rememberMeToken = RememberMeUtils.generateRememberMeToken(username, userToken);
 		System.out.println("_REMEMBER_ME=" + rememberMeToken);
 

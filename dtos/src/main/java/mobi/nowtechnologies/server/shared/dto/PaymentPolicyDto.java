@@ -62,14 +62,10 @@ public class PaymentPolicyDto {
         setThreeG( Tariff._3G == policy.getTariff() );
     }
 
-    /*private boolean isPsmsPolicy() {
-        return paymentType.equalsIgnoreCase("");
-    }
-
-    private boolean isO2Operator() {
-        return "O2 UK".equals(operatorName);
-    }*/
-
+	public boolean isMonthly() {
+		return subweeks == null || subweeks.intValue() == 0;
+	}
+    
     public short getId() {
         return id;
     }

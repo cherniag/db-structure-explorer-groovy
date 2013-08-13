@@ -23,13 +23,13 @@
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isNonO2OnIOS eq true}">
+		<c:when test="${paymentPageData.appleIOSNonO2Business}">
 			<jsp:include page="../payments_common/content_header_itunes.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
 		<c:otherwise>
-				<%--isBussinesOrNonO2User --%>
+				<%-- CreditCard/Paypal  --%>
 				<jsp:include page="../payments_common/content_header_o2business.jsp">
 					<jsp:param name="callingPage" value="payments" />
 				</jsp:include>
@@ -43,13 +43,13 @@
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isNonO2OnIOS eq true}">
+		<c:when test="${paymentPageData.appleIOSNonO2Business}">
 			<jsp:include page="../payments_common/content_paymentoptions_itunes.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>
 		</c:when>
 		<c:otherwise>
-			<%--isBussinesOrNonO2User --%>
+			<%-- CreditCard/Paypal  --%>
 			<jsp:include page="../payments_common/content_paymentoptions_business.jsp">
 				<jsp:param name="callingPage" value="payments" />
 			</jsp:include>

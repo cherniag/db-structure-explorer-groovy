@@ -4,16 +4,13 @@ import org.springframework.security.crypto.codec.Base64;
 import org.springframework.util.DigestUtils;
 
 public class RememberMeUtils {
-	static long TWO_WEEKS = 14L * 24L * 60L * 60L * 1000L;
-	static String help = "Help:\n" + "Possible arguments:\n" + "\t\t[tb_users.userName] [tb_users.token] \n"
-			+ "\t\tor\n" + "\t\t[tb_users.userName] [tb_users.token] [expiredMillies]\n\n"
-			+ "\t\t by default expiredMillies = NOW() + TWO_WEEKS in milliseconds\n\n";
+	private static long TWO_WEEKS = 14L * 24L * 60L * 60L * 1000L;
 
 	public static void main(String[] args) {
 
-		String username = "+447408831838";//CharMatcher.isNot('\'').retainFrom(args[0]);
-		String userToken = "c7213cd89f51597428f6bce9cf9d6cac";//CharMatcher.isNot('\'').retainFrom(args[1]);
-
+		String username = "+447408831838";
+		String userToken = "c7213cd89f51597428f6bce9cf9d6cac";
+		
 		String rememberMeToken = generateRememberMeToken(username, userToken);
 		System.out.println("Token " + rememberMeToken);
 

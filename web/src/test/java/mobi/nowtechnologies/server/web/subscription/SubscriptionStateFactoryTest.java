@@ -126,6 +126,7 @@ public class SubscriptionStateFactoryTest {
 		Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
 	}
 
+	//Auto opt-in is not implemented yet
 	// @Test
 	// public void testFreeTrialOptedIn() {
 	//
