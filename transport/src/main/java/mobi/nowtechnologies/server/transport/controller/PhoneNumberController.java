@@ -62,7 +62,8 @@ public class PhoneNumberController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER"
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
     })
     public ModelAndView activatePhoneNumberJson(
             @RequestParam(value = "PHONE", required = false) String phone,
