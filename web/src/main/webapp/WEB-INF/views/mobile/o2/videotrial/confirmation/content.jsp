@@ -4,7 +4,7 @@
 <div class="header pie">
 	<div class="gradient_border">&#160;</div>
     <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-    <a href="${returnUrl}" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+    <a href="${returnUrl}" class="button-small button-right-abs"><s:message code='m.page.main.menu.close' /></a>
 </div>
 
 <div class="container">		
