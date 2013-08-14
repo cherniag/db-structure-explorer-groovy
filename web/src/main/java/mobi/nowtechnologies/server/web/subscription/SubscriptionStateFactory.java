@@ -26,24 +26,27 @@ public class SubscriptionStateFactory {
 			return state;
 		}
 
-		if (user.isSubscribedStatus() && user.isNextSubPaymentInTheFuture() && (user.getCurrentPaymentDetails()!=null)) {
+		boolean paySubscription = (user.isSubscribedStatus() && user.isNextSubPaymentInTheFuture() 
+				&& (user.getCurrentPaymentDetails() != null));
+
+		if (paySubscription  && !(user.isOnFreeTrial()) ) {
 			state.setPaySubscription(true);
 		} else {
 			state.setFreeTrial(true);
-			
+
 			if (!user.isOnFreeTrial()) {
 				LOGGER.warn("Expecting user to be on free trial! {} {} {} {} ", user.getUserName(), user.getStatus(),
 						user.getNextSubPayment(), user.getFreeTrialExpiredMillis());
 			}
 		}
-
+		
 		if (state.isFreeTrial()) {
 			if (state.isEligibleForVideo()) {
 				state.setUnlimitedFreeTrialFor4G(true);
-
 			}
 			state.setFreeTrialAudioOnly(!user.isOnVideoAudioFreeTrial());
-			state.setFreeTrialOptedIn(false);//we are not auto-subscribing user at the moment
+			
+			state.setFreeTrialOptedIn(paySubscription && !user.isExpiring());
 		}
 
 		if (state.isPaySubscription()) {

@@ -1989,8 +1989,8 @@ p.itemsTrackName {
 }
 
 .videoNotOptedIn {
-	height: 130px;
-	padding: 12px 10px 6px 10px;
+	height: auto;
+	padding: 12px 10px 5px 10px;
 }
 
 .videoNotOptedInHeader {

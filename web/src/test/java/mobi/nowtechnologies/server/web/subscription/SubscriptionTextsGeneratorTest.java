@@ -36,223 +36,221 @@ public class SubscriptionTextsGeneratorTest {
 
 	@Test
 	public void testFreeTrialNonEligibleVideo() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setFreeTrial(true);
 		s.setNextBillingDate(NEXT_DATE);
 		s.setDaysToNextBillingDate(DAYS);
-		SubscriptionTexts r=generator.generate(s);
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
 		Assert.assertEquals("You have " + DAYS + " days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 
 	}
+
 	@Test
 	public void testFreeTrialEligibleVideoNotAcceptedTnC() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setFreeTrial(true);
 		s.setEligibleForVideo(true);
 		s.setUnlimitedFreeTrialFor4G(true);
 		s.setFreeTrialAudioOnly(true);
 
-		SubscriptionTexts r=generator.generate(s);
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial (Music)", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
-	
+
 	@Test
 	public void testFreeTrialEligibleVideoAcceptedTnC() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setFreeTrial(true);
 		s.setEligibleForVideo(true);
 		s.setUnlimitedFreeTrialFor4G(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial (Music + Video)", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
-	
 
 	@Test
 	public void testFreeTrialOptedIn() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setFreeTrial(true);
 		s.setFreeTrialOptedIn(true);
 		s.setDaysToNextBillingDate(DAYS);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("Due to subscribe after free trial ("+DAYS+" days left)", r.getNextBillingText());
-		Assert.assertEquals("Subscribed",r.getFutureText());
+		Assert.assertEquals("Due to subscribe after free trial (" + DAYS + " days left)", r.getNextBillingText());
+		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
-	
+
 	@Test
 	public void testFreeTrialOptedInEligibleForVideo() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setFreeTrial(true);
 		s.setFreeTrialOptedIn(true);
 		s.setEligibleForVideo(true);
 		s.setUnlimitedFreeTrialFor4G(true);
 		s.setDaysToNextBillingDate(DAYS);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("4G Free Trial", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
-		Assert.assertEquals("Subscribed",r.getFutureText());
+		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
-	
 
 	@Test
 	public void testSubscribed() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setEligibleForVideo(false);
 		s.setNextBillingDate(NEXT_DATE);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing",r.getFutureText());
+		Assert.assertEquals("Ongoing", r.getFutureText());
 	}
-	
+
 	@Test
 	public void testSubscribedVideo() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(true);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing",r.getFutureText());
+		Assert.assertEquals("Ongoing", r.getFutureText());
 	}
-	
+
 	@Test
 	public void testSubscribedAudioOnly() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(false);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing",r.getFutureText());
-	}	
+		Assert.assertEquals("Ongoing", r.getFutureText());
+	}
 
 	@Test
 	public void testSubscribedUpgrading() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(false);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
 		s.setUpgradingToVideo(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
 		Assert.assertEquals("Due get access to Video on 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Upgrading",r.getFutureText());
-	}	
-	
+		Assert.assertEquals("Upgrading", r.getFutureText());
+	}
+
 	@Test
 	public void testSubscribedDowngrading() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(true);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
 		s.setDowngradingToAudioOnly(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
 		Assert.assertEquals("Video access will expire on 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Downgrading",r.getFutureText());
-	}	
+		Assert.assertEquals("Downgrading", r.getFutureText());
+	}
 
-	
 	@Test
 	public void testSubscribedExpiring() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setEligibleForVideo(false);
 		s.setExpiringSubscription(true);
 		s.setNextBillingDate(NEXT_DATE);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring",r.getFutureText());
+		Assert.assertEquals("Expiring", r.getFutureText());
 	}
-	
+
 	@Test
 	public void testSubscribedVideoExpiring() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(true);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
 		s.setExpiringSubscription(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring",r.getFutureText());
+		Assert.assertEquals("Expiring", r.getFutureText());
 	}
-	
+
 	@Test
 	public void testSubscribedAudioOnlyExpiring() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setPaySubscription(true);
 		s.setSubscribedToVideo(false);
 		s.setEligibleForVideo(true);
 		s.setNextBillingDate(NEXT_DATE);
 		s.setExpiringSubscription(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring",r.getFutureText());
-	}	
+		Assert.assertEquals("Expiring", r.getFutureText());
+	}
 
 	@Test
 	public void testPreviewMode() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setEligibleForVideo(false);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Preview mode", r.getStatusText());
 		Assert.assertEquals("Consider subscribing to gain full access!", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
-	}	
-	
+	}
+
 	@Test
 	public void testPreviewModeEligibleVideo() {
-		
+
 		SubscriptionState s = new SubscriptionState();
 		s.setEligibleForVideo(true);
-		
-		SubscriptionTexts r=generator.generate(s);
+
+		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Preview mode", r.getStatusText());
 		Assert.assertEquals("Consider subscribing to gain full access!", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
-	}	
+	}
 }

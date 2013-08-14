@@ -391,6 +391,10 @@ public class User implements Serializable {
 		return isO2User() && CONSUMER.equals(segment);
 	}
 
+	public boolean isO2Business(){
+		return isO2User() && !isO2Consumer();
+	}
+	
 	public void addPaymentDetails(PaymentDetails paymentDetails) {
 		if (null != paymentDetails) {
 			this.paymentDetailsList.add(paymentDetails);

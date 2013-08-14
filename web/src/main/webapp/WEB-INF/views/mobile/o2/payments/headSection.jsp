@@ -4,3 +4,4 @@
 <title><s:message code="page.pays.title" /></title>
 <meta name="description" content="" />
 <meta name="keywords" content="" />
+<meta name = "format-detection" content = "telephone=no">

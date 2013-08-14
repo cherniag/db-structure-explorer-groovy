@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
 import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
@@ -68,23 +67,16 @@ public class PaymentsController extends CommonController {
         List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator());
         mav.addObject("paymentPolicies", paymentPolicies);
 
-        //TODO cleanup flags
-        mav.addObject("nonIOSDevice", !user.isIOSDevice())
-        .addObject("isIOSDevice", user.isIOSDevice())
-        .addObject("trialExpiredOrLimited", user.isTrialExpired() || user.isLimited())
-        .addObject("isO2User", user.isO2User())
-        .addObject("isO2Consumer", user.isO2Consumer());
+        mav.addObject("isO2Consumer", user.isO2Consumer());
         PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
         mav.addObject("paymentDetails", paymentDetails);
-//        String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         PaymentPolicy activePolicy = paymentDetails != null ? paymentDetails.getPaymentPolicy() : null;
         mav.addObject("activePolicy", activePolicy);
-//        mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
-//        mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
+        //TODO: move logic to controller <c:if test="${paymentDetails != null && activePolicy != null && paymentDetails.activated && activePolicy.subcost == paymentPolicy.subcost && activePolicy.subweeks == paymentPolicy.subweeks}">
+        
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
         mav.addObject("mobilePhoneNumber", user.getMobile());
-        mav.addObject("isNonO2OnIOS", user.isIOSDevice()&&user.isnonO2User());
         
         boolean userIsOptedInToVideo = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
         
@@ -95,6 +87,7 @@ public class PaymentsController extends CommonController {
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
         
         PaymentPageData paymentPageData = new PaymentPageData(subscriptionState, subscriptionTexts);
+        paymentPageData.setAppleIOSNonO2Business(user.isIOSDevice() && !(user.isO2Business()));
         mav.addObject("paymentPageData", paymentPageData);
 
         String paymentType = null;
@@ -106,12 +99,6 @@ public class PaymentsController extends CommonController {
         	}
         }
         mav.addObject("paymentDetailsType", paymentType);
-        
-        boolean isBussinesUser =  SegmentType.BUSINESS == user.getSegment();
-        
-        mav.addObject("isBussinesOrNonO2User", isBussinesUser || user.isnonO2User());
-        mav.addObject("isBussinesUser", isBussinesUser);
-        mav.addObject("isPayMonthlyUser", Contract.PAYM == user.getContract());
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -119,7 +106,7 @@ public class PaymentsController extends CommonController {
         return mav;
     }
 
-    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
+    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
         List<PaymentPolicyDto> paymentPolicy;
         
         if(user.isnonO2User()) {

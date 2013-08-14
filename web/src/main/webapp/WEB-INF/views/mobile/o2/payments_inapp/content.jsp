@@ -22,13 +22,13 @@
 				<jsp:param name="callingPage" value="payments_inapp" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${isNonO2OnIOS eq true}">
+		<c:when test="${paymentPageData.appleIOSNonO2Business}">
 			<jsp:include page="../payments_common/content_header_itunes.jsp">
 				<jsp:param name="callingPage" value="payments_inapp" />
 			</jsp:include>
 		</c:when>
 		<c:otherwise>
-			<%--isBussinesOrNonO2User --%>
+			<%-- CreditCard/Paypal  --%>
 			<jsp:include page="../payments_common/content_header_o2business.jsp">
 				<jsp:param name="callingPage" value="payments_inapp" />
 			</jsp:include>
@@ -42,11 +42,11 @@
 					<jsp:param name="callingPage" value="payments_inapp" />
 				</jsp:include>
 			</c:when>
-			<c:when test="${isNonO2OnIOS eq true}">
+			<c:when test="${paymentPageData.appleIOSNonO2Business}">
 				<%--we are not including the iTunes payment option because this is an external page and the link will not be intercepted (as it's happening in the page loaded by O2 Tracks app...) --%>
 			</c:when>
 			<c:otherwise>
-				<%--isBussinesOrNonO2User --%>
+				<%-- CreditCard/Paypal  --%>
 				<jsp:include page="../payments_common/content_paymentoptions_business.jsp">
 					<jsp:param name="callingPage" value="payments_inapp" />
 				</jsp:include>
