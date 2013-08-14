@@ -133,6 +133,12 @@ public class PaymentsController extends CommonController {
     		return ret;
     	}
     	
+    	if(user.isO2Business()){     		
+    		//no filtering required
+    		ret.addAll(paymentPolicyList);
+    		return ret;
+    	}
+    	
     	for ( PaymentPolicyDto pp : paymentPolicyList ) {
     		if ( user.is3G() && pp.isThreeG() ) {
     			ret.add( pp );
