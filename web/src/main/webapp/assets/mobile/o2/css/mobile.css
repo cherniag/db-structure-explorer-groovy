@@ -920,6 +920,12 @@ form .formButton  {
     position: relative;
 }
 
+.button-right-abs  {
+    right: 0;
+    margin: 10px 10px 13px 0;
+    position: absolute;
+}
+
 .button-swap{
     padding: 0 10px 0 10px;
     height: 27px;
@@ -1114,6 +1120,7 @@ form .formButton  {
         color-stop(0, rgb(200,200,201)),
         color-stop(0.8, rgb(232,233,233))
     );
+    -webkit-box-sizing: border-box;
     border: 1px solid #bfbfc0;
 }
 
