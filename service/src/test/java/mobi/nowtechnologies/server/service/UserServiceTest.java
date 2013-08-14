@@ -3085,6 +3085,27 @@ public class UserServiceTest {
         assertEquals(false, canActivateVideoTrial);
     }
 
+    @Test
+    public void testUnsubscribeAndSkipFreeTrial_4GVideoAudioFreeTrialTo3G_Success() throws Exception {
+
+        currentTimeMillis = 0L;
+        currentUserTariff = _4G;
+        newUserTariff = _3G;
+
+        create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial();
+
+        mockDowngradeUserTariffMethodsCalls();
+
+        actualUser = userServiceSpy.unsubscribeAndSkipFreeTrial(user, USER_DOWNGRADED_TARIFF);
+
+        assertNotNull(actualUser);
+        assertEquals(currentTimeMillis, new Long(actualUser.getNextSubPayment()*1000L));
+        assertEquals(currentTimeMillis, actualUser.getFreeTrialExpiredMillis());
+
+        verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+    }
+
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = _4G;
         mediaType = VIDEO_AND_AUDIO;

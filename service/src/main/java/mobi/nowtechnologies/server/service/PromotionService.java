@@ -83,13 +83,7 @@ public class PromotionService {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
 	}
-	
-	/***
-	 * Method returns the first promotion linked with user
-	 * @param communityName
-	 * @param user
-	 * @return the first available promotion, other wise it returns null
-	 */
+
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Promotion getPromotionForUser(final String communityName, User user) {
 		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
@@ -171,7 +165,9 @@ public class PromotionService {
     public User activateVideoAudioFreeTrial(User user){
         boolean isPromotionApplied = false;
         if (userService.canActivateVideoTrial(user)) {
+
             if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+            else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
             else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
 
             isPromotionApplied = applyPromotionForO24GConsumer(user);
