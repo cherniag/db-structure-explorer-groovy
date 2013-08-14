@@ -126,45 +126,64 @@ public class SubscriptionStateFactoryTest {
 		Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
 	}
 
-	//Auto opt-in is not implemented yet
-	// @Test
-	// public void testFreeTrialOptedIn() {
-	//
-	// User user = new User();
-	//
-	// user.setLastPromo(getPromo(MediaType.VIDEO_AND_AUDIO));
-	// Date futureDate = getFutureDate();
-	// user.setFreeTrialExpired(futureDate);
-	// setUserEligibleVideo(user, true);
-	// user.setVideoFreeTrialHasBeenActivated(true);
-	// user.setStatus(getUserStatus(UserStatus.SUBSCRIBED));
-	// SubscriptionState state = factory.getInstance(user);
-	//
-	// Assert.assertFalse(state.isPaySubscription());
-	// Assert.assertTrue(state.isFreeTrial());
-	// Assert.assertTrue(state.isUnlimitedFreeTrialFor4G());
-	// Assert.assertFalse(state.isFreeTrialAudioOnly());
-	// Assert.assertFalse(state.isFreeTrialOptedIn());
-	// Assert.assertTrue(state.isEligibleForVideo());
-	// Assert.assertFalse(state.isSubscribedToVideo());
-	// Assert.assertFalse(state.isUpgradingToVideo());
-	// Assert.assertFalse(state.isDowngradingToAudioOnly());
-	// Assert.assertFalse(state.isExpiringSubscription());
-	// Assert.assertEquals(futureDate, state.getNextBillingDate());
-	// Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
-	// }
+	@Test
+	public void testFreeTrialOptedIn() {
+		User user = new User();
 
-	// @Test public void testFreeTrialOptedInEligibleForVideo() {
-	//
-	// SubscriptionState s = new SubscriptionState(); s.setFreeTrial(true);
-	// s.setFreeTrialOptedIn(true); s.setEligibleForVideo(true);
-	// s.setUnlimitedFreeTrialFor4G(true); s.setDaysToNextBillingDate(DAYS);
-	//
-	// SubscriptionTexts r=generator.generate(s);
-	// Assert.assertEquals("4G Free Trial", r.getStatusText());
-	// Assert.assertEquals("You will be notified towards the end of your trial",
-	// r.getNextBillingText());
-	// Assert.assertEquals("Subscribed",r.getFutureText()); }
+		user.setLastPromo(getPromo(MediaType.AUDIO));
+		Date futureDate = getFutureDate();
+		user.setFreeTrialExpired(futureDate);
+		setNextSubpayment(user, futureDate);
+		setUserEligibleVideo(user, false);
+		user.setVideoFreeTrialHasBeenActivated(true);
+		user.setStatus(getUserStatus(UserStatus.SUBSCRIBED));
+		user.setCurrentPaymentDetails(createPaymentDetails(MediaType.AUDIO));
+
+		SubscriptionState state = factory.getInstance(user);
+
+		Assert.assertFalse(state.isPaySubscription());
+		Assert.assertTrue(state.isFreeTrial());
+		Assert.assertFalse(state.isUnlimitedFreeTrialFor4G());
+		Assert.assertTrue(state.isFreeTrialAudioOnly());
+		Assert.assertTrue(state.isFreeTrialOptedIn());
+		Assert.assertFalse(state.isEligibleForVideo());
+		Assert.assertFalse(state.isSubscribedToVideo());
+		Assert.assertFalse(state.isUpgradingToVideo());
+		Assert.assertFalse(state.isDowngradingToAudioOnly());
+		Assert.assertFalse(state.isExpiringSubscription());
+		Assert.assertEquals(futureDate, state.getNextBillingDate());
+		Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
+	}
+
+	@Test
+	public void testFreeTrialOptedInEligibleForVideo() {
+		User user = new User();
+
+		user.setLastPromo(getPromo(MediaType.VIDEO_AND_AUDIO));
+		Date futureDate = getFutureDate();
+		user.setFreeTrialExpired(futureDate);
+		setNextSubpayment(user, futureDate);
+		setUserEligibleVideo(user, true);
+		user.setVideoFreeTrialHasBeenActivated(true);
+		user.setStatus(getUserStatus(UserStatus.SUBSCRIBED));
+		user.setCurrentPaymentDetails(createPaymentDetails(MediaType.VIDEO_AND_AUDIO));
+
+		SubscriptionState state = factory.getInstance(user);
+
+		Assert.assertFalse(state.isPaySubscription());
+		Assert.assertTrue(state.isFreeTrial());
+		Assert.assertTrue(state.isUnlimitedFreeTrialFor4G());
+		Assert.assertFalse(state.isFreeTrialAudioOnly());
+		Assert.assertTrue(state.isFreeTrialOptedIn());
+		Assert.assertTrue(state.isEligibleForVideo());
+		Assert.assertFalse(state.isSubscribedToVideo());
+		Assert.assertFalse(state.isUpgradingToVideo());
+		Assert.assertFalse(state.isDowngradingToAudioOnly());
+		Assert.assertFalse(state.isExpiringSubscription());
+		Assert.assertEquals(futureDate, state.getNextBillingDate());
+		Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
+
+	}
 
 	@Test
 	public void testSubscribed() {
@@ -373,8 +392,6 @@ public class SubscriptionStateFactoryTest {
 		Assert.assertEquals(DAYS, state.getDaysToNextBillingDate().intValue());
 	}
 
-	
-	
 	@Test
 	public void testSubscribedVideoExpiring() {
 		User user = new User();

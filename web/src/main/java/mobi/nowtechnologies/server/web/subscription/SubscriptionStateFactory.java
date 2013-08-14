@@ -29,7 +29,7 @@ public class SubscriptionStateFactory {
 		boolean paySubscription = (user.isSubscribedStatus() && user.isNextSubPaymentInTheFuture() 
 				&& (user.getCurrentPaymentDetails() != null));
 
-		if (paySubscription  && !(user.isExpiring() && user.isOnFreeTrial())) {
+		if (paySubscription  && !(user.isOnFreeTrial()) ) {
 			state.setPaySubscription(true);
 		} else {
 			state.setFreeTrial(true);
@@ -39,13 +39,14 @@ public class SubscriptionStateFactory {
 						user.getNextSubPayment(), user.getFreeTrialExpiredMillis());
 			}
 		}
-
+		
 		if (state.isFreeTrial()) {
 			if (state.isEligibleForVideo()) {
 				state.setUnlimitedFreeTrialFor4G(true);
 			}
 			state.setFreeTrialAudioOnly(!user.isOnVideoAudioFreeTrial());
-			state.setFreeTrialOptedIn(false);//we are not auto-subscribing user at the moment
+			
+			state.setFreeTrialOptedIn(paySubscription && !user.isExpiring());
 		}
 
 		if (state.isPaySubscription()) {
