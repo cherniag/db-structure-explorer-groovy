@@ -9,13 +9,9 @@ import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: sanya
- * Date: 7/15/13
- * Time: 3:59 PM
- * To change this template use File | Settings | File Templates.
- */
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
+
 public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
 
     public IngestWizardDataDtoMapper(IngestWizardData data) {
@@ -23,40 +19,40 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
         this.setSuid(data.getSuid());
         this.setStatus(data.getStatus());
 
-        List<DropsData.Drop> drops = data.getDropdata() != null ? data.getDropdata().getDrops() : null;
-        if(drops != null){
-            for (DropsData.Drop drop : drops) {
-                DropDto dropDto = new DropDto();
-                dropDto.setDate(drop.getDrop().getDate());
-                dropDto.setName(drop.getDrop().getName());
-                dropDto.setIngestor(drop.getIngestor().name());
-                dropDto.setSelected(drop.getSelected());
+        DropsData dropdata = data.getDropdata();
+        if(isNotNull(dropdata) &&  isNotNull(dropdata.getDrops()))
+            for (DropsData.Drop drop : dropdata.getDrops())
+                this.drops.add(toDrops(drop));
 
-                List<IngestData.Track> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getData() : null;
-                if(tracks != null){
-                    List<DropTrackDto> dropTracks = new ArrayList<DropTrackDto>();
+    }
 
-                    for(IngestData.Track track : tracks){
-                        DropTrackDto dropTrackDto = new DropTrackDto();
+    private DropDto toDrops(DropsData.Drop drop) {
+        DropDto result = new DropDto();
+        result.setDate(drop.getDrop().getDate());
+        result.setName(drop.getDrop().getName());
+        result.setIngestor(drop.getIngestor().name());
+        result.setSelected(drop.getSelected());
 
-                        dropTrackDto.setArtist(track.getArtist());
-                        dropTrackDto.setExists(track.getExists());
-                        dropTrackDto.setIsrc(track.getISRC());
-                        dropTrackDto.setProductCode(track.getProductCode());
-                        dropTrackDto.setIngest(track.getIngest());
-                        dropTrackDto.setTitle(track.getTitle());
-                        dropTrackDto.setType(DropTrackType.valueOf(track.getType().name()));
+        List<IngestData.Track> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getData() : null;
+        if(tracks != null){
+            List<DropTrackDto> dropTracks = new ArrayList<DropTrackDto>();
 
-                        dropTracks.add(dropTrackDto);
-                    }
+            for(IngestData.Track track : tracks){
+                DropTrackDto dropTrackDto = new DropTrackDto();
 
-                    dropDto.setTracks(dropTracks);
-                }
+                dropTrackDto.setArtist(track.getArtist());
+                dropTrackDto.setExists(track.getExists());
+                dropTrackDto.setIsrc(track.getISRC());
+                dropTrackDto.setProductCode(track.getProductCode());
+                dropTrackDto.setIngest(track.getIngest());
+                dropTrackDto.setTitle(track.getTitle());
+                dropTrackDto.setType(DropTrackType.valueOf(track.getType().name()));
 
-
-                this.drops.add(dropDto);
+                dropTracks.add(dropTrackDto);
             }
+            result.setTracks(dropTracks);
         }
+        return result;
     }
 
     public static IngestWizardData map(IngestWizardDataDto dto){

@@ -48,14 +48,14 @@ public class IngestServiceImpl implements IngestService{
 	public IngestWizardData getDrops(String parserName) throws Exception {
 
 		LOG.debug("formBackingObject " + parserName);
-		IngestWizardData wizardData = updateIngestData(null, false);
+		IngestWizardData result = updateIngestData(null, false);
 
 		if (parserName != null) {
 
 			IParserFactory.Ingestors ingestor = IParserFactory.Ingestors.valueOf(parserName);
 			IParser parser = parserFactory.getParser(ingestor);
 			DropsData drops = new DropsData();
-			wizardData.setDropdata(drops);
+			result.setDropdata(drops);
 			drops.setDrops(new ArrayList<DropsData.Drop>());
 
 			List<DropData> parserDrops = parser.getDrops(false);
@@ -72,7 +72,7 @@ public class IngestServiceImpl implements IngestService{
 		} else {
 			DropsData drops = new DropsData();
 			drops.setDrops(new ArrayList<DropsData.Drop>());
-			wizardData.setDropdata(drops);
+			result.setDropdata(drops);
 			for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
 				LOG.info("Getting drops for " + ingestor);
 				IParser parser = parserFactory.getParser(ingestor);
@@ -91,7 +91,7 @@ public class IngestServiceImpl implements IngestService{
 
 			}
 		}
-		return wizardData;
+		return result;
 	}
 
     @Override

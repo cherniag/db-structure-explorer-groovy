@@ -34,18 +34,6 @@ public class UniversalParser extends IParser {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setEntityResolver(new DtdLoader());
 
-		/*
-		 * SAXBuilder builder = new SAXBuilder(false);
-		 * builder.setValidation(false);
-		 * builder.setFeature("http://xml.org/sax/features/validation", false);
-		 * builder.setFeature(
-		 * "http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-		 * false);builder.setFeature(
-		 * "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-		 * false); builder.setProperty(
-		 * "http://apache.org/xml/properties/schema/external-schemaLocation",
-		 * "http://www.digiplug.com/dsc/umgistd-1_4 umgistd-1_4");
-		 */
 		LOG.info("Scaning " + root + "/" + code + "_" + drop + " ");
 		File productDir = new File(root + "/" + code + "_" + drop);
 		File[] files = productDir.listFiles();
