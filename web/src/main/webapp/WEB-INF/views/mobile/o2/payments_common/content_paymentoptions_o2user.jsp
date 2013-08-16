@@ -13,17 +13,21 @@
     </c:if>
     
 	<c:choose>
-		<c:when test="${paymentPolicy.subweeks == 3}">
-	        <c:set var="paymentPolicyOptionNo" value="4" />
-	    </c:when>
 	    <c:when test="${paymentPolicy.subweeks == 1}">
 	        <c:set var="paymentPolicyOptionNo" value="3" />
+	        <c:set var="imageWeeks" value="3" />
 	    </c:when>
 	    <c:when test="${paymentPolicy.subweeks == 2}">
 	        <c:set var="paymentPolicyOptionNo" value="2" />
+	        <c:set var="imageWeeks" value="2" />
+	    </c:when>
+	    <c:when test="${paymentPolicy.subweeks == 3}">
+	        <c:set var="paymentPolicyOptionNo" value="4" />
+	        <c:set var="imageWeeks" value="1" />
 	    </c:when>
 	    <c:when test="${paymentPolicy.subweeks == 5}">
 	        <c:set var="paymentPolicyOptionNo" value="1" />
+	        <c:set var="imageWeeks" value="1" />
 	    </c:when>
 	    <c:otherwise>
 	        <c:set var="paymentPolicyOptionNo" value="0" />
@@ -31,11 +35,7 @@
 	</c:choose>
 	
 	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" id="paymentOption${paymentPolicy.id}">
-		<c:set var="imageWeeks" value="${paymentPolicy.subweeks}" />
-	   	<c:if test="${paymentPolicy.subweeks == 3}">
-	   		<c:set var="imageWeeks" value="5" />
-	   	</c:if>
-	   	
+		
 	   	<c:set var="disabledAttrib" />
 	   	<c:set var="buttonStyle" value="button-off" />
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
