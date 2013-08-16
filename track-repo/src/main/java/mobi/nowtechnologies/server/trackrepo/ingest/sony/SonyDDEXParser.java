@@ -21,16 +21,16 @@ public class SonyDDEXParser extends DDEXParser {
 
 	public SonyDDEXParser(String root) throws FileNotFoundException {
         super(root);
-		LOG.info("EMI parser loadin from " + root);
+		LOG.info("EMI parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
 
-		Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+		Map<String, DropTrack> tracks = Collections.<String, DropTrack>emptyMap();
 		try {
 			File xmlFile = new File(root + "/manifests/"+drop.name);
 			SAXBuilder builder = new SAXBuilder();
-			Document document = (Document) builder.build(xmlFile);
+			Document document = builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
 			List messages = rootNode.getChildren("MessageInBatch");
 			for (int i = 0; i < messages.size(); i++) {
@@ -45,9 +45,6 @@ public class SonyDDEXParser extends DDEXParser {
 					tracks.putAll(result);
 				}
 			}
-
-			
-
 		} catch (Exception e) {
 			LOG.error("Ingest failed " + e.getMessage());
 		}

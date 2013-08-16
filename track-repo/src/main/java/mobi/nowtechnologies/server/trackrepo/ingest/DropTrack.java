@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class DropTrack {
 	public List<DropAssetFile> files = new ArrayList<DropAssetFile>();
 	public List<DropTerritory> territories = new ArrayList<DropTerritory>();
 	public String productId;
+
 	public String getXml() {
 		return xml;
 	}
@@ -153,4 +156,27 @@ public class DropTrack {
 		this.exists = exists;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("xml", xml)
+                .append("type", type)
+                .append("productCode", productCode)
+                .append("title", title)
+                .append("subTitle", subTitle)
+                .append("artist", artist)
+                .append("genre", genre)
+                .append("copyright", copyright)
+                .append("label", label)
+                .append("isrc", isrc)
+                .append("year", year)
+                .append("physicalProductId", physicalProductId)
+                .append("album", album)
+                .append("info", info)
+                .append("licensed", licensed)
+                .append("exists", exists)
+                .append("explicit", explicit)
+                .append("productId", productId)
+                .toString();
+    }
 }
