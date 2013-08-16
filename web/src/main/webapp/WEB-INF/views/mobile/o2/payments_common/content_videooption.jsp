@@ -26,17 +26,23 @@
 					<s:message code='pays.page.note.account.videoinfo' />
 				</div>
 					
-				<c:set var="buttonClass" value="button-off" />
+				<c:set var="buttonClassOnStyle" value="display: none" />
+				<c:set var="buttonClassOffStyle" value="display: block" />
 				<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
-					<c:set var="buttonClass" value="button-on" />
+					<%-- <c:set var="buttonClass" value="button-on" /> --%>
 					<%-- Activate the video checkbox if the user has a video subscription --%>
+					<c:set var="buttonClassOnStyle" value="display: block" />
+					<c:set var="buttonClassOffStyle" value="display: none" />
 				</c:if>
 				<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
-					<c:set var="buttonClass" value="button-on" />
+					<%-- <c:set var="buttonClass" value="button-on" /> --%>
 					<%--Activate the video checkbox if the user has no subscription --%>
+					<c:set var="buttonClassOnStyle" value="display: block" />
+					<c:set var="buttonClassOffStyle" value="display: none" />
 				</c:if>
 				
-				<span class="${buttonClass}" id="videoCheckbox" style="top:35px;"></span>
+				<span class="button-on" id="videoCheckboxOn" style="top:35px; ${buttonClassOnStyle}"></span>
+				<span class="button-off" id="videoCheckboxOff" style="top:35px; ${buttonClassOffStyle}"></span>
 			</a>
 		</div>
 	</c:when>
