@@ -2216,10 +2216,6 @@ public class IntegrationTestIT {
 			Diff diff = new Diff(expected, contentAsString);
 			diff.overrideElementQualifier(new MessageElementQualifier());
 			
-			//DetailedDiff detailedDiff = new DetailedDiff(diff);
-
-			//List<Difference> allDifferences = detailedDiff.getAllDifferences();
-			
 			XMLAssert.assertXMLEqual(diff, true);
 			
 			requestURI = "/"+communityUrl+"/3.5/GET_NEWS";
@@ -2295,9 +2291,6 @@ public class IntegrationTestIT {
 				}
 			}
 
-			// PowerMockito.mockStatic(Utils.class);
-			// PowerMockito.when(Utils.getRandomString(Mockito.anyInt())).thenReturn("value");
-
 			MockFacebookService mockFacebookService = new MockFacebookService();
 			entityController.setFacebookService(mockFacebookService);
 
@@ -2340,7 +2333,6 @@ public class IntegrationTestIT {
 		String deviceString = "Device 1";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-		String phoneNumber = "00447580381128";
 		int operator = 1;
 
 		String storedToken = Utils.createStoredToken(userName, password);
@@ -2356,9 +2348,6 @@ public class IntegrationTestIT {
 		userRegInfo.setDisplayName("Nigel");
 		userRegInfo.setPhoneNumber("07580381128");
 		userRegInfo.setOperator(1);
-
-		// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken,
-		// appVersion);
 
 		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 				+ "<userRegInfo>"
@@ -2487,8 +2476,6 @@ public class IntegrationTestIT {
 			userRegInfo.setDisplayName("Nigel");
 			userRegInfo.setPhoneNumber("07580381128");
 			userRegInfo.setOperator(1);
-
-			int timeBeforeRegistrationSeconds = Utils.getEpochSeconds();
 
 			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 					+ "<userRegInfo>"
@@ -2873,9 +2860,7 @@ public class IntegrationTestIT {
 		String apiVersion = "V3.6";
 		String communityName = "o2";
 		String appVersion = "CNBETA";
-		String phone = "07870111111";
 		String timestamp = "2011_12_26_07_04_23";
-		String deviceType = UserRegInfo.DeviceType.ANDROID;
 		String base64EncodedAppStoreReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQXNyQUNod2dETm1IYmIvSHU2UU5JbHZEUTY4TEE3dWIvQWlkY3huS2JSeTl1NTYyWWM4VHNtUGROQzcwcmo5KzBxOVE1UlBKYTdMK3lYb2ltU05TS0pCVDd2OVozVjgra2dVNkNwQmFPb1dyOW50TDhOdWZwdmxicUh5dUdjMm1vS1pOYXFsM2JFLzlRVWpkK1FKR2tPMVNmNVVWRDRpeDQ0MGlmMlMzd0p2K0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE1T2pVeU9qQTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9URTFNamd3TXpraU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJelpHTTFOakUwTldaa1pqWmpOREU0WXpRNFlqSm1ZelZrTVRNd09HSTBOR1ZoTlRkaVltUmlJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzFOVGsxT0NJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpreE56QTRNRE01SWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMxTlRrMU9DSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk1TVRVeU9ETTVOaUk3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpOVEl3TlNJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFOVG93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0pwZEdWdExXbGtJaUE5SUNJMk1ESTNNalU0TWpnaU93b0pJbVY0Y0dseVpYTXRaR0YwWlMxbWIzSnRZWFIwWldRaUlEMGdJakl3TVRNdE1ESXRNVElnTVRjNk5UVTZNRGdnUlhSakwwZE5WQ0k3Q2draWNISnZaSFZqZEMxcFpDSWdQU0FpWTI5dExtMTFjMmxqY1hWaVpXUXViekl1WVhWMGIzSmxibVYzTG5SbGMzUWlPd29KSW5CMWNtTm9ZWE5sTFdSaGRHVWlJRDBnSWpJd01UTXRNREl0TVRJZ01UYzZOVEk2TURnZ1JYUmpMMGROVkNJN0Nna2liM0pwWjJsdVlXd3RjSFZ5WTJoaGMyVXRaR0YwWlNJZ1BTQWlNakF4TXkwd01pMHhNaUF4TnpvMU1qb3dPQ0JGZEdNdlIwMVVJanNLQ1NKaWFXUWlJRDBnSW1OdmJTNXRkWE5wWTNGMVltVmtMbTh5SWpzS0NTSndkWEpqYUdGelpTMWtZWFJsTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFNam93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0p4ZFdGdWRHbDBlU0lnUFNBaU1TSTdDbjA9IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
 		final String transactionReceipt = base64EncodedAppStoreReceipt.replaceAll("=", "\\\\u003d");
 		final String originalTransactionId = "1000000064861007";
