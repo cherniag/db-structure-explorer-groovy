@@ -16,9 +16,9 @@ $(document).ready( function(){
 var CheckboxElement = (function(){
 	
 	var checkboxSelected = false;
-	var checkboxId = "videoCheckbox";
 	var initialized = false;
-	var checkboxElem = null;
+	var checkboxElemOn = null;
+	var checkBoxElemOff = null;
 	
 	updateOptions = function(){
 		if ( !initialized ) return;
@@ -41,12 +41,13 @@ var CheckboxElement = (function(){
 	}
 	
 	init = function() {
-		checkboxElem = $("#" + checkboxId);
-		if ( checkboxElem.length === 0 ) {
+		checkboxElemOn = $("#videoCheckboxOn");;
+		checkBoxElemOff = $("#videoCheckboxOff");;
+		if ( checkboxElemOn.length === 0 || checkBoxElemOff.length === 0 ) {
 			return;
 		}
 		
-		checkboxSelected = checkboxElem.hasClass("button-on");
+		checkboxSelected = checkboxElemOn.is(":visible");
 		
 		initialized = true;
 		
@@ -59,11 +60,15 @@ var CheckboxElement = (function(){
 		checkboxSelected = !checkboxSelected;
 		
 		if ( checkboxSelected === true ) {
-			checkboxElem.removeClass("button-off");
-			checkboxElem.addClass("button-on");
+			checkBoxElemOff.hide();
+			checkboxElemOn.show();
+			/* checkboxElem.removeClass("button-off");
+			checkboxElem.addClass("button-on"); */
 		} else {
-			checkboxElem.removeClass("button-on");
-			checkboxElem.addClass("button-off");
+			/* checkboxElem.removeClass("button-on");
+			checkboxElem.addClass("button-off"); */
+			checkBoxElemOff.show();
+			checkboxElemOn.hide();
 		}
 		
 		updateOptions();
