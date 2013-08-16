@@ -315,7 +315,7 @@ public abstract class DDEXParser extends IParser {
         List<Element> mediaFiles;
         mediaFiles = rootNode.getChild("ResourceList").getChildren("Image");
         for (int i = 0; i < mediaFiles.size(); i++) {
-            Element node = (Element) mediaFiles.get(i);
+            Element node = mediaFiles.get(i);
             Element details = node.getChild("ImageDetailsByTerritory");
             Element techDetail = details.getChild("TechnicalImageDetails");
             if (techDetail != null) {

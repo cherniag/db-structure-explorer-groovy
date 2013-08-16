@@ -32,14 +32,14 @@ public class SonyDDEXParserTest {
 
     private File xmlFile;
     private SonyDDEXParser sonyDdexParserFixture;
-    private Map<String,DropTrack> resultDropTrackMap;
+    private Map<String, DropTrack> resultDropTrackMap;
     private XpathEngine xpathEngine;
     private Document document;
     private String expectedAlbum;
     private Type expectedDropTrackType;
     private String expectedProductCode;
     private NodeList expectedReleaseIdNodeList;
-    private Map<String,List<DropAssetFile>> dropAssetsByResourceReferenceMap;
+    private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
 
     @Before
     public void setUp() throws FileNotFoundException {
@@ -54,7 +54,7 @@ public class SonyDDEXParserTest {
     }
 
     @Test
-    public void shouldParseFormat3_4_1()throws Exception {
+    public void shouldParseFormat3_4_1() throws Exception {
         //given
         xmlFile = new ClassPathResource("media/sony_cdu/ern.v3.4.1/A10301A00002442286.xml").getFile();
 
@@ -71,7 +71,6 @@ public class SonyDDEXParserTest {
         assertEquals(getTrackReleaseCount(), resultDropTrackMap.entrySet().size());
 
         expectedReleaseIdNodeList = getReleaseIdNodeList();
-        //NodeList soundRecordingNodeList = getSoundRecordingNodeList();
         NodeList fileNodeList = getFileNodeList();
 
         dropAssetsByResourceReferenceMap = getDropAssetsByResourceReferenceMap(fileNodeList);
@@ -85,45 +84,54 @@ public class SonyDDEXParserTest {
         }
     }
 
-    private Map<String,List<DropAssetFile>> getDropAssetsByResourceReferenceMap(NodeList fileNodeList) {
+    private Map<String, List<DropAssetFile>> getDropAssetsByResourceReferenceMap(NodeList fileNodeList) throws XpathException {
+
+        DropAssetFile imageDropAssetFile = getImageDropAssetFile();
+
         dropAssetsByResourceReferenceMap = new HashMap<String, List<DropAssetFile>>();
         String xmlFileParentPath = xmlFile.getParent();
         for (int i = 0; i < fileNodeList.getLength(); i++) {
             Node fileNode = fileNodeList.item(i);
-            Node soundRecordingNode = getsSundRecordingNode(fileNode);
+            Node soundRecordingNode = getsSoundRecordingNode(fileNode);
             Element soundRecordingChildNodesElement = getChildNodesElement(soundRecordingNode);
             String resourceReference = getResourceReference(soundRecordingChildNodesElement);
 
             Element fileChildNodesElement = getChildNodesElement(fileNode);
             DropAssetFile dropAssetFile = new DropAssetFile();
             dropAssetFile.file = xmlFileParentPath + getFileName(fileChildNodesElement);
-            //dropAssetFile.isrc =
 
-            putInToDropAssetsByResourceReferenceMap(resourceReference, dropAssetFile);
+            putInToDropAssetsByResourceReferenceMap(resourceReference, dropAssetFile, imageDropAssetFile);
         }
         return dropAssetsByResourceReferenceMap;
     }
 
-    private void putInToDropAssetsByResourceReferenceMap(String resourceReference, DropAssetFile dropAssetFile) {
+    private Node getImageFileNode(NodeList imageFileNodeList) {
+        return imageFileNodeList.item(0);
+    }
+
+    private NodeList getImageFileNodeList() throws XpathException {
+        return xpathEngine.getMatchingNodes("/ernm:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File", document);
+    }
+
+    private DropAssetFile getImageDropAssetFile() throws XpathException {
+        DropAssetFile dropAssetFile = null;
+        Node imageFileNode = getImageFileNode(getImageFileNodeList());
+        Element imageFileChildNodesElement = getChildNodesElement(imageFileNode);
+        if (imageFileChildNodesElement != null) {
+            dropAssetFile = new DropAssetFile();
+            dropAssetFile.file = "/resources/" + getFileName(imageFileChildNodesElement);
+        }
+        return dropAssetFile;
+    }
+
+    private void putInToDropAssetsByResourceReferenceMap(String resourceReference, DropAssetFile dropAssetFile, DropAssetFile imageDropAssetFile) {
         List<DropAssetFile> dropAssetFiles = dropAssetsByResourceReferenceMap.get(resourceReference);
         if (dropAssetFiles == null) {
             dropAssetFiles = new ArrayList<DropAssetFile>();
             dropAssetsByResourceReferenceMap.put(resourceReference, dropAssetFiles);
+            dropAssetFiles.add(imageDropAssetFile);
         }
-
         dropAssetFiles.add(dropAssetFile);
-    }
-
-    private Node getsSundRecordingNode(Node fileNode) {
-        return fileNode.getParentNode().getParentNode().getParentNode();
-    }
-
-    private String getResourceReference(Element soundRecordingChildNodesElement) {
-        return getElementValue(soundRecordingChildNodesElement, "ResourceReference");
-    }
-
-    private String getFileName(Element fileChildNodesElement) {
-        return getElementValue(fileChildNodesElement, "FileName");
     }
 
     private void validateResultDropTrack(int i) {
@@ -135,45 +143,57 @@ public class SonyDDEXParserTest {
         String expectedProprietaryId = getProprietaryId(releaseIdNChildElement);
         String expectedGRid = getGRid(releaseIdNChildElement);
 
-        DropTrack dropTrack = resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + sonyDdexParserFixture.getClass());
-        assertNotNull(dropTrack);
+        DropTrack resultDropTrack = getResultDropTrack(expectedIsrc, expectedProprietaryId);
+        assertNotNull(resultDropTrack);
 
         Element referenceTitleElement = getReferenceTitleElement(releaseElement);
         Element releaseDetailsByTerritoryElement = getReleaseDetailsByTerritoryElement(releaseElement);
         Element genreElement = getGenreElement(releaseDetailsByTerritoryElement);
-        Element pLineElement = getpLineElement(releaseElement);
+        Element pLineElement = getPLineElement(releaseElement);
 
-        assertEquals(expectedDropTrackType, dropTrack.type);
-        assertEquals(expectedProductCode, dropTrack.productCode);
-        assertEquals(getTitleText(referenceTitleElement), dropTrack.title);
-        assertEquals(getSubTitle(referenceTitleElement), dropTrack.subTitle);
-        assertEquals(getDisplayArtistName(releaseDetailsByTerritoryElement), dropTrack.artist);
-        assertEquals(getGenre(genreElement), dropTrack.genre);
-        assertEquals(getCopyright(pLineElement), dropTrack.copyright);
-        assertEquals(getLabel(releaseDetailsByTerritoryElement), dropTrack.label);
-        assertEquals(expectedIsrc, dropTrack.isrc);
-        assertEquals(getYear(pLineElement), dropTrack.year);
-        assertEquals(expectedGRid, dropTrack.physicalProductId);
-        assertEquals(expectedAlbum, dropTrack.album);
-        assertEquals(null, dropTrack.info);
-        assertEquals(true, dropTrack.licensed);
-        assertEquals(false, dropTrack.exists);
-        assertEquals(false, dropTrack.explicit);
-        assertEquals(expectedGRid, dropTrack.productId);
+        assertEquals(expectedDropTrackType, resultDropTrack.type);
+        assertEquals(expectedProductCode, resultDropTrack.productCode);
+        assertEquals(getTitleText(referenceTitleElement), resultDropTrack.title);
+        assertEquals(getSubTitle(referenceTitleElement), resultDropTrack.subTitle);
+        assertEquals(getDisplayArtistName(releaseDetailsByTerritoryElement), resultDropTrack.artist);
+        assertEquals(getGenre(genreElement), resultDropTrack.genre);
+        assertEquals(getCopyright(pLineElement), resultDropTrack.copyright);
+        assertEquals(getLabel(releaseDetailsByTerritoryElement), resultDropTrack.label);
+        assertEquals(expectedIsrc, resultDropTrack.isrc);
+        assertEquals(getYear(pLineElement), resultDropTrack.year);
+        assertEquals(expectedGRid, resultDropTrack.physicalProductId);
+        assertEquals(expectedAlbum, resultDropTrack.album);
+        assertEquals(null, resultDropTrack.info);
+        assertEquals(true, resultDropTrack.licensed);
+        assertEquals(false, resultDropTrack.exists);
+        assertEquals(false, resultDropTrack.explicit);
+        assertEquals(expectedGRid, resultDropTrack.productId);
 
         Element releaseResourceReferenceListElement = getReleaseResourceReferenceListElement(releaseElement);
-        //Element releaseResourceReferenceElement = getReleaseResourceReferenceElement(releaseResourceReferenceListElement);
 
-        assertNotNull(dropTrack.files);
+        assertNotNull(resultDropTrack.files);
 
         List<DropAssetFile> expectedDropAssetFiles = dropAssetsByResourceReferenceMap.get(getReleaseResourceReference(releaseResourceReferenceListElement));
-        //assertEquals(expectedDropAssetFiles.size(), dropTrack.files.size());
-//        assertEquals(expectedDropAssetFiles, dropTrack.files);
-//
-//        for(DropAssetFile dropAssetFile: dropTrack.files){
-//            assertEquals(expectedDropAssetFiles, dropAssetFile.file);
-//        }
-        assertNotNull(dropTrack.territories);
+        assertEquals(expectedDropAssetFiles.size(), resultDropTrack.files.size());
+        //assertEquals(expectedDropAssetFiles, resultDropTrack.files);
+
+        assertNotNull(resultDropTrack.territories);
+    }
+
+    private Node getsSoundRecordingNode(Node fileNode) {
+        return fileNode.getParentNode().getParentNode().getParentNode();
+    }
+
+    private String getResourceReference(Element soundRecordingChildNodesElement) {
+        return getElementValue(soundRecordingChildNodesElement, "ResourceReference");
+    }
+
+    private String getFileName(Element fileChildNodesElement) {
+        return getElementValue(fileChildNodesElement, "FileName");
+    }
+
+    private DropTrack getResultDropTrack(String expectedIsrc, String expectedProprietaryId) {
+        return resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + sonyDdexParserFixture.getClass());
     }
 
     private String getReleaseResourceReference(Element releaseResourceReferenceListElement) {
@@ -196,11 +216,7 @@ public class SonyDDEXParserTest {
         return (Element) releaseElement.getElementsByTagName("ReleaseResourceReferenceList").item(0);
     }
 
-    private Element getReleaseResourceReferenceElement(Element releaseResourceReferenceListElement) {
-        return (Element) releaseResourceReferenceListElement.getElementsByTagName("ReleaseResourceReference").item(0);
-    }
-
-    private Element getpLineElement(Element releaseElement) {
+    private Element getPLineElement(Element releaseElement) {
         return (Element) releaseElement.getElementsByTagName("PLine").item(0);
     }
 
@@ -262,10 +278,6 @@ public class SonyDDEXParserTest {
 
     private NodeList getReleaseIdNodeList() throws XpathException {
         return xpathEngine.getMatchingNodes("/ernm:NewReleaseMessage/ReleaseList/Release[ReleaseType='TrackRelease']/ReleaseId", document);
-    }
-
-    private NodeList getSoundRecordingNodeList() throws XpathException {
-        return xpathEngine.getMatchingNodes("/ernm:NewReleaseMessage/ResourceList/SoundRecording", document);
     }
 
     private NodeList getFileNodeList() throws XpathException {
