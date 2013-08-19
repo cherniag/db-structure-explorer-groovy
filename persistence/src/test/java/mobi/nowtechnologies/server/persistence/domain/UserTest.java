@@ -439,7 +439,13 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        UserGroup o2 = new UserGroup().withCommunity(new Community().withRewriteUrl("o2"));
+        PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
+
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
+                .withUserGroup(o2)
+                .withLastPromo(videoPromo).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user.setVideoFreeTrialHasBeenActivated(true);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
