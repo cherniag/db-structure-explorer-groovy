@@ -70,7 +70,7 @@ public class GetFileControllerTestIT {
 		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        String mediaId = generateVideoMedia();
+        String mediaId = "VIDEO160822";//generateVideoMedia();
 		
 		ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")

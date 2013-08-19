@@ -27,7 +27,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.joda.time.DateTime;
-import org.joda.time.ReadableDuration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,19 +46,27 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.service.UserService.*;
+import static mobi.nowtechnologies.server.service.UserService.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
@@ -2212,14 +2219,11 @@ public class UserServiceTest {
 		
 		Mockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
-		Mockito.when(userRepositoryMock.payOffDebt(Integer.MIN_VALUE, 0, user.getId())).thenReturn(0);
-		
 		userServiceSpy.processPaymentSubBalanceCommand(user, 5, submittedPayment);
 		
 		verify(entityServiceMock, times(1)).saveEntity(cardTopUpAccountLog);
 		verify(entityServiceMock, times(1)).saveEntity(subscriptionChargeAccountLog);
 		verify(entityServiceMock, times(1)).updateEntity(user);
-		verify(userRepositoryMock, times(0)).payOffDebt(Integer.MIN_VALUE, 0, user.getId());
 	}
 	
 	@Test

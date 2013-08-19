@@ -151,10 +151,6 @@ section {
 						Wrong image
 					</p>
 				</div>
-<!-- 				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.position}">Position:</strong></label> <input type="number" class="quantity" maxlength="2" min="0" max="99" name="position" style="width: 98%;" /> -->
-<!-- 				<p class="hasError" th:if="${#fields.hasErrors('position')}" th:errors="*{position}"> -->
-<!-- 						Wrong position value -->
-<!-- 				</p> -->
 				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="50" name="name" style="width: 98%;" />
 				<p class="hasError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
 						Wrong title value
@@ -197,5 +193,19 @@ section {
 			</div>
 		</div>
 	</footer>
+
+    <div th:fragment="audioPlayer" th:if="${!isVideo}" class="modal hide audioContainer" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>
+    </div>
+
+    <div th:fragment="videoPlayer" th:if="${isVideo}" class="modal hide videoContainer" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <video class="video" controls="controls" th:attr="src=${mediaSrc}"/>
+    </div>
 </body>
 </html>

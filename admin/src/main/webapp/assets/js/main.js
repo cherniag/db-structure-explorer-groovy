@@ -19,57 +19,75 @@ $(function() {
     //------------------Play Video and Audio-----------//
     var player = null;
     $(".play").mouseover(function(){
-           var modalEl = $(this).parent().find(".modal");
+        var that = $(this);
+        var parent = $(this).parent();
+        var modalEl = parent.find(".modal");
 
-           setAbsPosition(modalEl, $(this).parent().offset());
+        if(!modalEl.is(':visible')){
+               setAbsPlayerPosition(modalEl, parent.offset());
+               modalEl.modal({backdrop:false});
 
-           modalEl.modal({backdrop:false});
-           modalEl.mouseout(function(){
-               if(player == null || player[0] !== $(this)[0]){
-                   $(this).modal("hide");
-               }
-           });
+               modalEl.mouseout(function(e){
+                   hideIfNotPlay(that, modalEl, e);
+               });
+               that.mouseout(function(e){
+                   hideIfNotPlay(that, modalEl, e);
+               });
 
-           var videoEl = modalEl.find("video");
-           var closeEl = modalEl.find(".close");
-           closeEl.hide();
-           closeEl.click(function(){
-               player.stop();
-           });
-           videoEl[0].addEventListener('ended', function(){
-               modalEl.modal("hide");
-               player = null;
-           });
-           videoEl[0].addEventListener('play', function(){
-               stop();
+               var videoEl = modalEl.find("video, audio");
+               var closeEl = modalEl.find(".close");
+               closeEl.hide();
+               closeEl.click(function(){
+                   stop();
+               });
+               videoEl[0].addEventListener('ended', function(){
+                   stop();
+               });
+               videoEl[0].addEventListener('play', function(){
+                   if(player == null || modalEl[0] !== player[0]){
+                       stop();
 
-               player = modalEl;
-               closeEl.show();
-           });
+                       player = modalEl;
+                       closeEl.show();
+                   }
+               });
+        }
     });
+
+    var hideIfNotPlay = function(playArea, playEl, e){
+        var visibleNow = playEl.is(':visible');
+        var containedPlayArea = playArea.containsPoint(e) || playEl.containsPoint(e);
+        var notPlayer = player == null || player[0] !== playEl[0];
+        if(visibleNow && !containedPlayArea && notPlayer){
+            playEl.modal("hide");
+        }
+    }
 
     var stop = function(){
         if(player){
             player.modal("hide");
-//            var videoEl = player.find("video");
-//            videoEl[0].pause();
-//            videoEl[0].load();
+            var videoEl = player.find("video, audio");
+            videoEl[0].pause();
+            videoEl[0].load();
             player = null;
         }
     }
 
     $(window).scroll(function () {
         if(player){
-            setAbsPosition(player, player.parent().offset());
+            setAbsPlayerPosition(player, player.parent().offset());
         }
     });
 
-    var setAbsPosition = function (el, offset) {
+    var setAbsPlayerPosition = function (el, offset) {
+            var audio = el.find("audio");
             var pos = offset;
             pos.top = pos.top - $(window).scrollTop();
             pos.left = pos.left - $(window).scrollLeft();
-            el.css("top",pos.top+234);
-            el.css("left",pos.left+280);
+            var offX = 280;
+            var offY = audio ? 234+el.parent().height()-audio.height() : 234 ;
+            el.css("top",pos.top+offY);
+            el.css("left",pos.left+offX);
     }
 
     //-----------------Select All Checkbox------------//
@@ -386,4 +404,45 @@ function deselectText() {
 	if (document.selection) document.selection.empty(); 
 	else if (window.getSelection)
             window.getSelection().removeAllRanges();
+}
+
+jQuery.fn['bounds'] = function () {
+    var bounds = {
+        left: Number.POSITIVE_INFINITY,
+        top: Number.POSITIVE_INFINITY,
+        right: Number.NEGATIVE_INFINITY,
+        bottom: Number.NEGATIVE_INFINITY,
+        width: Number.NaN,
+        height: Number.NaN
+    };
+
+    this.each(function (i,el) {
+        var elQ = $(el);
+        var off = elQ.offset();
+        off.right = off.left + $(elQ).width();
+        off.bottom = off.top + $(elQ).height();
+
+        if (off.left < bounds.left)
+            bounds.left = off.left;
+
+        if (off.top < bounds.top)
+            bounds.top = off.top;
+
+        if (off.right > bounds.right)
+            bounds.right = off.right;
+
+        if (off.bottom > bounds.bottom)
+            bounds.bottom = off.bottom;
+    });
+
+    bounds.width = bounds.right - bounds.left;
+    bounds.height = bounds.bottom - bounds.top;
+    return bounds;
+}
+
+jQuery.fn['containsPoint'] = function (p) {
+
+    var bounds = $(this).bounds();
+    var contains = bounds.left < p.pageX && bounds.top < p.pageY && bounds.right > p.pageX && bounds.bottom > p.pageY ;
+    return contains;
 }

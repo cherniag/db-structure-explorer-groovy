@@ -300,15 +300,9 @@ public class User implements Serializable {
 	@Column(name = "last_subscribed_payment_system")
 	private String lastSubscribedPaymentSystem;
 
-	@Column(name = "last_payment_try_in_cycle_millis", columnDefinition = "BIGINT default 0")
-	private long lastPaymentTryInCycleMillis;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "segment", columnDefinition = "char(255)")
 	private SegmentType segment;
-
-	@Column(name = "deactivated_grace_credit_millis", columnDefinition = "BIGINT default 0")
-	private long deactivatedGraceCreditMillis;
 
 	@Column(name = "last_before48_sms_millis", columnDefinition = "BIGINT default 0")
 	private long lastBefore48SmsMillis;
@@ -1033,35 +1027,17 @@ public class User implements Serializable {
 	}
 
 	public long getLastPaymentTryInCycleMillis() {
-		return lastPaymentTryInCycleMillis;
+		return 1L;
 	}
 
 	public void setLastPaymentTryInCycleMillis(long lastPaymentTryInCycleMillis) {
-		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleMillis;
 	}
 
 	public void setLastPaymentTryInCycleSeconds(int lastPaymentTryInCycleSeconds) {
-		this.lastPaymentTryInCycleMillis = lastPaymentTryInCycleSeconds * 1000L;
 	}
 
 	public int getLastPaymentTryInCycleSeconds() {
-		return (int) (lastPaymentTryInCycleMillis / 1000);
-	}
-
-	public long getDeactivatedGraceCreditMillis() {
-		return deactivatedGraceCreditMillis;
-	}
-
-	public void setDeactivatedGraceCreditMillis(long deactivatedGraceCreditMillis) {
-		this.deactivatedGraceCreditMillis = deactivatedGraceCreditMillis;
-	}
-
-	public int getDeactivatedGraceCreditSeconds() {
-		return (int) (deactivatedGraceCreditMillis / 1000L);
-	}
-
-	public void setDeactivatedGraceCreditSeconds(int deactivatedGraceCreditSeconds) {
-		this.deactivatedGraceCreditMillis = deactivatedGraceCreditSeconds * 1000L;
+		return 1;
 	}
 
 	public long getLastBefore48SmsMillis() {
@@ -1098,7 +1074,6 @@ public class User implements Serializable {
 				.add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
 				.add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
 				.add("potentialPromotionId", potentialPromotionId)
-				.add("deactivatedGraceCreditMillis", deactivatedGraceCreditMillis)
 				.add("pin", pin)
 				.add("code", code)
 				.add("operator", operator)

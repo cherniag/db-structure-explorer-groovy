@@ -401,9 +401,9 @@ public abstract class DDEXParser extends IParser {
 			return result;
 
 		} catch (IOException io) {
-			LOG.error("Exception " + io.getMessage());
+			LOG.error("Exception " + io.getMessage(), io);
 		} catch (JDOMException jdomex) {
-			LOG.error("Exception " + jdomex.getMessage());
+			LOG.error("Exception " + jdomex.getMessage(), jdomex);
 		}
 		return null;
 
