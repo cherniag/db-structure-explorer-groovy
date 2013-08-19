@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:jaxws="http://cxf.apache.org/jaxws"
-      xmlns:soap="http://cxf.apache.org/bindings/soap"
-      xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
-<!-- 
-    <jaxws:endpoint xmlns:customer="http://customerservice.example.com/"
-            id="CustomerServiceHTTP" address="/CustomerServicePort"
-            serviceName="customer:CustomerServiceService" endpointName="customer:CustomerServicePort"
-            implementor="com.example.customerservice.server.CustomerServiceImpl">
-	jaxws:properties>
-	    <entry key="schema-validation-enabled" value="true" />
-	</jaxws:properties
-    </jaxws:endpoint>-->
-    
-    <jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/subscriberservice_2/"
-            id="SubscriberHTTP" address="/Subscriber_2_0"
-            serviceName="subscriber:SubscriberService" endpointName="subscriber:SubscriberPort"
-            implementor="com.example.customerservice.server.SubscriberPortImpl">
-    </jaxws:endpoint>
+
+	<jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/subscriberservice_2/"
+		id="SubscriberHTTP" address="/Subscriber_2_0" serviceName="subscriber:SubscriberService"
+		endpointName="subscriber:SubscriberPort" implementor="com.musicqubed.o2services.SubscriberPortImpl" />
 
 <!-- 
-    <jaxws:endpoint xmlns:subscriber="http://soa.o2.co.uk/managepostpaytariffdata_2/"
-                    id="ManagePostpayTariffHTTP" address="/ManagePostpayTariffPort"
-                    serviceName="subscriber:ManagePostpayTariffService" endpointName="subscriber:ManagePostpayTariffPort"
-                    implementor="com.example.customerservice.server.ManagePostpayTariffServiceImpl">
-    </jaxws:endpoint>
+o2.service.endpoint.subscriber_2_0=http://localhost:8998/services/Subscriber_2_0
+o2.service.endpoint.sendmessage_1_1=http://localhost:8998/services/SendMessage_1_1
+o2.service.endpoint.chargecustomer_1_0=http://localhost:8998/services/ChargeCustomer_1_0
+
+o2.service.endpoint.manageprepaytariffdata_2=http://localhost:8998/services/ManagePrepayTariff_2_0
+o2.service.endpoint.manageorder_2=http://localhost:8998/services/ManageOrder_2_0
  -->
+
+	<jaxws:endpoint xmlns:managepostpaytariffdata="http://soa.o2.co.uk/managepostpaytariffdata_2/"
+		id="ManagePostpayTariffServiceHTTP" address="/ManagePostpayTariff_2_0" serviceName="managepostpaytariffdata:ManagePostpayTariffService"
+		endpointName="managepostpaytariffdata:ManagePostpayTariffPort" implementor="com.musicqubed.o2services.ManagePostpayTariffServicePortImpl" />
+		
+	<jaxws:endpoint xmlns:postpayboltons="http://soa.o2.co.uk/managepostpayboltonsdata_2/"
+		id="managePostpayBoltonsHTTP" address="/ManagePostpayBoltons_2_0" serviceName="postpayboltons:ManagePostpayBoltonsService"
+		endpointName="postpayboltons:ManagePostpayBoltonsPort" implementor="com.musicqubed.o2services.ManagePostpayBoltonsPortImpl" />
+
 
 </beans>
