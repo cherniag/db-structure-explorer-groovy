@@ -57,6 +57,7 @@ create table refund (
   next_sub_payment_millis bigint,
   payment_details_id bigint(20) not null,
   user_id int(10) unsigned not null,
+  reason varchar(255) not null,
   primary key (id))
  engine=INNODB DEFAULT CHARSET=utf8;
 
@@ -115,8 +116,9 @@ create table refund (
  alter table tb_media modify column headerPreviewFile int unsigned null;
  alter table tb_media modify column purchasedFile int unsigned null;
 
- alter table tb_users add column last_promo int(10);
- alter table tb_users add constraint user_promo_code_fk foreign key (i) references tb_promoCode(id);
+ alter table tb_users add column last_promo int(10) default null;
+ ALTER TABLE tb_promoCode MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT;
+ alter table tb_users add constraint user_promo_code_fk foreign key (last_promo) references tb_promoCode(id);
  
 -- insert 3 new audio payment policies for o2 consumer group
 
@@ -135,15 +137,19 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
 -- insert 3 new audio+video payment policies for o2 consumer group
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
-(10,3,'4.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107059','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
+(10,3,'4.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','C','mqbed_tracks_3107059','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
 
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
-(10,2,'3','o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107058','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
+(10,2,'3','o2Psms',null,'','GBP',true,null,null,'CONSUMER','C','mqbed_tracks_3107058','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
 
 
 INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,content_description,sub_merchant_id,provider,tariff,media_type) VALUES
-(10,1,'1.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
+(10,1,'1.5','o2Psms',null,'','GBP',true,null,null,'CONSUMER','C','mqbed_tracks_3107057','Description of content','O2 Tracks','o2','_4G','VIDEO_AND_AUDIO');
 
  -- insert new windows phone device type to database
 INSERT INTO tb_deviceTypes (name) VALUES ('WINDOWS_PHONE');
+
+-- Remove unused column
+ alter table tb_users drop column deactivated_grace_credit_millis;
+ alter table tb_users drop column last_payment_try_in_cycle_millis;

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -127,4 +128,22 @@ public class GetNewsController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.0}/GET_NEWS.json"
+    }, produces = "application/json")
+    public @ResponseBody Response getNews_O2Json(
+            @RequestParam("APP_VERSION") String appVersion,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("API_VERSION") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @PathVariable("community") String community) throws Exception {
+
+        return (Response)getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community).getModelMap().get(MODEL_NAME);
+
+    }
 }

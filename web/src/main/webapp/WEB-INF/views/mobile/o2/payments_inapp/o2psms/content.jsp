@@ -8,7 +8,7 @@
     <span class="logo" style="padding-right: 49px;"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 </div>
 
-<img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
+
 
 <c:choose>
 	<c:when test="${suweeks == 3}">
@@ -29,6 +29,7 @@
 </c:choose>
 
 <div class="container">
+    <img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
     <div class="subscription-container">
         <a class="subscription-selector option-${paymentPolicyOptionNo}" disabled="true">
             <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${suweeks}.png" />
@@ -38,7 +39,7 @@
             </div>
         </a>
         
-        <div class="rel" style="margin:0 6px; padding:6px 0; border-top: 1px solid #a0a0a0">
+        <div class="rel" style="margin:12px 6px; padding:6px 0; border-top: 1px solid #a0a0a0">
             <input class="button-grey no-margin left pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
             <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/payments_inapp/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
             <div style="clear: both;"></div>
@@ -52,7 +53,7 @@
     </div>
 
     <div class="rel" style="text-align: center; margin-top: 15px;">
-        <img style="width:33%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
+        <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
     </div>
     
 </div>

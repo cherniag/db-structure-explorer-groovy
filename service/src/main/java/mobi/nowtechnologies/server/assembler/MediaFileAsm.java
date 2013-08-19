@@ -18,7 +18,6 @@ public class MediaFileAsm {
 		MediaFileDto mediaFileDto = new MediaFileDto();
 		
 		mediaFileDto.setFilename(mediaFile.getFilename());
-		//mediaFileDto.setFileType(FileType.valueOf(mediaFile.getFileType().getName()));
 		mediaFileDto.setId(mediaFile.getI());
 		mediaFileDto.setSize(mediaFile.getSize());
 		

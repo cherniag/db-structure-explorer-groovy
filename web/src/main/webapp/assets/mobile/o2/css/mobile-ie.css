@@ -199,14 +199,25 @@ img.centered{
     width: 175px;
 }
 
-.container {
-	background-color: #003399;
-	padding: 0 6px;
+.tapArea {
+	border: 1px solid #003399;
+	border-radius: 5px;
+	margin-bottom: 5px;
 }
 
-.pane-red span{
-    padding-left: 35px;
+.maincontainer {
+	background-color: #fff;
 }
+
+.container {
+	background-color: #003399;
+	padding: 10px;
+}
+
+.paymentscontainer {
+	padding: 0 5px;
+}
+.pane-red span{ padding-left: 35px; }
 
 .pane-red img{
     display: block;
@@ -503,31 +514,6 @@ input.accounts{
 	display: block;
 }
 
-.videoOption {
-	border: 3px solid gray;
-	margin: 5px;
-	padding: 10px;
-}
-
-.videoOptionOptin {
-	cursor: pointer;
-	font-size: 90%;
-	text-align: center;
-}
-
-.videoOptionHighlight {
-	background-color: #ccc;
-}
-
-.videoOptionFirstRow {
-	margin-bottom: 10px;
-}
-
-.videoOptionText {
-	font-size: 80%;
-}
-
-
 .setOfButtons  {
 	margin-bottom: 17px;
 }
@@ -553,7 +539,7 @@ form .formButton  {
 .button-off, .button-on, .button-arrow{
     display: block;
     position: absolute;
-    top: 8px;
+    top: 14px;
     right: 10px;
     width: 25px;
     height: 25px;
@@ -654,7 +640,7 @@ form .formButton  {
 
 .subscription-selector {
     display: block;
-    height: 66px;
+    height: 53px;
     border-width: 0;
     font-weight: lighter;
     text-align: left;
@@ -673,15 +659,16 @@ form .formButton  {
 .subscription-selector .button-on {
     display: block;
     position: absolute;
-    top: 19px;
+    top: 14px;
     right: 12px;
-    width: 39px;
-    height: 39px;
+    width: 37px;
+    height: 37px;
     background-size: 39px 39px;
 }
 
 .subscription-selector .button-on {
-    background: transparent url(../imgs/icon_plan_selected.png) no-repeat;
+    /* background: transparent url(../imgs/icon_plan_selected.png) no-repeat; */
+    background: transparent url(../imgs/ic_tick_selected.png) no-repeat;
     background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
@@ -690,7 +677,8 @@ form .formButton  {
 }
 
 .subscription-selector .button-off{
-    background: transparent url(../imgs/icon_plan_normal.png) no-repeat;
+    /*background: transparent url(../imgs/icon_plan_normal.png) no-repeat;*/
+    background: transparent url(../imgs/ic_tick_normal.png) no-repeat;
     background-size:contain;
 	-webkit-background-size:contain;
 	-moz-background-size:contain;
@@ -702,19 +690,24 @@ form .formButton  {
 .subscription-selected img {
     display:block;
     float:left;
-    margin-right: 18px;
-    border:none;
+    margin-right: 10px;
 }
 .subscription-selector .title {
-    font-family: frutigerBold, Helvetica, Arial, sans-serif;
+    font-family: frutigerLight, Helvetica, Arial, sans-serif;
+    font-size: 10px;
 }
-.subscription-selector.option-1 .title { color:#952d98; }
+/* .subscription-selector.option-1 .title { color:#952d98; }
 .subscription-selector.option-2 .title { color:#00a9a9; }
 .subscription-selector.option-3 .title { color:#3399cc; }
-.subscription-selector.option-4 .title { color:#952d98; }
+.subscription-selector.option-4 .title { color:#952d98; } */
+
+.subscription-selector.option-1 .title { color:#003399; }
+.subscription-selector.option-2 .title { color:#003399; }
+.subscription-selector.option-3 .title { color:#003399; }
+.subscription-selector.option-4 .title { color:#003399; }
 
 .subscription-selector .price {
-    font-size:30px;
+    font-size:16px;
     margin-right:5px;
 }
 
@@ -1555,4 +1548,129 @@ p.itemsTrackName {
 .validationNotes {
 	padding: 20px;
 	padding-left: 0px;
+}
+.frR15 {
+	color: #003399;
+	font-family: frutigerRoman, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+}
+
+.frL11 {
+	color: #003399;
+	font-family: frutigerLight, Helvetica, Arial, sans-serif;
+	font-size: 11px;
+}
+.frB15 {
+	color: #003399;
+	font-family: frutigerBold, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+}
+
+.userStatusText {
+	color: #66ccff;
+	font-family: frutigerRoman, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	margin-bottom: 6px;
+	line-height: 18px;
+}
+
+.userStatusPhone {
+	font-family: frutigerLight, Helvetica, Arial, sans-serif;
+	color: #ffffff;
+	font-size: 15px;
+}
+
+.itunesheader {
+	padding: 0 5px 0;
+}
+
+.itunespaymentheader {
+	padding-bottom: 20px;
+}
+.itunesHr {
+	color: #ddd;
+	margin: 10px 0 12px 0
+}
+
+.itunesheader div {
+	line-height: 16px;
+	margin-bottom: 17px;
+}
+
+.o2Businesshr {
+	color: #ddd;
+	margin: 7px 0 9px 0;
+}
+
+.o2BusinessHeader {
+	padding: 0px 5px 20px 5px;
+	line-height: 16px;
+}
+
+.o2UserHeader2 {
+	padding: 0 5px 9px;
+}
+
+.o2UserHeader2 > div.frR15 {
+	line-height: 16px;
+}
+
+.o2UserHeader2 > div.frL11 {
+	margin-top: 7px;
+}
+
+.o2Userhr {
+	color: #ddd;
+	margin: 10px 0 10px 0;
+}
+
+.o2UserPaymentOption {
+	color: #3399cc;
+	padding-top: 8px;
+}
+
+.o2TracksHeader {
+	/*padding: 4px 5px 0; */
+	padding: 10px 5px 0;
+}
+
+.o2businessPaymentType {
+	border-top: 1px solid #a0a0a0;
+	margin:0 6px;
+	padding-top:2px;
+	text-align: center;
+}
+
+.videoNotOptedIn {
+	height: auto;
+	padding: 12px 10px 5px 10px;
+}
+
+.videoNotOptedInHeader {
+	margin-bottom: 10px;
+}
+
+.videoNotOptedInHeader > div {
+	padding-top: 1px;
+	padding-left: 44px;
+}
+
+.videoNotOptedInHeaderSmall {
+	line-height: 16px;
+	margin-bottom: 10px;
+}
+
+.videoInfo {
+	line-height: 16px;
+	margin-right: 70px;
+	margin-top: 9px;
+}
+
+.videoOption {
+	margin-top: 10px;
+}
+
+.videoOption a {
+	height: 105px;
+	padding: 10px 6px 6px 10px;
 }

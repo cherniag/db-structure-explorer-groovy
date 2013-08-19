@@ -2,11 +2,7 @@ package mobi.nowtechnologies.ingestors.sony;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,16 +24,16 @@ public class SonyDDEXParser extends DDEXParser {
 
 	public SonyDDEXParser() {
 		root = Property.getInstance().getStringValue("ingest.sony.ddex.root");
-		LOG.info("EMI parser loadin from " + root);
+		LOG.info("EMI parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
 
-		Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+		Map<String, DropTrack> tracks = Collections.<String, DropTrack>emptyMap();
 		try {
 			File xmlFile = new File(root + "/manifests/"+drop.name);
 			SAXBuilder builder = new SAXBuilder();
-			Document document = (Document) builder.build(xmlFile);
+			Document document = builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
 			List messages = rootNode.getChildren("MessageInBatch");
 			for (int i = 0; i < messages.size(); i++) {
@@ -45,16 +41,15 @@ public class SonyDDEXParser extends DDEXParser {
 				String url = message.getChildText("URL");
 				int index = url.indexOf("ddex");
 				String xml=root+url.substring(index+4);
-				LOG.info("Loading "+xml);
-						Map<String, DropTrack> result = loadXml(xml);
+
+                LOG.info("Loading "+xml);
+
+                Map<String, DropTrack> result = loadXml(xml);
 
 				if (result != null) {
 					tracks.putAll(result);
 				}
 			}
-
-			
-
 		} catch (Exception e) {
 			LOG.error("Ingest failed " + e.getMessage());
 		}

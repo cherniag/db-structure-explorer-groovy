@@ -27,52 +27,6 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
  */
 public class UserDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
-	
-	@SuppressWarnings("unchecked")
-	public List<User> getListOfUsersForUpdate() {
-		return (List<User>) getJpaTemplate()
-				.find("select user from "
-					 + User.class.getSimpleName()
-					 + " user where user.subBalance = 0"
-					 + " and user.paymentEnabled=true"
-					 + " and paymentStatus != " + PaymentStatusDao.getAWAITING_PSMS().getId()
-					 + " and ( " +
-					 		" (user.userStatusId = 10 or user.userStatusId = 11)"
-					 + 		" or ( user.userStatusId = 4 and paymentStatus = " + PaymentStatusDao.getAWAITING_PAYMENT().getId() + " )"
-					 +" )"
-					 + " order by user.userStatusId desc limit 0,1000");
-	}
-
-	public Payment getLatestPaymentForUser(int userId) {
-		List<?> list = getJpaTemplate().find(
-						"select o from "
-								+ Payment.class.getSimpleName()
-								+ " o where (o.status = '"
-								+ STATUS_OK + "' or o.status = '"
-								+ STATUS_REGISTERED + "') "
-								+ "and ((o.externalTxCode <> '"
-								+ NOT_AVAILABLE + "' and o.externalTxCode <> '' "
-								+ "and o.externalTxCode is not null) or (o.txType = 7)) "
-								+ "and o.userUID = ?1 order by o.timestamp desc limit 0,1",
-						userId);
-		return list == null || list.size() == 0 ? null : (Payment) list.get(0);
-	}
-
-	public Payment getLatestDeferredPaymentForUser(int userId) {
-		List<?> list = getJpaTemplate().find(
-						"select o from "
-								+ Payment.class.getSimpleName()
-								+ " o where (o.status = '" 
-								+ STATUS_OK + "' or o.status = '" 
-								+ STATUS_REGISTERED + "') "
-								+ "and o.externalTxCode <> '" 
-								+ NOT_AVAILABLE + "' and o.externalTxCode <> '' "
-								+ "and o.externalTxCode is not null "
-								+ "and o.txType = 8 and o.userUID = ?1 "
-								+ "order by o.timestamp desc limit 0,1",
-						userId);
-		return list == null || list.size() == 0 ? null : (Payment) list.get(0);
-	}
 
 	public byte getUserGroupByCommunity(String communityName) {
 		if (communityName == null)
@@ -159,44 +113,13 @@ public class UserDao extends JpaDaoSupport {
 		return userCount != 0;
 	}
 
-	public Promotion getActivePromotion(byte userGroup) {
+	public Promotion getActivePromotion(UserGroup userGroup) {
 		List<?> list = getJpaTemplate().find(
 				"select o from " + Promotion.class.getSimpleName() +
 				" o where (o.numUsers < o.maxUsers or o.maxUsers=0) and o.startDate < ?1 " +
 				"and o.endDate > ?1 and o.isActive = 1 and o.userGroup = ?2 and o.type = ?3", 
 				getEpochSeconds(), userGroup, Promotion.ADD_SUBBALANCE_PROMOTION);
 		return list == null || list.size() == 0 ? null : (Promotion) list.get(0);
-	}
-
-	public List<User> getListOfUsersForPaymentRetry() {
-		return (List<User>) getJpaTemplate().executeFind(new JpaCallback<List>() {
-			@Override
-			public List doInJpa(EntityManager entityManager)
-					throws javax.persistence.PersistenceException {
-						Query query = entityManager
-								.createQuery("select user from "
-										+ User.class.getSimpleName()
-										+ " user, "
-										+ PayPalPayment.class.getSimpleName()
-										+ " payPalPayment "
-										+ " where user.paymentStatus = "
-										+ PaymentStatusDao.getAWAITING_PSMS()
-												.getId() + " or (user."
-										+ User.Fields.id.name()
-										+ " = payPalPayment."
-										+ Payment.Fields.userUID.name()
-										+ " and payPalPayment."
-										+ Payment.Fields.status.name() + "='"
-										+ AppConstants.STATUS_USER_CONFIRMED
-										+ "' ) group by user."
-										+ User.Fields.id.name());
-                query.setFirstResult(0);
-                query.setMaxResults(1000);
-                List results = query.getResultList();
-                return results;
-			}
-		});
-
 	}
 	
 	public User findUserTree(int userId) {
@@ -214,14 +137,6 @@ public class UserDao extends JpaDaoSupport {
 		if (null!=users && users.size()>0)
 			return users.get(0);
 		return null;
-	}
-
-	public boolean checkStoredToken(String deviceUID, byte userGroupId, String storedToken) {
-		LOGGER.debug("input parameters deviceUID, userGroupId, storedToken: [{}], [{}], [{}]", new Object[]{deviceUID, userGroupId, storedToken});
-		Long count = (Long) getJpaTemplate().findByNamedQuery(User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, new Object[]{deviceUID, userGroupId, storedToken}).get(0);
-		boolean isValid=(0!=count);
-		LOGGER.debug("Output parameter isValid=[{}]", isValid);
-		return isValid;
 	}
 
 	@SuppressWarnings("unchecked")

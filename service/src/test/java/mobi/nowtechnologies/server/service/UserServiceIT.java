@@ -312,7 +312,6 @@ public class UserServiceIT {
 	private User prepareTestData(int nextSubPayment, User user, long lastPaymentTryMillis, PaymentDetailsStatus lastPaymentStatus,
 			PaymentDetailsType paymentDetailsType, mobi.nowtechnologies.server.shared.enums.UserStatus userStatus) {
 		user.setNextSubPayment(nextSubPayment);
-		user.setLastPaymentTryInCycleMillis(lastPaymentTryMillis);
 		user.setStatus(UserStatusDao.getUserStatusMapUserStatusAsKey().get(userStatus));
 		entityDao.updateEntity(user);
 

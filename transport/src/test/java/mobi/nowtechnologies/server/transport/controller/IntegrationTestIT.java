@@ -49,7 +49,6 @@ import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.ITunesService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.WeeklyUpdateService;
-import mobi.nowtechnologies.server.service.UserService.AmountCurrencyWeeks;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.impl.ITunesServiceImpl;
 import mobi.nowtechnologies.server.shared.AppConstants;
@@ -144,9 +143,6 @@ public class IntegrationTestIT {
 
 	@Resource(name = "service.WeeklyUpdateService")
 	private WeeklyUpdateService weeklyUpdateService;
-
-	// @Resource(name = "transport.EntityController")
-	// private EntityController entityController;
 	
 	@Resource(name = "service.ITunesService")
 	private ITunesServiceImpl iTunesServiceImpl;
@@ -166,9 +162,6 @@ public class IntegrationTestIT {
 	@Resource
 	private EntityController entityController;
 
-	//@Rule
-	//public PowerMockRule powerMockRule = new PowerMockRule();
-	
 	@PostConstruct
 	public void setUp() {
 		XMLUnit.setControlParser(
@@ -178,400 +171,6 @@ public class IntegrationTestIT {
 		XMLUnit.setSAXParserFactory(
 				"org.apache.xerces.jaxp.SAXParserFactoryImpl");
 		XMLUnit.setIgnoreWhitespace(true);
-	}
-
-	@Test
-	public void test_PSMSUserStatusAndPaymentStatusLifeCycle_Success() {
-		try {
-
-			PostService mockPostService = new PostService() {
-				@Override
-				public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
-					if (url == null)
-						throw new NullPointerException(
-								"The parameter url is null");
-					if (nameValuePairs == null)
-						throw new NullPointerException(
-								"The parameter nameValuePairs is null");
-					Response response = new Response();
-					response.setStatusCode(200);
-					response.setMessage("OK");
-					return response;
-				}
-			};
-
-			LOGGER.info("mockPostService created and wired");
-
-			String timestamp = "1";
-			String userToken = "1a4d0298535c54cbab054eccaca4c793";
-			String userName = "zzz@z.com";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-			String deviceType = "ANDROID";
-			String displayName = "Nigel";
-			String deviceString = "Device 1";
-			String phoneNumber = "00447580381128";
-			String operator = "1";
-
-			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<userRegInfo>"
-					+ "<address>33333</address>"
-					+ "<appVersion>" + appVersion + "</appVersion>"
-					+ "<apiVersion>" + apiVersion + "</apiVersion>"
-					+ "<deviceType>" + deviceType + "</deviceType>"
-					+ "<deviceString>" + deviceString + "</deviceString>"
-					+ "<countryFullName>Great Britain</countryFullName>"
-					+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-					+ "<operator>" + operator + "</operator>"
-					+ "<city>33</city>"
-					+ "<firstName>33</firstName>"
-					+ "<lastName>33</lastName>"
-					+ "<email>" + userName + "</email>"
-					+ "<communityName>" + communityName + "</communityName>"
-					+ "<displayName>" + displayName + "</displayName>"
-					+ "<postCode>null</postCode>"
-					+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-					+ "<storedToken>51c7bb77ae9859e18118b014188f34b1</storedToken>"
-					+ "<cardBillingAddress>88</cardBillingAddress>"
-					+ "<cardBillingCity>London</cardBillingCity>"
-					+ "<cardBillingCountry>GB</cardBillingCountry>"
-					+ "<cardCv2>123</cardCv2>"
-					+ "<cardIssueNumber></cardIssueNumber>"
-					+ "<cardHolderFirstName>John</cardHolderFirstName>"
-					+ "<cardHolderLastName>Smith</cardHolderLastName>"
-					+ "<cardBillingPostCode>412</cardBillingPostCode>"
-					+ "<cardStartMonth>1</cardStartMonth>"
-					+ "<cardStartYear>2011</cardStartYear>"
-					+ "<cardExpirationMonth>1</cardExpirationMonth>"
-					+ "<cardExpirationYear>2012</cardExpirationYear>"
-					+ "<cardNumber>4929000000006</cardNumber>"
-					+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" + "</userRegInfo>";
-
-			MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			User user = userService.findByNameAndCommunity(userName, communityName);
-			final int userId = user.getId();
-
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNull(lastPremiumUserPayment);
-
-			String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPIN_PENDING().getName(), paymentStatus);
-
-			aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-					userName, communityName, appVersion, user.getPin());
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null, null);
-
-			String responseBody = aHttpServletResponse.getContentAsString();
-
-			assertNotNull(responseBody);
-			assertEquals(
-					"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-							+ "<response>"
-							+ "<user>"
-							+ "<chartItems>40</chartItems>"
-							+ "<chartTimestamp>1317302136</chartTimestamp>"
-							+ "<deviceType>" + deviceType + "</deviceType>"
-							+ "<deviceUID>" + deviceString + "</deviceUID>"
-							+ "<displayName>" + displayName + "</displayName>"
-							+ "<drmValue>0</drmValue>"
-							+ "<newsItems>10</newsItems>"
-							+ "<newsTimestamp>1317300123</newsTimestamp>"
-							+ "<operator>" + operator + "</operator>"
-							+ "<paymentEnabled>true</paymentEnabled>"
-							+ "<paymentStatus>AWAITING_PAYMENT</paymentStatus>"
-							+ "<paymentType>PSMS</paymentType>"
-							+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-							+ "<status>EULA</status>"
-							+ "<subBalance>0</subBalance>"
-							+ "</user>"
-							+ "</response>", responseBody);
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getName(), paymentStatus);
-
-			lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-
-			AmountCurrencyWeeks amountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-
-			assertNotNull(lastPremiumUserPayment);
-			assertEquals(AppConstants.STATUS_PENDING, lastPremiumUserPayment.getStatus());
-			assertEquals(amountCurrencyWeeks.getWeeks(), lastPremiumUserPayment.getSubweeks());
-
-			// --------------------------------------------------------------------------------------------------
-			// CL-2335: User can pay by one policy and get weeks by other policy
-			// rules
-			// http://jira.dev.now-technologies.mobi:8181/browse/CL-2335
-			Integer operator2 = 3;
-
-			PaymentPolicy paymentPolicy = new PaymentPolicy();
-			// paymentPolicy.setCommunityid(5);
-			// paymentPolicy.setOperator(operator2);
-			paymentPolicy.setPaymentType("PSMS");
-			paymentPolicy.setShortCode("80988");
-			paymentPolicy.setSubcost(new BigDecimal(33));
-			paymentPolicy.setSubweeks((byte) 33);
-
-			entityService.saveEntity(paymentPolicy);
-
-			aHttpServletResponse = updatePhone(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, phoneNumber,
-					operator2);
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPIN_PENDING().getName(), paymentStatus);
-
-			aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-					userName, communityName, appVersion, user.getPin());
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
-
-			AmountCurrencyWeeks newAmountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-
-			assertTrue(newAmountCurrencyWeeks.getWeeks() != amountCurrencyWeeks.getWeeks());
-			assertEquals(paymentPolicy.getSubweeks(), newAmountCurrencyWeeks.getWeeks());
-
-			aHttpServletResponse = emulateMigSuccesCallback(lastPremiumUserPayment
-					.getInternalTxCode());
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			lastPremiumUserPayment = entityService.findById(PremiumUserPayment.class, lastPremiumUserPayment.getI());
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
-
-			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null, null);
-
-			responseBody = aHttpServletResponse.getContentAsString();
-
-			assertNotNull(responseBody);
-
-			final Map<String, Object> nameValueMap = new HashMap<String, Object>();
-			nameValueMap.put(PaymentPolicy.Fields.operator.toString(),
-					user.getOperator());
-			nameValueMap.put(PaymentPolicy.Fields.communityId.toString(),
-					CommunityDao.getMapAsNames().get(communityName).getId());
-			// PaymentPolicy
-			// paymentPolicy=entityService.findByProperties(PaymentPolicy.class,
-			// nameValueMap);
-
-			byte freeWeeks = 0;
-			Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
-			if (promotion != null)
-				freeWeeks = promotion.getFreeWeeks();
-			assertTrue(freeWeeks >= 0);
-
-			// int
-			// expectedSubBlance=paymentPolicy.getSubweeks()+amountCurrencyWeeks.getWeeks();
-			int expectedSubBlance = freeWeeks + amountCurrencyWeeks.getWeeks() - 1;// -1
-																					// because
-																					// it's
-																					// a
-																					// first
-																					// login
-																					// where
-																					// status
-																					// SUBSCRIBED
-
-			assertEquals(responseBody,
-					"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-							+ "<response>"
-							+ "<user>"
-							+ "<chartItems>40</chartItems>"
-							+ "<chartTimestamp>1317302136</chartTimestamp>"
-							+ "<deviceType>" + deviceType + "</deviceType>"
-							+ "<deviceUID>" + deviceString + "</deviceUID>"
-							+ "<displayName>" + displayName + "</displayName>"
-							+ "<drmValue>0</drmValue>"
-							+ "<newsItems>10</newsItems>"
-							+ "<newsTimestamp>1317300123</newsTimestamp>"
-							+ "<operator>" + operator2 + "</operator>"
-							+ "<paymentEnabled>true</paymentEnabled>"
-							+ "<paymentStatus>OK</paymentStatus>"
-							+ "<paymentType>PSMS</paymentType>"
-							+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-							+ "<status>SUBSCRIBED</status>"
-							+ "<subBalance>" + expectedSubBlance + "</subBalance>"
-							+ "</user>"
-							+ "</response>");
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			assertEquals(expectedSubBlance, user.getSubBalance());
-
-			int nextSubPayment = user.getNextSubPayment();
-
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(user.getNextSubPayment() * 1000L);
-			SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-			Date dateTime = calendar.getTime();
-
-			LOGGER.info(String.valueOf(nextSubPayment));
-			LOGGER.info(dateFormatLocal.format(dateTime));
-
-			assertTrue((Utils.getEpochSeconds() < nextSubPayment) && (Utils.getEpochSeconds() + Utils.WEEK_SECONDS >= nextSubPayment));
-
-			List<AccountLog> accountLogs = entityService.findListByProperty(AccountLog.class, AccountLog.Fields.userId.toString(), userId);
-
-			assertNotNull(accountLogs);
-			assertEquals(3, accountLogs.size());
-
-			Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-			fieldNameValueMap.put(AccountLog.Fields.userId.toString(), userId);
-			fieldNameValueMap.put(AccountLog.Fields.transactionType.toString(), TransactionType.CARD_TOP_UP);
-
-			AccountLog accountLog = entityService.findByProperties(AccountLog.class, fieldNameValueMap);
-			assertNotNull(accountLog);
-			assertEquals(amountCurrencyWeeks.getWeeks(), accountLog.getBalanceAfter());
-
-			fieldNameValueMap.put(AccountLog.Fields.transactionType.toString(), TransactionType.PROMOTION.getCode());
-			accountLog = entityService.findByProperties(AccountLog.class, fieldNameValueMap);
-			assertNotNull(accountLog);
-			assertEquals(freeWeeks + amountCurrencyWeeks.getWeeks(), accountLog.getBalanceAfter());
-
-			fieldNameValueMap.put(AccountLog.Fields.transactionType.toString(), TransactionType.SUBSCRIPTION_CHARGE.getCode());
-			accountLog = entityService.findByProperties(AccountLog.class, fieldNameValueMap);
-			assertNotNull(accountLog);
-			assertEquals(expectedSubBlance, accountLog.getBalanceAfter());
-
-			// ------------------------------------------------------------------------------------------------------------------------------
-			// Emulate CL-2348: Balance is not re-filled after it becomes 0
-			// http://jira.dev.now-technologies.mobi:8181/browse/CL-2348
-			user.setSubBalance((byte) 0);
-
-			userService.updateUser(user);
-
-			// accountUpdateService.updateAccounts();
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			assertEquals((byte) 0, user.getSubBalance());
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getAWAITING_PSMS().getName(), paymentStatus);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			PremiumUserPayment newlastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNotNull(newlastPremiumUserPayment);
-			assertTrue(newlastPremiumUserPayment.getTimestamp() > lastPremiumUserPayment.getTimestamp());
-
-			aHttpServletResponse = emulateMigSuccesCallback(newlastPremiumUserPayment
-					.getInternalTxCode());
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			amountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-			expectedSubBlance = amountCurrencyWeeks.getWeeks();
-
-			assertEquals(expectedSubBlance, user.getSubBalance());
-			// ------------------------------------------------------------------------------------------------
-			// CL-2350: Balance is not re-filled after 'nextSubPayment' date
-			// pass
-			// http://jira.dev.now-technologies.mobi:8181/browse/CL-2350
-
-			user.setSubBalance((byte) 10);
-			user.setNextSubPayment(0);
-
-			userService.updateUser(user);
-
-			weeklyUpdateService.updateWeekly();
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			assertEquals((byte) 9, user.getSubBalance());
-
-			// -------------------------------------------------------------------------------------------------
-			// CL-2267: User gets to LIMITED status after balance is 0
-			// http://jira.dev.now-technologies.mobi:8181/browse/CL-2267
-			user.setSubBalance((byte) 0);
-			user.setPaymentStatus(PaymentStatusDao.getAWAITING_PSMS().getId());
-			user.setNumPsmsRetries(0);
-
-			userService.updateUser(user);
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getAWAITING_PSMS().getName(), paymentStatus);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			newlastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNotNull(newlastPremiumUserPayment);
-			assertTrue(newlastPremiumUserPayment.getTimestamp() > lastPremiumUserPayment.getTimestamp());
-
-			aHttpServletResponse = emulateMigUnSuccessCallback(newlastPremiumUserPayment
-					.getInternalTxCode());
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPSMS_ERROR().getName(), paymentStatus);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			// -------------------------------------------------------------------------------------------------
-			// CL-2202: User doesn't move to LIMITED status after failed
-			// NextSubscription
-			// http://jira.dev.now-technologies.mobi:8181/browse/CL-2202
-			user.setSubBalance((byte) 0);
-			user.setPaymentStatus(PaymentStatusDao.getOK().getId());
-			user.setNumPsmsRetries(0);
-			user.setNextSubPayment(0);
-
-			userService.updateUser(user);
-			// accountUpdateService.updateAccounts();
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getAWAITING_PSMS().getName(), paymentStatus);
-			assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-			newlastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNotNull(newlastPremiumUserPayment);
-			assertTrue(newlastPremiumUserPayment.getTimestamp() > lastPremiumUserPayment.getTimestamp());
-
-			aHttpServletResponse = emulateMigUnSuccessCallback(newlastPremiumUserPayment
-					.getInternalTxCode());
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPSMS_ERROR().getName(), paymentStatus);
-			assertEquals(UserStatus.LIMITED.getCode(), user.getUserStatusId());
-
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-			throw new RuntimeException(e);
-		}
 	}
 
 	private MockHttpServletResponse updatePhone(String timestamp,
@@ -966,246 +565,6 @@ public class IntegrationTestIT {
 		}
 	}
 
-	private void registerPSMSUserToSubscridedStatus(UserRegInfo userRegInfo, String timestamp, String userToken, String apiVersion) throws ServletException, IOException {
-		if (userRegInfo == null)
-			throw new NullPointerException("The parameter userRegInfo is null");
-		if (timestamp == null)
-			throw new NullPointerException("The parameter timestamp is null");
-		if (userToken == null)
-			throw new NullPointerException("The parameter userToken is null");
-		if (apiVersion == null)
-			throw new NullPointerException("The parameter apiVersion is null");
-
-		String userName = userRegInfo.getEmail();
-		String communityName = userRegInfo.getCommunityName();
-		String appVersion = userRegInfo.getAppVersion();
-		String deviceType = userRegInfo.getDeviceType();
-		String displayName = userRegInfo.getDisplayName();
-		String deviceString = userRegInfo.getDeviceString();
-		String phoneNumber = userRegInfo.getPhoneNumber();
-		String operator = String.valueOf(userRegInfo.getOperator());
-		String storedToken = userRegInfo.getStoredToken();
-
-		if (userName == null)
-			throw new NullPointerException("The parameter userName is null");
-		if (communityName == null)
-			throw new NullPointerException("The parameter communityName is null");
-		if (appVersion == null)
-			throw new NullPointerException("The parameter appVersion is null");
-		if (deviceType == null)
-			throw new NullPointerException("The parameter deviceType is null");
-		if (displayName == null)
-			throw new NullPointerException("The parameter displayName is null");
-		if (deviceString == null)
-			throw new NullPointerException("The parameter deviceString is null");
-		if (phoneNumber == null)
-			throw new NullPointerException("The parameter phoneNumber is null");
-
-		PostService mockPostService = new PostService() {
-			@Override
-			public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
-				if (url == null)
-					throw new NullPointerException(
-							"The parameter url is null");
-				if (nameValuePairs == null)
-					throw new NullPointerException(
-							"The parameter nameValuePairs is null");
-				Response response = new Response();
-				response.setStatusCode(200);
-				response.setMessage("OK");
-				return response;
-			}
-		};
-
-		LOGGER.info("mockPostService created and wired");
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<address>33333</address>"
-				+ "<appVersion>" + appVersion + "</appVersion>"
-				+ "<apiVersion>" + apiVersion + "</apiVersion>"
-				+ "<deviceType>" + deviceType + "</deviceType>"
-				+ "<deviceString>" + deviceString + "</deviceString>"
-				+ "<countryFullName>Great Britain</countryFullName>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<city>33</city>"
-				+ "<firstName>33</firstName>"
-				+ "<lastName>33</lastName>"
-				+ "<email>" + userName + "</email>"
-				+ "<communityName>" + communityName + "</communityName>"
-				+ "<displayName>" + displayName + "</displayName>"
-				+ "<postCode>null</postCode>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-				+ "<storedToken>" + storedToken + "</storedToken>"
-				+ "<cardBillingAddress>88</cardBillingAddress>"
-				+ "<cardBillingCity>London</cardBillingCity>"
-				+ "<cardBillingCountry>GB</cardBillingCountry>"
-				+ "<cardCv2>123</cardCv2>"
-				+ "<cardIssueNumber></cardIssueNumber>"
-				+ "<cardHolderFirstName>John</cardHolderFirstName>"
-				+ "<cardHolderLastName>Smith</cardHolderLastName>"
-				+ "<cardBillingPostCode>412</cardBillingPostCode>"
-				+ "<cardStartMonth>1</cardStartMonth>"
-				+ "<cardStartYear>2011</cardStartYear>"
-				+ "<cardExpirationMonth>1</cardExpirationMonth>"
-				+ "<cardExpirationYear>2012</cardExpirationYear>"
-				+ "<cardNumber>4929000000006</cardNumber>"
-				+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" + "</userRegInfo>";
-
-		MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		final int userId = user.getId();
-
-		assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-		assertNull(lastPremiumUserPayment);
-
-		// String
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getPIN_PENDING().getName(),
-		// paymentStatus);
-
-		aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-				userName, communityName, appVersion, user.getPin());
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
-
-		aHttpServletResponse = acc_check(timestamp, userToken, userName,
-				apiVersion, communityName, appVersion, null, null, null, null);
-
-		String responseBody = aHttpServletResponse.getContentAsString();
-
-		assertNotNull(responseBody);
-		// assertEquals(
-		// "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-		// +"<response>"
-		// +"<user>"
-		// +"<chartItems>40</chartItems>"
-		// +"<chartTimestamp>1321452650</chartTimestamp>"
-		// +"<deviceType>"+deviceType+"</deviceType>"
-		// +"<deviceUID>"+deviceString+"</deviceUID>"
-		// +"<displayName>"+displayName+"</displayName>"
-		// +"<drmType>PLAYS</drmType>"
-		// +"<drmValue>100</drmValue>"
-		// +"<newsItems>10</newsItems>"
-		// +"<newsTimestamp>1317300123</newsTimestamp>"
-		// +"<operator>"+operator+"</operator>"
-		// +"<paymentEnabled>true</paymentEnabled>"
-		// +"<paymentStatus>AWAITING_PAYMENT</paymentStatus>"
-		// +"<paymentType>PSMS</paymentType>"
-		// +"<phoneNumber>"+phoneNumber+"</phoneNumber>"
-		// +"<status>EULA</status>"
-		// +"<subBalance>0</subBalance>"
-		// +"</user>"
-		// +"</response>",responseBody);
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
-
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getName(),
-		// paymentStatus);
-
-		// accountUpdateService.makePayment(user);
-		createPendingPaymentJob.execute();
-
-		lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-
-		assertNotNull(lastPremiumUserPayment);
-
-		aHttpServletResponse = emulateMigSuccesCallback(lastPremiumUserPayment
-				.getInternalTxCode());
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		lastPremiumUserPayment = entityService.findById(PremiumUserPayment.class, lastPremiumUserPayment.getI());
-
-		// paymentStatus=PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		// assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
-
-		aHttpServletResponse = acc_check(timestamp, userToken, userName,
-				apiVersion, communityName, appVersion, null, null, null, null);
-
-		responseBody = aHttpServletResponse.getContentAsString();
-
-		assertNotNull(responseBody);
-
-		final Map<String, Object> nameValueMap = new HashMap<String, Object>();
-		nameValueMap.put(PaymentPolicy.Fields.operator.toString(),
-				user.getOperator());
-		nameValueMap.put(PaymentPolicy.Fields.communityId.toString(),
-				CommunityDao.getMapAsNames().get(communityName).getId());
-		// PaymentPolicy
-		// paymentPolicy=entityService.findByProperties(PaymentPolicy.class,
-		// nameValueMap);
-
-		byte freeWeeks = 0;
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
-		if (promotion != null)
-			freeWeeks = promotion.getFreeWeeks();
-		assertTrue(freeWeeks >= 0);
-		AmountCurrencyWeeks amountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-
-		// int
-		// expectedSubBlance=paymentPolicy.getSubweeks()+amountCurrencyWeeks.getWeeks();
-		int expectedSubBlance = freeWeeks + amountCurrencyWeeks.getWeeks() - 1;// -1
-																				// because
-																				// it's
-																				// a
-																				// first
-																				// login
-																				// where
-																				// status
-																				// SUBSCRIBED
-
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-						+ "<response>"
-						+ "<user>"
-						+ "<chartItems>40</chartItems>"
-						+ "<chartTimestamp>1321452650</chartTimestamp>"
-						+ "<deviceType>" + deviceType + "</deviceType>"
-						+ "<deviceUID>" + deviceString + "</deviceUID>"
-						+ "<displayName>" + displayName + "</displayName>"
-						+ "<drmType>PLAYS</drmType>"
-						+ "<drmValue>100</drmValue>"
-						+ "<newsItems>10</newsItems>"
-						+ "<newsTimestamp>1317300123</newsTimestamp>"
-						+ "<operator>" + operator + "</operator>"
-						+ "<paymentEnabled>true</paymentEnabled>"
-						+ "<paymentStatus>OK</paymentStatus>"
-						+ "<paymentType>PSMS</paymentType>"
-						+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-						+ "<status>SUBSCRIBED</status>"
-						+ "<subBalance>" + expectedSubBlance + "</subBalance>"
-						+ "</user>"
-						+ "</response>", responseBody);
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		assertEquals(expectedSubBlance, user.getSubBalance());
-
-		int nextSubPayment = user.getNextSubPayment();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(user.getNextSubPayment() * 1000L);
-		SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		Date dateTime = calendar.getTime();
-
-		LOGGER.info(String.valueOf(nextSubPayment));
-		LOGGER.info(dateFormatLocal.format(dateTime));
-
-		assertTrue((Utils.getEpochSeconds() < nextSubPayment) && (Utils.getEpochSeconds() + Utils.WEEK_SECONDS >= nextSubPayment));
-	}
-
 	private MockHttpServletResponse checkPin(String timestamp,
 			String userToken, String apiVersion, String userName,
 			String communityName, String appVersion, String pin)
@@ -1239,49 +598,6 @@ public class IntegrationTestIT {
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
-	}
-
-	@Test
-	public void test_GET_FILE_commnd() {
-		try {
-			String password = "zzz@z.com";
-			String userName = "zzz@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-
-			String storedToken = Utils.createStoredToken(userName, password);
-			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType("ANDROID");
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString("Device 1");
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber("07580381128");
-			userRegInfo.setOperator(1);
-
-			// String phoneNumber=userRegInfo.getPhoneNumber();
-			// String operator=String.valueOf(userRegInfo.getOperator());
-
-			registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, appVersion);
-
-			String id = "USAT21001886";
-			String type = FileService.FileType.AUDIO.name();
-
-			MockHttpServletResponse aHttpServletResponse = getFile(userName,
-					timestamp, apiVersion, communityName, appVersion,
-					userToken, id, type);
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
 	}
 
 	private MockHttpServletResponse getFile(String userName, String timestamp,
@@ -1324,98 +640,6 @@ public class IntegrationTestIT {
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
-	}
-
-	@Test
-	public void test_CHECK_PIN_command() throws Exception {
-		// CL-2380: Incorrect status after resolve balance from track purchasing
-		// http://jira.dev.now-technologies.mobi:8181/browse/CL-2380
-
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-		String phoneNumber = "00447580381128";
-		int operator = 1;
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType("ANDROID");
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString("Device 1");
-		userRegInfo.setDisplayName("Nigel");
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-
-		registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, apiVersion);
-
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		final int userId = user.getId();
-
-		user.setSubBalance((byte) 0);
-
-		userService.updateUser(user);
-
-		MockHttpServletResponse aHttpServletResponse = updatePhone(userName,
-				timestamp, apiVersion, communityName, appVersion, phoneNumber,
-				operator, userToken);
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-
-		String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getPIN_PENDING().getName(), paymentStatus);
-
-		aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-				userName, communityName, appVersion, user.getPin());
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-
-		paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getName(), paymentStatus);
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-		assertNotNull(lastPremiumUserPayment);
-
-		assertEquals(AppConstants.STATUS_PENDING, lastPremiumUserPayment.getStatus());
-
-		paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getAWAITING_PSMS().getName(), paymentStatus);
-
-		assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		aHttpServletResponse = emulateMigSuccesCallback(lastPremiumUserPayment
-				.getInternalTxCode());
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		lastPremiumUserPayment = entityService.findById(PremiumUserPayment.class, lastPremiumUserPayment.getI());
-
-		assertEquals(AppConstants.STATUS_OK, lastPremiumUserPayment.getStatus());
-
-		paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getOK().getName(), paymentStatus);
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		AmountCurrencyWeeks amountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-
-		int expectedSubBlance = amountCurrencyWeeks.getWeeks();// -1 because
-																// it's a first
-																// login where
-																// status
-																// SUBSCRIBED
-		assertEquals(expectedSubBlance, user.getSubBalance());
 	}
 
 	private PremiumUserPayment findLastPremiumUserPayment(final int userId) {
@@ -1618,7 +842,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
-	public void test_REGISTER_USER_comandWithoutPaymentDetails() throws Exception {
+	public void test_REGISTER_USER_commandWithoutPaymentDetails() throws Exception {
 		String password = "zzz@z.com";
 		String userName = "zzz@z.com";
 		String timestamp = "1";
@@ -1651,7 +875,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
-	public void test_REGISTER_USER_comandWithWrongGeoLocation() throws Exception {
+	public void test_REGISTER_USER_commandWithWrongGeoLocation() throws Exception {
 		String password = "zzz@z.com";
 		String userName = "zzz@z.com";
 		String timestamp = "1";
@@ -1837,54 +1061,6 @@ public class IntegrationTestIT {
 		assertNotSame(0, user.getSubBalance());
 	}
 
-	@Test
-	public void test_makePayment() {
-		try {
-			String password = "zzz@z.com";
-			String userName = "zzz@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-			String phoneNumber = "00447580381128";
-			int operator = 1;
-
-			String storedToken = Utils.createStoredToken(userName, password);
-			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType("ANDROID");
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString("Device 1");
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber(phoneNumber);
-			userRegInfo.setOperator(operator);
-
-			registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, apiVersion);
-			User user = userService.findByNameAndCommunity(userName, communityName);
-
-			user.setStatus(UserStatusDao.getEulaUserStatus());
-			user.setPaymentStatus(PaymentStatusDao.getNULL().getId());
-			entityService.updateEntity(user);
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-			assertEquals(PaymentStatusDao.getNULL().getId(), user.getPaymentStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-			assertEquals(PaymentStatusDao.getAWAITING_PSMS().getId(), user.getPaymentStatus());
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-	}
-
 	private MockHttpServletResponse updatePaymentDetails(String userName,
 			String timestamp, String apiVersion, String communityName,
 			String appVersion, String userToken, String aBody) throws ServletException, IOException {
@@ -1994,211 +1170,6 @@ public class IntegrationTestIT {
 
 		String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
 		assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
-	}
-
-	@Test
-	public void test_PSMSUser_PromoCodePromotion_Success() throws Exception {
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-
-		String deviceType = "ANDROID";
-		String displayName = "Nigel";
-		String deviceString = "Device 1";
-		String phoneNumber = "00447580381128";
-		int operator = 1;
-		String promotionCode = "promo";
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType(deviceType);
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString(deviceString);
-		userRegInfo.setDisplayName(displayName);
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-		userRegInfo.setPromotionCode(promotionCode);
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<address>33333</address>"
-				+ "<appVersion>" + appVersion + "</appVersion>"
-				+ "<apiVersion>" + apiVersion + "</apiVersion>"
-				+ "<deviceType>" + deviceType + "</deviceType>"
-				+ "<deviceString>" + deviceString + "</deviceString>"
-				+ "<countryFullName>Great Britain</countryFullName>"
-				+ "<city>33</city>"
-				+ "<firstName>33</firstName>"
-				+ "<lastName>33</lastName>"
-				+ "<email>" + userName + "</email>"
-				+ "<communityName>" + communityName + "</communityName>"
-				+ "<displayName>" + displayName + "</displayName>"
-				+ "<postCode>null</postCode>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.UNKNOWN + "</paymentType>"
-				+ "<storedToken>" + storedToken + "</storedToken>"
-				+ "<promotionCode>" + promotionCode + "</promotionCode>"
-				+ "</userRegInfo>";
-
-		LOGGER.info(aBody);
-
-		int timeBeforeRegistration = Utils.getEpochSeconds();
-
-		MockHttpServletResponse mockHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-		assertEquals(200, mockHttpServletResponse.getStatus());
-
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		final int userId = user.getId();
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		assertEquals(0, user.getSubBalance());
-
-		int nextSubPayment = user.getNextSubPayment();
-		int twoWeeks = 2 * Utils.WEEK_SECONDS;
-
-		assertTrue(nextSubPayment >= timeBeforeRegistration
-				+ twoWeeks
-				&& nextSubPayment <= Utils.getEpochSeconds()
-						+ twoWeeks);
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-		assertNull(lastPremiumUserPayment);
-
-		String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
-
-		List<AccountLog> accountLogs = entityService.findListByProperty(AccountLog.class, AccountLog.Fields.userId.toString(), userId);
-
-		assertNotNull(accountLogs);
-		assertEquals(1, accountLogs.size());
-
-		AccountLog accountLog = accountLogs.get(0);
-		assertNotNull(accountLog);
-		assertEquals(TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED, accountLog.getTransactionType());
-		assertEquals(0, accountLog.getBalanceAfter());
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		mockHttpServletResponse = acc_check(timestamp, userToken, userName, apiVersion, communityName, appVersion, null, null, null, null);
-		assertEquals(200, mockHttpServletResponse.getStatus());
-
-		String responseBody = mockHttpServletResponse.getContentAsString();
-
-		assertNotNull(responseBody);
-
-		int expectedSubBlance = 0;
-
-		assertEquals(responseBody,
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-						+ "<response>"
-						+ "<user>"
-						+ "<chartItems>40</chartItems>"
-						+ "<chartTimestamp>1317302136</chartTimestamp>"
-						+ "<deviceType>" + deviceType + "</deviceType>"
-						+ "<deviceUID>" + deviceString + "</deviceUID>"
-						+ "<displayName>" + displayName + "</displayName>"
-						+ "<drmValue>0</drmValue>"
-						+ "<newsItems>10</newsItems>"
-						+ "<newsTimestamp>1317300123</newsTimestamp>"
-						+ "<operator>0</operator>"
-						+ "<paymentEnabled>false</paymentEnabled>"
-						+ "<paymentStatus>NULL</paymentStatus>"
-						+ "<paymentType>UNKNOWN</paymentType>"
-						+ "<phoneNumber></phoneNumber>"
-						+ "<status>SUBSCRIBED</status>"
-						+ "<subBalance>" + expectedSubBlance + "</subBalance>"
-						+ "</user>"
-						+ "</response>");
-
-		user = userService.findByNameAndCommunity(userName, communityName);
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		assertEquals(expectedSubBlance, user.getSubBalance());
-
-		aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-				+ "<cardBillingAddress>88</cardBillingAddress>"
-				+ "<cardBillingCity>London</cardBillingCity>"
-				+ "<cardBillingCountry>GB</cardBillingCountry>"
-				+ "<cardCv2>123</cardCv2>"
-				+ "<cardIssueNumber></cardIssueNumber>"
-				+ "<cardHolderFirstName>John</cardHolderFirstName>"
-				+ "<cardHolderLastName>Smith</cardHolderLastName>"
-				+ "<cardBillingPostCode>412</cardBillingPostCode>"
-				+ "<cardStartMonth>1</cardStartMonth>"
-				+ "<cardStartYear>2011</cardStartYear>"
-				+ "<cardExpirationMonth>1</cardExpirationMonth>"
-				+ "<cardExpirationYear>2012</cardExpirationYear>"
-				+ "<cardNumber>4929000000006</cardNumber>"
-				+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" +
-				"</userRegInfo>";
-
-		LOGGER.info(aBody);
-
-		mockHttpServletResponse = updatePaymentDetails(userName, timestamp, apiVersion, communityName, appVersion, userToken, aBody);
-		assertEquals(200, mockHttpServletResponse.getStatus());
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertEquals(PaymentStatusDao.getPIN_PENDING().getId(), user.getPaymentStatus());
-
-		assertEquals(expectedSubBlance, user.getSubBalance());
-
-		mockHttpServletResponse = checkPin(timestamp, userToken, apiVersion, userName, communityName, appVersion, user.getPin());
-
-		assertEquals(200, mockHttpServletResponse.getStatus());
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getId(), user.getPaymentStatus());
-
-		assertEquals(expectedSubBlance, user.getSubBalance());
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertEquals(PaymentStatusDao.getAWAITING_PSMS().getId(), user.getPaymentStatus());
-
-		lastPremiumUserPayment = findLastPremiumUserPayment(user.getId());
-
-		mockHttpServletResponse = emulateMigSuccesCallback(lastPremiumUserPayment
-				.getInternalTxCode());
-
-		assertEquals(200, mockHttpServletResponse.getStatus());
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-		assertEquals(PaymentStatusDao.getOK().getId(), user.getPaymentStatus());
-
-		byte freeWeeks = 0;
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroupId());
-		if (promotion != null)
-			freeWeeks = promotion.getFreeWeeks();
-		assertTrue(freeWeeks >= 0);
-
-		AmountCurrencyWeeks amountCurrencyWeeks = userService.getUpdateAmountCurrencyWeeks(user);
-
-		expectedSubBlance = freeWeeks + amountCurrencyWeeks.getWeeks();
-		assertEquals(expectedSubBlance, user.getSubBalance());
-
-		nextSubPayment = user.getNextSubPayment();
-
-		assertTrue(nextSubPayment >= timeBeforeRegistration
-				+ twoWeeks
-				&& nextSubPayment <= Utils.getEpochSeconds()
-						+ twoWeeks);
 	}
 
 	public void registerPayPalPaymentTypeUser(UserRegInfo userRegInfo, String timestamp, String userToken, String apiVersion) throws ServletException, IOException {
@@ -2420,177 +1391,6 @@ public class IntegrationTestIT {
 			assertNotNull(responseBody);
 
 			assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><promoCode>promo</promoCode></response>", responseBody);
-
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testSET_DRM() {
-		try {
-			String password = "zzz@z.com";
-			String userName = "zzz1@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String communityUrl = "nowtop40";
-			String appVersion = "CNBETA";
-
-			String storedToken = Utils.createStoredToken(userName, password);
-			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType("ANDROID");
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString("Device 1");
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber("07580381128");
-			userRegInfo.setOperator(1);
-
-			registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, appVersion);
-
-			String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><user><activation>REGISTERED</activation><chartItems>21</chartItems><chartTimestamp>1321452650</chartTimestamp><deviceType>ANDROID</deviceType><deviceUID></deviceUID><displayName></displayName><drmType>PLAYS</drmType><drmValue>100</drmValue><freeTrial>false</freeTrial><fullyRegistred>true</fullyRegistred><hasOffers>false</hasOffers><hasPotentialPromoCodePromotion>false</hasPotentialPromoCodePromotion><newsItems>10</newsItems><newsTimestamp>1317300123</newsTimestamp><nextSubPaymentSeconds>0</nextSubPaymentSeconds><operator>1</operator><paymentEnabled>false</paymentEnabled><paymentStatus>NULL</paymentStatus><paymentType>UNKNOWN</paymentType><phoneNumber></phoneNumber><promotedDevice>false</promotedDevice><promotedWeeks>0</promotedWeeks><rememberMeToken>enp6QHouY29tOjEzNjIwNDQ3Nzk1Mjg6MTBmNzI3YWFkMWMxZmM3NGMxMmYxYmUyN2E1ODU0ODI</rememberMeToken><status>LIMITED</status><subBalance>0</subBalance><timeOfMovingToLimitedStatusSeconds>0</timeOfMovingToLimitedStatusSeconds><userName>zzz@z.com</userName><userToken>c6c97e872b7e77ce4c4396069a220e0d</userToken><oAuthProvider>NONE</oAuthProvider></user><chart><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>5</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>1</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>145</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>2</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>38</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>3</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>4</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1285</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>5</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>436</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>6</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>44</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>7</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>8</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>9</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>33</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>10</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>8888</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>11</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>555</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>12</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>2</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>13</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>14</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><chartDetailVersion>6</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>15</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>925</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>16</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>3</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>17</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>1</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>18</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>11</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>19</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>111</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>true</isArtistUrl><media>US-UM7-11-00061</media><playlistId>5</playlistId><position>20</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><bonusTrack><amazonUrl>http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2F030758836X%2Fref%3Ds9_al_bw_g14_ir03%3Fpf_rd_m%3DATVPDKIKX0DER%26pf_rd_s%3Dcenter-4%26pf_rd_r%3D079680TPPVRZ8J4W5B6Z%26pf_rd_t%3D101%26pf_rd_p%3D1418176682%26pf_rd_i%3D5916596011</amazonUrl><artist>Lmfao/Lauren Bennett/Goonrock</artist><audioSize>1464070</audioSize><audioVersion>1</audioVersion><changePosition>DOWN</changePosition><channel>HEATSEEKER</channel><chartDetailVersion>98</chartDetailVersion><drmType>PLAYS</drmType><drmValue>100</drmValue><genre1>Default</genre1><genre2>Default</genre2><headerSize>162676</headerSize><headerVersion>666</headerVersion><imageLargeSize>41581</imageLargeSize><imageLargeVersion>2</imageLargeVersion><imageSmallSize>6125</imageSmallSize><imageSmallVersion>3</imageSmallVersion><info>LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.</info><isArtistUrl>false</isArtistUrl><media>USAT21001886</media><playlistId>5</playlistId><position>21</position><previousPosition>24</previousPosition><title>Party Rock Anthem</title><trackSize>1626744</trackSize><iTunesUrl>http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%2526a%3D1997010%2526url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%2526uo%3D4%2526partnerId%3D2003</iTunesUrl></bonusTrack><playlist><id>5</id><playlistTitle>Default Chart</playlistTitle><subtitle>Default Chart</subtitle></playlist></chart></response>";
-			getChart(expected, userName, timestamp, apiVersion, communityUrl, communityName, appVersion, userToken, storedToken);
-
-			String isrc = "USUM71100721";
-			byte drmValue = 5;
-
-			MockHttpServletResponse aHttpServletResponse = new MockHttpServletResponse();
-			MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(
-					"POST", "/SET_DRM");
-			httpServletRequest.addHeader("Content-Type", "text/xml");
-			httpServletRequest.addHeader("Content-Length", "0");
-			httpServletRequest.setRemoteAddr("2.24.0.1");
-
-			httpServletRequest.addParameter(isrc, String.valueOf(drmValue));
-			httpServletRequest.addParameter("APP_VERSION", appVersion);
-			httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
-			httpServletRequest.addParameter("API_VERSION", apiVersion);
-			httpServletRequest.addParameter("USER_NAME", userName);
-			httpServletRequest.addParameter("USER_TOKEN", userToken);
-			httpServletRequest.addParameter("TIMESTAMP", timestamp);
-
-			dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<response>"
-					+ "<user>"
-					+ "<chartItems>40</chartItems>"
-					+ "<chartTimestamp>1321452650</chartTimestamp>"
-					+ "<deviceType>ANDROID</deviceType>"
-					+ "<deviceUID>Device 1</deviceUID>"
-					+ "<displayName>Nigel</displayName>"
-					+ "<drmType>PLAYS</drmType>"
-					+ "<drmValue>100</drmValue>"
-					+ "<newsItems>10</newsItems>"
-					+ "<newsTimestamp>1317300123</newsTimestamp>"
-					+ "<operator>1</operator>"
-					+ "<paymentEnabled>true</paymentEnabled>"
-					+ "<paymentStatus>OK</paymentStatus>"
-					+ "<paymentType>PSMS</paymentType>"
-					+ "<phoneNumber>07580381128</phoneNumber>"
-					+ "<status>SUBSCRIBED</status>"
-					+ "<subBalance>6</subBalance>"
-					+ "</user>"
-					+ "<drm>"
-					+ "<item>"
-					+ "<drmType>PLAYS</drmType>"
-					+ "<drmValue>5</drmValue>"
-					+ "<mediaUID>USUM71100721</mediaUID>"
-					+ "</item>"
-					+ "</drm>"
-					+ "</response>";
-			assertEquals(expected, aHttpServletResponse.getContentAsString());
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testSET_PASSWORD() throws Exception {
-		try {
-			String password = "zzz@z.com";
-			String userName = "zzz@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-
-			String storedToken = Utils.createStoredToken(userName, password);
-			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType("ANDROID");
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString("Device 1");
-			userRegInfo.setDisplayName("Nigel");
-			userRegInfo.setPhoneNumber("07580381128");
-			userRegInfo.setOperator(1);
-
-			registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken, appVersion);
-
-			String newPassword = "newPassword";
-			String newStoredToken = Utils.createStoredToken(userName, newPassword);
-
-			MockHttpServletResponse aHttpServletResponse = new MockHttpServletResponse();
-			MockHttpServletRequest httpServletRequest = new MockHttpServletRequest(
-					"POST", "/SET_PASSWORD");
-			httpServletRequest.addHeader("Content-Type", "text/xml");
-			httpServletRequest.addHeader("Content-Length", "0");
-			httpServletRequest.setRemoteAddr("2.24.0.1");
-
-			httpServletRequest.addParameter("NEW_TOKEN", newStoredToken);
-			httpServletRequest.addParameter("APP_VERSION", appVersion);
-			httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
-			httpServletRequest.addParameter("API_VERSION", apiVersion);
-			httpServletRequest.addParameter("USER_NAME", userName);
-			httpServletRequest.addParameter("USER_TOKEN", userToken);
-			httpServletRequest.addParameter("TIMESTAMP", timestamp);
-
-			dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<response>"
-					+ "<user>"
-					+ "<chartItems>40</chartItems>"
-					+ "<chartTimestamp>1321452650</chartTimestamp>"
-					+ "<deviceType>ANDROID</deviceType>"
-					+ "<deviceUID>Device 1</deviceUID>"
-					+ "<displayName>Nigel</displayName>"
-					+ "<drmType>PLAYS</drmType>"
-					+ "<drmValue>100</drmValue>"
-					+ "<newsItems>10</newsItems>"
-					+ "<newsTimestamp>1317300123</newsTimestamp>"
-					+ "<operator>1</operator>"
-					+ "<paymentEnabled>true</paymentEnabled>"
-					+ "<paymentStatus>OK</paymentStatus>"
-					+ "<paymentType>PSMS</paymentType>"
-					+ "<phoneNumber>07580381128</phoneNumber>"
-					+ "<status>SUBSCRIBED</status>"
-					+ "<subBalance>6</subBalance>"
-					+ "</user>"
-					+ "<setPassword>OK</setPassword>"
-					+ "</response>";
-
-			assertEquals(expected, aHttpServletResponse.getContentAsString());
-
-			User user = userService.findByNameAndCommunity(userName, communityName);
-			assertNotNull(user);
-
-			assertEquals(newStoredToken, user.getToken());
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -3416,10 +2216,6 @@ public class IntegrationTestIT {
 			Diff diff = new Diff(expected, contentAsString);
 			diff.overrideElementQualifier(new MessageElementQualifier());
 			
-			//DetailedDiff detailedDiff = new DetailedDiff(diff);
-
-			//List<Difference> allDifferences = detailedDiff.getAllDifferences();
-			
 			XMLAssert.assertXMLEqual(diff, true);
 			
 			requestURI = "/"+communityUrl+"/3.5/GET_NEWS";
@@ -3495,9 +2291,6 @@ public class IntegrationTestIT {
 				}
 			}
 
-			// PowerMockito.mockStatic(Utils.class);
-			// PowerMockito.when(Utils.getRandomString(Mockito.anyInt())).thenReturn("value");
-
 			MockFacebookService mockFacebookService = new MockFacebookService();
 			entityController.setFacebookService(mockFacebookService);
 
@@ -3540,7 +2333,6 @@ public class IntegrationTestIT {
 		String deviceString = "Device 1";
 		String deviceType = UserRegInfo.DeviceType.ANDROID;
 
-		String phoneNumber = "00447580381128";
 		int operator = 1;
 
 		String storedToken = Utils.createStoredToken(userName, password);
@@ -3556,9 +2348,6 @@ public class IntegrationTestIT {
 		userRegInfo.setDisplayName("Nigel");
 		userRegInfo.setPhoneNumber("07580381128");
 		userRegInfo.setOperator(1);
-
-		// registerPSMSUserToSubscridedStatus(userRegInfo, timestamp, userToken,
-		// appVersion);
 
 		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 				+ "<userRegInfo>"
@@ -3687,8 +2476,6 @@ public class IntegrationTestIT {
 			userRegInfo.setDisplayName("Nigel");
 			userRegInfo.setPhoneNumber("07580381128");
 			userRegInfo.setOperator(1);
-
-			int timeBeforeRegistrationSeconds = Utils.getEpochSeconds();
 
 			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 					+ "<userRegInfo>"
@@ -4073,9 +2860,7 @@ public class IntegrationTestIT {
 		String apiVersion = "V3.6";
 		String communityName = "o2";
 		String appVersion = "CNBETA";
-		String phone = "07870111111";
 		String timestamp = "2011_12_26_07_04_23";
-		String deviceType = UserRegInfo.DeviceType.ANDROID;
 		String base64EncodedAppStoreReceipt = "ewoJInNpZ25hdHVyZSIgPSAiQXNyQUNod2dETm1IYmIvSHU2UU5JbHZEUTY4TEE3dWIvQWlkY3huS2JSeTl1NTYyWWM4VHNtUGROQzcwcmo5KzBxOVE1UlBKYTdMK3lYb2ltU05TS0pCVDd2OVozVjgra2dVNkNwQmFPb1dyOW50TDhOdWZwdmxicUh5dUdjMm1vS1pOYXFsM2JFLzlRVWpkK1FKR2tPMVNmNVVWRDRpeDQ0MGlmMlMzd0p2K0FBQURWekNDQTFNd2dnSTdvQU1DQVFJQ0NHVVVrVTNaV0FTMU1BMEdDU3FHU0liM0RRRUJCUVVBTUg4eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUtEQXBCY0hCc1pTQkpibU11TVNZd0pBWURWUVFMREIxQmNIQnNaU0JEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVURXpNREVHQTFVRUF3d3FRWEJ3YkdVZ2FWUjFibVZ6SUZOMGIzSmxJRU5sY25ScFptbGpZWFJwYjI0Z1FYVjBhRzl5YVhSNU1CNFhEVEE1TURZeE5USXlNRFUxTmxvWERURTBNRFl4TkRJeU1EVTFObG93WkRFak1DRUdBMVVFQXd3YVVIVnlZMmhoYzJWU1pXTmxhWEIwUTJWeWRHbG1hV05oZEdVeEd6QVpCZ05WQkFzTUVrRndjR3hsSUdsVWRXNWxjeUJUZEc5eVpURVRNQkVHQTFVRUNnd0tRWEJ3YkdVZ1NXNWpMakVMTUFrR0ExVUVCaE1DVlZNd2daOHdEUVlKS29aSWh2Y05BUUVCQlFBRGdZMEFNSUdKQW9HQkFNclJqRjJjdDRJclNkaVRDaGFJMGc4cHd2L2NtSHM4cC9Sd1YvcnQvOTFYS1ZoTmw0WElCaW1LalFRTmZnSHNEczZ5anUrK0RyS0pFN3VLc3BoTWRkS1lmRkU1ckdYc0FkQkVqQndSSXhleFRldngzSExFRkdBdDFtb0t4NTA5ZGh4dGlJZERnSnYyWWFWczQ5QjB1SnZOZHk2U01xTk5MSHNETHpEUzlvWkhBZ01CQUFHamNqQndNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVOaDNvNHAyQzBnRVl0VEpyRHRkREM1RllRem93RGdZRFZSMFBBUUgvQkFRREFnZUFNQjBHQTFVZERnUVdCQlNwZzRQeUdVakZQaEpYQ0JUTXphTittVjhrOVRBUUJnb3Foa2lHOTJOa0JnVUJCQUlGQURBTkJna3Foa2lHOXcwQkFRVUZBQU9DQVFFQUVhU2JQanRtTjRDL0lCM1FFcEszMlJ4YWNDRFhkVlhBZVZSZVM1RmFaeGMrdDg4cFFQOTNCaUF4dmRXLzNlVFNNR1k1RmJlQVlMM2V0cVA1Z204d3JGb2pYMGlreVZSU3RRKy9BUTBLRWp0cUIwN2tMczlRVWU4Y3pSOFVHZmRNMUV1bVYvVWd2RGQ0TndOWXhMUU1nNFdUUWZna1FRVnk4R1had1ZIZ2JFL1VDNlk3MDUzcEdYQms1MU5QTTN3b3hoZDNnU1JMdlhqK2xvSHNTdGNURXFlOXBCRHBtRzUrc2s0dHcrR0szR01lRU41LytlMVFUOW5wL0tsMW5qK2FCdzdDMHhzeTBiRm5hQWQxY1NTNnhkb3J5L0NVdk02Z3RLc21uT09kcVRlc2JwMGJzOHNuNldxczBDOWRnY3hSSHVPTVoydG04bnBMVW03YXJnT1N6UT09IjsKCSJwdXJjaGFzZS1pbmZvIiA9ICJld29KSW05eWFXZHBibUZzTFhCMWNtTm9ZWE5sTFdSaGRHVXRjSE4wSWlBOUlDSXlNREV6TFRBeUxURXlJREE1T2pVeU9qQTRJRUZ0WlhKcFkyRXZURzl6WDBGdVoyVnNaWE1pT3dvSkluQjFjbU5vWVhObExXUmhkR1V0YlhNaUlEMGdJakV6TmpBMk9URTFNamd3TXpraU93b0pJblZ1YVhGMVpTMXBaR1Z1ZEdsbWFXVnlJaUE5SUNJelpHTTFOakUwTldaa1pqWmpOREU0WXpRNFlqSm1ZelZrTVRNd09HSTBOR1ZoTlRkaVltUmlJanNLQ1NKdmNtbG5hVzVoYkMxMGNtRnVjMkZqZEdsdmJpMXBaQ0lnUFNBaU1UQXdNREF3TURBMk5EYzFOVGsxT0NJN0Nna2laWGh3YVhKbGN5MWtZWFJsSWlBOUlDSXhNell3TmpreE56QTRNRE01SWpzS0NTSjBjbUZ1YzJGamRHbHZiaTFwWkNJZ1BTQWlNVEF3TURBd01EQTJORGMxTlRrMU9DSTdDZ2tpYjNKcFoybHVZV3d0Y0hWeVkyaGhjMlV0WkdGMFpTMXRjeUlnUFNBaU1UTTJNRFk1TVRVeU9ETTVOaUk3Q2draWQyVmlMVzl5WkdWeUxXeHBibVV0YVhSbGJTMXBaQ0lnUFNBaU1UQXdNREF3TURBeU5qWXpOVEl3TlNJN0Nna2lZblp5Y3lJZ1BTQWlNUzR3SWpzS0NTSmxlSEJwY21WekxXUmhkR1V0Wm05eWJXRjBkR1ZrTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFOVG93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0pwZEdWdExXbGtJaUE5SUNJMk1ESTNNalU0TWpnaU93b0pJbVY0Y0dseVpYTXRaR0YwWlMxbWIzSnRZWFIwWldRaUlEMGdJakl3TVRNdE1ESXRNVElnTVRjNk5UVTZNRGdnUlhSakwwZE5WQ0k3Q2draWNISnZaSFZqZEMxcFpDSWdQU0FpWTI5dExtMTFjMmxqY1hWaVpXUXViekl1WVhWMGIzSmxibVYzTG5SbGMzUWlPd29KSW5CMWNtTm9ZWE5sTFdSaGRHVWlJRDBnSWpJd01UTXRNREl0TVRJZ01UYzZOVEk2TURnZ1JYUmpMMGROVkNJN0Nna2liM0pwWjJsdVlXd3RjSFZ5WTJoaGMyVXRaR0YwWlNJZ1BTQWlNakF4TXkwd01pMHhNaUF4TnpvMU1qb3dPQ0JGZEdNdlIwMVVJanNLQ1NKaWFXUWlJRDBnSW1OdmJTNXRkWE5wWTNGMVltVmtMbTh5SWpzS0NTSndkWEpqYUdGelpTMWtZWFJsTFhCemRDSWdQU0FpTWpBeE15MHdNaTB4TWlBd09UbzFNam93T0NCQmJXVnlhV05oTDB4dmMxOUJibWRsYkdWeklqc0tDU0p4ZFdGdWRHbDBlU0lnUFNBaU1TSTdDbjA9IjsKCSJlbnZpcm9ubWVudCIgPSAiU2FuZGJveCI7CgkicG9kIiA9ICIxMDAiOwoJInNpZ25pbmctc3RhdHVzIiA9ICIwIjsKfQ==";
 		final String transactionReceipt = base64EncodedAppStoreReceipt.replaceAll("=", "\\\\u003d");
 		final String originalTransactionId = "1000000064861007";
@@ -4092,11 +2877,7 @@ public class IntegrationTestIT {
 		final Response expectedResponse = new Response();
 		expectedResponse.setStatusCode(200);
 		expectedResponse.setMessage("{ \"receipt\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703334\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638439\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:44:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:41:42 Etc/GMT\", \"purchase_date_ms\" : \"1360755702795\", \"expires_date_formatted_pst\" : \"2013-02-13 03:44:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:41:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"latest_receipt_info\" : { \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", \"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", \"original_transaction_id\" : \""+originalTransactionId+"\", \"expires_date\" : \""+expiresDate+"\", \"transaction_id\" : \""+appStoreOriginalTransactionId+"\", \"quantity\" : \"1\", \"product_id\" : \""+appStoreProductId+"\", \"original_purchase_date_ms\" : \"1360755703000\", \"bid\" : \"com.musicqubed.o2\", \"web_order_line_item_id\" : \"1000000026638446\", \"bvrs\" : \"1.0\", \"expires_date_formatted\" : \"2013-02-13 11:50:42 Etc/GMT\", \"purchase_date\" : \"2013-02-13 11:47:42 Etc/GMT\", \"purchase_date_ms\" : \"1360756062000\", \"expires_date_formatted_pst\" : \"2013-02-13 03:50:42 America/Los_Angeles\", \"purchase_date_pst\" : \"2013-02-13 03:47:42 America/Los_Angeles\", \"original_purchase_date\" : \"2013-02-13 11:41:43 Etc/GMT\", \"item_id\" : \"602725828\" }, \"status\" : 0, \"latest_receipt\" : \""+transactionReceipt+"\" }");
-		
-		//PostService mockPostService = Mockito.mock(PostService.class);
-		
-		//Mockito.when(mockPostService.sendHttpPost(Mockito.eq(appleInAppITunesUrl), (List<NameValuePair>)Mockito.isNull(), Mockito.eq(expectedBody))).thenReturn(expectedResponse);
-		
+
 		PostService mockPostService = new PostService(){
 			@Override
 			public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {

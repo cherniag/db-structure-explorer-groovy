@@ -11,8 +11,12 @@ import mobi.nowtechnologies.server.service.O2Service;
 import mobi.nowtechnologies.server.service.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+
+import static mobi.nowtechnologies.server.shared.log.LogUtils.putGlobalMDC;
+import static mobi.nowtechnologies.server.shared.log.LogUtils.removeGlobalMDC;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,7 @@ public class UpdateO2UserTask {
 		long beforeExecutionTimeNano = System.nanoTime();
 		Throwable error = null;
 		try {
+            putGlobalMDC(u.getId(), u.getMobile(), u.getUserName(), u.getUserGroup().getCommunity().getRewriteUrlParameter(), "", UpdateO2UserTask.class, "");
 			updateUser(u);
 		} catch (Throwable t) {
 			error = t;
@@ -43,6 +48,7 @@ public class UpdateO2UserTask {
 			}
 			LOG.info("updateUser completed in [{}]ms user id=[{}] phone [{}] result: [{}]", executionDurationMillis,
 					u.getId(), u.getMobile(), result);
+            removeGlobalMDC();
 		}
 	}
 

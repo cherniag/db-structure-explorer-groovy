@@ -193,7 +193,7 @@ public class UserAsm {
         accountCheckDTO.setChartItems(chart.getNumTracks());
         setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0));
+        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
         if (null != currentPaymentDetails)
             accountCheckDTO.setLastPaymentStatus(currentPaymentDetails.getLastPaymentStatus());
 
@@ -224,6 +224,7 @@ public class UserAsm {
         accountCheckDTO.setHasAllDetails(user.hasAllDetails());
         accountCheckDTO.setShowFreeTrial(user.isShowFreeTrial());
         accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
+        accountCheckDTO.setEligibleForVideo(user.isEligibleForVideo());
 
         accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
 

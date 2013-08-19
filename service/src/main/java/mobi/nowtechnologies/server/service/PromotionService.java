@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -19,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -39,6 +40,7 @@ public class PromotionService {
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
+    private RefundService refundService;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -60,7 +62,11 @@ public class PromotionService {
         this.promotionRepository = promotionRepository;
     }
 
-	public Promotion getActivePromotion(String promotionCode, String communityName) {
+    public void setRefundService(RefundService refundService) {
+        this.refundService = refundService;
+    }
+
+    public Promotion getActivePromotion(String promotionCode, String communityName) {
 		notNull(promotionCode, "The parameter promotionCode is null");
 		notNull(communityName, "The parameter communityName is null");
 
@@ -77,13 +83,7 @@ public class PromotionService {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
 	}
-	
-	/***
-	 * Method returns the first promotion linked with user
-	 * @param communityName
-	 * @param user
-	 * @return the first available promotion, other wise it returns null
-	 */
+
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Promotion getPromotionForUser(final String communityName, User user) {
 		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
@@ -147,12 +147,37 @@ public class PromotionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
         boolean isPromotionApplied;
-        if (user.is4G() && (user.isO2PAYGConsumer() || user.isO2PAYMConsumer()) && (user.isO2Indirect() || user.isO2Direct()|| isNull(user.getContractChannel()))) {
+        if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User activateVideoAudioFreeTrial(String userName, String userToken, String timestamp, String communityUri, String deviceUID){
+        User user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        return activateVideoAudioFreeTrial(user);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User activateVideoAudioFreeTrial(User user){
+        boolean isPromotionApplied = false;
+        if (userService.canActivateVideoTrial(user)) {
+
+            if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+            else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+            else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
+            isPromotionApplied = applyPromotionForO24GConsumer(user);
+        }else{
+            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");
+        }
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
+        return user;
     }
 
     private boolean applyPromotionForO24GConsumer(User user){

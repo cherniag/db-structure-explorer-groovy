@@ -11,6 +11,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
+import static org.junit.Assert.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: sanya
@@ -30,7 +32,7 @@ public class DDEXParserTest {
 
         Map<String, DropTrack> result = fixture.loadXml(file);
 
-        Assert.assertEquals(true, result.get("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.ingestors.warner.WarnerParser").explicit);
+        assertEquals(true, result.get("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.ingestors.warner.WarnerParser").explicit);
     }
 
 

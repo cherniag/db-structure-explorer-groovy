@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Date		Version		Author				Change Description
+	21/04/2011  2.0.1	    Subramanyam    		Request of getValidBoltons modified to have choice of msisdn and newTariffProductId.
+ -->
+<xsd:schema targetNamespace="http://soa.o2.co.uk/managepostpayboltonsdata_2" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xcore="http://soa.o2.co.uk/coredata_1" xmlns:mbd="http://soa.o2.co.uk/managepostpayboltonsdata_2" xmlns:cpd="http://soa.o2.co.uk/pscommonpostpaydata_2">
+	<xsd:import namespace="http://soa.o2.co.uk/pscommonpostpaydata_2" schemaLocation="pscommonpostpaydata_2_0.xsd"/>
+	<xsd:import namespace="http://soa.o2.co.uk/coredata_1" schemaLocation="coredata_1_1.xsd"/>
+
+    <xsd:element name="getCurrentBoltons" type="mbd:getCurrentBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, retrieves the current set of Boltons associated with the MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getCurrentBoltonsResponse" type="mbd:getCurrentBoltonsResponse">
+	    <xsd:annotation>
+			<xsd:documentation>For a given customer identifier, retrieves the current set of Boltons associated with the MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getCurrentBoltonsFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for getCurrentBoltons operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getValidBoltons" type="mbd:getValidBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves list of valid Boltons which the customer is eiligible to move for the associated MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getValidBoltonsResponse" type="mbd:getValidBoltonsResponse">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, retrieves the valid set of Boltons associated with the MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getValidBoltonsFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for getValidBoltons operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getBusinessPolicies" type="mbd:getBusinessPolicies">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in force on the Boltons.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getBusinessPoliciesResponse" type="mbd:getBusinessPoliciesResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in force on the Boltons.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getBusinessPoliciesFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for getBusinessPolicies operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="addBoltons" type="mbd:addBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, adds the Boltons to the current Tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="addBoltonsResponse" type="mbd:genericBoltonResponse">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer, identifier adds the Boltons to the current Tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="addBoltonsFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for addBoltons operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="changeBoltonParameters" type="mbd:changeBoltonParameters">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, updates a configurable Bolts On provisioned on the given MPN with a new value e.g. your O2 numbers,favourite number, home zone.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="changeBoltonParametersResponse" type="mbd:genericBoltonResponse">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, updates a configurable Bolt Ons provisioned on the given MPN with a new value e.g. your O2 numbers,favourite number, home zone.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="changeBoltonParametersFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for changeBoltonParameters operation.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="removeBoltons" type="mbd:removeBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, removes the Boltons from the current tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="removeBoltonsResponse" type="mbd:genericBoltonResponse">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, removes the Boltons from the current tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="removeBoltonsFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for removeBoltons operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+      <xsd:element name="getCurrentAndPendingBoltons" type="mbd:getCurrentAndPendingBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of Boltons and any Boltons pending for the Addition/Removal to Tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getCurrentAndPendingBoltonsResponse" type="mbd:getCurrentAndPendingBoltonsResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of Boltons and any Boltons pending for the Addition/Removal to Tariff.</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="getCurrentAndPendingBoltonsFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for getCurrentAndPendingBoltons operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="cancelBoltonsChange" type="mbd:cancelBoltonsChange">
+    	<xsd:annotation>
+			<xsd:documentation>Cancels pending Bolton changes to the Tariff for the given Service Request Id(s).</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="cancelBoltonsChangeResponse" type="mbd:cancelBoltonsChangeResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Cancels pending Bolton changes to the Tariff for the given Service Request Id(s).</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="cancelBoltonsChangeFault" type="xcore:SOAFaultType">
+    	<xsd:annotation>
+			<xsd:documentation>Generic Fault message for cancelBoltonsChange operation</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="getCurrentBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, retrieves the current set of Boltons associated with the MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getCurrentBoltonsResponse">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier, retrieves the current set of Boltons associated with the MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="MSISDN" type="xsd:string">
+    			<xsd:annotation>
+					<xsd:documentation>Mobile phone number.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="myCurrentBoltons" type="mbd:myCurrentBoltonsType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getValidBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the list of valid Boltons which the customer is eiligible to move for the given Tariff.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:choice>
+    		
+    		<xsd:element name="customerId" type="xcore:accountType">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+			<xsd:element name="tariffProductId" type="xsd:string">
+			<xsd:annotation>
+					<xsd:documentation>Tariff Product Id.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+			
+			<xsd:sequence>
+	    		<xsd:element name="msisdn" type="xcore:msisdnType">
+	    			<xsd:annotation>
+						<xsd:documentation>MSISDN is required.</xsd:documentation>
+					</xsd:annotation>
+	    		</xsd:element>
+				<xsd:element name="newTariffProductId" type="xcore:productIDType">
+				<xsd:annotation>
+						<xsd:documentation>New Tariff Product Id.</xsd:documentation>
+					</xsd:annotation>
+	    		</xsd:element>
+		</xsd:sequence>
+    	</xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="getValidBoltonsResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the list of valid Boltons the Custmor is eligible to move to.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="validBoltons" type="mbd:validBoltonsType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getBusinessPolicies">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in force on the contract.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getBusinessPoliciesResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of business policies in force on the Boltons.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="businessPolicies" type="mbd:businessPoliciesType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="addBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>For a given customer identifier adds the Boltons to the current Tariff.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="additionalBolton" type="mbd:additionalBoltonType" minOccurs="1" maxOccurs="unbounded">
+    			<xsd:annotation>
+    				<xsd:documentation>List of new additional Boltons to be added for a given MSISDN and the Tariff.</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="overrideRules" type="xsd:boolean" minOccurs="0" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>Indicates whether business rules are to be over-ridden. Ignored for clients not authorized to over-ride business rules. Transaction may still fail due to rules which can not be over-ridden.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+     <xsd:complexType name="changeBoltonParameters">
+    	<xsd:annotation>
+			<xsd:documentation>Updates a configurable Bolt Ons provisioned on the given MPN with a new value e.g. your O2 numbers,favourite number, home zone.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="changeBolton" type="mbd:changeBoltonType" minOccurs="1" maxOccurs="unbounded">
+    			<xsd:annotation>
+    				<xsd:documentation>Boltons for which configuration is required.</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="removeBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>Removes the requested Boltons for the given MSISDN and the Tariff.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="removalBolton" type="mbd:removalBoltonType" minOccurs="1" maxOccurs="unbounded"/>
+    		<xsd:element name="overrideRules" type="xsd:boolean" minOccurs="0" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>Indicates whether business rules are to be over-ridden. Ignored for clients not authorized to over-ride business rules. Transaction may still fail due to rules which can not be over-ridden.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="cancelBoltonsChange">
+    	<xsd:annotation>
+			<xsd:documentation>Request to cancel the Boltons change.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="cancelDetails" type="mbd:cancelDetails" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>The cancel request details.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getCurrentAndPendingBoltons">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of Boltons and any Boltons pending for Addition/Removal to the Tariff.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="customerId" type="xcore:accountType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>MSISDN is required.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="getCurrentAndPendingBoltonsResponse">
+    	<xsd:annotation>
+			<xsd:documentation>Retrieves the current set of Boltons and any Boltons pending for Addition or Removal to Tariff.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="MSISDN" type="xsd:string"/>
+    		<xsd:element name="myBoltons" type="mbd:myBoltonsType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="genericBoltonResponse">
+    	<xsd:annotation>
+		<xsd:documentation>This is the generic Bolton response structure. For every Bolton action, results element will be repeated.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="changeResults" type="mbd:results" minOccurs="1" maxOccurs="unbounded"/>
+    		<xsd:element name="isRulesOverridable" type="xsd:boolean" maxOccurs="1" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="results">
+		<xsd:annotation>
+			<xsd:documentation>Bolton response details.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="success" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="statusCode" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="productId" type="xsd:string" minOccurs="0" maxOccurs="1">
+    		<xsd:annotation>
+					<xsd:documentation>Tariff Product Id for which the action(add/remove/set) is performed.For cancelBoltonschange operation, this element is not returned in the response.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="statusMessage" type="xsd:string" minOccurs="0" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>Status message of the Service Request if success is false.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="serviceRequestId" type="xsd:string" minOccurs="0" maxOccurs="1">
+    			<xsd:annotation>
+					<xsd:documentation>Service Request Id for the service request. If the service request is accepted, then service request Id is always returned.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+    <xsd:complexType name="cancelBoltonsChangeResponse">
+    	<xsd:annotation>
+		<xsd:documentation>This is the cancel Bolton change response structure.
+		For each bolton cancel request, cancelResults element will be repeated.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="cancelResult" type="mbd:cancelResultType" minOccurs="1" maxOccurs="1"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:complexType name="cancelResultType">
+		<xsd:annotation>
+			<xsd:documentation>This section will have the results of cancelled service requests.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+    		<xsd:element name="cancelRequestDetail" type="mbd:results" minOccurs="1" maxOccurs="unbounded">
+    			<xsd:annotation>
+					<xsd:documentation>For each bolton cancel request, this element will be populated.</xsd:documentation>
+				</xsd:annotation>
+    		</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="myBoltonType">
+		<xsd:annotation>
+			<xsd:documentation>My Bolton details.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+		<xsd:element name="bolton" type="cpd:productType" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>My current Bolton product or pending for Addition/Removal.</xsd:documentation>
+    			</xsd:annotation>
+    	</xsd:element>
+		<xsd:element name="cancelToken" type="xsd:integer" minOccurs="0" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>Token to be used to cancel the pending Bolton change. The token will be available only when the Bolton is pending for Addtion or Removal.</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="changeBoltonType">
+		<xsd:annotation>
+			<xsd:documentation>Change Bolton details.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+		<xsd:element name="productId" type="xsd:string" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>The Bolton Product Id for which the configuration will be altered.</xsd:documentation>
+    			</xsd:annotation>
+    	</xsd:element>
+		<xsd:element name="productParameters" type="cpd:productParamType" minOccurs="0" maxOccurs="unbounded">
+    			<xsd:annotation>
+    				<xsd:documentation>Additional parameters required by the Product.</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="cancelDetails">
+    	<xsd:annotation>
+			<xsd:documentation>Cancel request details.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="cancelToken" type="xsd:integer" minOccurs="1" maxOccurs="unbounded">
+    			<xsd:annotation>
+					<xsd:documentation>Token provided in the getCurrentAndPendingBoltons call.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+   <xsd:complexType name="myBoltonsType">
+   			<xsd:annotation>
+				<xsd:documentation>Provides the list of current Boltons and the ones pending for Addition or Removal(Promotional, Data Option, Wifi products and so on).</xsd:documentation>
+			</xsd:annotation>
+			<xsd:sequence>
+    		<xsd:element name="bolton" type="mbd:myBoltonType" maxOccurs="unbounded">
+			</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="myCurrentBoltonsType">
+   			<xsd:annotation>
+				<xsd:documentation>List of current set of Boltons associated with MSISDN.</xsd:documentation>
+			</xsd:annotation>
+			<xsd:sequence>
+    		<xsd:element name="bolton" type="cpd:productType" maxOccurs="unbounded">
+			</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="removalBoltonType">
+   			<xsd:annotation>
+				<xsd:documentation>The bolton to be removed along with an optional effective removal date.</xsd:documentation>
+			</xsd:annotation>
+			<xsd:sequence>
+    		<xsd:element name="bolton" type="cpd:productType"/>
+    		<xsd:element name="effectiveRemovalDate" type="xsd:date" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="additionalBoltonType">
+   			<xsd:annotation>
+				<xsd:documentation>The bolton to be added along with an optional Effective Start date.</xsd:documentation>
+			</xsd:annotation>
+			<xsd:sequence>
+    		<xsd:element name="bolton" type="cpd:productType"/>
+    		<xsd:element name="effectiveStartDate" type="xsd:date" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="validBoltonsType">
+    	<xsd:annotation>
+			<xsd:documentation>List of valid Boltons associated with the Tariff for a given MSISDN.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="bolton" type="cpd:productType" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="businessPoliciesType">
+    	<xsd:annotation>
+			<xsd:documentation>A list of policies active against the current contract with respect to Boltons.</xsd:documentation>
+		</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="businessPolicy" type="cpd:businessPolicy" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    </xsd:schema>

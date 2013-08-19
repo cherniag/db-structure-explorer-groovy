@@ -49,7 +49,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		
 		final User user = pendingPayment.getUser();
 		final int epochSeconds = Utils.getEpochSeconds();
-		user.setLastPaymentTryInCycleSeconds(epochSeconds);
 		
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		
@@ -102,8 +101,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 
     @Transactional(propagation=Propagation.REQUIRED)
     protected PaymentDetails commitPaymentDetails(User user, PaymentDetails newPaymentDetails){
-
-        refundService.logSkippedAudioBoughtPeriodOnTariffMigrationFrom3GTo4GVideoAudio(user, newPaymentDetails.getPaymentPolicy());
 
         paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, "Commit new payment details");
 

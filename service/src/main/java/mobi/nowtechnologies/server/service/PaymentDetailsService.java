@@ -458,8 +458,7 @@ public class PaymentDetailsService {
 			currentPaymentDetails.setDescriptionError(reason);
 
 			currentPaymentDetails = update(currentPaymentDetails);
-			
-			user.setLastPaymentTryInCycleMillis(0L);
+
 			userService.updateUser(user);
 		}
 		

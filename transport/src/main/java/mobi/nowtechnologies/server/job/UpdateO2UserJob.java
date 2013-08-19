@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.service.HazelcastService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import static mobi.nowtechnologies.server.service.HazelcastService.QUEUE_O2_USERS_FOR_UPDATE;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-public class UpdateO2UserJob extends QuartzJobBean {
+public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserJob.class);
     private transient static int POOL_SIZE;
     private transient static int TASK_COUNT;

@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,4 +55,20 @@ public class DropTerritory {
 		return result;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("country", country)
+                .append("label", label)
+                .append("currency", currency)
+                .append("price", price)
+                .append("startdate", startdate)
+                .append("reportingId", reportingId)
+                .append("distributor", distributor)
+                .append("takeDown", takeDown)
+                .append("priceCode", priceCode)
+                .append("dealReference", dealReference)
+                .append("publisher", publisher)
+                .toString();
+    }
 }

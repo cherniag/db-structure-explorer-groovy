@@ -1,43 +1,57 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
-import org.junit.Assert;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.XpathEngine;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathsEqual;
+import static org.junit.Assert.*;
+
 /**
- * Created with IntelliJ IDEA.
  * User: sanya
  * Date: 7/9/13
  * Time: 1:31 PM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class DDEXParserTest {
 
-    private DDEXParser fixture;
+    private DDEXParser ddexParserFixture;
 
     @Test
     public void testLoadXml_IsExplicit_Success() throws Exception {
         URL fileURL = this.getClass().getClassLoader().getResource("media/warner_cdu/new_release/20111011_0926_13/075679971517/075679971517.xml");
         String file = new File(fileURL.toURI()).getAbsolutePath();
 
-        Map<String, DropTrack> result = fixture.loadXml(file);
+        Map<String, DropTrack> result = ddexParserFixture.loadXml(file);
 
-        Assert.assertEquals(true, result.get("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser").explicit);
+        assertEquals(true, result.get("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser").explicit);
     }
-
 
     @Before
     public void setUp() throws Exception {
-        fixture = new WarnerParser("classpath:media/warner_cdu/new_release/");
-
+        ddexParserFixture = new WarnerParser("classpath:media/warner_cdu/new_release/");
     }
 
 }

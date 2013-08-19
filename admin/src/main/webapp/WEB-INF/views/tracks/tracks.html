@@ -71,7 +71,7 @@
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
-					<!--<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>-->
+					<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>
 				</li>
 				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}"  th:with="isVideo=${trackDto.mediaType.name() == 'VIDEO'}, mediaSrc=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}">
 					<div th:id="${'idDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.id}">ID</div>
@@ -83,7 +83,7 @@
 					<div th:id="${'publishArtistDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishArtist}">Publish Artist</div>
 					<div th:id="${'resolutionDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.resolution}">Resolution</div>
 					<div th:id="${'areArtistUrlsDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.areArtistUrls}">AreArtistUrls</div>
-
+					
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
 						<img class="play" alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />

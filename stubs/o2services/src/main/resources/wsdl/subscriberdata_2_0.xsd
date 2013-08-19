@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Date			Change		Author		Change Description      						
+	10/04/2012		2.0.2		Anshuman	Added new operation getSPIDDetails_1
+	22/12/2010     	2.0.1	    Manoj N V  	Added accountNumber as an input choice for getBillProfile operation
+	24/08/2010     	2.0.0	    Arjun    	Added new operation getChargingCategory-->
+<xsd:schema targetNamespace="http://soa.o2.co.uk/subscriberdata_2" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xcore="http://soa.o2.co.uk/coredata_1" xmlns:sud="http://soa.o2.co.uk/subscriberdata_2">
+   <xsd:import namespace="http://soa.o2.co.uk/coredata_1" schemaLocation="coredata_1_1.xsd"/>
+   <xsd:element name="getSubscriberProfile" type="sud:getSubscriberProfile">
+      <xsd:annotation>
+         <xsd:documentation>Request to get profile for MSISDN</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberProfile">
+      <xsd:annotation>
+         <xsd:documentation>Request to get profile for MSISDN</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="subscriberID" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberProfileResponse" type="sud:getSubscriberProfileResponse">
+      <xsd:annotation>
+         <xsd:documentation>The returned profile</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberProfileResponse">
+      <xsd:annotation>
+         <xsd:documentation>The returned profile</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="subscriberProfile" type="sud:subscriberProfileType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberProfileFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>getSubscriberProfile Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberPaymentCategory" type="sud:getSubscriberPaymentCategory">
+      <xsd:annotation>
+         <xsd:documentation>Only returns Payment type</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberPaymentCategory">
+      <xsd:annotation>
+         <xsd:documentation>Only returns Payment type</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="SubscriberID" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberPaymentCategoryResponse" type="sud:getSubscriberPaymentCategoryResponse">
+      <xsd:annotation>
+         <xsd:documentation>returns prepay or postpay</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberPaymentCategoryResponse">
+      <xsd:annotation>
+         <xsd:documentation>returns prepay or postpay</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="PaymentCategory" type="xcore:PaymentCategoryType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberPaymentCategoryFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>getSubscriberPaymentCategory Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberSegment" type="sud:getSubscriberSegment">
+      <xsd:annotation>
+         <xsd:documentation>Only gets the Segment</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberSegment">
+      <xsd:annotation>
+         <xsd:documentation>Only gets the Segment</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="SubscriberID" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberSegmentResponse" type="sud:getSubscriberSegmentResponse">
+      <xsd:annotation>
+         <xsd:documentation>Only returns Segment</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberSegmentResponse">
+      <xsd:annotation>
+         <xsd:documentation>Only returns Segment</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="Segment" type="xcore:SegmentType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberSegmentFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>getSubscriberSegment Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberOperator" type="sud:getSubscriberOperator">
+      <xsd:annotation>
+         <xsd:documentation>gets Operator for MSISDN</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberOperator">
+      <xsd:annotation>
+         <xsd:documentation>gets Operator for MSISDN</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="SubscriberID" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberOperatorResponse" type="sud:getSubscriberOperatorResponse">
+      <xsd:annotation>
+         <xsd:documentation>returns MSISDN operator</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberOperatorResponse">
+      <xsd:annotation>
+         <xsd:documentation>returns MSISDN operator</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="Operator" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberOperatorFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>getSubscriberOperator Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberChannel" type="sud:getSubscriberChannel">
+      <xsd:annotation>
+         <xsd:documentation>gets the channel of a subscriber Online, Retail, etc.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberChannel">
+      <xsd:annotation>
+         <xsd:documentation>gets the channel of a subscriber Online, Retail, etc.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="SubscriberID" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberChannelResponse" type="sud:getSubscriberChannelResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the channel, e.g. O2Online</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberChannelResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the channel, e.g. O2Online</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="channel" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberChannelFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>getSubscriberChannel Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getBillingSystem" type="sud:getBillingSystem">
+      <xsd:annotation>
+         <xsd:documentation>Get the Billing System for a given Service Provider ID</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getBillingSystemResponse" type="sud:getBillingSystemResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Billing System</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getBillingSystemFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Billing System Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getChargingCategory" type="sud:getChargingCategory">
+      <xsd:annotation>
+         <xsd:documentation>Request to retrieve the subscriber charging category for a customer.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getChargingCategoryResponse" type="sud:getChargingCategoryResponse">
+      <xsd:annotation>
+         <xsd:documentation>Response of the subscriber charging category operation.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getChargingCategoryFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>The fault structure encapsulating the errors returned as part of the getChargingCategory operation.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getBillingSystem">
+      <xsd:annotation>
+         <xsd:documentation>Get the Billing System for a given Service Provider ID</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="msisdn" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getBillingSystemResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Billing System</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="billingProfile" type="sud:BillingProfileType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getSubscriberAndBillingSystem" type="sud:getSubscriberAndBillingSystem">
+      <xsd:annotation>
+         <xsd:documentation>Get the Subscriber profile and Billing System for a given MSISDN</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberAndBillingSystemResponse" type="sud:getSubscriberAndBillingSystemResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Subscriber Profile and Billing System</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSubscriberAndBillingSystemFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Subscriber Profile and Billing System Fault</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getSubscriberAndBillingSystem">
+      <xsd:annotation>
+         <xsd:documentation>Get the Subscriber profile and Billing System for a given MSISDN</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="msisdn" type="xcore:msisdnType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getSubscriberAndBillingSystemResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Subscriber Profile and Billing System</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="subscriberProfile" type="xcore:SubscriberProfileType"/>
+         <xsd:element name="billingProfile" type="sud:BillingProfileType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="getBillProfile" type="sud:getBillProfile">
+      <xsd:annotation>
+         <xsd:documentation>Gets the related MSISDNS given an account number or MSISDN</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getBillProfileResponse" type="sud:getBillProfileResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the list of  MSISDNs</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getBillProfileFault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>fault from getBillProfile</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSPIDDetails_1" type="sud:getSPIDDetails_1RequestType">
+      <xsd:annotation>
+         <xsd:documentation>Request element to get SPID details of given SPID.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSPIDDetails_1Response" type="sud:getSPIDDetails_1ResponseType">
+      <xsd:annotation>
+         <xsd:documentation>Response element containing SPID details from ABS back-end.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="getSPIDDetails_1Fault" type="xcore:SOAFaultType">
+      <xsd:annotation>
+         <xsd:documentation>SOA Fault response.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:complexType name="getBillProfile">
+      <xsd:annotation>
+         <xsd:documentation>Gets the account number and also states if that account is multi-MSISDN</xsd:documentation>
+      </xsd:annotation>
+      <xsd:choice>
+         <xsd:element name="msisdn" type="xcore:msisdnType"/>
+         <xsd:element name="accountNumber" type="xcore:billingAccountNumberType"/>
+      </xsd:choice>
+   </xsd:complexType>
+   <xsd:complexType name="getBillProfileResponse">
+      <xsd:annotation>
+         <xsd:documentation>Returns the Billing System, account number and list of MSISDNs</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="billingSystem" type="sud:BillingProfileType"/>
+         <xsd:element name="accountNumber" type="xcore:billingAccountNumberType"/>
+         <xsd:element name="msisdnList" type="sud:msisdnList" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="msisdnList">
+      <xsd:annotation>
+         <xsd:documentation>List of associated MSISDNs</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="msisdn" type="xcore:msisdnType" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="BillingProfileType">
+      <xsd:annotation>
+         <xsd:documentation>Enumerated Billing Profile</xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="CPW"/>
+         <xsd:enumeration value="CUK"/>
+         <xsd:enumeration value="Prepay"/>
+         <xsd:enumeration value="DISE"/>
+         <xsd:enumeration value="Unknown"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="subscriberProfileType">
+      <xsd:annotation>
+         <xsd:documentation>Complex Type that defines Subscriber Profile</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="subscriberID" type="xcore:msisdnType">
+            <xsd:annotation>
+               <xsd:documentation>This refers to the MSISDN for Mobile subscribers</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="operator" type="xsd:string" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Operator ID for the particular subscriber</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="paymentCategory" type="xcore:PaymentCategoryType" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Type of payment, Prepay of Postpay</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="segment" type="xcore:SegmentType" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Segment of Subscriber, corporate, consumer, ISP etc.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="channel" type="xsd:string" minOccurs="0"/>
+         <xsd:element name="serviceProviderID" type="xsd:long" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>SPID which is a unique value for the type of O2 Service Provider like Tesco, CPW etc.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="status" type="xsd:string"/>
+         <xsd:element name="puk" type="xsd:string" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getChargingCategory">
+      <xsd:annotation>
+         <xsd:documentation>Complex type defining the input required to fetch the charging type of the Subscriber</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="msisdn" type="xcore:msisdnType"/>
+         <xsd:element name="productList" type="sud:productListType" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getChargingCategoryResponse">
+      <xsd:annotation>
+         <xsd:documentation>Complex type defining the response of the subscriber charging category response.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="chargingCategory" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="productListType">
+      <xsd:annotation>
+         <xsd:documentation>The customer current tariff and the list of services present on the account. If this is provided then the customer data charging type 
+			would be determined using the tariff/services combination.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="tariffProductId" type="xcore:productIDType" minOccurs="1"/>
+         <xsd:element name="services" type="sud:servicesType" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="servicesType">
+      <xsd:annotation>
+         <xsd:documentation>A list of services available on the customer current tariff.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="productId" type="xcore:productIDType" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getSPIDDetails_1RequestType">
+      <xsd:annotation>
+         <xsd:documentation>Complex type definition for getSPIDDetails_1 request element.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="serviceProviderId" type="xcore:spidType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="getSPIDDetails_1ResponseType">
+      <xsd:annotation>
+         <xsd:documentation>Complex type definition for getSPIDDetails_1 response element.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="serviceProviderDetails" type="sud:serviceProviderDetailsType"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="serviceProviderDetailsType">
+      <xsd:annotation>
+         <xsd:documentation>Complex type definition having various basic service provider details.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="serviceProviderId" type="xcore:spidType">
+            <xsd:annotation>
+               <xsd:documentation>Service provider unique ID.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="serviceProviderName" type="sud:serviceProviderNameType"/>
+         <xsd:element name="masterServiceProviderId" type="xcore:spidType">
+            <xsd:annotation>
+               <xsd:documentation>Holds the group or master spid.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="autoReleaseCredit" type="xsd:boolean"/>
+         <xsd:element name="autoReleaseReserved" type="xsd:boolean"/>
+         <xsd:element name="autoReleaseStln" type="xsd:boolean"/>
+         <xsd:element name="barAll" type="xsd:boolean"/>
+         <xsd:element name="creationDateTime" type="xsd:dateTime">
+            <xsd:annotation>
+               <xsd:documentation>Service Provider create date.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="nextDeliveryDateTime" type="xsd:dateTime">
+            <xsd:annotation>
+               <xsd:documentation>Service Provider’s next delivery date.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="deliveryFrequency" type="xsd:integer">
+            <xsd:annotation>
+               <xsd:documentation>Service providers delivery  frequency.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="aliasId" type="xsd:integer" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>There are around 39 SP alias groups. If this SPID is under any of those 39 groups then that group ID will be provided here.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="comments" minOccurs="0" type="xsd:string"/>
+         <xsd:element name="csercsRecordLength" minOccurs="0" type="xsd:string">
+            <xsd:annotation>
+               <xsd:documentation>Mentions the record length of the CSERCS file that will be provided. E.g. T228 indicates that each record in the CSERC file will be of 228 bytes.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="csercsFileNextProvidedDate" type="xsd:dateTime" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>The date when the CSERCS file will be provided.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="processingPeriod" type="xsd:integer" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Service Provider’s Processing Period.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="heldIndicator" minOccurs="0" maxOccurs="1" type="sud:singleCharType">
+            <xsd:annotation>
+               <xsd:documentation>Can contain Y/N/P where P depicts in PCD.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="testIndicator" minOccurs="0" maxOccurs="1" type="sud:singleCharType">
+            <xsd:annotation>
+               <xsd:documentation>Can contain E/Y/N. E depicts Excluded from WAI. WAI - wholesale accounting and invoicing. It is related to reporting.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="pricedCallDistributionPriority" type="xsd:integer" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Based on the value provided here, it will be prioritized as to for which SPID the PCD should run first. PCD is Priced Call Distribution. After pricing this process runs to split the records based on SP.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="mnoGroup" type="xsd:integer" minOccurs="0">
+            <xsd:annotation>
+               <xsd:documentation>Values returned here are 1/2/3.
+							1 - Tesco Mobile
+							2 – MVNE
+							3 - Manx Telecom MVNO</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="postpayOrPrepay" type="xsd:string">
+            <xsd:annotation>
+               <xsd:documentation>Type of operator, could be POSTPAY or PREPAY.</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="machIMSICategory" type="xsd:string">
+            <xsd:annotation>
+               <xsd:documentation>Possible values are:
+				POST
+				SIMRPOST
+				GBRMT
+				MVNE1
+				PRE
+				TESROAM</xsd:documentation>
+            </xsd:annotation>
+         </xsd:element>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="singleCharType">
+      <xsd:annotation>
+         <xsd:documentation>This element will hold one character.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:length value="1"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="serviceProviderNameType">
+      <xsd:annotation>
+         <xsd:documentation>Name of Service Provider.</xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="33"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

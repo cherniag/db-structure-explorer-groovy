@@ -69,4 +69,8 @@
  	<bean class="mobi.nowtechnologies.server.transport.controller.UnsubscribeController" parent="transport.CommonController">
  	</bean>
 
+    <bean id="transport.ActivateVideoAudioFreeTrialController" class="mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" parent="transport.CommonController">
+        <property name="promotionService" ref="service.PromotionService"/>
+    </bean>
+
 </beans>

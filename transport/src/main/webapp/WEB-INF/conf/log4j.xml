@@ -43,7 +43,7 @@
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
-			<param name="classNames" value="mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartControllerTestIT, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" />
+			<param name="classNames" value="mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartControllerTestIT, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SingUpDeviceController, mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" />
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>
@@ -257,6 +257,22 @@
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>
+
+    <appender name="updateO2UserTaskAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/update-o2-user-job.log" />
+        <param name="encoding" value="UTF-8" />
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/update-o2-user-job_%d{yyyy-ww-dd}.gz" />
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+        </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+            <param name="contextKey" value="class" />
+            <param name="classNames" value="mobi.nowtechnologies.server.job.UpdateO2UserTask" />
+            <param name="acceptOnMatch" value="true" />
+        </filter>
+    </appender>
 	
 	<!-- Payment Job Logs -->
 	<logger name="mobi.nowtechnologies.server.job">
@@ -345,6 +361,7 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
+        <appender-ref ref="updateO2UserTaskAppender" />
 	</logger>
 	<!-- END MIG Logger -->
 	

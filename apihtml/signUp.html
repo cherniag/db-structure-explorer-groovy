@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="jquery-1.10.2.js"></script>
+<script src="rsa.js"></script>
+<script src="encode.js"></script>
+<script src="date.js"></script>
+
+<style>input[type="text"] {width : 520px;}</style>
+</head>
+<body>
+
+<fieldset>
+<form id="mainForm" name="mainForm">
+<table border="0">
+<tr><td> Server </td><td> <input type="text" id="serverUrlId" value="xxxxhttp://localhost:8080/transport/service/" />  </td></tr>  
+<tr><td> DeviceUID </td><td> <input type="text" id="p_deviceUID" value="????"/>
+
+</table>
+   Change value of DeviceUID and click here <input type="button" value="setValues" onclick="setValues()" /> first.<br />
+</form>
+</fieldset>
+
+<script>
+function setValues(){	
+	setAuthValues();
+	$("input[name='DEVICE_UID']").val($("#p_deviceUID").val());
+}
+function execSubmit(){
+	serverUrl=$("#serverUrlId").attr("value");	
+	$("#SignUpFormId").attr("action", serverUrl+"SIGN_UP_DEVICE"+defaultPrefix);
+	$("#SignUpFormId").submit();
+}
+</script>
+
+
+<fieldset>
+<legend>SIGN_UP_DEVICE</legend>
+<form id="SignUpFormId" method="post" target="_blank" action="XXXXhttp://rage.musicqubed.com/transport/service/SIGN_UP_DEVICE">
+
+<input type="button" value="JSSubmit" onclick="execSubmit()" /><br />
+
+<table border="0">
+<tr><td>DEVICE_UID </td><td> <input type="text" name="DEVICE_UID" value="??" /> ******              </td></tr>  
+<tr><td>DEVICE_MODEL </td><td> <input type="text" name="DEVICE_MODEL" value="Blackberry 10 phone 1234" />         </td></tr>  
+<tr><td>TIMESTAMP </td><td> <input type="text" name="TIMESTAMP" value="2013-07-30 13:53+0000" />              </td></tr>  
+<tr><td>APP_VERSION </td><td> <input type="text" name="APP_VERSION" value="CNBETA" /> NA </td></tr>   
+<tr><td>API_VERSION </td><td> <input type="text" name="API_VERSION" value="V1.1" />  NA       </td></tr>  
+<tr><td>USER_TOKEN </td><td> <input type="text" name="USER_TOKEN" value="" />     NA          </td></tr>  <!--88ae296f3bb116462c655dded124c07d-->
+<tr><td>DEVICE_TYPE </td><td> <input type="text" name="DEVICE_TYPE" value="BLACKBERRY" />               </td></tr>  
+<tr><td>COMMUNITY_NAME </td><td> <input type="text" name="COMMUNITY_NAME" value="o2" />           </td></tr>  
+<tr><td>USER_NAME </td><td> <input type="text" name="USER_NAME" value="" />         NA        </td></tr>  
+<tr><td>PUSH_NOTIFICATION_TOKEN </td><td> <input type="text" name="PUSH_NOTIFICATION_TOKEN" value="" /> NA  </td></tr>  
+</table>
+</form>
+</fieldset>
+
+</body>
+
+</html>

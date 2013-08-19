@@ -10,8 +10,13 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionStateFactory;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
+import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -62,24 +67,28 @@ public class PaymentsController extends CommonController {
         List<PaymentPolicyDto> paymentPolicies = getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator());
         mav.addObject("paymentPolicies", paymentPolicies);
 
-        mav.addObject("nonIOSDevice", !user.isIOSDevice())
-        .addObject("isIOSDevice", user.isIOSDevice())
-        .addObject("trialExpiredOrLimited", user.isTrialExpired() || user.isLimited())
-        .addObject("isO2User", user.isO2User());
+        mav.addObject("isO2Consumer", user.isO2Consumer());
         PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
         mav.addObject("paymentDetails", paymentDetails);
-        String accountNotesMsgCode = getMessageCodeForAccountNotes(user);
         PaymentPolicy activePolicy = paymentDetails != null ? paymentDetails.getPaymentPolicy() : null;
         mav.addObject("activePolicy", activePolicy);
-        mav.addObject("paymentAccountNotes", message(locale, accountNotesMsgCode));
-        mav.addObject("paymentAccountBanner", message(locale, accountNotesMsgCode + ".img"));
+        //TODO: move logic to controller <c:if test="${paymentDetails != null && activePolicy != null && paymentDetails.activated && activePolicy.subcost == paymentPolicy.subcost && activePolicy.subweeks == paymentPolicy.subweeks}">
+        
         mav.addObject("paymentPoliciesNote", paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
         mav.addObject("paymentPoliciesHeader", paymentsMessage(locale, user, PAYMENTS_HEADER_MSG_CODE));
+        mav.addObject("mobilePhoneNumber", user.getMobile());
         
         boolean userIsOptedInToVideo = user.is4G() && user.isVideoFreeTrialHasBeenActivated();
         
         mav.addObject("userIsOptedInToVideo", userIsOptedInToVideo);
         mav.addObject("userCanGetVideo", user.is4G());
+        
+        SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
+        SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
+        
+        PaymentPageData paymentPageData = new PaymentPageData(subscriptionState, subscriptionTexts);
+        paymentPageData.setAppleIOSNonO2Business(user.isIOSDevice() && !(user.isO2Business()));
+        mav.addObject("paymentPageData", paymentPageData);
 
         String paymentType = null;
         if ( paymentDetails != null ) {
@@ -90,12 +99,6 @@ public class PaymentsController extends CommonController {
         	}
         }
         mav.addObject("paymentDetailsType", paymentType);
-        
-        boolean isBussinesUser =  SegmentType.BUSINESS == user.getSegment();
-        boolean isPayMonthlyUser =  Contract.PAYM == user.getContract();
-        
-        mav.addObject("isBussinesUser", isBussinesUser);
-        mav.addObject("isPayMonthlyUser", isPayMonthlyUser);
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
@@ -103,7 +106,7 @@ public class PaymentsController extends CommonController {
         return mav;
     }
 
-    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator) {
+    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
         List<PaymentPolicyDto> paymentPolicy;
         
         if(user.isnonO2User()) {
@@ -127,6 +130,12 @@ public class PaymentsController extends CommonController {
     	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
     	
     	if ( paymentPolicyList == null || user == null ) {
+    		return ret;
+    	}
+    	
+    	if(user.isO2Business()){     		
+    		//no filtering required
+    		ret.addAll(paymentPolicyList);
     		return ret;
     	}
     	
@@ -184,49 +193,6 @@ public class PaymentsController extends CommonController {
         	}
         }
         return "";
-    }
-    
-    /*private String getMessageCodeForAccountNotes2(User user) {
-    	
-    	return null;
-    }
-    
-    private String getMessageCodeForVideo(User user) {
-    	
-    	
-    	return null;
-    }
-    
-    private String getMessageCodeForAudio(User user) {
-    	if ( user.isOnFreeTrial() ) {
-    		
-    	} else if ( user.isSubscribed() ) {
-    		
-    	} else if ( user.isLimited() ) {
-    		
-    	} else {
-    		LOGGER.warn("No banner for user [{}]", user);
-    	}
-
-    	return null;
-    }*/
-
-    public String getMessageCodeForAccountNotes(User user) {
-        String messageCode = "pays.page.note.account";
-        if (user.isLimited())
-            messageCode = "pays.page.note.account.limited";
-        else if (user.isOnFreeTrial())
-            messageCode = "pays.page.note.account.freetrial";
-        else if (user.isSubscribed())
-            messageCode = "pays.page.note.account.subscribed";
-        else if (user.isSubscribedViaInApp())
-            messageCode = "pays.page.note.account.subscribed_via_inapp";
-        else if (user.isTrialExpired())
-            messageCode = "pays.page.note.account.trial_expired";
-        else if (user.isUnsubscribedWithFullAccess())
-            messageCode = "pays.page.note.account.unsubscribed_with_full_access";
-
-        return messageCode;
     }
 
     private String message(Locale locale, String messageCode) {

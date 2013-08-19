@@ -3,10 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
-/**
- * The persistent class for the tb_files database table.
- * 
- */
 @Entity
 @Table(name = "tb_files")
 public class MediaFile implements Serializable {
@@ -95,7 +91,6 @@ public class MediaFile implements Serializable {
                 "i=" + i +
                 ", filename='" + filename + '\'' +
                 ", fileTypeId=" + fileTypeId +
-                ", fileType=" + fileType +
                 ", size=" + size +
                 ", duration=" + duration +
                 ", version=" + version +

@@ -5,12 +5,12 @@ import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -28,18 +28,14 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.google.common.base.Objects;
 
@@ -109,8 +105,8 @@ public class User implements Serializable {
 	@Column(name = "i")
 	private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "last_promo")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "last_promo", columnDefinition = "INT default NULL")
     private PromoCode lastPromo;
 
     @Column(name = "contract_channel")
@@ -118,7 +114,7 @@ public class User implements Serializable {
     private ContractChannel contractChannel;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tariff", columnDefinition = "char(255)")
+    @Column(name = "tariff", columnDefinition = "char(255)", nullable = false)
     private Tariff tariff;
 
 	@Column(name = "address1", columnDefinition = "char(50)")
@@ -342,6 +338,7 @@ public class User implements Serializable {
 		setPaymentDetailsList(new ArrayList<PaymentDetails>());
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
+        setTariff(_3G);
 	}
 
     public boolean isShowFreeTrial() {
@@ -371,12 +368,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isnonO2User() {
-		Community community = this.userGroup.getCommunity();
-
-		if (!"o2".equals(this.provider))
-			return true;
-
-		return false;
+		return !"o2".equals(this.provider);
 	}
 
 	public boolean isO2CommunityUser() {
@@ -399,6 +391,10 @@ public class User implements Serializable {
 		return isO2User() && CONSUMER.equals(segment);
 	}
 
+	public boolean isO2Business(){
+		return isO2User() && !isO2Consumer();
+	}
+	
 	public void addPaymentDetails(PaymentDetails paymentDetails) {
 		if (null != paymentDetails) {
 			this.paymentDetailsList.add(paymentDetails);
@@ -817,6 +813,21 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withUserName(String userName){
+        setUserName(userName);
+        return this;
+    }
+
+    public User withContractChannel(ContractChannel contractChannel){
+        setContractChannel(contractChannel);
+        return this;
+    }
+
+    public User withDeviceUID(String deviceUID){
+        setDeviceUID(deviceUID);
+        return this;
+    }
+
 	public int getPaymentStatus() {
 		return paymentStatus;
 	}
@@ -917,7 +928,7 @@ public class User implements Serializable {
 
 		accountDto.setSubscription(subscription);
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance, 0) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
@@ -1026,20 +1037,6 @@ public class User implements Serializable {
 		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 	}
 
-	public long getLastPaymentTryInCycleMillis() {
-		return 1L;
-	}
-
-	public void setLastPaymentTryInCycleMillis(long lastPaymentTryInCycleMillis) {
-	}
-
-	public void setLastPaymentTryInCycleSeconds(int lastPaymentTryInCycleSeconds) {
-	}
-
-	public int getLastPaymentTryInCycleSeconds() {
-		return 1;
-	}
-
 	public long getLastBefore48SmsMillis() {
 		return lastBefore48SmsMillis;
 	}
@@ -1102,15 +1099,22 @@ public class User implements Serializable {
 				.add("canContact", canContact)
 				.add("deviceString", deviceString)
 				.add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
 				.add("activationStatus", activationStatus)
 				.add("segment", segment)
 				.add("provider", provider)
                 .add("tariff", tariff)
                 .add("contractChannel", contractChannel)
+                .add("lastPromoId", getLastPromoId())
 				.add("contract", contract).toString();
 	}
 
-	public boolean isOnFreeTrial() {
+    private Integer getLastPromoId() {
+        if (isNotNull(lastPromo)) return lastPromo.getId();
+        return null;
+    }
+
+    public boolean isOnFreeTrial() {
 		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
 	}
 
@@ -1123,7 +1127,7 @@ public class User implements Serializable {
 		return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
 				|| (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
 						&& getLastSubscribedPaymentSystem() != null
-						&& !isActivePaymentDetails());
+						&& !hasActivePaymentDetails());
 	}
 
 	public boolean isSubscribedStatus() {
@@ -1143,7 +1147,7 @@ public class User implements Serializable {
 	public boolean isSubscribed() {
 		return isSubscribedStatus()
 				&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-				&& isActivePaymentDetails();
+				&& hasActivePaymentDetails();
 	}
 
 	public boolean isNotActivePaymentDetails() {
@@ -1151,7 +1155,7 @@ public class User implements Serializable {
 		return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
 	}
 
-	public boolean isActivePaymentDetails() {
+	public boolean hasActivePaymentDetails() {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && currentPaymentDetails.isActivated();
 	}
@@ -1235,7 +1239,7 @@ public class User implements Serializable {
 
 	public boolean isExpiring() {
 		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
-				&& !isActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
+				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
     public boolean has4GVideoAudioSubscription(){
@@ -1243,12 +1247,16 @@ public class User implements Serializable {
     }
 
     public boolean isOn4GVideoAudioBoughtPeriod(){
-        return nextSubPayment > Utils.getEpochSeconds() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isNextSubPaymentInTheFuture() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
     public boolean isOnAudioBoughtPeriod() {
-        return nextSubPayment > Utils.getEpochSeconds() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isNextSubPaymentInTheFuture() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
+
+	public boolean isNextSubPaymentInTheFuture() {
+		return nextSubPayment > Utils.getEpochSeconds();
+	}
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
         if (paymentDetails != null ){
@@ -1275,11 +1283,11 @@ public class User implements Serializable {
     }
 
     public boolean is4G(){
-        return Tariff._4G.equals(tariff);
+        return _4G.equals(tariff);
     }
 
     public boolean is3G(){
-        return Tariff._3G.equals(tariff);
+        return _3G.equals(tariff);
     }
 
     public boolean isVideoFreeTrialHasBeenActivated() {
@@ -1343,5 +1351,9 @@ public class User implements Serializable {
 
     public boolean canPlayVideo(){
         return isOnVideoAudioFreeTrial() || isOn4GVideoAudioBoughtPeriod();
+    }
+
+    public boolean isEligibleForVideo(){
+        return isO24GConsumer();
     }
 }
