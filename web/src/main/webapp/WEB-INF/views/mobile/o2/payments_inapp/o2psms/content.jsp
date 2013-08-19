@@ -35,7 +35,7 @@
     <div class="subscription-container">
         <a class="subscription-selector option-${paymentPolicyOptionNo}" disabled="true">
             <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
-            <div class="rel" style="padding-top:8px;">
+            <div class="rel" style="padding-top:8px;margin-bottom: 12px;">
                 <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
                 <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
             </div>
