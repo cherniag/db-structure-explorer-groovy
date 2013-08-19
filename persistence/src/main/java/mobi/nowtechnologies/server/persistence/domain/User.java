@@ -342,7 +342,7 @@ public class User implements Serializable {
 	}
 
     public boolean isShowFreeTrial() {
-        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
+        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial() && isVideoFreeTrialHasBeenActivated());
     }
 
     public boolean isIOsnonO2ItunesSubscribedUser() {
