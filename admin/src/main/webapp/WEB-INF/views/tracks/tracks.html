@@ -73,7 +73,7 @@
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
 					<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>
 				</li>
-				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}">
+				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}"  th:with="isVideo=${trackDto.mediaType.name() == 'VIDEO'}, mediaSrc=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}">
 					<div th:id="${'idDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.id}">ID</div>
 					<div th:id="${'iTunesUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.itunesUrl}">iTunesUrl</div>
 					<div th:id="${'amazonUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.amazonUrl}">amazonUrl</div>
@@ -86,14 +86,9 @@
 					
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
-						<img alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
-                        <audio controls="controls" th:if="${trackDto.mediaType.name() != 'VIDEO'}" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}"/>
-                        <div th:if="${trackDto.mediaType.name() == 'VIDEO'}" class="modal hide fade videoContainer" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" style="width: 320px; height: 240px;">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            </div>
-                            <video class="video" controls="controls" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}"/>
-                        </div>
+						<img class="play" alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
+                        <div th:substituteby="tpl::audioPlayer"></div>
+                        <div th:substituteby="tpl::videoPlayer"></div>
                     </div>
 					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
@@ -114,7 +109,7 @@
 								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showPullDialog(this.name);">Pull</button>
 						</form>
 					</div>
-                </li>
+				</li>
 			</ul>
 		</div>
 	</div>

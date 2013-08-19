@@ -51,15 +51,15 @@ public class ResourceFileDtoBuilder {
 
 		String workDirPath = workDir.getFile().getAbsolutePath();
 		String distDirPath = publishDir.getFile().getAbsolutePath();
-		
-		String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, isrc));
-		String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, isrc));
-		String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, isrc));
 
 		List<ResourceFileDto> files = new ArrayList<ResourceFileDto>(15);
 
         AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
 		if(audioFile != null){
+            String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, isrc));
+            String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, isrc));
+            String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, isrc));
+
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, isrc, null));
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, isrc, null));
             files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));

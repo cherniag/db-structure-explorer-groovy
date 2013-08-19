@@ -1581,9 +1581,12 @@ p.itemsTrackName {
 }
 
 .itunesheader {
-	padding: 0 5px 20px;
+	padding: 0 5px 0;
 }
 
+.itunespaymentheader {
+	padding-bottom: 20px;
+}
 .itunesHr {
 	color: #ddd;
 	margin: 10px 0 12px 0
@@ -1627,7 +1630,8 @@ p.itemsTrackName {
 }
 
 .o2TracksHeader {
-	padding: 4px 5px 0;
+	/*padding: 4px 5px 0; */
+	padding: 10px 5px 0;
 }
 
 .o2businessPaymentType {
@@ -1638,8 +1642,8 @@ p.itemsTrackName {
 }
 
 .videoNotOptedIn {
-	height: 130px;
-	padding: 12px 10px 6px 10px;
+	height: auto;
+	padding: 12px 10px 5px 10px;
 }
 
 .videoNotOptedInHeader {
