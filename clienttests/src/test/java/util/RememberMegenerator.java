@@ -18,9 +18,9 @@ public class RememberMegenerator {
     public static void main(String[] args) {
         try {
 //            String username = "+447544259145";//CharMatcher.isNot('\'').retainFrom(args[0]);
-            String username = "+447731293075";//CharMatcher.isNot('\'').retainFrom(args[0]);
+            String username = "+447841651060";//CharMatcher.isNot('\'').retainFrom(args[0]);
 //            String userToken = "de8e7cf99db049013c6b6ae770aeeb71";//CharMatcher.isNot('\'').retainFrom(args[1]);
-            String userToken = "530cfe53f868ec33eab25e34d7fa4015";//CharMatcher.isNot('\'').retainFrom(args[1]);
+            String userToken = "c3aed474b0cbc0132cbf92fdeff4407c";//CharMatcher.isNot('\'').retainFrom(args[1]);
             String expiredMillis = getExpiredMillis(args);
             String signature = makeTokenSignature(username, Long.parseLong(expiredMillis), userToken);
 

@@ -23,7 +23,7 @@
 		<div class="subscription-container">
 		    <a class="subscription-selector option-3" style="margin-bottom: 0px;" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
 		 		<img width="51px" height="51px" style="margin-right: 6px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
-		         <div class="rel" style="padding-top: 14px;">
+		         <div class="rel o2BusinessSubscription">
 		             <span class="frR15"><s:message code="${payment_label}" /></span>
 		         </div>
 		

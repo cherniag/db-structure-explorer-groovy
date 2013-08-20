@@ -1,17 +1,10 @@
-package com.example.customerservice.server;
+package com.musicqubed.o2services;
 
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
+import o2stub.O2ServiceStub;
 import uk.co.o2.soa.coredata_1.PaymentCategoryType;
 import uk.co.o2.soa.coredata_1.SegmentType;
 import uk.co.o2.soa.subscriberdata_2.BillingProfileType;
@@ -32,8 +25,6 @@ import uk.co.o2.soa.subscriberservice_2.GetSubscriberProfileFault;
 import uk.co.o2.soa.subscriberservice_2.GetSubscriberSegmentFault;
 import uk.co.o2.soa.subscriberservice_2.SubscriberPort;
 
-import com.example.customerservice.server.impl.O2ServiceStub;
-
 public class SubscriberPortImpl implements SubscriberPort {
 
 	@Override
@@ -42,61 +33,58 @@ public class SubscriberPortImpl implements SubscriberPort {
 	}
 
 	@Override
-	public void getSubscriberAndBillingSystem(
-			String msisdn,
+	public void getSubscriberAndBillingSystem(String msisdn,
 			Holder<uk.co.o2.soa.coredata_1.SubscriberProfileType> subscriberProfile,
-			Holder<BillingProfileType> billingProfile)
-			throws GetSubscriberAndBillingSystemFault {
-		// TODO Auto-generated method stub
+			Holder<BillingProfileType> billingProfile) throws GetSubscriberAndBillingSystemFault {
 
 	}
 
 	@Override
 	public List<String> getChargingCategory(String msisdn, ProductListType productList) throws GetChargingCategoryFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ServiceProviderDetailsType getSPIDDetails1(String serviceProviderId) throws GetSPIDDetails1Fault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public GetBillProfileResponse getBillProfile(GetBillProfile getBillProfile) throws GetBillProfileFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public String getSubscriberOperator(String subscriberID) throws GetSubscriberOperatorFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public BillingProfileType getBillingSystem(String msisdn) throws GetBillingSystemFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public String getSubscriberChannel(String subscriberID) throws GetSubscriberChannelFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PaymentCategoryType getSubscriberPaymentCategory(String subscriberID)
 			throws GetSubscriberPaymentCategoryFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public SegmentType getSubscriberSegment(String subscriberID) throws GetSubscriberSegmentFault {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

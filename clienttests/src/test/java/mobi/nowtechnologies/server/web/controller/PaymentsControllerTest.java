@@ -4,25 +4,31 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.servlet.http.Cookie;
+
+import net.sourceforge.jwebunit.junit.JWebUnit;
+import net.sourceforge.jwebunit.junit.WebTester;
+import net.sourceforge.jwebunit.util.TestingEngineRegistry;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import util.RememberMegenerator;
 
-import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+
+import static net.sourceforge.jwebunit.junit.JWebUnit.*;
 
 public class PaymentsControllerTest {
 
 	private WebClient webClient;
 	
-	private String o23GUser = "testUser-o2-3g";
-	private String o23GToken = "token-o2-3g";
+	private String o23GUser = "+447841651060";
+	private String o23GToken = "c3aed474b0cbc0132cbf92fdeff4407c";
 	
 //	private String o24GUserNotOpted = "testUser-o2-4g-ontopted";
 //	private String o24GTokenNotOpted = "token-o2-4g-ontopted";
@@ -44,20 +50,44 @@ public class PaymentsControllerTest {
 	
 	@Before
 	public void setUp() {
-		webClient = new WebClient();
+		String rememberMeToken = RememberMegenerator.getRememberMeCookie(o23GUser, o23GToken);
+		/*webClient = new WebClient();
 		
 		CookieManager cookieManager = webClient.getCookieManager();
 		
-		String rememberMeToken = RememberMegenerator.getRememberMeCookie(o23GUser, o23GToken);
+		Cookie rememberMeCookie = new Cookie("localhost", "_REMEMBER_ME", rememberMeToken);
+		Cookie localeCookie = new Cookie("localhost", "_chartsnow_community", "o2");*/
 		
-		cookieManager.addCookie( new Cookie("localhost", "_REMEMBER_ME", rememberMeToken) );
-		cookieManager.addCookie( new Cookie("localhost", "_chartsnow_community", "o2") );
+		/*cookieManager.addCookie( rememberMeCookie );
+		cookieManager.addCookie( localeCookie );*/
+		
+		Cookie rememberMeCookie = new Cookie("_REMEMBER_ME", rememberMeToken);
+		rememberMeCookie.setDomain("localhost");
+		Cookie localeCookie = new Cookie("_chartsnow_community", "o2");
+		localeCookie.setDomain("localhost");
+		
+		JWebUnit.setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
+		JWebUnit.getTestContext().addCookie( rememberMeCookie );
+		JWebUnit.getTestContext().addCookie( localeCookie );
+		JWebUnit.getTestContext().setUserAgent(IOSUserAgent);
+		JWebUnit.setBaseUrl("http://localhost:8080/web");
 	}
 	
 	
 	@Test
 	public void tst() throws Exception {
-		WebRequest request = new WebRequest(new URL(pageUrl), HttpMethod.GET);
+		JWebUnit.beginAt( "payments_inapp.html" );
+		
+		assertTitleEquals("Manage Payments");
+		
+		assertElementPresent("paymentOption108");
+		assertElementPresent("paymentOption109");
+		assertElementPresent("paymentOption110");
+		
+		assertElementPresent("paymentOption111");
+		assertElementPresent("paymentOption112");
+		assertElementPresent("paymentOption113");
+		/*WebRequest request = new WebRequest(new URL(pageUrl), HttpMethod.GET);
         request.setRequestParameters(new ArrayList<NameValuePair>());
         request.getRequestParameters().add(new NameValuePair("COMMUNITY_NAME", "o2"));
         request.getRequestParameters().add(new NameValuePair("TIMESTAMP", new Date().toString()));
@@ -67,7 +97,7 @@ public class PaymentsControllerTest {
         request.setAdditionalHeader("User-Agent", IOSUserAgent);
         
         Page page = webClient.getPage(request);
-        String pageContent = page.getWebResponse().getContentAsString(); 
-        System.out.println( pageContent );
+        String pageContent = page.getWebResponse().getContentAsString();
+        System.out.println( pageContent );*/
 	}
 }

@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements. See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership. The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License. You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations
-  under the License.
--->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
@@ -40,9 +23,40 @@
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 
-    <session-config>
-        <session-timeout>60</session-timeout>
-    </session-config>
+
+
+    <servlet>
+        <servlet-name>redeem</servlet-name>
+        <servlet-class>o2stub.RedeemServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>redeem</servlet-name>
+        <url-pattern>/redeemotac/*</url-pattern>
+    </servlet-mapping>
+
+
+	 <servlet>
+        <servlet-name>updatePhone</servlet-name>
+        <servlet-class>o2stub.UpdatePhoneServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>updatePhone</servlet-name>
+        <url-pattern>/updatePhone</url-pattern>
+    </servlet-mapping>
+
+	 <servlet>
+        <servlet-name>checkPhone</servlet-name>
+        <servlet-class>o2stub.CheckPhoneServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>checkPhone</servlet-name>
+        <url-pattern>/checkPhone</url-pattern>
+    </servlet-mapping>
+
+
 
 </web-app>
 

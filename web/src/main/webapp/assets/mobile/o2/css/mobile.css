@@ -959,7 +959,7 @@ form .formButton  {
 }
 .subscription-selector {
     display: block;
-    height: 53px;
+    /* height: 53px; */
     border-width: 0;
     font-weight: lighter;
     text-align: left;
@@ -1995,8 +1995,13 @@ p.itemsTrackName {
 	text-align: center;
 }
 
+.o2BusinessSubscription {
+	margin-bottom: 21px;
+	padding-top: 14px;
+}
+
 .videoNotOptedIn {
-	height: auto;
+	/* height: auto; */
 	padding: 12px 10px 5px 10px;
 }
 
@@ -2016,6 +2021,7 @@ p.itemsTrackName {
 
 .videoInfo {
 	line-height: 16px;
+	margin-bottom: 41px;
 	margin-right: 70px;
 	margin-top: 9px;
 }
@@ -2025,6 +2031,6 @@ p.itemsTrackName {
 }
 
 .videoOption a {
-	height: 105px;
+	/* height: 105px; */
 	padding: 10px 6px 6px 10px;
 }
