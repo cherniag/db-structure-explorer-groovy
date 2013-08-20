@@ -172,7 +172,8 @@ public class PromotionService {
 
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else{
-            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action");
+            throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
+                    .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
         }
         if (!isPromotionApplied){
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");

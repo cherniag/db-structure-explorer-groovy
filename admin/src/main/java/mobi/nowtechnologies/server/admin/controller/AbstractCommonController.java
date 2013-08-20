@@ -60,7 +60,7 @@ public abstract class AbstractCommonController implements MessageSourceAware{
 		LOGGER.error(serviceException.getMessage(), serviceException);
 
 		ModelAndView modelAndView = new ModelAndView("errors/500");
-		final String errorCode = serviceException.getErrorCode();
+		final String errorCode = serviceException.getErrorCodeForMessageLocalization();
 
 		final String message = messageSource.getMessage(errorCode, null, locale);
 		if (serviceException instanceof ExternalServiceException)

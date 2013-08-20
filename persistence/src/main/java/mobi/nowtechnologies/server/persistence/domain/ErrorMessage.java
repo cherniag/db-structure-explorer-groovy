@@ -34,6 +34,11 @@ public class ErrorMessage {
 		this.errorCode = errorCode;
 	}
 
+    public ErrorMessage addErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+        return this;
+    }
+
 	public String getMessage() {
 		return message;
 	}
