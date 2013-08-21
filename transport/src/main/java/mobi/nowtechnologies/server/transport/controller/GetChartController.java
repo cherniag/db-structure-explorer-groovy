@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.google.common.base.CharMatcher;
 import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -321,7 +322,7 @@ public class GetChartController extends CommonController{
 	}
 
 	public ChartDto converToOldVersion(ChartDto chartDto, String version) {
-        version = version.replace(".","").substring(0,2);
+        version = CharMatcher.DIGIT.retainFrom(version).substring(0,2);
         int intVersion = new Integer(version);
 
         Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ? Arrays.asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) : Arrays.asList(VIDEO_CHART));
