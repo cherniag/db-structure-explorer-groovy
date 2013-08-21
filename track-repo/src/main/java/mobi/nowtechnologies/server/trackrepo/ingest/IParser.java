@@ -42,17 +42,10 @@ public abstract class IParser {
 	protected boolean isDirectory(File file) {
 		try {
 			if (file.isDirectory() || file.getCanonicalFile().isDirectory()) {
-				if (file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath())) { // Link
-																								// loop.....
-																								// don't
-																								// follow
-					return false;
-				} else {
-					return true;
-				}
+                boolean symlink = file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath());
+                return symlink ? false : true;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;

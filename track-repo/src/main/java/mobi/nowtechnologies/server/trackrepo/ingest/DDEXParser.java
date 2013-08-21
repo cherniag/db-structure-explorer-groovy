@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +20,8 @@ import java.util.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public abstract class DDEXParser extends IParser {
 
@@ -61,9 +64,8 @@ public abstract class DDEXParser extends IParser {
             // Parse releases
             mediaFiles = rootNode.getChild("ReleaseList").getChildren("Release");
 
-            for (int i = 0; i < mediaFiles.size(); i++) {
+            for (Element release: mediaFiles) {
                 DropTrack track = new DropTrack();
-                Element release = mediaFiles.get(i);
                 String type = release.getChildText("ReleaseType");
                 LOG.info("release type " + type);
                 track.type = action;
@@ -98,9 +100,8 @@ public abstract class DDEXParser extends IParser {
                         track.copyright = resourceDetail.copyright;
                     }
 
-                    if (resourceDetail != null) {
+                    if (resourceDetail != null)
                         track.explicit = resourceDetail.explicit;
-                    }
 
                     Element details = release.getChild("ReleaseDetailsByTerritory");
                     track.title = release.getChild("ReferenceTitle").getChildText("TitleText");
@@ -109,19 +110,10 @@ public abstract class DDEXParser extends IParser {
                     //Get all sub titles from ReleaseDetailsByTerritory
                     Element detailsTitle = details.getChild("Title");
                     List subTitles = detailsTitle.getChildren("SubTitle");
-                    if (subTitles != null) {
-                        String fullSubTitle = new String();
-                        for (int si = 0; si < subTitles.size(); si++) {
-                            Element subTitle = (Element) subTitles.get(si);
-                            fullSubTitle += subTitle.getText();
-                            if (si < subTitles.size() - 1)
-                                fullSubTitle += " / ";
-                        }
-                        if (!"".equals(fullSubTitle))
-                            track.subTitle = fullSubTitle;
-                    }
+                    track.subTitle = parseSubTitles(subTitles, track.subTitle);
+
                     String artist = details.getChildText("DisplayArtistName");
-                    if (artist == null || "".equals(artist)) {
+                    if (isEmpty(artist)) {
                         // Try another format (used by CI)
                         List<Element> displayArtists = details.getChildren("DisplayArtist");
                         if (displayArtists != null && displayArtists.size() > 0) {
@@ -130,17 +122,15 @@ public abstract class DDEXParser extends IParser {
                                     artist = displayArtist.getChild("PartyName").getChildText("FullName");
                                 }
                             }
-                            if (artist == null || "".equals(artist)) {
+                            if (isEmpty(artist)) {
                                 // Default to first one.....
                                 artist = displayArtists.get(0).getChild("PartyName").getChildText("FullName");
                             }
                         }
                     }
                     track.artist = artist;
-                    String label = details.getChildText("LabelName");
-                    track.label = label;
-                    XMLOutputter outPutter = new XMLOutputter();
-                    track.xml = outPutter.outputString(release);
+                    track.label = details.getChildText("LabelName");
+                    track.xml = toXmlString(release);
 
                     // Add territory info (need to add deals....)
                     List<Element> territoriesNodes = release.getChildren("ReleaseDetailsByTerritory");
@@ -154,46 +144,14 @@ public abstract class DDEXParser extends IParser {
                         Map<String, DropTerritory> deal = deals.get(releaseReference);
                         LOG.info("Deal for release ref  " + releaseReference + " " + deal);
 
-                        if (deal == null) {
-                            continue;
-                        }
-                        if ("Worldwide".equals(code)) {
-                            Set<String> countries = deal.keySet();
-                            Iterator<String> it = countries.iterator();
-                            while (it.hasNext()) {
-                                String country = it.next();
-                                LOG.info("Adding country " + country);
-                                DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
-                                DropTerritory dealTerritory = deal.get(country);
-                                territoryData.country = dealTerritory.country;
-                                territoryData.takeDown = dealTerritory.takeDown;
-                                territoryData.distributor = distributor;
-                                String territoryLabel = territory.getChildText("LabelName");
-                                territoryData.label = territoryLabel;
-                                territoryData.reportingId = track.isrc;
-                                territoryData.startdate = dealTerritory.startdate;
-                                territoryData.price = dealTerritory.price;
-                                territoryData.priceCode = dealTerritory.priceCode;
-                                territoryData.currency = dealTerritory.currency;
-                                territoryData.dealReference = dealTerritory.dealReference;
-                            }
-                        } else {
-                            LOG.info("Adding country " + code);
+                        if (deal == null) continue;
 
-                            DropTerritory dealTerritory = deal.get(code);
-                            DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
-                            territoryData.country = dealTerritory.country;
-                            territoryData.takeDown = dealTerritory.takeDown;
-                            territoryData.distributor = distributor;
-                            String territoryLabel = territory.getChildText("LabelName");
-                            territoryData.label = territoryLabel;
-                            territoryData.reportingId = track.isrc;
-                            territoryData.startdate = dealTerritory.startdate;
-                            territoryData.price = dealTerritory.price;
-                            territoryData.priceCode = dealTerritory.priceCode;
-                            territoryData.currency = dealTerritory.currency;
-                            territoryData.dealReference = dealTerritory.dealReference;
-                        }
+                        if ("Worldwide".equals(code))
+                            for (String country : deal.keySet())
+                                parseDropTerrotory(distributor, track, territory, deal.get(country), country);
+                        else
+                            parseDropTerrotory(distributor, track, territory, deal.get(code), code);
+
                     }
 
                     result.put(track.isrc + track.productCode + getClass(), track);
@@ -225,13 +183,42 @@ public abstract class DDEXParser extends IParser {
         return null;
     }
 
+    private String toXmlString(Element release) {
+        XMLOutputter xmlOutputter = new XMLOutputter();
+        return xmlOutputter.outputString(release);
+    }
+
+    private String parseSubTitles(List subTitles, String defaultValue) {
+        if (subTitles != null) {
+            String fullSubTitle = Joiner.on('/').skipNulls().join(subTitles).toString();
+            if (isNotEmpty(fullSubTitle))
+                return fullSubTitle;
+        }
+        return defaultValue;
+    }
+
+    private void parseDropTerrotory(String distributor, DropTrack track, Element territory, DropTerritory dealTerritory, String codeOrCountry) {
+        LOG.info("Adding country " + codeOrCountry);
+        DropTerritory territoryData = DropTerritory.getTerritory(codeOrCountry, track.territories);
+        territoryData.country = dealTerritory.country;
+        territoryData.takeDown = dealTerritory.takeDown;
+        territoryData.distributor = distributor;
+        String territoryLabel = territory.getChildText("LabelName");
+        territoryData.label = territoryLabel;
+        territoryData.reportingId = track.isrc;
+        territoryData.startdate = dealTerritory.startdate;
+        territoryData.price = dealTerritory.price;
+        territoryData.priceCode = dealTerritory.priceCode;
+        territoryData.currency = dealTerritory.currency;
+        territoryData.dealReference = dealTerritory.dealReference;
+    }
+
     private Map<String, Map<String, DropTerritory>> parseDeals(Element rootNode) {
         Map<String, Map<String, DropTerritory>> deals = new HashMap<String, Map<String, DropTerritory>>();
         List<Element> mediaFiles = rootNode.getChild("DealList").getChildren("ReleaseDeal");
-        for (int i = 0; i < mediaFiles.size(); i++) {
-            Element releaseDeal = mediaFiles.get(i);
-            List<Element> references = releaseDeal.getChildren("DealReleaseReference");
+        for (Element releaseDeal:  mediaFiles) {
 
+            List<Element> references = releaseDeal.getChildren("DealReleaseReference");
             Map<String, DropTerritory> dealsMap = new HashMap<String, DropTerritory>();
 
             List<Element> dealNodes = releaseDeal.getChildren("Deal");
@@ -312,10 +299,8 @@ public abstract class DDEXParser extends IParser {
 
     private DropAssetFile parseImageFile(String fileRoot, Element rootNode) {
         DropAssetFile imageFile = null;
-        List<Element> mediaFiles;
-        mediaFiles = rootNode.getChild("ResourceList").getChildren("Image");
-        for (int i = 0; i < mediaFiles.size(); i++) {
-            Element node = mediaFiles.get(i);
+        List<Element> mediaFiles = rootNode.getChild("ResourceList").getChildren("Image");
+        for (Element node : mediaFiles) {
             Element details = node.getChild("ImageDetailsByTerritory");
             Element techDetail = details.getChild("TechnicalImageDetails");
             if (techDetail != null) {
@@ -338,24 +323,25 @@ public abstract class DDEXParser extends IParser {
 
     private void parseMediaFiles(String fileRoot, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, List<Element> list) {
         for (Element node: list) {
-            Element details = node.getChild("SoundRecordingDetailsByTerritory");
             String reference = node.getChildText("ResourceReference");
-            DropTrack resourceDetail = new DropTrack();
-            resourceDetail.isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
+            DropTrack dropTrack = new DropTrack();
+            dropTrack.isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
+
+            Element details = node.getChild("SoundRecordingDetailsByTerritory");
             String parentalWarningType = details.getChildText("ParentalWarningType");
-            resourceDetail.explicit = "Explicit".equals(parentalWarningType);
-            resourceDetails.put(reference, resourceDetail);
+            dropTrack.explicit = "Explicit".equals(parentalWarningType);
             if (details.getChild("PLine") != null) {
-                resourceDetail.copyright = details.getChild("PLine").getChildText("PLineText");
-                resourceDetail.year = details.getChild("PLine").getChildText("Year");
+                dropTrack.copyright = details.getChild("PLine").getChildText("PLineText");
+                dropTrack.year = details.getChild("PLine").getChildText("Year");
             }
+            resourceDetails.put(reference, dropTrack);
             List<Element> techDetails = details.getChildren("TechnicalSoundRecordingDetails");
             for (Element techDetail : techDetails) {
                 String preview = techDetail.getChildText("IsPreview");
                 String fileName = techDetail.getChild("File").getChildText("FileName");
                 DropAssetFile assetFile = new DropAssetFile();
                 assetFile.file = getAssetFile(fileRoot, fileName);
-                assetFile.isrc = resourceDetail.isrc;
+                assetFile.isrc = dropTrack.isrc;
                 if (preview == null || "false".equals(preview)) {
                     String codecType = techDetail.getChildText("AudioCodecType");
                     if (codecType == null

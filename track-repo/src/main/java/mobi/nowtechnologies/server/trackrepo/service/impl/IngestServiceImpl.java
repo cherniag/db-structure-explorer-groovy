@@ -130,9 +130,7 @@ public class IngestServiceImpl implements IngestService{
 		}
 
 		Collection<DropTrack> list = tracks.values();
-		Iterator<DropTrack> it = list.iterator();
-		while (it.hasNext()) {
-			DropTrack value = it.next();
+		for (DropTrack value: list) {
 			if (value == null) {
 				LOG.info("Null track value");
 				continue;
@@ -142,9 +140,9 @@ public class IngestServiceImpl implements IngestService{
 			if (value.type == Type.INSERT || value.type == Type.UPDATE) {
 				LOG.info("Inserting " + value.isrc);
 
-				Track track = trackRepository.findByKey((String) value.isrc, (String) value.productCode, parserFactory.getName(ingestor));
+				Track track = trackRepository.findByKey( value.isrc,  value.productCode, parserFactory.getName(ingestor));
 				if (track == null) { // Try to find old keys for Fuga
-					track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(ingestor));
+					track = trackRepository.findByKey( value.isrc,  value.isrc, parserFactory.getName(ingestor));
 				}
 				if (track == null) {
 					if (value.type == Type.UPDATE) {
@@ -160,16 +158,16 @@ public class IngestServiceImpl implements IngestService{
 				} else {
 					track.setIngestionUpdateDate(new Date());
 				}
-				track.setTitle((String) value.title);
-				track.setSubTitle((String) value.subTitle);
-				track.setArtist((String) value.artist);
-				track.setIsrc((String) value.isrc);
-				track.setProductId((String) value.productId);
-				track.setProductCode((String) value.productCode);
-				track.setGenre((String) value.genre);
-				track.setCopyright((String) value.copyright);
-				track.setYear((String) value.year);
-				track.setAlbum((String) value.album);
+				track.setTitle( value.title);
+				track.setSubTitle( value.subTitle);
+				track.setArtist( value.artist);
+				track.setIsrc( value.isrc);
+				track.setProductId( value.productId);
+				track.setProductCode(value.productCode);
+				track.setGenre(value.genre);
+				track.setCopyright(value.copyright);
+				track.setYear( value.year);
+				track.setAlbum( value.album);
 				track.setIngestor(parserFactory.getName(ingestor));
 				track.setXml(value.xml.getBytes());
 				track.setInfo(value.info);
