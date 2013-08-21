@@ -361,6 +361,11 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
                 addQParam(criteria.getGenre(), "genre", queryParams);
+                addQParam(String.valueOf(criteria.isWithTerritories()), "withTerritories", queryParams);
+                addQParam(String.valueOf(criteria.isWithFiles()), "withFiles", queryParams);
+                if(criteria.getTrackIds() != null && !criteria.getTrackIds().isEmpty())
+                    addQParam(criteria.getTrackIds().get(0).toString(), "trackIds[0]", queryParams);
+
                 if(queryParams.size() > 0){
                     buildPageParams(page, queryParams);
 

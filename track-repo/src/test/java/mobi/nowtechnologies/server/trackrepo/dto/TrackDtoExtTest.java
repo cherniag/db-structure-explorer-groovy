@@ -53,7 +53,6 @@ public class TrackDtoExtTest {
 		track.setCopyright("");
 		track.setGenre("");
 		track.setIsrc("");
-		track.setTerritories(new HashSet<Territory>());
 		track.setItunesUrl("");
 		track.setAlbum("");
 		track.setIngestionUpdateDate(new Date());
@@ -87,12 +86,14 @@ public class TrackDtoExtTest {
 		assertEquals(track.getIngestor(), result.getIngestor());
 		assertEquals(track.getSubTitle(), result.getSubTitle());
 		assertEquals(track.getProductCode(), result.getProductCode());
-		assertEquals(track.getTerritoryCodes(), result.getTerritories());
+		assertEquals(track.getTerritoryCodes(), result.getTerritoryCodes());
 		assertEquals(track.getCoverFile().getId().toString(), result.getCoverFileName());
 		assertEquals(track.getMediaFile().getId().toString(), result.getMediaFileName());
 		assertEquals(track.getMediaType().name(), result.getMediaType().name());
 		assertEquals(track.getItunesUrl(), result.getItunesUrl());
 		assertEquals(null, result.getReleaseDate());
+		assertEquals(null, result.getTerritories());
+		assertEquals(null, result.getFiles());
 	}
 
     @Test
@@ -113,8 +114,69 @@ public class TrackDtoExtTest {
         assertEquals("0", result.getMediaFileName());
     }
 
+    @Test
+    public void testTrackDtoExt_NotNullFiles_Success()
+            throws Exception {
+        AssetFile mediaFile = new AssetFile();
+        mediaFile.setPath("path");
+        mediaFile.setType(AssetFile.FileType.VIDEO);
+
+        Track track = new Track();
+        track.setMediaType(AssetFile.FileType.DOWNLOAD);
+        track.setFiles(Collections.singleton(mediaFile));
+
+        TrackDtoMapper result = new TrackDtoMapper(track);
+
+        assertNotNull(result);
+        assertNotNull(result.getFiles());
+        assertEquals(mediaFile.getPath(), result.getFiles().get(0).getFilename());
+        assertEquals(mediaFile.getType().name(), result.getFiles().get(0).getType());
+    }
+
+    @Test
+    public void testTrackDtoExt_NotNullTerritories_Success()
+            throws Exception {
+        Territory territory= new Territory();
+        territory.setLabel("label");
+        territory.setCode("code");
+        territory.setCreateDate(new Date());
+        territory.setCurrency("GBP");
+        territory.setDealReference("ref");
+        territory.setDeleted(true);
+        territory.setDeleteDate(new Date());
+        territory.setDistributor("SONY");
+        territory.setPrice(100f);
+        territory.setPriceCode("ff");
+        territory.setPublisher("SONY");
+        territory.setStartDate(new Date());
+        territory.setReportingId("ref");
+
+        Track track = new Track();
+        track.setMediaType(AssetFile.FileType.DOWNLOAD);
+        track.setTerritories(Collections.singleton(territory));
+
+        TrackDtoMapper result = new TrackDtoMapper(track);
+
+        assertNotNull(result);
+        assertNotNull(result.getTerritories());
+        TerritoryDto ter = result.getTerritories().get(0);
+        assertEquals(territory.getLabel(), ter.getLabel());
+        assertEquals(territory.getCode(), ter.getCode());
+        assertEquals(territory.getCreateDate(), ter.getCreateDate());
+        assertEquals(territory.getCurrency(), ter.getCurrency());
+        assertEquals(territory.getDealReference(), ter.getDealReference());
+        assertEquals(territory.isDeleted(), ter.isDeleted());
+        assertEquals(territory.getDeleteDate(), ter.getDeleteDate());
+        assertEquals(territory.getDistributor(), ter.getDistributor());
+        assertEquals(territory.getPrice(), ter.getPrice());
+        assertEquals(territory.getPriceCode(), ter.getPriceCode());
+        assertEquals(territory.getPublisher(), ter.getPublisher());
+        assertEquals(territory.getStartDate(), ter.getStartDate());
+        assertEquals(territory.getReportingId(), ter.getReportingId());
+    }
+
     @Test(expected = NullPointerException.class)
-    public void testTrackDtoExt_NullMediaType_Failure()
+    public void testTrackDtoExt_NotNullMediaType_Failure()
             throws Exception {
         AssetFile mediaFile = null;
         AssetFile coverFile = null;

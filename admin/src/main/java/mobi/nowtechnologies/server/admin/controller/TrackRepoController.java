@@ -66,8 +66,8 @@ public class TrackRepoController extends AbstractCommonController{
 		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[] { track });
 
 		track = trackRepoService.encode(track);
-		
-		ModelAndView modelAndView = new ModelAndView();
+
+        ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(TrackDto.TRACK_DTO, track);
 
 		return modelAndView;
@@ -78,7 +78,7 @@ public class TrackRepoController extends AbstractCommonController{
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
 		track = trackRepoService.pull(track);
-		
+
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(TrackDto.TRACK_DTO, track);
 
