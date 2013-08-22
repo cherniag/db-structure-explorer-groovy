@@ -10,27 +10,31 @@ public class BrowserStarter {
 
 	public static void main(String[] args) {
 
-		//String url="http://rage.musicqubed.com/web/payments_inapp.html";
-		String url = "http://localhost:8080/web/payments_inapp.html";
+		String url="http://rage.musicqubed.com/web/payments_inapp.html";
+		//String url = "http://localhost:8080/web/payments_inapp.html";
 		//String url = "http://kiwi.musicqubed.com/web/payments_inapp.html";
 		
 		//String username = "+447779836075";
 		//String userToken = "83fd31553b331fcf6475caaa7f25eabe";
 		
 		//localhost/kiwi
-		String username = "+447852365884";
-		String userToken = "675d00beb25eb8c7c503d6aa8eb69442";
+		//String username = "+447852365884";
+		//String userToken = "675d00beb25eb8c7c503d6aa8eb69442";
 
 		//rage
-		//String username = "+447731293078";
-		//String userToken = "a47674eea93c97592d3c80fe99428af0";
+//		String username = "+447731293078";
+//		String userToken = "a47674eea93c97592d3c80fe99428af0";
 
+		String username = "535a160b-92cf-44b6-af20-4104c230a909";
+		String userToken = "65571dc5235aa0ce594e561e23e29dbb";
 		
 		
 		String rememberMeToken = RememberMeUtils.generateRememberMeToken(username, userToken);
 		System.out.println("_REMEMBER_ME=" + rememberMeToken);
 
 		startBrowser(url, rememberMeToken);
+		
+		System.exit(0);
 	}
 
 	public static void startBrowser(String url, String rememberMeToken) {

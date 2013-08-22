@@ -90,7 +90,7 @@ public class PaymentsPayPalController extends CommonController {
 
 		ModelAndView modelAndView = new ModelAndView(scopeView + VIEW_PAYMENTS_PAYPAL);
 
-		final String message = messageSource.getMessage(exception.getErrorCode(), null, locale);
+		final String message = messageSource.getMessage(exception.getErrorCodeForMessageLocalization(), null, locale);
 		if (exception instanceof ExternalServiceException)
 			modelAndView.addObject("external_error", message);
 		else

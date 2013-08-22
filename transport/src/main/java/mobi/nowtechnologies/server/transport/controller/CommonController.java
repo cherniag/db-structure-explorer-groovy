@@ -100,7 +100,7 @@ public abstract class CommonController extends ProfileController{
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
-		final Integer errorCode = new Integer(exception.getErrorCode());
+		final Integer errorCode = new Integer(exception.getErrorCodeForMessageLocalization());
 		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
 		
 		LOGGER.error(message, exception);
@@ -206,7 +206,7 @@ public abstract class CommonController extends ProfileController{
 			String communityUri = getCommunityUrl(httpServletRequest);
 			String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
 			message = serviceException.getLocalizedMessage();
-			errorMessage = getErrorMessage(localizedMessage, message, null);
+			errorMessage = getErrorMessage(localizedMessage, message, serviceException.getErrorCode());
 			LOGGER.error(message);
 		} else
 			throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());

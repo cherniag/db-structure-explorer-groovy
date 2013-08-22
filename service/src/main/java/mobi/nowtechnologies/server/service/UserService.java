@@ -1678,9 +1678,9 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName) {
+	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
 		LOGGER.info("apply init promo o2 " + user.getId() + " "
-                + user.getMobile() + " " + user.getActivationStatus());
+                + user.getMobile() + " " + user.getActivationStatus()+" updateContractAndProvider="+updateContractAndProvider);
 		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
@@ -1701,9 +1701,10 @@ public class UserService {
                 hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
             }
         }
-
-        user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-        user.setProvider(o2UserDetails.getOperator());
+        if(updateContractAndProvider){
+        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
+        	user.setProvider(o2UserDetails.getOperator());
+        }
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user.setUserName(user.getMobile());
         userRepository.save(user);

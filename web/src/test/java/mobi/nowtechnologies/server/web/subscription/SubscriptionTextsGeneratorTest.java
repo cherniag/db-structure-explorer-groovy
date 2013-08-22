@@ -58,7 +58,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setFreeTrialAudioOnly(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Free Trial (Music)", r.getStatusText());
+		Assert.assertEquals("Free Trial", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
@@ -72,7 +72,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setUnlimitedFreeTrialFor4G(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Free Trial (Music + Video)", r.getStatusText());
+		Assert.assertEquals("Free Trial", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
@@ -118,7 +118,7 @@ public class SubscriptionTextsGeneratorTest {
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -131,9 +131,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setNextBillingDate(NEXT_DATE);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -146,9 +146,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setNextBillingDate(NEXT_DATE);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Ongoing", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -162,9 +162,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setUpgradingToVideo(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Due get access to Video on 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Upgrading", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -178,9 +178,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDowngradingToAudioOnly(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Video access will expire on 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Downgrading", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -195,7 +195,7 @@ public class SubscriptionTextsGeneratorTest {
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -209,9 +209,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setExpiringSubscription(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music + Video)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -225,9 +225,9 @@ public class SubscriptionTextsGeneratorTest {
 		s.setExpiringSubscription(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Subscribed (Music)", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
-		Assert.assertEquals("Expiring", r.getFutureText());
+		Assert.assertEquals("", r.getFutureText());
 	}
 
 	@Test
@@ -237,8 +237,8 @@ public class SubscriptionTextsGeneratorTest {
 		s.setEligibleForVideo(false);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Preview mode", r.getStatusText());
-		Assert.assertEquals("Consider subscribing to gain full access!", r.getNextBillingText());
+		Assert.assertEquals("Unsubscribed", r.getStatusText());
+		Assert.assertEquals("Consider subscribing to gain full access.", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -249,8 +249,8 @@ public class SubscriptionTextsGeneratorTest {
 		s.setEligibleForVideo(true);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Preview mode", r.getStatusText());
-		Assert.assertEquals("Consider subscribing to gain full access!", r.getNextBillingText());
+		Assert.assertEquals("Unsubscribed", r.getStatusText());
+		Assert.assertEquals("Consider subscribing to gain full access.", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 }

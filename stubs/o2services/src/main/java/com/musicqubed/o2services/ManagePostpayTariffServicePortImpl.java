@@ -1,7 +1,9 @@
-package com.example.customerservice.server;
+package com.musicqubed.o2services;
 
 
 import java.util.logging.Logger;
+
+import o2stub.O2ServiceStub;
 
 import uk.co.o2.soa.managepostpaytariffservice_2.CancelContractChangeFault;
 import uk.co.o2.soa.managepostpaytariffservice_2.ChangeContractFault;
@@ -37,7 +39,7 @@ public class ManagePostpayTariffServicePortImpl implements ManagePostpayTariffPo
         LOG.info("Executing operation getContract");
         System.out.println(customerId);
         try {
-            uk.co.o2.soa.managepostpaytariffdata_2.ServiceContractType _return = null;
+            uk.co.o2.soa.managepostpaytariffdata_2.ServiceContractType _return = new O2ServiceStub().getManagePostpayContract(customerId.getMsisdn());
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();

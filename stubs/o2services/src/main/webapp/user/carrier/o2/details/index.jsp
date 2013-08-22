@@ -6,15 +6,12 @@
 		code="";
 	}
 	System.err.println("validate OTAC "+code);
-	
-	//Assert.assertEquals("o2|PAYM", validateOtac("000001"));
-	//Assert.assertEquals("o2|PAYG", validateOtac("000002"));
-	//Assert.assertEquals("non-o2|PAYG", validateOtac("000003"));
-	boolean o2=!code.endsWith("3");
-	boolean contractMonthly=code.endsWith("1");
-	
-	String operator=o2?"o2":"non-o2";
-	String contract=contractMonthly?"PAYM":"PAYG";
+
+	String phone=code;
+	o2stub.SubsData data=o2stub.PhoneNumberManager.getInstance().getData(phone);
+	System.err.println("validate OTAC data "+data);
+	String operator=data.isO2()?"o2":"non-o2";
+	String contract=(!data.isPayAsYouGo())?"PAYM":"PAYG";
 	
  %>
 <user><network_operator><%=operator %></network_operator><tariff_type><%= contract %></tariff_type></user>

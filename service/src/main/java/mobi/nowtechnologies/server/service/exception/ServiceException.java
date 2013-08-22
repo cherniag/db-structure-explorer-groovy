@@ -5,6 +5,8 @@ package mobi.nowtechnologies.server.service.exception;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 
+import java.util.Map;
+
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -14,10 +16,10 @@ public class ServiceException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	private ServerMessage serverMessage;
-
+    private Integer errorCode;
 	private String localizedMessage;
 	protected String errorCodeForMessageLocalization = DEFAULT_ERROR_CODE;
-	
+
 	public ServiceException(String message) {
 		super(message);
 	}
@@ -68,8 +70,8 @@ public class ServiceException extends RuntimeException {
 		return serviceException;
 	}
 	
-	public String getErrorCode() {
-		return errorCodeForMessageLocalization;
+	public Integer getErrorCode() {
+		return errorCode;
 	}
 	
 	public String getDefaultMessage() {
@@ -81,5 +83,26 @@ public class ServiceException extends RuntimeException {
 		return "ServiceException [message=" +getMessage()+ ", localizedMessage=" + localizedMessage + ", errorCodeForMessageLocalization=" + errorCodeForMessageLocalization + ", serverMessage="
 				+ serverMessage + "]";
 	}
-	
+
+    public ServiceException addErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+        return this;
+    }
+
+    public enum Error{
+        NOT_ELIGIBLE(5001);
+
+        private int code;
+
+        Error(int code){
+            this.code = code;
+        }
+        public int getCode(){
+            return code;
+        }
+        @Override
+        public String toString(){
+            return new Integer(code).toString();
+        }
+    }
 }

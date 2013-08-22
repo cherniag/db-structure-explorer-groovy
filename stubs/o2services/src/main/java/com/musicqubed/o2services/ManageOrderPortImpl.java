@@ -1,4 +1,4 @@
-package com.example.customerservice.server;
+package com.musicqubed.o2services;
 
 import java.util.List;
 
