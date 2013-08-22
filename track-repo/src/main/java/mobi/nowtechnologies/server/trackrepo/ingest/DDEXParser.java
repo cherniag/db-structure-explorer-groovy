@@ -229,9 +229,10 @@ public abstract class DDEXParser extends IParser {
                 if (usage != null) {
                     List<Element> useTypes = usage.getChildren("UseType");
                     for (Element useType : useTypes) {
-                        if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
-                                || "PermanentDownload".equals(useType.getText())) {
-                            LOG.info("Found valid usage " + useType.getText());
+                        String type = useType.getText();
+                        if ("AsPerContract".equals(type) || "Download".equals(type)
+                                || "PermanentDownload".equals(type)) {
+                            LOG.info("Found valid usage " + type);
                             validUseType = true;
                             break;
                         }
@@ -265,13 +266,14 @@ public abstract class DDEXParser extends IParser {
                     }
 
                     for (Element country : countriesNodes) {
-                        LOG.info("Deal for country " + country.getText());
-                        DropTerritory territory = dealsMap.get(country.getText());
+                        String countryText = country.getText();
+                        LOG.info("Deal for country " + countryText);
+                        DropTerritory territory = dealsMap.get(countryText);
                         if (territory == null) {
                             territory = new DropTerritory();
-                            dealsMap.put(country.getText(), territory);
+                            dealsMap.put(countryText, territory);
                         }
-                        territory.country = country.getText();
+                        territory.country = countryText;
                         territory.takeDown = (takeDown != null);
                         territory.startdate = dealStartDate;
                         territory.dealReference = dealNode.getChildText("DealReference");
@@ -286,10 +288,11 @@ public abstract class DDEXParser extends IParser {
                 }
             }
             for (Element reference : references) {
-                LOG.info("Loading deal reference " + reference.getText());
-                Map<String, DropTerritory> ExistingDealsMap = deals.get(reference.getText());
+                String refText = reference.getText();
+                LOG.info("Loading deal reference " + refText);
+                Map<String, DropTerritory> ExistingDealsMap = deals.get(refText);
                 if (ExistingDealsMap == null)
-                    deals.put(reference.getText(), dealsMap);
+                    deals.put(refText, dealsMap);
                 else
                     ExistingDealsMap.putAll(dealsMap);
             }

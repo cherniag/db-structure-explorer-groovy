@@ -215,6 +215,11 @@ public class DropTrack {
 		this.territories = territories;
         return this;
 	}
+    public DropTrack addTerritories(DropTerritory... territory) {
+        for(DropTerritory t: territory)
+            this.territories.add(t);
+        return this;
+    }
 	public String getProductId() {
 		return productId;
 	}

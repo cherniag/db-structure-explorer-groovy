@@ -18,6 +18,21 @@ public class DropTerritory {
 	public String priceCode;
 	public String dealReference;
 	public String publisher;
+
+    public DropTerritory(){}
+
+    public DropTerritory(String country){
+        this.country = country;
+    }
+
+    public DropTerritory addCurrency(String currency){
+        this.currency = currency;
+        return this;
+    }
+    public DropTerritory addDistributor(String distributor){
+        this.distributor = distributor;
+        return this;
+    }
 	
 	public static DropTerritory getTerritory(String country, List<DropTerritory> territories) {
 		DropTerritory territoryData = null;
@@ -70,5 +85,30 @@ public class DropTerritory {
                 .append("dealReference", dealReference)
                 .append("publisher", publisher)
                 .toString();
+    }
+
+    public DropTerritory addLabel(String label) {
+        this.label = label;
+        return this;
+    }
+
+    public DropTerritory addPrice(float price) {
+        this.price = price;
+        return this;
+    }
+
+    public DropTerritory addPriceCode(String priceCode) {
+        this.priceCode = priceCode;
+        return this;
+    }
+
+    public DropTerritory addPublisher(String publisher) {
+        this.publisher = publisher;
+        return this;
+    }
+
+    public DropTerritory addReportingId(String isrc) {
+        this.reportingId = isrc;
+        return this;
     }
 }

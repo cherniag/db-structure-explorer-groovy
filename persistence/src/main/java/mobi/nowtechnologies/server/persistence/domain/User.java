@@ -97,7 +97,7 @@ public class User implements Serializable {
     }
 
     public static enum Fields {
-		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
+		userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
 	}
 
 	@Id
