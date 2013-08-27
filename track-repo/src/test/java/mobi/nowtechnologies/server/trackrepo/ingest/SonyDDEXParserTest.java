@@ -175,15 +175,15 @@ public class SonyDDEXParserTest {
         assertEquals(expectedGRid, resultDropTrack.productId);
 
         Element releaseResourceReferenceListElement = getReleaseResourceReferenceListElement(releaseElement);
-        String resourseRef = getReleaseResourceReference(releaseResourceReferenceListElement);
+        String resourceRef = getReleaseResourceReference(releaseResourceReferenceListElement);
 
         assertNotNull(resultDropTrack.files);
 
-        List<DropAssetFile> expectedDropAssetFiles = dropAssetsByResourceReferenceMap.get(resourseRef);
+        List<DropAssetFile> expectedDropAssetFiles = dropAssetsByResourceReferenceMap.get(resourceRef);
         assertEquals(expectedDropAssetFiles.size(), resultDropTrack.files.size());
         int j = 0;
         for (DropAssetFile file : resultDropTrack.files) {
-            validateAssetFile(file, j, resourseRef);
+            validateAssetFile(file, j, resourceRef);
             j++;
         }
 
@@ -191,14 +191,14 @@ public class SonyDDEXParserTest {
         assertEquals(expectedDropAssetFiles.size(), resultDropTrack.files.size());
         j = 0;
         for (DropTerritory territory: resultDropTrack.territories) {
-            validateTerritory(territory, j, resourseRef);
+            validateTerritory(territory, j, resourceRef);
             j++;
         }
     }
 
-    private void validateAssetFile(DropAssetFile file, Integer j, String resourseRef){
+    private void validateAssetFile(DropAssetFile file, Integer j, String resourceRef){
 
-          Map<Integer, DropAssetFile> expectedMap = expectedDropAssetsMap.get(resourseRef);
+          Map<Integer, DropAssetFile> expectedMap = expectedDropAssetsMap.get(resourceRef);
 
           if(expectedMap != null){
               DropAssetFile expected = expectedMap.get(j);
@@ -210,9 +210,9 @@ public class SonyDDEXParserTest {
           }
     }
 
-    private void validateTerritory(DropTerritory territory, Integer j, String resourseRef){
+    private void validateTerritory(DropTerritory territory, Integer j, String resourceRef){
 
-        Map<Integer, DropTerritory> expectedMap = expectedTerritoriesMap.get(resourseRef);
+        Map<Integer, DropTerritory> expectedMap = expectedTerritoriesMap.get(resourceRef);
 
         if(expectedMap != null){
             DropTerritory expected = expectedMap.get(j);
@@ -231,15 +231,18 @@ public class SonyDDEXParserTest {
         }
     }
 
-    private Map<String,Map<Integer,DropAssetFile>> getExpectedDropAssetsMap() {
+    private Map<String,Map<Integer,DropAssetFile>> getExpectedDropAssetsMap() throws IOException {
         Map<String,Map<Integer,DropAssetFile>> map = new HashMap<String, Map<Integer, DropAssetFile>>();
 
         Map<Integer,DropAssetFile> assetMap = new HashMap<Integer, DropAssetFile>();
         map.put("A1", assetMap);
-        assetMap.put(0, createDropAssetFile(AssetFile.FileType.PREVIEW, "/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/sony_cdu/ern.v3.4.1/resources/A10301A00002442286_T-10413_SoundRecording_001-001.aac", "FIBMB9100008", "e2767ec5f8a5ac0116c88f8b8e6dc533"));
-        assetMap.put(1, createDropAssetFile(AssetFile.FileType.DOWNLOAD, "/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/sony_cdu/ern.v3.4.1/resources/A10301A00002442286_T-11006_SoundRecording_001-001.mp3", "FIBMB9100008", "3a2e576a50ea0d80444108a11cd6b134"));
-        assetMap.put(2, createDropAssetFile(AssetFile.FileType.MOBILE, "/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/sony_cdu/ern.v3.4.1/resources/A10301A00002442286_T-10253_SoundRecording_001-001.m4a", "FIBMB9100008", "19b6c9dbdd030d608d9710c215d1c648"));
-        assetMap.put(3, createDropAssetFile(AssetFile.FileType.IMAGE, "/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/sony_cdu/ern.v3.4.1/resources/A10301A00002442286_T-10026_Image.jpg", null, "68eac0c555283fd215cff48321815ad0"));
+
+        String dirVersionAbsolutePath = new ClassPathResource("media/sony_cdu/ern.v3.4.1/").getFile().getAbsolutePath();
+
+        assetMap.put(0, createDropAssetFile(AssetFile.FileType.PREVIEW, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10413_SoundRecording_001-001.aac", "FIBMB9100008", "e2767ec5f8a5ac0116c88f8b8e6dc533"));
+        assetMap.put(1, createDropAssetFile(AssetFile.FileType.DOWNLOAD, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-11006_SoundRecording_001-001.mp3", "FIBMB9100008", "3a2e576a50ea0d80444108a11cd6b134"));
+        assetMap.put(2, createDropAssetFile(AssetFile.FileType.MOBILE, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10253_SoundRecording_001-001.m4a", "FIBMB9100008", "19b6c9dbdd030d608d9710c215d1c648"));
+        assetMap.put(3, createDropAssetFile(AssetFile.FileType.IMAGE, dirVersionAbsolutePath + "/resources/A10301A00002442286_T-10026_Image.jpg", null, "68eac0c555283fd215cff48321815ad0"));
 
         return map;
     }
