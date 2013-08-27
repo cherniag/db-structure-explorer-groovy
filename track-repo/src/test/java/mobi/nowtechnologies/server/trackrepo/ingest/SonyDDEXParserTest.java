@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.lang.Integer.parseInt;
@@ -43,6 +45,7 @@ public class SonyDDEXParserTest {
     private Map<String, Map<Integer, DropAssetFile>> expectedDropAssetsMap;
     private Map<String, Map<Integer, DropTerritory>> expectedTerritoriesMap;
     private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
+    public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd");
 
     @Before
     public void setUp() throws FileNotFoundException {
@@ -68,7 +71,7 @@ public class SonyDDEXParserTest {
         shouldParseFormat3_4_1Successfully();
     }
 
-    private void shouldParseFormat3_4_1Successfully() throws IOException, SAXException, XpathException {
+    private void shouldParseFormat3_4_1Successfully() throws IOException, SAXException, XpathException, ParseException {
         document = getDocument();
 
         assertEquals(getTrackReleaseCount(), resultDropTrackMap.entrySet().size());
@@ -247,7 +250,7 @@ public class SonyDDEXParserTest {
         return map;
     }
 
-    private Map<String,Map<Integer,DropTerritory>> getExpectedTerritoryMap() {
+    private Map<String,Map<Integer,DropTerritory>> getExpectedTerritoryMap() throws ParseException {
         Map<String,Map<Integer, DropTerritory>> map = new HashMap<String, Map<Integer, DropTerritory>>();
 
         Map<Integer,DropTerritory> assetMap = new HashMap<Integer, DropTerritory>();
@@ -268,14 +271,15 @@ public class SonyDDEXParserTest {
         return dropAssetFile;
     }
 
-    private DropTerritory createDropTerritory(){
+    private DropTerritory createDropTerritory() throws ParseException {
         DropTerritory dropTerritory= new DropTerritory();
 
         dropTerritory.country = "GB";
         dropTerritory.label = "RCA Camden";
         dropTerritory.currency = "GBP";
         dropTerritory.price = 0.83f;
-        dropTerritory.startdate = new Date(947800800000L);
+
+        dropTerritory.startdate = DATE_PARSER.parse("2000-01-14");
         dropTerritory.reportingId = "FIBMB9100008";
         dropTerritory.distributor = "Sony Music Entertainment";
         dropTerritory.takeDown = false;
