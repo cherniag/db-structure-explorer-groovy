@@ -20,9 +20,11 @@ var Player = {
 		this.load();
 		
 		var track = Backbone.tracks.get(Player.current);
-        this.player.src=track.get('audio');
-        this.player.load();
-        this.player.play();
+        Player.player.src=track.get('audio');
+        Player.player.load();
+        Player.player.addEventListener("loadeddata", function(){
+            Player.player.play();
+        });
 	},
 	stop : function() {
 		this.current = null;
