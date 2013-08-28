@@ -8,20 +8,22 @@
     <span class="logo" style="padding-right: 49px;"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 </div>
 
-
-
 <c:choose>
-	<c:when test="${suweeks == 3}">
-        <c:set var="paymentPolicyOptionNo" value="4" />
-    </c:when>
     <c:when test="${suweeks == 1}">
         <c:set var="paymentPolicyOptionNo" value="3" />
+        <c:set var="imageWeeks" value="3" />
     </c:when>
     <c:when test="${suweeks == 2}">
         <c:set var="paymentPolicyOptionNo" value="2" />
+        <c:set var="imageWeeks" value="2" />
+    </c:when>
+    <c:when test="${suweeks == 3}">
+        <c:set var="paymentPolicyOptionNo" value="4" />
+        <c:set var="imageWeeks" value="1" />
     </c:when>
     <c:when test="${suweeks == 5}">
         <c:set var="paymentPolicyOptionNo" value="1" />
+        <c:set var="imageWeeks" value="1" />
     </c:when>
     <c:otherwise>
         <c:set var="paymentPolicyOptionNo" value="0" />
@@ -32,8 +34,8 @@
     <img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
     <div class="subscription-container">
         <a class="subscription-selector option-${paymentPolicyOptionNo}" disabled="true">
-            <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${suweeks}.png" />
-            <div class="rel" style="padding-top:8px;">
+            <img style="width:66px; height:66px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
+            <div class="rel" style="padding-top:8px;margin-bottom: 12px;">
                 <span class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></span><br />
                 <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
             </div>

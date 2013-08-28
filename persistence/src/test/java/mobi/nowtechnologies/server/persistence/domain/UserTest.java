@@ -17,6 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.assertFalse;
@@ -439,7 +440,12 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        UserGroup o2 = new UserGroup().withCommunity(new Community().withRewriteUrl("o2"));
+        PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
+
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
+                .withUserGroup(o2)
+                .withLastPromo(videoPromo).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();

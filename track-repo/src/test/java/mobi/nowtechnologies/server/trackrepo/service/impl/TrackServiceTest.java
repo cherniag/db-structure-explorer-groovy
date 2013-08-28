@@ -34,7 +34,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -91,7 +90,7 @@ public class TrackServiceTest {
 				return matched ? Collections.singletonList(track) : Collections.<Track> emptyList();
 			}
 		});
-		when(trackRepository.find(any(SearchTrackDto.class), any(Pageable.class), anyBoolean(), anyBoolean())).thenAnswer(new Answer<Page<Track>>() {
+		when(trackRepository.find(any(SearchTrackDto.class), any(Pageable.class))).thenAnswer(new Answer<Page<Track>>() {
 			@Override
 			public Page<Track> answer(InvocationOnMock invocation) throws Throwable {
 				SearchTrackDto searchTrackDto = (SearchTrackDto) invocation.getArguments()[0];

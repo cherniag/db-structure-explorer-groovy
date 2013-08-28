@@ -19,8 +19,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 
@@ -59,8 +57,6 @@ public class TrackController extends AbstractCommonController{
 	@RequestMapping(value = "/tracks", method = RequestMethod.GET)
 	public @ResponseBody PageListDto<? extends TrackDto> find(@RequestParam(value="query", required = false) String query, @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto
 			, @PageableDefaults(pageNumber = 0, value = 10) Pageable page) {
-
-        List<TrackDto> trackDtos = new LinkedList<TrackDto>();
 
 		return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
 	}

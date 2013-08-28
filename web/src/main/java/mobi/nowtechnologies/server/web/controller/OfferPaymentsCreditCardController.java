@@ -117,7 +117,7 @@ public class OfferPaymentsCreditCardController extends CommonController {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(VIEW_CREATE_PAYMENT_DETAIL_FAIL);
 
-		final String message = messageSource.getMessage(serviceException.getErrorCode(), null, locale);
+		final String message = messageSource.getMessage(serviceException.getErrorCodeForMessageLocalization(), null, locale);
 		if (serviceException instanceof ExternalServiceException)
 			modelAndView.addObject("external_error", message);
 		else
