@@ -20,9 +20,11 @@ var Player = {
 		this.load();
 		
 		var track = Backbone.tracks.get(Player.current);
-        this.player.src=track.get('audio');
-        this.player.load();
-        this.player.play();
+        Player.player.src=track.get('audio');
+        Player.player.load();
+        Player.player.addEventListener("loadeddata", function(){
+            Player.player.play();
+        });
 	},
 	stop : function() {
 		this.current = null;
@@ -227,6 +229,8 @@ var PlaylistRouter = Backbone.Router.extend({
         Backbone.swapView = new SwapView();
 
         this.views = [Backbone.playlistView, Backbone.tracksView, Backbone.homeView, Backbone.swapView];
+        document.addEventListener("backbutton", function(){Player.stop()});
+
     },
     routes: {
         "": "home",
