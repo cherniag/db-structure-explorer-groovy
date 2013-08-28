@@ -40,7 +40,7 @@ public class SonyParser extends IParser {
 
 		try {
 
-			Document document = (Document) builder.build(xmlFile);
+			Document document = builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
 
 			XMLOutputter outputter = new XMLOutputter();
@@ -296,26 +296,24 @@ public class SonyParser extends IParser {
 			File logFile = new File(root + "/logs/" + logFileName);
 			if (!auto) {
 				if (!logFile.exists()) {
-					DropData drop = new DropData();
-					drop.name = manifest.getName();
-					drop.date = new Date(manifest.lastModified());
-					result.add(drop);
+                    addDrop(result, manifest);
 				}
 			} else {
 				String ackName = manifest.getName().replace(".txt", ".ack");
 				File ackFile = new File(root + "/manifests/"+ackName);
 				if (!ackFile.exists() && !logFile.exists()) {
-					DropData drop = new DropData();
-					drop.name = manifest.getName();
-					drop.date = new Date(manifest.lastModified());
-					result.add(drop);
+                    addDrop(result, manifest);
 				}
-
-
-
 			}
 		}
 		return result;
 	}
+
+    private void addDrop(List<DropData> result, File manifest) {
+        DropData drop = new DropData();
+        drop.name = manifest.getName();
+        drop.date = new Date(manifest.lastModified());
+        result.add(drop);
+    }
 
 }
