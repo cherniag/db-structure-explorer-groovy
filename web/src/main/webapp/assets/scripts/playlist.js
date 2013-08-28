@@ -229,6 +229,8 @@ var PlaylistRouter = Backbone.Router.extend({
         Backbone.swapView = new SwapView();
 
         this.views = [Backbone.playlistView, Backbone.tracksView, Backbone.homeView, Backbone.swapView];
+        document.addEventListener("backbutton", function(){Player.stop()});
+
     },
     routes: {
         "": "home",
