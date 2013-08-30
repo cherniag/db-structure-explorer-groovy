@@ -73,5 +73,16 @@ public class O2WebServiceResulstsProcessorTest {
 		T r = ((JAXBElement<T>) unmarchaller.unmarshal(file)).getValue();
 		return r;
 	}
+	
+	@Test
+	public void testGetSubscriberProfileBusiness() throws Exception {
+		GetSubscriberProfileResponse r = readObject(
+				"subscriberservice20_getSubsProfileBusiness_result.xml",
+				GetSubscriberProfileResponse.class);
+		O2SubscriberData data = p.getSubscriberData(r);
+		assertTrue(data.isBusinessOrConsumerSegment());
+		assertTrue(data.isContractPostPayOrPrePay());
+		assertTrue(data.isProviderO2());
+	}
 
 }

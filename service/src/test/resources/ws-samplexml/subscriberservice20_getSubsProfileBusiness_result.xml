@@ -1,0 +1,11 @@
+     <sub:getSubscriberProfileResponse xmlns:sub="http://soa.o2.co.uk/subscriberdata_2">
+         <sub:subscriberProfile>
+            <sub:subscriberID>447764119969</sub:subscriberID>
+            <sub:operator>O2</sub:operator>
+            <sub:paymentCategory>Postpay</sub:paymentCategory>
+            <sub:segment>SME</sub:segment>
+            <sub:channel>Online</sub:channel>
+            <sub:serviceProviderID>283</sub:serviceProviderID>
+            <sub:status>A</sub:status>
+         </sub:subscriberProfile>
+      </sub:getSubscriberProfileResponse>

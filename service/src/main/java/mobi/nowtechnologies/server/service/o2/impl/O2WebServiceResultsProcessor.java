@@ -59,13 +59,13 @@ public class O2WebServiceResultsProcessor {
 			GetSubscriberProfileResponse subscriberProfile) {
 		O2SubscriberData res = new O2SubscriberData();
 		
-		// a business user can have segment set to "CORPORATE" or "SME" 
-		res.setBusinessOrConsumerSegment(subscriberProfile.getSubscriberProfile().getSegment() == SegmentType.CORPORATE
-				|| subscriberProfile.getSubscriberProfile().getSegment() == SegmentType.SME);
-		res.setContractPostPayOrPrePay(subscriberProfile.getSubscriberProfile()
-				.getPaymentCategory() == PaymentCategoryType.POSTPAY);
-		res.setProviderO2("O2".equalsIgnoreCase(subscriberProfile
-				.getSubscriberProfile().getOperator()));
+		boolean consumerUser = subscriberProfile.getSubscriberProfile().getSegment() == SegmentType.CONSUMER;
+		boolean businessUser = !consumerUser;
+
+		res.setBusinessOrConsumerSegment( businessUser );
+		res.setContractPostPayOrPrePay( subscriberProfile.getSubscriberProfile().getPaymentCategory() == PaymentCategoryType.POSTPAY );
+		res.setProviderO2("O2".equalsIgnoreCase( subscriberProfile.getSubscriberProfile().getOperator()) );
+		
 		return res;
 	}
 
