@@ -79,7 +79,6 @@ public class UserService {
     private CountryAppVersionService countryAppVersionService;
     private DeviceTypeService deviceTypeService;
     private CountryService countryService;
-    private SagePayService sagePayService;
 	private PaymentService paymentService;
 
     private PromotionService promotionService;
@@ -162,10 +161,6 @@ public class UserService {
 	public void setCountryAppVersionService(
 			CountryAppVersionService countryAppVersionService) {
 		this.countryAppVersionService = countryAppVersionService;
-	}
-
-	public void setSagePayService(SagePayService sagePayService) {
-		this.sagePayService = sagePayService;
 	}
 
 	public void setPromotionService(PromotionService promotionService) {
@@ -1828,6 +1823,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User skipBoughtPeriodAndUnsubscribe(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
         userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, actionReason.getDescription());
         userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);

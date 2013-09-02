@@ -90,13 +90,6 @@ public class CloudFileServiceImpl implements CloudFileService {
 		return isConfigured;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mobi.nowtechnologies.server.service.CloudFileService#uploadFile(org.springframework.web.multipart.MultipartFile, java.lang.String)
-	 * 
-	 * This method synchronized because the filesClient isn't thread-safe
-	 */
 	@Override
 	public synchronized boolean login() {
 		LOGGER.info("login on cloud");
@@ -118,13 +111,6 @@ public class CloudFileServiceImpl implements CloudFileService {
 		return isLogged;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mobi.nowtechnologies.server.service.CloudFileService#uploadFile(org.springframework.web.multipart.MultipartFile, java.lang.String)
-	 * 
-	 * This method synchronized because the filesClient isn't thread-safe
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized boolean uploadFile(MultipartFile file, String fileName) {
@@ -138,7 +124,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 			try {
 				filesClient.storeStreamedObject(containerName, file.getInputStream(), "application/octet-stream", fileName, Collections.EMPTY_MAP);
 				uploaded = true;
-				LOGGER.info("Done updating file on cloud. File was successfuly uploaded {}", uploaded);
+				LOGGER.info("Done updating file on cloud. File was successfully uploaded {}", uploaded);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
@@ -161,7 +147,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 			copied = true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Coudn't copy file on cloud");
+			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Couldn't copy file on cloud");
 		}
 
 		return copied;

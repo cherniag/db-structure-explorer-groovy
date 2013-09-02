@@ -200,7 +200,6 @@ public class SonyDDEXParserTest {
     }
 
     private void validateAssetFile(DropAssetFile file, Integer j, String resourceRef){
-
           Map<Integer, DropAssetFile> expectedMap = expectedDropAssetsMap.get(resourceRef);
 
           if(expectedMap != null){
@@ -214,7 +213,6 @@ public class SonyDDEXParserTest {
     }
 
     private void validateTerritory(DropTerritory territory, Integer j, String resourceRef){
-
         Map<Integer, DropTerritory> expectedMap = expectedTerritoriesMap.get(resourceRef);
 
         if(expectedMap != null){
@@ -286,7 +284,6 @@ public class SonyDDEXParserTest {
         dropTerritory.priceCode = null;
         dropTerritory.dealReference = null;
         dropTerritory.publisher = null;
-
 
         return dropTerritory;
     }

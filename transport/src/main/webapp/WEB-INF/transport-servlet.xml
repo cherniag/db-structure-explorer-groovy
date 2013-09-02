@@ -244,13 +244,13 @@
 	</bean>
 	
 	<!-- O2 sms notification job -->
-	<bean id="transport.smsNotification" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<bean id="transport.weeklyUpdateJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="service.WeeklyUpdateService" />
 		<property name="targetMethod" value="updateWeekly" />
 		<property name="concurrent" value="false" />
 	</bean>
 	<bean id="transport.smsNotificationQuartzTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="transport.smsNotification" />
+		<property name="jobDetail" ref="transport.weeklyUpdateJob" />
 		<property name="startDelay" value="${smsNotification.startDelayMillis}" />
 		<property name="repeatInterval" value="${smsNotification.repeatIntervalMillis}" />
 	</bean>

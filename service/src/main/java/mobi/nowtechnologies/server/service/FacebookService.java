@@ -152,7 +152,7 @@ public class FacebookService {
 	
 	public UserCredentions getUserCredentions(String communityName, String facebookToken) {
 		LOGGER.debug("input parameters communityName, facebookToken: [{}], [{}]", communityName, facebookToken);
-		String urlFacebookUserCredentions = AppConstants.FB_URL_USER_CREDENTIONS;
+		String urlFacebookUserCredentions = AppConstants.FB_URL_USER_CREDENTIALS;
 		
 		Map<String, String> requestParams = new HashMap<String, String>();
 		requestParams.put(REQUEST_PARAM_TOKEN, facebookToken);

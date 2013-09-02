@@ -158,22 +158,4 @@ public class PaymentPolicyServiceTest {
 		
 	}
 
-	@Test
-	public void testGetPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType_Success() {
-		
-		Community community = CommunityFactory.createCommunity();
-		String paymentType ="paymentType";
-		
-		List<PaymentPolicy> paymentPolicies = Collections.<PaymentPolicy>emptyList();
-				
-		Mockito.when(mockPaymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType)).thenReturn(paymentPolicies);
-		
-		List<PaymentPolicy> actualPaymentPolicies = fixturePaymentPolicyService.getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(community, paymentType);
-		
-		assertNotNull(actualPaymentPolicies);
-		assertEquals(paymentPolicies, actualPaymentPolicies);
-		
-		Mockito.verify(mockPaymentPolicyRepository, times(1)).getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
-	}
-
 }

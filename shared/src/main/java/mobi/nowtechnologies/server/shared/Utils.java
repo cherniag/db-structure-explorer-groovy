@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -23,15 +22,13 @@ import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
  * 
  */
 public class Utils {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class
-			.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
-    public static final long EIGHT_WEEK_MILLIS = 8*WEEK_SECONDS*1000L;
     public static final int DAY_MILLISECONDS = 86400000;
-	public static final int DAY_SECONDS = 86400;
-    
+
     private static Pattern MAJOR_VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\..*");
 
     public static int truncatedToSeconds(Date date){
@@ -48,13 +45,6 @@ public class Utils {
 		return sb.toString();
 	}
 
-	/**
-	 * This functions returns a MD5 hash based on the input String
-	 * 
-	 * @param input
-	 *            String to be MD5
-	 * @return the MD5 hash
-	 */
 	public static String md5(String input) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -146,13 +136,7 @@ public class Utils {
 			return nextSubPayment;
 
 		int timeOfMovingToLimitedStatusSeconds = nextSubPayment + subBalance * WEEK_SECONDS;
-		/*
-		 * PRO-710: add all balance weeks to the chart subscription end date for
-		 * (int i = 0; i < subBalance-1; i++) {
-		 * timeOfMovingToLimitedStatusSeconds =
-		 * getNextSubPaymentAccoringToPaymentPolicy
-		 * (timeOfMovingToLimitedStatusSeconds); }
-		 */
+
 		LOGGER.debug("Output parameter timeOfMovingToLimitedStatusSeconds=[{}]", timeOfMovingToLimitedStatusSeconds);
 		return timeOfMovingToLimitedStatusSeconds;
 	}
@@ -192,8 +176,8 @@ public class Utils {
 		LOGGER.debug("Output parameter montlyNextSubPayment=[{}]", montlyNextSubPayment);
 		return montlyNextSubPayment;
 	}
-	public static boolean datesNotEquals(Date oldTime, Date newTimet) {
-        return newTimet.getTime() != oldTime.getTime();
+	public static boolean datesNotEquals(Date oldTime, Date newTime) {
+        return newTime.getTime() != oldTime.getTime();
     }
 
     public static String substring(String s, int i) {

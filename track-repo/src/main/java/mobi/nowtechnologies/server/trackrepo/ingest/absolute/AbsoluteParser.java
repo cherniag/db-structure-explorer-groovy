@@ -27,57 +27,56 @@ public class AbsoluteParser {
         try {
             Document document = builder.build(file);
             Element root = document.getRootElement();
-            String DISTRIBUTOR = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
+            String distributor = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
             List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
             List<Element> releases = root.getChild("ReleaseList").getChildren("Release");
             List<Element> deals = root.getChild("DealList").getChildren("ReleaseDeal");
 
             for (Element node : sounds) {
-                String ISRC = node.getChild("SoundRecordingId").getChildText("ISRC");
+                String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
                 Element details = node.getChild("SoundRecordingDetailsByTerritory");
-                String ARTIST = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
-                String TITLE = details.getChild("Title").getChildText("TitleText");
-                String SUB_TITLE = details.getChildText("ParentalWarningType");
-                String GENRE = details.getChild("Genre").getChildText("GenreText");
-                String COPYRIGHT = details.getChild("PLine").getChildText("PLineText");
-                String LABEL = details.getChildText("LabelName");
-                String YEAR = details.getChild("PLine").getChildText("Year");
-                List<DropTerritory> TERRITORIES = createTerritory(details, DISTRIBUTOR, LABEL, ISRC);
+                String artist = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
+                String title = details.getChild("Title").getChildText("TitleText");
+                String subTitle = details.getChildText("ParentalWarningType");
+                String genre = details.getChild("Genre").getChildText("GenreText");
+                String copyright = details.getChild("PLine").getChildText("PLineText");
+                String label = details.getChildText("LabelName");
+                String year = details.getChild("PLine").getChildText("Year");
+                List<DropTerritory> territories = createTerritory(details, distributor, label, isrc);
 
-                res.put(getDropTrackKey(ISRC), new DropTrack()
+                res.put(getDropTrackKey(isrc), new DropTrack()
                         .addType(INSERT)
                         .addProductCode("")
-                        .addTitle(TITLE)
-                        .addSubTitle(SUB_TITLE)
-                        .addArtist(ARTIST)
-                        .addGenre(GENRE)
-                        .addCopyright(COPYRIGHT)
-                        .addLabel(LABEL)
-                        .addYear(YEAR)
-                        .addIsrc(ISRC)
-                        .addPhysicalProductId(ISRC)
+                        .addTitle(title)
+                        .addSubTitle(subTitle)
+                        .addArtist(artist)
+                        .addGenre(genre)
+                        .addCopyright(copyright)
+                        .addLabel(label)
+                        .addYear(year)
+                        .addIsrc(isrc)
+                        .addPhysicalProductId(isrc)
                         .addInfo("")
                         .addExists(true)
                         .addExplicit(false)
-                        .addProductId(ISRC)
-                        .addTerritories(TERRITORIES)
-
+                        .addProductId(isrc)
+                        .addTerritories(territories)
                 );
             }
 
             for (Element node : releases) {
-                String ISRC = node.getChild("ReleaseId").getChildText("ISRC");
-                if (ISRC == null) continue;
+                String isrc = node.getChild("ReleaseId").getChildText("ISRC");
+                if (isrc == null) continue;
                 String releaseReference = node.getChildText("ReleaseReference");
-                DropTrack track = res.get(getDropTrackKey(ISRC));
-                String ALBUM = "";//node.getChildText("");
+                DropTrack track = res.get(getDropTrackKey(isrc));
+                String album = "";//node.getChildText("");
 
-                track.addAlbum(ALBUM);
+                track.addAlbum(album);
             }
 
             for(Element node: deals){
                 String reference = node.getChildText("DealReleaseReference");
-                String DEAL_REFERENCE = node.getChild("Deal").getChildText("DealReference");
+                String dealReference = node.getChild("Deal").getChildText("DealReference");
             }
         } catch (JDOMException e) {
             e.printStackTrace();
@@ -103,7 +102,7 @@ public class AbsoluteParser {
         return res;
     }
 
-    private String getDropTrackKey(String ISRC) {
-        return Joiner.on('_').join(ISRC, getClass().getSimpleName());
+    private String getDropTrackKey(String isrc) {
+        return Joiner.on('_').join(isrc, getClass().getSimpleName());
     }
 }

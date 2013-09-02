@@ -52,7 +52,6 @@ public class PaymentPolicyService {
 	}
 	
 	public PaymentPolicy getPaymentPolicy(Integer id){
-		
 		return paymentPolicyRepository.findOne(id.shortValue());
 	}
 
@@ -84,15 +83,5 @@ public class PaymentPolicyService {
 		
 		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
 		return offerPaymentPolicyDtos;
-	}
-
-	@Transactional(readOnly = true)
-	public List<PaymentPolicy> getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(Community community, String paymentType) {
-		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
-		
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
-		
-		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
-		return paymentPolicies;
 	}
 }

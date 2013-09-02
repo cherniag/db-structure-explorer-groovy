@@ -85,7 +85,6 @@ public class EntityDao extends JpaDaoSupport {
 		}
 	}
 
-	// TODO Think about propagation and rollback
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> T updateEntity(T entity) {
 		LOGGER.debug("input parameters entity: [{}]", entity);
@@ -101,7 +100,6 @@ public class EntityDao extends JpaDaoSupport {
 		}
 	}
 
-	// TODO Think about propagation and rollback
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Object saveEntity(Object entity) {
 		LOGGER.debug("input parameters entity: [{}]", entity);
@@ -117,8 +115,7 @@ public class EntityDao extends JpaDaoSupport {
 			throw new PersistenceException("Couldn't save entity");
 		}
 	}
-	
-	// TODO Think about propagation and rollback
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void removeEntity(Class<?> entityClass, Object entityId) {
 		try {
@@ -280,27 +277,6 @@ public class EntityDao extends JpaDaoSupport {
 				query.append(_AND_ + condition);
 		}
 		return getJpaTemplate().find(query.toString());
-	}
-
-	public Country findPropertyByProperty(Class<Country> entityClass, String targetProperty,
-			String property, String propertyValue) {
-		throw new UnsupportedOperationException("Not implaemented yet");
-	}
-	
-	@Transactional(propagation=Propagation.REQUIRED)
-	public <T> List<T> batchInserts(List<T> objects) {
-		try{
-			LOGGER.debug("Start bulk insert for {} object(s)", objects.size());
-			for (T object : objects) {
-				getJpaTemplate().persist(object);
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error while bulk insert");
-			throw new PersistenceException(e);
-		} finally {
-			LOGGER.debug("End of  bulk insert for {} object(s)", objects.size());
-		}
-		return objects;
 	}
 	
 }

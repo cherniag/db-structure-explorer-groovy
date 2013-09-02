@@ -658,7 +658,6 @@ public class UserServiceTest {
 	public void setUp() throws Exception {
 		userServiceSpy = Mockito.spy(new UserService());
 
-		SagePayService sagePayServiceMock = PowerMockito.mock(SagePayService.class);
 		PaymentPolicyService paymentPolicyServiceMock = PowerMockito.mock(PaymentPolicyService.class);
 		countryServiceMock = PowerMockito.mock(CountryService.class);
 		communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
@@ -687,8 +686,7 @@ public class UserServiceTest {
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
-		
-		userServiceSpy.setSagePayService(sagePayServiceMock);
+
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
 		userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);

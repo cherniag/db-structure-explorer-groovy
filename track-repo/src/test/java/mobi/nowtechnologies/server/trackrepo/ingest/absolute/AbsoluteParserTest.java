@@ -26,9 +26,10 @@ public class AbsoluteParserTest {
     public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws IOException {
         //given
         File file = new ClassPathResource("media/absolute/absolute.xml").getFile();
-        //when
 
+        //when
         Map<String, DropTrack> trackMap = new AbsoluteParser().parse(file);
+
         //then
         DropTrack track = trackMap.get("ROROT1302001_AbsoluteParser");
 
