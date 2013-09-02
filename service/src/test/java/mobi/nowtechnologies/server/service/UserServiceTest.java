@@ -1396,7 +1396,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1474,7 +1474,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1557,7 +1557,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1641,7 +1641,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1725,7 +1725,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1805,7 +1805,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1887,7 +1887,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1962,7 +1962,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -2044,7 +2044,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -2127,7 +2127,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -2256,7 +2256,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(monthlyNextSubPayment);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(monthlyNextSubPayment);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);

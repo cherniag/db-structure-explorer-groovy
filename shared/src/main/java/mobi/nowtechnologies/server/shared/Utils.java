@@ -150,7 +150,7 @@ public class Utils {
 		return remoteAddr;
 	}
 
-	public static int getMontlyNextSubPayment(int nextSubPayment) {
+	public static int getMonthlyNextSubPayment(int nextSubPayment) {
 		LOGGER.debug("input parameters nextSubPayment: [{}]", nextSubPayment);
 
 		int epochSeconds = Utils.getEpochSeconds();
@@ -171,10 +171,10 @@ public class Utils {
 			calendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
 
-		int montlyNextSubPayment = (int) (calendar.getTimeInMillis() / MILLISECONDS_IN_SECOND);
+		int monthlyNextSubPayment = (int) (calendar.getTimeInMillis() / MILLISECONDS_IN_SECOND);
 
-		LOGGER.debug("Output parameter montlyNextSubPayment=[{}]", montlyNextSubPayment);
-		return montlyNextSubPayment;
+		LOGGER.debug("Output parameter monthlyNextSubPayment=[{}]", monthlyNextSubPayment);
+		return monthlyNextSubPayment;
 	}
 	public static boolean datesNotEquals(Date oldTime, Date newTime) {
         return newTime.getTime() != oldTime.getTime();

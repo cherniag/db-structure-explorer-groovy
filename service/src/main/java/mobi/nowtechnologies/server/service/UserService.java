@@ -24,7 +24,6 @@ import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -883,7 +882,7 @@ public class UserService {
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
+			user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
 		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
