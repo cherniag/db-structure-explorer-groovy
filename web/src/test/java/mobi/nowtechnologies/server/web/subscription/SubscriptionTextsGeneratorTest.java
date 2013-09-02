@@ -15,7 +15,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
-@Ignore
 public class SubscriptionTextsGeneratorTest {
 
 	private static Locale communityLocale = new Locale("o2");
@@ -31,7 +30,7 @@ public class SubscriptionTextsGeneratorTest {
 	}
 
 	@Test
-	public void testMessageSoure() {
+	public void testMessageSource() {
 		String msg = messageSource.getMessage("subscription.text.subscribed", new Object[] {}, communityLocale);
 		Assert.assertEquals(msg, "Subscribed");
 	}
