@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,11 +19,11 @@ import java.io.IOException;
 import java.util.*;
 
 public class SonyDDEXParser extends DDEXParser {
-	protected static final Log LOG = LogFactory.getLog(SonyDDEXParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SonyDDEXParser.class);
 
 	public SonyDDEXParser(String root) throws FileNotFoundException {
         super(root);
-		LOG.info("EMI parser loading from " + root);
+		LOGGER.info("EMI parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
@@ -38,7 +40,7 @@ public class SonyDDEXParser extends DDEXParser {
 				String url = message.getChildText("URL");
 				int index = url.indexOf("ddex");
 				String xml=root+url.substring(index+4);
-				LOG.info("Loading "+xml);
+				LOGGER.info("Loading "+xml);
 						Map<String, DropTrack> result = loadXml(xml);
 
 				if (result != null) {
@@ -46,7 +48,7 @@ public class SonyDDEXParser extends DDEXParser {
 				}
 			}
 		} catch (Exception e) {
-			LOG.error("Ingest failed " + e.getMessage());
+			LOGGER.error("Ingest failed " + e.getMessage());
 		}
 		return tracks;
 
@@ -77,7 +79,7 @@ public class SonyDDEXParser extends DDEXParser {
 		List<DropData> result = new ArrayList<DropData>();
 
 		File manifests = new File(root + "/manifests");
-		LOG.info("Checking manifests in " + root + "/manifests");
+		LOGGER.info("Checking manifests in " + root + "/manifests");
 		File[] manifestFiles = manifests.listFiles();
 		for (File manifest : manifestFiles) {
 			if (!manifest.getName().endsWith(".ack")) {
@@ -110,7 +112,7 @@ public class SonyDDEXParser extends DDEXParser {
 		int codeSep = folder.getName().indexOf('_');
 		if (codeSep > 0) {
 			String code = folder.getName().substring(0, codeSep);
-			LOG.info("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
+			LOGGER.info("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
 			File xml = new File(folder.getAbsoluteFile() + "/" + code + ".xml");
 			return xml;
 		}

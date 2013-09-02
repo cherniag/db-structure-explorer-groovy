@@ -56,7 +56,6 @@ public class SonyDDEXParserTest {
 
         xpathEngine = XMLUnit.newXpathEngine();
         xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
-
     }
 
     @Test
@@ -74,6 +73,7 @@ public class SonyDDEXParserTest {
     private void shouldParseFormat3_4_1Successfully() throws IOException, SAXException, XpathException, ParseException {
         document = getDocument();
 
+        assertNotNull(resultDropTrackMap);
         assertEquals(getTrackReleaseCount(), resultDropTrackMap.entrySet().size());
 
         expectedReleaseIdNodeList = getReleaseIdNodeList();
@@ -85,7 +85,6 @@ public class SonyDDEXParserTest {
         expectedAlbum = getAlbum();
         expectedDropTrackType = getDropTrackType();
         expectedProductCode = getProductCode();
-
 
         for (int i = 0; i < expectedReleaseIdNodeList.getLength(); i++) {
             validateResultDropTrack(i);

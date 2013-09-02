@@ -13,6 +13,8 @@ import mobi.nowtechnologies.server.trackrepo.utils.NullAwareBeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,7 @@ public class IngestServiceImpl implements IngestService{
 
     protected final static int MAX_SIZE_DATA_BUFFER = 10;
     protected final static long EXPIRE_PERIOD_BUFFER = 24*60*60*1000;
-	protected static final Log LOG = LogFactory.getLog(IngestServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngestServiceImpl.class);
 
 	private TrackRepository trackRepository;
 	private IngestionLogRepository ingestionLogRepository;
@@ -47,7 +49,7 @@ public class IngestServiceImpl implements IngestService{
     @Override
 	public IngestWizardData getDrops(String parserName) throws Exception {
 
-		LOG.debug("formBackingObject " + parserName);
+        LOGGER.debug("formBackingObject " + parserName);
 		IngestWizardData result = updateIngestData(null, false);
 
 		if (parserName != null) {
@@ -74,7 +76,7 @@ public class IngestServiceImpl implements IngestService{
 			drops.setDrops(new ArrayList<DropsData.Drop>());
 			result.setDropdata(drops);
 			for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-				LOG.info("Getting drops for " + ingestor);
+                LOGGER.info("Getting drops for " + ingestor);
 				IParser parser = parserFactory.getParser(ingestor);
 
 				List<DropData> parserDrops = parser.getDrops(false);
@@ -97,16 +99,16 @@ public class IngestServiceImpl implements IngestService{
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
 	public boolean commitDrops(IngestWizardData command) throws Exception {
-		LOG.debug("INGEST processFinish");
+        LOGGER.debug("INGEST processFinish");
         command = updateIngestData(command, true);
 
 		for (Drop drop : ((IngestWizardData) command).getDropdata().getDrops()) {
 
 			if (!drop.getSelected()) {
-				LOG.debug("Skipping not selected  " + drop.getName());
+                LOGGER.debug("Skipping not selected  " + drop.getName());
 				continue;
 			}
-			LOG.info("Loading " + drop.getName() + " with " + drop.getParser().getClass());
+            LOGGER.info("Loading " + drop.getName() + " with " + drop.getParser().getClass());
 
 			processDrop(drop, true);
 		}
@@ -116,11 +118,11 @@ public class IngestServiceImpl implements IngestService{
 
     @Transactional(propagation = Propagation.REQUIRED)
 	protected void processDrop(Drop drop, boolean updateFiles) throws IOException, InterruptedException {
-		LOG.debug("INGEST processFinish");
+        LOGGER.debug("INGEST processFinish");
         IParser parser = drop.getParser();
         IParserFactory.Ingestors ingestor = drop.getIngestor();
 
-        LOG.info("Loading " + drop.getName() + " with " + parser.getClass());
+        LOGGER.info("Loading " + drop.getName() + " with " + parser.getClass());
 
 		Map<String, DropTrack> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getTracks() : parser.ingest(drop.getDrop());
 		if (tracks == null || tracks.isEmpty()) {
@@ -132,13 +134,13 @@ public class IngestServiceImpl implements IngestService{
 		Collection<DropTrack> list = tracks.values();
 		for (DropTrack value: list) {
 			if (value == null) {
-				LOG.info("Null track value");
+                LOGGER.info("Null track value");
 				continue;
 			}
-			LOG.info("Ingesting " + value.isrc);
+            LOGGER.info("Ingesting " + value.isrc);
 
 			if (value.type == Type.INSERT || value.type == Type.UPDATE) {
-				LOG.info("Inserting " + value.isrc);
+                LOGGER.info("Inserting " + value.isrc);
 
 				Track track = trackRepository.findByKey( value.isrc,  value.productCode, parserFactory.getName(ingestor));
 				if (track == null) { // Try to find old keys for Fuga
@@ -146,11 +148,11 @@ public class IngestServiceImpl implements IngestService{
 				}
 				if (track == null) {
 					if (value.type == Type.UPDATE) {
-						LOG.info("Not updating " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not updating " + value.isrc + " " + value.productCode + " " + ingestor.toString());
 						continue; // Nothing to update
 					}
 					if (value.files == null || value.files.size() == 0) {
-						LOG.info("Not inserting with no tracks " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not inserting with no tracks " + value.isrc + " " + value.productCode + " " + ingestor.toString());
 						continue;
 					}
 					track = new Track();
@@ -183,7 +185,7 @@ public class IngestServiceImpl implements IngestService{
 
 				trackRepository.save(track);
 			} else if (value.type == Type.DELETE) {
-				LOG.info("DELETE " + value.productId);
+                LOGGER.info("DELETE " + value.productId);
 				Track track = trackRepository.findByProductCode((String) value.productId);
 				if (track != null)
 					trackRepository.delete(track);
@@ -200,7 +202,7 @@ public class IngestServiceImpl implements IngestService{
 
         DropsData drops = new DropsData();
 		for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-			LOG.info("Getting drops for " + ingestor);
+            LOGGER.info("Getting drops for " + ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
 
 			List<DropData> parserDrops = parser.getDrops(true);
@@ -214,7 +216,6 @@ public class IngestServiceImpl implements IngestService{
 					processDrop(data, false);
 				}
 			}
-
 		}
 	}
 
@@ -251,11 +252,11 @@ public class IngestServiceImpl implements IngestService{
 				while (it.hasNext()) {
 					DropTrack value = it.next();
 					if (value == null) {
-						LOG.info("NULL TRACK VALUE !!!!!!!!");
+                        LOGGER.info("NULL TRACK VALUE !!!!!!!!");
 						continue;
 					}
 					if (value.isrc == null) {
-						LOG.info("NULL ISRC VALUE !!!!!!!!");
+                        LOGGER.info("NULL ISRC VALUE !!!!!!!!");
 					}
 					IngestData.Track dataTrack = data.new Track();
 					dataTrack.type = value.type;
@@ -272,7 +273,7 @@ public class IngestServiceImpl implements IngestService{
 						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
 					} else {
 						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
-						LOG.info("Checking ISRC in cn " + value.isrc);
+                        LOGGER.info("Checking ISRC in cn " + value.isrc);
 						Track track = trackRepository.findByKey((String) value.isrc, (String) value.productCode, parserFactory.getName(drop.getIngestor()));
 						if (track == null) { // Try to find old keys for Fuga
 							track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(drop.getIngestor()));
@@ -293,7 +294,6 @@ public class IngestServiceImpl implements IngestService{
 					}
 				}
 			}
-
             return command;
 	}
 
@@ -380,7 +380,7 @@ public class IngestServiceImpl implements IngestService{
             track.setFiles(files);
         }
 
-        LOG.info("Adding files " + dropFiles.size());
+        LOGGER.info("Adding files " + dropFiles.size());
         for (DropAssetFile file : dropFiles) {
             if (!addOrUpdateFile(files, file, updateFiles)) {
                 return false;
@@ -410,7 +410,7 @@ public class IngestServiceImpl implements IngestService{
 			}
 		}
 		if (!found) {
-			LOG.info("Adding file " + dropFile.type + " " + dropFile.file);
+            LOGGER.info("Adding file " + dropFile.type + " " + dropFile.file);
 			AssetFile file = new AssetFile();
 			file.setType(dropFile.type);
 			file.setPath(dropFile.file);
@@ -426,7 +426,7 @@ public class IngestServiceImpl implements IngestService{
 	 * territory is added or updated.
 	 */
 	protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
-		LOG.debug("Adding territory " + value.country + " " + value.label);
+        LOGGER.debug("Adding territory " + value.country + " " + value.label);
 		if (value.country != null) {
 			boolean found = false;
 			Territory territory = null;
@@ -435,7 +435,7 @@ public class IngestServiceImpl implements IngestService{
 					found = true;
 					territory = data;
 					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
-						LOG.info("Takedown for " + value.country + " on " + territory.getReportingId());
+                        LOGGER.info("Takedown for " + value.country + " on " + territory.getReportingId());
 						territory.setDeleted(true);
 						territory.setDeleteDate(new Date());
 						return false;

@@ -8,6 +8,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,7 +24,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE
 
 public abstract class DDEXParser extends IParser {
 
-    protected static final Log LOG = LogFactory.getLog(DDEXParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
     public DDEXParser(String root) throws FileNotFoundException {
         super(root);
@@ -32,7 +34,7 @@ public abstract class DDEXParser extends IParser {
     protected Map<String, DropTrack> loadXml(String file) {
 
         SAXBuilder builder = new SAXBuilder();
-        LOG.info("Loading " + file);
+        LOGGER.info("Loading " + file);
         File xmlFile = new File(file);
 
         try {
@@ -55,9 +57,9 @@ public abstract class DDEXParser extends IParser {
             return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
 
         } catch (IOException io) {
-            LOG.error("Exception " + io.getMessage());
+            LOGGER.error("Exception " + io.getMessage());
         } catch (JDOMException jdomex) {
-            LOG.error("Exception " + jdomex.getMessage());
+            LOGGER.error("Exception " + jdomex.getMessage());
         }
         return null;
     }
@@ -70,7 +72,7 @@ public abstract class DDEXParser extends IParser {
         for (int i = 0; i < releaseList.size(); i++) {
             Element release = releaseList.get(i);
             String type = release.getChildText("ReleaseType");
-            LOG.info("release type " + type);
+            LOGGER.info("release type " + type);
 
             boolean isAlbum = checkAlbum(type);
 
@@ -99,7 +101,7 @@ public abstract class DDEXParser extends IParser {
             upc = releaseId.getChildText("ICPN");
             grid = releaseId.getChildText("GRid");
         }
-        LOG.info("album " + albumTitle);
+        LOGGER.info("album " + albumTitle);
         // Add album title to all tracks
         if (albumTitle != null)
             for (DropTrack track : result.values()) {
@@ -114,7 +116,7 @@ public abstract class DDEXParser extends IParser {
         track.type = action;
 
         String resourceRef = release.getChild("ReleaseResourceReferenceList").getChildText("ReleaseResourceReference");
-        LOG.info("Resource reference " + resourceRef);
+        LOGGER.info("Resource reference " + resourceRef);
 
         if (files.get(resourceRef) != null)
             track.files.addAll(files.get(resourceRef));
@@ -129,7 +131,7 @@ public abstract class DDEXParser extends IParser {
         if (track.isrc == null || "".equals(track.isrc)) {
             if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
                     && resourceDetail != null) {
-                LOG.info("Getting ISRC from resource " + resourceRef);
+                LOGGER.info("Getting ISRC from resource " + resourceRef);
                 track.isrc = resourceDetail.isrc;
             }
         }
@@ -213,7 +215,7 @@ public abstract class DDEXParser extends IParser {
                 track.genre = genre.getChildText("GenreText");
 
             Map<String, DropTerritory> deal = deals.get(releaseReference);
-            LOG.info("Deal for release ref  " + releaseReference + " " + deal);
+            LOGGER.info("Deal for release ref  " + releaseReference + " " + deal);
 
             if (deal == null) {
                 continue;
@@ -223,7 +225,7 @@ public abstract class DDEXParser extends IParser {
                 Iterator<String> it = countries.iterator();
                 while (it.hasNext()) {
                     String country = it.next();
-                    LOG.info("Adding country " + country);
+                    LOGGER.info("Adding country " + country);
                     DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
                     DropTerritory dealTerritory = deal.get(country);
                     territoryData.country = dealTerritory.country;
@@ -239,7 +241,7 @@ public abstract class DDEXParser extends IParser {
                     territoryData.dealReference = dealTerritory.dealReference;
                 }
             } else {
-                LOG.info("Adding country " + code);
+                LOGGER.info("Adding country " + code);
 
                 DropTerritory dealTerritory = deal.get(code);
                 DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
@@ -285,7 +287,7 @@ public abstract class DDEXParser extends IParser {
             }
 
             for (Element reference : references) {
-                LOG.info("Loading deal reference " + reference.getText());
+                LOGGER.info("Loading deal reference " + reference.getText());
                 Map<String, DropTerritory> ExistingDealsMap = deals.get(reference.getText());
                 if (ExistingDealsMap == null)
                     deals.put(reference.getText(), dealsMap);
@@ -325,7 +327,7 @@ public abstract class DDEXParser extends IParser {
             }
 
             for (Element country : countriesNodes) {
-                LOG.info("Deal for country " + country.getText());
+                LOGGER.info("Deal for country " + country.getText());
                 DropTerritory territory = dealsMap.get(country.getText());
                 if (territory == null) {
                     territory = new DropTerritory();
@@ -354,7 +356,7 @@ public abstract class DDEXParser extends IParser {
             for (Element useType : useTypes) {
                 if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
                         || "PermanentDownload".equals(useType.getText())) {
-                    LOG.info("Found valid usage " + useType.getText());
+                    LOGGER.info("Found valid usage " + useType.getText());
                     validUseType = true;
                     break;
                 }
@@ -468,10 +470,10 @@ public abstract class DDEXParser extends IParser {
 
     public boolean checkAlbum(String type) {
         if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
-            LOG.info("Album for " + type);
+            LOGGER.info("Album for " + type);
             return true;
         }
-        LOG.info("Track for " + type);
+        LOGGER.info("Track for " + type);
         return false;
 
     }

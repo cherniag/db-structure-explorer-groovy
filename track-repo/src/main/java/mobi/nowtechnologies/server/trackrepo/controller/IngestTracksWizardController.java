@@ -6,6 +6,8 @@ import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IngestTracksWizardController extends AbstractCommonController {
 
-	protected static final Log LOG = LogFactory.getLog(IngestTracksWizardController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngestTracksWizardController.class);
+
 	private IngestService ingestService;
 
 	public void setIngestService(IngestService ingestService) {

@@ -8,17 +8,19 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class WarnerParserV34 extends DDEXParser {
-	protected static final Log LOG = LogFactory.getLog(WarnerParserV34.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WarnerParserV34.class);
 
 	public WarnerParserV34(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("Warner parser loadin from " + root);
+        LOGGER.info("Warner parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
@@ -37,7 +39,7 @@ public class WarnerParserV34 extends DDEXParser {
 			}
 
 		} catch (Exception e) {
-			LOG.error("Ingest failed "+e.getMessage());
+            LOGGER.error("Ingest failed "+e.getMessage());
 		}
 		return tracks;
 
@@ -50,7 +52,7 @@ public class WarnerParserV34 extends DDEXParser {
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-			LOG.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder " + result.get(i));
 		}
 		return result;
 	}
@@ -73,7 +75,7 @@ public class WarnerParserV34 extends DDEXParser {
 			}
 		}
 		if (deliveryComplete && !processed) {
-			LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
 			DropData drop = new DropData();
 			drop.name =folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());

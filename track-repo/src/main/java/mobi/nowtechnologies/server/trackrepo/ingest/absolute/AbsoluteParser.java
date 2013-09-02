@@ -3,10 +3,14 @@ package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +22,8 @@ import java.util.Map;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 
 public class AbsoluteParser {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
 
     public Map<String, DropTrack> parse(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
@@ -79,9 +85,9 @@ public class AbsoluteParser {
                 String dealReference = node.getChild("Deal").getChildText("DealReference");
             }
         } catch (JDOMException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return res;
     }

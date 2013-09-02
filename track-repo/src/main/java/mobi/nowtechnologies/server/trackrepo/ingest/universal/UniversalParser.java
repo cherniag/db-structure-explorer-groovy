@@ -10,6 +10,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,12 +22,12 @@ import java.util.*;
 
 public class UniversalParser extends IParser {
     private static final String CLASSPATH_PROTOCOL = "classpath:";
-	
-	protected static final Log LOG = LogFactory.getLog(UniversalParser.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
 
 	public UniversalParser(String root) throws FileNotFoundException {
 		super(root);
-		LOG.info("Universal parser loading from " + root);
+		LOGGER.info("Universal parser loading from " + root);
 	}
 
 	protected Map<String, DropTrack> loadXml(String drop, String code, Map<String, List<DropAssetFile>> fulfillmentFiles) {
@@ -34,14 +36,14 @@ public class UniversalParser extends IParser {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setEntityResolver(new DtdLoader());
 
-		LOG.info("Scaning " + root + "/" + code + "_" + drop + " ");
+		LOGGER.info("Scaning " + root + "/" + code + "_" + drop + " ");
 		File productDir = new File(root + "/" + code + "_" + drop);
 		File[] files = productDir.listFiles();
 		for (File file : files) {
 			if (file.getName().endsWith(".xml")) {
 				try {
 
-					LOG.debug("Loading " + file.getPath());
+					LOGGER.debug("Loading " + file.getPath());
 					Document document = (Document) builder.build(file);
 					Element product = document.getRootElement();
 					String country = product.getChildText("territory");
@@ -59,7 +61,7 @@ public class UniversalParser extends IParser {
 
 					} catch (ParseException e) {
 					}
-					LOG.info("Tracks " + product.getChild("tracks"));
+					LOGGER.info("Tracks " + product.getChild("tracks"));
 
 					List<Element> tracks = product.getChild("tracks").getChildren("track");
 					for (Element track : tracks) {
@@ -143,9 +145,9 @@ public class UniversalParser extends IParser {
 					return result;
 
 				} catch (IOException io) {
-					LOG.error(io.getMessage());
+					LOGGER.error(io.getMessage());
 				} catch (JDOMException jdomex) {
-					LOG.error(jdomex.getMessage());
+					LOGGER.error(jdomex.getMessage());
 				}
 			}
 
@@ -162,7 +164,7 @@ public class UniversalParser extends IParser {
 			File fulfillment = new File(root + "/Delivery_Messages/" + "fulfillment_" + drop.name + ".xml");
 			SAXBuilder builder = new SAXBuilder();
 			builder.setEntityResolver(new DtdLoader());
-			LOG.info("Loading " + fulfillment.getPath());
+			LOGGER.info("Loading " + fulfillment.getPath());
 
 			try {
 				Map<String, List<DropAssetFile>> fulfillmentFiles = new HashMap<String, List<DropAssetFile>>();
@@ -230,9 +232,9 @@ public class UniversalParser extends IParser {
 				}
 
 			} catch (IOException io) {
-				LOG.error(io.getMessage());
+				LOGGER.error(io.getMessage());
 			} catch (JDOMException jdomex) {
-				LOG.error(jdomex.getMessage());
+				LOGGER.error(jdomex.getMessage());
 			}
 
 		} catch (Exception e) {
@@ -265,7 +267,7 @@ public class UniversalParser extends IParser {
 
 		List<DropData> result = new ArrayList<DropData>();
 		File deliveries = new File(root + "/Delivery_Messages");
-		LOG.info("Checking manifests in " + root + "/Delivery_Messages");
+		LOGGER.info("Checking manifests in " + root + "/Delivery_Messages");
 		File[] fulfillmentFiles = deliveries.listFiles();
 		for (File file : fulfillmentFiles) {
 			if (file.getName().startsWith("delivery") && file.getName().endsWith(".xml")) {
