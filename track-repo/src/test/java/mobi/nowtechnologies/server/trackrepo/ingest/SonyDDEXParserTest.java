@@ -2,22 +2,14 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.XpathEngine;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
@@ -37,7 +29,7 @@ public class SonyDDEXParserTest extends ParserTest{
     private String expectedAlbum;
     private Type expectedDropTrackType;
     private String expectedProductCode;
-    private NodeList expectedReleaseIdNodeList;
+    private NodeList expectedTrackReleaseIdNodeList;
     private Map<String, Map<Integer, DropAssetFile>> expectedDropAssetsMap;
     private Map<String, Map<Integer, DropTerritory>> expectedTerritoriesMap;
     private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
@@ -69,7 +61,7 @@ public class SonyDDEXParserTest extends ParserTest{
         assertNotNull(resultDropTrackMap);
         assertEquals(getTrackReleaseCount(), resultDropTrackMap.entrySet().size());
 
-        expectedReleaseIdNodeList = getReleaseIdNodeList();
+        expectedTrackReleaseIdNodeList = getTrackReleaseIdNodeList();
         NodeList fileNodeList = getFileNodeList();
 
         dropAssetsByResourceReferenceMap = getDropAssetsByResourceReferenceMap(fileNodeList);
@@ -79,7 +71,7 @@ public class SonyDDEXParserTest extends ParserTest{
         expectedDropTrackType = getDropTrackType();
         expectedProductCode = getProductCode();
 
-        for (int i = 0; i < expectedReleaseIdNodeList.getLength(); i++) {
+        for (int i = 0; i < expectedTrackReleaseIdNodeList.getLength(); i++) {
             validateResultDropTrack(i);
         }
     }
@@ -135,7 +127,7 @@ public class SonyDDEXParserTest extends ParserTest{
     }
 
     private void validateResultDropTrack(int i) {
-        Node releaseIdNode = expectedReleaseIdNodeList.item(i);
+        Node releaseIdNode = expectedTrackReleaseIdNodeList.item(i);
         Element releaseIdNChildElement = getChildNodesElement(releaseIdNode);
         Element releaseElement = getReleaseElement(releaseIdNode);
 
@@ -372,7 +364,7 @@ public class SonyDDEXParserTest extends ParserTest{
         return evaluate("/ernm:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReleaseId/ICPN");
     }
 
-    private NodeList getReleaseIdNodeList() throws XpathException {
+    private NodeList getTrackReleaseIdNodeList() throws XpathException {
         return xpathEngine.getMatchingNodes("/ernm:NewReleaseMessage/ReleaseList/Release[ReleaseType='TrackRelease']/ReleaseId", document);
     }
 

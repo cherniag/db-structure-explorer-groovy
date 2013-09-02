@@ -35,6 +35,7 @@ public class AbsoluteParserTest extends ParserTest {
     }
 
     @Test
+    @Ignore
     public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws Exception {
         //given
         xmlFile = new ClassPathResource("media/absolute/absolute.xml").getFile();
