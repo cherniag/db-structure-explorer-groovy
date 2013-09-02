@@ -30,7 +30,7 @@ public class WarnerParser extends DDEXParser {
 			File[] content = folder.listFiles();
 			for (File file : content) {
 				String xmlFileName = file.getName() + ".xml";
-				Map<String, DropTrack> result = loadXml(file.getAbsolutePath() + "/" + xmlFileName);
+				Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
 
 				if (result != null) {
 					tracks.putAll(result);

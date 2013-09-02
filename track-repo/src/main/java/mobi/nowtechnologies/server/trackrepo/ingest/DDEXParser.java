@@ -22,7 +22,7 @@ import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public abstract class DDEXParser extends IParser {
+public abstract class DDEXParser extends IParser implements Parser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
@@ -31,11 +31,10 @@ public abstract class DDEXParser extends IParser {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, DropTrack> loadXml(String file) {
+    public Map<String, DropTrack> loadXml(File xmlFile) {
 
         SAXBuilder builder = new SAXBuilder();
-        LOGGER.info("Loading " + file);
-        File xmlFile = new File(file);
+        LOGGER.info("Loading [{}]", xmlFile.getAbsolutePath());
 
         try {
             String fileRoot = xmlFile.getParent();

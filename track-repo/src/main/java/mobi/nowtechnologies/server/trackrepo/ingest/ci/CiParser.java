@@ -29,7 +29,7 @@ public class CiParser extends DDEXParser {
 			File folder = new File(drop.name);
 			List<File> xmls = getXmlFile(folder);
 			for (File xml : xmls) {
-				Map<String, DropTrack> result = loadXml(xml.getAbsolutePath());
+				Map<String, DropTrack> result = loadXml(xml);
 
 				if (result != null) {
 					tracks.putAll(result);

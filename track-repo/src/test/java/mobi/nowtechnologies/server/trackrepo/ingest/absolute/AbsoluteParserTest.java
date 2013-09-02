@@ -2,12 +2,10 @@ package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.XpathEngine;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,21 +13,18 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Integer.parseInt;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class AbsoluteParserTest {
+public class AbsoluteParserTest extends ParserTest {
 
-    private AbsoluteParser absoluteParser;
-    private XpathEngine xpathEngine;
-    private File xmlFile;
     private Map<String,DropTrack> resultDropTrackMap;
 
     @Before
@@ -45,21 +40,25 @@ public class AbsoluteParserTest {
 
     @Test
     @Ignore
-    public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws IOException {
+    public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws Exception {
         //given
         xmlFile = new ClassPathResource("media/absolute/absolute.xml").getFile();
 
         //when
-        resultDropTrackMap = absoluteParser.parse(xmlFile);
+        resultDropTrackMap = parserFixture.loadXml(xmlFile);
 
         //then
         shouldParseCorrectly();
     }
 
-    private void shouldParseCorrectly() {
+    private void shouldParseCorrectly() throws Exception {
+        document = getDocument();
+
+        assertNotNull(resultDropTrackMap);
+        assertThat(resultDropTrackMap.size(), is(getTrackReleaseCount()));
+
         DropTrack dropTrack = resultDropTrackMap.get("ROROT1302001_AbsoluteParser");
 
-        assertThat(resultDropTrackMap.size(), is(greaterThan(0)));
         //assertThat(dropTrack.xml, is("3BEATCD019"));
         assertThat(dropTrack.type, is(DropTrack.Type.INSERT));
         assertThat(dropTrack.productCode, is(""));
@@ -105,7 +104,14 @@ public class AbsoluteParserTest {
     }
 
     private void absoluteParser() {
-        absoluteParser = new AbsoluteParser();
+        parserFixture = new AbsoluteParser();
     }
 
+    private int getTrackReleaseCount() throws XpathException {
+        return parseInt(evaluate("count(/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Single'])"));
+    }
+
+    private DropTrack getResultDropTrack(String expectedIsrc, String expectedProprietaryId) {
+        return resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + parserFixture.getClass());
+    }
 }

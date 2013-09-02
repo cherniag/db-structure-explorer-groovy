@@ -41,7 +41,7 @@ public class SonyDDEXParser extends DDEXParser {
 				int index = url.indexOf("ddex");
 				String xml=root+url.substring(index+4);
 				LOGGER.info("Loading "+xml);
-						Map<String, DropTrack> result = loadXml(xml);
+						Map<String, DropTrack> result = loadXml(new File(xml));
 
 				if (result != null) {
 					tracks.putAll(result);

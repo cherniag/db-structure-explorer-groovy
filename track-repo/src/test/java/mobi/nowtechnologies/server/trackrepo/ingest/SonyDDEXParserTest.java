@@ -34,7 +34,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE
 public class SonyDDEXParserTest {
 
     private File xmlFile;
-    private SonyDDEXParser sonyDdexParserFixture;
+    private Parser parserFixture;
     private Map<String, DropTrack> resultDropTrackMap;
     private XpathEngine xpathEngine;
     private Document document;
@@ -64,7 +64,7 @@ public class SonyDDEXParserTest {
         xmlFile = new ClassPathResource("media/sony_cdu/ern.v3.4.1/A10301A00002442286.xml").getFile();
 
         //when
-        resultDropTrackMap = sonyDdexParserFixture.loadXml(xmlFile.getAbsolutePath());
+        resultDropTrackMap = parserFixture.loadXml(xmlFile);
 
         //then
         shouldParseFormat3_4_1Successfully();
@@ -300,7 +300,7 @@ public class SonyDDEXParserTest {
     }
 
     private DropTrack getResultDropTrack(String expectedIsrc, String expectedProprietaryId) {
-        return resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + sonyDdexParserFixture.getClass());
+        return resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + parserFixture.getClass());
     }
 
     private String getReleaseResourceReference(Element releaseResourceReferenceListElement) {
@@ -424,6 +424,6 @@ public class SonyDDEXParserTest {
     }
 
     private void sonyDDEXParser() throws FileNotFoundException {
-        sonyDdexParserFixture = new SonyDDEXParser("classpath:media/sony_cdu/ern.v3.4.1/");
+        parserFixture = new SonyDDEXParser("classpath:media/sony_cdu/ern.v3.4.1/");
     }
 }

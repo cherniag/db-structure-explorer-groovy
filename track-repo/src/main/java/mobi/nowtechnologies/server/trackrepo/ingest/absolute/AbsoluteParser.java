@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import mobi.nowtechnologies.server.trackrepo.ingest.Parser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -21,11 +22,11 @@ import java.util.Map;
 
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 
-public class AbsoluteParser {
+public class AbsoluteParser implements Parser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
 
-    public Map<String, DropTrack> parse(File file) {
+    public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         if (!file.exists()) return res;
 

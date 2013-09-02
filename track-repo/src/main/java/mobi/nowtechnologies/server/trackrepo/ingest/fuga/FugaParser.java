@@ -28,7 +28,7 @@ public class FugaParser extends DDEXParser {
 		try {
 			File folder = new File(drop.name);
 			File xml = getXmlFile(folder);
-			Map<String, DropTrack> result = loadXml(xml.getAbsolutePath());
+			Map<String, DropTrack> result = loadXml(xml);
 
 			if (result != null) {
 				tracks.putAll(result);

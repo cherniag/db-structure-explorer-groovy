@@ -41,10 +41,9 @@ public class DDEXParserTest {
 
     @Test
     public void testLoadXml_IsExplicit_Success() throws Exception {
-        URL fileURL = this.getClass().getClassLoader().getResource("media/warner_cdu/new_release/20111011_0926_13/075679971517/075679971517.xml");
-        String file = new File(fileURL.toURI()).getAbsolutePath();
+        File xmlFile = new ClassPathResource("media/warner_cdu/new_release/20111011_0926_13/075679971517/075679971517.xml").getFile();
 
-        Map<String, DropTrack> result = ddexParserFixture.loadXml(file);
+        Map<String, DropTrack> result = ddexParserFixture.loadXml(xmlFile);
 
         assertEquals(true, result.get("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser").explicit);
     }
