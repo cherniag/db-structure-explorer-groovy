@@ -40,7 +40,7 @@ public class SonyDDEXParser extends DDEXParser {
 				String url = message.getChildText("URL");
 				int index = url.indexOf("ddex");
 				String xml=root+url.substring(index+4);
-				LOGGER.info("Loading "+xml);
+				LOGGER.info("Loading [{}]", xml);
 						Map<String, DropTrack> result = loadXml(new File(xml));
 
 				if (result != null) {

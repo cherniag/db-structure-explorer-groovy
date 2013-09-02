@@ -31,13 +31,9 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public class SonyDDEXParserTest {
+public class SonyDDEXParserTest extends ParserTest{
 
-    private File xmlFile;
-    private Parser parserFixture;
     private Map<String, DropTrack> resultDropTrackMap;
-    private XpathEngine xpathEngine;
-    private Document document;
     private String expectedAlbum;
     private Type expectedDropTrackType;
     private String expectedProductCode;
@@ -47,15 +43,12 @@ public class SonyDDEXParserTest {
     private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
     public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Before
-    public void setUp() throws FileNotFoundException {
-        sonyDDEXParser();
+    public void createParser() throws FileNotFoundException {
+        parserFixture = new SonyDDEXParser("classpath:media/sony_cdu/ern.v3.4.1/");
+    }
 
-        HashMap m = new HashMap();
-        m.put("ernm", "http://ddex.net/xml/ern/341");
-
-        xpathEngine = XMLUnit.newXpathEngine();
-        xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
+    public void populateXmlPrefixMap() {
+        xmlPrefixMap.put("ernm", "http://ddex.net/xml/ern/341");
     }
 
     @Test
@@ -307,10 +300,6 @@ public class SonyDDEXParserTest {
         return getElementValue(releaseResourceReferenceListElement, "ReleaseResourceReference");
     }
 
-    private Document getDocument() throws IOException, SAXException {
-        return XMLUnit.buildControlDocument(new InputSource(new FileInputStream(xmlFile)));
-    }
-
     private Element getChildNodesElement(Node node) {
         return (Element) node.getChildNodes();
     }
@@ -412,18 +401,10 @@ public class SonyDDEXParserTest {
         return evaluate("/ernm:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
     }
 
-    private String evaluate(String expression) throws XpathException {
-        return xpathEngine.evaluate(expression, document);
-    }
-
     private String getElementValue(Element element, String tagName) {
         Node item = element.getElementsByTagName(tagName).item(0);
         if (item != null)
             return item.getTextContent();
         return null;
-    }
-
-    private void sonyDDEXParser() throws FileNotFoundException {
-        parserFixture = new SonyDDEXParser("classpath:media/sony_cdu/ern.v3.4.1/");
     }
 }

@@ -11,7 +11,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,19 +26,15 @@ public class AbsoluteParserTest extends ParserTest {
 
     private Map<String,DropTrack> resultDropTrackMap;
 
-    @Before
-    public void setUp() throws FileNotFoundException {
-        absoluteParser();
+    public void createParser() {
+        parserFixture = new AbsoluteParser();
+    }
 
-        HashMap m = new HashMap();
-        m.put("ern", "http://ddex.net/xml/2010/ern-main/312");
-
-        xpathEngine = XMLUnit.newXpathEngine();
-        xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
+    public void populateXmlPrefixMap() {
+        xmlPrefixMap.put("ern", "http://ddex.net/xml/2010/ern-main/312");
     }
 
     @Test
-    @Ignore
     public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws Exception {
         //given
         xmlFile = new ClassPathResource("media/absolute/absolute.xml").getFile();
@@ -101,10 +96,6 @@ public class AbsoluteParserTest extends ParserTest {
         assertThat(asset.isrc, is(""));
         assertThat(asset.md5, is(""));
         assertThat(asset.type, is(AssetFile.FileType.MOBILE));
-    }
-
-    private void absoluteParser() {
-        parserFixture = new AbsoluteParser();
     }
 
     private int getTrackReleaseCount() throws XpathException {
