@@ -36,7 +36,7 @@ public class UniversalParser extends IParser {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setEntityResolver(new DtdLoader());
 
-		LOGGER.info("Scaning " + root + "/" + code + "_" + drop + " ");
+		LOGGER.info("Scanning " + root + "/" + code + "_" + drop + " ");
 		File productDir = new File(root + "/" + code + "_" + drop);
 		File[] files = productDir.listFiles();
 		for (File file : files) {
@@ -44,7 +44,7 @@ public class UniversalParser extends IParser {
 				try {
 
 					LOGGER.debug("Loading " + file.getPath());
-					Document document = (Document) builder.build(file);
+					Document document = builder.build(file);
 					Element product = document.getRootElement();
 					String country = product.getChildText("territory");
 					String provider = product.getChildText("prd_label_name");

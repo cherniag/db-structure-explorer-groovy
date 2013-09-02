@@ -7,6 +7,8 @@ import org.custommonkey.xmlunit.XpathEngine;
 import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Before;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -49,5 +51,24 @@ public abstract class ParserTest {
 
     protected String evaluate(String expression) throws XpathException {
         return xpathEngine.evaluate(expression, document);
+    }
+
+    protected Element getChildNodesElement(Node node) {
+        return (Element) node.getChildNodes();
+    }
+
+    protected String getElementValue(Element element, String tagName) {
+        Node item = element.getElementsByTagName(tagName).item(0);
+        if (item != null)
+            return item.getTextContent();
+        return null;
+    }
+
+    protected String getIsrc(Element releaseIdNChildElement) {
+        return getElementValue(releaseIdNChildElement, "ISRC");
+    }
+
+    protected String getProprietaryId(Element releaseIdNChildElement) {
+        return getElementValue(releaseIdNChildElement, "ProprietaryId");
     }
 }

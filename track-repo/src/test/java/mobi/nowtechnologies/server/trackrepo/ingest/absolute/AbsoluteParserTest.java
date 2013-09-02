@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
+import junit.framework.Assert;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
@@ -10,6 +11,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
+import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +30,7 @@ import static org.junit.Assert.assertThat;
 public class AbsoluteParserTest extends ParserTest {
 
     private Map<String,DropTrack> resultDropTrackMap;
+    private NodeList expectedTrackReleaseIdNodeList;
 
     public void createParser() {
         parserFixture = new AbsoluteParser();
@@ -35,7 +41,6 @@ public class AbsoluteParserTest extends ParserTest {
     }
 
     @Test
-    @Ignore
     public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws Exception {
         //given
         xmlFile = new ClassPathResource("media/absolute/absolute.xml").getFile();
@@ -52,6 +57,12 @@ public class AbsoluteParserTest extends ParserTest {
 
         assertNotNull(resultDropTrackMap);
         assertThat(resultDropTrackMap.size(), is(getTrackReleaseCount()));
+
+        expectedTrackReleaseIdNodeList = getTrackReleaseIdNodeList();
+
+        for (int i = 0; i < expectedTrackReleaseIdNodeList.getLength(); i++) {
+            validateResultDropTrack(i);
+        }
 
         DropTrack dropTrack = resultDropTrackMap.get("ROROT1302001_AbsoluteParser");
 
@@ -99,11 +110,26 @@ public class AbsoluteParserTest extends ParserTest {
         assertThat(asset.type, is(AssetFile.FileType.MOBILE));
     }
 
+    private void validateResultDropTrack(int i) {
+        Node releaseIdNode = expectedTrackReleaseIdNodeList.item(i);
+        Element releaseIdNChildElement = getChildNodesElement(releaseIdNode);
+
+        String expectedIsrc = getIsrc(releaseIdNChildElement);
+        String expectedProprietaryId = getProprietaryId(releaseIdNChildElement);
+
+        //DropTrack resultDropTrack = getResultDropTrack(expectedIsrc, expectedProprietaryId);
+        //assertNotNull(resultDropTrack);
+    }
+
     private int getTrackReleaseCount() throws XpathException {
         return parseInt(evaluate("count(/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Single'])"));
     }
 
-    private DropTrack getResultDropTrack(String expectedIsrc, String expectedProprietaryId) {
-        return resultDropTrackMap.get(expectedIsrc + expectedProprietaryId + parserFixture.getClass());
+    private NodeList getTrackReleaseIdNodeList() throws XpathException {
+        return xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Single']/ReleaseId", document);
+    }
+
+    private DropTrack getResultDropTrack(String expectedIsrc) {
+        return resultDropTrackMap.get(expectedIsrc + "_" + parserFixture.getClass().getSimpleName());
     }
 }

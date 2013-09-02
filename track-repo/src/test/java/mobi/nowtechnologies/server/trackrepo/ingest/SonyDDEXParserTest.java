@@ -292,10 +292,6 @@ public class SonyDDEXParserTest extends ParserTest{
         return getElementValue(releaseResourceReferenceListElement, "ReleaseResourceReference");
     }
 
-    private Element getChildNodesElement(Node node) {
-        return (Element) node.getChildNodes();
-    }
-
     private Element getReleaseElement(Node releaseIdNode) {
         return getChildNodesElement(releaseIdNode.getParentNode());
     }
@@ -320,16 +316,8 @@ public class SonyDDEXParserTest extends ParserTest{
         return (Element) releaseElement.getElementsByTagName("ReferenceTitle").item(0);
     }
 
-    private String getProprietaryId(Element releaseIdNChildElement) {
-        return getElementValue(releaseIdNChildElement, "ProprietaryId");
-    }
-
     private String getGRid(Element releaseIdNChildElement) {
         return getElementValue(releaseIdNChildElement, "GRid");
-    }
-
-    private String getIsrc(Element releaseIdNChildElement) {
-        return getElementValue(releaseIdNChildElement, "ISRC");
     }
 
     private String getYear(Element pLineElement) {
@@ -393,10 +381,4 @@ public class SonyDDEXParserTest extends ParserTest{
         return evaluate("/ernm:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
     }
 
-    private String getElementValue(Element element, String tagName) {
-        Node item = element.getElementsByTagName(tagName).item(0);
-        if (item != null)
-            return item.getTextContent();
-        return null;
-    }
 }
