@@ -79,7 +79,7 @@ INSERT
             mediaType
         ) SELECT
             t1.id ,
-            'WMG' ,
+            'WARNER' ,
             t1.ISRC ,
             t1.Title ,
             t1.Artist ,
@@ -127,6 +127,6 @@ commit;
 
 start transaction;
 
-update cn_cms.Track track set track.PublishDate='2013-09-01' where track.Ingestor = 'WMG';
+update cn_cms.Track track set track.PublishDate='2013-09-01' where track.emi_track_id is not null;
 
 commit;
