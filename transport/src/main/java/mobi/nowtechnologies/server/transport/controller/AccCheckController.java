@@ -86,8 +86,8 @@ public class AccCheckController extends CommonController {
 			List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
 			
 			AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
-			accountCheck.setLockedTracks(LockedTrackDto.fromChartDetailList(chartDetails));
-			accountCheck.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
+			accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
+			accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
 			
 			final Object[] objects = new Object[] { accountCheck };
 			precessRememberMeToken(objects);

@@ -258,9 +258,8 @@ public abstract class CommonController extends ProfileController{
 		for (Object object : objects) {
 			if (!(object instanceof AccountCheckDTO)) continue;
 			AccountCheckDTO accountCheckDTO = (AccountCheckDTO) object;
-			
-			String rememberMeToken = getRememberMeToken(accountCheckDTO.getUserName(), accountCheckDTO.getUserToken());
-			accountCheckDTO.setRememberMeToken(rememberMeToken);
+
+            accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 		}
 		LOGGER.debug("Output parameter objects=[{}]", objects);
 		return objects;

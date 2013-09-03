@@ -58,7 +58,7 @@ public class SingUpDeviceController extends CommonController {
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
 			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
 			final Object[] objects = new Object[]{accountCheckDTO};
@@ -99,7 +99,7 @@ public class SingUpDeviceController extends CommonController {
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
 			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			precessRememberMeToken(objects);
@@ -143,7 +143,7 @@ public class SingUpDeviceController extends CommonController {
 		        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
 
 		        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
-		        user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+		        user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 
 		        final Object[] objects = new Object[] { accountCheckDTO };
 		        precessRememberMeToken(objects);

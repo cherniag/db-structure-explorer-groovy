@@ -970,17 +970,16 @@ public class UserService {
 
 		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
-		accountCheckDTO.setPromotedDevice(deviceService.existsInPromotedList(community, user.getDeviceUID()));
-
-		accountCheckDTO.setPromotedWeeks((int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1);
+		accountCheckDTO.isPromotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
+		accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
 
 		List<Integer> relatedMediaUIDsByLogTypeList = accountLogService.getRelatedMediaUIDsByLogType(userId, OFFER_PURCHASE);
 
-		accountCheckDTO.setHasOffers(false);
+		accountCheckDTO.hasOffers = false;
 		if (relatedMediaUIDsByLogTypeList.isEmpty()) {
 			List<ContentOfferDto> contentOfferDtos = offerService.getContentOfferDtos(user.getId());
 			if (contentOfferDtos != null && contentOfferDtos.size() > 0)
-				accountCheckDTO.setHasOffers(true);
+				accountCheckDTO.hasOffers = true;
 		}
 
 		LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
@@ -1710,8 +1709,8 @@ public class UserService {
         userRepository.save(user);
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
-        dto.setFullyRegistred(true);
-        dto.setHasPotentialPromoCodePromotion(hasPromo);
+        dto.fullyRegistred = true;
+        dto.hasPotentialPromoCodePromotion = hasPromo;
         return dto;
     }
 

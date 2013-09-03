@@ -114,10 +114,10 @@ public class SubscriberProfileType {
                 .toString();
     }
 
-    public mobi.nowtechnologies.server.persistence.domain.enums.SegmentType getSegmentType() {
+    public mobi.nowtechnologies.server.shared.enums.SegmentType getSegmentType() {
         return SegmentType.CONSUMER.equals(getSegment()) ?
-                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER :
-                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+                mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER :
+                mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
     }
 
     public Contract getCotract() {

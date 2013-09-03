@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.dto.O2UserDetailsFactory;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -45,7 +45,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
@@ -1073,13 +1073,13 @@ public class UserServiceTest {
 					assertEquals(user.getFirstDeviceLoginMillis() - user.getFirstDeviceLoginMillis() % 100000, curTime - curTime % 100000);
 				}
 
-				accountCheckDTO.setUserName(user.getUserName());
-				accountCheckDTO.setUserToken(user.getToken());
-				accountCheckDTO.setDeviceType(user.getDeviceType().getName());
-				accountCheckDTO.setOperator(user.getOperator());
-				accountCheckDTO.setStatus(user.getStatus().getName());
-				accountCheckDTO.setDeviceUID(user.getDeviceUID());
-				accountCheckDTO.setActivation(ActivationStatus.REGISTERED);
+				accountCheckDTO.userName = user.getUserName();
+				accountCheckDTO.userToken = user.getToken();
+				accountCheckDTO.deviceType = user.getDeviceType().getName();
+				accountCheckDTO.operator = user.getOperator();
+				accountCheckDTO.status = user.getStatus().getName();
+				accountCheckDTO.deviceUID = user.getDeviceUID();
+				accountCheckDTO.activation = ActivationStatus.REGISTERED;
 
 				return accountCheckDTO;
 			}
@@ -1106,14 +1106,14 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getUserToken(), storedToken);
-		assertEquals(accountCheckDTO.getUserName(), deviceUID);
-		assertEquals(accountCheckDTO.getDeviceType(), deviceTypeName);
+		assertEquals(accountCheckDTO.userToken, storedToken);
+		assertEquals(accountCheckDTO.userName, deviceUID);
+		assertEquals(accountCheckDTO.deviceType, deviceTypeName);
 		Entry<Integer, Operator> entry = operatorMap.entrySet().iterator().next();
-		assertEquals(accountCheckDTO.getOperator(), entry.getKey());
-		assertEquals(accountCheckDTO.getDeviceUID(), deviceUID);
-		assertEquals(accountCheckDTO.getStatus(), UserStatusDao.LIMITED);
-		assertEquals(accountCheckDTO.getActivation(), ActivationStatus.REGISTERED);
+		assertEquals(accountCheckDTO.operator, entry.getKey());
+		assertEquals(accountCheckDTO.deviceUID, deviceUID);
+		assertEquals(accountCheckDTO.status, UserStatusDao.LIMITED);
+		assertEquals(accountCheckDTO.activation, ActivationStatus.REGISTERED);
 
 		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
@@ -1145,7 +1145,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getDeviceType(), DeviceTypeDao.NONE);
+		assertEquals(accountCheckDTO.deviceType, DeviceTypeDao.NONE);
 		
 		verifyStatic(times(1));
 		DeviceTypeDao.getNoneDeviceType();
@@ -1166,8 +1166,8 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getUserToken(), user.getToken());
-		assertEquals(accountCheckDTO.getUserName(), user.getUserName());
+		assertEquals(accountCheckDTO.userToken, user.getToken());
+		assertEquals(accountCheckDTO.userName, user.getUserName());
 
 		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
 		verify(countryServiceMock, times(0)).findIdByFullName(anyString());
@@ -2464,8 +2464,8 @@ public class UserServiceTest {
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
-		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 		
 		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
 		assertEquals(o2UserDetails.getOperator(), user.getProvider());
@@ -2509,8 +2509,8 @@ public class UserServiceTest {
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
-		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 		
 		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
 		assertEquals(o2UserDetails.getOperator(), user.getProvider());

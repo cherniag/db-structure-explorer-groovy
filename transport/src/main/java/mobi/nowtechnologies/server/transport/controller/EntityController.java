@@ -574,7 +574,7 @@ public class EntityController extends CommonController {
             AccountCheckDTO accountCheckDTO = userService.updateUserFacebookDetails(userFacebookDetailsDto);
             try {
                 if (PROFILE_LOGGER.isDebugEnabled()) {
-                    user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userFacebookDetailsDto.getCommunityName());
+                    user = userService.findByNameAndCommunity(accountCheckDTO.userName, userFacebookDetailsDto.getCommunityName());
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

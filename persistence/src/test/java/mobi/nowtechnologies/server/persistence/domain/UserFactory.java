@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
 import java.math.BigDecimal;
