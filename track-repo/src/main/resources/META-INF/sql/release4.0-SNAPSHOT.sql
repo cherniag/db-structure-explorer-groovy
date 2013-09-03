@@ -84,7 +84,7 @@ INSERT
             t1.Title ,
             t1.Artist ,
             t1.ProductId ,
-            t1.ProductCode ,
+            t1.ISRC ,
             t1.Genre ,
             t1.Copyright ,
             t1.YEAR ,
