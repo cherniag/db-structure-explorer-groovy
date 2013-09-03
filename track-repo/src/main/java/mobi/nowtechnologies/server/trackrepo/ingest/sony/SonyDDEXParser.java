@@ -28,7 +28,7 @@ public class SonyDDEXParser extends DDEXParser {
 
 	public Map<String, DropTrack> ingest(DropData drop) {
 
-		Map<String, DropTrack> tracks = Collections.<String, DropTrack>emptyMap();
+		Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
 		try {
 			File xmlFile = new File(root + "/manifests/"+drop.name);
 			SAXBuilder builder = new SAXBuilder();
