@@ -114,9 +114,9 @@ public class EntityControllerIT {
     public void verifyThatTwoDifferentXtifyTokensWhenReceivedWithTheSameUserAndCommunityAndDeviceWillUpdated()throws Exception{
     	AccCheckController controller = prepareMockController();
         controller.accountCheckWithXtifyToken(
-                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
         controller.accountCheckWithXtifyToken(
-                null, null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "5678", null);
+                null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "5678", null);
 
         verify(controller);
         DeviceUserData data = deviceUserDataService.getByXtifyToken("5678");
@@ -131,9 +131,9 @@ public class EntityControllerIT {
     @Transactional
     public void verifyThatXtifyTokenWillNotDuplicateWithTheSameUserAndCommunityUrl() throws Exception  {
     	AccCheckController controller = prepareMockController();
-        controller.accountCheckWithXtifyToken(null,
+        controller.accountCheckWithXtifyToken(
                 null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
-        controller.accountCheckWithXtifyToken(null,
+        controller.accountCheckWithXtifyToken(
                 null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
 
         verify(controller);
@@ -146,7 +146,7 @@ public class EntityControllerIT {
     public void verifyThatXtifyTokenCanBeSavedThroughRestApi() throws Exception {
 
     	AccCheckController controller = prepareMockController();
-        controller.accountCheckWithXtifyToken(null,
+        controller.accountCheckWithXtifyToken(
                 null, "Now Music", null, "test@test.com", null, null, null, "deviceUID", null, null, "1234", null);
 
         verify(controller);
