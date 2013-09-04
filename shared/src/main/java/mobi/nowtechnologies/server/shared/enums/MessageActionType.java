@@ -15,5 +15,10 @@ public enum MessageActionType {
 	A_SPECIFIC_NEWS_STORY,
 	THE_ACCOUNT_SCREEN,
 	EXTERNAL_URL,
-	MOBILE_WEB_PORTAL
+	MOBILE_WEB_PORTAL;
+
+    public boolean isSpecificNewsStoryOrSpecificTrackOrExternalUrlOrMobileWebPortal() {
+        return this.equals(A_SPECIFIC_NEWS_STORY) || this.equals(A_SPECIFIC_TRACK)
+                || this.equals(EXTERNAL_URL) || this.equals(MOBILE_WEB_PORTAL);
+    }
 }
