@@ -21,18 +21,22 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
     @Override
     public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pagable) {
 
-        String suffixWithoutFetchQuery = createSuffixQuery(searchTrackCreateria);
-
-        Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
-        countQuery.setFirstResult(pagable.getOffset());
-        countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
-        List<Integer> ids = countQuery.getResultList();
-        Long count = new Long(ids.size() + pagable.getOffset());
-
         String suffixQuery = createSuffixQuery(searchTrackCreateria);
+
+        Long count = 1L;
+        if(pagable != null){
+            Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixQuery, searchTrackCreateria);
+            countQuery.setFirstResult(pagable.getOffset());
+            countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
+            List<Integer> ids = countQuery.getResultList();
+            count = new Long(ids.size() + pagable.getOffset());
+        }
+
         Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCreateria);
-        listQuery.setFirstResult(pagable.getOffset());
-        listQuery.setMaxResults(pagable.getPageSize());
+        if(pagable != null){
+            listQuery.setFirstResult(pagable.getOffset());
+            listQuery.setMaxResults(pagable.getPageSize());
+        }
 
         List<Track> limitedTrackList = (List<Track>) listQuery.getResultList();
 

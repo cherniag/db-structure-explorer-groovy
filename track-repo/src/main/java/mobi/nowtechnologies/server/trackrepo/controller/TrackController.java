@@ -17,8 +17,11 @@ import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.Callable;
 
 /**
  * 
@@ -46,12 +49,26 @@ public class TrackController extends AbstractCommonController{
 	}
 
 	@RequestMapping(value = "/tracks/{trackId}/encode", method = RequestMethod.POST)
-	public @ResponseBody TrackDto encode(@PathVariable("trackId")Long trackId, 
-			@RequestParam(value="isHighRate", required = false) Boolean isHighRate, @RequestParam(value="licensed", required = false) Boolean licensed) {
+	public @ResponseBody WebAsyncTask<TrackDto> encode(final @PathVariable("trackId")Long trackId,
+			final @RequestParam(value="isHighRate", required = false) Boolean isHighRate,final @RequestParam(value="licensed", required = false) Boolean licensed) {
 
-		Track track = trackService.encode(trackId, isHighRate, licensed);
-		
-		return new TrackDtoMapper(track);
+        WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                return new TrackDtoMapper(trackService.encode(trackId, isHighRate, licensed));
+            }
+        });
+        encodeTask.onTimeout(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
+
+                return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
+            }
+        });
+
+		return encodeTask;
 	}
 	
 	@RequestMapping(value = "/tracks", method = RequestMethod.GET)
@@ -78,7 +95,7 @@ public class TrackController extends AbstractCommonController{
 			return trackDto;
 		} catch (Exception e) {
 			LOGGER.error("Cannot pull encoded track.", e);
-			throw new RuntimeException("Cannot pull encoded track.");
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 }
