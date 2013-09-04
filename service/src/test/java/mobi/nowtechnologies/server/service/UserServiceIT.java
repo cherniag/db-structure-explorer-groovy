@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +27,7 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -65,10 +69,6 @@ public class UserServiceIT {
 		sagePayCreditCard, o2Psms
 	}
 
-	public enum Provider {
-		o2, non_o2
-	}
-
 	public static int count;
 
 	@DataPoints
@@ -76,9 +76,6 @@ public class UserServiceIT {
 
 	@DataPoints
 	public static final int[] nextSubPayments = new int[] { EPOCH_SECONDS - DAY_SECONDS, EPOCH_SECONDS + HOUR_SECONDS, EPOCH_SECONDS + DAY_SECONDS, EPOCH_SECONDS + TWO_DAY_SECONDS };
-
-	@DataPoints
-	public static final Provider[] providers = Arrays.copyOf(Provider.values(), Provider.values().length + 1);
 
 	@DataPoints
 	public static final Contract[] contracts = Arrays.copyOf(Contract.values(), Contract.values().length + 1);
@@ -113,29 +110,29 @@ public class UserServiceIT {
 	@BeforeClass
 	public static void generateDataPoints() throws Exception {
 		User o2ConsumerUser = new User();
-		o2ConsumerUser.setProvider(Provider.o2.name());
-		o2ConsumerUser.setSegment(SegmentType.CONSUMER);
-		o2ConsumerUser.setContract(Contract.PAYG);
+		o2ConsumerUser.setProvider(O2);
+		o2ConsumerUser.setSegment(CONSUMER);
+		o2ConsumerUser.setContract(PAYG);
 
 		User o2BussinessUser = new User();
-		o2BussinessUser.setProvider(Provider.o2.name());
-		o2BussinessUser.setSegment(SegmentType.CONSUMER);
-		o2BussinessUser.setContract(Contract.PAYG);
+		o2BussinessUser.setProvider(O2);
+		o2BussinessUser.setSegment(CONSUMER);
+		o2BussinessUser.setContract(PAYG);
 
 		User o2ConsumerPaymUser = new User();
-		o2ConsumerPaymUser.setProvider(Provider.o2.name());
-		o2ConsumerPaymUser.setSegment(SegmentType.CONSUMER);
-		o2ConsumerPaymUser.setContract(Contract.PAYM);
+		o2ConsumerPaymUser.setProvider(O2);
+		o2ConsumerPaymUser.setSegment(CONSUMER);
+		o2ConsumerPaymUser.setContract(PAYM);
 
 		User o2BussinessPaygUser = new User();
-		o2BussinessPaygUser.setProvider(Provider.o2.name());
-		o2BussinessPaygUser.setSegment(SegmentType.CONSUMER);
-		o2BussinessPaygUser.setContract(Contract.PAYG);
+		o2BussinessPaygUser.setProvider(O2);
+		o2BussinessPaygUser.setSegment(CONSUMER);
+		o2BussinessPaygUser.setContract(PAYG);
 
 		User notO2User = new User();
-		notO2User.setProvider(Provider.non_o2.name());
-		notO2User.setSegment(SegmentType.CONSUMER);
-		notO2User.setContract(Contract.PAYG);
+		notO2User.setProvider(NON_O2);
+		notO2User.setSegment(CONSUMER);
+		notO2User.setContract(PAYG);
 
 		User chartsNowUser = new User();
 
@@ -258,9 +255,9 @@ public class UserServiceIT {
 	
 	private boolean isExpectedO2User(User user) {	
 		boolean isExpectedO2User;
-		if (user.getSegment().equals(SegmentType.CONSUMER)) {
+		if (user.getSegment().equals(CONSUMER)) {
 			isExpectedO2User = isExpectedO2ConsumerUser(user);
-		} else if (user.getSegment().equals(SegmentType.BUSINESS)){
+		} else if (user.getSegment().equals(BUSINESS)){
 			isExpectedO2User = isExpectedO2BusinessUser(user);
 		}else{
 			isExpectedO2User = false;
@@ -276,7 +273,7 @@ public class UserServiceIT {
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 		
-		boolean isExpectedO2BussinessUser = SegmentType.BUSINESS.equals(user.getSegment())
+		boolean isExpectedO2BussinessUser = BUSINESS.equals(user.getSegment())
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
@@ -291,7 +288,7 @@ public class UserServiceIT {
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
-		boolean isExpectedO2User = SegmentType.CONSUMER.equals(user.getSegment())
+		boolean isExpectedO2User = CONSUMER.equals(user.getSegment())
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
 				//&& Contract.PAYG.equals(userWithCommunity.getContract())
 				&& currentPaymentDetails.isActivated()

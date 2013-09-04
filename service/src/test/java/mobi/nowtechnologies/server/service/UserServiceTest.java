@@ -45,6 +45,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
@@ -1237,7 +1239,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("provider");
+		user.setProvider(NON_O2);
 		
 		boolean isnonO2User = userServiceSpy.isnonO2User(user);
 		assertTrue(isnonO2User);
@@ -1252,7 +1254,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		
 		boolean isnonO2User = userServiceSpy.isnonO2User(user);
 		assertFalse(isnonO2User);
@@ -1350,7 +1352,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("provider");
+		user.setProvider(NON_O2);
 		user.setSubBalance(0);
 		user.setStatus(limitedUserStatus);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
@@ -1428,7 +1430,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(limitedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1507,7 +1509,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(limitedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1591,7 +1593,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1675,7 +1677,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1759,7 +1761,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(oldSubBalance);
 		user.setStatus(eulaUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1839,7 +1841,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(oldSubBalance);
 		user.setStatus(subscribedUserStatus);
 		user.setLastSubscribedPaymentSystem(migSmsType);
@@ -1995,7 +1997,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2078,7 +2080,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2207,7 +2209,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("non-o2");
+		user.setProvider(NON_O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2282,7 +2284,7 @@ public class UserServiceTest {
 		user.setStatus(subscribedUserStatus);
 		user.setDeviceType(iosDeviceType);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-        user.setProvider("nonO2");
+        user.setProvider(NON_O2);
 		
 		PowerMockito.mockStatic(DeviceTypeDao.class);
 		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
@@ -2468,7 +2470,7 @@ public class UserServiceTest {
 		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 		
 		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
-		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ProviderType.valueOfKey(o2UserDetails.getOperator()), user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2513,7 +2515,7 @@ public class UserServiceTest {
 		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 		
 		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
-		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(ProviderType.valueOfKey(o2UserDetails.getOperator()), user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2954,7 +2956,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Payg4GConsumerWithVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -2966,7 +2968,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GIndirectConsumerWithVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -2978,7 +2980,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Paym4GIndirectConsumerWithVideoAudioFreeTrialHasBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(true).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(true).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365*24*60*60*1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -2992,7 +2994,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GConsumerWithNullContractChannelNotOnVideoAudioFreeTrialAndNotOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(null).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+        user = new User().withContractChanel(null).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3006,7 +3008,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GDirectConsumerNotOnVideoAudioFreeTrialAndNotOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3020,7 +3022,7 @@ public class UserServiceTest {
     @Test
     public void shoulNotdMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioFreeTrialBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3034,7 +3036,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3048,7 +3050,7 @@ public class UserServiceTest {
     @Test
      public void shouldNotMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -3060,7 +3062,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().minus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3074,7 +3076,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(true).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(true).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().minus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3197,7 +3199,7 @@ public class UserServiceTest {
 
         user.setCurrentPaymentDetails(o2PSMSPaymentDetails);
         user.setUserGroup(userGroup);
-        user.setProvider("o2");
+        user.setProvider(O2);
         user.setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
     }
 

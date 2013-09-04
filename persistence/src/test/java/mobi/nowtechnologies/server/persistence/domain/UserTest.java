@@ -13,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
@@ -78,7 +79,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -98,7 +99,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("non_o2");
+		user.setProvider(NON_O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -118,7 +119,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(null);
 		user.setContract(PAYG);
 		
@@ -138,7 +139,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -158,7 +159,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYM);
 		
@@ -178,7 +179,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -192,7 +193,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(null);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -210,7 +211,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		
 		boolean isO2Consumer = user.isO2Consumer();
@@ -229,7 +230,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("non_o2");
+		user.setProvider(NON_O2);
 		user.setSegment(CONSUMER);
 		
 		boolean isO2Consumer = user.isO2Consumer();
@@ -248,7 +249,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(null);
 		
 		boolean isO2Consumer = user.isO2Consumer();
@@ -267,7 +268,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(PAYG);
 		
@@ -287,7 +288,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		
 		boolean isO2Consumer = user.isO2Consumer();
@@ -300,7 +301,7 @@ public class UserTest {
 		
 		User user = new User();
 		user.setUserGroup(null);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		
 		user.isO2Consumer();
@@ -309,13 +310,13 @@ public class UserTest {
 	@Test
 	public void testIsInvalidPaymentPolicy_NotSameProvider_Success(){
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
-		paymentPolicy.setProvider("non-o2");
+		paymentPolicy.setProvider(NON_O2);
 
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
 		User user = UserFactory.createUser();
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
 		
@@ -327,14 +328,14 @@ public class UserTest {
 	@Test
 	public void testIsInvalidPaymentPolicy_O2ProviderNotSameSegment_Success(){
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
-		paymentPolicy.setProvider("o2");
+		paymentPolicy.setProvider(NON_O2);
 		paymentPolicy.setSegment(BUSINESS);
 		
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
 		User user = UserFactory.createUser();
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
 		
@@ -346,14 +347,14 @@ public class UserTest {
 	@Test
 	public void testIsInvalidPaymentPolicy_NonO2ProviderNotSameSegment_Success(){
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
-		paymentPolicy.setProvider("non-o2");
+		paymentPolicy.setProvider(NON_O2);
 		paymentPolicy.setSegment(BUSINESS);
 		
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
 		User user = UserFactory.createUser();
-		user.setProvider("non-o2");
+		user.setProvider(NON_O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
 		
@@ -366,7 +367,7 @@ public class UserTest {
 	public void testIsTariffChanged_tariffsAreTheSame_Success(){
 			
 		User user = UserFactory.createUser();
-		user.setProvider("non-o2");
+		user.setProvider(NON_O2);
 		user.setSegment(CONSUMER);
 		
 		boolean result = user.isInvalidPaymentPolicy();
@@ -440,7 +441,7 @@ public class UserTest {
         UserGroup o2 = new UserGroup().withCommunity(new Community().withRewriteUrl("o2"));
         PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
 
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider(O2)
                 .withUserGroup(o2)
                 .withLastPromo(videoPromo).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
@@ -454,7 +455,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -466,7 +467,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaygConsumerOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -478,7 +479,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymBusinessOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();

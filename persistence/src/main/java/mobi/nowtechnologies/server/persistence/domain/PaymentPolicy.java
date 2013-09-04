@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
@@ -77,8 +77,9 @@ public class PaymentPolicy {
     @Column(name="app_store_product_id")
     private String appStoreProductId;
 
-    @Transient
-    private ProviderType providerType;
+    @Enumerated(EnumType.STRING)
+    @Column(name="provider", columnDefinition = "char(255)")
+    private ProviderType provider;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -276,27 +277,6 @@ public class PaymentPolicy {
         this.contentDescription = contentDescription;
     }
 
-    public ProviderType getProviderAsEnum() {
-        return providerType;
-    }
-
-    public void setProviderAsEnum(ProviderType providerType) {
-        this.providerType = providerType;
-    }
-
-    @Access(AccessType.PROPERTY)
-    @Column(name="provider", columnDefinition = "char(255)")
-    public String getProvider() {
-        return  providerType != null ? providerType.toString() : null;
-    }
-
-    public void setProvider(String provider) {
-        for(ProviderType providerType : ProviderType.values()){
-            if(providerType.toString().equals(provider))
-                this.providerType = providerType;
-        }
-    }
-
     public Tariff getTariff() {
         return tariff;
     }
@@ -313,14 +293,12 @@ public class PaymentPolicy {
         this.mediaType = mediaType;
     }
 
-    public PaymentPolicy withTariff(Tariff tariff){
-        setTariff(tariff);
-        return this;
+    public ProviderType getProvider() {
+        return provider;
     }
 
-    public PaymentPolicy withMediaType(MediaType mediaType){
-        setMediaType(mediaType);
-        return this;
+    public void setProvider(ProviderType provider) {
+        this.provider = provider;
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
@@ -363,8 +341,38 @@ public class PaymentPolicy {
         isDefault = aDefault;
     }
 
+    public PaymentPolicy withTariff(Tariff tariff){
+        setTariff(tariff);
+        return this;
+    }
+
+    public PaymentPolicy withMediaType(MediaType mediaType){
+        setMediaType(mediaType);
+        return this;
+    }
+
     public PaymentPolicy withDefault(boolean aDefault){
         this.setDefault(aDefault);
+        return this;
+    }
+
+    public PaymentPolicy withPaymentType(String paymentType){
+        setPaymentType(paymentType);
+        return this;
+    }
+
+    public PaymentPolicy withSegment(SegmentType segment){
+        setSegment(segment);
+        return this;
+    }
+
+    public PaymentPolicy withContract(Contract contract){
+        setContract(contract);
+        return this;
+    }
+
+    public PaymentPolicy withProvider(ProviderType provider){
+        setProvider(provider);
         return this;
     }
 
@@ -382,7 +390,7 @@ public class PaymentPolicy {
                 .append("currencyISO", currencyISO)
                 .append("availableInStore", availableInStore)
                 .append("appStoreProductId", appStoreProductId)
-                .append("providerType", providerType)
+                .append("provider", provider)
                 .append("segment", segment)
                 .append("contract", contract)
                 .append("contentCategory", contentCategory)

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doNothing;
@@ -115,7 +116,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
@@ -242,7 +243,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(epochSeconds - 50*60*60);
@@ -370,7 +371,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);

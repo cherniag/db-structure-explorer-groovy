@@ -2,8 +2,10 @@ package mobi.nowtechnologies.server.shared.dto;
 
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 
 
@@ -45,7 +47,7 @@ public class AccountCheckDTOFactory{
 		accountCheckDTO.isPromotedDevice = false;
 		accountCheckDTO.promotedWeeks = Integer.MIN_VALUE;
 		accountCheckDTO.promotionLabel = "promotionLabel";
-		accountCheckDTO.provider = "provider";
+		accountCheckDTO.provider = O2;
 		accountCheckDTO.rememberMeToken = "rememberMeToken";
 		accountCheckDTO.segment = null;
 		accountCheckDTO.status = "status";

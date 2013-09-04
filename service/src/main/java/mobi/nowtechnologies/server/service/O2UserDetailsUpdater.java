@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -20,7 +20,7 @@ public class O2UserDetailsUpdater {
 
 	/** Updates given user */
 	public void setUserFieldsFromSubscriberData(User user, O2SubscriberData data) {
-		user.setProvider((data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2).toString());
+		user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2);
 		user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
 		user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
 		user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);

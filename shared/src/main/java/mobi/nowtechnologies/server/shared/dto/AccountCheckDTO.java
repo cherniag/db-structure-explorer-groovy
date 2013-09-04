@@ -58,7 +58,7 @@ public class AccountCheckDTO {
     
     public String appStoreProductId;
     
-    public String provider;
+    public ProviderType provider;
     public Contract contract;
     public SegmentType segment;
     public Tariff tariff;

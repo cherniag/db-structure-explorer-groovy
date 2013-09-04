@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -24,7 +25,6 @@ import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -64,6 +64,7 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
@@ -924,7 +925,7 @@ public class UserService {
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
 		boolean isnonO2User = false;
-		if ("o2".equalsIgnoreCase(communityUrl) && (!"o2".equals(user.getProvider()))) {
+		if ("o2".equalsIgnoreCase(communityUrl) && (!O2.equals(user.getProvider()))) {
 			isnonO2User = true;
 		}
 
@@ -1701,7 +1702,7 @@ public class UserService {
         }
         if(updateContractAndProvider){
         	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-        	user.setProvider(o2UserDetails.getOperator());
+        	user.setProvider(ProviderType.valueOfKey(o2UserDetails.getOperator()));
         }
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user.setUserName(user.getMobile());

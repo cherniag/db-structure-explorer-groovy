@@ -10,7 +10,7 @@ public class O2UserDetailsFactory
  {
 
 	public static O2UserDetails createO2UserDetails() {
-		return new O2UserDetails("", "");
+		return new O2UserDetails("o2", "");
 	}
 
 

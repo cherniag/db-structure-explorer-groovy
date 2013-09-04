@@ -8,7 +8,7 @@ import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +22,7 @@ import org.mockito.stubbing.Answer;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -155,14 +156,14 @@ public class PendingPaymentServiceImplTest {
 		paymentPolicy.setCurrencyISO("GBP");
 		paymentPolicy.setPaymentType(PaymentDetails.O2_PSMS_TYPE);
 		paymentPolicy.setSubcost(BigDecimal.TEN);
-		paymentPolicy.setProvider("o2");
+		paymentPolicy.setProvider(O2);
 		paymentPolicy.setSegment(BUSINESS);
 		paymentPolicy.setSubweeks((byte) 10);
 		currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentPaymentDetails.setLastPaymentStatus(status);
 		user.addPaymentDetails(currentPaymentDetails);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
-		user.setProvider(invalid ? "non-o2" : "o2");
+		user.setProvider(invalid ? ProviderType.NON_O2 : ProviderType.O2);
 		user.setSegment(BUSINESS);
 		return user;
 	}

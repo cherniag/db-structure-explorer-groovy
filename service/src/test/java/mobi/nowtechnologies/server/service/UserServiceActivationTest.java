@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -14,7 +17,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -43,9 +46,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 		OperatorDao.class, AccountLog.class, EmailValidator.class })
 public class UserServiceActivationTest {
 
-	public static final long EIGHT_WEEKS_MILLIS = 8 * 7 * 24 * 60 * 60 * 1000L;
-
-	public static final int YEAR_SECONDS = 365 * 24 * 60 * 60;
 	private UserService userServiceSpy;
 	private UserRepository userRepositoryMock;
 	private UserDao userDaoMock;
@@ -175,9 +175,9 @@ public class UserServiceActivationTest {
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
 		verify(o2ServiceMock, times(1)).getSubscriberData(anyString());
-		assertEquals(user.getSegment(), SegmentType.CONSUMER);
-		assertEquals(user.getProvider(), ProviderType.O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
+		assertEquals(user.getSegment(), CONSUMER);
+		assertEquals(user.getProvider(), O2);
+		assertEquals(user.getTariff(), _3G);
 
 	}
 

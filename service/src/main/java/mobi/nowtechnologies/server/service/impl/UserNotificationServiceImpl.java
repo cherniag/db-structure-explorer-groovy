@@ -481,8 +481,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 		String[] codes = new String[6];
 
-		final String provider = user.getProvider();
-		final SegmentType segment = user.getSegment();
+        final String provider = user.getProvider() == null ? null : user.getProvider().toString();
+        final SegmentType segment = user.getSegment();
 		final Contract contract = user.getContract();
 		final DeviceType deviceType = user.getDeviceType();
 		String deviceTypeName = null;

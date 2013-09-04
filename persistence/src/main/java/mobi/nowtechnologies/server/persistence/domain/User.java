@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -222,7 +223,9 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private ActivationStatus activationStatus;
 
-	private String provider;
+    @Column(name = "provider")
+    @Enumerated(EnumType.STRING)
+	private ProviderType provider;
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "char(255)")
@@ -363,12 +366,12 @@ public class User implements Serializable {
 
 		PaymentPolicy paymentPolicy = getCurrentPaymentDetails().getPaymentPolicy();
 
-		return !org.apache.commons.lang.StringUtils.equals(getProvider(), paymentPolicy.getProvider())
-				|| (ProviderType.O2.toString().equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
+		return (provider != null && !provider.equals(paymentPolicy.getProvider()))
+				|| (O2.equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
 	}
 
 	public boolean isnonO2User() {
-		return !"o2".equals(this.provider);
+		return !O2.equals(this.provider);
 	}
 
 	public boolean isO2CommunityUser() {
@@ -384,7 +387,7 @@ public class User implements Serializable {
 
 	public boolean isO2User() {
 		Community community = this.getUserGroup().getCommunity();
-		return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
+		return O2.equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
 	}
 
 	public boolean isO2Consumer() {
@@ -803,7 +806,7 @@ public class User implements Serializable {
         return this;
     }
 
-    public User withProvider(String provider){
+    public User withProvider(ProviderType provider){
         setProvider(provider);
         return this;
     }
@@ -1179,15 +1182,15 @@ public class User implements Serializable {
 		return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
 	}
 
-	public String getProvider() {
-		return provider;
-	}
+    public ProviderType getProvider() {
+        return provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    public void setProvider(ProviderType provider) {
+        this.provider = provider;
+    }
 
-	public Contract getContract() {
+    public Contract getContract() {
 		return contract;
 	}
 

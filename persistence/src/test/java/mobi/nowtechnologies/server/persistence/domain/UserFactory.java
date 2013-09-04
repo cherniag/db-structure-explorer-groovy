@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
@@ -89,7 +90,7 @@ public class UserFactory
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(paymentStatus.getId());
-		testUser.setProvider("o2");
+		testUser.setProvider(O2);
 		testUser.setContract(PAYG);
 		testUser.setSegment(CONSUMER);
 		return testUser;

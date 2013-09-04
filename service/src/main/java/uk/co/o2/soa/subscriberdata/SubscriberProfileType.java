@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
