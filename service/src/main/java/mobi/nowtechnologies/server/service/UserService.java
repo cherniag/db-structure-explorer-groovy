@@ -1677,9 +1677,8 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
-		LOGGER.info("apply init promo o2 " + user.getId() + " "
-                + user.getMobile() + " " + user.getActivationStatus()+" updateContractAndProvider="+updateContractAndProvider);
+	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]" , user.getId(), user.getMobile(),user.getActivationStatus(), updateContractAndProvider);
 		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
@@ -1872,4 +1871,17 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID) {
+        User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+
+        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        if (isPromotionApplied){
+            PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+            user = paymentDetails.getOwner();
+        }else throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+
+        return user;
+    }
+    
 }

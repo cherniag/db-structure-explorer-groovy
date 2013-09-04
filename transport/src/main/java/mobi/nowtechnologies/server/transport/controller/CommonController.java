@@ -85,7 +85,7 @@ public abstract class CommonController extends ProfileController{
     }
 
     @ExceptionHandler(Exception.class)
-	public ModelAndView handleException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(Exception exception, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
@@ -96,7 +96,7 @@ public abstract class CommonController extends ProfileController{
 	}
 	
 	@ExceptionHandler(InvalidPhoneNumberException.class)
-	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
@@ -149,7 +149,7 @@ public abstract class CommonController extends ProfileController{
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)
-	public ModelAndView handleException(UserCredentialsException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {		
+	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();
 		
 		final String localizedDisplayMessage;
@@ -174,7 +174,7 @@ public abstract class CommonController extends ProfileController{
 	}
 	
 	@ExceptionHandler(ThrottlingException.class)
-	public ModelAndView handleException(ThrottlingException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(ThrottlingException exception, HttpServletResponse response) {
 		LOGGER.info(exception.toString());
 		response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         response.addHeader("reason", "throttling");
@@ -242,7 +242,7 @@ public abstract class CommonController extends ProfileController{
 
         String apiVersion = apiVersionThreadLocal.get();
 
-        if (isEmpty(apiVersion) || isNotEmpty(apiVersion) && isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+        if (isEmpty(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
             return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
         }
 
@@ -254,7 +254,7 @@ public abstract class CommonController extends ProfileController{
 	 * @return rememberMe auth token
 	 */
 	public Object[] precessRememberMeToken(Object[] objects) {
-		LOGGER.debug("input parameters objects: [{}], [{}]", objects);
+		LOGGER.debug("input parameters objects: [{}]", objects);
 		for (Object object : objects) {
 			if (!(object instanceof AccountCheckDTO)) continue;
 			AccountCheckDTO accountCheckDTO = (AccountCheckDTO) object;

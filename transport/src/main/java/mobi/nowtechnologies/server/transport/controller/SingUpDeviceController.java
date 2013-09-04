@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * SingUpDeviceController
- * 
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  * 
@@ -34,6 +32,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class SingUpDeviceController extends CommonController {
 		
 	private UserService userService;
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 	
 	@InitBinder(UserDeviceRegDetailsDto.NAME)
 	public void initUserDeviceRegDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -173,16 +179,20 @@ public class SingUpDeviceController extends CommonController {
         return (Response)signUpDevice_O2(request, userDeviceDetailsDto, result, community).getModelMap().get(MODEL_NAME);
     }
 
-    public void setCommunityService(CommunityService communityService) {
-		this.communityService = communityService;
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-	
-	public static void main(String[] args) {
-		  Long device = 1357207434453L;
-		  System.out.println(new Date(device));
-	}
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE",
+            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE.json"
+    })
+    public ModelAndView signUpDevice_O2AcceptHeaderSupport(HttpServletRequest request,
+                                                           @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto,
+                                                           BindingResult result,
+                                                           @PathVariable("community") String community,
+                                                           @PathVariable("apiVersion") String apiVersion) {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = signUpDevice_O2(request, userDeviceDetailsDto, result, community);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
+    }
 }

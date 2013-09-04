@@ -235,6 +235,7 @@ public class UserAsm {
         ActivationStatus activationStatus = user.getActivationStatus();
         accountCheckDTO.activation = activationStatus;
         accountCheckDTO.fullyRegistred = ACTIVATED.equals(activationStatus);
+        accountCheckDTO.eligibleForAutoOptIn = true;
 
         if (appStoreProductIds != null) {
             StringBuilder temp = new StringBuilder();

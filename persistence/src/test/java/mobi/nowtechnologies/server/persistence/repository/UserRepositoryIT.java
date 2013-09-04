@@ -415,7 +415,7 @@ public class UserRepositoryIT {
 		
 		testUser = userRepository.save(testUser);
 		
-		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne((short)228);
+		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(228);
 		
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		

@@ -87,7 +87,7 @@ public class ApplyInitPromoController extends CommonController {
             	
     			boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community, updateContractAndProvider);
+            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, updateContractAndProvider);
 
     	        final Object[] objects = new Object[]{accountCheckDTO};
     	        precessRememberMeToken(objects);
@@ -127,5 +127,25 @@ public class ApplyInitPromoController extends CommonController {
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) {
         return (Response)applyO2Promotion(communityName, userName, userToken, timestamp, token, community, apiVersion).getModelMap().get(MODEL_NAME);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO",
+            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO.json"
+    })
+    public ModelAndView applyO2PromotionAcceptHeaderSupport(
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = applyO2Promotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
     }
 }

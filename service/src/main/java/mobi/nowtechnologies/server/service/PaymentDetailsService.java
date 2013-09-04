@@ -4,6 +4,7 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
@@ -68,12 +69,6 @@ public class PaymentDetailsService {
     private PaymentPolicyDao paymentPolicyDao;
     
     private PaymentDetailsRepository paymentDetailsRepository;
-
-    private RefundService refundService;
-
-    public void setRefundService(RefundService refundService) {
-        this.refundService = refundService;
-    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
@@ -153,6 +148,21 @@ public class PaymentDetailsService {
 		pdto.setPhoneNumber(userService.getMigPhoneNumber(dto.getOperator(), convertedPhone));
 		return (MigPaymentDetails) createPaymentDetails(pdto, user, community);
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public O2PSMSPaymentDetails createDefaultO2PsmsPaymentDetails(User user) throws ServiceException {
+
+        PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
+
+        if (ObjectUtils.isNull(defaultPaymentPolicy)) throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
+
+        Community community = user.getUserGroup().getCommunity();
+        PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
+        paymentDetailsDto.setPaymentType(O2_PSMS);
+        paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicy.getId());
+
+        return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user, community);
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {

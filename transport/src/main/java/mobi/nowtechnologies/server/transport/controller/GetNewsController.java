@@ -44,7 +44,7 @@ public class GetNewsController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			if (userName == null)
 				throw new NullPointerException("The parameter userName is null");
 			if (communityName == null)
@@ -61,9 +61,6 @@ public class GetNewsController extends CommonController {
 
 			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
-
-			// Object[] objects = newsDetailService.processGetNewsCommand(user,
-			// communityName);
 
 			Object[] objects = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis, false);
 			precessRememberMeToken(objects);
@@ -114,7 +111,7 @@ public class GetNewsController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
 			Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
@@ -144,6 +141,29 @@ public class GetNewsController extends CommonController {
             @PathVariable("community") String community) throws Exception {
 
         return (Response)getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community).getModelMap().get(MODEL_NAME);
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_NEWS",
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_NEWS.json"
+    }, produces = "application/json")
+    public ModelAndView getNews_O2AcceptHeaderSupport(
+            @RequestParam("APP_VERSION") String appVersion,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("API_VERSION") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @PathVariable("community") String community) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
 
     }
 }

@@ -3,8 +3,11 @@ package mobi.nowtechnologies.server.persistence.repository;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +16,7 @@ import org.springframework.data.jpa.repository.Query;
  * @author Titov Mykhaylo (titov)
  *
  */
-public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Short>{
+public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Integer>{
 	
 	@Query(value="select paymentPolicy.appStoreProductId from PaymentPolicy paymentPolicy " +
 			"where paymentPolicy.community=?1 " +
@@ -43,4 +46,14 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Sh
     @Query(value="select p from PaymentPolicy p "+
             " where p.community=?1  and p.segment = ?2 ")
     List<PaymentPolicy> getPaymentPolicies(Community community, SegmentType segment);
+
+    @Query(value="select paymentPolicy from PaymentPolicy paymentPolicy "+
+            "where " +
+            "paymentPolicy.community=?1 " +
+            "and paymentPolicy.paymentType= '" + O2PSMSPaymentDetails.O2_PSMS_TYPE +"' " +
+            "and p.provider=?2 " +
+            "and paymentPolicy.segment=?3 " +
+            "and paymentPolicy.contract=?4" +
+            "and paymentPolicy.isDefault=true ")
+    PaymentPolicy findDefaultO2PsmsPaymentPolicy(Community community, String provider, SegmentType segment, Contract contract);
 }

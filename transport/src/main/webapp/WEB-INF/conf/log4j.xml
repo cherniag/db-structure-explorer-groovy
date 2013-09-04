@@ -180,10 +180,6 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
 		</layout>
-		<filter class="mobi.nowtechnologies.server.shared.log.ContextFilter">
-			<param name="contextKey" value="ACC_CHECK" />
-			<param name="acceptOnMatch" value="true" />
-		</filter>
 	</appender>
 	
 	<appender name="weeklyUpdateServiceFile" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -351,10 +347,8 @@
 		<appender-ref ref="paymentExecutionAppender"/>
 	</logger>
 
-	<!-- MIG Logger -->
 	<logger name="mobi.nowtechnologies">
 		<level value="INFO" />
-		<appender-ref ref="accCheckAppender" />
 		<appender-ref ref="migControllerAppender" />
 		<appender-ref ref="transportControllerAppender" />
 		<appender-ref ref="weeklyUpdateServiceFile" />
@@ -363,12 +357,16 @@
 		<appender-ref ref="userSMSNotificationAppender" />
         <appender-ref ref="updateO2UserTaskAppender" />
 	</logger>
-	<!-- END MIG Logger -->
-	
+
 	<logger name="PROFILE_LOGGER">
 		<level value="INFO" />
 		<appender-ref ref="transportProfileAppender" />
 	</logger>
+
+    <logger name="SUCCESS_ACC_CHECK_LOGGER">
+        <level value="INFO" />
+        <appender-ref ref="accCheckAppender" />
+    </logger>
 
 	<root>
 		<appender-ref ref="transportErrorsAppender" />

@@ -63,16 +63,17 @@ public class PhoneNumberController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER.json"
     })
-    public ModelAndView activatePhoneNumberJson(
+    public ModelAndView activatePhoneNumberAcceptHeaderSupport(
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) throws Exception {
-
         apiVersionThreadLocal.set(apiVersion);
 
         ModelAndView modelAndView = activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion);

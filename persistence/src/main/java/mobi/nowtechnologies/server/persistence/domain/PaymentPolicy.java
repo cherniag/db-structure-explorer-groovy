@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +35,13 @@ public class PaymentPolicy {
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
     public static enum Fields {
-        communityId, operator, paymentType
+        communityId
     }
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-    @Column(name = "i", length = 5, nullable = false)
-    private short id;
+    @Column(name = "i")
+    private Integer id;
 
     @Column(name = "communityID", length = 10, nullable = false, insertable = false, updatable = false)
     private Integer communityId;
@@ -107,11 +108,14 @@ public class PaymentPolicy {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
-    public void setId(short id) {
+    @Column(name = "is_default")
+    private boolean isDefault;
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -319,15 +323,6 @@ public class PaymentPolicy {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
-                + ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
-                + ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", tariff="+ tariff
-                + ", contentCategory=" + contentCategory+ ", contentType=" + contentType + ", subMerchantId=" + subMerchantId +
-                ", contentDescription=" + contentDescription + ", mediaType="+ mediaType + "]";
-    }
-
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
         LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
 
@@ -351,12 +346,52 @@ public class PaymentPolicy {
     public boolean is4GVideoAudioSubscription(){
         return Tariff._4G.equals(tariff) && VIDEO_AND_AUDIO.equals(mediaType);
     }
-    
+
     public boolean isVideoAndAudio4GSubscription() {// jstl can not call methods starting with numbers
     	return is4GVideoAudioSubscription();
     }
 
     public boolean isAudioSubscription() {
         return AUDIO.equals(mediaType);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public PaymentPolicy withDefault(boolean aDefault){
+        this.setDefault(aDefault);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("communityId", communityId)
+                .append("subcost", subcost)
+                .append("subweeks", subweeks)
+                .append("operatorId", operatorId)
+                .append("paymentType", paymentType)
+                .append("operatorName", operatorName)
+                .append("shortCode", shortCode)
+                .append("currencyISO", currencyISO)
+                .append("availableInStore", availableInStore)
+                .append("appStoreProductId", appStoreProductId)
+                .append("providerType", providerType)
+                .append("segment", segment)
+                .append("contract", contract)
+                .append("contentCategory", contentCategory)
+                .append("contentType", contentType)
+                .append("subMerchantId", subMerchantId)
+                .append("contentDescription", contentDescription)
+                .append("tariff", tariff)
+                .append("mediaType", mediaType)
+                .append("isDefault", isDefault)
+                .toString();
     }
 }

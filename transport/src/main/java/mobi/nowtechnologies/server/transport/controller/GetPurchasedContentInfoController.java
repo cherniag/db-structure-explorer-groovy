@@ -39,7 +39,6 @@ public class GetPurchasedContentInfoController extends CommonController {
             "*/{apiVersion:4\\.0}/GET_PURCHASED_CONTENT_INFO"
     })
 	public ModelAndView getPurchasedContentInfo(
-				HttpServletRequest request,
 				@RequestParam("APP_VERSION") String appVersion,
 				@RequestParam("COMMUNITY_NAME") String communityName,
 				@RequestParam("API_VERSION") String apiVersion,
@@ -79,5 +78,23 @@ public class GetPurchasedContentInfoController extends CommonController {
 			LOGGER.info("command processing finished");
 		}
 	}
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO.json"
+    })
+    public ModelAndView getPurchasedContentInfoAcceptHeaderSupport(
+            @RequestParam("APP_VERSION") String appVersion,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("API_VERSION") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = getPurchasedContentInfo(appVersion, communityName, apiVersion, userName, userToken, timestamp);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
+    }
 
 }

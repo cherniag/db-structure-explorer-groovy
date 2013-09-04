@@ -58,4 +58,22 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
             LOGGER.info("command processing finished");
         }
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.1}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
+            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.1}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json"
+    })
+    public ModelAndView activateVideoAcceptHeaderSupport(@RequestParam("APP_VERSION") String appVersion,
+                                      @RequestParam("USER_NAME") String userName,
+                                      @RequestParam("USER_TOKEN") String userToken,
+                                      @RequestParam("TIMESTAMP") String timestamp,
+                                      @RequestParam("DEVICE_UID") String deviceUID,
+                                      @PathVariable("communityUri") String communityUri,
+                                      @PathVariable("apiVersion") String apiVersion) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = activateVideo(appVersion, userName, userToken, timestamp, deviceUID, communityUri);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
+    }
 }

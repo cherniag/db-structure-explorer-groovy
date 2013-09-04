@@ -73,4 +73,6 @@
         <property name="promotionService" ref="service.PromotionService"/>
     </bean>
 
+    <bean id="transport.AutoOptInController" class="mobi.nowtechnologies.server.transport.controller.AutoOptInController" parent="transport.CommonController"/>
+
 </beans>
