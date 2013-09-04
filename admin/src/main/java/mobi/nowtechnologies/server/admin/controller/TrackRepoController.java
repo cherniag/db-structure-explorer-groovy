@@ -35,8 +35,9 @@ public class TrackRepoController extends AbstractCommonController{
 		this.trackRepoFilesURL = trackRepoFilesURL;
 	}
 	
-	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
+	@InitBinder()
 	public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 

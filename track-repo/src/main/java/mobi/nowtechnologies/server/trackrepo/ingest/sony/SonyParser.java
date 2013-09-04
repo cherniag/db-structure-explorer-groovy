@@ -4,8 +4,6 @@ import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -244,20 +242,13 @@ public class SonyParser extends IParser {
 							LOGGER.debug("ISRC is " + result.isrc);
 						}
 						// Log all files for this directory
-						int lastSlash = file.lastIndexOf('/');
-						String path = file.substring(0, lastSlash);
-						for (String searchFile : files) {
-							if (searchFile.startsWith(path)) {
-								try {
-									File size = new File(searchFile);
-									Date date = new Date();
-									SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:MM");
-									logWriter.write(searchFile + " " + format.format(date) + " " + size.length() + "\n");
-								} catch (Exception e) {
-									LOGGER.error("Skipping file " + searchFile + " in logs: exception " + e.getMessage());
-								}
-
-							}
+                        try {
+                            File size = new File(file);
+                            Date date = new Date();
+                            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:MM");
+                            logWriter.write(file + " " + format.format(date) + " " + size.length() + "\n");
+                        } catch (Exception e) {
+						    LOGGER.error("Skipping file " + file + " in logs: exception " + e.getMessage());
 						}
 					} catch (Exception e) {
 						LOGGER.error("Not processed " + file);
