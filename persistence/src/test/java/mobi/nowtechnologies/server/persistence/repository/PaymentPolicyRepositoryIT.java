@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
@@ -57,12 +58,13 @@ public class PaymentPolicyRepositoryIT {
     @Test
     public void shouldReturnOneDefaultO2PsmsPaymentPolicy(){
         //given
-        paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
+        paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
 
         //when
         PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
+        assertNotNull(actualPaymentPolicy);
         assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
 
