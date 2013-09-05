@@ -23,7 +23,9 @@ public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.Acco
 	@XmlAnyElement
     public LockedTrackDto[] lockedTracks;
 
-	public AccountCheckDto(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
+    public AccountCheckDto() {}
+
+    public AccountCheckDto(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
 		super(accountCheckDTO);
     }
 
