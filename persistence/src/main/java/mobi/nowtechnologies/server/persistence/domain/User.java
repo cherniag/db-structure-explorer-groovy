@@ -2,6 +2,9 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.AppConstants.*;
+import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -26,9 +29,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
@@ -49,7 +52,7 @@ import com.google.common.base.Objects;
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
 public class User implements Serializable {
-	private static final long serialVersionUID = 4414398062970887453L;
+    private static final long serialVersionUID = 4414398062970887453L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
@@ -60,42 +63,6 @@ public class User implements Serializable {
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";
-
-    public boolean isO2Direct() {
-        return DIRECT.equals(contractChannel);
-    }
-
-    public boolean isO24GConsumer() {
-        return isO2Consumer() && is4G();
-    }
-
-    public boolean isO23GConsumer() {
-        return isO2Consumer() && is3G();
-    }
-
-    public boolean isO2Indirect() {
-        return INDIRECT.equals(contractChannel);
-    }
-
-    public ContractChannel getContractChannel() {
-        return contractChannel;
-    }
-
-    public void setContractChannel(ContractChannel contractChannel) {
-        this.contractChannel = contractChannel;
-    }
-
-    public PromoCode getLastPromo() {
-        return lastPromo;
-    }
-
-    public void setLastPromo(PromoCode lastPromo) {
-        this.lastPromo = lastPromo;
-    }
-
-    private boolean isLastPromoForVideo() {
-        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
-    }
 
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
@@ -344,12 +311,48 @@ public class User implements Serializable {
         setTariff(_3G);
 	}
 
+    public boolean isO2Direct() {
+        return DIRECT.equals(contractChannel);
+    }
+
+    public boolean isO24GConsumer() {
+        return isO2Consumer() && is4G();
+    }
+
+    public boolean isO23GConsumer() {
+        return isO2Consumer() && is3G();
+    }
+
+    public boolean isO2Indirect() {
+        return INDIRECT.equals(contractChannel);
+    }
+
+    public ContractChannel getContractChannel() {
+        return contractChannel;
+    }
+
+    public void setContractChannel(ContractChannel contractChannel) {
+        this.contractChannel = contractChannel;
+    }
+
+    public PromoCode getLastPromo() {
+        return lastPromo;
+    }
+
+    public void setLastPromo(PromoCode lastPromo) {
+        this.lastPromo = lastPromo;
+    }
+
+    private boolean isLastPromoForVideo() {
+        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
+    }
+
     public boolean isShowFreeTrial() {
         return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
     }
 
-    public boolean isIOsnonO2ItunesSubscribedUser() {
-		return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
+    public boolean isIOsNonO2ITunesSubscribedUser() {
+		return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
 
 	public boolean isSubscribedByITunes() {
@@ -360,34 +363,37 @@ public class User implements Serializable {
 		return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
 	}
 
-	public boolean isInvalidPaymentPolicy() {
-		if (getCurrentPaymentDetails() == null)
-			return false;
+    public boolean isInvalidPaymentPolicy() {
+        return isNull(currentPaymentDetails) || isPaymentPolicyInvalidByProvider()
+                || isPaymentPolicyInvalidBySegment();
+    }
 
-		PaymentPolicy paymentPolicy = getCurrentPaymentDetails().getPaymentPolicy();
+    private boolean isPaymentPolicyInvalidBySegment() {
+        return O2.equals(provider) && segment != currentPaymentDetails.getPaymentPolicy().getSegment();
+    }
 
-		return (provider != null && !provider.equals(paymentPolicy.getProvider()))
-				|| (O2.equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
-	}
+    private boolean isPaymentPolicyInvalidByProvider() {
+        ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
 
-	public boolean isnonO2User() {
-		return !O2.equals(this.provider);
+        return (isNotNull(provider) && !provider.equals(paymentPolicyProvider)) || (isNull(provider) && isNotNull(paymentPolicyProvider));
+    }
+
+    public boolean isNonO2User() {
+		return !O2.equals(provider);
 	}
 
 	public boolean isO2CommunityUser() {
 		Community community = userGroup.getCommunity();
 		String rewriteUrlParameter = community.getRewriteUrlParameter();
-		boolean isO2CommunityUser = rewriteUrlParameter.equalsIgnoreCase("o2");
-		return isO2CommunityUser;
+        return O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(rewriteUrlParameter);
 	}
 
 	public boolean isO2PAYGConsumer() {
-		return isO2Consumer() && Contract.PAYG.equals(contract);
+		return isO2Consumer() && PAYG.equals(contract);
 	}
 
 	public boolean isO2User() {
-		Community community = this.getUserGroup().getCommunity();
-		return O2.equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
+		return O2.equals(this.provider) && isO2CommunityUser();
 	}
 
 	public boolean isO2Consumer() {
@@ -706,32 +712,8 @@ public class User implements Serializable {
 		return currentPaymentDetailsId;
 	}
 
-	public String getCountryIdString() {
-		if (country == -1)
-			return NONE;
-		return String.valueOf(country);
-	}
-
-	public void setCountryIdString(String aCountryId) {
-		if (aCountryId == null)
-			throw new NullPointerException("The parameter aCountryId is null");
-		if (NONE.equals(aCountryId))
-			country = -1;
-		else
-			country = Integer.parseInt(aCountryId);
-	}
-
 	public String getDeviceTypeIdString() {
 		return deviceType.getName();
-	}
-
-	public void setDeviceTypeIdString(String deviceTypeName) {
-		if (deviceTypeName == null)
-			throw new NullPointerException("The parameter deviceTypeName is null");
-		if (DeviceTypeDao.NONE.equals(deviceTypeName))
-			deviceType = DeviceTypeDao.getNoneDeviceType();
-		else
-			setDeviceType(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(deviceTypeName));
 	}
 
 	public String getConformStoredToken() {
@@ -931,7 +913,7 @@ public class User implements Serializable {
 
 		accountDto.setSubscription(subscription);
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
@@ -1048,77 +1030,13 @@ public class User implements Serializable {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
 	}
 
-	@Override
-	public String toString() {
-		return Objects.toStringHelper(this)
-				.add("id", id)
-				.add("userName", userName)
-				.add("facebookId", facebookId)
-				.add("deviceUID", deviceUID)
-				.add("subBalance", subBalance)
-				.add("userGroupId", userGroupId)
-				.add("userStatusId", userStatusId)
-				.add("nextSubPayment", nextSubPayment)
-				.add("isFreeTrial", isOnFreeTrial())
-				.add("currentPaymentDetailsId", currentPaymentDetailsId)
-				.add("lastPaymentTx", lastPaymentTx)
-				.add("token", token)
-				.add("paymentStatus", paymentStatus)
-				.add("paymentType", paymentType)
-				.add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
-				.add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
-				.add("numPsmsRetries", numPsmsRetries)
-				.add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
-				.add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
-				.add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
-				.add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
-				.add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
-				.add("potentialPromotionId", potentialPromotionId)
-				.add("pin", pin)
-				.add("code", code)
-				.add("operator", operator)
-				.add("mobile", mobile)
-				.add("conformStoredToken", conformStoredToken)
-				.add("lastDeviceLogin", lastDeviceLogin)
-				.add("lastWebLogin", lastWebLogin)
-				.add("lastWebLogin", lastWebLogin)
-				.add("firstUserLoginMillis", firstUserLoginMillis)
-				.add("firstDeviceLoginMillis", firstDeviceLoginMillis)
-				.add("lastBefore48SmsMillis", lastBefore48SmsMillis)
-				.add("device", device)
-				.add("deviceModel", deviceModel)
-				.add("deviceTypeId", deviceTypeId)
-				.add("newStoredToken", newStoredToken)
-				.add("tempToken", tempToken)
-				.add("postcode", postcode)
-				.add("address1", address1)
-				.add("address2", country)
-				.add("city", city)
-				.add("title", title)
-				.add("displayName ", displayName)
-				.add("firstName", firstName)
-				.add("lastName", lastName)
-				.add("ipAddress", ipAddress)
-				.add("canContact", canContact)
-				.add("deviceString", deviceString)
-				.add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
-                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
-				.add("activationStatus", activationStatus)
-				.add("segment", segment)
-				.add("provider", provider)
-                .add("tariff", tariff)
-                .add("contractChannel", contractChannel)
-                .add("lastPromoId", getLastPromoId())
-				.add("contract", contract).toString();
-	}
-
     private Integer getLastPromoId() {
         if (isNotNull(lastPromo)) return lastPromo.getId();
         return null;
     }
 
     public boolean isOnFreeTrial() {
-		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
+		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > getEpochMillis();
 	}
 
 	public boolean wasSubscribed() {
@@ -1141,7 +1059,7 @@ public class User implements Serializable {
 		Community community = this.userGroup.getCommunity();
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-		if (!"o2".equalsIgnoreCase(communityUrl))
+		if (!O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(communityUrl))
 			return true;
 
 		return false;
@@ -1207,7 +1125,7 @@ public class User implements Serializable {
 	}
 
 	public User withNextSubPayment(Date time) {
-		this.nextSubPayment = Utils.truncatedToSeconds(time);
+		this.nextSubPayment = truncatedToSeconds(time);
 		return this;
 	}
 
@@ -1223,25 +1141,25 @@ public class User implements Serializable {
 
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
 		Chart sameTypeChart = null;
-		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
+		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){
 			for(Chart chart : getSelectedCharts()){
 				if(chart.getI().equals(chartDetail.getChart().getI()))
 					return true;
 				else if(chart.getType() == chartDetail.getChart().getType())
 					sameTypeChart = chart;
-					
+
 			}
 		}
-		
+
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
 	public boolean isPending() {
-		return isSubscribed() && isBeforeExpiration(Utils.getEpochMillis(), 24);
+		return isSubscribed() && isBeforeExpiration(getEpochMillis(), 24);
 	}
 
 	public boolean isExpiring() {
-		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
+		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
 				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
@@ -1258,7 +1176,7 @@ public class User implements Serializable {
     }
 
 	public boolean isNextSubPaymentInTheFuture() {
-		return nextSubPayment > Utils.getEpochSeconds();
+		return nextSubPayment > getEpochSeconds();
 	}
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
@@ -1298,7 +1216,7 @@ public class User implements Serializable {
     }
 
     public boolean isO2PAYMConsumer() {
-        return isO2Consumer() && Contract.PAYM.equals(contract);
+        return isO2Consumer() && PAYM.equals(contract);
     }
 
     public boolean hasAllDetails() {
@@ -1316,6 +1234,7 @@ public class User implements Serializable {
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
+
     public SubscriptionDirection getSubscriptionDirection() {
 
         PaymentDetails currentDetails = getCurrentPaymentDetails();
@@ -1347,7 +1266,6 @@ public class User implements Serializable {
                 && is4G()) return DOWNGRADE;
         return null;
     }
-
     public boolean isOnVideoAudioFreeTrial() {
         return isLastPromoForVideo() && isOnFreeTrial();
     }
@@ -1358,5 +1276,69 @@ public class User implements Serializable {
 
     public boolean isEligibleForVideo(){
         return isO24GConsumer();
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("userName", userName)
+                .add("facebookId", facebookId)
+                .add("deviceUID", deviceUID)
+                .add("subBalance", subBalance)
+                .add("userGroupId", userGroupId)
+                .add("userStatusId", userStatusId)
+                .add("nextSubPayment", nextSubPayment)
+                .add("isFreeTrial", isOnFreeTrial())
+                .add("currentPaymentDetailsId", currentPaymentDetailsId)
+                .add("lastPaymentTx", lastPaymentTx)
+                .add("token", token)
+                .add("paymentStatus", paymentStatus)
+                .add("paymentType", paymentType)
+                .add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
+                .add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
+                .add("numPsmsRetries", numPsmsRetries)
+                .add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                .add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
+                .add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
+                .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
+                .add("potentialPromotionId", potentialPromotionId)
+                .add("pin", pin)
+                .add("code", code)
+                .add("operator", operator)
+                .add("mobile", mobile)
+                .add("conformStoredToken", conformStoredToken)
+                .add("lastDeviceLogin", lastDeviceLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("firstUserLoginMillis", firstUserLoginMillis)
+                .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
+                .add("lastBefore48SmsMillis", lastBefore48SmsMillis)
+                .add("device", device)
+                .add("deviceModel", deviceModel)
+                .add("deviceTypeId", deviceTypeId)
+                .add("newStoredToken", newStoredToken)
+                .add("tempToken", tempToken)
+                .add("postcode", postcode)
+                .add("address1", address1)
+                .add("address2", country)
+                .add("city", city)
+                .add("title", title)
+                .add("displayName ", displayName)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("ipAddress", ipAddress)
+                .add("canContact", canContact)
+                .add("deviceString", deviceString)
+                .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
+                .add("activationStatus", activationStatus)
+                .add("segment", segment)
+                .add("provider", provider)
+                .add("tariff", tariff)
+                .add("contractChannel", contractChannel)
+                .add("lastPromoId", getLastPromoId())
+                .add("contract", contract).toString();
     }
 }

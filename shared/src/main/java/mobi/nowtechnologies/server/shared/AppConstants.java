@@ -35,6 +35,5 @@ public final class AppConstants {
 	public static final String FB_URL_ACCESS_TOKEN = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s";
 	
 	public static final int TMP_PASSWORD_LENGTH = 6;
-	
-	private AppConstants() {}
+    public static final String O2_COMMUNITY_REWRITE_URL = "o2";
 }

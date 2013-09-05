@@ -18,8 +18,10 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
+import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,6 +35,9 @@ import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
 import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
+
+import static mobi.nowtechnologies.server.shared.AppConstants.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -109,7 +114,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String getServerO2Url(String phoneNumber) {
-		Community o2Community = communityService.getCommunityByName("o2");
+		Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
 
 		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
 				? this.promotedServerO2Url
@@ -120,7 +125,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String getRedeemServerO2Url(String phoneNumber) {
-		Community o2Community = communityService.getCommunityByName("o2");
+		Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
 
 		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
 				? this.redeemPromotedServerO2Url
@@ -216,7 +221,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public boolean isO2User(O2UserDetails userDetails) {
-		if (userDetails != null && "o2".equals(userDetails.getOperator())) {
+		if (userDetails != null && O2.toString().equals(userDetails.getOperator())) {
 			return true;
 		}
 		return false;

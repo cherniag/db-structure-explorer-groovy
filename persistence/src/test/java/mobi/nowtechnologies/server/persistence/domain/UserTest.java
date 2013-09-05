@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -372,7 +373,7 @@ public class UserTest {
 		
 		boolean result = user.isInvalidPaymentPolicy();
 		
-		assertEquals(false, result);
+		assertEquals(true, result);
 	}
 
     private void createSubscribedUserWithTariffMigration(Tariff subscribedUserTariff, Tariff newUserTariff) {
@@ -582,6 +583,60 @@ public class UserTest {
 
         //then
         org.junit.Assert.assertEquals(false, canPlayVideo);
+    }
+
+    @Test
+    public void testIsNonO2User_nonO2User_Success() throws Exception{
+        final User user = UserFactory.createUser();
+        final UserGroup userGroup = UserGroupFactory.createUserGroup();
+        final Community community = CommunityFactory.createCommunity();
+
+        community.setRewriteUrlParameter("o2");
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        user.setProvider(NON_O2);
+
+        assertTrue(user.isNonO2User());
+    }
+
+    @Test
+    public void testIsNonO2User_O2User_Success() throws Exception{
+        final User user = UserFactory.createUser();
+        final UserGroup userGroup = UserGroupFactory.createUserGroup();
+        final Community community = CommunityFactory.createCommunity();
+
+        community.setRewriteUrlParameter("o2");
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        user.setProvider(O2);
+
+        assertFalse(user.isNonO2User());
+    }
+
+    @Test
+    public void testINonO2User_UserFromNotO2Community_Success() throws Exception{
+        final User user = UserFactory.createUser();
+        final UserGroup userGroup = UserGroupFactory.createUserGroup();
+        final Community community = CommunityFactory.createCommunity();
+
+        community.setRewriteUrlParameter("r");
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        user.setProvider(null);
+
+        assertTrue(user.isNonO2User());
+    }
+
+    @Test(expected=NullPointerException.class)
+    public void testIsNonO2User_CommunityIsNull_Failure() throws Exception{
+        final User user = UserFactory.createUser();
+        final UserGroup userGroup = UserGroupFactory.createUserGroup();
+        final Community community = null;
+
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+
+        user.isNonO2User();
     }
 
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {

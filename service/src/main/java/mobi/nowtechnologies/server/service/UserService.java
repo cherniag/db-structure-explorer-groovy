@@ -888,9 +888,9 @@ public class UserService {
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
+		}else if (user.isO2CommunityUser() && user.isNonO2User()) {
 			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
-		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
+		}else if (user.isO2CommunityUser() && !user.isNonO2User()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 			}else{
@@ -918,18 +918,6 @@ public class UserService {
 		entityService.updateEntity(user);
 
 		LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
-	}
-
-	public boolean isnonO2User(User user) {
-		Community community = user.getUserGroup().getCommunity();
-		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
-
-		boolean isnonO2User = false;
-		if ("o2".equalsIgnoreCase(communityUrl) && (!O2.equals(user.getProvider()))) {
-			isnonO2User = true;
-		}
-
-		return isnonO2User;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

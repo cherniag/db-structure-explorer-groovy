@@ -13,6 +13,10 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static uk.co.o2.soa.coredata.PaymentCategoryType.*;
+
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "subscriberProfileType", propOrder = {
@@ -121,12 +125,12 @@ public class SubscriberProfileType {
     }
 
     public Contract getCotract() {
-        return PaymentCategoryType.POSTPAY.equals(getPaymentCategory()) ?
-                Contract.PAYM : Contract.PAYG;
+        return POSTPAY.equals(getPaymentCategory()) ?
+                PAYM : PAYG;
     }
     
     public ProviderType getProvider(){
     	return "O2".equals(getOperator()) ?
-                ProviderType.O2 : ProviderType.NON_O2;
+                O2 : NON_O2;
     }
 }
