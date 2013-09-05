@@ -3072,6 +3072,27 @@ public class UserServiceTest {
         userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
     }
 
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotAutoOptInBecauseOfUserIsNotSubjectToAutoOptIn() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+
+        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        expectedUser.subjectToAutoOptIn=false;
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        PowerMockito.doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
+        PowerMockito.doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+
+        //when
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+    }
+
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = _4G;
         mediaType = VIDEO_AND_AUDIO;

@@ -64,7 +64,6 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
@@ -1632,13 +1631,13 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User activatePhoneNumber(User user, String phone, boolean populateO2SubscriberData) {
 		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
-				user.getActivationStatus(), populateO2SubscriberData);
+                user.getActivationStatus(), populateO2SubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
         
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
-				user.getMobile());
+                user.getMobile());
         if(populateO2SubscriberData){
         	populateO2subscriberData(user, msisdn);
         }
@@ -1864,13 +1863,14 @@ public class UserService {
     public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID) {
         User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
-        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
-        if (isPromotionApplied){
-            PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
-            user = paymentDetails.getOwner();
-        }else throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        if(!user.subjectToAutoOptIn) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
 
-        return user;
+        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+
+        if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+
+        PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+        return paymentDetails.getOwner();
     }
     
 }

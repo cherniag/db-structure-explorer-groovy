@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -28,9 +30,10 @@ public class O2PSMSPaymentDetails extends PaymentDetails {
 		return PaymentDetails.O2_PSMS_TYPE;
 	}
 
-	@Override
-	public String toString() {
-		return "O2PSMSPaymentDetails ["+ super.toString()+", phoneNumber=" + phoneNumber + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString())
+                .append("phoneNumber", phoneNumber)
+                .toString();
+    }
 }

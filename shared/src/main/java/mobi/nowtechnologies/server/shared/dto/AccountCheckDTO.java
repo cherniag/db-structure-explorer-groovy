@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -75,7 +74,7 @@ public class AccountCheckDTO {
 
     public String lastSubscribedPaymentSystem;
     public SubscriptionDirection subscriptionChanged;
-    public boolean eligibleForAutoOptIn;
+    public boolean subjectToAutoOptIn;
 
     public AccountCheckDTO(){
 		
@@ -131,7 +130,7 @@ public class AccountCheckDTO {
         this.activation = accountCheckDTO.activation;
         this.fullyRegistred = accountCheckDTO.fullyRegistred;
         this.eligibleForVideo = accountCheckDTO.eligibleForVideo;
-        this.eligibleForAutoOptIn = accountCheckDTO.eligibleForAutoOptIn;
+        this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
         this.tariff = accountCheckDTO.tariff;
 
         accountCheckDTO.fullyRegistred = EmailValidator.validate(userName);
@@ -185,6 +184,7 @@ public class AccountCheckDTO {
                 .append("eligibleForVideo", eligibleForVideo)
                 .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
                 .append("subscriptionChanged", subscriptionChanged)
+                .append("subjectToAutoOptIn", subjectToAutoOptIn)
                 .toString();
     }
 }

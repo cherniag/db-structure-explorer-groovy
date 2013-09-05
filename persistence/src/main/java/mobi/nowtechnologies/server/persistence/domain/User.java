@@ -289,6 +289,9 @@ public class User implements Serializable {
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
 
+    @Transient
+    public boolean subjectToAutoOptIn = true;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
