@@ -70,6 +70,58 @@ public class PaymentDetailsService {
     
     private PaymentDetailsRepository paymentDetailsRepository;
 
+    public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
+        this.paymentDetailsDao = paymentDetailsDao;
+    }
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
+
+    public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
+        this.sagePayPaymentService = sagePayPaymentService;
+    }
+
+    public void setPayPalPaymentService(PayPalPaymentService payPalPaymentService) {
+        this.payPalPaymentService = payPalPaymentService;
+    }
+
+    public void setMigPaymentService(MigPaymentService migPaymentService) {
+        this.migPaymentService = migPaymentService;
+    }
+
+    public void setPromotionService(PromotionService promotionService) {
+        this.promotionService = promotionService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+    public void setOfferService(OfferService offerService) {
+        this.offerService = offerService;
+    }
+
+    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
+        this.paymentPolicyRepository = paymentPolicyRepository;
+    }
+
+    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
+        this.paymentPolicyDao = paymentPolicyDao;
+    }
+
+    public void setO2PaymentService(O2PaymentService o2PaymentService) {
+        this.o2PaymentService = o2PaymentService;
+    }
+
+    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
+        this.paymentDetailsRepository = paymentDetailsRepository;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
@@ -154,7 +206,7 @@ public class PaymentDetailsService {
 
         PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
 
-        if (ObjectUtils.isNull(defaultPaymentPolicy)) throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
+        if (isNull(defaultPaymentPolicy)) throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
 
         Community community = user.getUserGroup().getCommunity();
         PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
@@ -310,42 +362,6 @@ public class PaymentDetailsService {
 		return paymentDetailsDao.getAvailableOperators(community, paymentType);
 	}
 
-	public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
-		this.paymentDetailsDao = paymentDetailsDao;
-	}
-
-	public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
-		this.paymentPolicyService = paymentPolicyService;
-	}
-
-	public void setSagePayPaymentService(SagePayPaymentService sagePayPaymentService) {
-		this.sagePayPaymentService = sagePayPaymentService;
-	}
-
-	public void setPayPalPaymentService(PayPalPaymentService payPalPaymentService) {
-		this.payPalPaymentService = payPalPaymentService;
-	}
-
-	public void setMigPaymentService(MigPaymentService migPaymentService) {
-		this.migPaymentService = migPaymentService;
-	}
-
-	public void setPromotionService(PromotionService promotionService) {
-		this.promotionService = promotionService;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setCommunityService(CommunityService communityService) {
-		this.communityService = communityService;
-	}
-
-	public void setOfferService(OfferService offerService) {
-		this.offerService = offerService;
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void buyByPayPalPaymentDetails(String token, String communityUrl, int userId, Integer offerId) throws ServiceException {
 		LOGGER.debug("buyByPayPalPaymentDetails input parameters token, communityUrl, userId, offerId: [{}], [{}], [{}], [{}]", new Object[] { token, communityUrl, userId, offerId });
@@ -474,22 +490,6 @@ public class PaymentDetailsService {
 		
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
-	}
-
-    public void setPaymentPolicyRepository(PaymentPolicyRepository paymentPolicyRepository) {
-        this.paymentPolicyRepository = paymentPolicyRepository;
-    }
-
-    public void setPaymentPolicyDao(PaymentPolicyDao paymentPolicyDao) {
-        this.paymentPolicyDao = paymentPolicyDao;
-    }
-    
-    public void setO2PaymentService(O2PaymentService o2PaymentService) {
-		this.o2PaymentService = o2PaymentService;
-	}
-    
-    public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
-		this.paymentDetailsRepository = paymentDetailsRepository;
 	}
 
 }

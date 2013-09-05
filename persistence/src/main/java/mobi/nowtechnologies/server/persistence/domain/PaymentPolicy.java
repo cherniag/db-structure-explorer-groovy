@@ -341,6 +341,11 @@ public class PaymentPolicy {
         isDefault = aDefault;
     }
 
+    public PaymentPolicy withId(Integer id){
+        setId(id);
+        return this;
+    }
+
     public PaymentPolicy withTariff(Tariff tariff){
         setTariff(tariff);
         return this;
