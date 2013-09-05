@@ -1144,12 +1144,6 @@ public class User implements Serializable {
 		return false;
 	}
 
-	public boolean isSubscribed() {
-		return isSubscribedStatus()
-				&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-				&& hasActivePaymentDetails();
-	}
-
 	public boolean isNotActivePaymentDetails() {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
@@ -1233,10 +1227,6 @@ public class User implements Serializable {
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
-	public boolean isPending() {
-		return isSubscribed() && isBeforeExpiration(Utils.getEpochMillis(), 24);
-	}
-
 	public boolean isExpiring() {
 		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
 				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
@@ -1247,11 +1237,15 @@ public class User implements Serializable {
     }
 
     public boolean isOn4GVideoAudioBoughtPeriod(){
-        return isNextSubPaymentInTheFuture() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isOnBoughtPeriod() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
     public boolean isOnAudioBoughtPeriod() {
-        return isNextSubPaymentInTheFuture() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isOnBoughtPeriod() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+    }
+
+    public boolean isOnBoughtPeriod() {
+        return isNextSubPaymentInTheFuture() && isNotNull(lastSuccessfulPaymentDetails);
     }
 
 	public boolean isNextSubPaymentInTheFuture() {
