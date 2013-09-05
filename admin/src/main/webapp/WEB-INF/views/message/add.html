@@ -69,7 +69,7 @@
                             <div class="control-group">
                                 <select th:field="*{actionType}">
                                     <option th:each="messageActionType : ${T(mobi.nowtechnologies.server.shared.enums.MessageActionType).values()}"
-                                            th:value="${messageActionType.name()}" th:label="${messageActionType.name()}" th:text="${messageActionType.name()}"></option>
+                                            th:value="${messageActionType.name()}" th:text="${messageActionType.name()}" th:label="#{${'messages.pages.message.actionType.'+messageActionType.name()}}"></option>
                                 </select>
                             </div>
 
