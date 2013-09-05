@@ -79,23 +79,39 @@ public class TrackController extends AbstractCommonController{
 	}
 	
 	@RequestMapping(value = "/tracks/{trackId}/pull", method = RequestMethod.GET)
-	public @ResponseBody TrackDto pull(@PathVariable("trackId")Long trackId) {
-		try {
-			Track track = trackService.pull(trackId);
-			TrackDtoMapper trackDto = new TrackDtoMapper(track);
-			
-			if(track.getStatus() == TrackStatus.ENCODED){
-				trackDto.setFiles(resourceFileDtoBuilder.build(track));
-				Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
-				if (publishTerritory != null) {
-					trackDto.setPublishDate(publishTerritory.getStartDate());
-				}
-			}
-			
-			return trackDto;
-		} catch (Exception e) {
-			LOGGER.error("Cannot pull encoded track.", e);
-			throw new RuntimeException(e.getMessage());
-		}
+	public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
+        WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                try {
+                    Track track = trackService.pull(trackId);
+                    TrackDtoMapper trackDto = new TrackDtoMapper(track);
+
+                    if(track.getStatus() == TrackStatus.ENCODED){
+                        trackDto.setFiles(resourceFileDtoBuilder.build(track));
+                        Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
+                        if (publishTerritory != null) {
+                            trackDto.setPublishDate(publishTerritory.getStartDate());
+                        }
+                    }
+
+                    return trackDto;
+                } catch (Exception e) {
+                    LOGGER.error("Cannot pull encoded track.", e);
+                    throw new RuntimeException(e.getMessage());
+                }
+            }
+        });
+        pullTask.onTimeout(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
+
+                return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
+            }
+        });
+
+        return pullTask;
 	}
 }
