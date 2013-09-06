@@ -82,11 +82,6 @@ public class UserNotificationServiceImplTest {
 	private MigHttpService migHttpServiceMock;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
 
-	/**
-	 * Run the UserNotificationImpl() constructor test.
-	 * 
-	 * @generatedBy CodePro at 04.09.12 13:21
-	 */
 	@Test
 	public void testUserNotificationImpl_Constructor_Success()
 			throws Exception {
@@ -94,14 +89,6 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Future<Boolean> notifyUserAboutSuccesfullPayment(User) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 04.09.12 13:21
-	 */
 	@Test
 	public void testNotifyUserAboutSuccesfullPayment_Success()
 			throws Exception {
@@ -125,14 +112,6 @@ public class UserNotificationServiceImplTest {
 		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
-	/**
-	 * Run the Future<Boolean> notifyUserAboutSuccesfullPayment(User) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 04.09.12 13:21
-	 */
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testNotifyUserAboutSuccesfullPayment_UserIsNull_Failure()
 			throws Exception {
@@ -147,13 +126,6 @@ public class UserNotificationServiceImplTest {
 		Mockito.verify(userServiceMock, times(0)).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
-	/**
-	 * Run the void setUserService(UserService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 04.09.12 13:21
-	 */
 	@Test
 	public void testSetUserService_UserNotificationThrowsRuntimeException_Success()
 			throws Exception {
@@ -174,13 +146,6 @@ public class UserNotificationServiceImplTest {
 		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
 
-	/**
-	 * Run the void setUserService(UserService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 04.09.12 13:21
-	 */
 	@Test
 	public void testSetUserService_UserNotificationThrowsServiceCheckedException_Success()
 			throws Exception {
@@ -1761,7 +1726,7 @@ public class UserNotificationServiceImplTest {
 		String msgCodeBase = "msgCodeBase";
 		
 		String expectedMsg = "expectedMsg";
-		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider();
+		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey();
 		
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -1901,7 +1866,7 @@ public class UserNotificationServiceImplTest {
 		String msgCodeBase = "msgCodeBase";
 		
 		String expectedMsg = "expectedMsg";
-		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
+		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 		
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);

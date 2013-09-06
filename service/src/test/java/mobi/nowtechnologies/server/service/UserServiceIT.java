@@ -233,7 +233,7 @@ public class UserServiceIT {
 	private boolean isExpectedO2CommunityUser(User user) {
 		boolean isExpectedO2CommunityUser;
 
-		if ("o2".equals(user.getProvider())) {
+		if (O2.equals(user.getProvider())) {
 			isExpectedO2CommunityUser = isExpectedO2User(user);
 		} else {
 			isExpectedO2CommunityUser = isExpectedNotO2User(user);
@@ -246,7 +246,7 @@ public class UserServiceIT {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
-		boolean isExpectedNotO2User = !"o2".equals(user.getProvider()) && nextSubPayment <= currentTimeSeconds + DAY_SECONDS && currentPaymentDetails.isActivated() && user.getLastDeviceLogin() != 0
+		boolean isExpectedNotO2User = !O2.equals(user.getProvider()) && nextSubPayment <= currentTimeSeconds + DAY_SECONDS && currentPaymentDetails.isActivated() && user.getLastDeviceLogin() != 0
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()));
 
 		return isExpectedNotO2User;

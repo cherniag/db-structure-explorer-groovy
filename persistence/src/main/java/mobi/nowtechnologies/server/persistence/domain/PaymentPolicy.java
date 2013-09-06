@@ -78,8 +78,9 @@ public class PaymentPolicy {
     @Column(name="app_store_product_id")
     private String appStoreProductId;
 
-    @Column(name="provider", columnDefinition = "char(255)")
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    @Column(name="provider", columnDefinition = "varchar(255)")
+    private ProviderType provider;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -294,12 +295,11 @@ public class PaymentPolicy {
     }
 
     public ProviderType getProvider() {
-        return ProviderType.valueOfKey(provider);
+        return provider;
     }
 
     public void setProvider(ProviderType providerType) {
-        if (isNull(providerType)) provider = null;
-        else provider = providerType.toString();
+        provider = providerType;
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {

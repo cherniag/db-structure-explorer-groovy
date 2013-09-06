@@ -481,7 +481,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 		String[] codes = new String[6];
 
-        final String provider = user.getProvider() == null ? null : user.getProvider().toString();
+        final String providerKey = user.getProvider() == null ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
 		final Contract contract = user.getContract();
 		final DeviceType deviceType = user.getDeviceType();
@@ -492,7 +492,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		}
 
 		codes[0] = msgCodeBase;
-		codes[1] = getCode(codes, 0, provider);
+		codes[1] = getCode(codes, 0, providerKey);
 		codes[2] = getCode(codes, 1, segment);
 		codes[3] = getCode(codes, 2, contract);
 		codes[4] = getCode(codes, 3, deviceTypeName);

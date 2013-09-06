@@ -13,7 +13,7 @@ public class O2UserDetailsFactory
  {
 
 	public static O2UserDetails createO2UserDetails() {
-		return new O2UserDetails(O2.toString(), "");
+		return new O2UserDetails(O2.getKey(), "");
 	}
 
 

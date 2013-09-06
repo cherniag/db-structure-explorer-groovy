@@ -64,7 +64,7 @@ public class PaymentPolicyRepositoryIT {
         paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(O2).withMediaType(AUDIO).withContract(PAYG).withSegment(BUSINESS).withTariff(_3G).withDefault(true));
 
         //when
-        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2.toString(), BUSINESS, PAYG, _3G);
+        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
         assertNotNull(actualPaymentPolicy);
@@ -77,7 +77,7 @@ public class PaymentPolicyRepositoryIT {
         paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(null).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true));
 
         //when
-        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2.toString(), BUSINESS, PAYG, _3G);
+        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2, BUSINESS, PAYG, _3G);
 
         //then
         assertNotNull(actualPaymentPolicy);
