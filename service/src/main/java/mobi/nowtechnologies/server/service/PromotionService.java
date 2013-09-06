@@ -195,7 +195,7 @@ public class PromotionService {
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
             String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
-            promotion = userService.setPotentialPromo(user, promoCode);
+            promotion = userService.setPotentialPromoByPromoCode(user, promoCode);
         }else{
             promotion = null;
             LOGGER.error("Couldn't find promotion code [{}]", messageCodeForPromoCode);

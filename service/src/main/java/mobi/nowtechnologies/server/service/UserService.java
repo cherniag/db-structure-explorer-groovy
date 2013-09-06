@@ -442,6 +442,7 @@ public class UserService {
         return applyO2PotentialPromo(isO2User, user, community, freeTrialStartedTimestampSeconds);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
         Promotion promotion = null;
 
@@ -449,13 +450,13 @@ public class UserService {
         String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
 
         if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
-            promotion = setPotentialPromo(community, user, staffCode);
+            promotion = setPotentialPromoByPromoCode(user, staffCode);
         else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
-            promotion = setPotentialPromo(community, user, storeCode);
+            promotion = setPotentialPromoByPromoCode(user, storeCode);
         else if (isO2User)
-            promotion = setPotentialPromo(community.getName(), user, "promotionCode");
+            promotion = setPotentialPromoByMessageCode(community.getName(), user, "promotionCode");
         else
-            promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");
+            promotion = setPotentialPromoByMessageCode(community.getName(), user, "defaultPromotionCode");
 
         return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
     }
@@ -1310,7 +1311,7 @@ public class UserService {
 					promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
 			}
 
-			setPotentialPromoCodePromotion(community, user, promotionCode);
+            setPotentialPromoByPromoCode(user, promotionCode);
 
 		}
 
@@ -1352,20 +1353,18 @@ public class UserService {
 		return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
 	}
 
-    public Promotion setPotentialPromo(User user, String promotionCode) {
-        Community community = user.getUserGroup()
-                .getCommunity();
-        return setPotentialPromo(community, user, promotionCode);
-    }
 
-	public Promotion setPotentialPromo(String communityName, User user, String promotionCode) {
-		Community community = communityService.getCommunityByName(communityName);
+    @Transactional(propagation = Propagation.REQUIRED)
+	public Promotion setPotentialPromoByMessageCode(String communityName, User user, String messageCode) {
+        Community community = user.getUserGroup().getCommunity();
 		String communityUri = community.getRewriteUrlParameter().toLowerCase();
-		String code = messageSource.getMessage(communityUri, promotionCode, null, null);
-		return setPotentialPromo(community, user, code);
+		String promoCode = messageSource.getMessage(communityUri, messageCode, null, null);
+		return setPotentialPromoByPromoCode(user, promoCode);
 	}
 
-	protected Promotion setPotentialPromo(Community community, User user, String code) {
+    @Transactional(propagation = Propagation.REQUIRED)
+	protected Promotion setPotentialPromoByPromoCode(User user, String code) {
+        Community community = user.getUserGroup().getCommunity();
 		if (code != null) {
 			Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
 			user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
@@ -1373,14 +1372,6 @@ public class UserService {
 			return potentialPromoCodePromotion;
 		}
 		return null;
-	}
-
-	public void setPotentialPromoCodePromotion(Community community, User user, String promotionCode) {
-		if (promotionCode != null) {
-			Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(promotionCode, community.getName());
-			user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
-			entityService.updateEntity(user);
-		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

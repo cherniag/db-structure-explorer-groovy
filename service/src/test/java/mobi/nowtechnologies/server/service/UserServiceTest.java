@@ -2437,8 +2437,8 @@ public class UserServiceTest {
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(true);
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
 		when(o2ClientServiceMock.isO2User(any(O2UserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), anyString());
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2450,8 +2450,8 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(0)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(O2UserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
-		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), anyString());
+		verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		verify(userServiceSpy, times(1)).setPotentialPromoByPromoCode(any(User.class), anyString());
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2469,9 +2469,9 @@ public class UserServiceTest {
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
 		when(o2ClientServiceMock.isO2User(any(O2UserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2483,9 +2483,9 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(O2UserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
-		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		verify(userServiceSpy, times(1)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2503,9 +2503,9 @@ public class UserServiceTest {
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
 		when(o2ClientServiceMock.isO2User(any(O2UserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2517,10 +2517,10 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(O2UserDetails.class));
-		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(anyString(), any(User.class), eq("promotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(anyString(), any(User.class), eq("defaultPromotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2538,9 +2538,9 @@ public class UserServiceTest {
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
 		when(o2ClientServiceMock.isO2User(any(O2UserDetails.class))).thenReturn(false);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(anyString(), any(User.class), anyString());
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+		doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2552,10 +2552,10 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(O2UserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
-		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(anyString(), any(User.class), eq("promotionCode"));
+		verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(anyString(), any(User.class), eq("defaultPromotionCode"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+		verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	

@@ -52,9 +52,9 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "where " +
             "paymentPolicy.community=?1 " +
             "and paymentPolicy.paymentType= '" + O2PSMSPaymentDetails.O2_PSMS_TYPE +"' " +
-            "and paymentPolicy.provider=?2 " +
-            "and paymentPolicy.segment=?3 " +
-            "and paymentPolicy.contract=?4 " +
+            "and (paymentPolicy.provider=?2 or paymentPolicy.provider is null)" +
+            "and (paymentPolicy.segment=?3 or paymentPolicy.segment is null)" +
+            "and (paymentPolicy.contract=?4 or paymentPolicy.contract is null)" +
             "and paymentPolicy.tariff=?5 " +
             "and paymentPolicy.isDefault=true ")
     PaymentPolicy findDefaultO2PsmsPaymentPolicy(Community community, String provider, SegmentType segment, Contract contract, Tariff tariff);

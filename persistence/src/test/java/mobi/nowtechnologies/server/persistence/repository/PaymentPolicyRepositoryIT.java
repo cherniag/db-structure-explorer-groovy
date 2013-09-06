@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -25,6 +27,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 public class PaymentPolicyRepositoryIT {
 
     @Resource(name = "paymentPolicyRepository")
@@ -68,12 +71,26 @@ public class PaymentPolicyRepositoryIT {
         assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
 
+    @Test
+    public void shouldReturnOneDefaultO2PsmsPaymentPolicyWithNullProviderSegmentContract(){
+        //given
+        paymentPolicy = paymentPolicyRepository.save(createPaymentPolicyWithCommunity().withPaymentType(O2_PSMS_TYPE).withProvider(null).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true));
+
+        //when
+        PaymentPolicy actualPaymentPolicy= paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(o2Community, O2.toString(), BUSINESS, PAYG, _3G);
+
+        //then
+        assertNotNull(actualPaymentPolicy);
+        assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
+    }
+
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");
 
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         paymentPolicy.setTariff(_3G);
         paymentPolicy.setCommunity(o2Community);
+        paymentPolicy.setMediaType(MediaType.AUDIO);
         return paymentPolicy;
     }
 
