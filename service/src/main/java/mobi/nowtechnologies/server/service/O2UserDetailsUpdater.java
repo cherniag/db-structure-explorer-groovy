@@ -63,7 +63,7 @@ public class O2UserDetailsUpdater {
 		O2SubscriberData data = new O2SubscriberData();
 		data.setBusinessOrConsumerSegment(user.getSegment() == SegmentType.BUSINESS);
 		data.setContractPostPayOrPrePay(user.getContract() == Contract.PAYM);
-		data.setProviderO2(ProviderType.O2.toString().equals(user.getProvider()));
+		data.setProviderO2(ProviderType.O2.equals(user.getProvider()));
 		data.setTariff4G(user.getTariff() == Tariff._4G);
 		data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
 		return data;
