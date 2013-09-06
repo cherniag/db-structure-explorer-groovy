@@ -33,23 +33,26 @@ public class O2UserDetailsUpdater {
 
 		List<String> differences = Lists.newArrayList();
 
-		if (userData.isBusinessOrConsumerSegment() != data.isBusinessOrConsumerSegment()) {
+		// if the contract/provider/segment is set to null in user object, we still set data in O2SubscriberData object...
+		// a case that's failing is user.segment == null, and in the data we receive from o2 user segment is CONTRACT
+		// the old logic would not see a difference
+		if (user.getSegment() == null || userData.isBusinessOrConsumerSegment() != data.isBusinessOrConsumerSegment()) {
 			differences.add("segment");
 		}
 
-		if (userData.isContractPostPayOrPrePay() != data.isContractPostPayOrPrePay()) {
+		if (user.getContract() == null || userData.isContractPostPayOrPrePay() != data.isContractPostPayOrPrePay()) {
 			differences.add("contract");
 		}
 
-		if (userData.isProviderO2() != data.isProviderO2()) {
+		if (user.getProvider() == null || userData.isProviderO2() != data.isProviderO2()) {
 			differences.add("provider");
 		}
 
-		if (userData.isTariff4G() != data.isTariff4G()) {
+		if (user.getTariff() == null || userData.isTariff4G() != data.isTariff4G()) {
 			differences.add("tariff4G");
 		}
 
-		if (userData.isDirectOrIndirect4GChannel() != data.isDirectOrIndirect4GChannel()) {
+		if (user.getContractChannel() == null || userData.isDirectOrIndirect4GChannel() != data.isDirectOrIndirect4GChannel()) {
 			differences.add("direct4GChannel");
 		}
 		return differences;
