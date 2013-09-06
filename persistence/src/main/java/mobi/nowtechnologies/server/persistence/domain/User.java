@@ -190,9 +190,7 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private ActivationStatus activationStatus;
 
-    @Column(name = "provider")
-    @Enumerated(EnumType.STRING)
-	private ProviderType provider;
+    private String provider;
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "char(255)")
@@ -372,17 +370,18 @@ public class User implements Serializable {
     }
 
     private boolean isPaymentPolicyInvalidBySegment() {
-        return O2.equals(provider) && segment != currentPaymentDetails.getPaymentPolicy().getSegment();
+        return O2.equals(getProvider()) && segment != currentPaymentDetails.getPaymentPolicy().getSegment();
     }
 
     private boolean isPaymentPolicyInvalidByProvider() {
         ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
+        ProviderType userProvider = getProvider();
 
-        return (isNotNull(provider) && !provider.equals(paymentPolicyProvider)) || (isNull(provider) && isNotNull(paymentPolicyProvider));
+        return (isNotNull(userProvider) && !userProvider.equals(paymentPolicyProvider)) || (isNull(userProvider) && isNotNull(paymentPolicyProvider));
     }
 
     public boolean isNonO2User() {
-		return !O2.equals(provider);
+		return !O2.equals(getProvider());
 	}
 
 	public boolean isO2CommunityUser() {
@@ -396,7 +395,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isO2User() {
-		return O2.equals(this.provider) && isO2CommunityUser();
+		return O2.equals(getProvider()) && isO2CommunityUser();
 	}
 
 	public boolean isO2Consumer() {
@@ -1104,11 +1103,12 @@ public class User implements Serializable {
 	}
 
     public ProviderType getProvider() {
-        return provider;
+        return ProviderType.valueOfKey(provider);
     }
 
-    public void setProvider(ProviderType provider) {
-        this.provider = provider;
+    public void setProvider(ProviderType providerType) {
+        if (isNull(providerType)) provider = null;
+        else provider = providerType.toString();
     }
 
     public Contract getContract() {

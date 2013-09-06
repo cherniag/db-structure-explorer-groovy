@@ -94,6 +94,6 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
-        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(user.getUserGroup().getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff());
+        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(user.getUserGroup().getCommunity(), user.getProvider().toString(), user.getSegment(), user.getContract(), user.getTariff());
     }
 }

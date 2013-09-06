@@ -19,6 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 
 @Entity
@@ -77,9 +78,8 @@ public class PaymentPolicy {
     @Column(name="app_store_product_id")
     private String appStoreProductId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name="provider", columnDefinition = "char(255)")
-    private ProviderType provider;
+    private String provider;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -294,11 +294,12 @@ public class PaymentPolicy {
     }
 
     public ProviderType getProvider() {
-        return provider;
+        return ProviderType.valueOfKey(provider);
     }
 
-    public void setProvider(ProviderType provider) {
-        this.provider = provider;
+    public void setProvider(ProviderType providerType) {
+        if (isNull(providerType)) provider = null;
+        else provider = providerType.toString();
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
