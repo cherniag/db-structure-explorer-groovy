@@ -165,7 +165,7 @@ public class PaymentsController extends CommonController {
         	String[] codes = new String[4];
     		codes[3] = msgCodeBase;
     		if (user.getProvider() != null) {
-    			codes[2] = msgCodeBase + "." + user.getProvider();
+    			codes[2] = msgCodeBase + "." + user.getProvider().getKey();
     			if (user.getSegment() != null) {
     				codes[1] = codes[2] + "." + user.getSegment();
     				if (user.getContract() != null) {
