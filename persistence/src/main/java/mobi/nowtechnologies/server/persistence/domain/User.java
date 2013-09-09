@@ -1354,6 +1354,14 @@ public class User implements Serializable {
     }
 
     public boolean isEligibleForVideo(){
-        return isO24GConsumer();
+        return isO24GConsumer() || isOnWhiteListedVideoAudioFreeTrial();
+    }
+
+    public boolean isOnWhiteListedVideoAudioFreeTrial(){
+        return isOnVideoAudioFreeTrial() && isWhiteListedLastPromo();
+    }
+
+    private boolean isWhiteListedLastPromo() {
+        return isNotNull(lastPromo) && lastPromo.isWhiteListed();
     }
 }

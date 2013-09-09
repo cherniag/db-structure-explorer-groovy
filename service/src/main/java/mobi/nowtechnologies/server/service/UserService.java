@@ -1863,9 +1863,10 @@ public class UserService {
     }
 
     /** called by UpdateO2User job when provider/segment/contract/4G/channel have been changed*/
+    @Transactional(propagation = Propagation.REQUIRED)
     public void o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
 		Tariff newTariff = o2SubscriberData.isTariff4G() ? Tariff._4G : Tariff._3G;
-		if (newTariff != user.getTariff()) {
+		if (!newTariff.equals(user.getTariff()) && !user.isOnWhiteListedVideoAudioFreeTrial()) {
 			LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(),  newTariff);
 			user = downgradeUserTariff(user, newTariff);
 		}

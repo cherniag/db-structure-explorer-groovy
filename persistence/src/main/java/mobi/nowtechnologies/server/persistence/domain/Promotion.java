@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.ObjectUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.List;
@@ -65,6 +66,9 @@ public class Promotion implements Serializable {
 
 	@OneToOne(fetch = FetchType.EAGER, mappedBy="promotion")
 	private PromoCode promoCode;
+
+    @Column(name = "is_white_listed", columnDefinition = "BIT default false")
+    private boolean isWhiteListed;
 
 	public Promotion() {
 	}
@@ -182,7 +186,7 @@ public class Promotion implements Serializable {
 	}
 
     public Integer getPromoCodeId() {
-        if (ObjectUtils.isNotNull(promoCode)){
+        if (isNotNull(promoCode)){
             return promoCode.getId();
         }
         return null;
@@ -209,6 +213,14 @@ public class Promotion implements Serializable {
 
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
+    }
+
+    public boolean isWhiteListed() {
+        return isWhiteListed;
+    }
+
+    public void setWhiteListed(boolean whiteListed) {
+        isWhiteListed = whiteListed;
     }
 
     public Promotion withDescription(String description){
@@ -277,10 +289,24 @@ public class Promotion implements Serializable {
     }
 
     @Override
-	public String toString() {
-		return "Promotion [i=" + i + ", description=" + description + ", type=" + type + ", endDate=" + endDate + ", freeWeeks=" + freeWeeks + ", isActive="
-				+ isActive + ", maxUsers=" + maxUsers + ", numUsers=" + numUsers + ", startDate=" + startDate + ", subWeeks=" + subWeeks + ", userGroupId="
-				+ getUserGroupId() + ", showPromotion=" + showPromotion + ", label=" + label + ", promoCodeId=" + getPromoCodeId() + "]";
-	}
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("subWeeks", subWeeks)
+                .append("description", description)
+                .append("type", type)
+                .append("endDate", endDate)
+                .append("freeWeeks", freeWeeks)
+                .append("isActive", isActive)
+                .append("maxUsers", maxUsers)
+                .append("numUsers", numUsers)
+                .append("startDate", startDate)
+                .append("showPromotion", showPromotion)
+                .append("label", label)
+                .append("isWhiteListed", isWhiteListed)
+                .append("userGroupId", getUserGroupId())
+                .append("promoCodeId", getPromoCodeId())
+                .toString();
+    }
 
 }
