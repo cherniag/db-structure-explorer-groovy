@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class IParser {
+public abstract class IParser{
 
 	public abstract Map<String, DropTrack> ingest(DropData drop);
 

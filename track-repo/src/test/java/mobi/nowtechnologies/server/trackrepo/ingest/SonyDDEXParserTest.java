@@ -23,7 +23,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public class SonyDDEXParserTest extends ParserTest{
+public class SonyDDEXParserTest extends ParserTest<SonyDDEXParser>{
 
     private Map<String, DropTrack> resultDropTrackMap;
     private String expectedAlbum;

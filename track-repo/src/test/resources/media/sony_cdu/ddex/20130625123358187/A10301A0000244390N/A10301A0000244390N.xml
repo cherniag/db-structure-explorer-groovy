@@ -1,0 +1,2063 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ernm:NewReleaseMessage LanguageAndScriptCode="en" MessageSchemaVersionId="/ern/341" xs:schemaLocation="http://ddex.net/xml/ern/341 http://ddex.net/xml/ern/341/release-notification.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/341">
+    <MessageHeader>
+        <MessageThreadId>G010000244390N_MQB</MessageThreadId>
+        <MessageId>9526259</MessageId>
+        <MessageSender>
+            <PartyId>PADPIDA2007040502I</PartyId>
+            <PartyName>
+                <FullName>Sony Music Entertainment</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>Musicqubed</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-25T12:06:41.636-04:00</MessageCreatedDateTime>
+        <MessageControlType>TestMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator>OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200310</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Älä Revi Mua</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M30S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Älä Revi Mua</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Älä Revi Mua</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2002</Year>
+                    <PLineText>(P) 2002 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T1</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-001.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>16e3177adea803c5e7be707e37547d1b</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T2</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-001.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>e7d1254a9749bb8b2a9fb255a6040ed6</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T3</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-001.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>d52cb47613dcb1b5f2dc9849744dbb5a</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200460</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A2</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Vesitornin varjossa</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M3S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vesitornin varjossa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vesitornin varjossa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T4</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-002.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>a7a293f301d786a3b0991c31402d21aa</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T5</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-002.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>cdee905b74af551c22f6d35ee2f7dee4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T6</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-002.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>10f1cdbc61c3e5bd73eca510d7fa072d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200461</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A3</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Ihoni alla</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M43S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ihoni alla</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ihoni alla</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T7</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-003.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>d4122108b019754d02fa9fb409746012</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T8</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-003.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>da27ace0800be381ac975db8acfcd3b8</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T9</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-003.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>8e39b4f5efd36c78ce40f64915029992</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200462</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A4</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Aika vaihtuu</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M7S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Aika vaihtuu</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Aika vaihtuu</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Pekka Lehti</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Ahti Marja-Aho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T10</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-004.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>d15e1d8b52d7526d733730da163c5bca</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T11</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-004.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>bfcc3fa7441164161440e019d1afd51c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T12</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-004.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>369e6c0e7ae1213c73d7a36284bae143</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200463</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A5</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Auringonpilkut</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M21S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Auringonpilkut</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Auringonpilkut</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T13</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-005.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5e4e7e176b3eb895105c6d7b874f6faa</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T14</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-005.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>b7ee5af853667aaf7d324f141122403b</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T15</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-005.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>718eed2bb83de63b7d30842b39f1707f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200464</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A6</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Haloo Hanoi</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M31S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Haloo Hanoi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Haloo Hanoi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Janne Haavisto</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Tom Nyman</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Matti Pitsinki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Mikko Lankinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T16</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-006.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>36990792478b69ea28e40e789a45a8e4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T17</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-006.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>85205619d4f17c6d41bcf859dcd172b4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T18</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-006.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>bc3e672d3245d15bd9665a8f5120417f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200465</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A7</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Hiekkamies</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M30S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiekkamies</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiekkamies</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T19</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-007.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>34722ac904a08aef0cd63dace6e40ddf</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T20</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-007.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>cb507f081832c66b66fd953f6f41c710</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T21</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-007.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c61d13b862ed1d8a35bb6f6acaa7965f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200466</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A8</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Viimeinen kerta</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M34S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Viimeinen kerta</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Viimeinen kerta</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T22</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-008.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ea38300382668486c67377f37a828359</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T23</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-008.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>10d6fc333683ca507f9fc91dde7af760</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T24</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-008.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>bad4d039fe1a3f9b96b07e5d01fa93b2</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200467</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A9</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Muistan unohtaa</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M48S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muistan unohtaa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muistan unohtaa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T25</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-009.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>cd59229eeaf8be880775758b59d75393</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T26</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-009.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>fa2281b48e684f41c53ae065c228ef60</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T27</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-009.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>0bb788ff4a614834cb5cb55dde89c697</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR0200468</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A10</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Kivi, sakset, paperi</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M33S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kivi, sakset, paperi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kivi, sakset, paperi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Jussi Jaakonaho</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Timo Lassy</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2003</Year>
+                    <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T28</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10413_SoundRecording_001-010.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>acd946f1eb5c7d8531d40feb21957ef0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T29</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-11006_SoundRecording_001-010.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>6146f918a9b01c9a53e3e0baa03a87b9</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T30</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10253_SoundRecording_001-010.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>8fc656c345efa1342d435968445a7f8e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">G010000244390N</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A11</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>T31</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1500</ImageHeight>
+                    <ImageWidth>1500</ImageWidth>
+                    <ImageResolution>72</ImageResolution>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244390N_T-10026_Image.jpg</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c97537da6525f0b84cbeab4786ee66f3</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <GRid>A10301A0000244390N</GRid>
+                <ICPN IsEan="false">828765023726</ICPN>
+                <CatalogNumber Namespace="DPID:PADPIDA2007040502I">G010000244390N</CatalogNumber>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799627</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tuure Kilpeläinen</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuure Kilpeläinen</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuure Kilpeläinen</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <Title TitleType="GroupingTitle">
+                            <TitleText>Disc 1</TitleText>
+                        </Title>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>2</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>3</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>4</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>5</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>6</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>7</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>8</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>9</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>10</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>11</SequenceNumber>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>RCA Records Label</LabelName>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <OriginalReleaseDate>2003-03-24</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H38M40S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P)  2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494723</GRid>
+                <ISRC>FIBAR0200310</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799628</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Älä Revi Mua</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Älä Revi Mua</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Älä Revi Mua</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M30S</Duration>
+            <PLine>
+                <Year>2002</Year>
+                <PLineText>(P) 2002 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494731</GRid>
+                <ISRC>FIBAR0200460</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799629</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R2</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Vesitornin varjossa</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vesitornin varjossa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vesitornin varjossa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M3S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494715</GRid>
+                <ISRC>FIBAR0200461</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799630</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R3</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Ihoni alla</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ihoni alla</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ihoni alla</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M43S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494707</GRid>
+                <ISRC>FIBAR0200462</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799631</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R4</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Aika vaihtuu</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Aika vaihtuu</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Aika vaihtuu</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M7S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749469U</GRid>
+                <ISRC>FIBAR0200463</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799632</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R5</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Auringonpilkut</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Auringonpilkut</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Auringonpilkut</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M21S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749468W</GRid>
+                <ISRC>FIBAR0200464</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799633</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R6</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Haloo Hanoi</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Haloo Hanoi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Haloo Hanoi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M31S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749467Y</GRid>
+                <ISRC>FIBAR0200465</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799634</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R7</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Hiekkamies</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiekkamies</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiekkamies</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M30S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494660</GRid>
+                <ISRC>FIBAR0200466</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799635</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R8</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Viimeinen kerta</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Viimeinen kerta</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Viimeinen kerta</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M34S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494651</GRid>
+                <ISRC>FIBAR0200467</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799636</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R9</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Muistan unohtaa</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muistan unohtaa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muistan unohtaa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M48S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047494643</GRid>
+                <ISRC>FIBAR0200468</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799637</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R10</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Kivi, sakset, paperi</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tuure Kilpeläinen</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kivi, sakset, paperi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kivi, sakset, paperi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tuure Kilpeläinen</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M33S</Duration>
+            <PLine>
+                <Year>2003</Year>
+                <PLineText>(P) 2003 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">10.73</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.71</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R10</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.64</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R2</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.94</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R3</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.54</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R4</DealReleaseReference>
+            <DealReleaseReference>R7</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.67</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R5</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.83</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R6</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.86</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R8</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.91</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R9</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.90</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2003-03-24</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ernm:NewReleaseMessage>

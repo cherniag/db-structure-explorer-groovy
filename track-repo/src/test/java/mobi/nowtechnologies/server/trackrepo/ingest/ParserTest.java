@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
-import mobi.nowtechnologies.server.trackrepo.ingest.Parser;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.XpathEngine;
@@ -22,9 +21,9 @@ import java.util.HashMap;
  * User: Titov Mykhaylo (titov)
  * 02.09.13 15:42
  */
-public abstract class ParserTest {
+public abstract class ParserTest<T extends IParser> {
 
-    protected Parser parserFixture;
+    protected T parserFixture;
     protected XpathEngine xpathEngine;
     protected File xmlFile;
     protected Document document;

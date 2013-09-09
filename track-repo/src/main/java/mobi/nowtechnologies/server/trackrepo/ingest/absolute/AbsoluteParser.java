@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import com.google.common.base.Joiner;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import mobi.nowtechnologies.server.trackrepo.ingest.Parser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -14,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +22,14 @@ import java.util.Map;
 
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 
-public class AbsoluteParser implements Parser {
+public class AbsoluteParser extends IParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
+
+    public AbsoluteParser(String root) throws FileNotFoundException {
+        super(root);
+        LOGGER.info("Warner parser loading from " + root);
+    }
 
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
@@ -111,5 +116,15 @@ public class AbsoluteParser implements Parser {
 
     private String getDropTrackKey(String isrc) {
         return Joiner.on('_').join(isrc, getClass().getSimpleName());
+    }
+
+    @Override
+    public Map<String, DropTrack> ingest(DropData drop) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<DropData> getDrops(boolean auto) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

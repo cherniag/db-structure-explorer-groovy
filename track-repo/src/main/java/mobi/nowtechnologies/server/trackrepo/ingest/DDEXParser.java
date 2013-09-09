@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -22,12 +20,34 @@ import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public abstract class DDEXParser extends IParser implements Parser {
+public abstract class DDEXParser extends IParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
     public DDEXParser(String root) throws FileNotFoundException {
         super(root);
+    }
+
+    public Map<String, DropTrack> ingest(DropData drop) {
+
+        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+        try {
+            File folder = new File(drop.name);
+            File[] content = folder.listFiles();
+            for (File file : content) {
+                String xmlFileName = file.getName() + ".xml";
+                Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
+
+                if (result != null) {
+                    tracks.putAll(result);
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Ingest failed "+e.getMessage());
+        }
+        return tracks;
+
     }
 
     @SuppressWarnings("unchecked")
@@ -459,12 +479,51 @@ public abstract class DDEXParser extends IParser implements Parser {
         return root + "/resources/" + file;
     }
 
+    public List<DropData> getDrops(boolean auto) {
+
+        List<DropData> result = new ArrayList<DropData>();
+        File rootFolder = new File(root);
+        result.addAll(getDrops(rootFolder, auto));
+        for (int i = 0; i < result.size(); i++) {
+            LOGGER.info("Drop folder " + result.get(i));
+        }
+        return result;
+    }
+
+    protected List<DropData> getDrops(File folder, boolean auto) {
+
+        List<DropData> result = new ArrayList<DropData>();
+        File[] content = folder.listFiles();
+        boolean deliveryComplete = false;
+        boolean processed = false;
+        for (File file : content) {
+            if (isDirectory(file)) {
+                result.addAll(getDrops(file, auto));
+            } else if (file.getName().startsWith("BatchComplete")) {
+                deliveryComplete = true;
+            } else if ("ingest.ack".equals(file.getName())) {
+                processed = true;
+            } else if (auto && "autoingest.ack".equals(file.getName())) {
+                processed = true;
+            }
+        }
+        if (deliveryComplete && !processed) {
+            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            DropData drop = new DropData();
+            drop.name =folder.getAbsolutePath();
+            drop.date = new Date(folder.lastModified());
+
+            result.add(drop);
+        }
+        return result;
+    }
+
     public abstract void getIds(Element release, DropTrack track, List<DropAssetFile> files);
 
     public void setUpc(DropTrack track, String upc) {
     }
 
-    public void setGRid(DropTrack track, String GRid) {
+    public void setGRid(DropTrack track, String GRid) {;
     }
 
     public boolean checkAlbum(String type) {

@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -16,24 +15,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
-import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class AbsoluteParserTest extends ParserTest {
+public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
     private Map<String,DropTrack> resultDropTrackMap;
     private NodeList expectedTrackReleaseIdNodeList;
 
-    public void createParser() {
-        parserFixture = new AbsoluteParser();
+    public void createParser() throws FileNotFoundException {
+        parserFixture = new AbsoluteParser("classpath:media/absolute/");
     }
 
     public void populateXmlPrefixMap() {
