@@ -215,7 +215,7 @@ public class TrackServiceTest {
 		assertEquals(track.getIsrc(), ISRC_VALUE);
 		assertEquals(track.getIngestor(), INGESTOR_VALUE);
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
-		assertEquals(track.getStatus(), TrackStatus.ENCODED);
+		assertEquals(track.getStatus(), TrackStatus.PUBLISHED);
 	}
 
     @Test

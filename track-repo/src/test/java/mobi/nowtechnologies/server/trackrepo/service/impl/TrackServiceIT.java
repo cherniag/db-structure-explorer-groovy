@@ -72,6 +72,7 @@ public class TrackServiceIT {
 		long curTime = System.currentTimeMillis();
 		assertNotNull(track);
 		assertEquals(anyTrack.getId(), track.getId());
+        assertEquals(TrackStatus.PUBLISHED, track.getStatus());
 		assertNotNull(track.getPublishDate());
 		assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
 	}

@@ -102,6 +102,7 @@ public class TrackServiceImpl implements TrackService {
 
 		try {
 			track.setStatus(TrackStatus.ENCODING);
+            track.setPublishDate(null);
 			trackRepository.save(track);
 
 			licensed = licensed == null ? track.getLicensed() : licensed;
@@ -152,15 +153,37 @@ public class TrackServiceImpl implements TrackService {
 		return track;
 	}
 
-	@Override
+    @Override
+    public Track pull(Long trackId) {
+        LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
+
+        Track track = trackRepository.findOneWithCollections(trackId);
+
+        if (track == null || track.getStatus() != TrackStatus.ENCODED || track.getStatus() != TrackStatus.PUBLISHED)
+            return track;
+
+        TrackStatus oldStatus = track.getStatus();
+
+        track.setStatus(TrackStatus.PUBLISHING);
+        trackRepository.save(track);
+
+        try {
+            pull(track);
+
+            track.setStatus(TrackStatus.PUBLISHED);
+        } catch (Exception e){
+            track.setStatus(oldStatus);
+        }
+
+        trackRepository.save(track);
+
+        LOGGER.info("output pull(trackId): [{}]", new Object[] { track });
+        return track;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Track pull(Long trackId) {
-		LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
-
-		Track track = trackRepository.findOneWithCollections(trackId);
-
-		if (track == null || track.getStatus() != TrackStatus.ENCODED)
-			return track;
+	protected Track pull(Track track) {
+		LOGGER.info("start pull process: [{}]", new Object[] { track.getIsrc() });
 
 		try {
 			
@@ -176,7 +199,7 @@ public class TrackServiceImpl implements TrackService {
 			
 			for (int i = 0; i < pullFiles.length; i++) {
                 if(pullFiles[i] != null)
-				    cloudFileService.copyFile(pullFiles[i], destPullContainer, trackId+"_"+pullFiles[i], srcPullContainer);
+				    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId()+"_"+pullFiles[i], srcPullContainer);
 			}
 
             //upload video on brightcove if it exists
@@ -191,7 +214,7 @@ public class TrackServiceImpl implements TrackService {
 			throw new RuntimeException("Cannot pull encoded track.");
 		}
 
-		LOGGER.info("output pull(trackId): [{}]", new Object[] { track });
+		LOGGER.info("end pull process: [{}]", new Object[] { track.getIsrc() });
 		return track;
 	}
 

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
@@ -55,7 +54,13 @@ public class TrackController extends AbstractCommonController{
         WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                return new TrackDtoMapper(trackService.encode(trackId, isHighRate, licensed));
+               // return new TrackDtoMapper(trackService.encode(trackId, isHighRate, licensed));
+                Thread.sleep(4000);
+
+                Track track = new Track();
+                track.setStatus(TrackStatus.ENCODED);
+
+                return new TrackDtoMapper(track);
             }
         });
         encodeTask.onTimeout(new Callable<TrackDto>() {
@@ -83,23 +88,30 @@ public class TrackController extends AbstractCommonController{
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                try {
-                    Track track = trackService.pull(trackId);
-                    TrackDtoMapper trackDto = new TrackDtoMapper(track);
+//                try {
+//                    Track track = trackService.pull(trackId);
+//                    TrackDtoMapper trackDto = new TrackDtoMapper(track);
+//
+//                    if(track.getStatus() == TrackStatus.PUBLISHED){
+//                        trackDto.setFiles(resourceFileDtoBuilder.build(track));
+//                        Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
+//                        if (publishTerritory != null) {
+//                            trackDto.setPublishDate(publishTerritory.getStartDate());
+//                        }
+//                    }
+//
+//                    return trackDto;
+//                } catch (Exception e) {
+//                    LOGGER.error("Cannot pull encoded track.", e);
+//                    throw new RuntimeException(e.getMessage());
+//                }
+                Thread.sleep(4000);
 
-                    if(track.getStatus() == TrackStatus.ENCODED){
-                        trackDto.setFiles(resourceFileDtoBuilder.build(track));
-                        Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
-                        if (publishTerritory != null) {
-                            trackDto.setPublishDate(publishTerritory.getStartDate());
-                        }
-                    }
+                Track track = new Track();
+                track.setStatus(TrackStatus.PUBLISHED);
+                track.setPublishDate(new Date());
 
-                    return trackDto;
-                } catch (Exception e) {
-                    LOGGER.error("Cannot pull encoded track.", e);
-                    throw new RuntimeException(e.getMessage());
-                }
+                return new TrackDtoMapper(track);
             }
         });
         pullTask.onTimeout(new Callable<TrackDto>() {

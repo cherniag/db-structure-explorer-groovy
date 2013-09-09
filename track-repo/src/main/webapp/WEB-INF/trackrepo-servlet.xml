@@ -11,13 +11,26 @@
 		DispatcherServlet Context: defines this servlet's request-processing
 		infrastructure
 	-->
+    <!-- Application properties     -->
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+                <value>classpath:trackrepo-application.properties</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
+                <value>file:#{systemProperties['catalina.base']}/conf/trackrepo-application.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="ignoreResourceNotFound" value="true" />
+    </bean>
 
 	<!-- Configures the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven>
 	    <mvc:argument-resolvers>
 	        <bean class="org.springframework.data.web.PageableArgumentResolver" />
 	    </mvc:argument-resolvers>
-        <mvc:async-support task-executor="trackRepo.TaskExecuter" default-timeout="${trackRepo.executor.timeout}">
+        <mvc:async-support task-executor="trackRepo.TaskExecuter" default-timeout="60000">
         </mvc:async-support>
 	</mvc:annotation-driven>
 

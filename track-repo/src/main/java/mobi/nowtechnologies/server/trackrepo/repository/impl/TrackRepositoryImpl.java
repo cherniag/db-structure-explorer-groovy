@@ -23,13 +23,15 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
         String suffixQuery = createSuffixQuery(searchTrackCreateria);
 
-        Long count = 1L;
+        Long total = 1L;
+        Integer pageSize = 1;
         if(pagable != null){
             Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixQuery, searchTrackCreateria);
             countQuery.setFirstResult(pagable.getOffset());
             countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
             List<Integer> ids = countQuery.getResultList();
-            count = new Long(ids.size() + pagable.getOffset());
+            total = new Long(ids.size() + pagable.getOffset());
+            pageSize = pagable.getPageSize();
         }
 
         Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCreateria);
@@ -42,7 +44,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
         Iterator<Track> i = limitedTrackList.iterator();
         int j = 0;
-        while (i.hasNext() && j < pagable.getPageSize()) {
+        while (i.hasNext() && j < pageSize) {
             Track track = i.next();
 
             if (searchTrackCreateria.isWithTerritories())
@@ -58,7 +60,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             j++;
         }
 
-        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, count);
+        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, total);
         return page;
     }
 
