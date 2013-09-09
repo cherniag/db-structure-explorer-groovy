@@ -187,7 +187,7 @@ public class ChartServiceTest {
 	}
 	
 	@Test
-	public void testGetLockedChartItems_UserSubscribed_Success()
+	public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success()
 			throws Exception {
 		List<String> chartDetailIds = Collections.singletonList("ISRC");
 		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
@@ -196,6 +196,7 @@ public class ChartServiceTest {
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+48*60*60);
+        user.setFreeTrialExpiredMillis(user.getNextSubPayment()*1000L);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -220,6 +221,7 @@ public class ChartServiceTest {
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -245,6 +247,7 @@ public class ChartServiceTest {
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
