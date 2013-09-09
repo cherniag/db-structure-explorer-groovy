@@ -6,9 +6,9 @@
 		<c:if test="${not empty paymentPageData and not empty paymentPageData.subscriptionTexts and not empty paymentPageData.subscriptionTexts.statusText}">
 			<c:out value="${paymentPageData.subscriptionTexts.statusText}" />
 			
-			<c:if test="${not empty paymentPageData.subscriptionTexts.futureText}">
+			<%-- <c:if test="${not empty paymentPageData.subscriptionTexts.futureText}">
 				&nbsp;/&nbsp;<c:out value="${paymentPageData.subscriptionTexts.futureText}" />
-			</c:if>
+			</c:if> --%>
 			
 			<c:if test="${not empty paymentPageData.subscriptionTexts.nextBillingText}">
 				<br /><c:out value="${paymentPageData.subscriptionTexts.nextBillingText}" />

@@ -69,7 +69,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public IngestWizardDataDto getDrops() {
         LOGGER.debug("input getDrops()");
 
@@ -80,7 +79,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public IngestWizardDataDto selectDrops(IngestWizardDataDto input) {
         LOGGER.debug("input selectDrops(): [{}]", new Object[] { input });
 
@@ -91,7 +89,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public IngestWizardDataDto selectTrackDrops(IngestWizardDataDto input) {
         LOGGER.debug("input selectTrackDrops(): [{}]", new Object[] { input });
 
@@ -102,7 +99,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Boolean commitDrops(IngestWizardDataDto data) {
         LOGGER.debug("input commitDrops(): [{}]", new Object[] { data });
 
