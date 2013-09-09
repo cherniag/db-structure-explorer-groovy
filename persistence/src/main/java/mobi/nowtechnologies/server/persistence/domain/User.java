@@ -379,7 +379,7 @@ public class User implements Serializable {
         ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
         ProviderType userProvider = getProvider();
 
-        return (isNotNull(userProvider) && !userProvider.equals(paymentPolicyProvider)) || (isNull(userProvider) && isNotNull(paymentPolicyProvider));
+        return isNotNull(paymentPolicyProvider) && !paymentPolicyProvider.equals(userProvider);
     }
 
     public boolean isNonO2User() {
