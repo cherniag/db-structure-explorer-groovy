@@ -288,6 +288,11 @@ public class Promotion implements Serializable {
         return this;
     }
 
+    public Promotion withIsWhiteListed(boolean isWhiteListed){
+        setWhiteListed(isWhiteListed);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

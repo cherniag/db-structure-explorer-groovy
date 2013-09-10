@@ -586,6 +586,54 @@ public class UserTest {
         org.junit.Assert.assertEquals(false, canPlayVideo);
     }
 
+    @Test
+    public void shouldBeOnWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+
+        //when
+        boolean isOnWhiteListedVideoAudioFreeTrial = user.isOnWhiteListedVideoAudioFreeTrial();
+
+        //then
+        Assert.assertTrue(isOnWhiteListedVideoAudioFreeTrial);
+    }
+
+    @Test
+    public void shouldNotBeOnWhiteListedVideoAudioFreeTrialWhenItIsOnAudio(){
+        //given
+        user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+
+        //when
+        boolean isOnWhiteListedVideoAudioFreeTrial = user.isOnWhiteListedVideoAudioFreeTrial();
+
+        //then
+        Assert.assertFalse(isOnWhiteListedVideoAudioFreeTrial);
+    }
+
+    @Test
+    public void shouldNotBeOnWhiteListedVideoAudioFreeTrialWhenItIslExpired(){
+        //given
+        user = new User().withFreeTrialExpiredMillis(Long.MIN_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+
+        //when
+        boolean isOnWhiteListedVideoAudioFreeTrial = user.isOnWhiteListedVideoAudioFreeTrial();
+
+        //then
+        Assert.assertFalse(isOnWhiteListedVideoAudioFreeTrial);
+    }
+
+    @Test
+    public void shouldNotBeOnWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
+
+        //when
+        boolean isOnWhiteListedVideoAudioFreeTrial = user.isOnWhiteListedVideoAudioFreeTrial();
+
+        //then
+        Assert.assertFalse(isOnWhiteListedVideoAudioFreeTrial);
+    }
+
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
 
         mockStatic(Utils.class);

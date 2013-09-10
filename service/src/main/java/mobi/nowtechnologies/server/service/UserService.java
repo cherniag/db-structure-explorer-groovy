@@ -105,6 +105,7 @@ public class UserService {
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
+    private O2UserDetailsUpdater o2UserDetailsUpdater;
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
     public void setO2ClientService(O2ClientService o2ClientService) {
@@ -226,7 +227,12 @@ public class UserService {
         this.communityService = communityService;
     }
 
+    public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
+        this.o2UserDetailsUpdater = o2UserDetailsUpdater;
+    }
+
     public Boolean canActivateVideoTrial(User u) {
+        if (u.isOnWhiteListedVideoAudioFreeTrial()) return false;
         String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
         Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
@@ -1724,8 +1730,7 @@ public class UserService {
 		if (subBalance <= 0) {
 			user.setStatus(UserStatusDao.getLimitedUserStatus());
 			userRepository.save(user);
-			LOGGER.info("Unable to make weekly update balance is " + subBalance + ", user id [" + user.getId()
-					+ "]. So the user subscription status was changed on LIMITED");
+			LOGGER.info("Unable to decrease balance [{}] for user with id [{}]. So the user subscription status was changed on LIMITED", subBalance, user.getId());
 		} else {
 
 			user.setSubBalance((byte) (subBalance - 1));
@@ -1792,7 +1797,7 @@ public class UserService {
     public User downgradeUserTariff(User userWithOldTariff, Tariff newTariff) {
 
         Tariff oldTariff = userWithOldTariff.getTariff();
-        if (Tariff._4G.equals(oldTariff) && _3G.equals(newTariff)) {
+        if (_4G.equals(oldTariff) && _3G.equals(newTariff)) {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = skipBoughtPeriodAndUnsubscribe(userWithOldTariff, USER_DOWNGRADED_TARIFF);
@@ -1862,16 +1867,18 @@ public class UserService {
         return user;
     }
 
-    /** called by UpdateO2User job when provider/segment/contract/4G/channel have been changed*/
     @Transactional(propagation = Propagation.REQUIRED)
-    public void o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
-		Tariff newTariff = o2SubscriberData.isTariff4G() ? Tariff._4G : Tariff._3G;
-		if (!newTariff.equals(user.getTariff()) && !user.isOnWhiteListedVideoAudioFreeTrial()) {
-			LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(),  newTariff);
-			user = downgradeUserTariff(user, newTariff);
-		}
-        new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-        userRepository.save(user);
+    public User o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
+        Tariff newTariff = o2SubscriberData.isTariff4G() ? _4G : _3G;
+        if (!newTariff.equals(user.getTariff())) {
+            if (user.isOnWhiteListedVideoAudioFreeTrial()) LOGGER.info("User will not be downgraded because of he on white listed Video Audio Free Trial");
+            else {
+                LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(), newTariff);
+                user = downgradeUserTariff(user, newTariff);
+            }
+        }
+        o2UserDetailsUpdater.setUserFieldsFromSubscriberData(user, o2SubscriberData);
+        return userRepository.save(user);
     }
 
 }

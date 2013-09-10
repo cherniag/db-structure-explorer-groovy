@@ -134,7 +134,7 @@ public class ChartService {
 	public List<ChartDetail> getLockedChartItems(String communityName, User user) {
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		
-		if(user.isPending() || user.isSubscribed() || user.isExpiring())
+		if(user.isPending() || user.isSubscribed() || user.isExpiring() || user.isOnWhiteListedVideoAudioFreeTrial())
 			return Collections.EMPTY_LIST;
 		
 		List<Chart> charts = chartRepository.getByCommunityName(communityName);
