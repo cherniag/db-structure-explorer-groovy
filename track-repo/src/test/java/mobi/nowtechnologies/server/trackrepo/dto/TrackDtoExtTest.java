@@ -121,14 +121,19 @@ public class TrackDtoExtTest {
         mediaFile.setPath("path");
         mediaFile.setType(AssetFile.FileType.VIDEO);
 
+        AssetFile unknownFile = new AssetFile();
+        unknownFile.setPath("path");
+        unknownFile.setType(null);
+
         Track track = new Track();
         track.setMediaType(AssetFile.FileType.DOWNLOAD);
-        track.setFiles(Collections.singleton(mediaFile));
+        track.setFiles(new HashSet<AssetFile>(Arrays.asList(mediaFile, unknownFile)));
 
         TrackDtoMapper result = new TrackDtoMapper(track);
 
         assertNotNull(result);
         assertNotNull(result.getFiles());
+        assertEquals(1, result.getFiles().size());
         assertEquals(mediaFile.getPath(), result.getFiles().get(0).getFilename());
         assertEquals(mediaFile.getType().name(), result.getFiles().get(0).getType());
     }

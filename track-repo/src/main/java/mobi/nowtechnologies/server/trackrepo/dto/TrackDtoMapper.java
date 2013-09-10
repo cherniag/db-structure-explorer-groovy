@@ -50,12 +50,14 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
             List<ResourceFileDto> files = new LinkedList<ResourceFileDto>();
 
             for (AssetFile file : track.getFiles()){
-                ResourceFileDto fileDto = new ResourceFileDto();
+                if(file.getType() != null){
+                    ResourceFileDto fileDto = new ResourceFileDto();
 
-                fileDto.setFilename(file.getPath());
-                fileDto.setType(file.getType().name());
+                    fileDto.setFilename(file.getPath());
+                    fileDto.setType(file.getType().name());
 
-                files.add(fileDto);
+                    files.add(fileDto);
+                }
             }
 
             this.setFiles(files);
