@@ -45,7 +45,13 @@ public class DDEXParserTest {
 
         assertNotNull(result);
         assertEquals(3, result.size());
-        assertEquals(true, result.get(0).getName().endsWith("20130625123358187"));
+
+        DropData dropExpected = null;
+        for(DropData drop : result){
+            if(drop.getName().endsWith("20130625123358187"))
+                dropExpected = drop;
+        }
+        assertNotNull(dropExpected);
     }
 
     @Test
@@ -54,7 +60,13 @@ public class DDEXParserTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals(true, result.get(0).getName().endsWith("20130625123358187"));
+
+        DropData dropExpected = null;
+        for(DropData drop : result){
+            if(drop.getName().endsWith("20130625123358187"))
+                dropExpected = drop;
+        }
+        assertNotNull(dropExpected);
     }
 
     @Test
