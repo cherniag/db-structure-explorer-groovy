@@ -634,6 +634,126 @@ public class UserTest {
         Assert.assertFalse(isOnWhiteListedVideoAudioFreeTrial);
     }
 
+    @Test
+    public void shouldBeEligibleForVideoO24GConsumer(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(true, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoO24GConsumerFromWrongCommunity(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("non-o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoNonO24GConsumer(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("non-o2");
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoO23GConsumer(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_3G).withSegment(CONSUMER).withProvider("o2");
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoO24GBusiness(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(BUSINESS).withProvider("o2");
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldBeEligibleForVideoUserOnWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(true, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoUserOnExpiredWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MIN_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoUserOnNotWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoUserOnNotWhiteListedFreeTrial(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldNotBeEligibleForVideoUserOnWhiteListedAudioFreeTrial(){
+        //given
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
+
+        //when
+        boolean isEligibleForVideo = user.isEligibleForVideo();
+
+        //then
+        assertEquals(false, isEligibleForVideo);
+    }
+
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
 
         mockStatic(Utils.class);
