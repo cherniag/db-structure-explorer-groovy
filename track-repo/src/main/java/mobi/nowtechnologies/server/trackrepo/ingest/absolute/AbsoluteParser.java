@@ -28,7 +28,7 @@ public class AbsoluteParser extends IParser {
 
     public AbsoluteParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Warner parser loading from " + root);
+        LOGGER.info("Absolute parser loading from [{}]" , root);
     }
 
     public Map<String, DropTrack> loadXml(File file) {
@@ -120,11 +120,11 @@ public class AbsoluteParser extends IParser {
 
     @Override
     public Map<String, DropTrack> ingest(DropData drop) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public List<DropData> getDrops(boolean auto) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+@Ignore
 public class SubscriptionTextsGeneratorTest {
 
 	private static Locale communityLocale = new Locale("o2");

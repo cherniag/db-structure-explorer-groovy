@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -63,25 +65,6 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
         DropTrack dropTrack = resultDropTrackMap.get("ROROT1302001_AbsoluteParser");
 
-        //assertThat(dropTrack.xml, is("3BEATCD019"));
-        assertThat(dropTrack.type, is(DropTrack.Type.INSERT));
-        assertThat(dropTrack.productCode, is(""));
-        assertThat(dropTrack.title, is("In Your Eyes"));
-        assertThat(dropTrack.subTitle, is("NotExplicit"));
-        assertThat(dropTrack.artist, is("Inna"));
-        assertThat(dropTrack.genre, is("Rock/Pop"));
-        assertThat(dropTrack.copyright, is("2012 3 Beat Productions Ltd under exclusive licence from ROTON"));
-        assertThat(dropTrack.label, is("3 Beat Productions"));
-        assertThat(dropTrack.isrc, is("ROROT1302001"));
-        assertThat(dropTrack.year, is("2012"));
-        assertThat(dropTrack.physicalProductId, is("ROROT1302001"));
-        // assertThat(dropTrack.album, is("Party Never Ends"));
-        assertThat(dropTrack.info, is(""));
-        assertThat(dropTrack.licensed, is(true));
-        assertThat(dropTrack.exists, is(true));    // ?
-        assertThat(dropTrack.explicit, is(false));
-        assertThat(dropTrack.productId, is("ROROT1302001"));
-
         List<DropTerritory> territories = dropTrack.getTerritories();
 
         assertThat(territories.size(), is(2));
@@ -107,15 +90,65 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         assertThat(asset.type, is(AssetFile.FileType.MOBILE));
     }
 
-    private void validateResultDropTrack(int i) {
-        Node releaseIdNode = expectedTrackReleaseIdNodeList.item(i);
-        Element releaseIdNChildElement = getChildNodesElement(releaseIdNode);
+    private void validateResultDropTrack(int i) throws XpathException {
+        int xPathExpressionIndex = i + 1;
+        String expectedIsrc = getIsrc(xPathExpressionIndex);
 
-        String expectedIsrc = getIsrc(releaseIdNChildElement);
-        String expectedProprietaryId = getProprietaryId(releaseIdNChildElement);
+        DropTrack resultDropTrack = getResultDropTrack(expectedIsrc);
 
-        //DropTrack resultDropTrack = getResultDropTrack(expectedIsrc, expectedProprietaryId);
-        //assertNotNull(resultDropTrack);
+        assertNotNull(resultDropTrack);
+
+        //assertThat(resultDropTrack.xml, is("3BEATCD019"));
+        assertThat(resultDropTrack.type, is(INSERT));
+        assertThat(resultDropTrack.productCode, is(""));
+        assertThat(resultDropTrack.title, is(getTitleText(xPathExpressionIndex)));
+        assertThat(resultDropTrack.subTitle, is(getSubTitle(xPathExpressionIndex)));
+        assertThat(resultDropTrack.artist, is(getArtist(xPathExpressionIndex)));
+        assertThat(resultDropTrack.genre, is(getGenre(xPathExpressionIndex)));
+        assertThat(resultDropTrack.copyright, is(getCopyright(xPathExpressionIndex)));
+        assertThat(resultDropTrack.label, is(getLabel(xPathExpressionIndex)));
+        assertThat(resultDropTrack.isrc, is(expectedIsrc));
+        assertThat(resultDropTrack.year, is(getYear(xPathExpressionIndex)));
+        assertThat(resultDropTrack.physicalProductId, is(expectedIsrc));
+        // assertThat(resultDropTrack.album, is("Party Never Ends"));
+        assertThat(resultDropTrack.info, is(""));
+        assertThat(resultDropTrack.licensed, is(true));
+        assertThat(resultDropTrack.exists, is(true));    // ?
+        assertThat(resultDropTrack.explicit, is(false));
+        assertThat(resultDropTrack.productId, is(expectedIsrc));
+
+    }
+
+    private String getTitleText(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/Title/TitleText)[" + index +"]");
+    }
+
+    private String getSubTitle(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/ParentalWarningType)[" + index +"]");
+    }
+
+    private String getArtist(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/DisplayArtist/PartyName/FullName)[" + index +"]");
+    }
+
+    private String getGenre(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/Genre/GenreText)[" + index +"]");
+    }
+
+    private String getCopyright(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/PLine/PLineText)[" + index +"]");
+    }
+
+    private String getLabel(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/LabelName)[" + index +"]");
+    }
+
+    private String getIsrc(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId/ISRC)[" + index +"]");
+    }
+
+    private String getYear(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/PLine/Year)[" + index +"]");
     }
 
     private int getTrackReleaseCount() throws XpathException {

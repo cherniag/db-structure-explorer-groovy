@@ -523,7 +523,7 @@ public abstract class DDEXParser extends IParser {
     public void setUpc(DropTrack track, String upc) {
     }
 
-    public void setGRid(DropTrack track, String GRid) {;
+    public void setGRid(DropTrack track, String GRid) {
     }
 
     public boolean checkAlbum(String type) {
