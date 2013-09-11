@@ -36,6 +36,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private int expectedResultDropTrackIndex;
     private String expectedAlbum;
     private String expectedReleaseReference;
+    private String xmlFileParent;
 
     public void createParser() throws FileNotFoundException {
         parserFixture = new AbsoluteParser("classpath:media/absolute/");
@@ -77,6 +78,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         expectedIsrc = getIsrc(xPathExpressionResultDropTrackIndex);
         expectedLabel = getLabel(xPathExpressionResultDropTrackIndex);
         expectedReleaseReference = getReleaseReference(expectedIsrc);
+        xmlFileParent = xmlFile.getParent();
 
         resultDropTrack = getResultDropTrack(expectedIsrc);
 
@@ -101,7 +103,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         assertThat(resultDropTrack.productId, is(expectedIsrc));
 
         validateResultTerritories();
-        //validateResultFiles();
+        validateResultFiles();
     }
 
     private void validateResultTerritories() throws XpathException, ParseException {
@@ -136,11 +138,11 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
         for (int i = 0; i < files.size(); i++) {
             DropAssetFile asset = files.get(i);
-            assertThat(asset.duration, is(0)); //PT3M50S
-            assertThat(asset.file, is(""));
-            assertThat(asset.isrc, is(""));
-            assertThat(asset.md5, is(""));
-            assertThat(asset.type, is(MOBILE));
+            assertThat(asset.isrc, is(expectedIsrc));
+            assertThat(asset.file, is(getAssetFile(getFileName(expectedIsrc, i + 1))));
+            //assertThat(asset.duration, is(0)); //PT3M50S
+            //assertThat(asset.md5, is(""));
+            //assertThat(asset.type, is(MOBILE));
         }
     }
 
@@ -208,6 +210,10 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         return parseInt(evaluate("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)"));
     }
 
+    private String getFileName(String isrc, int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)["+index+"]");
+    }
+
     private int getTrackReleaseCount() throws XpathException {
         return parseInt(evaluate("count(/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Single'])"));
     }
@@ -218,5 +224,9 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
     private DropTrack getResultDropTrack(String expectedIsrc) {
         return resultDropTrackMap.get(expectedIsrc + "_" + parserFixture.getClass().getSimpleName());
+    }
+
+    private String getAssetFile(String fileName) {
+        return xmlFileParent + "/resources/" + fileName;
     }
 }

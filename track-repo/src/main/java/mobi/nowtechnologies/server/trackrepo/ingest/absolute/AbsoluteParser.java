@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import org.dom4j.Attribute;
 import org.jdom.Document;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.*;
+import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 
 public class AbsoluteParser extends DDEXParser {
@@ -39,6 +42,8 @@ public class AbsoluteParser extends DDEXParser {
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         if (!file.exists()) return res;
+
+        String fileRoot = file.getParent();
 
         SAXBuilder builder = new SAXBuilder();
         try {
@@ -62,6 +67,7 @@ public class AbsoluteParser extends DDEXParser {
                 String year = details.getChild("PLine").getChildText("Year");
                 String releaseReference = getReleaseReference(document, isrc);
                 List<DropTerritory> territories = createTerritory(document, details, distributor, label, isrc, releaseReference);
+                List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
 
                 res.put(getDropTrackKey(isrc), new DropTrack()
                         .addType(INSERT)
@@ -80,6 +86,7 @@ public class AbsoluteParser extends DDEXParser {
                         .addExplicit(false)
                         .addProductId(isrc)
                         .addTerritories(territories)
+                        .addFiles(files)
                 );
             }
 
@@ -98,10 +105,18 @@ public class AbsoluteParser extends DDEXParser {
         return res;
     }
 
-    private String getAlbum(Document document) throws JDOMException {
-       XPath xPath = XPath.newInstance("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
-       xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
-       return ((Element) xPath.selectSingleNode(document)).getValue();
+    private List<DropAssetFile> createFiles(Document doc, String isrc, String fileRoot) throws JDOMException {
+        int filesCount = getFilesCount(doc, isrc);
+        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount);
+
+        for (int i = 0; i < filesCount; i++) {
+            DropAssetFile dropAssetFile = new DropAssetFile();
+            dropAssetFile.isrc = isrc;
+            dropAssetFile.file = getAssetFile(fileRoot, getFileName(doc, isrc, i+1));
+
+            dropAssetFiles.add(dropAssetFile);
+        }
+        return dropAssetFiles;
     }
 
     private List<DropTerritory> createTerritory(Document doc, Element details, String distributor, String label, String isrc, String releaseReference) {
@@ -127,8 +142,12 @@ public class AbsoluteParser extends DDEXParser {
         }
     }
 
+    private String getAlbum(Document doc) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
+    }
+
     private String getStartDate(Document doc, String dealReleaseReference) throws JDOMException {
-        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/ValidityPeriod/StartDate");
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='" + dealReleaseReference + "']/Deal/DealTerms/ValidityPeriod/StartDate");
     }
 
     private String getReleaseReference(Document doc, String isrc) throws JDOMException {
@@ -137,6 +156,17 @@ public class AbsoluteParser extends DDEXParser {
 
     private String getDealReference(Document doc, String dealReleaseReference) throws JDOMException {
         return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealReference");
+    }
+
+    private int getFilesCount(Document doc, String isrc) throws JDOMException {
+        XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)");
+        xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+        return ((Double) xPath.selectSingleNode(doc)).intValue();
+
+    }
+
+    private String getFileName(Document doc, String isrc, int index) throws JDOMException {
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)["+index+"]");
     }
 
     private String evaluate(Document doc, String xPathExpression) throws JDOMException {
