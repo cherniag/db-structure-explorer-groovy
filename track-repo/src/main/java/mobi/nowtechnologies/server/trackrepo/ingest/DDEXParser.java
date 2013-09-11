@@ -234,7 +234,7 @@ public abstract class DDEXParser extends IParser {
                 track.genre = genre.getChildText("GenreText");
 
             Map<String, DropTerritory> deal = deals.get(releaseReference);
-            LOGGER.info("Deal for release ref  " + releaseReference + " " + deal);
+            LOGGER.info("Deal for release ref [{}] [{}]", releaseReference, deal);
 
             if (deal == null) {
                 continue;
@@ -244,7 +244,7 @@ public abstract class DDEXParser extends IParser {
                 Iterator<String> it = countries.iterator();
                 while (it.hasNext()) {
                     String country = it.next();
-                    LOGGER.info("Adding country " + country);
+                    LOGGER.info("Adding country [{}]", country);
                     DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
                     DropTerritory dealTerritory = deal.get(country);
                     territoryData.country = dealTerritory.country;
@@ -260,7 +260,7 @@ public abstract class DDEXParser extends IParser {
                     territoryData.dealReference = dealTerritory.dealReference;
                 }
             } else {
-                LOGGER.info("Adding country " + code);
+                LOGGER.info("Adding country [{}]", code);
 
                 DropTerritory dealTerritory = deal.get(code);
                 DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
@@ -306,7 +306,7 @@ public abstract class DDEXParser extends IParser {
             }
 
             for (Element reference : references) {
-                LOGGER.info("Loading deal reference " + reference.getText());
+                LOGGER.info("Loading deal reference [{}]", reference.getText());
                 Map<String, DropTerritory> ExistingDealsMap = deals.get(reference.getText());
                 if (ExistingDealsMap == null)
                     deals.put(reference.getText(), dealsMap);
@@ -346,7 +346,7 @@ public abstract class DDEXParser extends IParser {
             }
 
             for (Element country : countriesNodes) {
-                LOGGER.info("Deal for country " + country.getText());
+                LOGGER.info("Deal for country [{}]", country.getText());
                 DropTerritory territory = dealsMap.get(country.getText());
                 if (territory == null) {
                     territory = new DropTerritory();
@@ -375,7 +375,7 @@ public abstract class DDEXParser extends IParser {
             for (Element useType : useTypes) {
                 if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
                         || "PermanentDownload".equals(useType.getText())) {
-                    LOGGER.info("Found valid usage " + useType.getText());
+                    LOGGER.info("Found valid usage, [{}] ", useType.getText());
                     validUseType = true;
                     break;
                 }
@@ -508,7 +508,7 @@ public abstract class DDEXParser extends IParser {
             }
         }
         if (deliveryComplete && !processed) {
-            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
             DropData drop = new DropData();
             drop.name =folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());

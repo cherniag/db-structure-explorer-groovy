@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 /**
@@ -22,6 +24,8 @@ import java.util.HashMap;
  * 02.09.13 15:42
  */
 public abstract class ParserTest<T extends IParser> {
+
+    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
     protected T parserFixture;
     protected XpathEngine xpathEngine;

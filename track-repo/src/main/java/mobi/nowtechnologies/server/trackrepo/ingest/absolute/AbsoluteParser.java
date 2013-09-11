@@ -1,20 +1,22 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import com.google.common.base.Joiner;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.*;
+import org.dom4j.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,9 @@ import java.util.Map;
 
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 
-public class AbsoluteParser extends IParser {
+public class AbsoluteParser extends DDEXParser {
+
+    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
 
@@ -31,6 +35,7 @@ public class AbsoluteParser extends IParser {
         LOGGER.info("Absolute parser loading from [{}]" , root);
     }
 
+    @Override
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         if (!file.exists()) return res;
@@ -43,6 +48,7 @@ public class AbsoluteParser extends IParser {
             List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
             List<Element> releases = root.getChild("ReleaseList").getChildren("Release");
             List<Element> deals = root.getChild("DealList").getChildren("ReleaseDeal");
+            String album = getAlbum(document);
 
             for (Element node : sounds) {
                 String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
@@ -54,7 +60,8 @@ public class AbsoluteParser extends IParser {
                 String copyright = details.getChild("PLine").getChildText("PLineText");
                 String label = details.getChildText("LabelName");
                 String year = details.getChild("PLine").getChildText("Year");
-                List<DropTerritory> territories = createTerritory(details, distributor, label, isrc);
+                String releaseReference = getReleaseReference(document, isrc);
+                List<DropTerritory> territories = createTerritory(document, details, distributor, label, isrc, releaseReference);
 
                 res.put(getDropTrackKey(isrc), new DropTrack()
                         .addType(INSERT)
@@ -79,16 +86,9 @@ public class AbsoluteParser extends IParser {
             for (Element node : releases) {
                 String isrc = node.getChild("ReleaseId").getChildText("ISRC");
                 if (isrc == null) continue;
-                String releaseReference = node.getChildText("ReleaseReference");
                 DropTrack track = res.get(getDropTrackKey(isrc));
-                String album = "";//node.getChildText("");
 
                 track.addAlbum(album);
-            }
-
-            for(Element node: deals){
-                String reference = node.getChildText("DealReleaseReference");
-                String dealReference = node.getChild("Deal").getChildText("DealReference");
             }
         } catch (JDOMException e) {
             LOGGER.error(e.getMessage());
@@ -98,7 +98,14 @@ public class AbsoluteParser extends IParser {
         return res;
     }
 
-    private List<DropTerritory> createTerritory(Element details, String distributor, String label, String isrc) {
+    private String getAlbum(Document document) throws JDOMException {
+       XPath xPath = XPath.newInstance("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
+       xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+       return ((Element) xPath.selectSingleNode(document)).getValue();
+    }
+
+    private List<DropTerritory> createTerritory(Document doc, Element details, String distributor, String label, String isrc, String releaseReference) {
+        try{
         List<DropTerritory> res = new ArrayList<DropTerritory>();
         List<Element> territoryCode = details.getChildren("TerritoryCode");
         for (Element e : territoryCode)
@@ -110,8 +117,32 @@ public class AbsoluteParser extends IParser {
                     .addPriceCode("0.0")
                     .addPublisher("")
                     .addReportingId(isrc)
+                    .addDealReference(getDealReference(doc, releaseReference))
+                    .addStartDate(YYYY_MM_DD.parse(getStartDate(doc, releaseReference)))
             );
         return res;
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getStartDate(Document doc, String dealReleaseReference) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/ValidityPeriod/StartDate");
+    }
+
+    private String getReleaseReference(Document doc, String isrc) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='"+isrc+"']/ReleaseReference");
+    }
+
+    private String getDealReference(Document doc, String dealReleaseReference) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealReference");
+    }
+
+    private String evaluate(Document doc, String xPathExpression) throws JDOMException {
+        XPath xPath = XPath.newInstance(xPathExpression);
+        xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+        return ((Element) xPath.selectSingleNode(doc)).getValue();
     }
 
     private String getDropTrackKey(String isrc) {
@@ -126,5 +157,20 @@ public class AbsoluteParser extends IParser {
     @Override
     public List<DropData> getDrops(boolean auto) {
         return null;
+    }
+
+    @Override
+    public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
+    }
+
+    @Override
+    public boolean checkAlbum(String type) {
+        if ("Album".equals(type)) {
+            LOGGER.info("Album for " + type);
+            return true;
+        }
+        LOGGER.info("Track for " + type);
+        return false;
+
     }
 }

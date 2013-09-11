@@ -426,7 +426,7 @@ public class IngestServiceImpl implements IngestService{
 	 * territory is added or updated.
 	 */
 	protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
-        LOGGER.debug("Adding territory " + value.country + " " + value.label);
+        LOGGER.debug("Adding territory [{}] [{}]", value.country, value.label);
 		if (value.country != null) {
 			boolean found = false;
 			Territory territory = null;
@@ -435,7 +435,7 @@ public class IngestServiceImpl implements IngestService{
 					found = true;
 					territory = data;
 					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
-                        LOGGER.info("Takedown for " + value.country + " on " + territory.getReportingId());
+                        LOGGER.info("Take down for [{}] on [{}]",value.country, territory.getReportingId());
 						territory.setDeleted(true);
 						territory.setDeleteDate(new Date());
 						return false;
@@ -445,16 +445,16 @@ public class IngestServiceImpl implements IngestService{
 			if (!found) {
 				territory = new Territory();
 				territories.add(territory);
-				territory.setCode((String) value.country);
+				territory.setCode(value.country);
 				territory.setCreateDate(new Date());
 			}
-			territory.setDistributor((String) value.distributor);
-			territory.setPublisher(((String) value.publisher) == null ? "" : (String) value.publisher);
-			territory.setLabel((String) value.label);
-			territory.setCurrency((String) value.currency);
-			territory.setPrice((Float) value.price);
-			territory.setStartDate((Date) value.startdate);
-			territory.setReportingId((String) value.reportingId);
+			territory.setDistributor(value.distributor);
+			territory.setPublisher((value.publisher) == null ? "" : value.publisher);
+			territory.setLabel(value.label);
+			territory.setCurrency(value.currency);
+			territory.setPrice(value.price);
+			territory.setStartDate(value.startdate);
+			territory.setReportingId(value.reportingId);
 			territory.setPriceCode(value.priceCode);
 			territory.setDealReference(value.dealReference);
 			territory.setDeleted(false);
