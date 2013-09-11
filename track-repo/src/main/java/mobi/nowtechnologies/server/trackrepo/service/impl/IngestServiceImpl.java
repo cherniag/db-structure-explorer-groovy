@@ -276,8 +276,10 @@ public class IngestServiceImpl implements IngestService{
 							track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(drop.getIngestor()));
 						}
 						if (track == null) {
-							if (!value.hasAnyMediaResources())
-								continue; // Skip empty insert
+							if (!value.hasAnyMediaResources()){
+                                it.remove();
+                                continue; // Skip empty insert
+                            }
 							dataTrack.exists = false;
 						} else {
 							dataTrack.exists = true;
