@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.ArrayList;
@@ -198,6 +199,16 @@ public class DropTrack {
 	public List<DropAssetFile> getFiles() {
 		return files;
 	}
+    public boolean hasAnyMediaResources(){
+        if(files != null){
+            for(DropAssetFile file:files){
+                if(file.type == AssetFile.FileType.VIDEO || file.type == AssetFile.FileType.DOWNLOAD)
+                    return true;
+            }
+        }
+
+        return false;
+    }
 	public void setFiles(List<DropAssetFile> files) {
 		this.files = files;
 	}

@@ -11,8 +11,6 @@ import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import mobi.nowtechnologies.server.trackrepo.utils.NullAwareBeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -127,7 +125,6 @@ public class IngestServiceImpl implements IngestService{
 		Map<String, DropTrack> tracks = drop.getIngestdata() != null ? drop.getIngestdata().getTracks() : parser.ingest(drop.getDrop());
 		if (tracks == null || tracks.isEmpty()) {
 			commit(ingestor, parser, drop.getDrop(), null, false, false, "No tracks");
-			// parser.commit(drop.getDrop());
 			return;
 		}
 
@@ -279,7 +276,7 @@ public class IngestServiceImpl implements IngestService{
 							track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(drop.getIngestor()));
 						}
 						if (track == null) {
-							if (value.files == null || value.files.size() == 0)
+							if (!value.hasAnyMediaResources())
 								continue; // Skip empty insert
 							dataTrack.exists = false;
 						} else {
