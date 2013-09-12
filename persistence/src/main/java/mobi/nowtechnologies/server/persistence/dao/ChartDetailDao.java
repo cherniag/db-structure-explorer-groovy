@@ -25,17 +25,6 @@ public class ChartDetailDao extends JpaDaoSupport {
 		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);
 		return chartDetails;
 	}
-
-
-	@SuppressWarnings("unchecked")
-	public List<ChartDetail> findChartDetailTree(int userId, byte chartId) {
-		Object[] argArray = new Object[] { userId, chartId};
-		LOGGER.debug("input parameters userId, chartId: [{}], [{}]",  userId, chartId);
-		
-		List<ChartDetail> chartDetails = getJpaTemplate().findByNamedQuery("ChartDetail.findChartDetailTree", argArray);
-		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
 	
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc){
 		if (isrc == null)

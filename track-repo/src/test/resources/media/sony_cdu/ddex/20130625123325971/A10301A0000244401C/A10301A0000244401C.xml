@@ -1,0 +1,1969 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ernm:NewReleaseMessage LanguageAndScriptCode="en" MessageSchemaVersionId="/ern/341" xs:schemaLocation="http://ddex.net/xml/ern/341 http://ddex.net/xml/ern/341/release-notification.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/341">
+    <MessageHeader>
+        <MessageThreadId>G010000244401C_MQB</MessageThreadId>
+        <MessageId>9526260</MessageId>
+        <MessageSender>
+            <PartyId>PADPIDA2007040502I</PartyId>
+            <PartyName>
+                <FullName>Sony Music Entertainment</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>Musicqubed</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-25T12:13:18.575-04:00</MessageCreatedDateTime>
+        <MessageControlType>TestMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator>OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900075</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Lainatut Lauseet</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M50S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Lainatut Lauseet</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Lainatut Lauseet</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Edu Kettunen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T1</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-001.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>3fe36041628591a8e276b6f84ee02afc</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T2</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-001.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>62f127289b02a6b636261963882e1213</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T3</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-001.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>d8f4bf327925ca4776912b90f3b553d3</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900076</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A2</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Kaihon Kultamaa</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H5M17S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kaihon Kultamaa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kaihon Kultamaa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Esa Kaartamo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T4</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-002.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>7bf1a647c2ae526874b57b307450dca9</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T5</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-002.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>25c78d4a384535379a516eeebd40e442</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T6</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-002.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>de2e8e37b41ce1eb908f0c8ff7302c8f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900077</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A3</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Minä Olen Muistanut</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H2M40S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Edu Kettunen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Kassu Halonen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Esa Kaartamo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T7</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-003.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>00b839281de4fe196238387fc1c57dfe</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T8</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-003.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>59eadae93c49c5c998c8de5bc761174f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T9</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-003.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>f348ecd54722a83ec75a12d9f252507c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900078</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A4</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Soitan Kitaraa</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M13S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Soitan Kitaraa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Soitan Kitaraa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Esa Kaartamo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T10</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-004.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c6773e6b614e5d4c78954e751911cd6e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T11</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-004.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>29d71acb40ad4568e444f91d93c27f2c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T12</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-004.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>e8dec349007975e11852a09f7e73ba7b</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900079</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A5</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Kuvia Vain</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H1M47S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kuvia Vain</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kuvia Vain</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Edu Kettunen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T13</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-005.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>227d50015667a2b84782d3c146a36a57</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T14</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-005.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>e0c79b3538b5b3d53c7a6867ed1a3250</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T15</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-005.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ec3ed82c6821b094de5238f7a85f4f0f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900080</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A6</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tumma Sävel</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M55S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tumma Sävel</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tumma Sävel</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Juha Björninen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Kassu Halonen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Vexi Salmi</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T16</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-006.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ee50b1639e7488bd762c85e50cee96bc</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T17</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-006.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>daa52c35197c0e349dbfe89ac820d706</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T18</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-006.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>9b333459f93be47640ce54e523a219a6</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900081</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A7</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Syntymästä Kuolemaan</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M9S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Syntymästä Kuolemaan</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Syntymästä Kuolemaan</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Esa Kaartamo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T19</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-007.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>dda127c7fb5f5b9997bd2302dcc66802</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T20</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-007.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5dbd2061a03d6ad8aa404a38febcf258</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T21</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-007.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ada8ad46080db79de9c671619df25e26</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900082</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A8</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Rohto</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M56S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rohto</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rohto</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Edu Kettunen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T22</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-008.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>faf15822b96aa4cb1514145e88e33084</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T23</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-008.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>31de84a5ba965f82a2c87c2ed38fca4e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T24</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-008.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>3abbe32f8fee1f6a05c1baa740907399</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900083</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A9</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Matkamies</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M24S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Matkamies</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Matkamies</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Esa Kaartamo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T25</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-009.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5569d1a59da60c92b22647e97129f343</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T26</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-009.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>36a2b5eca7a901c365002c86d76354fe</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T27</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-009.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>633d3b65d75be025482c8eda2296845e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIFMF8900084</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A10</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Ankeita Aarteita</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H1M50S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ankeita Aarteita</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ankeita Aarteita</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Edu Kettunen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1989</Year>
+                    <PLineText>(P)1989 Flamingo</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T28</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10413_SoundRecording_001-010.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>32ef0f85546f69b9095ebc98bbc9131b</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T29</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-11006_SoundRecording_001-010.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>2ce3b3c691ce6c6e0dbe6cb6f59feba2</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T30</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10253_SoundRecording_001-010.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ce4dd6b910aa861f335e9cbc3392c069</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">G010000244401C</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A11</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>T31</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1500</ImageHeight>
+                    <ImageWidth>1500</ImageWidth>
+                    <ImageResolution>72</ImageResolution>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0000244401C_T-10026_Image.jpg</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>043dd00ad0b3a34e1114a14e73276cdf</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <GRid>A10301A0000244401C</GRid>
+                <ICPN IsEan="false">743216185528</ICPN>
+                <CatalogNumber Namespace="DPID:PADPIDA2007040502I">G010000244401C</CatalogNumber>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004003528</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Minä Olen Muistanut</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <Title TitleType="GroupingTitle">
+                            <TitleText>Disc 1</TitleText>
+                        </Title>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>2</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>3</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>4</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>5</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>6</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>7</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>8</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>9</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>10</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>11</SequenceNumber>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A11</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>RCA Camden</LabelName>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <OriginalReleaseDate>2008-12-05</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H36M1S</Duration>
+            <PLine>
+                <Year>1998</Year>
+                <PLineText>(P)1998 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749334N</GRid>
+                <ISRC>FIFMF8900075</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081950</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Lainatut Lauseet</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Lainatut Lauseet</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Lainatut Lauseet</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M50S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749333P</GRid>
+                <ISRC>FIFMF8900076</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081951</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R2</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Kaihon Kultamaa</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kaihon Kultamaa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kaihon Kultamaa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H5M17S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749332R</GRid>
+                <ISRC>FIFMF8900077</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081952</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R3</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Minä Olen Muistanut</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä Olen Muistanut</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H2M40S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749331T</GRid>
+                <ISRC>FIFMF8900078</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081953</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R4</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Soitan Kitaraa</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Soitan Kitaraa</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Soitan Kitaraa</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M13S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749330V</GRid>
+                <ISRC>FIFMF8900079</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081954</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R5</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Kuvia Vain</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kuvia Vain</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kuvia Vain</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H1M47S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749329H</GRid>
+                <ISRC>FIFMF8900080</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081955</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R6</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tumma Sävel</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tumma Sävel</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tumma Sävel</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M55S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749328J</GRid>
+                <ISRC>FIFMF8900081</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081956</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R7</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Syntymästä Kuolemaan</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Syntymästä Kuolemaan</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Syntymästä Kuolemaan</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M9S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749327L</GRid>
+                <ISRC>FIFMF8900082</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081957</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R8</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Rohto</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rohto</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rohto</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M56S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749325P</GRid>
+                <ISRC>FIFMF8900083</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081958</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R9</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Matkamies</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Matkamies</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Matkamies</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M24S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004749326N</GRid>
+                <ISRC>FIFMF8900084</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004081959</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R10</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Ankeita Aarteita</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Kim Lönnholm</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ankeita Aarteita</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Ankeita Aarteita</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Kim Lönnholm</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Vocal" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H1M50S</Duration>
+            <PLine>
+                <Year>1989</Year>
+                <PLineText>(P)1989 Flamingo</PLineText>
+            </PLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">7.60</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.75</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R10</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.98</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R2</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.81</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R3</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.70</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R4</DealReleaseReference>
+            <DealReleaseReference>R5</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.90</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R6</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.87</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R7</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.52</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R8</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.65</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R9</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">1.00</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2008-12-05</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ernm:NewReleaseMessage>

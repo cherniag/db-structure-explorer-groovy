@@ -24,7 +24,6 @@ import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -79,7 +78,6 @@ public class UserService {
     private CountryAppVersionService countryAppVersionService;
     private DeviceTypeService deviceTypeService;
     private CountryService countryService;
-    private SagePayService sagePayService;
 	private PaymentService paymentService;
 
     private PromotionService promotionService;
@@ -163,10 +161,6 @@ public class UserService {
 	public void setCountryAppVersionService(
 			CountryAppVersionService countryAppVersionService) {
 		this.countryAppVersionService = countryAppVersionService;
-	}
-
-	public void setSagePayService(SagePayService sagePayService) {
-		this.sagePayService = sagePayService;
 	}
 
 	public void setPromotionService(PromotionService promotionService) {
@@ -449,7 +443,7 @@ public class UserService {
     }
 
     public boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
-        Promotion promotion = null;
+        Promotion promotion;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
         String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
@@ -894,7 +888,7 @@ public class UserService {
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
+			user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
 		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
@@ -1833,6 +1827,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User skipBoughtPeriodAndUnsubscribe(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
         userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, actionReason.getDescription());
         userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);

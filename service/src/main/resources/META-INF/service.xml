@@ -43,7 +43,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
-		<property name="sagePayService" ref="service.SagePayService" />
 		<property name="paymentService" ref="service.PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
@@ -198,22 +197,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
 		<property name="paymentDao" ref="persistence.PaymentDao" />
 		<property name="entityService" ref="service.EntityService" />
-	</bean>
-
-	<bean id="service.SagePayService" class="mobi.nowtechnologies.server.service.SagePayService">
-		<property name="userService" ref="service.UserService" />
-		<property name="urlDeferred" value="${sagepay.deferUrl}" />
-		<property name="urlRelease" value="${sagepay.releaseUrl}" />
-		<property name="urlRepeat" value="${sagepay.repeatUrl}" />
-	</bean>
-
-	<bean id="service.MigService" class="mobi.nowtechnologies.server.service.MigService">
-		<property name="postService" ref="shared.PostService" />
-		<property name="messageSource" ref="serviceMessageSource" />
-		<property name="migOtaUrl" value="${mig.otaUrl}" />
-		<property name="urlFreeSms" value="${mig.freeSMSURL}" />
-		<property name="urlPremiumSms" value="${mig.premiumSMSURL}" />
-		<property name="timeToLive" value="${mig.timeToLiveMin}" />
 	</bean>
 
 	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.FacebookService">

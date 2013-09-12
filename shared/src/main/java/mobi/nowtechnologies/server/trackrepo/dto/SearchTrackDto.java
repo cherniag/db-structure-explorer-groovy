@@ -34,6 +34,8 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	private String ingestor;
     private String album;
     private String genre;
+    private boolean withTerritories;
+    private boolean withFiles;
     
     private List<Integer> trackIds;
 	
@@ -122,7 +124,23 @@ public class SearchTrackDto implements SearchTrackCriteria{
 		return trackIds;
 	}
 
-	@Override
+    public boolean isWithTerritories() {
+        return withTerritories;
+    }
+
+    public void setWithTerritories(boolean withTerritories) {
+        this.withTerritories = withTerritories;
+    }
+
+    public boolean isWithFiles() {
+        return withFiles;
+    }
+
+    public void setWithFiles(boolean withFiles) {
+        this.withFiles = withFiles;
+    }
+
+    @Override
 	public int hashCode() {
         return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title);
 	}

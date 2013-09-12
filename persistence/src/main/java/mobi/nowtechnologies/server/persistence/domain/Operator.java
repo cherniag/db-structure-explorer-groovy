@@ -54,10 +54,6 @@ public class Operator implements Serializable {
 		this.migName = migName;
 	}
 	
-	public static Map<String,Operator> getMapAsMigNames() {
-		return OperatorDao.getMapAsMigNames();
-	}
-	
 	public static Map<Integer,Operator> getMapAsIds() {
 		return OperatorDao.getMapAsIds();
 	}

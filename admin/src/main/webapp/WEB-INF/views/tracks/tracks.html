@@ -4,7 +4,8 @@
 
 <body>
 	<div th:substituteby="tpl::navbar"></div>
-	<div class="container">
+
+    <div class="container">
 		<h1 class="head" th:text="#{tracks.pages.title}">Track Repository</h1>
 		<form id="searchTrackDto" name="searchTrackDto" action="#" th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="well">
 		<div class="rel">
@@ -71,9 +72,13 @@
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
-					<div class="buttons_repo_columns" th:text="#{tracks.page.trackList.head.actions}">Actions</div>
 				</li>
-				<li class="content" th:each="trackDto, it: ${PAGE_LIST_DTO.list}"  th:with="isVideo=${trackDto.mediaType.name() == 'VIDEO'}, mediaSrc=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}">
+				<li class="content popover-selector"
+                    onShownPopover="onShownTrackDetails"
+                    onHiddenPopover="onHiddenTrackDetails"
+                    th:each="trackDto, it: ${PAGE_LIST_DTO.list}"
+                    th:with="isVideo=${trackDto.mediaType.name() == 'VIDEO'}, mediaSrc=@{__${trackRepoFilesURL}__(id=__${trackDto.mediaFileName}__)}"
+                    data-toggle="popover" data-placement="bottom" data-trigger="click">
 					<div th:id="${'idDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.id}">ID</div>
 					<div th:id="${'iTunesUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.itunesUrl}">iTunesUrl</div>
 					<div th:id="${'amazonUrlDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.amazonUrl}">amazonUrl</div>
@@ -83,7 +88,88 @@
 					<div th:id="${'publishArtistDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.publishArtist}">Publish Artist</div>
 					<div th:id="${'resolutionDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.resolution}">Resolution</div>
 					<div th:id="${'areArtistUrlsDiv_'+trackDto.id}" style="display: none;" th:text="${trackDto.areArtistUrls}">AreArtistUrls</div>
-					
+
+                    <div class="popover-title" style="display: none;">
+                        <span class="popover-title-text" th:text="#{tracks.page.trackList.head.details}">Track Details</span>
+                        <form class="in-line right-button" th:id="${'pulltrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#"
+                              th:with="canPull=${trackDto.status.name() == 'ENCODED' or trackDto.status.name() == 'PUBLISHED'}, pullingState=#{tracks.page.trackList.action.pulling}, pullState=#{tracks.page.trackList.action.pull}"
+                              th:switch="${trackDto.status.name()}">
+                            <button th:case="'PUBLISHING'" class='btn btn-primary' th:disabled="${!canPull}" th:id="${'pulltrackButton_'+trackDto.id}"
+                                th:attr="data-loading-text=${pullingState}, data-original-text=${pullState}"
+                                th:name="${trackDto.id}" type="button" onclick="showPullDialog(this.name);"
+                                th:text="${pullingState}" >Pulling</button>
+                            <button th:case="*" class='btn btn-primary' th:disabled="${!canPull}" th:id="${'pulltrackButton_'+trackDto.id}"
+                                th:attr="data-loading-text=${pullingState}, data-original-text=${pullState}"
+                                th:name="${trackDto.id}" type="button" onclick="showPullDialog(this.name);"
+                                th:text="${pullState}" >Pull</button>
+                        </form>
+                        <form class="in-line right-button" style="float: right;" th:id="${'encodetrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#"
+                              th:with="canEncode=${trackDto.status.name() != 'ENCODING' and trackDto.status.name() != 'PUBLISHING'}, encodingState=#{tracks.page.trackList.action.encoding}, encodeState=#{tracks.page.trackList.action.encode}, reencodeState=#{tracks.page.trackList.action.reencode}"
+                              th:switch="${trackDto.status.name()}">
+                            <button th:case="'NONE'" class='btn btn-primary' th:disabled="${!canEncode}" th:id="${'encodetrackButton_'+trackDto.id}"
+                                    th:attr="data-loading-text=${encodingState}, data-original-text=${encodeState}, data-retry-text=${reencodeState}"
+                                    th:name="${trackDto.id}" type="button" onclick="showEncodeDialog(this.name);"
+                                    th:text="${encodeState}">Encode</button>
+                            <button th:case="'ENCODING'" class='btn btn-primary' th:disabled="${!canEncode}" th:id="${'encodetrackButton_'+trackDto.id}"
+                                    th:attr="data-loading-text=${encodingState}, data-original-text=${encodeState}, data-retry-text=${reencodeState}"
+                                    th:name="${trackDto.id}" type="button" onclick="showEncodeDialog(this.name);"
+                                    th:text="${encodingState}">Encoding</button>
+                            <button th:case="*" class='btn btn-primary' th:disabled="${!canEncode}" th:id="${'encodetrackButton_'+trackDto.id}"
+                                    th:attr="data-loading-text=${encodingState}, data-original-text=${encodeState}, data-retry-text=${reencodeState}"
+                                    th:name="${trackDto.id}" type="button" onclick="showEncodeDialog(this.name);"
+                                    th:text="${reencodeState}">Re-Encode</button>
+                        </form>
+                    </div>
+
+                    <div class="popover-content" style="display: none;">
+                        <div class="control-group" style="width:1140px">
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.title}">Title:</strong></label>
+                            <span class="details-value" th:text="${trackDto.title}">Title</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.subtitle}">Subtitle:</strong></label>
+                            <span class="details-value" th:text="${trackDto.subTitle}">Subtitle</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.artist}">Artist:</strong></label>
+                            <span class="details-value" th:text="${trackDto.artist}">Artist</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.album}">Album:</strong></label>
+                            <span class="details-value" th:text="${trackDto.album}">Album</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.year}">Year:</strong></label>
+                            <span class="details-value" th:text="${trackDto.year}">Year</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.genre}">Genre:</strong></label>
+                            <span class="details-value" th:text="${trackDto.genre}">Genre</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.copyright}">Copyright:</strong></label>
+                            <span class="details-value" th:text="${trackDto.copyright}">Copyright</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.isrc}">ISRC:</strong></label>
+                            <span class="details-value" th:text="${trackDto.isrc}">ISRC</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productCode}">Product Code:</strong></label>
+                            <span class="details-value" th:text="${trackDto.productCode}">Product Code</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productId}">Product ID:</strong></label>
+                            <span class="details-value" th:text="${trackDto.productId}">Product Id</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.ingestor}">Ingestor:</strong></label>
+                            <span class="details-value" th:text="${trackDto.ingestor}">Ingestor</span>
+                        </div>
+                        <ul class="table trackFiles">
+                            <li class="title">
+                                <div class="type_asset_columns" th:text="#{tracks.page.assetList.head.type}">Type</div>
+                                <div class="path_asset_columns" th:text="#{tracks.page.assetList.head.path}">Path</div>
+                            </li>
+                            <li class="ui-state-default ui-state-disabled"><p class="loadingSmall">&#160;</p></li>
+                         </ul>
+                        <ul class="table trackTerritories">
+                            <li class="title">
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.country}">Country</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.destributor}">Distributor</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.publisher}">Publisher</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.label}">Label</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.currency}">Currency</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.price}">Price</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.priceCode}">Price Code</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.startDate}">Start Date</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.reportingId}">Reporting ID</div>
+                                <div class="territory_columns" th:text="#{tracks.page.territoryList.head.deleted}">Deleted</div>
+                            </li>
+                            <li class="ui-state-default ui-state-disabled"><p class="loadingSmall">&#160;</p></li>
+                        </ul>
+                    </div>
+
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
 					<div class="image_repo_columns">
 						<img class="play" alt="Track image" src="" width="100" height="100" th:attr="src=@{__${trackRepoFilesURL}__(id=__${trackDto.coverFileName}__)}" th:alt="#{tracks.page.tracksTable.track.img.alt}" />
@@ -97,18 +183,7 @@
 					<div class="repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
 						Date</div>
-					<div class="repo_columns" th:text="${trackDto.territories}">Territories</div>
-					<div class="buttons_repo_columns">
-						<form class="in-line" th:id="${'encodetrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#">
-							<button th:attr="style=${trackDto.status.name() != 'ENCODING' and trackDto.status.name() != 'PUBLISHING' ? 'display:block' : 'display:none'}" th:id="${'encodetrackButton_'+trackDto.id}"
-								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showEncodeDialog(this.name);" th:text="${trackDto.status.name() != 'NONE' ? 'Re-Encode' : 'Encode'}">Encode</button>
-						</form>
-						|
-						<form class="in-line" th:id="${'pulltrackForm_'+trackDto.id}" th:object="${TRACK_DTO}" name="TRACK_DTO" action="#">
-							<button th:attr="style=${trackDto.status.name() == 'ENCODED' or trackDto.status.name() == 'PUBLISHED' ? 'display:block' : 'display:none'}" th:id="${'pulltrackButton_'+trackDto.id}"
-								th:name="${trackDto.id}" type="button" class="btn btn-danger" onclick="showPullDialog(this.name);">Pull</button>
-						</form>
-					</div>
+					<div class="repo_columns" th:text="${trackDto.territoryCodes}">Territories</div>
 				</li>
 			</ul>
 		</div>
@@ -151,7 +226,7 @@
 	
 	<div class="busy">
 	  <div class="center">
-		  <p class="image">&#160;</p>
+		  <p class="loadingLarge">&#160;</p>
 		  <p class="message" th:utext="#{tracks.page.pull.dialog.item.loading}">Please wait...<br/>It may take a while1</p>
 	  </div>
 	</div>
@@ -185,160 +260,12 @@
 		</div>
 	</div>
 
-	    <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
-	                                          
-		function showEncodeDialog(trackId) {
-			var id = $("#idDiv_" + trackId).text();
-			var isrc = $("#isrcDiv_" + trackId).text();
-			var licensed = $("#licensedDiv_" + trackId).text();
-			var resolution = $("#resolutionDiv_" + trackId).text();
-			var isHighRate = resolution == "RATE_96" ? true : false;
-			
-			var encodeForm = $("form#encode-form");
-			encodeForm.find("input[name='id']").val(id);
-			encodeForm.find("input[name='isrc']").val(isrc);
-			encodeForm.find("input[name='licensed']").attr('checked', licensed);
-			encodeForm.find("input[name='isHighRate']").attr('checked', isHighRate);
-			
-			$("#encode-dialog").modal("show");
-		};
-		
-		function showPullDialog(trackId) {
-			var id = $("#idDiv_" + trackId).text();
-			var isrc = $("#isrcDiv_" + trackId).text();
-			var title = $("#publishTitleDiv_" + trackId).text();
-			title = title.length > 50 ? title.substring(0, 49).replace('&', ' ') : title.replace('&', ' ');
-			var artist = $("#publishArtistDiv_" + trackId).text();
-			artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
-			var info = $("#infoDiv_" + trackId).text();
-			var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
-			var amazonUrl = $("#amazonUrlDiv_" + trackId).text();
-			var areArtistUrls = $("#areArtistUrlsDiv_" + trackId).text();
-			
-			var pullForm = $("form#pull-form");
-			pullForm.find("input[name='id']").val(id);
-			pullForm.find("input[name='isrc']").val(isrc);
-			pullForm.find("input[name='title']").val(title);
-			pullForm.find("input[name='artist']").val(artist);
-			pullForm.find("input[name='info']").val(info);
-			pullForm.find("input[name='itunesUrl']").val(iTunesUrl);
-			pullForm.find("input[name='areArtistUrls']").attr('checked', (areArtistUrls=="true"));
-			var itunesLink = pullForm.find("a[name='itunesLink']");
-			itunesLink.text(iTunesUrl);
-			itunesLink.attr('href', iTunesUrl);
-			pullForm.find("input[name='amazonUrl']").val(amazonUrl);
-			var itunesLink = pullForm.find("a[name='amazonLink']");
-			itunesLink.text(amazonUrl);
-			itunesLink.attr('href', amazonUrl);
-			
-			$("#pull-dialog").modal("show");
-		};
-	
-		function onEncode() {
-			var encodeForm = $("form#encode-form");
-			var resolution = encodeForm.find("input[name='isHighRate']").attr('checked') ? "RATE_96" : "RATE_48";
-			var trackId = encodeForm.find("input[name='id']").val();
-			encodeForm.find("input[name='resolution']").val(resolution);
-			
-			var pulltrackButtonId = "#pulltrackButton_" + trackId;
-			var encodetrackButtonId = "#encodetrackButton_" + trackId;
-			var publishTitleDivId = "#publishTitleDiv_" + trackId;
-			var publishArtistDivId = "#publishArtistDiv_" + trackId;
-			var iTunesDivId = "#iTunesUrlDiv_" + trackId;
-			var infoDivId = "#infoDiv_" + trackId;
-			
-			$(encodetrackButtonId).hide();
-			$(pulltrackButtonId).hide();
-			$('.busy').show();
-			$.ajax({
-				url : /*[[@{'/tracks/encode.json'}]]*/"",
-				type : "post",
-				data : encodeForm.serialize(),
-				success : function(data) {
-					$(encodetrackButtonId).text('Re-Encode');
-					$(encodetrackButtonId).show();
-					$(pulltrackButtonId).show();
-					
-					$(publishTitleDivId).text(data.TRACK_DTO.title);
-					$(publishArtistDivId).text(data.TRACK_DTO.artist);
-					$(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
-					$(infoDivId).text(data.TRACK_DTO.publishDate);
-				},
-				complete: function() {
-			        $('.busy').hide();
-			    }
-
-			}).fail(function(data, x, e) {
-				try {
-					var error = $.parseJSON(data.responseText);
-					if (error.external_error)
-						alert(error.external_error);
-					else if (error.internal_error)
-						alert(error.internal_error);
-				} catch (ex) {
-					if(e != null && e != '')
-						alert(e);
-				}
-				$(encodetrackButtonId).text('Encode');
-				$(encodetrackButtonId).show();
-				$('.busy').hide();
-			});
-		};
-
-		function onPull() {
-			var pullForm = $("form#pull-form");
-			var trackId = pullForm.find("input[name='id']").val();
-			
-			var pulltrackButtonId = "#pulltrackButton_" + trackId;
-			var encodetrackButtonId = "#encodetrackButton_" + trackId;
-			var publishDateDivId = "#publishDateDiv_" + trackId;
-			var publishTitleDivId = "#publishTitleDiv_" + trackId;
-			var publishArtistDivId = "#publishArtistDiv_" + trackId;
-			var iTunesDivId = "#iTunesUrlDiv_" + trackId;
-			var amazonDivId = "#amazonUrlDiv_" + trackId;
-			var infoDivId = "#infoDiv_" + trackId;
-			var areArtistUrls = "#areArtistUrlsDiv_" + trackId;
-			
-			$(encodetrackButtonId).hide();
-			$(pulltrackButtonId).hide();
-			$('.busy').show();
-			$.ajax({
-				url : /*[[@{'/tracks/pull.json'}]]*/"",
-				type : "post",
-				data : pullForm.serialize(),
-				success : function(data) {
-						$(encodetrackButtonId).show();
-						$(pulltrackButtonId).show();
-
-						var publishDate = new Date(data.TRACK_DTO.publishDate);
-						var $dateformat = /*[[#{tracks.datetime.format}]]*/'dd/MM/yyyy hh:mm:ss';
-						$(publishDateDivId).text(dateFormat(publishDate, $dateformat));
-						$(publishTitleDivId).text(data.TRACK_DTO.title);
-						$(publishArtistDivId).text(data.TRACK_DTO.artist);
-						$(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
-						$(amazonDivId).text(data.TRACK_DTO.amazonUrl);
-						$(areArtistUrls).text(data.TRACK_DTO.areArtistUrls);
-						$(infoDivId).text(data.TRACK_DTO.info);
-				},
-				complete: function() {
-			        $('.busy').hide();
-			    }
-			}).fail(function(data, x, e) {
-						try {
-							var error = $.parseJSON(data.responseText);
-							if (error.external_error)
-								alert(error.external_error);
-							else if (error.internal_error)
-								alert(error.internal_error);
-						} catch (ex) {
-							if(e != null && e != '')
-								alert(e);
-						}
-						$(encodetrackButtonId).show();
-						$(pulltrackButtonId).show();
-						$('.busy').hide();
-			});
-		};	
+	<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+        var encodeUrl = /*[[@{'/tracks/encode.json'}]]*/"";
+        var pullUrl = /*[[@{'/tracks/pull.json'}]]*/"";
+        var findUrl = /*[[@{'/tracks/list.json'}]]*/"";
+        var filesUrl = /*[[@{__${trackRepoFilesURL}__}]]*/"";
+        var $dateformat = /*[[#{tracks.datetime.format}]]*/'dd/MM/yyyy hh:mm:ss';
 	/*]]>*/</script>
 </body>
 </html>

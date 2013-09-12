@@ -11,10 +11,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,62 +18,40 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.job.CreatePendingPaymentJob;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
 import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PaymentStatus;
-import mobi.nowtechnologies.server.persistence.domain.PremiumUserPayment;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CountryByIpService;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.FacebookService;
 import mobi.nowtechnologies.server.service.FileService;
-import mobi.nowtechnologies.server.service.ITunesService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.WeeklyUpdateService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.impl.ITunesServiceImpl;
-import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.TransactionType;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 import org.apache.http.NameValuePair;
-import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.DifferenceListener;
-import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
 import org.custommonkey.xmlunit.ElementQualifier;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +60,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -211,27 +184,6 @@ public class IntegrationTestIT {
 		return aHttpServletResponse;
 	}
 
-	private MockHttpServletResponse emulateMigUnSuccessCallback(
-			String internalTxCode)
-			throws ServletException, IOException {
-		if (internalTxCode == null)
-			throw new NullPointerException(
-					"The parameter internalTxCode is null");
-
-		MockHttpServletResponse aHttpServletResponse;
-		MockHttpServletRequest httpServletRequest;
-		aHttpServletResponse = new MockHttpServletResponse();
-		httpServletRequest = new MockHttpServletRequest("GET",
-				"/DRListener");
-		httpServletRequest.addParameter("STATUSTYPE", "20");
-		httpServletRequest.addParameter("GUID", "12345");
-		httpServletRequest.addParameter("STATUS", "1");
-		httpServletRequest.addParameter("MESSAGEID", internalTxCode);
-
-		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
-		return aHttpServletResponse;
-	}
-
 	private MockHttpServletResponse acc_check(String timestamp,
 			String userToken, String userName, String apiVersion,
 			String communityName, String appVersion, String deviceType, String pushNotificationToken, String iphoneToken, String transactionReceipt) throws ServletException,
@@ -271,142 +223,6 @@ public class IntegrationTestIT {
 		return aHttpServletResponse;
 	}
 
-	@Test
-	public void test_PSMSUserStatusAndPaymentOnNotOkMigResponse() {
-		// CL-2378: User status is changed instead of paymentStatus on first
-		// failed payment
-		// http://jira.dev.now-technologies.mobi:8181/browse/CL-2378
-		try {
-
-			PostService mockPostService = new PostService() {
-				@Override
-				public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
-					if (url == null)
-						throw new NullPointerException(
-								"The parameter url is null");
-					if (nameValuePairs == null)
-						throw new NullPointerException(
-								"The parameter nameValuePairs is null");
-					Response response = new Response();
-					response.setStatusCode(200);
-					response.setMessage("");
-					return response;
-				}
-			};
-
-			LOGGER.info("mockPostService created and wired");
-
-			String timestamp = "1";
-			String userToken = "1a4d0298535c54cbab054eccaca4c793";
-			String userName = "zzz@z.com";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-			String deviceType = "ANDROID";
-			String displayName = "Nigel";
-			String deviceString = "Device 1";
-			String phoneNumber = "00447580381128";
-			String operator = "1";
-
-			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<userRegInfo>"
-					+ "<address>33333</address>"
-					+ "<appVersion>" + appVersion + "</appVersion>"
-					+ "<apiVersion>" + apiVersion + "</apiVersion>"
-					+ "<deviceType>" + deviceType + "</deviceType>"
-					+ "<deviceString>" + deviceString + "</deviceString>"
-					+ "<countryFullName>Great Britain</countryFullName>"
-					+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-					+ "<operator>" + operator + "</operator>"
-					+ "<city>33</city>"
-					+ "<firstName>33</firstName>"
-					+ "<lastName>33</lastName>"
-					+ "<email>" + userName + "</email>"
-					+ "<communityName>" + communityName + "</communityName>"
-					+ "<displayName>" + displayName + "</displayName>"
-					+ "<postCode>null</postCode>"
-					+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-					+ "<storedToken>51c7bb77ae9859e18118b014188f34b1</storedToken>"
-					+ "<cardBillingAddress>88</cardBillingAddress>"
-					+ "<cardBillingCity>London</cardBillingCity>"
-					+ "<cardBillingCountry>GB</cardBillingCountry>"
-					+ "<cardCv2>123</cardCv2>"
-					+ "<cardIssueNumber></cardIssueNumber>"
-					+ "<cardHolderFirstName>John</cardHolderFirstName>"
-					+ "<cardHolderLastName>Smith</cardHolderLastName>"
-					+ "<cardBillingPostCode>412</cardBillingPostCode>"
-					+ "<cardStartMonth>1</cardStartMonth>"
-					+ "<cardStartYear>2011</cardStartYear>"
-					+ "<cardExpirationMonth>1</cardExpirationMonth>"
-					+ "<cardExpirationYear>2012</cardExpirationYear>"
-					+ "<cardNumber>4929000000006</cardNumber>"
-					+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" + "</userRegInfo>";
-
-			MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			User user = userService.findByNameAndCommunity(userName, communityName);
-			final int userId = user.getId();
-
-			assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNull(lastPremiumUserPayment);
-
-			String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPIN_PENDING().getName(), paymentStatus);
-
-			aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-					userName, communityName, appVersion, user.getPin());
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null, null);
-
-			String responseBody = aHttpServletResponse.getContentAsString();
-
-			assertNotNull(responseBody);
-			assertEquals(
-					"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-							+ "<response>"
-							+ "<user>"
-							+ "<chartItems>40</chartItems>"
-							+ "<chartTimestamp>1317302136</chartTimestamp>"
-							+ "<deviceType>" + deviceType + "</deviceType>"
-							+ "<deviceUID>" + deviceString + "</deviceUID>"
-							+ "<displayName>" + displayName + "</displayName>"
-							+ "<drmValue>0</drmValue>"
-							+ "<newsItems>10</newsItems>"
-							+ "<newsTimestamp>1317300123</newsTimestamp>"
-							+ "<operator>" + operator + "</operator>"
-							+ "<paymentEnabled>false</paymentEnabled>"
-							+ "<paymentStatus>PSMS_ERROR</paymentStatus>"
-							+ "<paymentType>PSMS</paymentType>"
-							+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-							+ "<status>EULA</status>"
-							+ "<subBalance>0</subBalance>"
-							+ "</user>"
-							+ "</response>", responseBody);
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPSMS_ERROR().getName(), paymentStatus);
-
-			lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertEquals(AppConstants.STATUS_FAIL, lastPremiumUserPayment.getStatus());
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-	}
-
 	private MockHttpServletResponse registerUser(String aBody, String remoteAddr)
 			throws ServletException, IOException {
 		if (aBody == null)
@@ -427,142 +243,6 @@ public class IntegrationTestIT {
 		httpServletRequest.setPathInfo("/REGISTER_USER");
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
-	}
-
-	@Test
-	public void test_PSMSUserStatusAndPaymentOnNot200MigHttpStatus() {
-		// CL-2378: User status is changed instead of paymentStatus on first
-		// failed payment
-		// http://jira.dev.now-technologies.mobi:8181/browse/CL-2378
-		try {
-
-			PostService mockPostService = new PostService() {
-				@Override
-				public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
-					if (url == null)
-						throw new NullPointerException(
-								"The parameter url is null");
-					if (nameValuePairs == null)
-						throw new NullPointerException(
-								"The parameter nameValuePairs is null");
-					Response response = new Response();
-					response.setStatusCode(400);
-					response.setMessage("");
-					return response;
-				}
-			};
-
-			LOGGER.info("mockPostService created and wired");
-
-			String timestamp = "1";
-			String userToken = "1a4d0298535c54cbab054eccaca4c793";
-			String userName = "zzz@z.com";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-			String deviceType = "ANDROID";
-			String displayName = "Nigel";
-			String deviceString = "Device 1";
-			String phoneNumber = "00447580381128";
-			String operator = "1";
-
-			String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-					+ "<userRegInfo>"
-					+ "<address>33333</address>"
-					+ "<appVersion>" + appVersion + "</appVersion>"
-					+ "<apiVersion>" + apiVersion + "</apiVersion>"
-					+ "<deviceType>" + deviceType + "</deviceType>"
-					+ "<deviceString>" + deviceString + "</deviceString>"
-					+ "<countryFullName>Great Britain</countryFullName>"
-					+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-					+ "<operator>" + operator + "</operator>"
-					+ "<city>33</city>"
-					+ "<firstName>33</firstName>"
-					+ "<lastName>33</lastName>"
-					+ "<email>" + userName + "</email>"
-					+ "<communityName>" + communityName + "</communityName>"
-					+ "<displayName>" + displayName + "</displayName>"
-					+ "<postCode>null</postCode>"
-					+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-					+ "<storedToken>51c7bb77ae9859e18118b014188f34b1</storedToken>"
-					+ "<cardBillingAddress>88</cardBillingAddress>"
-					+ "<cardBillingCity>London</cardBillingCity>"
-					+ "<cardBillingCountry>GB</cardBillingCountry>"
-					+ "<cardCv2>123</cardCv2>"
-					+ "<cardIssueNumber></cardIssueNumber>"
-					+ "<cardHolderFirstName>John</cardHolderFirstName>"
-					+ "<cardHolderLastName>Smith</cardHolderLastName>"
-					+ "<cardBillingPostCode>412</cardBillingPostCode>"
-					+ "<cardStartMonth>1</cardStartMonth>"
-					+ "<cardStartYear>2011</cardStartYear>"
-					+ "<cardExpirationMonth>1</cardExpirationMonth>"
-					+ "<cardExpirationYear>2012</cardExpirationYear>"
-					+ "<cardNumber>4929000000006</cardNumber>"
-					+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" + "</userRegInfo>";
-
-			MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			User user = userService.findByNameAndCommunity(userName, communityName);
-			final int userId = user.getId();
-
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertNull(lastPremiumUserPayment);
-
-			String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getPIN_PENDING().getName(), paymentStatus);
-
-			aHttpServletResponse = checkPin(timestamp, userToken, apiVersion,
-					userName, communityName, appVersion, user.getPin());
-
-			assertEquals(200, aHttpServletResponse.getStatus());
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			aHttpServletResponse = acc_check(timestamp, userToken, userName,
-					apiVersion, communityName, appVersion, null, null, null, null);
-
-			String responseBody = aHttpServletResponse.getContentAsString();
-
-			assertNotNull(responseBody);
-			assertEquals(
-					"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-							+ "<response>"
-							+ "<user>"
-							+ "<chartItems>40</chartItems>"
-							+ "<chartTimestamp>1317302136</chartTimestamp>"
-							+ "<deviceType>" + deviceType + "</deviceType>"
-							+ "<deviceUID>" + deviceString + "</deviceUID>"
-							+ "<displayName>" + displayName + "</displayName>"
-							+ "<drmValue>0</drmValue>"
-							+ "<newsItems>10</newsItems>"
-							+ "<newsTimestamp>1317300123</newsTimestamp>"
-							+ "<operator>" + operator + "</operator>"
-							+ "<paymentEnabled>false</paymentEnabled>"
-							+ "<paymentStatus>" + PaymentStatusDao.getAWAITING_PSMS().getName() + "</paymentStatus>"
-							+ "<paymentType>PSMS</paymentType>"
-							+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-							+ "<status>" + UserStatus.EULA + "</status>"
-							+ "<subBalance>0</subBalance>"
-							+ "</user>"
-							+ "</response>", responseBody);
-
-			user = userService.findByNameAndCommunity(userName, communityName);
-			assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-			paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-			assertEquals(PaymentStatusDao.getAWAITING_PSMS().getName(), paymentStatus);
-
-			lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-			assertEquals(AppConstants.STATUS_PENDING, lastPremiumUserPayment.getStatus());
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
 	}
 
 	private MockHttpServletResponse checkPin(String timestamp,
@@ -637,82 +317,6 @@ public class IntegrationTestIT {
 		httpServletRequest.addParameter("USER_NAME", userName);
 		httpServletRequest.addParameter("USER_TOKEN", userToken);
 		httpServletRequest.addParameter("TIMESTAMP", timestamp);
-
-		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
-		return aHttpServletResponse;
-	}
-
-	private PremiumUserPayment findLastPremiumUserPayment(final int userId) {
-		Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-		fieldNameValueMap.put(PremiumUserPayment.Fields.userUID.toString(),
-				userId);
-		fieldNameValueMap.put(PremiumUserPayment.Fields.timestamp
-				.toString(), new Object() {
-			@Override
-			public String toString() {
-				return "(select max("
-						+ PremiumUserPayment.Fields.timestamp.toString()
-						+ ") from "
-						+ PremiumUserPayment.class.getSimpleName()
-						+ " m where m."
-						+ PremiumUserPayment.Fields.userUID.toString()
-						+ "=" + userId + ")";
-			}
-		});
-		PremiumUserPayment lastPremiumUserPayment = entityService
-				.findByProperties(PremiumUserPayment.class,
-						fieldNameValueMap);
-		return lastPremiumUserPayment;
-	}
-
-	private MockHttpServletResponse emulateMigSuccesCallback(
-			String internalTxCode) throws ServletException,
-			IOException {
-		if (internalTxCode == null)
-			throw new NullPointerException(
-					"The parameter internalTxCode is null");
-
-		MockHttpServletRequest httpServletRequest;
-		MockHttpServletResponse aHttpServletResponse;
-		aHttpServletResponse = new MockHttpServletResponse();
-		httpServletRequest = new MockHttpServletRequest("GET",
-				"/DRListener");
-		httpServletRequest.addParameter("STATUSTYPE", "20");
-		httpServletRequest.addParameter("GUID", "12345");
-		httpServletRequest.addParameter("STATUS", "0");
-		httpServletRequest.addParameter("MESSAGEID", internalTxCode);
-
-		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
-		return aHttpServletResponse;
-	}
-
-	private MockHttpServletResponse updatePhone(String userName,
-			String timestamp, String apiVersion, String communityName,
-			String appVersion, String phoneNumber, int operator,
-			String userToken) throws ServletException, IOException {
-		if (userName == null)
-			throw new NullPointerException("The parameter userName is null");
-		if (timestamp == null)
-			throw new NullPointerException("The parameter timestamp is null");
-		if (apiVersion == null)
-			throw new NullPointerException("The parameter apiVersion is null");
-		if (communityName == null)
-			throw new NullPointerException("The parameter communityName is null");
-		if (appVersion == null)
-			throw new NullPointerException("The parameter appVersion is null");
-		if (phoneNumber == null)
-			throw new NullPointerException("The parameter phoneNumber is null");
-
-		MockHttpServletResponse aHttpServletResponse = new MockHttpServletResponse();
-		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("POST", "/UPDATE_PHONE");
-		httpServletRequest.addParameter("APP_VERSION", appVersion);
-		httpServletRequest.addParameter("COMMUNITY_NAME", communityName);
-		httpServletRequest.addParameter("API_VERSION", apiVersion);
-		httpServletRequest.addParameter("USER_NAME", userName);
-		httpServletRequest.addParameter("USER_TOKEN", userToken);
-		httpServletRequest.addParameter("TIMESTAMP", timestamp);
-		httpServletRequest.addParameter("PHONE_NUMBER", phoneNumber);
-		httpServletRequest.addParameter("OPERATOR", String.valueOf(operator));
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
@@ -841,226 +445,6 @@ public class IntegrationTestIT {
 		}
 	}
 
-	@Test
-	public void test_REGISTER_USER_commandWithoutPaymentDetails() throws Exception {
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-
-		String deviceType = "ANDROID";
-		String displayName = "Nigel";
-		String deviceString = "Device 1";
-		String phoneNumber = "00447580381128";
-		int operator = 1;
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType(deviceType);
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString(deviceString);
-		userRegInfo.setDisplayName(displayName);
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-		userRegInfo.setPromotionCode("promo");
-
-		registerUnknownPaymentTypeUser(userRegInfo, timestamp, userToken, apiVersion);
-	}
-
-	@Test
-	public void test_REGISTER_USER_commandWithWrongGeoLocation() throws Exception {
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-
-		String deviceType = "ANDROID";
-		String displayName = "Nigel";
-		String deviceString = "Device 1";
-		String phoneNumber = "00447580381128";
-		int operator = 1;
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType(deviceType);
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString(deviceString);
-		userRegInfo.setDisplayName(displayName);
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-		userRegInfo.setPromotionCode("promo");
-
-		registerUnknownPaymentTypeUser(userRegInfo, timestamp, userToken, apiVersion);
-	}
-
-	@Test
-	public void test_updatePaymentDetailsPSMS() throws ServletException, IOException {
-
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-
-		String deviceType = "ANDROID";
-		String displayName = "Nigel";
-		String deviceString = "Device 1";
-		String phoneNumber = "00447580381128";
-		int operator = 1;
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType(deviceType);
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString(deviceString);
-		userRegInfo.setDisplayName(displayName);
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-		userRegInfo.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
-		userRegInfo.setPromotionCode("promo");
-
-		registerUnknownPaymentTypeUser(userRegInfo, timestamp, userToken, apiVersion);
-
-		// Set user in SUBSCRIBED | NULL
-		User user = userDao.findByNameAndCommunity(userName, communityName);
-		user.setStatus(UserStatusDao.getSubscribedUserStatus());
-		user.setPaymentStatus(PaymentStatus.NULL_CODE);
-		userService.updateUser(user);
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.PREMIUM_USER + "</paymentType>"
-				+ "<cardBillingAddress>88</cardBillingAddress>"
-				+ "<cardBillingCity>London</cardBillingCity>"
-				+ "<cardBillingCountry>GB</cardBillingCountry>"
-				+ "<cardCv2>123</cardCv2>"
-				+ "<cardIssueNumber></cardIssueNumber>"
-				+ "<cardHolderFirstName>John</cardHolderFirstName>"
-				+ "<cardHolderLastName>Smith</cardHolderLastName>"
-				+ "<cardBillingPostCode>412</cardBillingPostCode>"
-				+ "<cardStartMonth>1</cardStartMonth>"
-				+ "<cardStartYear>2011</cardStartYear>"
-				+ "<cardExpirationMonth>1</cardExpirationMonth>"
-				+ "<cardExpirationYear>2012</cardExpirationYear>"
-				+ "<cardNumber>4929000000006</cardNumber>"
-				+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" +
-				"</userRegInfo>";
-
-		updatePaymentDetails(userName, timestamp, apiVersion, communityName, appVersion, userToken, aBody);
-
-		MockHttpServletResponse httpServletResponse = checkPin(timestamp, userToken, apiVersion, userName, communityName, appVersion, user.getPin());
-
-		assertEquals(200, httpServletResponse.getStatus());
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-		assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getId(), user.getPaymentStatus());
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(user.getId());
-
-		MockHttpServletResponse aHttpServletResponse = emulateMigSuccesCallback(lastPremiumUserPayment
-				.getInternalTxCode());
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-
-		assertNotSame(0, user.getSubBalance());
-
-	}
-
-	@Test
-	public void test_updatePaymentDetailsCreditCard() throws ServletException, IOException {
-		String password = "zzz@z.com";
-		String userName = "zzz@z.com";
-		String timestamp = "1";
-		String apiVersion = "V1.2";
-		String communityName = "Now Music";
-		String appVersion = "CNBETA";
-
-		String deviceType = "ANDROID";
-		String displayName = "Nigel";
-		String deviceString = "Device 1";
-		String phoneNumber = "00447580381128";
-		int operator = 0;
-
-		String storedToken = Utils.createStoredToken(userName, password);
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-		UserRegInfo userRegInfo = new UserRegInfo();
-		userRegInfo.setEmail(userName);
-		userRegInfo.setStoredToken(storedToken);
-		userRegInfo.setAppVersion(appVersion);
-		userRegInfo.setDeviceType(deviceType);
-		userRegInfo.setCommunityName(communityName);
-		userRegInfo.setDeviceString(deviceString);
-		userRegInfo.setDisplayName(displayName);
-		userRegInfo.setPhoneNumber(phoneNumber);
-		userRegInfo.setOperator(operator);
-		userRegInfo.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
-		userRegInfo.setPromotionCode("promo");
-
-		registerUnknownPaymentTypeUser(userRegInfo, timestamp, userToken, apiVersion);
-
-		// Set user in SUBSCRIBED | NULL
-		User user = userDao.findByNameAndCommunity(userName, communityName);
-		user.setStatus(UserStatusDao.getSubscribedUserStatus());
-		user.setPaymentStatus(PaymentStatus.NULL_CODE);
-		userService.updateUser(user);
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.CREDIT_CARD + "</paymentType>"
-				+ "<cardBillingAddress>88</cardBillingAddress>"
-				+ "<cardBillingCity>London</cardBillingCity>"
-				+ "<cardBillingCountry>GB</cardBillingCountry>"
-				+ "<cardCv2>123</cardCv2>"
-				+ "<cardIssueNumber></cardIssueNumber>"
-				+ "<cardHolderFirstName>John</cardHolderFirstName>"
-				+ "<cardHolderLastName>Smith</cardHolderLastName>"
-				+ "<cardBillingPostCode>412</cardBillingPostCode>"
-				+ "<cardStartMonth>1</cardStartMonth>"
-				+ "<cardStartYear>2011</cardStartYear>"
-				+ "<cardExpirationMonth>1</cardExpirationMonth>"
-				+ "<cardExpirationYear>2012</cardExpirationYear>"
-				+ "<cardNumber>4929000000006</cardNumber>"
-				+ "<cardType>" + UserRegInfo.CardType.VISA + "</cardType>" +
-				"</userRegInfo>";
-
-		updatePaymentDetails(userName, timestamp, apiVersion, communityName, appVersion, userToken, aBody);
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-
-		assertEquals(PaymentStatusDao.getAWAITING_PAYMENT().getId(), user.getPaymentStatus());
-
-		user = userDao.findByNameAndCommunity(userName, communityName);
-
-		assertNotSame(0, user.getSubBalance());
-	}
-
 	private MockHttpServletResponse updatePaymentDetails(String userName,
 			String timestamp, String apiVersion, String communityName,
 			String appVersion, String userToken, String aBody) throws ServletException, IOException {
@@ -1094,209 +478,6 @@ public class IntegrationTestIT {
 
 		dispatcherServlet.service(httpServletRequest, aHttpServletResponse);
 		return aHttpServletResponse;
-	}
-
-	public void registerUnknownPaymentTypeUser(UserRegInfo userRegInfo, String timestamp, String userToken, String apiVersion) throws ServletException, IOException {
-		if (userRegInfo == null)
-			throw new NullPointerException("The parameter userRegInfo is null");
-		if (timestamp == null)
-			throw new NullPointerException("The parameter timestamp is null");
-		if (userToken == null)
-			throw new NullPointerException("The parameter userToken is null");
-		if (apiVersion == null)
-			throw new NullPointerException("The parameter apiVersion is null");
-
-		String userName = userRegInfo.getEmail();
-		String communityName = userRegInfo.getCommunityName();
-		String appVersion = userRegInfo.getAppVersion();
-		String deviceType = userRegInfo.getDeviceType();
-		String displayName = userRegInfo.getDisplayName();
-		String deviceString = userRegInfo.getDeviceString();
-		String phoneNumber = userRegInfo.getPhoneNumber();
-		String operator = String.valueOf(userRegInfo.getOperator());
-		String storedToken = userRegInfo.getStoredToken();
-		String promoCode = userRegInfo.getPromotionCode();
-
-		if (userName == null)
-			throw new NullPointerException("The parameter userName is null");
-		if (communityName == null)
-			throw new NullPointerException("The parameter communityName is null");
-		if (appVersion == null)
-			throw new NullPointerException("The parameter appVersion is null");
-		if (deviceType == null)
-			throw new NullPointerException("The parameter deviceType is null");
-		if (displayName == null)
-			throw new NullPointerException("The parameter displayName is null");
-		if (deviceString == null)
-			throw new NullPointerException("The parameter deviceString is null");
-		if (phoneNumber == null)
-			throw new NullPointerException("The parameter phoneNumber is null");
-		if (promoCode == null)
-			throw new NullPointerException("The parameter promotionCode is null");
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<address>33333</address>"
-				+ "<appVersion>" + appVersion + "</appVersion>"
-				+ "<apiVersion>" + apiVersion + "</apiVersion>"
-				+ "<deviceType>" + deviceType + "</deviceType>"
-				+ "<deviceString>" + deviceString + "</deviceString>"
-				+ "<countryFullName>Great Britain</countryFullName>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<city>33</city>"
-				+ "<firstName>33</firstName>"
-				+ "<lastName>33</lastName>"
-				+ "<email>" + userName + "</email>"
-				+ "<communityName>" + communityName + "</communityName>"
-				+ "<displayName>" + displayName + "</displayName>"
-				+ "<postCode>null</postCode>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.UNKNOWN + "</paymentType>"
-				+ "<promotionCode>" + promoCode + "</promotionCode>"
-				+ "<storedToken>" + storedToken + "</storedToken>"
-				+ "</userRegInfo>";
-
-		MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		final int userId = user.getId();
-
-		assertEquals(UserStatus.SUBSCRIBED.getCode(), user.getUserStatusId());
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-		assertNull(lastPremiumUserPayment);
-
-		String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
-	}
-
-	public void registerPayPalPaymentTypeUser(UserRegInfo userRegInfo, String timestamp, String userToken, String apiVersion) throws ServletException, IOException {
-		if (userRegInfo == null)
-			throw new NullPointerException("The parameter userRegInfo is null");
-		if (timestamp == null)
-			throw new NullPointerException("The parameter timestamp is null");
-		if (userToken == null)
-			throw new NullPointerException("The parameter userToken is null");
-		if (apiVersion == null)
-			throw new NullPointerException("The parameter apiVersion is null");
-
-		String userName = userRegInfo.getEmail();
-		String communityName = userRegInfo.getCommunityName();
-		String appVersion = userRegInfo.getAppVersion();
-		String deviceType = userRegInfo.getDeviceType();
-		String displayName = userRegInfo.getDisplayName();
-		String deviceString = userRegInfo.getDeviceString();
-		String phoneNumber = userRegInfo.getPhoneNumber();
-		String operator = String.valueOf(userRegInfo.getOperator());
-		String storedToken = userRegInfo.getStoredToken();
-
-		if (userName == null)
-			throw new NullPointerException("The parameter userName is null");
-		if (communityName == null)
-			throw new NullPointerException("The parameter communityName is null");
-		if (appVersion == null)
-			throw new NullPointerException("The parameter appVersion is null");
-		if (deviceType == null)
-			throw new NullPointerException("The parameter deviceType is null");
-		if (displayName == null)
-			throw new NullPointerException("The parameter displayName is null");
-		if (deviceString == null)
-			throw new NullPointerException("The parameter deviceString is null");
-		if (phoneNumber == null)
-			throw new NullPointerException("The parameter phoneNumber is null");
-
-		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<userRegInfo>"
-				+ "<address>33333</address>"
-				+ "<appVersion>" + appVersion + "</appVersion>"
-				+ "<apiVersion>" + apiVersion + "</apiVersion>"
-				+ "<deviceType>" + deviceType + "</deviceType>"
-				+ "<deviceString>" + deviceString + "</deviceString>"
-				+ "<countryFullName>Great Britain</countryFullName>"
-				+ "<phoneNumber>" + phoneNumber + "</phoneNumber>"
-				+ "<operator>" + operator + "</operator>"
-				+ "<city>33</city>"
-				+ "<firstName>33</firstName>"
-				+ "<lastName>33</lastName>"
-				+ "<email>" + userName + "</email>"
-				+ "<communityName>" + communityName + "</communityName>"
-				+ "<displayName>" + displayName + "</displayName>"
-				+ "<postCode>null</postCode>"
-				+ "<paymentType>" + UserRegInfo.PaymentType.PAY_PAL + "</paymentType>"
-				+ "<storedToken>" + storedToken + "</storedToken>"
-				+ "</userRegInfo>";
-
-		MockHttpServletResponse aHttpServletResponse = registerUser(aBody, "2.24.0.1");
-
-		assertEquals(200, aHttpServletResponse.getStatus());
-
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		final int userId = user.getId();
-
-		assertEquals(UserStatus.EULA.getCode(), user.getUserStatusId());
-
-		PremiumUserPayment lastPremiumUserPayment = findLastPremiumUserPayment(userId);
-		assertNull(lastPremiumUserPayment);
-
-		String paymentStatus = PaymentStatusDao.getMapIdAsKey().get(user.getPaymentStatus()).getName();
-		assertEquals(PaymentStatusDao.getNULL().getName(), paymentStatus);
-	}
-
-	@Test
-	public void test_PayPalService() {
-		try {
-			String password = "zzz@z.com";
-			String userName = "zzz@z.com";
-			String timestamp = "1";
-			String apiVersion = "V1.2";
-			String communityName = "Now Music";
-			String appVersion = "CNBETA";
-
-			String deviceType = "ANDROID";
-			String displayName = "Nigel";
-			String deviceString = "Device 1";
-			String phoneNumber = "00447580381128";
-			int operator = 1;
-
-			String storedToken = Utils.createStoredToken(userName, password);
-			String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-			UserRegInfo userRegInfo = new UserRegInfo();
-			userRegInfo.setEmail(userName);
-			userRegInfo.setStoredToken(storedToken);
-			userRegInfo.setAppVersion(appVersion);
-			userRegInfo.setDeviceType(deviceType);
-			userRegInfo.setCommunityName(communityName);
-			userRegInfo.setDeviceString(deviceString);
-			userRegInfo.setDisplayName(displayName);
-			userRegInfo.setPhoneNumber(phoneNumber);
-			userRegInfo.setOperator(operator);
-			userRegInfo.setPaymentType(UserRegInfo.PaymentType.PAY_PAL);
-
-			registerPayPalPaymentTypeUser(userRegInfo, timestamp, userToken, apiVersion);
-
-			User user = userDao.findByNameAndCommunity(userName, communityName);
-
-			String billingAgreementDescription = "Test";
-
-			// HashMap<String, String> hashMap=null;
-			// while (hashMap==null||hashMap.isEmpty()||hashMap.){
-			// try{
-			// hashMap = payPalService.getExpressCheckoutDetails(token);
-			// }catch (Exception e) {
-			// LOGGER.error(e.getMessage(), e);
-			// }
-			// Thread.sleep(1000L);
-			// }
-			//
-			// LOGGER.info("");
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-
 	}
 
 	@Test

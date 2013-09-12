@@ -690,6 +690,11 @@ ul.table li div.repo_columns {
 	border: none;
 }
 
+ul.table li div.territory_columns {
+    width: 8.5%;
+    border: none;
+}
+
 ul.table li div.image_repo_columns {
     position: relative;
 	width: 100px;
@@ -746,12 +751,21 @@ ul#tracksTable li:hover {
     width: 300px;
 }
 
-.center p.image {
+.center p.loadingLarge {
 	text-align: center;
 	width: 100px;
     height: 100px;
     margin-left: 90px;
 	background: url("../img/loading-thumb.gif");
+}
+
+p.loadingSmall {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 33px;
+    height: 33px;
+    background: url("../img/loading-thumb-small.gif");
 }
 
 .center p.message {
@@ -955,4 +969,46 @@ ul.table li .audioContainer div.modal-header .close{
     position: relative;
     margin-top: 0px;
     z-index: 200;
+}
+
+.popover {
+    max-width: 1200px;
+}
+
+.popover-title {
+    height: 28px;
+    line-height: 27px;
+}
+
+.popover-title-text{
+    font-size: 16px;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.details-label {
+    display: inline-block;
+    width: 10%;
+}
+
+.details-value {
+    display: inline-block;
+    width: 85%;
+}
+
+ul.table li div.type_asset_columns {
+    width: 11%;
+    border: none;
+}
+
+ul.table li div.path_asset_columns {
+    width: 85%;
+    border: none;
+}
+
+.right-button {
+    padding-left: 5px;
+    height: 40px;
+    float: right;
 }

@@ -26,7 +26,9 @@ public interface SearchTrackCriteria {
 
     String getGenre();
     
-    void setTrackIds(List<Integer> trackIds);
-    
     List<Integer> getTrackIds();
+
+    boolean isWithTerritories();
+
+    boolean isWithFiles();
 }

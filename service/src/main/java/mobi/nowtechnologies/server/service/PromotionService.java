@@ -40,7 +40,6 @@ public class PromotionService {
     private UserService userService;
     private CommunityResourceBundleMessageSource messageSource;
     private PromotionRepository promotionRepository;
-    private RefundService refundService;
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -60,10 +59,6 @@ public class PromotionService {
 
     public void setPromotionRepository(PromotionRepository promotionRepository) {
         this.promotionRepository = promotionRepository;
-    }
-
-    public void setRefundService(RefundService refundService) {
-        this.refundService = refundService;
     }
 
     public Promotion getActivePromotion(String promotionCode, String communityName) {

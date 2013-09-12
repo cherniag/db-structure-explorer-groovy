@@ -16,6 +16,27 @@ $.fn.descendantOf = function(element) {
 };
 //---------------------------------------------------//
 $(function() {
+    //------------------Popover Dialogs----------------//
+    var popoverSelector = $(".popover-selector").popover({
+        title : function(){
+            var popoverTitle = $(this).find(".popover-title");
+            return popoverTitle.html();
+        },
+        content : function(){
+           var popoverContent = $(this).find(".popover-content");
+           return popoverContent.html();
+        },
+        html : true
+    });
+    popoverSelector.each(function () {
+        var $this = $(this);
+        $this.on("shown", function(){
+             window[$this.attr("onShownPopover")]($this);
+        });
+        $this.on("hidden", function(){
+            window[$this.attr("onHiddenPopover")]($this);
+        });
+    });
     //------------------Play Video and Audio-----------//
     var player = null;
     $(".play").mouseover(function(){
@@ -24,6 +45,8 @@ $(function() {
         var modalEl = parent.find(".modal");
 
         if(!modalEl.is(':visible')){
+               modalEl.click(stopBubble);
+               modalEl.on("shown", stopBubble);
                setAbsPlayerPosition(modalEl, parent.offset());
                modalEl.modal({backdrop:false});
 
@@ -445,4 +468,12 @@ jQuery.fn['containsPoint'] = function (p) {
     var bounds = $(this).bounds();
     var contains = bounds.left < p.pageX && bounds.top < p.pageY && bounds.right > p.pageX && bounds.bottom > p.pageY ;
     return contains;
+}
+
+var stopBubble = function(e){
+    if(e.stopPropagation){
+        e.stopPropagation();
+    } else {
+        window.event.cancelBubble = true;
+    }
 }

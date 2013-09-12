@@ -12,5 +12,5 @@ import org.springframework.data.domain.Pageable;
  */
 public interface TrackRepositoryCustom {
 
-	Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pageable, boolean withTerritories, boolean withFiles);
+	Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pageable);
 }

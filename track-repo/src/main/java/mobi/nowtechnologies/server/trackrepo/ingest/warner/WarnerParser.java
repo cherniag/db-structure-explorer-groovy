@@ -7,17 +7,19 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class WarnerParser extends DDEXParser {
-	protected static final Log LOG = LogFactory.getLog(DDEXParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WarnerParser.class);
 
 	public WarnerParser(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("Warner parser loadin from " + root);
+        LOGGER.info("Warner parser loadin from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
@@ -28,7 +30,7 @@ public class WarnerParser extends DDEXParser {
 			File[] content = folder.listFiles();
 			for (File file : content) {
 				String xmlFileName = file.getName() + ".xml";
-				Map<String, DropTrack> result = loadXml(file.getAbsolutePath() + "/" + xmlFileName);
+				Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
 
 				if (result != null) {
 					tracks.putAll(result);
@@ -50,7 +52,7 @@ public class WarnerParser extends DDEXParser {
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-			LOG.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder " + result.get(i));
 		}
 		return result;
 	}
@@ -73,7 +75,7 @@ public class WarnerParser extends DDEXParser {
 			}
 		}
 		if (deliveryComplete && !processed) {
-			LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
 			DropData drop = new DropData();
 			drop.name =folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());

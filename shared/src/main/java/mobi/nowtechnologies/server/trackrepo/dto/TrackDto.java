@@ -56,14 +56,13 @@ public class TrackDto {
 	private String amazonUrl;
 	private boolean areArtistUrls;
 	private AudioResolution resolution;
-	private String territories;
+	private String territoryCodes;
 	private List<ResourceFileDto> files;
+    private List<TerritoryDto> territories;
 
 	public TrackDto() {
 
 	}
-
-
 
 	public TrackDto(TrackDto track) {
 		this.id = track.id;
@@ -91,6 +90,7 @@ public class TrackDto {
 		this.publishTitle = track.publishTitle;
 		this.publishArtist = track.publishArtist;
         this.explicit = track.explicit;
+        this.territories = track.territories;
 	}
 
 	public Long getId() {
@@ -113,7 +113,15 @@ public class TrackDto {
 		return ingestor;
 	}
 
-	public void setIngestor(String ingestor) {
+    public List<TerritoryDto> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(List<TerritoryDto> territories) {
+        this.territories = territories;
+    }
+
+    public void setIngestor(String ingestor) {
 		this.ingestor = ingestor;
 	}
 
@@ -305,15 +313,15 @@ public class TrackDto {
 		this.itunesUrl = itunesUrl;
 	}
 
-	public String getTerritories() {
-		return territories;
-	}
+    public String getTerritoryCodes() {
+        return territoryCodes;
+    }
 
-	public void setTerritories(String territories) {
-		this.territories = territories;
-	}
+    public void setTerritoryCodes(String territoryCodes) {
+        this.territoryCodes = territoryCodes;
+    }
 
-	public AudioResolution getResolution() {
+    public AudioResolution getResolution() {
 		return resolution;
 	}
 
@@ -390,7 +398,7 @@ public class TrackDto {
 		result = prime * result + ((resolution == null) ? 0 : resolution.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((subTitle == null) ? 0 : subTitle.hashCode());
-		result = prime * result + ((territories == null) ? 0 : territories.hashCode());
+		result = prime * result + ((territoryCodes == null) ? 0 : territoryCodes.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((year == null) ? 0 : year.hashCode());
 		result = prime * result + ((label == null) ? 0 :label.hashCode());
@@ -518,10 +526,10 @@ public class TrackDto {
 				return false;
 		} else if (!subTitle.equals(other.subTitle))
 			return false;
-		if (territories == null) {
-			if (other.territories != null)
+		if (territoryCodes == null) {
+			if (other.territoryCodes != null)
 				return false;
-		} else if (!territories.equals(other.territories))
+		} else if (!territoryCodes.equals(other.territoryCodes))
 			return false;
 		if (title == null) {
 			if (other.title != null)
@@ -569,8 +577,9 @@ public class TrackDto {
                 ", amazonUrl='" + amazonUrl + '\'' +
                 ", areArtistUrls=" + areArtistUrls +
                 ", resolution=" + resolution +
-                ", territories='" + territories + '\'' +
+                ", territoryCodes='" + territoryCodes + '\'' +
                 ", files=" + files +
+                ", territories=" + territories +
                 "} " + super.toString();
     }
 }

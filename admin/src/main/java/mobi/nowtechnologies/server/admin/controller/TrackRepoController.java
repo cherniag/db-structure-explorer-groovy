@@ -35,8 +35,9 @@ public class TrackRepoController extends AbstractCommonController{
 		this.trackRepoFilesURL = trackRepoFilesURL;
 	}
 	
-	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
+	@InitBinder()
 	public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
@@ -66,8 +67,8 @@ public class TrackRepoController extends AbstractCommonController{
 		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[] { track });
 
 		track = trackRepoService.encode(track);
-		
-		ModelAndView modelAndView = new ModelAndView();
+
+        ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(TrackDto.TRACK_DTO, track);
 
 		return modelAndView;
@@ -78,7 +79,7 @@ public class TrackRepoController extends AbstractCommonController{
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
 		track = trackRepoService.pull(track);
-		
+
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(TrackDto.TRACK_DTO, track);
 

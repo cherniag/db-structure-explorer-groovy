@@ -4,13 +4,13 @@ import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.ParseException;
@@ -18,9 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SonyParser extends IParser {
-	
-	protected static final Log LOG = LogFactory.getLog(SonyParser.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SonyParser.class);
 
 	private ArrayList<String> files = new ArrayList<String>();;
 	private String logFile;
@@ -28,19 +27,19 @@ public class SonyParser extends IParser {
 
 	public SonyParser(String root) throws FileNotFoundException {
 		super(root);
-		LOG.debug("Sony parser loadin from " + root);
+		LOGGER.debug("Sony parser loadin from " + root);
 	}
 
 	protected DropTrack loadXml(String file) {
 
 		DropTrack result = new DropTrack();
 		SAXBuilder builder = new SAXBuilder();
-		LOG.debug("Loading " + file);
+		LOGGER.debug("Loading " + file);
 		File xmlFile = new File(file);
 
 		try {
 
-			Document document = (Document) builder.build(xmlFile);
+			Document document = builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
 
 			XMLOutputter outputter = new XMLOutputter();
@@ -60,12 +59,12 @@ public class SonyParser extends IParser {
 			if (result.type == Type.INSERT || result.type == Type.UPDATE) {
 				String product = actionRoot.getChild("Product").getAttribute("Type").getValue();
 				if (!"TRACK".equals(product)) {
-					LOG.info("Skipping product " + product);
+					LOGGER.info("Skipping product " + product);
 					return null;
 				}
 				String typeName = actionRoot.getChild("Product").getChildText("TypeName");
 				if (!"Single".equals(typeName)) {
-					LOG.info("Skipping type " + typeName);
+					LOGGER.info("Skipping type " + typeName);
 					return null;
 				}
 				String prodId = actionRoot.getChild("Product").getChildText("ProdID");
@@ -105,7 +104,7 @@ public class SonyParser extends IParser {
 				String album = physicalProduct.getChildText("Title");
 				result.album = album;
 
-				LOG.info("Loading " + file + " type " + type + " title " + title + " isrc " + isrc);
+				LOGGER.info("Loading " + file + " type " + type + " title " + title + " isrc " + isrc);
 				String provider = metadata.getChild("Provider").getValue();
 				String publisher = metadata.getChild("Publisher").getValue();
 
@@ -195,12 +194,12 @@ public class SonyParser extends IParser {
 			} else {
 				String product = actionRoot.getChild("Product").getAttribute("Type").getValue();
 				if (!"TRACK".equals(product)) {
-					LOG.info("Skipping product " + product);
+					LOGGER.info("Skipping product " + product);
 					return null;
 				}
 				String typeName = actionRoot.getChild("Product").getChildText("TypeName");
 				if (!"Single".equals(typeName)) {
-					LOG.info("Skipping type " + typeName);
+					LOGGER.info("Skipping type " + typeName);
 					return null;
 				}
 				String productCode = actionRoot.getChild("Product").getChildText("ProdID");
@@ -209,9 +208,9 @@ public class SonyParser extends IParser {
 			return result;
 
 		} catch (IOException io) {
-			LOG.error(io.getMessage());
+			LOGGER.error(io.getMessage());
 		} catch (JDOMException jdomex) {
-			LOG.error(jdomex.getMessage());
+			LOGGER.error(jdomex.getMessage());
 		} 
 		
 		return null;
@@ -240,26 +239,19 @@ public class SonyParser extends IParser {
 						DropTrack result = loadXml(root + "/" + file);
 						if (result != null) {
 							tracks.put(file, result);
-							LOG.debug("ISRC is " + result.isrc);
+							LOGGER.debug("ISRC is " + result.isrc);
 						}
 						// Log all files for this directory
-						int lastSlash = file.lastIndexOf('/');
-						String path = file.substring(0, lastSlash);
-						for (String searchFile : files) {
-							if (searchFile.startsWith(path)) {
-								try {
-									File size = new File(searchFile);
-									Date date = new Date();
-									SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:MM");
-									logWriter.write(searchFile + " " + format.format(date) + " " + size.length() + "\n");
-								} catch (Exception e) {
-									LOG.error("Skipping file " + searchFile + " in logs: exception " + e.getMessage());
-								}
-
-							}
+                        try {
+                            File size = new File(file);
+                            Date date = new Date();
+                            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:MM");
+                            logWriter.write(file + " " + format.format(date) + " " + size.length() + "\n");
+                        } catch (Exception e) {
+						    LOGGER.error("Skipping file " + file + " in logs: exception " + e.getMessage());
 						}
 					} catch (Exception e) {
-						LOG.error("Not processed " + file);
+						LOGGER.error("Not processed " + file);
 					}
 				}
 			}
@@ -289,33 +281,31 @@ public class SonyParser extends IParser {
 
 		List<DropData> result = new ArrayList<DropData>();
 		File manifests = new File(root + "/manifests");
-		LOG.info("Checking manifests in " + root + "/manifests");
+		LOGGER.info("Checking manifests in " + root + "/manifests");
 		File[] manifestFiles = manifests.listFiles();
 		for (File manifest : manifestFiles) {
 			String logFileName = manifest.getName().replace("manifest", "log");
 			File logFile = new File(root + "/logs/" + logFileName);
 			if (!auto) {
 				if (!logFile.exists()) {
-					DropData drop = new DropData();
-					drop.name = manifest.getName();
-					drop.date = new Date(manifest.lastModified());
-					result.add(drop);
+                    addDrop(result, manifest);
 				}
 			} else {
 				String ackName = manifest.getName().replace(".txt", ".ack");
 				File ackFile = new File(root + "/manifests/"+ackName);
 				if (!ackFile.exists() && !logFile.exists()) {
-					DropData drop = new DropData();
-					drop.name = manifest.getName();
-					drop.date = new Date(manifest.lastModified());
-					result.add(drop);
+                    addDrop(result, manifest);
 				}
-
-
-
 			}
 		}
 		return result;
 	}
+
+    private void addDrop(List<DropData> result, File manifest) {
+        DropData drop = new DropData();
+        drop.name = manifest.getName();
+        drop.date = new Date(manifest.lastModified());
+        result.add(drop);
+    }
 
 }

@@ -39,12 +39,10 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name="tb_accountLog")
 @NamedQueries({
-	@NamedQuery(name=AccountLog.NQ_FIND_BY_USER_ID_ORDERED_BY_LOG_ID_DESC, query="select accountLog from AccountLog accountLog where accountLog.userId=? order by accountLog.id desc"),
 	@NamedQuery(name=AccountLog.NQ_FIND_BY_USER_AND_LOG_TYPE, query="select accountLog from AccountLog accountLog where accountLog.userId=? and accountLog.transactionType=? order by accountLog.id desc")	
 })
 public class AccountLog implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public static final String NQ_FIND_BY_USER_ID_ORDERED_BY_LOG_ID_DESC = "findByUserIdOrderedByLogIdDesc";
 	public static final String NQ_FIND_BY_USER_AND_LOG_TYPE = "findByUserAndLogType";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountLog.class);

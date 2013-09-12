@@ -271,13 +271,12 @@ public class DrmService {
 					drm.setDrmType(DrmTypeDao.getPURCHASED_DRM_TYPE());
 					entityService.updateEntity(drm);
 
-					byte intNewBalance = (byte) (user.getSubBalance() - 1);
+					byte newBalance = (byte) (user.getSubBalance() - 1);
 
-					userService.updateUserBalance(user, intNewBalance);
+					userService.updateUserBalance(user, newBalance);
 
-					byte balanceAfter = (byte) (intNewBalance);
-					Media relatedMedia = drm.getMedia();
-					accountLogService.logAccountEvent(userId, balanceAfter, relatedMedia, null, TransactionType.TRACK_PURCHASE, null);
+                    Media relatedMedia = drm.getMedia();
+					accountLogService.logAccountEvent(userId, newBalance, relatedMedia, null, TransactionType.TRACK_PURCHASE, null);
 	
 					mediaService.logMediaEvent(userId, relatedMedia, MediaLogTypeDao.PURCHASE);
 

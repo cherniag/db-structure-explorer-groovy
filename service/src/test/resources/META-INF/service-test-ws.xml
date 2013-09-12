@@ -26,8 +26,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.CountryService" class="java.lang.Object" />
     <bean id="service.PaymentPolicyService" class="java.lang.Object" />
     <bean id="service.PaymentService" class="java.lang.Object" />
-    <bean id="service.SagePayService" class="java.lang.Object" />
-    <bean id="service.MigService" class="java.lang.Object" />
     <bean id="service.FacebookService" class="java.lang.Object" />
     <bean id="service.WeeklyUpdateService" class="java.lang.Object" />
     <bean id="service.UserDeviceDetailsService" class="java.lang.Object" />

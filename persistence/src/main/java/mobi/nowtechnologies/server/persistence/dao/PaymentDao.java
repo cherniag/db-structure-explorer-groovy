@@ -25,80 +25,16 @@ public class PaymentDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PaymentDao.class.getName());
 	
-	public static enum TxType {
-		PAYMENT(1),
-		REFUND(2),
-		REPEAT(3),
-		AUTHENTICATE(4),
-		AUTHORISE(5),
-		CANCEL(6),
-		RELEASE(7),
-		DEFERRED(8);
-		
-		private int code;
-		
-		private TxType(int code) {
-			this.code = code;
-		}
-
-		public int getCode() {
-			return code;
-		}
-	}
-	
 	private UserRepository userRepository;
 	
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 	
-
-	public boolean isUserAlreadyPaidSuccessfully(int userID) {
-		Long foundedRecordsCount = (Long) getJpaTemplate().find(
-				"select count(payment) from " + Payment.class.getSimpleName()
-						+ " payment where payment."
-						+ Payment.Fields.userUID.toString() + "=?1"
-						+ " and payment." + Payment.Fields.status.toString()
-						+ "='" + AppConstants.STATUS_OK + "' and (payment."
-						+ Payment.Fields.txType.toString() + "="
-						+ TxType.PAYMENT.getCode() + " or payment."
-						+ Payment.Fields.txType.toString() + "="
-						+ TxType.RELEASE.getCode() + ")",userID).get(0);
-
-		LOGGER.info("There are [" + foundedRecordsCount
-				+ "] payments with status [" + AppConstants.STATUS_OK
-				+ "] and txType=[" + TxType.PAYMENT.getCode() + "] or txType=["
-				+ TxType.RELEASE.getCode() + "] for userID=[" + userID + "]");
-		return !(Long.valueOf(0L).equals(foundedRecordsCount));
-	}
-
-
-	public PayPalPayment getLastDeferedPayPalPayment(int userID) {
-		@SuppressWarnings("unchecked")
-		List<PayPalPayment> payPalPayments =  getJpaTemplate().find(
-				"select payment from " + PayPalPayment.class.getSimpleName()
-						+ " payment where payment."
-						+ Payment.Fields.userUID.toString() + "=?1"
-						+" and payment."
-						+ Payment.Fields.status.toString() + "= '"
-						+ AppConstants.STATUS_USER_CONFIRMED + "' order by payment."+Payment.Fields.timestamp.toString()+" desc",userID);
-		
-		
-		if (payPalPayments.isEmpty()) return null;
-		return  payPalPayments.get(0);
-	}
-	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public PendingPayment savePendingPayment(PendingPayment pendingPayment) {
 		return getJpaTemplate().merge(pendingPayment);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)
-	public List<PendingPayment> getPendingPayments() {
-		return getJpaTemplate().findByNamedQuery(PendingPayment.NQ_GET_PENDING_PAYMENTS);
-	}
-
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true, propagation=Propagation.REQUIRED)

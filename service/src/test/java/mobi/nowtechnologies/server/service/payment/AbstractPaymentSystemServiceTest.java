@@ -70,9 +70,9 @@ public class AbstractPaymentSystemServiceTest {
 	}
 
 	@Test
-	public void testCommitPayment_SuccesfulResponse_Success()
+	public void testCommitPayment_SuccessfulResponse_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MIN_VALUE;
+		final int currentTimeSeconds = Integer.MIN_VALUE;
 
 		PaymentSystemResponse response = O2Response.successfulO2Response();
 
@@ -86,7 +86,7 @@ public class AbstractPaymentSystemServiceTest {
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
@@ -302,7 +302,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-		final String descriptionError = "Unexpected http statuc code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries willn't be incremented";
+		final String descriptionError = "Unexpected http status code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries willn't be incremented";
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);

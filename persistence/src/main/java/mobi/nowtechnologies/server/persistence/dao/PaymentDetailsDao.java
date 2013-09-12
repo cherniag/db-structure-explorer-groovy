@@ -19,37 +19,6 @@ public class PaymentDetailsDao extends JpaDaoSupport {
 	public void setEntityDao(EntityDao entityDao) {
 		this.entityDao = entityDao;
 	}
-
-	@SuppressWarnings("unchecked")
-	public PaymentDetails findPaymentDetails(String paymentType, int userId) {
-		if (paymentType == null)
-			throw new PersistenceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters paymentType, userId: [{}], [{}]",
-				new Object[] { paymentType,userId });
-
-		PaymentDetails paymentDetails = null;
-		List<PaymentDetails> paymentDetailsList = getJpaTemplate()
-				.findByNamedQuery(
-						"PaymentDetails.getPaymentDetailsByPaymentType",
-						new Object[] { paymentType, userId});
-
-		if (paymentDetailsList.size() > 1)
-			throw new PersistenceException(
-					"There are more than one paymentDetails with paymentType = ["
-							+ paymentType + "] ");
-		else if (paymentDetailsList.size() == 1)
-			paymentDetails = paymentDetailsList.get(0);
-
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
-	}
-	
-	@Transactional(readOnly=true)
-	@SuppressWarnings("unchecked")
-	public List<MigPaymentDetails> findMigPaymentDetails(String migPhoneNumber) throws DataAccessException {
-		return getJpaTemplate().findByNamedQuery(MigPaymentDetails.NQ_GET_PAYMENT_DETAILS_BY_PHONENUMBER, migPhoneNumber);
-	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public PaymentDetails update(PaymentDetails paymentDetails) throws DataAccessException {

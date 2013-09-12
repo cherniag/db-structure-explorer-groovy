@@ -7,17 +7,19 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class FugaParser extends DDEXParser {
-	protected static final Log LOG = LogFactory.getLog(FugaParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FugaParser.class);
 
 	public FugaParser(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("Fuga parser loadin from " + root);
+        LOGGER.info("Fuga parser loadin from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
@@ -26,14 +28,14 @@ public class FugaParser extends DDEXParser {
 		try {
 			File folder = new File(drop.name);
 			File xml = getXmlFile(folder);
-			Map<String, DropTrack> result = loadXml(xml.getAbsolutePath());
+			Map<String, DropTrack> result = loadXml(xml);
 
 			if (result != null) {
 				tracks.putAll(result);
 			}
 
 		} catch (Exception e) {
-			LOG.error("Ingest failed " + e.getMessage());
+			LOGGER.error("Ingest failed " + e.getMessage());
 		}
 		return tracks;
 
@@ -45,7 +47,7 @@ public class FugaParser extends DDEXParser {
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-			LOG.info("Drop folder " + result.get(i));
+			LOGGER.info("Drop folder " + result.get(i));
 		}
 		return result;
 	}
@@ -71,7 +73,7 @@ public class FugaParser extends DDEXParser {
 			}
 		}
 		if (deliveryComplete && !processed) {
-			LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+			LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
 			DropData drop = new DropData();
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());
@@ -85,7 +87,7 @@ public class FugaParser extends DDEXParser {
 		int codeSep = folder.getName().indexOf('_');
 		if (codeSep > 0) {
 			String code = folder.getName().substring(0, codeSep);
-			LOG.debug("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
+			LOGGER.debug("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
 			File xml = new File(folder.getAbsoluteFile() + "/" + code + ".xml");
 			return xml;
 		}
@@ -115,13 +117,13 @@ public class FugaParser extends DDEXParser {
 	public boolean checkAlbum(String type, DropTrack track) {
 		if ("TrackRelease".equals(type) || "Single".equals(type)) {
 			if (track.isrc == null || "".equals(track.isrc)) {
-				LOG.info("Album for "+type+" (no ISRC)");
+				LOGGER.info("Album for "+type+" (no ISRC)");
 				return  true;
 			} else {
-				LOG.info("Track for "+type+" "+track.isrc);
+				LOGGER.info("Track for "+type+" "+track.isrc);
 			}
 		} else if ("Album".equals(type) || "SingleResourceRelease".equals(type)) {
-			LOG.info("Album for "+type);
+			LOGGER.info("Album for "+type);
 			return  true;
 		}
 		return false;

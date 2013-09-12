@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
 
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -29,7 +30,7 @@ public class SubscriptionTextsGeneratorTest {
 	}
 
 	@Test
-	public void testMessageSoure() {
+	public void testMessageSource() {
 		String msg = messageSource.getMessage("subscription.text.subscribed", new Object[] {}, communityLocale);
 		Assert.assertEquals(msg, "Subscribed");
 	}

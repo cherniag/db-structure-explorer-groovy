@@ -69,7 +69,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			paymentDetails.setErrorCode(null);
 		} else {
 			status = PaymentDetailsStatus.ERROR;
-			final String descriptionError = "Unexpected http statuc code ["+httpStatus+"] so the madeRetries willn't be incremented";
+			final String descriptionError = "Unexpected http status code ["+httpStatus+"] so the madeRetries willn't be incremented";
 			submittedPayment.setDescriptionError(descriptionError);
 			paymentDetails.setDescriptionError(descriptionError);
 			paymentDetails.setErrorCode(null);
@@ -87,7 +87,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		entityService.updateEntity(paymentDetails);
 		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
 		
-		// Send sync-event about commited payment
+		// Send sync-event about committed payment
 		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
 		

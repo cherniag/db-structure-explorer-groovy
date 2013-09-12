@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ernm:NewReleaseMessage LanguageAndScriptCode="en" MessageSchemaVersionId="/ern/341" xs:schemaLocation="http://ddex.net/xml/ern/341 http://ddex.net/xml/ern/341/release-notification.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/341">
+    <MessageHeader>
+        <MessageThreadId>G010002931198S_MQB</MessageThreadId>
+        <MessageId>9527411</MessageId>
+        <MessageSender>
+            <PartyId>PADPIDA2007040502I</PartyId>
+            <PartyName>
+                <FullName>Sony Music Entertainment</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>Musicqubed</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-25T13:58:01.195-04:00</MessageCreatedDateTime>
+        <MessageControlType>TestMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator>UpdateMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USRC11300019</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Suit &amp; Tie featuring JAY Z</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M29S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z (Radio Edit)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Justin Timberlake</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>賈斯汀</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Mixing Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                    <ArtistRole>Producer</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Justin Timberlake</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>賈斯汀</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Mixing Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Regiment Horns</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Horn" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Timothy Mosley</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Elliott Ives</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Guitar" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Shawn Carter</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Jerome Harmon</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>Timbaland</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>James Fauntleroy</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>Jerome "J-Roc" Harmon</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Terrance Stubbs</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="11">
+                    <PartyName>
+                        <FullName>Chris Godbey</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Mixing Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="12">
+                    <PartyName>
+                        <FullName>Johnny Wilson</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="13">
+                    <PartyName>
+                        <FullName>Charles Still</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="14">
+                    <PartyName>
+                        <FullName>Matt Weber</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Assistant Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="15">
+                    <PartyName>
+                        <FullName>Jimmy Douglass</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Mixing Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="16">
+                    <PartyName>
+                        <FullName>Alejandro Baima</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Assistant Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Records Label</LabelName>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>(P) 2013 RCA Records, a division of Sony Music Entertainment</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">G010002931198S</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A2</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <GRid>A10301A0002931198S</GRid>
+                <ICPN IsEan="false">886443834668</ICPN>
+                <CatalogNumber Namespace="DPID:PADPIDA2007040502I">G010002931198S</CatalogNumber>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000027327124</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Suit &amp; Tie featuring JAY Z (Radio Edit)</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Justin Timberlake</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z (Radio Edit)</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z (Radio Edit)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Justin Timberlake</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>賈斯汀</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <Title TitleType="GroupingTitle">
+                            <TitleText>Disc 1</TitleText>
+                        </Title>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>2</SequenceNumber>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A2</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>RCA Records Label</LabelName>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Justin Timberlake</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>賈斯汀</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <OriginalReleaseDate>2013-01-31</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M29S</Duration>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>(P) 2013 RCA Records, a division of Sony Music Entertainment</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00063233639</GRid>
+                <ISRC>USRC11300019</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000027327125</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Suit &amp; Tie featuring JAY Z</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Justin Timberlake</DisplayArtistName>
+                <LabelName>RCA Records Label</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Suit &amp; Tie featuring JAY Z (Radio Edit)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Justin Timberlake</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>賈斯汀</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Mixing Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                    <ArtistRole>Producer</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M29S</Duration>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>(P) 2013 RCA Records, a division of Sony Music Entertainment</PLineText>
+            </PLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">1.97</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-23</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.66</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-23</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ernm:NewReleaseMessage>

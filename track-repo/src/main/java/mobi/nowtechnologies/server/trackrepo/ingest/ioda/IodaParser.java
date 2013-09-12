@@ -11,6 +11,8 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,13 +22,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class IodaParser extends IParser {
-	protected static final Log LOG = LogFactory.getLog(IodaParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IodaParser.class);
 
 	private ArrayList<String> files = new ArrayList<String>();;
 
 	public IodaParser(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("IODA parser loading from " + root);
+        LOGGER.info("IODA parser loading from " + root);
 	}
 
 	protected Map<String, DropTrack> loadXml(String file) {
@@ -34,7 +36,7 @@ public class IodaParser extends IParser {
 		Map<String, DropTrack> result = new HashMap<String, DropTrack>();
 
 		SAXBuilder builder = new SAXBuilder();
-		LOG.info("Loading " + file);
+        LOGGER.info("Loading " + file);
 		File xmlFile = new File(file);
 
 		try {
@@ -55,14 +57,14 @@ public class IodaParser extends IParser {
 			List<Element> list = rootNode.getChildren();
 			for (Element el : list) {
 				if (el.getName().equals("export_action")) {
-					LOG.debug("TYPE " + el.getText());
+                    LOGGER.debug("TYPE " + el.getText());
 				}
 			}
 			Type type = null;
 			Namespace space = Namespace.getNamespace("http://www.iodalliance.com/schema/ioda_standard_export_v2.2.xsd");
 			// Parse media files
 			String typeStr = rootNode.getChildText("export_action", space);
-			LOG.debug("type is " + typeStr);
+            LOGGER.debug("type is " + typeStr);
 
 			if ("update".equals(typeStr)) {
 				type = Type.UPDATE;
@@ -86,7 +88,7 @@ public class IodaParser extends IParser {
 
 			// if (type == Type.INSERT || type == Type.UPDATE) {
 			String label = rootNode.getChild("label", space).getChildText("label_name", space);
-			LOG.debug("Label " + label);
+            LOGGER.debug("Label " + label);
 			String artist = rootNode.getChildText("display_artist_name", space);
 			String album = rootNode.getChildText("release_name", space);
 			List<DropTerritory> territoriesList = new ArrayList<DropTerritory>();
@@ -155,9 +157,9 @@ public class IodaParser extends IParser {
 			return result;
 
 		} catch (IOException io) {
-			LOG.error("Ingest failed "+io.getMessage());
+            LOGGER.error("Ingest failed "+io.getMessage());
 		} catch (JDOMException jdomex) {
-			LOG.error("Ingest failed "+jdomex.getMessage());
+            LOGGER.error("Ingest failed "+jdomex.getMessage());
 		} 
 		return null;
 
@@ -171,7 +173,7 @@ public class IodaParser extends IParser {
 			tracks = loadXml(drop.name + "/" + dropDir.getName() + ".xml");
 
 		} catch (Exception e) {
-			LOG.error("Ingest failed "+e.getMessage());
+            LOGGER.error("Ingest failed "+e.getMessage());
 		}
 		return tracks;
 
@@ -184,7 +186,7 @@ public class IodaParser extends IParser {
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-			LOG.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder " + result.get(i));
 		}
 		return result;
 	}
@@ -208,7 +210,7 @@ public class IodaParser extends IParser {
 			}
 		}
 		if (valid && !processed) {
-			LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
 			DropData drop = new DropData();
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());
