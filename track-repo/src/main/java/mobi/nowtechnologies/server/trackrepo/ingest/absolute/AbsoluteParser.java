@@ -34,10 +34,13 @@ import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class AbsoluteParser extends DDEXParser {
@@ -83,8 +86,8 @@ public class AbsoluteParser extends DDEXParser {
                 List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
 
                 res.put(getDropTrackKey(isrc), new DropTrack()
-                        .addType(INSERT)
-                        .addProductCode("")
+                        .addType(getActionType(document))
+                        .addProductCode(getProprietaryId(document, isrc))
                         .addTitle(title)
                         .addSubTitle(subTitle)
                         .addArtist(artist)
@@ -197,14 +200,22 @@ public class AbsoluteParser extends DDEXParser {
         return null;
     }
 
+    private Type getActionType(Document doc) throws JDOMException {
+        return "UpdateMessage".equals(evaluate(doc, "/ern:NewReleaseMessage/UpdateIndicator")) ? UPDATE : INSERT;
+    }
+
+    private String getProprietaryId(Document doc, String isrc) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId[ISRC='"+isrc+"']/ProprietaryId");
+    }
+
     private String getMD5(Document doc, String isrc, int index) throws JDOMException {
         return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
     }
 
-    private AssetFile.FileType getType(Document doc, String isrc, int index) throws JDOMException {
+    private FileType getType(Document doc, String isrc, int index) throws JDOMException {
         String isPreview = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)["+index+"]");
 
-        AssetFile.FileType fileType;
+        FileType fileType;
         if (isEmpty(isPreview) || isPreview.equals("false")){
             String audioCodecType = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)["+index+"]");
             XPath xPath = XPath.newInstance("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)["+index+"]");

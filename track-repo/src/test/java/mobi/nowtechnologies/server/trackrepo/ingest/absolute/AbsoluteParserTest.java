@@ -8,6 +8,9 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
@@ -27,6 +30,7 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.hamcrest.CoreMatchers.is;
@@ -94,8 +98,8 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
         assertNotNull(resultDropTrack);
         // assertThat(resultDropTrack.xml, is("3BEATCD019"));
-        assertThat(resultDropTrack.type, is(INSERT));
-        assertThat(resultDropTrack.productCode, is(""));
+        assertThat(resultDropTrack.type, is(getActionType()));
+        assertThat(resultDropTrack.productCode, is(getProprietaryId(expectedIsrc)));
         assertThat(resultDropTrack.title, is(getTitleText(xPathExpressionResultDropTrackIndex)));
         assertThat(resultDropTrack.subTitle, is(getSubTitle(xPathExpressionResultDropTrackIndex)));
         assertThat(resultDropTrack.artist, is(getArtist(xPathExpressionResultDropTrackIndex)));
@@ -232,6 +236,10 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
     }
 
+    private String getProprietaryId(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId[ISRC='"+isrc+"']/ProprietaryId");
+    }
+
     private String getMD5(String isrc, int index) throws XpathException {
         return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
     }
@@ -252,6 +260,10 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
             fileType = PREVIEW;
         }
         return fileType;
+    }
+
+    private Type getActionType() throws XpathException {
+        return "UpdateMessage".equals(evaluate("/ern:NewReleaseMessage/UpdateIndicator")) ? UPDATE : INSERT;
     }
 
     private int getTrackReleaseCount() throws XpathException {
