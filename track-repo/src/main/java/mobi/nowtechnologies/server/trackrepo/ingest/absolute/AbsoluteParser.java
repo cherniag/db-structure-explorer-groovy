@@ -51,7 +51,7 @@ public class AbsoluteParser extends DDEXParser {
 
     public AbsoluteParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Absolute parser loading from [{}]" , root);
+        LOGGER.info("Absolute parser loading from [{}]", root);
     }
 
     @Override
@@ -67,8 +67,6 @@ public class AbsoluteParser extends DDEXParser {
             Element root = document.getRootElement();
             String distributor = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
             List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
-            List<Element> releases = root.getChild("ReleaseList").getChildren("Release");
-            List<Element> deals = root.getChild("DealList").getChildren("ReleaseDeal");
             String album = getAlbum(document);
 
             for (Element node : sounds) {
@@ -103,15 +101,8 @@ public class AbsoluteParser extends DDEXParser {
                         .addProductId(isrc)
                         .addTerritories(territories)
                         .addFiles(files)
+                        .addAlbum(album)
                 );
-            }
-
-            for (Element node : releases) {
-                String isrc = node.getChild("ReleaseId").getChildText("ISRC");
-                if (isrc == null) continue;
-                DropTrack track = res.get(getDropTrackKey(isrc));
-
-                track.addAlbum(album);
             }
         } catch (JDOMException e) {
             LOGGER.error(e.getMessage());
@@ -119,6 +110,29 @@ public class AbsoluteParser extends DDEXParser {
             LOGGER.error(e.getMessage());
         }
         return res;
+    }
+
+    private List<DropTerritory> createTerritory(Document doc, Element details, String distributor, String label, String isrc, String releaseReference) {
+        try {
+            List<DropTerritory> res = new ArrayList<DropTerritory>();
+            List<Element> territoryCode = details.getChildren("TerritoryCode");
+            for (Element e : territoryCode)
+                res.add(new DropTerritory(e.getText())
+                        .addCurrency("GBP")
+                        .addDistributor(distributor)
+                        .addLabel(label)
+                        .addPrice(0.0f)
+                        .addPriceCode("0.0")
+                        .addPublisher("")
+                        .addReportingId(isrc)
+                        .addDealReference(getDealReference(doc, releaseReference))
+                        .addStartDate(YYYY_MM_DD.parse(getStartDate(doc, releaseReference)))
+                );
+            return res;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 
     private List<DropAssetFile> createFiles(Document doc, String isrc, String fileRoot) throws JDOMException {
@@ -139,29 +153,6 @@ public class AbsoluteParser extends DDEXParser {
         return dropAssetFiles;
     }
 
-    private List<DropTerritory> createTerritory(Document doc, Element details, String distributor, String label, String isrc, String releaseReference) {
-        try{
-        List<DropTerritory> res = new ArrayList<DropTerritory>();
-        List<Element> territoryCode = details.getChildren("TerritoryCode");
-        for (Element e : territoryCode)
-            res.add(new DropTerritory(e.getText())
-                    .addCurrency("GBP")
-                    .addDistributor(distributor)
-                    .addLabel(label)
-                    .addPrice(0.0f)
-                    .addPriceCode("0.0")
-                    .addPublisher("")
-                    .addReportingId(isrc)
-                    .addDealReference(getDealReference(doc, releaseReference))
-                    .addStartDate(YYYY_MM_DD.parse(getStartDate(doc, releaseReference)))
-            );
-        return res;
-        }catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
     private String getAlbum(Document doc) throws JDOMException {
         return evaluate(doc, "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
     }
@@ -171,22 +162,21 @@ public class AbsoluteParser extends DDEXParser {
     }
 
     private String getReleaseReference(Document doc, String isrc) throws JDOMException {
-        return evaluate(doc, "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='"+isrc+"']/ReleaseReference");
+        return evaluate(doc, "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='" + isrc + "']/ReleaseReference");
     }
 
     private String getDealReference(Document doc, String dealReleaseReference) throws JDOMException {
-        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealReference");
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='" + dealReleaseReference + "']/Deal/DealReference");
     }
 
     private int getFilesCount(Document doc, String isrc) throws JDOMException {
-        XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)");
+        XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)");
         xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
         return ((Double) xPath.selectSingleNode(doc)).intValue();
-
     }
 
     private String getFileName(Document doc, String isrc, int index) throws JDOMException {
-        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)["+index+"]");
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[" + index + "]");
     }
 
     private Integer getDuration(Document doc, String isrc) throws JDOMException {
@@ -194,9 +184,9 @@ public class AbsoluteParser extends DDEXParser {
 
         PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
         ReadWritablePeriod readWritablePeriod = new MutablePeriod();
-        if (periodParser.parseInto(readWritablePeriod, duration, 0, null)>0){
+        if (periodParser.parseInto(readWritablePeriod, duration, 0, null) > 0) {
             return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
-        };
+        }
         return null;
     }
 
@@ -205,28 +195,28 @@ public class AbsoluteParser extends DDEXParser {
     }
 
     private String getProprietaryId(Document doc, String isrc) throws JDOMException {
-        return evaluate(doc, "/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId[ISRC='"+isrc+"']/ProprietaryId");
+        return evaluate(doc, "/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId[ISRC='" + isrc + "']/ProprietaryId");
     }
 
     private String getMD5(Document doc, String isrc, int index) throws JDOMException {
-        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[" + index + "]");
     }
 
     private FileType getType(Document doc, String isrc, int index) throws JDOMException {
-        String isPreview = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)["+index+"]");
+        String isPreview = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)[" + index + "]");
 
         FileType fileType;
-        if (isEmpty(isPreview) || isPreview.equals("false")){
-            String audioCodecType = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)["+index+"]");
-            XPath xPath = XPath.newInstance("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)["+index+"]");
+        if (isEmpty(isPreview) || isPreview.equals("false")) {
+            String audioCodecType = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[" + index + "]");
+            XPath xPath = XPath.newInstance("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[" + index + "]");
             xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
-            String userDefinedValue = ((Attribute)xPath.selectSingleNode(doc)).getValue();
-            if (isNull(audioCodecType)|| audioCodecType.equals("MP3")|| (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))){
+            String userDefinedValue = ((Attribute) xPath.selectSingleNode(doc)).getValue();
+            if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
-            }else{
+            } else {
                 fileType = MOBILE;
             }
-        }else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;
@@ -240,32 +230,22 @@ public class AbsoluteParser extends DDEXParser {
         return singleNode.getValue();
     }
 
-    private String getDropTrackKey(String isrc) {
-        return Joiner.on('_').join(isrc, getClass().getSimpleName());
-    }
-
-    @Override
-    public Map<String, DropTrack> ingest(DropData drop) {
-        return null;
-    }
-
-    @Override
-    public List<DropData> getDrops(boolean auto) {
-        return null;
-    }
-
     @Override
     public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
     }
 
-    @Override
-    public boolean checkAlbum(String type) {
-        if ("Album".equals(type)) {
-            LOGGER.info("Album for " + type);
-            return true;
-        }
-        LOGGER.info("Track for " + type);
-        return false;
-
+    private String getDropTrackKey(String isrc) {
+        return Joiner.on('_').join(isrc, getClass().getSimpleName());
     }
+
+//    @Override
+//    public boolean checkAlbum(String type) {
+//        if ("Album".equals(type)) {
+//            LOGGER.info("Album for [{}]", type);
+//            return true;
+//        }
+//        LOGGER.info("Track for [{}]", type);
+//        return false;
+//
+//    }
 }

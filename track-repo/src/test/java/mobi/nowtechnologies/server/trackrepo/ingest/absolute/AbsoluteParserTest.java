@@ -43,7 +43,6 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private Map<String,DropTrack> resultDropTrackMap;
     private NodeList expectedTrackReleaseIdNodeList;
     private DropTrack resultDropTrack;
-    private int xPathExpressionResultDropTrackIndex;
     private String expectedIsrc;
     private String expectedDistributor;
     private String expectedLabel;
@@ -88,10 +87,8 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     }
 
     private void validateResultDropTrack() throws XpathException, ParseException {
-        xPathExpressionResultDropTrackIndex = expectedResultDropTrackIndex + 1;
-        expectedIsrc = getIsrc(xPathExpressionResultDropTrackIndex);
-        expectedLabel = getLabel(xPathExpressionResultDropTrackIndex);
-        expectedReleaseReference = getReleaseReference(expectedIsrc);
+        expectedIsrc = getIsrc(expectedResultDropTrackIndex + 1);
+        expectedLabel = getLabel(expectedIsrc);
         xmlFileParent = xmlFile.getParent();
 
         resultDropTrack = getResultDropTrack(expectedIsrc);
@@ -100,14 +97,14 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         // assertThat(resultDropTrack.xml, is("3BEATCD019"));
         assertThat(resultDropTrack.type, is(getActionType()));
         assertThat(resultDropTrack.productCode, is(getProprietaryId(expectedIsrc)));
-        assertThat(resultDropTrack.title, is(getTitleText(xPathExpressionResultDropTrackIndex)));
-        assertThat(resultDropTrack.subTitle, is(getSubTitle(xPathExpressionResultDropTrackIndex)));
-        assertThat(resultDropTrack.artist, is(getArtist(xPathExpressionResultDropTrackIndex)));
-        assertThat(resultDropTrack.genre, is(getGenre(xPathExpressionResultDropTrackIndex)));
-        assertThat(resultDropTrack.copyright, is(getCopyright(xPathExpressionResultDropTrackIndex)));
+        assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
+        assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));
+        assertThat(resultDropTrack.artist, is(getArtist(expectedIsrc)));
+        assertThat(resultDropTrack.genre, is(getGenre(expectedIsrc)));
+        assertThat(resultDropTrack.copyright, is(getCopyright(expectedIsrc)));
         assertThat(resultDropTrack.label, is(expectedLabel));
         assertThat(resultDropTrack.isrc, is(expectedIsrc));
-        assertThat(resultDropTrack.year, is(getYear(xPathExpressionResultDropTrackIndex)));
+        assertThat(resultDropTrack.year, is(getYear(expectedIsrc)));
         assertThat(resultDropTrack.physicalProductId, is(expectedIsrc));
         assertThat(resultDropTrack.album, is(expectedAlbum));
         assertThat(resultDropTrack.info, is(""));
@@ -124,13 +121,14 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         List<DropTerritory> territories = resultDropTrack.getTerritories();
 
         assertNotNull(territories);
-        assertThat(territories.size(), is(getTerritoryPerTrackCount(xPathExpressionResultDropTrackIndex)));
+        assertThat(territories.size(), is(getTerritoryPerTrackCount(expectedIsrc)));
+
+        expectedReleaseReference = getReleaseReference(expectedIsrc);
 
         for (int i = 0; i < territories.size(); i++) {
             DropTerritory territory = territories.get(i);
 
-            int territoryPerTrackIndex = i + 1;
-            assertThat(territory.country, is(getTerritoryPerTrack(xPathExpressionResultDropTrackIndex, territoryPerTrackIndex)));
+            assertThat(territory.country, is(getTerritoryPerTrack(expectedIsrc, i + 1)));
             assertThat(territory.currency, is("GBP"));
             assertThat(territory.dealReference, is(getDealReference(expectedReleaseReference)));
             assertThat(territory.distributor, is(expectedDistributor));
@@ -161,44 +159,44 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         }
     }
 
-    private String getTitleText(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/Title/TitleText)[" + index +"]");
+    private String getTitleText(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/Title/TitleText");
     }
 
-    private String getSubTitle(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/ParentalWarningType)[" + index +"]");
+    private String getSubTitle(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/ParentalWarningType");
     }
 
-    private String getArtist(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/DisplayArtist/PartyName/FullName)[" + index +"]");
+    private String getArtist(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/DisplayArtist/PartyName/FullName");
     }
 
-    private String getGenre(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/Genre/GenreText)[" + index +"]");
+    private String getGenre(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/Genre/GenreText");
     }
 
-    private String getCopyright(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/PLine/PLineText)[" + index +"]");
+    private String getCopyright(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/PLine/PLineText");
     }
 
-    private String getLabel(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/LabelName)[" + index +"]");
+    private String getLabel(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/LabelName");
     }
 
     private String getIsrc(int index) throws XpathException {
         return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingId/ISRC)[" + index +"]");
     }
 
-    private String getYear(int index) throws XpathException {
-        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory/PLine/Year)[" + index +"]");
+    private String getYear(String isrc) throws XpathException {
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/PLine/Year");
     }
 
-    private int getTerritoryPerTrackCount(int index) throws XpathException {
-        return parseInt(evaluate("count((/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory)[" + index +"]/TerritoryCode)"));
+    private int getTerritoryPerTrackCount(String isrc) throws XpathException {
+        return parseInt(evaluate("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TerritoryCode)"));
     }
 
-    private String getTerritoryPerTrack(int soundRecordingDetailsByTerritoryIndex, int index) throws XpathException {
-        return evaluate("((/ern:NewReleaseMessage/ResourceList/SoundRecording/SoundRecordingDetailsByTerritory)[" + soundRecordingDetailsByTerritoryIndex +"]/TerritoryCode)["+index +"]");
+    private String getTerritoryPerTrack(String isrc, int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TerritoryCode)["+index +"]");
     }
 
     private String getDistributor() throws XpathException {

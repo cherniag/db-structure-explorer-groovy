@@ -27,6 +27,7 @@ public class IParserFactory {
     private String manualRoot;
     private String warnerRoot;
     private String sonyDDEXRoot;
+    private String absoluteRoot;
 
     public IParser getParser(Ingestors name) throws FileNotFoundException {
         if (SONY == name) {
@@ -50,7 +51,7 @@ public class IParserFactory {
         } else if (SONY_DDEX == name) {
             return new SonyDDEXParser(sonyDDEXRoot);
         } else if (ABSOLUTE == name){
-            return new AbsoluteParser("");
+            return new AbsoluteParser(absoluteRoot);
         }
         return null;
     }
@@ -104,6 +105,10 @@ public class IParserFactory {
 
     public void setSonyDDEXRoot(String sonyDDEXRoot) {
         this.sonyDDEXRoot = sonyDDEXRoot;
+    }
+
+    public void setAbsoluteRoot(String absoluteRoot) {
+        this.absoluteRoot = absoluteRoot;
     }
 
     public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, IODA, CI, MANUAL, SONY_DDEX, ABSOLUTE}
