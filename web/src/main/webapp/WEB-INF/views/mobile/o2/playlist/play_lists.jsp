@@ -19,7 +19,7 @@
     <script src="/web/assets/scripts/json2.js"></script>
     <script src="/web/assets/scripts/backbone.js"></script>
     <script src="/web/assets/scripts/utils.js"></script>
-    <script src="/web/assets/scripts/playlist.js"></script>
+    <script src="/web/assets/scripts/playlist.js?ver=8"></script>
     <script>
 	    var Messages = {
 	    		'page.playlists.header.text' : '<s:message code="page.playlists.header.text"/>',
@@ -38,12 +38,16 @@
                 'page.playlists.home.message.text' : '<s:message code="page.playlists.home.message.text"/>',
                 'page.playlists.home.button.go.text' : '<s:message code="page.playlists.home.button.go.text"/>',
                 'page.playlists.home.button.back.text': '<s:message code="page.playlists.home.button.back.text"/> ',
+                'page.playlists.home.info.middle.text': '<s:message code="page.playlists.home.info.middle.text"/>',
+                'page.playlists.home.checkbox.text':'<s:message code="page.playlists.home.checkbox.text"/>',
 
                 'page.swap.header.text' : '<s:message code="page.swap.header.text"/>',
                 'page.swap.button.back.text' : '<s:message code="page.swap.button.back.text"/>',
                 'page.swap.title.text' : '<s:message code="page.swap.title.text"/>',
                 'page.swap.message.text' : '<s:message code="page.swap.message.text"/>',
-                'page.swap.button.ok.text': '<s:message code="page.swap.button.ok.text"/>'
+                'page.swap.button.ok.text': '<s:message code="page.swap.button.ok.text"/>',
+                
+                'assetPath': '${requestScope.assetsPathAccordingToCommunity}'
 		};
     
         $(document).ready(function () {       	
@@ -55,6 +59,10 @@
             	Backbone.history.start();
             });
         });
+        
+        /* $(window).bind("beforeunload", 
+			function() {
+			}); */
     </script>
 </head>
 <body>
