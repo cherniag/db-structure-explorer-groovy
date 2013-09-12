@@ -42,6 +42,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class AbsoluteParser extends DDEXParser {
 
@@ -118,15 +119,16 @@ public class AbsoluteParser extends DDEXParser {
             List<Element> territoryCode = details.getChildren("TerritoryCode");
             for (Element e : territoryCode)
                 res.add(new DropTerritory(e.getText())
-                        .addCurrency("GBP")
+                        .addCurrency(getCurrency(doc, releaseReference))
                         .addDistributor(distributor)
                         .addLabel(label)
-                        .addPrice(0.0f)
-                        .addPriceCode("0.0")
+                        .addPrice(getPrice(doc, releaseReference))
+                        .addPriceCode(getPriceType(doc, releaseReference))
                         .addPublisher("")
                         .addReportingId(isrc)
                         .addDealReference(getDealReference(doc, releaseReference))
                         .addStartDate(YYYY_MM_DD.parse(getStartDate(doc, releaseReference)))
+                        .addTakeDown(getTakeDown(doc, releaseReference))
                 );
             return res;
         } catch (Exception e) {
@@ -200,6 +202,26 @@ public class AbsoluteParser extends DDEXParser {
 
     private String getMD5(Document doc, String isrc, int index) throws JDOMException {
         return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[" + index + "]");
+    }
+
+    private Float getPrice(Document doc, String dealReleaseReference) throws JDOMException {
+        String price = evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit");
+        if (isNotBlank(price)) return Float.parseFloat(price);
+        return null;
+    }
+
+    private String getCurrency(Document doc, String dealReleaseReference) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode");
+    }
+
+    private String getPriceType(Document doc, String dealReleaseReference) throws JDOMException {
+        return evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType");
+    }
+
+    private boolean getTakeDown(Document doc, String dealReleaseReference) throws JDOMException {
+        String takeDown = evaluate(doc, "/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/TakeDown");
+        if(isNotNull(takeDown)) return Boolean.parseBoolean(takeDown);
+        return false;
     }
 
     private FileType getType(Document doc, String isrc, int index) throws JDOMException {

@@ -32,7 +32,9 @@ import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -129,16 +131,16 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
             DropTerritory territory = territories.get(i);
 
             assertThat(territory.country, is(getTerritoryPerTrack(expectedIsrc, i + 1)));
-            assertThat(territory.currency, is("GBP"));
+            assertThat(territory.currency, is(getCurrency(expectedReleaseReference)));
             assertThat(territory.dealReference, is(getDealReference(expectedReleaseReference)));
             assertThat(territory.distributor, is(expectedDistributor));
             assertThat(territory.label, is(expectedLabel));
-            assertThat(territory.price, is(0.0f));
-            assertThat(territory.priceCode, is("0.0"));
+            assertThat(territory.price, is(getPrice(expectedReleaseReference)));
+            assertThat(territory.priceCode, is(getPriceType(expectedReleaseReference)));
             assertThat(territory.publisher, is(""));
             assertThat(territory.reportingId, is(expectedIsrc));
             assertThat(territory.startdate, is(YYYY_MM_DD.parse(getStartDate(expectedReleaseReference))));
-            assertThat(territory.takeDown, is(false));
+            assertThat(territory.takeDown, is(getTakeDown(expectedReleaseReference)));
         }
     }
 
@@ -219,6 +221,24 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         return evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/ValidityPeriod/StartDate");
     }
 
+    private Float getPrice(String dealReleaseReference) throws XpathException {
+        String price = evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit");
+        if (isNotBlank(price)) return Float.parseFloat(price);
+        return null;
+    }
+
+    private String getCurrency(String dealReleaseReference) throws XpathException {
+        String currencyCode= evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode");
+        if(isNotBlank(currencyCode)) return currencyCode;
+        return null;
+    }
+
+    private boolean getTakeDown(String dealReleaseReference) throws XpathException {
+        String takeDown = evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/TakeDown");
+        if(isNotNull(takeDown)) return Boolean.parseBoolean(takeDown);
+        return false;
+    }
+
     private int getFilesCount(String isrc) throws XpathException {
         return parseInt(evaluate("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)"));
     }
@@ -240,6 +260,12 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
     private String getMD5(String isrc, int index) throws XpathException {
         return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
+    }
+
+    private String getPriceType(String dealReleaseReference) throws XpathException {
+        String priceType = evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType");
+        if(isNotBlank(priceType)) return priceType;
+        return  null;
     }
 
     private FileType getType(String isrc, int index) throws XpathException {

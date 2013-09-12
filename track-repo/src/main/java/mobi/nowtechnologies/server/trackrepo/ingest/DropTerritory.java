@@ -73,7 +73,7 @@ public class DropTerritory {
         return this;
     }
 
-    public DropTerritory addPrice(float price) {
+    public DropTerritory addPrice(Float price) {
         this.price = price;
         return this;
     }
@@ -100,6 +100,11 @@ public class DropTerritory {
 
     public DropTerritory addStartDate(Date startDate) {
         this.startdate = startDate;
+        return this;
+    }
+
+    public DropTerritory addTakeDown(boolean takeDown) {
+        this.takeDown = takeDown;
         return this;
     }
 
