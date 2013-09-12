@@ -1,11 +1,17 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.joda.time.MutablePeriod;
+import org.joda.time.ReadWritablePeriod;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodParser;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.NodeList;
@@ -15,10 +21,14 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -130,7 +140,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         }
     }
 
-    private void validateResultFiles() throws XpathException {
+    private void validateResultFiles() throws XpathException, ParseException {
         List<DropAssetFile> files = resultDropTrack.getFiles();
 
         assertNotNull(files);
@@ -139,10 +149,11 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         for (int i = 0; i < files.size(); i++) {
             DropAssetFile asset = files.get(i);
             assertThat(asset.isrc, is(expectedIsrc));
-            assertThat(asset.file, is(getAssetFile(getFileName(expectedIsrc, i + 1))));
-            //assertThat(asset.duration, is(0)); //PT3M50S
-            //assertThat(asset.md5, is(""));
-            //assertThat(asset.type, is(MOBILE));
+            int xPathFileIndex = i + 1;
+            assertThat(asset.file, is(getAssetFile(getFileName(expectedIsrc, xPathFileIndex))));
+            assertThat(asset.duration, is(getDuration(expectedIsrc)));
+            assertThat(asset.md5, is(getMD5(expectedIsrc, xPathFileIndex)));
+            assertThat(asset.type, is(getType(expectedIsrc, xPathFileIndex)));
         }
     }
 
@@ -212,6 +223,35 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
     private String getFileName(String isrc, int index) throws XpathException {
         return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)["+index+"]");
+    }
+
+    private int getDuration(String isrc) throws XpathException, ParseException {
+        PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
+        ReadWritablePeriod readWritablePeriod = new MutablePeriod();
+        periodParser.parseInto(readWritablePeriod, evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/Duration"), 0, null);
+        return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
+    }
+
+    private String getMD5(String isrc, int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
+    }
+
+    private FileType getType(String isrc, int index) throws XpathException {
+        String isPreview = evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)["+index+"]");
+
+        FileType fileType;
+        if (isEmpty(isPreview) || isPreview.equals("false")){
+            String audioCodecType = evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)["+index+"]");
+            String userDefinedValue = evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)["+index+"]");
+            if (isNull(audioCodecType)|| audioCodecType.equals("MP3")|| (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))){
+                fileType = DOWNLOAD;
+            }else{
+                fileType = MOBILE;
+            }
+        }else {
+            fileType = PREVIEW;
+        }
+        return fileType;
     }
 
     private int getTrackReleaseCount() throws XpathException {

@@ -2,13 +2,19 @@ package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
-import org.dom4j.Attribute;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
+import org.joda.time.MutablePeriod;
+import org.joda.time.ReadWritablePeriod;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +30,15 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.*;
+import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class AbsoluteParser extends DDEXParser {
 
@@ -112,7 +125,11 @@ public class AbsoluteParser extends DDEXParser {
         for (int i = 0; i < filesCount; i++) {
             DropAssetFile dropAssetFile = new DropAssetFile();
             dropAssetFile.isrc = isrc;
-            dropAssetFile.file = getAssetFile(fileRoot, getFileName(doc, isrc, i+1));
+            int xPathFileIndex = i + 1;
+            dropAssetFile.file = getAssetFile(fileRoot, getFileName(doc, isrc, xPathFileIndex));
+            dropAssetFile.duration = getDuration(doc, isrc);
+            dropAssetFile.md5 = getMD5(doc, isrc, xPathFileIndex);
+            dropAssetFile.type = getType(doc, isrc, xPathFileIndex);
 
             dropAssetFiles.add(dropAssetFile);
         }
@@ -169,10 +186,47 @@ public class AbsoluteParser extends DDEXParser {
         return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)["+index+"]");
     }
 
+    private Integer getDuration(Document doc, String isrc) throws JDOMException {
+        String duration = evaluate(doc, "/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/Duration");
+
+        PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
+        ReadWritablePeriod readWritablePeriod = new MutablePeriod();
+        if (periodParser.parseInto(readWritablePeriod, duration, 0, null)>0){
+            return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
+        };
+        return null;
+    }
+
+    private String getMD5(Document doc, String isrc, int index) throws JDOMException {
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
+    }
+
+    private AssetFile.FileType getType(Document doc, String isrc, int index) throws JDOMException {
+        String isPreview = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)["+index+"]");
+
+        AssetFile.FileType fileType;
+        if (isEmpty(isPreview) || isPreview.equals("false")){
+            String audioCodecType = evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)["+index+"]");
+            XPath xPath = XPath.newInstance("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)["+index+"]");
+            xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+            String userDefinedValue = ((Attribute)xPath.selectSingleNode(doc)).getValue();
+            if (isNull(audioCodecType)|| audioCodecType.equals("MP3")|| (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))){
+                fileType = DOWNLOAD;
+            }else{
+                fileType = MOBILE;
+            }
+        }else {
+            fileType = PREVIEW;
+        }
+        return fileType;
+    }
+
     private String evaluate(Document doc, String xPathExpression) throws JDOMException {
         XPath xPath = XPath.newInstance(xPathExpression);
         xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
-        return ((Element) xPath.selectSingleNode(doc)).getValue();
+        Element singleNode = (Element) xPath.selectSingleNode(doc);
+        if (isNull(singleNode)) return null;
+        return singleNode.getValue();
     }
 
     private String getDropTrackKey(String isrc) {

@@ -82,7 +82,7 @@ public class ManualParser extends IParser {
 			String line;
 			while ((line = in.readLine()) != null) {
 				String[] tokens = line.split("#");
-				LOGGER.info("Token lenght "+tokens.length+" "+line);
+				LOGGER.info("Token length [{}] line", tokens.length);
 				DropTrack track = new DropTrack();
 				track.type = Type.INSERT;
 				track.xml="";
