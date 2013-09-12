@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import mobi.nowtechnologies.server.trackrepo.ingest.absolute.AbsoluteParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.ci.CiParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.emi.EmiParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.fuga.FugaParser;
@@ -12,6 +13,8 @@ import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 
 import java.io.FileNotFoundException;
+
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.*;
 
 public class IParserFactory {
     private String sonyRoot;
@@ -26,26 +29,28 @@ public class IParserFactory {
     private String sonyDDEXRoot;
 
     public IParser getParser(Ingestors name) throws FileNotFoundException {
-        if (Ingestors.SONY == name) {
+        if (SONY == name) {
             return new SonyParser(sonyRoot);
-        } else if (Ingestors.WARNER_OLD == name) {
+        } else if (WARNER_OLD == name) {
             return new WarnerParser(warnerOldRoot);
-        } else if (Ingestors.UNIVERSAL == name) {
+        } else if (UNIVERSAL == name) {
             return new UniversalParser(universalRoot);
-        } else if (Ingestors.FUGA == name) {
+        } else if (FUGA == name) {
             return new FugaParser(fugaRoot);
-        } else if (Ingestors.EMI == name) {
+        } else if (EMI == name) {
             return new EmiParser(emiRoot);
-        } else if (Ingestors.IODA == name) {
+        } else if (IODA == name) {
             return new IodaParser(iodaRoot);
-        } else if (Ingestors.CI == name) {
+        } else if (CI == name) {
             return new CiParser(ciRoot);
-        } else if (Ingestors.MANUAL == name) {
+        } else if (MANUAL == name) {
             return new ManualParser(manualRoot);
-        } else if (Ingestors.WARNER == name) {
+        } else if (WARNER == name) {
             return new WarnerParserV34(warnerRoot);
-        } else if (Ingestors.SONY_DDEX == name) {
+        } else if (SONY_DDEX == name) {
             return new SonyDDEXParser(sonyDDEXRoot);
+        } else if (ABSOLUTE == name){
+            return new AbsoluteParser("");
         }
         return null;
     }
@@ -53,10 +58,10 @@ public class IParserFactory {
     ;
 
     public String getName(Ingestors name) {
-        if (Ingestors.SONY_DDEX == name) {
-            return Ingestors.SONY.name();
-        } else if (Ingestors.WARNER_OLD == name) {
-            return Ingestors.WARNER.name();
+        if (SONY_DDEX == name) {
+            return SONY.name();
+        } else if (WARNER_OLD == name) {
+            return WARNER.name();
         }
         return name.name();
     }
@@ -101,5 +106,5 @@ public class IParserFactory {
         this.sonyDDEXRoot = sonyDDEXRoot;
     }
 
-    public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, IODA, CI, MANUAL, SONY_DDEX}
+    public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, IODA, CI, MANUAL, SONY_DDEX, ABSOLUTE}
 }
