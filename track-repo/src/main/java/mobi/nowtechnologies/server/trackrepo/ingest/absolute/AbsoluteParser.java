@@ -98,7 +98,7 @@ public class AbsoluteParser extends DDEXParser {
                         .addPhysicalProductId(isrc)
                         .addInfo("")
                         .addExists(true)
-                        .addExplicit(false)
+                        .addExplicit(getExplicit(document, isrc))
                         .addProductId(isrc)
                         .addTerritories(territories)
                         .addFiles(files)
@@ -175,6 +175,11 @@ public class AbsoluteParser extends DDEXParser {
         XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)");
         xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
         return ((Double) xPath.selectSingleNode(doc)).intValue();
+    }
+
+    private boolean getExplicit(Document doc, String isrc) throws JDOMException {
+        String parentalWarningType = evaluate(doc, "/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/ParentalWarningType");
+        return "Explicit".equals(parentalWarningType);
     }
 
     private String getFileName(Document doc, String isrc, int index) throws JDOMException {
@@ -259,15 +264,4 @@ public class AbsoluteParser extends DDEXParser {
     private String getDropTrackKey(String isrc) {
         return Joiner.on('_').join(isrc, getClass().getSimpleName());
     }
-
-//    @Override
-//    public boolean checkAlbum(String type) {
-//        if ("Album".equals(type)) {
-//            LOGGER.info("Album for [{}]", type);
-//            return true;
-//        }
-//        LOGGER.info("Track for [{}]", type);
-//        return false;
-//
-//    }
 }

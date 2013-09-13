@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropsData.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.*;
+
 public class IngestServiceImpl implements IngestService{
 
     protected final static int MAX_SIZE_DATA_BUFFER = 10;
@@ -49,12 +52,11 @@ public class IngestServiceImpl implements IngestService{
     @Override
 	public IngestWizardData getDrops(String parserName) throws Exception {
 
-        LOGGER.debug("formBackingObject " + parserName);
+        LOGGER.debug("formBackingObject [{}]", parserName);
 		IngestWizardData result = updateIngestData(null, false);
 
 		if (parserName != null) {
-
-			IParserFactory.Ingestors ingestor = IParserFactory.Ingestors.valueOf(parserName);
+			Ingestors ingestor = Ingestors.valueOf(parserName);
 			IParser parser = parserFactory.getParser(ingestor);
 			DropsData drops = new DropsData();
 			result.setDropdata(drops);
@@ -75,8 +77,8 @@ public class IngestServiceImpl implements IngestService{
 			DropsData drops = new DropsData();
 			drops.setDrops(new ArrayList<DropsData.Drop>());
 			result.setDropdata(drops);
-			for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-                LOGGER.info("Getting drops for " + ingestor);
+			for (Ingestors ingestor : Ingestors.values()) {
+                LOGGER.info("Getting drops for [{}]", ingestor);
 				IParser parser = parserFactory.getParser(ingestor);
 
 				List<DropData> parserDrops = parser.getDrops(false);
@@ -90,7 +92,6 @@ public class IngestServiceImpl implements IngestService{
 						drops.getDrops().add(data);
 					}
 				}
-
 			}
 		}
 		return result;
@@ -102,13 +103,13 @@ public class IngestServiceImpl implements IngestService{
         LOGGER.debug("INGEST processFinish");
         command = updateIngestData(command, true);
 
-		for (Drop drop : ((IngestWizardData) command).getDropdata().getDrops()) {
+		for (Drop drop : command.getDropdata().getDrops()) {
 
 			if (!drop.getSelected()) {
-                LOGGER.debug("Skipping not selected  " + drop.getName());
+                LOGGER.debug("Skipping not selected  [{}]", drop.getName());
 				continue;
 			}
-            LOGGER.info("Loading " + drop.getName() + " with " + drop.getParser().getClass());
+            LOGGER.info("Loading [{}] with [{}]", drop.getName(), drop.getParser().getClass());
 
 			processDrop(drop, true);
 		}
@@ -120,7 +121,7 @@ public class IngestServiceImpl implements IngestService{
 	protected void processDrop(Drop drop, boolean updateFiles) throws IOException, InterruptedException {
         LOGGER.debug("INGEST processFinish");
         IParser parser = drop.getParser();
-        IParserFactory.Ingestors ingestor = drop.getIngestor();
+        Ingestors ingestor = drop.getIngestor();
 
         LOGGER.info("Loading " + drop.getName() + " with " + parser.getClass());
 
@@ -201,8 +202,8 @@ public class IngestServiceImpl implements IngestService{
 	public void processAllDrops() throws Exception {
 
         DropsData drops = new DropsData();
-		for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-            LOGGER.info("Getting drops for " + ingestor);
+		for (Ingestors ingestor : Ingestors.values()) {
+            LOGGER.info("Getting drops for [{}]", ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
 
 			List<DropData> parserDrops = parser.getDrops(true);
@@ -463,7 +464,7 @@ public class IngestServiceImpl implements IngestService{
 
 	}
 
-	private void commit(IParserFactory.Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto,
+	private void commit(Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto,
 			String message) throws IOException, InterruptedException {
 		parser.commit(drop, auto);
 		logIngest(ingestor, parser, drop, tracks, status, message);

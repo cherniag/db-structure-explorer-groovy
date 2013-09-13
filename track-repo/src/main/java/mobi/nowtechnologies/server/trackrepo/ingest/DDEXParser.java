@@ -29,7 +29,6 @@ public abstract class DDEXParser extends IParser {
     }
 
     public Map<String, DropTrack> ingest(DropData drop) {
-
         Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
         try {
             File folder = new File(drop.name);
@@ -485,7 +484,7 @@ public abstract class DDEXParser extends IParser {
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder [{}]", result.get(i));
         }
         return result;
     }
@@ -518,20 +517,20 @@ public abstract class DDEXParser extends IParser {
         return result;
     }
 
-    public abstract void getIds(Element release, DropTrack track, List<DropAssetFile> files);
+    protected abstract void getIds(Element release, DropTrack track, List<DropAssetFile> files);
 
-    public void setUpc(DropTrack track, String upc) {
+    protected void setUpc(DropTrack track, String upc) {
     }
 
-    public void setGRid(DropTrack track, String GRid) {
+    protected void setGRid(DropTrack track, String GRid) {
     }
 
-    public boolean checkAlbum(String type) {
+    protected boolean checkAlbum(String type) {
         if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
-            LOGGER.info("Album for " + type);
+            LOGGER.info("Album for [{}]", type);
             return true;
         }
-        LOGGER.info("Track for " + type);
+        LOGGER.info("Track for [{}]", type);
         return false;
 
     }

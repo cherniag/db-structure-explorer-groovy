@@ -19,9 +19,9 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
         this.setSuid(data.getSuid());
         this.setStatus(data.getStatus());
 
-        DropsData dropdata = data.getDropdata();
-        if(isNotNull(dropdata) &&  isNotNull(dropdata.getDrops()))
-            for (DropsData.Drop drop : dropdata.getDrops())
+        DropsData dropsData = data.getDropdata();
+        if(isNotNull(dropsData) &&  isNotNull(dropsData.getDrops()))
+            for (DropsData.Drop drop : dropsData.getDrops())
                 this.drops.add(toDrops(drop));
 
     }

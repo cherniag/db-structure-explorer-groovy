@@ -1,16 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
-import mobi.nowtechnologies.server.shared.ObjectUtils;
-import mobi.nowtechnologies.server.shared.util.DateUtils;
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
@@ -27,12 +21,10 @@ import java.util.Map;
 import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
-import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.is;
@@ -112,7 +104,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         assertThat(resultDropTrack.info, is(""));
         assertThat(resultDropTrack.licensed, is(true));
         assertThat(resultDropTrack.exists, is(true));    // ?
-        assertThat(resultDropTrack.explicit, is(false));
+        assertThat(resultDropTrack.explicit, is(getExplicit(expectedIsrc)));
         assertThat(resultDropTrack.productId, is(expectedIsrc));
 
         validateResultTerritories();
@@ -191,6 +183,11 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
 
     private String getYear(String isrc) throws XpathException {
         return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/PLine/Year");
+    }
+
+    private boolean getExplicit(String isrc) throws XpathException {
+        String parentalWarningType = evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/ParentalWarningType");
+        return "Explicit".equals(parentalWarningType);
     }
 
     private int getTerritoryPerTrackCount(String isrc) throws XpathException {
