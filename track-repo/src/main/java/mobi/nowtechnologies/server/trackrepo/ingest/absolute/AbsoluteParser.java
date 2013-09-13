@@ -35,9 +35,7 @@ import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
@@ -97,7 +95,6 @@ public class AbsoluteParser extends DDEXParser {
                         .addIsrc(isrc)
                         .addPhysicalProductId(isrc)
                         .addInfo("")
-                        .addExists(true)
                         .addExplicit(getExplicit(document, isrc))
                         .addProductId(isrc)
                         .addTerritories(territories)
@@ -139,7 +136,9 @@ public class AbsoluteParser extends DDEXParser {
 
     private List<DropAssetFile> createFiles(Document doc, String isrc, String fileRoot) throws JDOMException {
         int filesCount = getFilesCount(doc, isrc);
-        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount);
+        List<DropAssetFile> imageDropAssetFiles = createImageDropAssetFiles(doc, fileRoot);
+
+        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount + imageDropAssetFiles.size());
 
         for (int i = 0; i < filesCount; i++) {
             DropAssetFile dropAssetFile = new DropAssetFile();
@@ -149,6 +148,25 @@ public class AbsoluteParser extends DDEXParser {
             dropAssetFile.duration = getDuration(doc, isrc);
             dropAssetFile.md5 = getMD5(doc, isrc, xPathFileIndex);
             dropAssetFile.type = getType(doc, isrc, xPathFileIndex);
+
+            dropAssetFiles.add(dropAssetFile);
+        }
+        dropAssetFiles.addAll(imageDropAssetFiles);
+
+        return dropAssetFiles;
+    }
+
+    private List<DropAssetFile> createImageDropAssetFiles(Document doc, String fileRoot) throws JDOMException {
+        int filesCount = getImageCount(doc);
+
+        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount);
+
+        for (int i = 0; i < filesCount; i++) {
+            DropAssetFile dropAssetFile = new DropAssetFile();
+            int xPathFileIndex = i + 1;
+            dropAssetFile.file = getAssetFile(fileRoot, getImageFileName(doc, xPathFileIndex));
+            dropAssetFile.md5 = getImageMD5(doc, xPathFileIndex);
+            dropAssetFile.type = IMAGE;
 
             dropAssetFiles.add(dropAssetFile);
         }
@@ -173,6 +191,30 @@ public class AbsoluteParser extends DDEXParser {
 
     private int getFilesCount(Document doc, String isrc) throws JDOMException {
         XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)");
+        xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+        return ((Double) xPath.selectSingleNode(doc)).intValue();
+    }
+
+    private String getImageMD5(Document doc, int index) throws JDOMException {
+        if ("MD5".equals(getImageFileHashSumAlgorithmType(doc, index)))
+            return getImageFileHashSum(doc, index);
+        return null;
+    }
+
+    private String getImageFileName(Document doc, int index) throws JDOMException {
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/FileName)[" + index + "]");
+    }
+
+    private String getImageFileHashSumAlgorithmType(Document doc, int index) throws JDOMException {
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[" + index + "]");
+    }
+
+    private String getImageFileHashSum(Document doc, int index) throws JDOMException {
+        return evaluate(doc, "(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSum)[" + index + "]");
+    }
+
+    private int getImageCount(Document doc) throws JDOMException {
+        XPath xPath = XPath.newInstance("count(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File)");
         xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
         return ((Double) xPath.selectSingleNode(doc)).intValue();
     }

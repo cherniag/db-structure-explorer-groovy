@@ -90,7 +90,7 @@ public abstract class DDEXParser extends IParser {
         for (int i = 0; i < releaseList.size(); i++) {
             Element release = releaseList.get(i);
             String type = release.getChildText("ReleaseType");
-            LOGGER.info("release type " + type);
+            LOGGER.info("release type [{}]", type);
 
             boolean isAlbum = checkAlbum(type);
 
@@ -134,7 +134,7 @@ public abstract class DDEXParser extends IParser {
         track.type = action;
 
         String resourceRef = release.getChild("ReleaseResourceReferenceList").getChildText("ReleaseResourceReference");
-        LOGGER.info("Resource reference " + resourceRef);
+        LOGGER.info("Resource reference [{}]", resourceRef);
 
         if (files.get(resourceRef) != null)
             track.files.addAll(files.get(resourceRef));
@@ -149,7 +149,7 @@ public abstract class DDEXParser extends IParser {
         if (track.isrc == null || "".equals(track.isrc)) {
             if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
                     && resourceDetail != null) {
-                LOGGER.info("Getting ISRC from resource " + resourceRef);
+                LOGGER.info("Getting ISRC from resource [{}]", resourceRef);
                 track.isrc = resourceDetail.isrc;
             }
         }
@@ -397,7 +397,6 @@ public abstract class DDEXParser extends IParser {
                 imageFile.file = getAssetFile(fileRoot, fileName);
 
                 imageFile.type = IMAGE;
-                // Get Hash
                 Element hash = techDetail.getChild("File").getChild("HashSum");
                 if (hash != null) {
                     if ("MD5".equals(hash.getChildText("HashSumAlgorithmType"))) {
@@ -453,7 +452,6 @@ public abstract class DDEXParser extends IParser {
                 }
                 resourceFiles.add(assetFile);
 
-                // Get Hash
                 Element hash = techDetail.getChild("File").getChild("HashSum");
                 if (hash != null) {
                     if ("MD5".equals(hash.getChildText("HashSumAlgorithmType"))) {
@@ -490,7 +488,6 @@ public abstract class DDEXParser extends IParser {
     }
 
     protected List<DropData> getDrops(File folder, boolean auto) {
-
         List<DropData> result = new ArrayList<DropData>();
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;

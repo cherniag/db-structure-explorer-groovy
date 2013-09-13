@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.jdom.Document;
+import org.jdom.JDOMException;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
@@ -44,6 +46,10 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private String expectedAlbum;
     private String expectedReleaseReference;
     private String xmlFileParent;
+    private int expectedTrackCount;
+    private int expectedImageFileCount;
+    private List<DropAssetFile> files;
+    private int expectedFileCount;
 
     public void createParser() throws FileNotFoundException {
         parserFixture = new AbsoluteParser("classpath:media/absolute/");
@@ -83,6 +89,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private void validateResultDropTrack() throws XpathException, ParseException {
         expectedIsrc = getIsrc(expectedResultDropTrackIndex + 1);
         expectedLabel = getLabel(expectedIsrc);
+        expectedImageFileCount = getImageCount();
         xmlFileParent = xmlFile.getParent();
 
         resultDropTrack = getResultDropTrack(expectedIsrc);
@@ -103,7 +110,6 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         assertThat(resultDropTrack.album, is(expectedAlbum));
         assertThat(resultDropTrack.info, is(""));
         assertThat(resultDropTrack.licensed, is(true));
-        assertThat(resultDropTrack.exists, is(true));    // ?
         assertThat(resultDropTrack.explicit, is(getExplicit(expectedIsrc)));
         assertThat(resultDropTrack.productId, is(expectedIsrc));
 
@@ -137,12 +143,20 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     }
 
     private void validateResultFiles() throws XpathException, ParseException {
-        List<DropAssetFile> files = resultDropTrack.getFiles();
+        files = resultDropTrack.getFiles();
+
+        expectedTrackCount = getFilesCount(expectedIsrc);
+        expectedFileCount = expectedTrackCount + expectedImageFileCount;
 
         assertNotNull(files);
-        assertThat(files.size(), is(getFilesCount(expectedIsrc)));
+        assertThat(files.size(), is(expectedFileCount));
 
-        for (int i = 0; i < files.size(); i++) {
+        validateTrackFiles();
+        validateImageFiles();
+    }
+
+    private void validateImageFiles() throws XpathException, ParseException {
+        for (int i = 0; i < expectedTrackCount; i++) {
             DropAssetFile asset = files.get(i);
             assertThat(asset.isrc, is(expectedIsrc));
             int xPathFileIndex = i + 1;
@@ -151,6 +165,40 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
             assertThat(asset.md5, is(getMD5(expectedIsrc, xPathFileIndex)));
             assertThat(asset.type, is(getType(expectedIsrc, xPathFileIndex)));
         }
+    }
+
+    private void validateTrackFiles() throws XpathException, ParseException {
+        for (int i = expectedTrackCount; i < expectedFileCount; i++) {
+            DropAssetFile asset = files.get(i);
+            //assertThat(asset.isrc, is(null));
+            int xPathFileIndex = i - expectedTrackCount + 1;
+            assertThat(asset.file, is(getAssetFile(getImageFileName(xPathFileIndex))));
+            //assertThat(asset.duration, is(getDuration(expectedIsrc)));
+            assertThat(asset.md5, is(getImageMD5(xPathFileIndex)));
+            assertThat(asset.type, is(IMAGE));
+        }
+    }
+
+    private String getImageMD5(int index) throws XpathException {
+        if ("MD5".equals(getImageFileHashSumAlgorithmType(index)))
+            return getImageFileHashSum(index);
+        return null;
+    }
+
+    private String getImageFileName(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/FileName)[" + index + "]");
+    }
+
+    private String getImageFileHashSumAlgorithmType(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[" + index + "]");
+    }
+
+    private String getImageFileHashSum(int index) throws XpathException {
+        return evaluate("(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSum)[" + index + "]");
+    }
+
+    private int getImageCount() throws XpathException {
+        return parseInt(evaluate("count(/ern:NewReleaseMessage/ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File)"));
     }
 
     private String getTitleText(String isrc) throws XpathException {
