@@ -40,6 +40,7 @@ public class WarnerParser extends DDEXParser {
 		return tracks;
 	}
 
+    @Override
 	public List<DropData> getDrops(boolean auto) {
 		List<DropData> result = new ArrayList<DropData>();
 		File rootFolder = new File(root);
@@ -69,7 +70,7 @@ public class WarnerParser extends DDEXParser {
 		if (deliveryComplete && !processed) {
             LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
 			DropData drop = new DropData();
-			drop.name =folder.getAbsolutePath();
+			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());
 
 			result.add(drop);

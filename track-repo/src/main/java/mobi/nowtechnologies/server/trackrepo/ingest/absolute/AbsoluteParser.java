@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.collect.Lists.*;
 import static com.google.common.primitives.Ints.checkedCast;
@@ -170,6 +167,44 @@ public class AbsoluteParser extends DDEXParser {
             dropAssetFiles.add(dropAssetFile);
         }
         return dropAssetFiles;
+    }
+
+    @Override
+    public List<DropData> getDrops(boolean auto) {
+        List<DropData> result = new ArrayList<DropData>();
+        File rootFolder = new File(root);
+        result.addAll(getDrops(rootFolder, auto));
+        for (int i = 0; i < result.size(); i++) {
+            LOGGER.info("Drop folder [{}]", result.get(i));
+        }
+        return result;
+    }
+
+    public List<DropData> getDrops(File folder, boolean auto) {
+        List<DropData> result = new ArrayList<DropData>();
+        File[] content = folder.listFiles();
+        boolean deliveryComplete = false;
+        boolean processed = false;
+        for (File file : content) {
+            if (isDirectory(file)) {
+                result.addAll(getDrops(file, auto));
+            } else if ("delivery.complete".equals(file.getName())) {
+                deliveryComplete = true;
+            } else if ("ingest.ack".equals(file.getName())) {
+                processed = true;
+            } else if (auto && "autoingest.ack".equals(file.getName())) {
+                processed = true;
+            }
+        }
+        if (deliveryComplete && !processed) {
+            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
+            DropData drop = new DropData();
+            drop.name = folder.getAbsolutePath();
+            drop.date = new Date(folder.lastModified());
+
+            result.add(drop);
+        }
+        return result;
     }
 
     private String getAlbum(Document doc) throws JDOMException {
