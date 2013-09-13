@@ -30,6 +30,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -170,10 +171,10 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private void validateTrackFiles() throws XpathException, ParseException {
         for (int i = expectedTrackCount; i < expectedFileCount; i++) {
             DropAssetFile asset = files.get(i);
-            //assertThat(asset.isrc, is(null));
+            assertThat(asset.isrc, is(nullValue()));
             int xPathFileIndex = i - expectedTrackCount + 1;
             assertThat(asset.file, is(getAssetFile(getImageFileName(xPathFileIndex))));
-            //assertThat(asset.duration, is(getDuration(expectedIsrc)));
+            assertThat(asset.duration, is(nullValue()));
             assertThat(asset.md5, is(getImageMD5(xPathFileIndex)));
             assertThat(asset.type, is(IMAGE));
         }
