@@ -50,7 +50,6 @@ public class AbsoluteParser extends DDEXParser {
 
     public AbsoluteParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Absolute parser loading from [{}]", root);
     }
 
     @Override

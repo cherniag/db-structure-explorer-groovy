@@ -28,7 +28,6 @@ public class IodaParser extends IParser {
 
 	public IodaParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("IODA parser loading from " + root);
 	}
 
 	protected Map<String, DropTrack> loadXml(String file) {

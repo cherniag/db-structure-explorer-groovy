@@ -16,7 +16,6 @@ public class ManualParser extends IParser {
 
 	public ManualParser(String root) throws FileNotFoundException {
         super(root);
-		LOGGER.info("Manual parser loadin from " + root);
 	}
 
 	@Override

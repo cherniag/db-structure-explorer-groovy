@@ -19,7 +19,6 @@ public class FugaParser extends DDEXParser {
 
 	public FugaParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Fuga parser loadin from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {

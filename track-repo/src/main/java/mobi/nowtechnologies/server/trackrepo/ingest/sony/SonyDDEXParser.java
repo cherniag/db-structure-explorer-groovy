@@ -16,7 +16,6 @@ public class SonyDDEXParser extends DDEXParser {
 
 	public SonyDDEXParser(String root) throws FileNotFoundException {
         super(root);
-		LOGGER.info("Sony DDEX parser loading from [{}]", root);
 	}
 
 	@Override

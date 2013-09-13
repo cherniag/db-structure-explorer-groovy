@@ -19,11 +19,9 @@ public class WarnerParser extends DDEXParser {
 
 	public WarnerParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Warner parser loadin from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
-
 		Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
 		try {
 			File folder = new File(drop.name);
@@ -36,29 +34,23 @@ public class WarnerParser extends DDEXParser {
 					tracks.putAll(result);
 				}
 			}
-
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            LOGGER.error(e.getMessage());
 		}
 		return tracks;
-
 	}
 
-
 	public List<DropData> getDrops(boolean auto) {
-
 		List<DropData> result = new ArrayList<DropData>();
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder [{}]", result.get(i));
 		}
 		return result;
 	}
 
 	public List<DropData> getDrops(File folder, boolean auto) {
-
 		List<DropData> result = new ArrayList<DropData>();
 		File[] content = folder.listFiles();
 		boolean deliveryComplete = false;
@@ -75,7 +67,7 @@ public class WarnerParser extends DDEXParser {
 			}
 		}
 		if (deliveryComplete && !processed) {
-            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
 			DropData drop = new DropData();
 			drop.name =folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());

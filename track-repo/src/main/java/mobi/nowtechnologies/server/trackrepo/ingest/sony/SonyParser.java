@@ -27,7 +27,6 @@ public class SonyParser extends IParser {
 
 	public SonyParser(String root) throws FileNotFoundException {
 		super(root);
-		LOGGER.debug("Sony parser loadin from " + root);
 	}
 
 	protected DropTrack loadXml(String file) {

@@ -27,7 +27,6 @@ public class UniversalParser extends IParser {
 
 	public UniversalParser(String root) throws FileNotFoundException {
 		super(root);
-		LOGGER.info("Universal parser loading from " + root);
 	}
 
 	protected Map<String, DropTrack> loadXml(String drop, String code, Map<String, List<DropAssetFile>> fulfillmentFiles) {

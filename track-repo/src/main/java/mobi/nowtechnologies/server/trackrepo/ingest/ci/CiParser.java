@@ -19,7 +19,6 @@ public class CiParser extends DDEXParser {
 
 	public CiParser(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("CI parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {

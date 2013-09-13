@@ -17,7 +17,6 @@ public class EmiParser extends DDEXParser {
 
     public EmiParser(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("EMI parser loadin from " + root);
     }
 
     public Map<String, DropTrack> ingest(DropData drop) {

@@ -5,8 +5,6 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
@@ -63,7 +61,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     @Test
     public void verifyThatAbsoluteParserReadBasicFieldCorrectly() throws Exception {
         //given
-        xmlFile = new ClassPathResource("media/absolute/absolute.xml").getFile();
+        xmlFile = new ClassPathResource("media/absolute/201307180007/5037128203551/absolute.xml").getFile();
 
         //when
         resultDropTrackMap = parserFixture.loadXml(xmlFile);

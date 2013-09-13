@@ -20,6 +20,7 @@ public abstract class IParser{
 
     protected IParser(String root) throws FileNotFoundException {
         this.root = getFile(root).getAbsolutePath();
+        LOGGER.info("[{}] parser loading from [{}]", getClass().getSimpleName(), root);
     }
 
     protected boolean isDirectory(File file) {

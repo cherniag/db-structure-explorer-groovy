@@ -476,6 +476,7 @@ public abstract class DDEXParser extends IParser {
         return root + "/resources/" + file;
     }
 
+    @Override
     public List<DropData> getDrops(boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
