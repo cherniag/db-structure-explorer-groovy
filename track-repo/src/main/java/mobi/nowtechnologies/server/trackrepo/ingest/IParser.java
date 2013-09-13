@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -8,47 +10,49 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.util.ResourceUtils.*;
+
 public abstract class IParser{
 
-	public abstract Map<String, DropTrack> ingest(DropData drop);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IParser.class);
 
     protected String root;
 
     protected IParser(String root) throws FileNotFoundException {
-        this.root = ResourceUtils.getFile(root).getAbsolutePath();
+        this.root = getFile(root).getAbsolutePath();
+    }
+
+    protected boolean isDirectory(File file) {
+        try {
+            if (file.isDirectory() || file.getCanonicalFile().isDirectory()) {
+                boolean symlink = file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath());
+                return symlink ? false : true;
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return false;
     }
 
 	public void commit(DropData drop, boolean auto) throws IOException, InterruptedException {
 		if (!auto) {
-			String commitFileName = drop.name + "/ingest.ack";
-			File commitFile = new File(commitFileName);
+            File commitFile = new File(drop.name + "/ingest.ack");
 			try {
 				commitFile.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+                LOGGER.error(e.getMessage());
 			}
 		}
-		String commitFileName = drop.name + "/autoingest.ack";
-		File commitFile = new File(commitFileName);
+        File commitFile = new File(drop.name + "/autoingest.ack");
 		try {
 			commitFile.createNewFile();
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage());
 		}
 	}
 
-	public abstract List<DropData> getDrops(boolean auto);
+    public abstract Map<String, DropTrack> ingest(DropData drop);
 
-	protected boolean isDirectory(File file) {
-		try {
-			if (file.isDirectory() || file.getCanonicalFile().isDirectory()) {
-                boolean symlink = file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath());
-                return symlink ? false : true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+    public abstract List<DropData> getDrops(boolean auto);
 
 }

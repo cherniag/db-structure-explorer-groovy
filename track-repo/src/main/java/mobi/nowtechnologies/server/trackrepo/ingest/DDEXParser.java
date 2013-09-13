@@ -119,7 +119,7 @@ public abstract class DDEXParser extends IParser {
             upc = releaseId.getChildText("ICPN");
             grid = releaseId.getChildText("GRid");
         }
-        LOGGER.info("album " + albumTitle);
+        LOGGER.info("album [{}]", albumTitle);
         // Add album title to all tracks
         if (albumTitle != null)
             for (DropTrack track : result.values()) {
@@ -477,7 +477,6 @@ public abstract class DDEXParser extends IParser {
     }
 
     public List<DropData> getDrops(boolean auto) {
-
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
