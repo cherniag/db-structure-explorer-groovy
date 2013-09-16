@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -156,12 +157,89 @@ public class MessageDto {
 		this.actionButtonText = actionButtonText;
 	}
 
-	@Override
-	public String toString() {
-		return "MessageDto [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText
-				+ ", body=" + body + ", file=" + file
-				+ ", filterDtos=" + filterDtos + ", frequence=" + frequence
-				+ ", headline=" + headline + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime + "]";
-	}
+    public MessageDto withPosition(Integer position){
+        setPosition(position);
+        return this;
+    }
+
+    public MessageDto withId(Integer id){
+        setId(id);
+        return this;
+    }
+
+    public MessageDto withHeadline(String headline){
+        setHeadline(headline);
+        return this;
+    }
+
+    public MessageDto withBody(String body){
+        setBody(body);
+        return this;
+    }
+
+    public MessageDto withActivated(boolean activated){
+        setActivated(activated);
+        return this;
+    }
+
+    public MessageDto withFrequence(MessageFrequence frequence){
+        setFrequence(frequence);
+        return this;
+    }
+
+    public MessageDto withMessageType(MessageType messageType){
+        setMessageType(messageType);
+        return this;
+    }
+
+    public MessageDto withPublishTime(Date publishTime){
+        setPublishTime(publishTime);
+        return this;
+    }
+
+    public MessageDto withFilterDtos(Set<FilterDto> filterDtos){
+        setFilterDtos(filterDtos);
+        return this;
+    }
+
+    public MessageDto withFile(MultipartFile file){
+        setFile(file);
+        return this;
+    }
+
+    public MessageDto withActionType(MessageActionType actionType){
+        setActionType(actionType);
+        return this;
+    }
+
+    public MessageDto withAction(String action){
+        setAction(action);
+        return this;
+    }
+
+    public MessageDto withActionButtonText(String actionButtonText){
+        setActionButtonText(actionButtonText);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("position", position)
+                .append("id", id)
+                .append("headline", headline)
+                .append("body", body)
+                .append("activated", activated)
+                .append("frequence", frequence)
+                .append("messageType", messageType)
+                .append("publishTime", publishTime)
+                .append("filterDtos", filterDtos)
+                .append("file", file)
+                .append("actionType", actionType)
+                .append("action", action)
+                .append("actionButtonText", actionButtonText)
+                .toString();
+    }
+
 
 }
