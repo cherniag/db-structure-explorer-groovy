@@ -21,7 +21,7 @@ public class ManualParser extends IParser {
 	@Override
 	public void commit(DropData drop, boolean auto) {
 		File dropFile = new File(drop.name);
-		String commitFileName = dropFile.getParent() + "/ingest.ack";
+		String commitFileName = dropFile.getParent() + "/" + INGEST_ACK;
 		File commitFile = new File(commitFileName);
 		try {
 			commitFile.createNewFile();
@@ -49,7 +49,7 @@ public class ManualParser extends IParser {
 		boolean processed = false;
 		File csv = null;
 		for (File file: rootFolder.listFiles()) {
-			if (file.getName().equals("ingest.ack")) {
+			if (file.getName().equals(INGEST_ACK)) {
 				processed = true;
 			}
 			if (file.getName().endsWith(".csv")) {
@@ -62,7 +62,7 @@ public class ManualParser extends IParser {
 			try {
 				data.name = csv.getCanonicalPath();
 			} catch (IOException e) {
-				LOGGER.error("getdrops failed "+e.getMessage());
+				LOGGER.error("getDrops failed "+e.getMessage());
 			}
 			result.add(data);
 		}

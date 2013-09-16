@@ -428,16 +428,16 @@ public abstract class DDEXParser extends IParser {
                 result.addAll(getDrops(file, auto));
             } else if (file.getName().startsWith("BatchComplete")) {
                 deliveryComplete = true;
-            } else if ("ingest.ack".equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            } else if (auto && "autoingest.ack".equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
         if (deliveryComplete && !processed) {
             LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
             DropData drop = new DropData();
-            drop.name =folder.getAbsolutePath();
+            drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
 
             result.add(drop);

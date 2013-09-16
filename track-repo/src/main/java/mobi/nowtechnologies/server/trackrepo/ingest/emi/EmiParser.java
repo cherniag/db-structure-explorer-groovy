@@ -4,16 +4,16 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class EmiParser extends DDEXParser {
-    protected static final Log LOG = LogFactory.getLog(EmiParser.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(EmiParser.class);
 
     public EmiParser(String root) throws FileNotFoundException {
         super(root);
@@ -32,19 +32,18 @@ public class EmiParser extends DDEXParser {
             }
 
         } catch (Exception e) {
-            LOG.error("Ingest failed " + e.getMessage());
+            LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
 
     }
 
     public List<DropData> getDrops(boolean auto) {
-
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         for (int i = 0; i < result.size(); i++) {
-            LOG.info("Drop folder " + result.get(i));
+            LOGGER.info("Drop folder [{}]", result.get(i));
         }
         return result;
     }
@@ -59,9 +58,9 @@ public class EmiParser extends DDEXParser {
             try {
                 if (isDirectory(file)) {
                     result.addAll(getDrops(file, auto));
-                } else if ("ingest.ack".equals(file.getName())) {
+                } else if (INGEST_ACK.equals(file.getName())) {
                     processed = true;
-                } else if (auto && "autoingest.ack".equals(file.getName())) {
+                } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                     processed = true;
                 } else {
                     File xml = getXmlFile(folder);
@@ -70,12 +69,12 @@ public class EmiParser extends DDEXParser {
                     }
                 }
             } catch (Exception e1) {
-                LOG.error("Ingest failed " + e1.getMessage());
+                LOGGER.error("Ingest failed " + e1.getMessage());
             }
 
         }
         if (deliveryComplete && !processed) {
-            LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
             DropData drop = new DropData();
             drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
@@ -89,7 +88,7 @@ public class EmiParser extends DDEXParser {
         int codeSep = folder.getName().indexOf('_');
         if (codeSep > 0) {
             String code = folder.getName().substring(0, codeSep);
-            LOG.info("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
+            LOGGER.info("Checking " + folder.getAbsoluteFile() + "/" + code + ".xml");
             File xml = new File(folder.getAbsoluteFile() + "/" + code + ".xml");
             return xml;
         }

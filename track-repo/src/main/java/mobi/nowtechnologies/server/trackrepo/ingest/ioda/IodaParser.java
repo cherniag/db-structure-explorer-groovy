@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.trackrepo.ingest.ioda;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -74,13 +72,14 @@ public class IodaParser extends IParser {
 			}
 
 			String year = null;
-			String releasedateStr = rootNode.getChildText("original_release_date", space);
-			SimpleDateFormat dateparse = new SimpleDateFormat("yyyy-MM-dd");
+			String releaseDateStr = rootNode.getChildText("original_release_date", space);
+			SimpleDateFormat dateParse = new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 			try {
-				Date releasedate = dateparse.parse(releasedateStr);
-				year = yearFormat.format(releasedate);
+				Date releaseDate = dateParse.parse(releaseDateStr);
+				year = yearFormat.format(releaseDate);
 			} catch (ParseException e) {
+                LOGGER.error(e.getMessage());
 			}
 
 			String genre = rootNode.getChild("primary_style", space).getChildText("ioda_style_name", space);
@@ -99,10 +98,11 @@ public class IodaParser extends IParser {
 				territoryData.label = label;
 				territoryData.distributor = "IODA";
 				territoryData.priceCode = territory.getChildText("price_tier", space);
-				String startdate = territory.getChildText("publish_date", space);
+				String startDate = territory.getChildText("publish_date", space);
 				try {
-					territoryData.startdate = dateparse.parse(startdate);
+					territoryData.startdate = dateParse.parse(startDate);
 				} catch (ParseException e) {
+                    LOGGER.error(e.getMessage());
 				}
 
 			}
@@ -191,7 +191,6 @@ public class IodaParser extends IParser {
 	}
 
 	public List<DropData> getDrops(File folder, boolean auto) {
-
 		List<DropData> result = new ArrayList<DropData>();
 		File[] content = folder.listFiles();
 		boolean processed = false;
@@ -199,9 +198,9 @@ public class IodaParser extends IParser {
 		for (File file : content) {
 			if (isDirectory(file)) {
 				result.addAll(getDrops(file, auto));
-			} else if ("ingest.ack".equals(file.getName())) {
+			} else if (INGEST_ACK.equals(file.getName())) {
 				processed = true;
-			} else if (auto && "autoingest.ack".equals(file.getName())) {
+			} else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
 				processed = true;
 			}  else if ("dir.complete".equals(file.getName())) {
 				valid = true;
@@ -209,7 +208,7 @@ public class IodaParser extends IParser {
 			}
 		}
 		if (valid && !processed) {
-            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            LOGGER.debug("Adding [{}]  to drops", folder.getAbsolutePath());
 			DropData drop = new DropData();
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());

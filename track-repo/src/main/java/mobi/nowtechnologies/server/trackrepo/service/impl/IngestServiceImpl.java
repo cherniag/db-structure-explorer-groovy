@@ -138,10 +138,10 @@ public class IngestServiceImpl implements IngestService{
                 LOGGER.info("Null track value");
 				continue;
 			}
-            LOGGER.info("Ingesting " + value.isrc);
+            LOGGER.info("Ingesting [{}]", value.isrc);
 
 			if (value.type == Type.INSERT || value.type == Type.UPDATE) {
-                LOGGER.info("Inserting " + value.isrc);
+                LOGGER.info("Inserting [{}]", value.isrc);
 
 				Track track = trackRepository.findByKey( value.isrc,  value.productCode, parserFactory.getName(ingestor));
 				if (track == null) { // Try to find old keys for Fuga
@@ -149,11 +149,11 @@ public class IngestServiceImpl implements IngestService{
 				}
 				if (track == null) {
 					if (value.type == Type.UPDATE) {
-                        LOGGER.info("Not updating " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not updating [{}] [{}] [{}]", value.isrc, value.productCode, ingestor.toString());
 						continue; // Nothing to update
 					}
 					if (value.files == null || value.files.size() == 0) {
-                        LOGGER.info("Not inserting with no tracks " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not inserting with no tracks [{}] [{}] [{}]", value.isrc, value.productCode, ingestor.toString());
 						continue;
 					}
 					track = new Track();

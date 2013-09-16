@@ -1,9 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -22,11 +19,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.google.common.collect.Lists.*;
 import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -308,11 +303,11 @@ public class AbsoluteParser extends DDEXParser {
         for (File file : content) {
             if (isDirectory(file)) {
                 result.addAll(getDrops(file, auto));
-            } else if ("delivery.complete".equals(file.getName())) {
+            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            } else if ("ingest.ack".equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            } else if (auto && "autoingest.ack".equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }

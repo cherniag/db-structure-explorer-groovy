@@ -4,8 +4,6 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +15,7 @@ import java.util.*;
 public class WarnerParser extends DDEXParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(WarnerParser.class);
 
-	public WarnerParser(String root) throws FileNotFoundException {
+    public WarnerParser(String root) throws FileNotFoundException {
         super(root);
 	}
 
@@ -59,11 +57,11 @@ public class WarnerParser extends DDEXParser {
 		for (File file : content) {
 			if (isDirectory(file)) {
 				result.addAll(getDrops(file, auto));
-			} else if ("delivery.complete".equals(file.getName())) {
+			} else if (DELIVERY_COMPLETE.equals(file.getName())) {
 				deliveryComplete = true;
-			} else if ("ingest.ack".equals(file.getName())) {
+			} else if (INGEST_ACK.equals(file.getName())) {
 				processed = true;
-			} else if (auto && "autoingest.ack".equals(file.getName())) {
+			} else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
 				processed = true;
 			}
 		}

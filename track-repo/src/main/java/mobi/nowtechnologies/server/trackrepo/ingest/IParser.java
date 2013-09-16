@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +14,10 @@ import static org.springframework.util.ResourceUtils.*;
 public abstract class IParser{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IParser.class);
+
+    public static final String DELIVERY_COMPLETE = "delivery.complete";
+    public static final String INGEST_ACK = "ingest.ack";
+    public static final String AUTO_INGEST_ACK = "autoingest.ack";
 
     protected String root;
 
@@ -37,20 +40,24 @@ public abstract class IParser{
 
 	public void commit(DropData drop, boolean auto) throws IOException, InterruptedException {
 		if (!auto) {
-            File commitFile = new File(drop.name + "/ingest.ack");
+            File commitFile = new File(drop.name + "/" + INGEST_ACK);
 			try {
 				commitFile.createNewFile();
 			} catch (IOException e) {
                 LOGGER.error(e.getMessage());
 			}
 		}
-        File commitFile = new File(drop.name + "/autoingest.ack");
+        File commitFile = new File(drop.name + "/" + AUTO_INGEST_ACK);
 		try {
 			commitFile.createNewFile();
 		} catch (IOException e) {
             LOGGER.error(e.getMessage());
 		}
 	}
+
+    public String getRoot() {
+        return root;
+    }
 
     public abstract Map<String, DropTrack> ingest(DropData drop);
 
