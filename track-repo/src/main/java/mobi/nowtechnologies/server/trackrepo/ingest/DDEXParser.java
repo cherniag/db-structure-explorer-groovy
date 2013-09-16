@@ -24,64 +24,6 @@ public abstract class DDEXParser extends IParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
-    public DDEXParser(String root) throws FileNotFoundException {
-        super(root);
-    }
-
-    public Map<String, DropTrack> ingest(DropData drop) {
-        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
-        try {
-            File folder = new File(drop.name);
-            File[] content = folder.listFiles();
-            for (File file : content) {
-                String xmlFileName = file.getName() + ".xml";
-                Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
-
-                if (result != null) {
-                    tracks.putAll(result);
-                }
-            }
-
-        } catch (Exception e) {
-            LOGGER.error("Ingest failed "+e.getMessage());
-        }
-        return tracks;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<String, DropTrack> loadXml(File xmlFile) {
-
-        SAXBuilder builder = new SAXBuilder();
-        LOGGER.info("Loading [{}]", xmlFile.getAbsolutePath());
-
-        try {
-            String fileRoot = xmlFile.getParent();
-            Map<String, DropTrack> resourceDetails = new HashMap<String, DropTrack>();
-
-            Document document = builder.build(xmlFile);
-            Element rootNode = document.getRootElement();
-
-            String distributor = getDistributor(rootNode);
-
-            Type action = getActionType(rootNode);
-
-            Map<String, List<DropAssetFile>> files = parseMediaFiles(fileRoot, resourceDetails, rootNode);
-
-            DropAssetFile imageFile = parseImageFile(fileRoot, rootNode);
-
-            Map<String, Map<String, DropTerritory>> deals = parseDeals(rootNode);
-
-            return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
-
-        } catch (IOException io) {
-            LOGGER.error("Exception " + io.getMessage());
-        } catch (JDOMException jdomex) {
-            LOGGER.error("Exception " + jdomex.getMessage());
-        }
-        return null;
-    }
-
     private Map<String, DropTrack> parseReleases(DropAssetFile imageFile, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, Map<String, Map<String, DropTerritory>> deals, String distributor, Type action, Element rootNode) {
         Element albumElement = null;
         Map<String, DropTrack> result = new HashMap<String, DropTrack>();
@@ -326,6 +268,7 @@ public abstract class DDEXParser extends IParser {
             try {
                 dealStartDate = dateParse.parse(startDate);
             } catch (ParseException e) {
+                LOGGER.error(e.getMessage());
             }
 
             Element priceInfo = dealTerms.getChild("PriceInformation");
@@ -460,7 +403,6 @@ public abstract class DDEXParser extends IParser {
                 }
             }
         }
-
         return files;
     }
 
@@ -474,17 +416,6 @@ public abstract class DDEXParser extends IParser {
 
     protected String getAssetFile(String root, String file) {
         return root + "/resources/" + file;
-    }
-
-    @Override
-    public List<DropData> getDrops(boolean auto) {
-        List<DropData> result = new ArrayList<DropData>();
-        File rootFolder = new File(root);
-        result.addAll(getDrops(rootFolder, auto));
-        for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder [{}]", result.get(i));
-        }
-        return result;
     }
 
     protected List<DropData> getDrops(File folder, boolean auto) {
@@ -516,11 +447,9 @@ public abstract class DDEXParser extends IParser {
 
     protected void getIds(Element release, DropTrack track, List<DropAssetFile> files){}
 
-    protected void setUpc(DropTrack track, String upc) {
-    }
+    protected void setUpc(DropTrack track, String upc) {}
 
-    protected void setGRid(DropTrack track, String GRid) {
-    }
+    protected void setGRid(DropTrack track, String GRid) {}
 
     protected boolean checkAlbum(String type) {
         if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
@@ -529,7 +458,73 @@ public abstract class DDEXParser extends IParser {
         }
         LOGGER.info("Track for [{}]", type);
         return false;
+    }
 
+    public DDEXParser(String root) throws FileNotFoundException {
+        super(root);
+    }
+
+    public Map<String, DropTrack> ingest(DropData drop) {
+        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+        try {
+            File folder = new File(drop.name);
+            File[] content = folder.listFiles();
+            for (File file : content) {
+                String xmlFileName = file.getName() + ".xml";
+                Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
+
+                if (result != null) {
+                    tracks.putAll(result);
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Ingest failed "+e.getMessage());
+        }
+        return tracks;
+    }
+
+    public Map<String, DropTrack> loadXml(File xmlFile) {
+
+        SAXBuilder builder = new SAXBuilder();
+        LOGGER.info("Loading [{}]", xmlFile.getAbsolutePath());
+
+        try {
+            String fileRoot = xmlFile.getParent();
+            Map<String, DropTrack> resourceDetails = new HashMap<String, DropTrack>();
+
+            Document document = builder.build(xmlFile);
+            Element rootNode = document.getRootElement();
+
+            String distributor = getDistributor(rootNode);
+
+            Type action = getActionType(rootNode);
+
+            Map<String, List<DropAssetFile>> files = parseMediaFiles(fileRoot, resourceDetails, rootNode);
+
+            DropAssetFile imageFile = parseImageFile(fileRoot, rootNode);
+
+            Map<String, Map<String, DropTerritory>> deals = parseDeals(rootNode);
+
+            return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
+
+        } catch (IOException io) {
+            LOGGER.error("Exception " + io.getMessage());
+        } catch (JDOMException jdomex) {
+            LOGGER.error("Exception " + jdomex.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public List<DropData> getDrops(boolean auto) {
+        List<DropData> result = new ArrayList<DropData>();
+        File rootFolder = new File(root);
+        result.addAll(getDrops(rootFolder, auto));
+        for (int i = 0; i < result.size(); i++) {
+            LOGGER.info("Drop folder [{}]", result.get(i));
+        }
+        return result;
     }
 
 }
