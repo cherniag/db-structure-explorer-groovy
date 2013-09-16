@@ -491,7 +491,7 @@ public class IngestServiceImpl implements IngestService{
 		log.setStatus(status);
 		log.setIngestor(ingestor.name());
 		log.setMessage(message);
-		log.setDropName(drop.getName());
+		log.setDropName(drop.name);
 		ingestionLogRepository.save(log);
 	}
 

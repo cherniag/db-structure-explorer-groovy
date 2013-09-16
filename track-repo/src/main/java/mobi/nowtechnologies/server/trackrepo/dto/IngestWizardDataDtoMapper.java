@@ -28,8 +28,8 @@ public class IngestWizardDataDtoMapper extends IngestWizardDataDto {
 
     private DropDto toDrops(DropsData.Drop drop) {
         DropDto result = new DropDto();
-        result.setDate(drop.getDrop().getDate());
-        result.setName(drop.getDrop().getName());
+        result.setDate(drop.getDrop().date);
+        result.setName(drop.getDrop().name);
         result.setIngestor(drop.getIngestor().name());
         result.setSelected(drop.getSelected());
 

@@ -514,7 +514,7 @@ public abstract class DDEXParser extends IParser {
         return result;
     }
 
-    protected abstract void getIds(Element release, DropTrack track, List<DropAssetFile> files);
+    protected void getIds(Element release, DropTrack track, List<DropAssetFile> files){}
 
     protected void setUpc(DropTrack track, String upc) {
     }

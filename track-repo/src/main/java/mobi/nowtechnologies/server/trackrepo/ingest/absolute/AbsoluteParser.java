@@ -41,70 +41,9 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class AbsoluteParser extends DDEXParser {
 
-    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
 
-    public AbsoluteParser(String root) throws FileNotFoundException {
-        super(root);
-    }
-
-    @Override
-    public Map<String, DropTrack> loadXml(File file) {
-        HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
-        if (!file.exists()) return res;
-
-        String fileRoot = file.getParent();
-
-        SAXBuilder builder = new SAXBuilder();
-        try {
-            Document document = builder.build(file);
-            Element root = document.getRootElement();
-            String distributor = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
-            List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
-            String album = getAlbum(document);
-
-            for (Element node : sounds) {
-                String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
-                Element details = node.getChild("SoundRecordingDetailsByTerritory");
-                String artist = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
-                String title = details.getChild("Title").getChildText("TitleText");
-                String subTitle = details.getChildText("ParentalWarningType");
-                String genre = details.getChild("Genre").getChildText("GenreText");
-                String copyright = details.getChild("PLine").getChildText("PLineText");
-                String label = details.getChildText("LabelName");
-                String year = details.getChild("PLine").getChildText("Year");
-                String releaseReference = getReleaseReference(document, isrc);
-                List<DropTerritory> territories = createTerritory(document, details, distributor, label, isrc, releaseReference);
-                List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
-
-                res.put(getDropTrackKey(isrc), new DropTrack()
-                        .addType(getActionType(document))
-                        .addProductCode(getProprietaryId(document, isrc))
-                        .addTitle(title)
-                        .addSubTitle(subTitle)
-                        .addArtist(artist)
-                        .addGenre(genre)
-                        .addCopyright(copyright)
-                        .addLabel(label)
-                        .addYear(year)
-                        .addIsrc(isrc)
-                        .addPhysicalProductId(isrc)
-                        .addInfo("")
-                        .addExplicit(getExplicit(document, isrc))
-                        .addProductId(isrc)
-                        .addTerritories(territories)
-                        .addFiles(files)
-                        .addAlbum(album)
-                );
-            }
-        } catch (JDOMException e) {
-            LOGGER.error(e.getMessage());
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return res;
-    }
+    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
     private List<DropTerritory> createTerritory(Document doc, Element details, String distributor, String label, String isrc, String releaseReference) {
         try {
@@ -167,44 +106,6 @@ public class AbsoluteParser extends DDEXParser {
             dropAssetFiles.add(dropAssetFile);
         }
         return dropAssetFiles;
-    }
-
-    @Override
-    public List<DropData> getDrops(boolean auto) {
-        List<DropData> result = new ArrayList<DropData>();
-        File rootFolder = new File(root);
-        result.addAll(getDrops(rootFolder, auto));
-        for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder [{}]", result.get(i));
-        }
-        return result;
-    }
-
-    public List<DropData> getDrops(File folder, boolean auto) {
-        List<DropData> result = new ArrayList<DropData>();
-        File[] content = folder.listFiles();
-        boolean deliveryComplete = false;
-        boolean processed = false;
-        for (File file : content) {
-            if (isDirectory(file)) {
-                result.addAll(getDrops(file, auto));
-            } else if ("delivery.complete".equals(file.getName())) {
-                deliveryComplete = true;
-            } else if ("ingest.ack".equals(file.getName())) {
-                processed = true;
-            } else if (auto && "autoingest.ack".equals(file.getName())) {
-                processed = true;
-            }
-        }
-        if (deliveryComplete && !processed) {
-            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
-            DropData drop = new DropData();
-            drop.name = folder.getAbsolutePath();
-            drop.date = new Date(folder.lastModified());
-
-            result.add(drop);
-        }
-        return result;
     }
 
     private String getAlbum(Document doc) throws JDOMException {
@@ -333,11 +234,96 @@ public class AbsoluteParser extends DDEXParser {
         return singleNode.getValue();
     }
 
-    @Override
-    public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
-    }
-
     private String getDropTrackKey(String isrc) {
         return Joiner.on('_').join(isrc, getClass().getSimpleName());
+    }
+
+    public AbsoluteParser(String root) throws FileNotFoundException {
+        super(root);
+    }
+
+    @Override
+    public Map<String, DropTrack> loadXml(File file) {
+        HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
+        if (!file.exists()) return res;
+
+        String fileRoot = file.getParent();
+
+        SAXBuilder builder = new SAXBuilder();
+        try {
+            Document document = builder.build(file);
+            Element root = document.getRootElement();
+            String distributor = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
+            List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
+            String album = getAlbum(document);
+
+            for (Element node : sounds) {
+                String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
+                Element details = node.getChild("SoundRecordingDetailsByTerritory");
+                String artist = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
+                String title = details.getChild("Title").getChildText("TitleText");
+                String subTitle = details.getChildText("ParentalWarningType");
+                String genre = details.getChild("Genre").getChildText("GenreText");
+                String copyright = details.getChild("PLine").getChildText("PLineText");
+                String label = details.getChildText("LabelName");
+                String year = details.getChild("PLine").getChildText("Year");
+                String releaseReference = getReleaseReference(document, isrc);
+                List<DropTerritory> territories = createTerritory(document, details, distributor, label, isrc, releaseReference);
+                List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
+
+                res.put(getDropTrackKey(isrc), new DropTrack()
+                        .addType(getActionType(document))
+                        .addProductCode(getProprietaryId(document, isrc))
+                        .addTitle(title)
+                        .addSubTitle(subTitle)
+                        .addArtist(artist)
+                        .addGenre(genre)
+                        .addCopyright(copyright)
+                        .addLabel(label)
+                        .addYear(year)
+                        .addIsrc(isrc)
+                        .addPhysicalProductId(isrc)
+                        .addInfo("")
+                        .addExplicit(getExplicit(document, isrc))
+                        .addProductId(isrc)
+                        .addTerritories(territories)
+                        .addFiles(files)
+                        .addAlbum(album)
+                );
+            }
+        } catch (JDOMException e) {
+            LOGGER.error(e.getMessage());
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return res;
+    }
+
+    @Override
+    protected List<DropData> getDrops(File folder, boolean auto) {
+        List<DropData> result = new ArrayList<DropData>();
+        File[] content = folder.listFiles();
+        boolean deliveryComplete = false;
+        boolean processed = false;
+        for (File file : content) {
+            if (isDirectory(file)) {
+                result.addAll(getDrops(file, auto));
+            } else if ("delivery.complete".equals(file.getName())) {
+                deliveryComplete = true;
+            } else if ("ingest.ack".equals(file.getName())) {
+                processed = true;
+            } else if (auto && "autoingest.ack".equals(file.getName())) {
+                processed = true;
+            }
+        }
+        if (deliveryComplete && !processed) {
+            LOGGER.debug("Adding [{}] to drops", folder.getAbsolutePath());
+            DropData drop = new DropData();
+            drop.name = folder.getAbsolutePath();
+            drop.date = new Date(folder.lastModified());
+
+            result.add(drop);
+        }
+        return result;
     }
 }
