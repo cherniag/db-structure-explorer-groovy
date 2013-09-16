@@ -246,7 +246,8 @@ var PlaylistRouter = Backbone.Router.extend({
         this.gotoView(Backbone.swapView);
     },
     home: function () {
-        this.gotoView(Backbone.homeView);
+        //this.gotoView(Backbone.homeView);
+    	this.allPlaylists();
     },
     allPlaylists: function () {
         Player.stop();
