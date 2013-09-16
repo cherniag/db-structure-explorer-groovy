@@ -46,6 +46,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -87,6 +90,8 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         private T data;
         private Throwable failure;
         private ScheduledFuture<?> future;
+        private final Lock lock = new ReentrantLock();
+        private final Condition isProcessing  = lock.newCondition();
 
         public void setData(T data) {
             this.data = data;
@@ -104,12 +109,22 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             this.failure = failure;
         }
 
-        public ScheduledFuture<?> getFuture() {
-            return future;
+        public void start(ScheduledFuture<?> future) throws InterruptedException {
+            lock.lock();
+
+            this.future = future;
+            isProcessing.wait();
+
+            lock.unlock();
         }
 
-        public void setFuture(ScheduledFuture<?> future) {
-            this.future = future;
+        public void stop(){
+            lock.lock();
+
+            this.notifyAll();
+            this.future.cancel(false);
+
+            lock.unlock();
         }
     }
 
@@ -320,13 +335,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 this.setData(trackDto);
 
                 if(this.getFailure() != null || this.getData() == null || this.getData().getPublishDate() != null){
-                    try {
-                        this.notifyAll();
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-
-                    getFuture().cancel(false);
+                    this.stop();
                 }
             }
         };
@@ -334,9 +343,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         ScheduledFuture<?> future = queryScheduler.scheduleWithFixedDelay(
                 pullTask, 0, 1, TimeUnit.SECONDS
         );
-        pullTask.setFuture(future);
-
-        pullTask.wait();
+        pullTask.start(future);
 
         if(pullTask.getFailure() != null){
             throw (Exception) pullTask.getFailure();
