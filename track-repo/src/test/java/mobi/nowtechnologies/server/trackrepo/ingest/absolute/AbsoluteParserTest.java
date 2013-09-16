@@ -49,6 +49,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private int expectedImageFileCount;
     private List<DropAssetFile> files;
     private int expectedFileCount;
+    private Type expectedActionType;
 
     public void createParser() throws FileNotFoundException {
         parserFixture = new AbsoluteParser("classpath:media/absolute/");
@@ -79,6 +80,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         expectedTrackReleaseIdNodeList = getTrackReleaseIdNodeList();
         expectedDistributor = getDistributor();
         expectedAlbum = getAlbum();
+        expectedActionType = getActionType();
 
         for (expectedResultDropTrackIndex = 0; expectedResultDropTrackIndex < expectedTrackReleaseIdNodeList.getLength(); expectedResultDropTrackIndex++) {
             validateResultDropTrack();
@@ -94,7 +96,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         resultDropTrack = getResultDropTrack(expectedIsrc);
 
         assertNotNull(resultDropTrack);
-        assertThat(resultDropTrack.type, is(getActionType()));
+        assertThat(resultDropTrack.type, is(expectedActionType));
         assertThat(resultDropTrack.productCode, is(getProprietaryId(expectedIsrc)));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
         assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));

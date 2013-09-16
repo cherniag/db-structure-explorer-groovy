@@ -1,11 +1,14 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.jdom.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +19,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
@@ -370,25 +375,11 @@ public abstract class DDEXParser extends IParser {
             }
             List<Element> techDetails = details.getChildren("TechnicalSoundRecordingDetails");
             for (Element techDetail : techDetails) {
-                String preview = techDetail.getChildText("IsPreview");
                 String fileName = techDetail.getChild("File").getChildText("FileName");
                 DropAssetFile assetFile = new DropAssetFile();
                 assetFile.file = getAssetFile(fileRoot, fileName);
                 assetFile.isrc = resourceDetail.isrc;
-                if (preview == null || "false".equals(preview)) {
-                    String codecType = techDetail.getChildText("AudioCodecType");
-                    if (codecType == null
-                            || "MP3".equals(codecType)
-                            || ("UserDefined".equals(codecType) && "MP3".equals(techDetail.getChild("AudioCodecType").getAttributeValue(
-                            "UserDefinedValue")))) {
-                        assetFile.type = DOWNLOAD;
-                    } else {
-                        assetFile.type = MOBILE;
-                    }
-
-                } else {
-                    assetFile.type = PREVIEW;
-                }
+                assetFile.type = getFileType(techDetail);
                 List<DropAssetFile> resourceFiles = files.get(node.getChildText("ResourceReference"));
                 if (resourceFiles == null) {
                     resourceFiles = new ArrayList<DropAssetFile>();
@@ -405,6 +396,11 @@ public abstract class DDEXParser extends IParser {
             }
         }
         return files;
+    }
+
+    private String getUserDefinedValue(Element techDetail) {
+        return techDetail.getChild("AudioCodecType").getAttributeValue(
+                "UserDefinedValue");
     }
 
     protected String getDistributor(Element rootNode) {
@@ -459,6 +455,24 @@ public abstract class DDEXParser extends IParser {
         }
         LOGGER.info("Track for [{}]", type);
         return false;
+    }
+
+    protected FileType getFileType(Element techDetail)  {
+        FileType fileType;
+        String isPreview = techDetail.getChildText("IsPreview");
+        if (isEmpty(isPreview) || "false".equals(isPreview)) {
+            String audioCodecType = techDetail.getChildText("AudioCodecType");
+            if (isNull(audioCodecType)
+                    || audioCodecType.equals("MP3")
+                    || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))) {
+                fileType = DOWNLOAD;
+            } else {
+                fileType = MOBILE;
+            }
+        } else {
+            fileType = PREVIEW;
+        }
+        return fileType;
     }
 
     public DDEXParser(String root) throws FileNotFoundException {
