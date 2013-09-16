@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -1646,7 +1647,14 @@ public class UserService {
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
 				user.getMobile());
         if(populateO2SubscriberData){
-        	populateO2subscriberData(user, msisdn);
+        	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
+				// if the device is promoted, we set the default field
+				user.setProvider("o2");
+				user.setSegment(SegmentType.CONSUMER);
+				user.setContract(Contract.PAYM);
+			} else {
+				populateO2subscriberData(user, msisdn);
+			}
         }
         
 		user.setMobile(msisdn);
@@ -1696,8 +1704,14 @@ public class UserService {
             }
         }
         if(updateContractAndProvider){
-        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-        	user.setProvider(o2UserDetails.getOperator());
+        	if ( isPromotedDevice(user.getMobile()) ) {
+				// if the device is promoted, we go with the default values
+        		user.setContract(Contract.PAYM);
+        		user.setProvider("o2");
+			} else {
+	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
+	        	user.setProvider(o2UserDetails.getOperator());
+			}
         }
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user.setUserName(user.getMobile());
@@ -1867,5 +1881,20 @@ public class UserService {
         new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
         userRepository.save(user);
     }
+    
+    public boolean isPromotedDevice(String phoneNumber) {
+		boolean isPromoted = false;
+		try {
+			isPromoted = deviceService.isPromotedDevicePhone(
+					communityService.getCommunityByName("o2"),
+					phoneNumber,
+					null);
+		} catch ( Exception e ) {
+			LOGGER.error("", e);
+		}
+		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
+		
+		return isPromoted;
+	}
 
 }
