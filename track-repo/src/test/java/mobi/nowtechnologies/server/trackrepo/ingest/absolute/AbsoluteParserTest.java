@@ -94,7 +94,6 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         resultDropTrack = getResultDropTrack(expectedIsrc);
 
         assertNotNull(resultDropTrack);
-        // assertThat(resultDropTrack.xml, is("3BEATCD019"));
         assertThat(resultDropTrack.type, is(getActionType()));
         assertThat(resultDropTrack.productCode, is(getProprietaryId(expectedIsrc)));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));

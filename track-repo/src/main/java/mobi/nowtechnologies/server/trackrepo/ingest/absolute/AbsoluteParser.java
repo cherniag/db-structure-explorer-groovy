@@ -240,17 +240,18 @@ public class AbsoluteParser extends DDEXParser {
     @Override
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
-        if (!file.exists()) return res;
-
-        String fileRoot = file.getParent();
-
-        SAXBuilder builder = new SAXBuilder();
         try {
+            if (!file.exists()) return res;
+
+            String fileRoot = file.getParent();
+
+            SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(file);
             Element root = document.getRootElement();
-            String distributor = root.getChild("MessageHeader").getChild("MessageSender").getChild("PartyName").getChildText("FullName");
+            String distributor = getDistributor(root);
             List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
             String album = getAlbum(document);
+            Type actionType = getActionType(root);
 
             for (Element node : sounds) {
                 String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
@@ -267,7 +268,7 @@ public class AbsoluteParser extends DDEXParser {
                 List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
 
                 res.put(getDropTrackKey(isrc), new DropTrack()
-                        .addType(getActionType(document))
+                        .addType(actionType)
                         .addProductCode(getProprietaryId(document, isrc))
                         .addTitle(title)
                         .addSubTitle(subTitle)

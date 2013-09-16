@@ -19,6 +19,7 @@ import java.util.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public abstract class DDEXParser extends IParser {
 
@@ -88,7 +89,7 @@ public abstract class DDEXParser extends IParser {
 
         DropTrack resourceDetail = resourceDetails.get(resourceRef);
 
-        if (track.isrc == null || "".equals(track.isrc)) {
+        if (isEmpty(track.isrc)) {
             if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
                     && resourceDetail != null) {
                 LOGGER.info("Getting ISRC from resource [{}]", resourceRef);
@@ -220,7 +221,7 @@ public abstract class DDEXParser extends IParser {
         }
     }
 
-    private Type getActionType(Element rootNode) {
+    protected Type getActionType(Element rootNode) {
         String updateIndicator = rootNode.getChildText("UpdateIndicator");
         return "UpdateMessage".equals(updateIndicator) ? UPDATE : INSERT;
     }
@@ -406,7 +407,7 @@ public abstract class DDEXParser extends IParser {
         return files;
     }
 
-    private String getDistributor(Element rootNode) {
+    protected String getDistributor(Element rootNode) {
         Element messageHeader = rootNode.getChild("MessageHeader");
         Element onBehalf = messageHeader.getChild("SentOnBehalfOf");
         Element general = onBehalf != null ? onBehalf : messageHeader.getChild("MessageSender");
@@ -479,7 +480,7 @@ public abstract class DDEXParser extends IParser {
             }
 
         } catch (Exception e) {
-            LOGGER.error("Ingest failed "+e.getMessage());
+            LOGGER.error("Ingest failed: [{}]", e.getMessage());
         }
         return tracks;
     }
@@ -509,9 +510,9 @@ public abstract class DDEXParser extends IParser {
             return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
 
         } catch (IOException io) {
-            LOGGER.error("Exception " + io.getMessage());
+            LOGGER.error("Exception: [{}]", io.getMessage());
         } catch (JDOMException jdomex) {
-            LOGGER.error("Exception " + jdomex.getMessage());
+            LOGGER.error("Exception [{}]", jdomex.getMessage());
         }
         return null;
     }

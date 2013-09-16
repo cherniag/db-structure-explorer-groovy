@@ -47,7 +47,7 @@ public class IodaParser extends IParser {
 
 			builder.setValidation(true);
 			builder.setErrorHandler(new DebugErrorHandler());
-			Document document = (Document) builder.build(xmlFile);
+			Document document = builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
 
 			XMLOutputter outputter = new XMLOutputter();
