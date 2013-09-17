@@ -208,7 +208,9 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     }
 
     private String getSubTitle(String isrc) throws XpathException {
-        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/SubTitle");
+        String subTitle = evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/SubTitle");
+        if(isEmpty(subTitle)) return null;
+        return subTitle;
     }
 
     private String getArtist(String isrc) throws XpathException {

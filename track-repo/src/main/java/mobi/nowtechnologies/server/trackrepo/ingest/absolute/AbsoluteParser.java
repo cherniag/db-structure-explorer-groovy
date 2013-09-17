@@ -237,8 +237,8 @@ public class AbsoluteParser extends DDEXParser {
         super(root);
     }
 
-    //@Override
-    public Map<String, DropTrack> loadXml1(File file) {
+    @Override
+    public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
             if (!file.exists()) return res;
@@ -337,5 +337,6 @@ public class AbsoluteParser extends DDEXParser {
     @Override
     public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
         track.productCode = "8742";
+        track.physicalProductId=track.isrc;
     }
 }
