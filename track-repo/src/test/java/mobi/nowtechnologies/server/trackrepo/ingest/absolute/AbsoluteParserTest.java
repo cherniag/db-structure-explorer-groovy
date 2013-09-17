@@ -5,15 +5,22 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
 import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +94,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         }
     }
 
-    private void validateResultDropTrack() throws XpathException, ParseException {
+    private void validateResultDropTrack() throws XpathException, ParseException, TransformerException {
         expectedIsrc = getIsrc(expectedResultDropTrackIndex + 1);
         expectedLabel = getLabel(expectedIsrc);
         expectedImageFileCount = getImageCount();
@@ -97,7 +104,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         resultDropTrack = getResultDropTrack(expectedIsrc, proprietaryId);
 
         assertNotNull(resultDropTrack);
-        //assertThat(resultDropTrack.xml, is(expectedActionType));
+        assertThat(resultDropTrack.xml, is(getXml(expectedIsrc)));
         assertThat(resultDropTrack.type, is(expectedActionType));
         assertThat(resultDropTrack.productCode, is(proprietaryId));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
@@ -185,6 +192,17 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         if ("MD5".equals(getImageFileHashSumAlgorithmType(index)))
             return getImageFileHashSum(index);
         return null;
+    }
+
+    private String getXml(String isrc) throws XpathException, TransformerException {
+            NodeList nodeList = xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='"+isrc+"']", document);
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            StringWriter buffer = new StringWriter();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(nodeList.item(0)),
+                    new StreamResult(buffer));
+            return buffer.toString();
     }
 
     private String getImageFileName(int index) throws XpathException {

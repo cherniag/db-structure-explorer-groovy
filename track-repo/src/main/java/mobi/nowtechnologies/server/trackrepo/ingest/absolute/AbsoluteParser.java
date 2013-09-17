@@ -7,6 +7,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
@@ -14,6 +15,8 @@ import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -222,11 +225,21 @@ public class AbsoluteParser extends DDEXParser {
     }
 
     private String evaluate(Document doc, String xPathExpression) throws JDOMException {
-        XPath xPath = XPath.newInstance(xPathExpression);
-        xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
-        Element singleNode = (Element) xPath.selectSingleNode(doc);
+        Element singleNode = getSingleNodeElement(doc, xPathExpression);
         if (isNull(singleNode)) return null;
         return singleNode.getValue();
+    }
+
+    private Element getSingleNodeElement(Document doc, String xPathExpression) throws JDOMException {
+        XPath xPath = XPath.newInstance(xPathExpression);
+        xPath.addNamespace("ern", "http://ddex.net/xml/2010/ern-main/312");
+        return (Element) xPath.selectSingleNode(doc);
+    }
+
+    private String getXml(Document doc, String isrc) throws JDOMException {
+        String xPathExpression = "/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='" + isrc + "']";
+        Element singleNode = getSingleNodeElement(doc, xPathExpression);
+        return new XMLOutputter().outputString(singleNode);
     }
 
     private String getDropTrackKey(String isrc, String productCode) {
@@ -286,6 +299,7 @@ public class AbsoluteParser extends DDEXParser {
                         .addTerritories(territories)
                         .addFiles(files)
                         .addAlbum(album)
+                        .addXml(getXml(document, isrc))
                 );
             }
         } catch (JDOMException e) {
