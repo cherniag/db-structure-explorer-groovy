@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static mobi.nowtechnologies.server.service.HazelcastService.QUEUE_O2_USERS_FOR_UPDATE;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -22,7 +21,6 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
     private transient static final Logger LOG = LoggerFactory.getLogger(UpdateO2UserJob.class);
     private transient static int POOL_SIZE;
-    private transient static int TASK_COUNT;
 
     private transient CommunityResourceBundleMessageSource messageSource;
     private transient ExecutorService executor;
@@ -38,16 +36,12 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        LOG.info("starting ...TASK_COUNT: [{}]", TASK_COUNT);
+        LOG.info("starting ... POOL_SIZE: [{}] queue size: [{}] ", POOL_SIZE, usersIdQueue.size());
         try {
-            for (int i = 0; i <= TASK_COUNT; i++) {
-                List<Integer> usersId = usersIdQueue.poll();
-                if (isNotEmpty(usersId))
-                    executor.submit(new UpdateO2UserBatchTask(usersId));
+        	for (int i = 0; i < POOL_SIZE; i++) {
+        		submitTaskForExecution();
             }
-            executor.shutdown();
-            executor.awaitTermination(1, TimeUnit.HOURS);
-
+            
         } catch (Throwable t) {
             LOG.error("Job ended with error.", t);
         } finally {
@@ -55,9 +49,15 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
         }
     }
 
+	private void submitTaskForExecution() {
+		List<Integer> usersId = usersIdQueue.poll();
+		if (isNotEmpty(usersId)){
+		    executor.submit(new UpdateO2UserBatchTask(usersId));
+		}
+	}
+
     private void readProperties() {
         POOL_SIZE = messageSource.readInt("job.update.o2.pool.size", 2);
-        TASK_COUNT = messageSource.readInt("job.update.o2.task.count", 4);
     }
 
 }

@@ -16,7 +16,6 @@ import static mobi.nowtechnologies.server.shared.log.LogUtils.putGlobalMDC;
 import static mobi.nowtechnologies.server.shared.log.LogUtils.removeGlobalMDC;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
