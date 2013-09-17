@@ -2472,7 +2472,7 @@ public class UserServiceTest {
 		
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
 		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
-		verify(communityServiceMock, times(0)).getCommunityByName(communityName);
+		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(userServiceSpy,times(0) ).applyO2PotentialPromo(o2UserDetails, user, community);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
