@@ -4,6 +4,8 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -15,11 +17,13 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.List;
@@ -34,6 +38,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
@@ -94,7 +99,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         }
     }
 
-    private void validateResultDropTrack() throws XpathException, ParseException, TransformerException {
+    private void validateResultDropTrack() throws XpathException, ParseException, TransformerException, IOException, SAXException {
         expectedIsrc = getIsrc(expectedResultDropTrackIndex + 1);
         expectedLabel = getLabel(expectedIsrc);
         expectedImageFileCount = getImageCount();
@@ -104,7 +109,9 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         resultDropTrack = getResultDropTrack(expectedIsrc, proprietaryId);
 
         assertNotNull(resultDropTrack);
-        assertThat(resultDropTrack.xml, is(getXml(expectedIsrc)));
+        //assertThat(resultDropTrack.xml, is(getXml(expectedIsrc)));
+        assertXMLEqual(resultDropTrack.xml, getXml(expectedIsrc));
+
         assertThat(resultDropTrack.type, is(expectedActionType));
         assertThat(resultDropTrack.productCode, is(proprietaryId));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
@@ -164,7 +171,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         validateImageFiles();
     }
 
-    private void validateImageFiles() throws XpathException, ParseException {
+    private void validateTrackFiles() throws XpathException, ParseException {
         for (int i = 0; i < expectedTrackCount; i++) {
             DropAssetFile asset = files.get(i);
             assertThat(asset.isrc, is(expectedIsrc));
@@ -176,7 +183,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         }
     }
 
-    private void validateTrackFiles() throws XpathException, ParseException {
+    private void validateImageFiles () throws XpathException, ParseException {
         for (int i = expectedTrackCount; i < expectedFileCount; i++) {
             DropAssetFile asset = files.get(i);
             assertThat(asset.isrc, is(nullValue()));
