@@ -229,16 +229,16 @@ public class AbsoluteParser extends DDEXParser {
         return singleNode.getValue();
     }
 
-    private String getDropTrackKey(String isrc) {
-        return Joiner.on('_').join(isrc, getClass().getSimpleName());
+    private String getDropTrackKey(String isrc, String productCode) {
+        return Joiner.on(productCode).join(isrc, getClass());
     }
 
     public AbsoluteParser(String root) throws FileNotFoundException {
         super(root);
     }
 
-    @Override
-    public Map<String, DropTrack> loadXml(File file) {
+    //@Override
+    public Map<String, DropTrack> loadXml1(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
             if (!file.exists()) return res;
@@ -258,7 +258,7 @@ public class AbsoluteParser extends DDEXParser {
                 Element details = node.getChild("SoundRecordingDetailsByTerritory");
                 String artist = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
                 String title = details.getChild("Title").getChildText("TitleText");
-                String subTitle = details.getChildText("ParentalWarningType");
+                String subTitle = details.getChild("Title").getChildText("SubTitle");
                 String genre = details.getChild("Genre").getChildText("GenreText");
                 String copyright = details.getChild("PLine").getChildText("PLineText");
                 String label = details.getChildText("LabelName");
@@ -266,10 +266,11 @@ public class AbsoluteParser extends DDEXParser {
                 String releaseReference = getReleaseReference(document, isrc);
                 List<DropTerritory> territories = createTerritory(document, details, distributor, label, isrc, releaseReference);
                 List<DropAssetFile> files = createFiles(document, isrc, fileRoot);
+                String proprietaryId = getProprietaryId(document, isrc);
 
-                res.put(getDropTrackKey(isrc), new DropTrack()
+                res.put(getDropTrackKey(isrc, proprietaryId), new DropTrack()
                         .addType(actionType)
-                        .addProductCode(getProprietaryId(document, isrc))
+                        .addProductCode(proprietaryId)
                         .addTitle(title)
                         .addSubTitle(subTitle)
                         .addArtist(artist)
@@ -321,5 +322,20 @@ public class AbsoluteParser extends DDEXParser {
             result.add(drop);
         }
         return result;
+    }
+
+    @Override
+    protected boolean checkAlbum(String type) {
+        if ("Album".equals(type) || "SingleResourceRelease".equals(type)) {
+            LOGGER.info("Album for [{}]", type);
+            return true;
+        }
+        LOGGER.info("Track for [{}]", type);
+        return false;
+    }
+
+    @Override
+    public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
+        track.productCode = "8742";
     }
 }

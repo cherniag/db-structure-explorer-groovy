@@ -93,11 +93,13 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         expectedImageFileCount = getImageCount();
         xmlFileParent = xmlFile.getParent();
 
-        resultDropTrack = getResultDropTrack(expectedIsrc);
+        String proprietaryId = getProprietaryId(expectedIsrc);
+        resultDropTrack = getResultDropTrack(expectedIsrc, proprietaryId);
 
         assertNotNull(resultDropTrack);
+        //assertThat(resultDropTrack.xml, is(expectedActionType));
         assertThat(resultDropTrack.type, is(expectedActionType));
-        assertThat(resultDropTrack.productCode, is(getProprietaryId(expectedIsrc)));
+        assertThat(resultDropTrack.productCode, is(proprietaryId));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
         assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));
         assertThat(resultDropTrack.artist, is(getArtist(expectedIsrc)));
@@ -206,7 +208,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     }
 
     private String getSubTitle(String isrc) throws XpathException {
-        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/ParentalWarningType");
+        return evaluate("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/SubTitle");
     }
 
     private String getArtist(String isrc) throws XpathException {
@@ -343,8 +345,8 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
         return xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseType='Single']/ReleaseId", document);
     }
 
-    private DropTrack getResultDropTrack(String expectedIsrc) {
-        return resultDropTrackMap.get(expectedIsrc + "_" + parserFixture.getClass().getSimpleName());
+    private DropTrack getResultDropTrack(String expectedIsrc, String productCode) {
+        return resultDropTrackMap.get(expectedIsrc + productCode + parserFixture.getClass());
     }
 
     private String getAssetFile(String fileName) {

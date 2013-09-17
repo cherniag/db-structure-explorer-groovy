@@ -19,12 +19,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public abstract class DDEXParser extends IParser {
 
@@ -164,7 +166,7 @@ public abstract class DDEXParser extends IParser {
                 if (si < subTitles.size() - 1)
                     fullSubTitle += " / ";
             }
-            if (!"".equals(fullSubTitle))
+            if (isNotEmpty(fullSubTitle))
                 subTitle = fullSubTitle;
         }
 
@@ -308,6 +310,7 @@ public abstract class DDEXParser extends IParser {
                     if (price != null)
                         territory.price = Float.valueOf(price);
                 } catch (NumberFormatException e) {
+                    LOGGER.error(e.getMessage());
                 }
                 territory.currency = currency;
                 territory.priceCode = priceType;
