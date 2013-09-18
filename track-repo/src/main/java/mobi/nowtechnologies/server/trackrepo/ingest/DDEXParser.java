@@ -1,14 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
-import org.jdom.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +16,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
@@ -192,40 +188,29 @@ public abstract class DDEXParser extends IParser {
                 Set<String> countries = deal.keySet();
                 Iterator<String> it = countries.iterator();
                 while (it.hasNext()) {
-                    String country = it.next();
-                    LOGGER.info("Adding country [{}]", country);
-                    DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
-                    DropTerritory dealTerritory = deal.get(country);
-                    territoryData.country = dealTerritory.country;
-                    territoryData.takeDown = dealTerritory.takeDown;
-                    territoryData.distributor = distributor;
-                    String territoryLabel = territory.getChildText("LabelName");
-                    territoryData.label = territoryLabel;
-                    territoryData.reportingId = track.isrc;
-                    territoryData.startdate = dealTerritory.startdate;
-                    territoryData.price = dealTerritory.price;
-                    territoryData.priceCode = dealTerritory.priceCode;
-                    territoryData.currency = dealTerritory.currency;
-                    territoryData.dealReference = dealTerritory.dealReference;
+                    parseTerritory(distributor, track, territory, deal, it.next());
                 }
             } else {
-                LOGGER.info("Adding country [{}]", code);
-
-                DropTerritory dealTerritory = deal.get(code);
-                DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
-                territoryData.country = dealTerritory.country;
-                territoryData.takeDown = dealTerritory.takeDown;
-                territoryData.distributor = distributor;
-                String territoryLabel = territory.getChildText("LabelName");
-                territoryData.label = territoryLabel;
-                territoryData.reportingId = track.isrc;
-                territoryData.startdate = dealTerritory.startdate;
-                territoryData.price = dealTerritory.price;
-                territoryData.priceCode = dealTerritory.priceCode;
-                territoryData.currency = dealTerritory.currency;
-                territoryData.dealReference = dealTerritory.dealReference;
+                parseTerritory(distributor, track, territory, deal, code);
             }
         }
+    }
+
+    private void parseTerritory(String distributor, DropTrack track, Element territory, Map<String, DropTerritory> deal, String country) {
+        LOGGER.info("Adding country [{}]", country);
+        DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
+        DropTerritory dealTerritory = deal.get(country);
+        territoryData.country = dealTerritory.country;
+        territoryData.takeDown = dealTerritory.takeDown;
+        territoryData.distributor = distributor;
+        String territoryLabel = territory.getChildText("LabelName");
+        territoryData.label = territoryLabel;
+        territoryData.reportingId = track.isrc;
+        territoryData.startdate = dealTerritory.startdate;
+        territoryData.price = dealTerritory.price;
+        territoryData.priceCode = dealTerritory.priceCode;
+        territoryData.currency = dealTerritory.currency;
+        territoryData.dealReference = dealTerritory.dealReference;
     }
 
     protected Type getActionType(Element rootNode) {
@@ -256,11 +241,11 @@ public abstract class DDEXParser extends IParser {
 
             for (Element reference : references) {
                 LOGGER.info("Loading deal reference [{}]", reference.getText());
-                Map<String, DropTerritory> ExistingDealsMap = deals.get(reference.getText());
-                if (ExistingDealsMap == null)
+                Map<String, DropTerritory> existingDealsMap = deals.get(reference.getText());
+                if (existingDealsMap == null)
                     deals.put(reference.getText(), dealsMap);
                 else
-                    ExistingDealsMap.putAll(dealsMap);
+                    existingDealsMap.putAll(dealsMap);
             }
         }
         return deals;
@@ -318,7 +303,7 @@ public abstract class DDEXParser extends IParser {
         }
     }
 
-    private boolean validDealUseType(Element dealTerms) {
+    protected boolean validDealUseType(Element dealTerms) {
         boolean validUseType = false;
         Element usage = dealTerms.getChild("Usage");
         if (usage != null) {
