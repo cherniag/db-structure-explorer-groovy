@@ -150,6 +150,9 @@ INSERT INTO tb_paymentPolicy (communityID,subWeeks,subCost,paymentType,operator,
  -- insert new windows phone device type to database
 INSERT INTO tb_deviceTypes (name) VALUES ('WINDOWS_PHONE');
 
--- Remove unused column
+ -- Remove unused column
  alter table tb_users drop column deactivated_grace_credit_millis;
  alter table tb_users drop column last_payment_try_in_cycle_millis;
+
+ -- IMP-2375 [Backend] Create a field for IDFA parameter and identify it in ACC_CHECK
+ alter table tb_users add column idfa varchar(255) default null;

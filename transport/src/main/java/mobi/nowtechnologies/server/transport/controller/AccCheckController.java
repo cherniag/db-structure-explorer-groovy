@@ -1,11 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
@@ -16,12 +10,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * AccCheckConroller
@@ -62,6 +59,7 @@ public class AccCheckController extends CommonController {
 			@RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
 			@RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
 			@RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+			@RequestParam(required = false, value = "IDFA") String idfa,
 			@PathVariable("community") String community) throws Exception {
 
 		User user = null;
@@ -81,7 +79,11 @@ public class AccCheckController extends CommonController {
 
 			final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
 					pushNotificationToken, deviceType, transactionReceipt);
-			
+
+            if(idfa != null){
+               user = userService.updateTockenDetails(user, idfa);
+            }
+
 			user = userService.getUserWithSelectedCharts(user.getId());
 			List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
 			
@@ -124,9 +126,10 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
 
-        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
+        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community).getModelMap().get(MODEL_NAME);
     }
 
 	public static AccountCheckDto getAccountCheckDtoFrom(ModelAndView mav) {
