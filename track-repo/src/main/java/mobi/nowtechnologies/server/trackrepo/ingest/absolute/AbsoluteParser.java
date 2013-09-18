@@ -3,27 +3,20 @@ package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import net.sf.saxon.s9api.*;
-import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.xpath.XPath;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,9 +25,9 @@ import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -234,7 +227,6 @@ public class AbsoluteParser extends DDEXParser {
     private XdmValue getXmlValue(String xPathExpression) throws SaxonApiException {
         XPathSelector selector = xpath.compile(xPathExpression).load();
         selector.setContextItem(doc);
-
         return selector.evaluate();
     }
 
@@ -263,30 +255,24 @@ public class AbsoluteParser extends DDEXParser {
     }
 
     //@Override
-    public Map<String, DropTrack> loadXml1(File file) {
+    public Map<String, DropTrack> loadXm1(File file) {
         Map<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
-            if (!file.exists()) return res;
+            createDoc(file);
 
-            SAXBuilder builder = new SAXBuilder();
-            document = builder.build(file);
             res = super.loadXml(file);
-        } catch (JDOMException e) {
-            LOGGER.error(e.getMessage());
-        } catch (IOException e) {
+        } catch (SaxonApiException e) {
             LOGGER.error(e.getMessage());
         }
         return res;
     }
 
-    //@Override
+    @Override
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
             if (!file.exists()) return res;
             createDoc(file);
-
-            String fileRoot = file.getParent();
 
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(file);
@@ -307,7 +293,7 @@ public class AbsoluteParser extends DDEXParser {
                 String year = details.getChild("PLine").getChildText("Year");
                 String releaseReference = getReleaseReference(isrc);
                 List<DropTerritory> territories = createTerritory(details, distributor, label, isrc, releaseReference);
-                List<DropAssetFile> files = createFiles(isrc, fileRoot);
+                List<DropAssetFile> files = createFiles(isrc, file.getParent());
                 String proprietaryId = getProprietaryId(isrc);
 
                 res.put(getDropTrackKey(isrc, proprietaryId), new DropTrack()
