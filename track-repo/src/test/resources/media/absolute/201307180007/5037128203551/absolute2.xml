@@ -1,0 +1,2881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ern:NewReleaseMessage xmlns:ern="http://ddex.net/xml/2010/ern-main/312" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ddex.net/xml/2010/ern-main/312 http://ddex.net/xml/2010/ern-main/312/ern-main.xsd" MessageSchemaVersionId="2010/ern-main/312">
+    <MessageHeader>
+        <MessageThreadId>R698</MessageThreadId>
+        <MessageId>2013071800070698</MessageId>
+        <MessageSender>
+            <PartyName>
+                <FullName>Absolute Marketing &amp; Distribution Ltd.</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>Omnifone</PartyId>
+            <PartyName>
+                <FullName>Omnifone</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-07-18T12:36:14-04:00</MessageCreatedDateTime>
+        <MessageControlType>LiveMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator xmlns="">OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302001</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9723</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9723</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>In Your Eyes</TitleText>
+            </ReferenceTitle>
+            <Duration>PT2M45S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>In Your Eyes</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9723</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_01.wav</FileName>
+                        <HashSum>
+                            <HashSum>a6a301aeb7ce1b4bc4b90df59bbdfe78</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302601</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9724</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9724</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>We Like To Party</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M50S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>We Like To Party</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9724</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_02.wav</FileName>
+                        <HashSum>
+                            <HashSum>0a7092dd3b2dce368418c6de74638feb</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1301201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9725</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9725</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>More Than Friends</TitleText>
+            </ReferenceTitle>
+            <Duration>PT4M10S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>More Than Friends</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Daddy Yankee</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9725</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_03.wav</FileName>
+                        <HashSum>
+                            <HashSum>22c1afe22f3e05d250be5ec6e7f020fe</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302801</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9726</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9726</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Fall In Love-Lie</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M56S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Fall In Love-Lie</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9726</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_04.wav</FileName>
+                        <HashSum>
+                            <HashSum>08ddd98e74ca58328912932ff925a588</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1303101</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9727</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9727</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Shining Star</TitleText>
+            </ReferenceTitle>
+            <Duration>PT2M50S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Shining Star</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9727</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_05.wav</FileName>
+                        <HashSum>
+                            <HashSum>4a280792149b6571995d43a9fdb0b9f5</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302701</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9728</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9728</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Take Me Down To Mexico</TitleText>
+            </ReferenceTitle>
+            <Duration>PT4M08S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Take Me Down To Mexico</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9728</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_06.wav</FileName>
+                        <HashSum>
+                            <HashSum>cc112bab75d6225c6ae0cfdcbc5b8b49</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9729</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9729</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Famous</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M30S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Famous</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9729</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_07.wav</FileName>
+                        <HashSum>
+                            <HashSum>18ddef74345b881b7a677c16d13b05d2</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9730</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9730</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Take It Off</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M28S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Take It Off</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9730</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_08.wav</FileName>
+                        <HashSum>
+                            <HashSum>ad77483573d3063d4b7f71d32b8f08c1</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302301</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9731</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9731</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tonight</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M41S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tonight</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9731</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_09.wav</FileName>
+                        <HashSum>
+                            <HashSum>4182d8ca588067ab7d6680cdbbbb7689</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1210304</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9732</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9732</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>J&apos;adore</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M15S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>J&apos;adore</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9732</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_10.wav</FileName>
+                        <HashSum>
+                            <HashSum>2b899944aef62ae72917af47d022861a</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1202401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9733</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9733</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Caliente</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M21S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Caliente</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9733</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_11.wav</FileName>
+                        <HashSum>
+                            <HashSum>0b771c085eeef45051efca0808d79664</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1208501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9734</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9734</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Crazy Sexy Wild</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M06S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Crazy Sexy Wild</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9734</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_12.wav</FileName>
+                        <HashSum>
+                            <HashSum>ffe2c09895bbb8dd07eb41cefe4b5752</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1209501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9735</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9735</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>INNDiA</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M34S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>INNDiA</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Play&amp;Win</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9735</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_13.wav</FileName>
+                        <HashSum>
+                            <HashSum>684ccaadbd6b58273823e16ca4e201ea</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1204311</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9736</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9736</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Ok</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M22S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Ok</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9736</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_14.wav</FileName>
+                        <HashSum>
+                            <HashSum>5ee394be7a8bc5c9f718e2fa5c64ac64</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1303401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9737</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9737</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Live Your Life</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M07S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Live Your Life</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9737</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_15.wav</FileName>
+                        <HashSum>
+                            <HashSum>999e25064f0f643338763f4ce413138d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1303201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9738</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9738</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Party Never Ends</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M12S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Party Never Ends</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9738</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_16.wav</FileName>
+                        <HashSum>
+                            <HashSum>37bac6247bc6f34eafdff4a876c840b8</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302101</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9750</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9750</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Be My Lover</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M32S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Be My Lover</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9750</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_17.wav</FileName>
+                        <HashSum>
+                            <HashSum>c3f2ee80e017cb9eaf3f2aa6948739ed</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302901</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9740</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9740</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>World Of Love</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M37S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>World Of Love</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9740</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_18.wav</FileName>
+                        <HashSum>
+                            <HashSum>b8e9f67090001f2f8b2b734009448eb0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1303001</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9741</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9741</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>I Like You</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M20S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>I Like You</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9741</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_19.wav</FileName>
+                        <HashSum>
+                            <HashSum>3a6ec9d54695486cbf41724470f177e3</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1302201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9751</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9751</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Dame Tu Amor</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M14S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dame Tu Amor</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Reik</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9751</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_20.wav</FileName>
+                        <HashSum>
+                            <HashSum>72f753cbd8c33f0c08286a7d3bf09b4e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1204401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9743</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9743</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Alright</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M49S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Alright</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9743</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_21.wav</FileName>
+                        <HashSum>
+                            <HashSum>d63031dbd4b9f3874a2430660bf12087</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1205401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9744</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9744</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tu Si Eu</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M06S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tu Si Eu</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9744</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_22.wav</FileName>
+                        <HashSum>
+                            <HashSum>3c7faef2beae6f824b41b1d82c653686</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ROROT1303301</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+                <ProprietaryId Namespace="">9752</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9752</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Light Up</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M14S</Duration>
+            <CreationDate>2013-07-28</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Light Up</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Reik</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-28</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2012</Year>
+                    <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9752</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037128203551_01_23.wav</FileName>
+                        <HashSum>
+                            <HashSum>2f9cdd366d11d7c11434a250952f284a</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="">PID1</ProprietaryId>
+            </ImageId>
+            <ResourceReference>AI1</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>TI1</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1400</ImageHeight>
+                    <ImageWidth>1400</ImageWidth>
+                    <File>
+                        <FileName>5037128203551.jpg</FileName>
+                        <HashSum>
+                            <HashSum>7f7eae8c4a49f3be822d30377f9df052</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302001</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9723</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>In Your Eyes</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9723</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>In Your Eyes</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302601</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9724</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>We Like To Party</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9724</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>We Like To Party</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1301201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9725</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>More Than Friends</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9725</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>More Than Friends</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302801</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9726</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Fall In Love-Lie</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9726</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Fall In Love-Lie</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1303101</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9727</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Shining Star</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9727</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Shining Star</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302701</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9728</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Take Me Down To Mexico</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9728</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Take Me Down To Mexico</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9729</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Famous</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9729</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Famous</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9730</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Take It Off</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9730</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Take It Off</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302301</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9731</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tonight</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9731</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tonight</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1210304</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9732</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>J&apos;adore</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9732</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>J&apos;adore</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1202401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9733</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Caliente</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9733</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Caliente</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1208501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9734</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Crazy Sexy Wild</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9734</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Crazy Sexy Wild</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1209501</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9735</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>INNDiA</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9735</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>INNDiA</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1204311</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9736</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Ok</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9736</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Ok</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1303401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9737</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Live Your Life</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9737</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Live Your Life</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1303201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9738</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Party Never Ends</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9738</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Party Never Ends</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302101</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9750</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Be My Lover</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9750</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Be My Lover</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302901</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9740</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>World Of Love</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9740</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>World Of Love</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1303001</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9741</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>I Like You</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9741</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>I Like You</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1302201</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9751</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Dame Tu Amor</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9751</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Dame Tu Amor</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1204401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9743</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Alright</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9743</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Alright</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1205401</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9744</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tu Si Eu</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9744</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tu Si Eu</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ROROT1303301</ISRC>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9752</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Light Up</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9752</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Light Up</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ICPN IsEan="false">5037128203551</ICPN>
+                <CatalogNumber Namespace="">3BEATCD019</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RR698</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Party Never Ends</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AI1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9723</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9724</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9725</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9726</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9727</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9728</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9729</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9730</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9731</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9732</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9733</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9734</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9735</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9736</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9737</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9738</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9750</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9740</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9741</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9751</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9743</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9744</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9752</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Inna</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title>
+                    <TitleText>Party Never Ends</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Inna</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <SequenceNumber>1</SequenceNumber>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ReleaseResourceReference>AT9723</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>2</SequenceNumber>
+                        <ReleaseResourceReference>AT9724</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>3</SequenceNumber>
+                        <ReleaseResourceReference>AT9725</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>4</SequenceNumber>
+                        <ReleaseResourceReference>AT9726</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>5</SequenceNumber>
+                        <ReleaseResourceReference>AT9727</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>6</SequenceNumber>
+                        <ReleaseResourceReference>AT9728</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>7</SequenceNumber>
+                        <ReleaseResourceReference>AT9729</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>8</SequenceNumber>
+                        <ReleaseResourceReference>AT9730</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>9</SequenceNumber>
+                        <ReleaseResourceReference>AT9731</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>10</SequenceNumber>
+                        <ReleaseResourceReference>AT9732</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>11</SequenceNumber>
+                        <ReleaseResourceReference>AT9733</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>12</SequenceNumber>
+                        <ReleaseResourceReference>AT9734</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>13</SequenceNumber>
+                        <ReleaseResourceReference>AT9735</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>14</SequenceNumber>
+                        <ReleaseResourceReference>AT9736</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>15</SequenceNumber>
+                        <ReleaseResourceReference>AT9737</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>16</SequenceNumber>
+                        <ReleaseResourceReference>AT9738</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>17</SequenceNumber>
+                        <ReleaseResourceReference>AT9750</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>18</SequenceNumber>
+                        <ReleaseResourceReference>AT9740</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>19</SequenceNumber>
+                        <ReleaseResourceReference>AT9741</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>20</SequenceNumber>
+                        <ReleaseResourceReference>AT9751</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>21</SequenceNumber>
+                        <ReleaseResourceReference>AT9743</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>22</SequenceNumber>
+                        <ReleaseResourceReference>AT9744</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>23</SequenceNumber>
+                        <ReleaseResourceReference>AT9752</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Rock/Pop</GenreText>
+                    <SubGenre>Pop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-28</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2012</Year>
+                <PLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2012</Year>
+                <CLineText>2012 3 Beat Productions Ltd under exclusive licence from ROTON</CLineText>
+            </CLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>RR698</DealReleaseReference>
+            <Deal>
+                <DealReference>DR698</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">album_6</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9723</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9723</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9724</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9724</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9725</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9725</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9726</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9726</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9727</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9727</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9728</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9728</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9729</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9729</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9730</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9730</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9731</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9731</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9732</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9732</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9733</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9733</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9734</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9734</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9735</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9735</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9736</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9736</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9737</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9737</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9738</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9738</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9750</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9750</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9740</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9740</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9741</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9741</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9751</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9751</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9743</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9743</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9744</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9744</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9752</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9752</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-28</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-28</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-18</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ern:NewReleaseMessage>

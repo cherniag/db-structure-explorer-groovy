@@ -122,9 +122,15 @@
             <artifactId>jdom</artifactId>
         </dependency>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
+            <groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <classifier>s9api</classifier>
+        </dependency>
+
 
         <!-- Security -->
 		<dependency>
