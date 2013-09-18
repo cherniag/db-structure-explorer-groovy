@@ -170,10 +170,6 @@ public class AbsoluteParser extends DDEXParser {
         return null;
     }
 
-    private Type getActionType() throws SaxonApiException {
-        return "UpdateMessage".equals(evaluate("//UpdateIndicator")) ? UPDATE : INSERT;
-    }
-
     private String getProprietaryId(String isrc) throws SaxonApiException {
         return evaluate("//ResourceList/SoundRecording/SoundRecordingId[ISRC='" + isrc + "']/ProprietaryId");
     }
