@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
@@ -124,7 +125,10 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @PathVariable("community") String community) throws Exception {
 
-        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, null, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
+        User user = userService.findByNameAndCommunity(userName, community);
+        deviceUID = user != null && DeviceType.IOS.equals(user.getDeviceType().getName()) ? null : deviceUID;
+
+        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
