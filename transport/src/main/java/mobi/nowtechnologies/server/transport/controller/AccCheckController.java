@@ -45,7 +45,7 @@ public class AccCheckController extends CommonController {
         this.chartService = chartService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/ACC_CHECK" })
+    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK" })
     public ModelAndView accountCheckForO2Client(
             HttpServletRequest httpServletRequest,
             @RequestParam("COMMUNITY_NAME") String communityName,
@@ -106,7 +106,30 @@ public class AccCheckController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.0}/ACC_CHECK.json"
+            "/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK",
+            "*/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckForO2Client_4d0(
+            HttpServletRequest httpServletRequest,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @PathVariable("community") String community) throws Exception {
+
+        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, null, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK.json",
+            "*/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK.json"
     }, produces = "application/json")
     public @ResponseBody Response accountCheckForO2ClientJson(
             HttpServletRequest httpServletRequest,
@@ -123,7 +146,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @PathVariable("community") String community) throws Exception {
 
-        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
+        return (Response)accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
     }
 
     protected boolean isValidDeviceUID(String deviceUID){
