@@ -35,33 +35,33 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
+        "classpath:transport-servlet-test.xml",
+        "classpath:META-INF/service-test.xml",
+        "classpath:META-INF/soap.xml",
+        "classpath:META-INF/dao-test.xml",
+        "classpath:META-INF/soap.xml",
+        "classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class AccCheckControllerTestIT {
-	
-	private MockMvc mockMvc;
 
-	@Autowired
-	private ApplicationContext applicationContext;
-	
-	@Autowired
-	@Qualifier("service.UserService")
-	private UserService userService;
-	
-	@Autowired
-	private ChartRepository chartRepository;
+    private MockMvc mockMvc;
 
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
+    @Autowired
+    private ApplicationContext applicationContext;
 
-	
+    @Autowired
+    @Qualifier("service.UserService")
+    private UserService userService;
+
+    @Autowired
+    private ChartRepository chartRepository;
+
+    @Autowired
+    private ChartDetailRepository chartDetailRepository;
+
+
     @Before
     public void setUp() {
         mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
@@ -69,65 +69,91 @@ public class AccCheckControllerTestIT {
 
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
-    	String userName = "+447111111114";
-		String apiVersion = "3.9";
-		String communityName = "o2";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
-		
-		List<Chart> charts = new ArrayList<Chart>();
-		Chart chart = chartRepository.findOne(5);
-		charts.add(chart);
-		User user = userService.findByNameAndCommunity(userName, communityName);
-		user.setSelectedCharts(charts);
-		userService.updateUser(user);
-		
-		ResultActions resultActions = mockMvc.perform(
+        String userName = "+447111111114";
+        String apiVersion = "3.9";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+
+        ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
-		
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-		
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
         assertTrue(resultXml.contains("<playlist><id>5</id><type>BASIC_CHART</type></playlist>"));
     }
-    
+
     @Test
     public void testAccountCheckForO2Client_WithLockedTracks_Success() throws Exception {
-    	String userName = "+447111111114";
-    	String apiVersion = "3.9";
-    	String communityName = "o2";
-    	String communityUrl = "o2";
-    	String timestamp = "2011_12_26_07_04_23";
-    	String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-    	String userToken = Utils.createTimestampToken(storedToken, timestamp);
-    	
-    	ChartDetail chartDetail = chartDetailRepository.findOne(22);
-    	chartDetail.setLocked(true);
-    	chartDetailRepository.save(chartDetail);
-    	User user = userService.findByNameAndCommunity(userName, communityName);
-    	UserStatus userStatus = new UserStatus();
-    	userStatus.setI((byte)10);
-		user.setStatus(userStatus);
-		userService.updateUser(user);
-    	
-    	ResultActions resultActions = mockMvc.perform(
-    			post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-    			.param("COMMUNITY_NAME", communityName)
-    			.param("USER_NAME", userName)
-    			.param("USER_TOKEN", userToken)
-    			.param("TIMESTAMP", timestamp)
-    			).andExpect(status().isOk());
-    	
-    	MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-    	String resultXml = aHttpServletResponse.getContentAsString();
-    	
-    	assertTrue(resultXml.contains("<lockedTrack><media>US-UM7-11-00061</media></lockedTrack>"));
+        String userName = "+447111111114";
+        String apiVersion = "3.9";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ChartDetail chartDetail = chartDetailRepository.findOne(22);
+        chartDetail.setLocked(true);
+        chartDetailRepository.save(chartDetail);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        UserStatus userStatus = new UserStatus();
+        userStatus.setI((byte)10);
+        user.setStatus(userStatus);
+        userService.updateUser(user);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<lockedTrack><media>US-UM7-11-00061</media></lockedTrack>"));
+    }
+
+    @Test
+    public void testAccountCheckForO2Client_WithIOS7DeviceUID_Success() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "3.9";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<deviceUID>IOS</deviceUID>"));
     }
 }
