@@ -177,10 +177,10 @@ public class SonyParser extends IParser {
 							territoryData.price = Float.parseFloat(price);
 						} catch (Exception e) {
 						}
-						String startdate = territory.getChildText("SALES_START_DATE");
-						SimpleDateFormat dateparse = new SimpleDateFormat("yyyyMMdd");
+						String startDate = territory.getChildText("SALES_START_DATE");
+						SimpleDateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
 						try {
-							territoryData.startdate = dateparse.parse(startdate);
+							territoryData.startdate = dateParse.parse(startDate);
 						} catch (ParseException e) {
 						}
 						territoryData.reportingId = reportingId;
