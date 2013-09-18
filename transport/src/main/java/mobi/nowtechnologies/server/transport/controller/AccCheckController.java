@@ -1,11 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
@@ -16,12 +10,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * AccCheckConroller
@@ -72,7 +69,7 @@ public class AccCheckController extends CommonController {
 			if (iphoneToken != null)
 				pushNotificationToken = iphoneToken;
 			
-			if (org.springframework.util.StringUtils.hasText(deviceUID))
+			if (isValidDeviceUID(deviceUID))
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
 			else
 				user = userService.checkCredentials(userName, userToken, timestamp, communityName);
@@ -127,6 +124,10 @@ public class AccCheckController extends CommonController {
             @PathVariable("community") String community) throws Exception {
 
         return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
+    }
+
+    protected boolean isValidDeviceUID(String deviceUID){
+       return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
     }
 
 	public static AccountCheckDto getAccountCheckDtoFrom(ModelAndView mav) {
