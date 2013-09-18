@@ -14,6 +14,7 @@
     <bean name="trackRepo.TrackController"
 		class="mobi.nowtechnologies.server.trackrepo.controller.TrackController">
 		<property name="trackService" ref="trackRepo.TrackService" />
+		<property name="executorTimeout" value="${trackRepo.executor.timeout}" />
 		<property name="resourceFileDtoBuilder" ref="trackRepo.ResourceFileDtoBuilder" />
 	</bean>
 

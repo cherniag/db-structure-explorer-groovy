@@ -113,7 +113,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             lock.lock();
 
             this.future = future;
-            isProcessing.wait();
+            isProcessing.await();
 
             lock.unlock();
         }
@@ -121,7 +121,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         public void stop(){
             lock.lock();
 
-            this.notifyAll();
+            isProcessing.signal();
             this.future.cancel(false);
 
             lock.unlock();

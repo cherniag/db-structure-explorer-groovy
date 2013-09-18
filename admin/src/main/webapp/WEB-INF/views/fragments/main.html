@@ -208,5 +208,12 @@ section {
         </div>
         <video class="video" controls="controls" th:attr="src=${mediaSrc}"/>
     </div>
+
+    <div class="busy">
+        <div class="center">
+            <p class="loadingLarge">&#160;</p>
+            <p class="message" th:utext="#{tracks.page.pull.dialog.item.loading}">Please wait...<br/>It may take a while1</p>
+        </div>
+    </div>
 </body>
 </html>

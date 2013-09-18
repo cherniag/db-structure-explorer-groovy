@@ -30,6 +30,7 @@ public class TrackRepoController extends AbstractCommonController{
 	
 	private TrackRepoService trackRepoService;
 	private String trackRepoFilesURL;
+    private Integer executorTimeout;
 	
 	public void setTrackRepoService(TrackRepoService trackRepoService) {
 		this.trackRepoService = trackRepoService;
@@ -38,8 +39,12 @@ public class TrackRepoController extends AbstractCommonController{
 	public void setTrackRepoFilesURL(String trackRepoFilesURL) {
 		this.trackRepoFilesURL = trackRepoFilesURL;
 	}
-	
-	@InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
+
+    public void setExecutorTimeout(Integer executorTimeout) {
+        this.executorTimeout = executorTimeout;
+    }
+
+    @InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
@@ -69,7 +74,7 @@ public class TrackRepoController extends AbstractCommonController{
 	public @ResponseBody WebAsyncTask<TrackDto> encodeTrack(final @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[] { track });
 
-        WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
+        WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
                 TrackDto result = trackRepoService.encode(track);
@@ -93,7 +98,7 @@ public class TrackRepoController extends AbstractCommonController{
 	public @ResponseBody WebAsyncTask<TrackDto> pullTrack(final @Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
-        WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(new Callable<TrackDto>() {
+        WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
                 return trackRepoService.pull(track);

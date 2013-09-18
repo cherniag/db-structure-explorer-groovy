@@ -224,14 +224,6 @@
 		</div>
 	</div>
 	
-	<div class="busy">
-	  <div class="center">
-		  <p class="loadingLarge">&#160;</p>
-		  <p class="message" th:utext="#{tracks.page.pull.dialog.item.loading}">Please wait...<br/>It may take a while1</p>
-	  </div>
-	</div>
-	
-	
 	<div id="encode-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -266,6 +258,10 @@
         var findUrl = /*[[@{'/tracks/list.json'}]]*/"";
         var filesUrl = /*[[@{__${trackRepoFilesURL}__}]]*/"";
         var $dateformat = /*[[#{tracks.datetime.format}]]*/'dd/MM/yyyy hh:mm:ss';
+        var defaultEncodeErrorMsg = /*[[#{tracks.encode.error}]]*/ 'Encode is unsuccessful';
+        var defaultPullErrorMsg = /*[[#{tracks.pull.error}]]*/ 'Pull is unsuccessful';
+        var encodeCheckDelay = 1000;
+        var pullCheckDelay = 1000;
 	/*]]>*/</script>
 </body>
 </html>

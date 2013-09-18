@@ -42,7 +42,7 @@ import java.util.*;
  * 
  */
 public class TrackServiceImpl implements TrackService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER  = java.util.logging.Logger.getLogger("BrightcoveLog");
 
 	private CloudFileService cloudFileService;
@@ -62,7 +62,7 @@ public class TrackServiceImpl implements TrackService {
     private String brightcoveReadToken;
     private Boolean brightcoveGeoFiltering;
 
-	private TrackRepository trackRepository;
+	protected TrackRepository trackRepository;
 
     private WriteApi brightcoveWriteService;
     private ReadApi brightcoveReadService;

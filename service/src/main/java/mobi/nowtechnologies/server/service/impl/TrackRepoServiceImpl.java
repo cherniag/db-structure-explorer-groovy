@@ -154,6 +154,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             track.setPublishDate(new Date(media.getPublishDate()*1000));
             track.setPublishArtist(media.getArtistName());
             track.setTitle(media.getTitle());
+            track.setPublishTitle(track.getTitle());
             track.setInfo(media.getInfo());
             track.setItunesUrl(config.getItunesUrl());
             track.setStatus(TrackStatus.PUBLISHED);
