@@ -172,26 +172,29 @@ public abstract class DDEXParser extends IParser {
     private void parseTerritories(String distributor, Map<String, Map<String, DropTerritory>> deals, Element release, DropTrack track) {
         List<Element> territoriesNodes = release.getChildren("ReleaseDetailsByTerritory");
         for (Element territory : territoriesNodes) {
-            String code = territory.getChildText("TerritoryCode");
-            String releaseReference = release.getChildText("ReleaseReference");
-            Element genre = territory.getChild("Genre");
-            if (genre != null)
-                track.genre = genre.getChildText("GenreText");
+            List<?> territoryCodes = territory.getChildren("TerritoryCode");
+            for (int i = 0; i < territoryCodes.size(); i++) {
+                String releaseReference = release.getChildText("ReleaseReference");
+                Element genre = territory.getChild("Genre");
+                if (genre != null)
+                    track.genre = genre.getChildText("GenreText");
 
-            Map<String, DropTerritory> deal = deals.get(releaseReference);
-            LOGGER.info("Deal for release ref [{}] [{}]", releaseReference, deal);
+                Map<String, DropTerritory> deal = deals.get(releaseReference);
+                LOGGER.info("Deal for release ref [{}] [{}]", releaseReference, deal);
 
-            if (deal == null) {
-                continue;
-            }
-            if ("Worldwide".equals(code)) {
-                Set<String> countries = deal.keySet();
-                Iterator<String> it = countries.iterator();
-                while (it.hasNext()) {
-                    parseTerritory(distributor, track, territory, deal, it.next());
+                if (deal == null) {
+                    continue;
                 }
-            } else {
-                parseTerritory(distributor, track, territory, deal, code);
+                String code = ((Element) territoryCodes.get(i)).getValue();
+                if ("Worldwide".equals(code)) {
+                    Set<String> countries = deal.keySet();
+                    Iterator<String> it = countries.iterator();
+                    while (it.hasNext()) {
+                        parseTerritory(distributor, track, territory, deal, it.next());
+                    }
+                } else {
+                    parseTerritory(distributor, track, territory, deal, code);
+                }
             }
         }
     }
@@ -349,7 +352,7 @@ public abstract class DDEXParser extends IParser {
         Map<String, List<DropAssetFile>> files = new HashMap<String, List<DropAssetFile>>();
         List<Element> list = rootNode.getChild("ResourceList").getChildren("SoundRecording");
 
-        for (Element node: list) {
+        for (Element node : list) {
             Element details = node.getChild("SoundRecordingDetailsByTerritory");
             String reference = node.getChildText("ResourceReference");
             DropTrack resourceDetail = new DropTrack();
@@ -430,11 +433,14 @@ public abstract class DDEXParser extends IParser {
         return result;
     }
 
-    protected void getIds(Element release, DropTrack track, List<DropAssetFile> files){}
+    protected void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
+    }
 
-    protected void setUpc(DropTrack track, String upc) {}
+    protected void setUpc(DropTrack track, String upc) {
+    }
 
-    protected void setGRid(DropTrack track, String GRid) {}
+    protected void setGRid(DropTrack track, String GRid) {
+    }
 
     protected boolean checkAlbum(String type) {
         if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
@@ -445,7 +451,7 @@ public abstract class DDEXParser extends IParser {
         return false;
     }
 
-    protected FileType getFileType(Element techDetail)  {
+    protected FileType getFileType(Element techDetail) {
         FileType fileType;
         String isPreview = techDetail.getChildText("IsPreview");
         if (isEmpty(isPreview) || "false".equals(isPreview)) {

@@ -23,11 +23,11 @@ public class AbsoluteParser extends DDEXParser {
     private QName isrcQName;
 
     private void prepareXPath(File file) throws SaxonApiException {
-        Processor proc = new Processor(false);
-        xPathCompiler = proc.newXPathCompiler();
+        Processor processor = new Processor(false);
+        xPathCompiler = processor.newXPathCompiler();
         isrcQName = new QName("isrc");
         xPathCompiler.declareVariable(isrcQName);
-        DocumentBuilder builder = proc.newDocumentBuilder();
+        DocumentBuilder builder = processor.newDocumentBuilder();
         xdmNode = builder.build(file);
 
         compileXPathExpressions();

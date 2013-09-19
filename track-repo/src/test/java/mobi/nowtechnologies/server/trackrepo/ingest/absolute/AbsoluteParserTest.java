@@ -5,24 +5,20 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.ParserTest;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.hamcrest.Matchers;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
 import org.joda.time.MutablePeriod;
 import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
@@ -34,18 +30,18 @@ import java.util.Map;
 
 import static com.google.common.primitives.Ints.checkedCast;
 import static java.lang.Integer.parseInt;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -153,7 +149,7 @@ public class AbsoluteParserTest extends ParserTest {
             assertThat(territory.distributor, is(expectedDistributor));
             assertThat(territory.label, is(expectedLabel));
             assertThat(territory.price, is(getPrice(expectedReleaseReference)));
-            assertThat(territory.priceCode, is(getPriceType(expectedReleaseReference)));
+            assertThat(territory.priceCode, is(getPriceCode(expectedReleaseReference)));
             assertThat(territory.publisher, is(nullValue()));
             assertThat(territory.reportingId, is(expectedIsrc));
             assertThat(territory.startdate, is(YYYY_MM_DD.parse(getStartDate(expectedReleaseReference))));
@@ -345,8 +341,20 @@ public class AbsoluteParserTest extends ParserTest {
         return evaluate("(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)["+index+"]");
     }
 
+    private String getPriceCode(String dealReleaseReference) throws XpathException {
+        String priceType = getPriceType(dealReleaseReference);
+        if(isNull(priceType)) return getPriceRange(dealReleaseReference);
+        return priceType;
+    }
+
     private String getPriceType(String dealReleaseReference) throws XpathException {
         String priceType = evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType");
+        if(isNotBlank(priceType)) return priceType;
+        return  null;
+    }
+
+    private String getPriceRange(String dealReleaseReference) throws XpathException {
+        String priceType = evaluate("/ern:NewReleaseMessage/DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/PriceRangeType");
         if(isNotBlank(priceType)) return priceType;
         return  null;
     }

@@ -50,7 +50,7 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                         .addDistributor(distributor)
                         .addLabel(label)
                         .addPrice(getPrice(releaseReference))
-                        .addPriceCode(getPriceType(releaseReference))
+                        .addPriceCode(getPriceCode(releaseReference))
                         .addPublisher(null)
                         .addReportingId(isrc)
                         .addDealReference(getDealReference(releaseReference))
@@ -62,6 +62,16 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String getPriceCode(String dealReleaseReference) throws SaxonApiException {
+        String priceType = getPriceType(dealReleaseReference);
+        if(isEmpty(priceType)) return getPriceRange(dealReleaseReference);
+        return priceType;
+    }
+
+    private String getPriceRange(String dealReleaseReference) throws SaxonApiException {
+        return evaluate("//DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/PriceRangeType");
     }
 
     private List<DropAssetFile> createFiles(String isrc, String fileRoot) throws SaxonApiException {
