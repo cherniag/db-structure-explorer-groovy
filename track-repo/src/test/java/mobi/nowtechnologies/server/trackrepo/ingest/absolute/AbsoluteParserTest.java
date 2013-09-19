@@ -118,7 +118,7 @@ public class AbsoluteParserTest extends ParserTest {
         assertThat(resultDropTrack.type, is(expectedActionType));
         assertThat(resultDropTrack.productCode, is(proprietaryId));
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
-        //assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));
+        assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));
         assertThat(resultDropTrack.artist, is(getArtist(expectedIsrc)));
         //assertThat(resultDropTrack.genre, is(getGenre(expectedIsrc)));
         assertThat(resultDropTrack.copyright, is(getCopyright(expectedIsrc)));
@@ -236,8 +236,14 @@ public class AbsoluteParserTest extends ParserTest {
     }
 
     private String getSubTitle(String isrc) throws XpathException {
-        String subTitle = evaluate("string-join(/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/SubTitle,'/')");
-        if(isEmpty(subTitle)) return null;
+        String subTitle = null;
+        NodeList nodeList = xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/SubTitle", document);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            subTitle += nodeList.item(i).getNodeValue();
+            if (i < nodeList.getLength() - 1) subTitle += "/";
+        }
+
+        if (isEmpty(subTitle)) return null;
         return subTitle;
     }
 

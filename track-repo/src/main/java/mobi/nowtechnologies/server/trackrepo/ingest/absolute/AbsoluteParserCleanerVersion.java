@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,78 +30,42 @@ import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public class AbsoluteParserCleanerVersion extends DDEXParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParserCleanerVersion.class);
 
-    private static final String ISRC = "isrc";
-    private static final String DEAL_RELEASE_REFERENCE = "dealReleaseReference";
-    private static final String X_PATH_IMAGE_FILE_INDEX = "xPathImageFileIndex";
-    private static final String X_PATH_FILE_INDEX = "xPathFileIndex";
-
     protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
-
     private static XPathCompiler xPathCompiler;
     private static XdmNode xdmNode;
 
-    private XPathSelector proprietaryIdXPathSelector;
-    private XPathSelector albumXPathSelector;
-    private XPathSelector subTitleXPathSelector;
-    private XPathSelector startDateXPathSelector;
-    private XPathSelector releaseReferenceXPathSelector;
-    private XPathSelector dealReferenceXPathSelector;
-    private XPathSelector fileCountXPathSelector;
-    private XPathSelector dealReleaseReferenceXPathSelector;
-    private XPathSelector takeDownXPathSelector;
-    private XPathSelector priceTypeXPathSelector;
-    private XPathSelector currencyCodeXPathSelector;
-    private XPathSelector durationXPathSelector;
-    private XPathSelector wholesalePricePerUnitXPathSelector;
-    private XPathSelector parentalWarningTypeXPathSelector;
-    private XPathSelector imageCountXPathSelector;
-    private XPathSelector xmlXPathSelector;
-    private XPathSelector imageFileNameXPathSelector;
-    private XPathSelector fileNameXPathSelector;
-    private XPathSelector fileHashSumXPathSelector;
-    private XPathSelector isPreviewFileXPathSelector;
-    private XPathSelector userDefinedValueFileXPathSelector;
-    private XPathSelector imageFileHashSumXPathSelector;
-    private XPathSelector audioCodecTypeFileXPathSelector;
-    private XPathSelector imageFileHashSumAlgorithmTypeXPathSelector;
-
-    private QName isrcQName;
-    private QName dealReleaseReferenceQName;
-    private QName xPathImageFileIndexQName;
-    private QName xPathFileIndexQName;
-
-    private String isrc;
-    private String productCode;
-    private String dealReleaseReference;
-    private int xPathImageFileIndex;
-    private int xPathFileIndex;
-
-    private List<DropTerritory> createTerritory(Element details, String distributor, String label) throws SaxonApiException, ParseException {
-        List<DropTerritory> res = new ArrayList<DropTerritory>();
-        List<Element> territoryCode = details.getChildren("TerritoryCode");
-        for (Element e : territoryCode)
-            res.add(new DropTerritory(e.getText())
-                    .addCurrency(evaluate(currencyCodeXPathSelector))
-                    .addDistributor(distributor)
-                    .addLabel(label)
-                    .addPrice(getPrice())
-                    .addPriceCode(evaluate(priceTypeXPathSelector))
-                    .addPublisher(null)
-                    .addReportingId(isrc)
-                    .addDealReference(evaluate(dealReferenceXPathSelector))
-                    .addStartDate(YYYY_MM_DD.parse(evaluate(startDateXPathSelector)))
-                    .addTakeDown(getTakeDown())
-            );
-        return res;
+    private List<DropTerritory> createTerritory(Element details, String distributor, String label, String isrc, String releaseReference) {
+        try {
+            List<DropTerritory> res = new ArrayList<DropTerritory>();
+            List<Element> territoryCode = details.getChildren("TerritoryCode");
+            for (Element e : territoryCode)
+                res.add(new DropTerritory(e.getText())
+                        .addCurrency(getCurrency(releaseReference))
+                        .addDistributor(distributor)
+                        .addLabel(label)
+                        .addPrice(getPrice(releaseReference))
+                        .addPriceCode(getPriceType(releaseReference))
+                        .addPublisher(null)
+                        .addReportingId(isrc)
+                        .addDealReference(getDealReference(releaseReference))
+                        .addStartDate(YYYY_MM_DD.parse(getStartDate(releaseReference)))
+                        .addTakeDown(getTakeDown(releaseReference))
+                );
+            return res;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 
-    private List<DropAssetFile> createFiles(String fileRoot) throws SaxonApiException {
-        int filesCount = getFilesCount();
+    private List<DropAssetFile> createFiles(String isrc, String fileRoot) throws SaxonApiException {
+        int filesCount = getFilesCount(isrc);
         List<DropAssetFile> imageDropAssetFiles = createImageDropAssetFiles(fileRoot);
 
         List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount + imageDropAssetFiles.size());
@@ -110,11 +73,11 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         for (int i = 0; i < filesCount; i++) {
             DropAssetFile dropAssetFile = new DropAssetFile();
             dropAssetFile.isrc = isrc;
-            xPathFileIndex = i + 1;
-            dropAssetFile.file = getAssetFile(fileRoot, evaluate(fileNameXPathSelector));
-            dropAssetFile.duration = getDuration();
-            dropAssetFile.md5 = evaluate(fileHashSumXPathSelector);
-            dropAssetFile.type = getType();
+            int xPathFileIndex = i + 1;
+            dropAssetFile.file = getAssetFile(fileRoot, getFileName(isrc, xPathFileIndex));
+            dropAssetFile.duration = getDuration(isrc);
+            dropAssetFile.md5 = getMD5(isrc, xPathFileIndex);
+            dropAssetFile.type = getType(isrc, xPathFileIndex);
 
             dropAssetFiles.add(dropAssetFile);
         }
@@ -124,15 +87,15 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
     }
 
     private List<DropAssetFile> createImageDropAssetFiles(String fileRoot) throws SaxonApiException {
-        int imageCount = getImageCount();
+        int filesCount = getImageCount();
 
-        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(imageCount);
+        List<DropAssetFile> dropAssetFiles = new ArrayList<DropAssetFile>(filesCount);
 
-        for (int i = 0; i < imageCount; i++) {
+        for (int i = 0; i < filesCount; i++) {
             DropAssetFile dropAssetFile = new DropAssetFile();
-            xPathImageFileIndex = i + 1;
-            dropAssetFile.file = getAssetFile(fileRoot, evaluate(imageFileNameXPathSelector));
-            dropAssetFile.md5 = getImageMD5();
+            int xPathFileIndex = i + 1;
+            dropAssetFile.file = getAssetFile(fileRoot, getImageFileName(xPathFileIndex));
+            dropAssetFile.md5 = getImageMD5(xPathFileIndex);
             dropAssetFile.type = IMAGE;
 
             dropAssetFiles.add(dropAssetFile);
@@ -140,30 +103,64 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         return dropAssetFiles;
     }
 
-    private int getFilesCount() throws SaxonApiException {
-        return parseInt(evaluate(fileCountXPathSelector));
+    private String getAlbum() throws SaxonApiException {
+        return evaluate("//ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText");
     }
 
-    private String getImageMD5() throws SaxonApiException {
-        if ("MD5".equals(getImageFileHashSumAlgorithmType()))
-            return evaluate(imageFileHashSumXPathSelector);
+    private String getSubTitle(String isrc) throws SaxonApiException {
+        String subTitle = evaluate("string-join(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/SubTitle,'/')");
+        if (isNotEmpty(subTitle)) return subTitle;
         return null;
     }
 
-    private String getImageFileHashSumAlgorithmType() throws SaxonApiException {
-        return evaluate(imageFileHashSumAlgorithmTypeXPathSelector);
+    private String getStartDate(String dealReleaseReference) throws SaxonApiException {
+        return evaluate("//DealList/ReleaseDeal[DealReleaseReference='" + dealReleaseReference + "']/Deal/DealTerms/ValidityPeriod/StartDate");
+    }
+
+    private String getReleaseReference(String isrc) throws SaxonApiException {
+        return evaluate("//ReleaseList/Release[ReleaseId/ISRC='" + isrc + "']/ReleaseReference");
+    }
+
+    private String getDealReference(String dealReleaseReference) throws SaxonApiException {
+        return evaluate("//DealList/ReleaseDeal[DealReleaseReference='" + dealReleaseReference + "']/Deal/DealReference");
+    }
+
+    private int getFilesCount(String isrc) throws SaxonApiException {
+        return parseInt(evaluate("count(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)"));
+    }
+
+    private String getImageMD5(int index) throws SaxonApiException {
+        if ("MD5".equals(getImageFileHashSumAlgorithmType(index)))
+            return getImageFileHashSum(index);
+        return null;
+    }
+
+    private String getImageFileName(int index) throws SaxonApiException {
+        return evaluate("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/FileName)[" + index + "]");
+    }
+
+    private String getImageFileHashSumAlgorithmType(int index) throws SaxonApiException {
+        return evaluate("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[" + index + "]");
+    }
+
+    private String getImageFileHashSum(int index) throws SaxonApiException {
+        return evaluate("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSum)[" + index + "]");
     }
 
     private int getImageCount() throws SaxonApiException {
-        return parseInt(evaluate(imageCountXPathSelector));
+        return parseInt(evaluate("count(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File)"));
     }
 
-    private boolean getExplicit() throws SaxonApiException {
-        return "Explicit".equals(evaluate(parentalWarningTypeXPathSelector));
+    private boolean getExplicit(String isrc) throws SaxonApiException {
+        return "Explicit".equals(evaluate("//ResourceList/SoundRecording[SoundRecordingId/ISRC='"+isrc+"']/SoundRecordingDetailsByTerritory/ParentalWarningType"));
     }
 
-    private Integer getDuration() throws SaxonApiException {
-        String duration = evaluate(durationXPathSelector);
+    private String getFileName(String isrc, int index) throws SaxonApiException {
+        return evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[" + index + "]");
+    }
+
+    private Integer getDuration(String isrc) throws SaxonApiException {
+        String duration = evaluate("//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/Duration");
 
         PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
         ReadWritablePeriod readWritablePeriod = new MutablePeriod();
@@ -173,24 +170,41 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         return null;
     }
 
-    private Float getPrice() throws SaxonApiException {
-        String price = evaluate(wholesalePricePerUnitXPathSelector);
+    private String getProprietaryId(String isrc) throws SaxonApiException {
+        return evaluate("//ResourceList/SoundRecording/SoundRecordingId[ISRC='" + isrc + "']/ProprietaryId");
+    }
+
+    private String getMD5(String isrc, int index) throws SaxonApiException {
+        return evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[" + index + "]");
+    }
+
+    private Float getPrice(String dealReleaseReference) throws SaxonApiException {
+        String price = evaluate("//DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit");
         if (isNotBlank(price)) return Float.parseFloat(price);
         return null;
     }
 
-    private boolean getTakeDown() throws SaxonApiException {
-        if (isNotNull(evaluate(takeDownXPathSelector))) return Boolean.parseBoolean(evaluate(takeDownXPathSelector));
+    private String getCurrency(String dealReleaseReference) throws SaxonApiException {
+        return evaluate("//DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode");
+    }
+
+    private String getPriceType(String dealReleaseReference) throws SaxonApiException {
+        return evaluate("//DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType");
+    }
+
+    private boolean getTakeDown(String dealReleaseReference) throws SaxonApiException {
+        String takeDown = evaluate("//DealList/ReleaseDeal[DealReleaseReference='"+dealReleaseReference+"']/Deal/DealTerms/TakeDown");
+        if(isNotNull(takeDown)) return Boolean.parseBoolean(takeDown);
         return false;
     }
 
-    private FileType getType() throws SaxonApiException {
-        String isPreview = evaluate(isPreviewFileXPathSelector);
+    private FileType getType(String isrc, int index) throws SaxonApiException {
+        String isPreview = evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)[" + index + "]");
 
         FileType fileType;
         if (isEmpty(isPreview) || isPreview.equals("false")) {
-            String audioCodecType = evaluate(audioCodecTypeFileXPathSelector);
-            String userDefinedValue = evaluate(userDefinedValueFileXPathSelector);
+            String audioCodecType = evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[" + index + "]");
+            String userDefinedValue = evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[" + index + "]");
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
             } else {
@@ -202,80 +216,34 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         return fileType;
     }
 
-    private XdmValue getXmlValue(XPathSelector xPathSelector) throws SaxonApiException {
-        xPathSelector.setContextItem(xdmNode);
-        xPathSelector.setVariable(isrcQName, new XdmAtomicValue(isrc));
-        xPathSelector.setVariable(dealReleaseReferenceQName, new XdmAtomicValue(dealReleaseReference));
-        xPathSelector.setVariable(xPathFileIndexQName, new XdmAtomicValue(xPathFileIndex));
-        xPathSelector.setVariable(xPathImageFileIndexQName, new XdmAtomicValue(xPathImageFileIndex));
-        return xPathSelector.evaluate();
+    private String getXml(String isrc) throws SaxonApiException {
+        return getXmlValue("//ReleaseList/Release[ReleaseId/ISRC='" + isrc + "']").toString();
     }
 
-    private String getXml() throws SaxonApiException {
-        return getXmlValue(xmlXPathSelector).toString();
+    private XdmValue getXmlValue(String xPathExpression) throws SaxonApiException {
+        XPathSelector selector = xPathCompiler.compile(xPathExpression).load();
+        selector.setContextItem(xdmNode);
+        return selector.evaluate();
     }
 
-    private String getDropTrackKey() {
+    private String getDropTrackKey(String isrc, String productCode) {
         return Joiner.on(productCode).join(isrc, getClass());
     }
 
-    private void prepareXPath(File file) throws SaxonApiException {
-        Processor processor = new Processor(false);
-        xPathCompiler = processor.newXPathCompiler();
-
-        isrcQName = new QName(ISRC);
-        dealReleaseReferenceQName = new QName(DEAL_RELEASE_REFERENCE);
-        dealReleaseReferenceQName = new QName(DEAL_RELEASE_REFERENCE);
-        xPathImageFileIndexQName = new QName(X_PATH_IMAGE_FILE_INDEX);
-        xPathFileIndexQName = new QName(X_PATH_FILE_INDEX);
-
-        xPathCompiler.declareVariable(isrcQName);
-        xPathCompiler.declareVariable(dealReleaseReferenceQName);
-        xPathCompiler.declareVariable(xPathImageFileIndexQName);
-        xPathCompiler.declareVariable(xPathFileIndexQName);
-
-        DocumentBuilder builder = processor.newDocumentBuilder();
-        xdmNode = builder.build(file);
-
-        compileXPathExpressions();
-    }
-
-    private void compileXPathExpressions() throws SaxonApiException {
-        proprietaryIdXPathSelector = xPathCompiler.compile("//ResourceList/SoundRecording/SoundRecordingId[ISRC eq $" + ISRC + "]/ProprietaryId").load();
-        albumXPathSelector = xPathCompiler.compile("//ReleaseList/Release[ReleaseType='Album']/ReferenceTitle/TitleText").load();
-        subTitleXPathSelector = xPathCompiler.compile("string-join(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/SubTitle,'/')").load();
-        startDateXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/ValidityPeriod/StartDate").load();
-        releaseReferenceXPathSelector = xPathCompiler.compile("//ReleaseList/Release[ReleaseId/ISRC eq $" + ISRC + "]/ReleaseReference").load();
-        dealReferenceXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealReference").load();
-        fileCountXPathSelector = xPathCompiler.compile("count(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)").load();
-        takeDownXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/TakeDown").load();
-        priceTypeXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType").load();
-        currencyCodeXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode").load();
-        durationXPathSelector = xPathCompiler.compile("//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/Duration").load();
-        wholesalePricePerUnitXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit").load();
-        parentalWarningTypeXPathSelector = xPathCompiler.compile("//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/ParentalWarningType").load();
-        imageCountXPathSelector = xPathCompiler.compile("count(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File)").load();
-        xmlXPathSelector = xPathCompiler.compile("//ReleaseList/Release[ReleaseId/ISRC eq $" + ISRC + "]").load();
-        imageFileNameXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/FileName)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
-        imageFileHashSumXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSum)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
-        imageFileHashSumAlgorithmTypeXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
-        fileNameXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[$" + X_PATH_FILE_INDEX + "]").load();
-        fileHashSumXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[$" + X_PATH_FILE_INDEX + "]").load();
-        isPreviewFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)[$" + X_PATH_FILE_INDEX + "]").load();
-        audioCodecTypeFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[$" + X_PATH_FILE_INDEX + "]").load();
-        userDefinedValueFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[$" + X_PATH_FILE_INDEX + "]").load();
-    }
-
-    private String getProprietaryId() throws SaxonApiException {
-        return evaluate(proprietaryIdXPathSelector);
-    }
-
-    private String evaluate(XPathSelector xPathSelector) throws SaxonApiException {
-        XdmValue children = getXmlValue(xPathSelector);
-        if (children.size() > 0) {
+    private String evaluate(String expression) throws SaxonApiException {
+        XdmValue children = getXmlValue(expression);
+        if(children.size()>0){
             return children.itemAt(0).getStringValue();
         }
         return null;
+    }
+
+    private void createDoc(File file) throws SaxonApiException {
+        Processor proc = new Processor(false);
+        xPathCompiler = proc.newXPathCompiler();
+        DocumentBuilder builder = proc.newDocumentBuilder();
+
+        xdmNode = builder.build(file);
     }
 
     @Override
@@ -315,21 +283,18 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
             if (!file.exists()) return res;
-            prepareXPath(file);
+            createDoc(file);
 
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(file);
             Element root = document.getRootElement();
             String distributor = getDistributor(root);
             List<Element> sounds = root.getChild("ResourceList").getChildren("SoundRecording");
-            String album = evaluate(albumXPathSelector);
+            String album = getAlbum();
             Type actionType = getActionType(root);
 
             for (Element node : sounds) {
-                isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
-                dealReleaseReference = evaluate(releaseReferenceXPathSelector);
-                productCode = getProprietaryId();
-
+                String isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
                 Element details = node.getChild("SoundRecordingDetailsByTerritory");
                 String artist = details.getChild("DisplayArtist").getChild("PartyName").getChildText("FullName");
                 String title = details.getChild("Title").getChildText("TitleText");
@@ -337,14 +302,16 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                 String copyright = details.getChild("PLine").getChildText("PLineText");
                 String label = details.getChildText("LabelName");
                 String year = details.getChild("PLine").getChildText("Year");
-                List<DropTerritory> territories = createTerritory(details, distributor, label);
-                List<DropAssetFile> files = createFiles(file.getParent());
+                String releaseReference = getReleaseReference(isrc);
+                List<DropTerritory> territories = createTerritory(details, distributor, label, isrc, releaseReference);
+                List<DropAssetFile> files = createFiles(isrc, file.getParent());
+                String proprietaryId = getProprietaryId(isrc);
 
-                res.put(getDropTrackKey(), new DropTrack()
+                res.put(getDropTrackKey(isrc, proprietaryId), new DropTrack()
                         .addType(actionType)
-                        .addProductCode(productCode)
+                        .addProductCode(proprietaryId)
                         .addTitle(title)
-                        .addSubTitle(evaluate(subTitleXPathSelector))
+                        .addSubTitle(getSubTitle(isrc))
                         .addArtist(artist)
                         .addGenre(genre)
                         .addCopyright(copyright)
@@ -353,16 +320,20 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                         .addIsrc(isrc)
                         .addPhysicalProductId(isrc)
                         .addInfo(null)
-                        .addExplicit(getExplicit())
+                        .addExplicit(getExplicit(isrc))
                         .addProductId(isrc)
                         .addTerritories(territories)
                         .addFiles(files)
                         .addAlbum(album)
-                        .addXml(getXml())
+                        .addXml(getXml(isrc))
                 );
             }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (JDOMException e) {
+            LOGGER.error(e.getMessage());
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        } catch (SaxonApiException e) {
+            LOGGER.error(e.getMessage());
         }
         return res;
     }
