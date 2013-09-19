@@ -49,7 +49,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
+public class AbsoluteParserTest extends ParserTest {
 
     private Map<String,DropTrack> resultDropTrackMap;
     private NodeList expectedTrackReleaseIdNodeList;
@@ -68,7 +68,7 @@ public class AbsoluteParserTest extends ParserTest<AbsoluteParser> {
     private Type expectedActionType;
 
     public void createParser() throws FileNotFoundException {
-        parserFixture = new AbsoluteParser("classpath:media/absolute/");
+        parserFixture = new AbsoluteParserCleanerVersion("classpath:media/absolute/");
     }
 
     public void populateXmlPrefixMap() {

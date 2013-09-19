@@ -33,11 +33,11 @@ import java.util.Locale;
  * User: Titov Mykhaylo (titov)
  * 02.09.13 15:42
  */
-public abstract class ParserTest<T extends IParser> {
+public abstract class ParserTest {
 
     protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
-    protected T parserFixture;
+    protected DDEXParser parserFixture;
     protected XpathEngine xpathEngine;
     protected File xmlFile;
     protected Document document;

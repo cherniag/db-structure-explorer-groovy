@@ -514,7 +514,7 @@ public abstract class DDEXParser extends IParser {
         } catch (IOException io) {
             LOGGER.error("Exception: [{}]", io.getMessage());
         } catch (JDOMException jdomex) {
-            LOGGER.error("Exception [{}]", jdomex.getMessage());
+            LOGGER.error("Exception: [{}]", jdomex.getMessage());
         }
         return null;
     }

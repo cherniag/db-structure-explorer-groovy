@@ -33,7 +33,7 @@ public class SonyParser extends IParser {
 
 		DropTrack result = new DropTrack();
 		SAXBuilder builder = new SAXBuilder();
-		LOGGER.debug("Loading " + file);
+		LOGGER.debug("Loading [{}]", file);
 		File xmlFile = new File(file);
 
 		try {
