@@ -399,8 +399,8 @@ public abstract class DDEXParser extends IParser {
         return general.getChild("PartyName").getChildText("FullName");
     }
 
-    protected String getAssetFile(String root, String file) {
-        return root + "/resources/" + file;
+    protected String getAssetFile(String root, String fileName) {
+        return root + "/resources/" + fileName;
     }
 
     protected List<DropData> getDrops(File folder, boolean auto) {
