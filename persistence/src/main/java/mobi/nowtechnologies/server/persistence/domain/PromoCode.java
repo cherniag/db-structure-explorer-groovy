@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -60,12 +61,12 @@ public class PromoCode {
 	}
 
 	public Integer getPromotionId() {
-        if (ObjectUtils.isNotNull(promotion)){
+        if (isNotNull(promotion)){
             return promotion.getI();
         }
 		return null;
 	}
-	
+
 	public Promotion getPromotion() {
 		return promotion;
 	}
@@ -73,13 +74,13 @@ public class PromoCode {
 	public void setPromotion(Promotion promotion) {
 		this.promotion = promotion;
 	}
-	
+
 	public static PromoCodeDto valueOf(PromoCode promoCode) {
 		PromoCodeDto dto = new PromoCodeDto();
 			dto.setPromoCode(promoCode.getCode());
 		return dto;
 	}
-	
+
 	public static List<PromoCodeDto> toPromoCodeDtoList(List<PromoCode> codes) {
 		List<PromoCodeDto> dtoList = new ArrayList<PromoCodeDto>();
 			for (PromoCode promoCode : codes) {
@@ -87,6 +88,10 @@ public class PromoCode {
 			}
 		return dtoList ;
 	}
+
+    public boolean isWhiteListed() {
+        return isNotNull(promotion) && promotion.isWhiteListed();
+    }
 
     public PromoCode withMediaType(MediaType mediaType){
         setMediaType(mediaType);
@@ -103,9 +108,13 @@ public class PromoCode {
         return this;
     }
 
-	@Override
-	public String toString() {
-		return "PromoCode [code=" + code + ", id=" + id + ", promotionId="
-				+ getPromotionId() + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("code", code)
+                .append("promotionId", getPromotionId())
+                .append("mediaType", mediaType)
+                .toString();
+    }
 }

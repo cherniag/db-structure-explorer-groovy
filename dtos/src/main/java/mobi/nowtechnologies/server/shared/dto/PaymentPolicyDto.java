@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 
@@ -137,18 +138,6 @@ public class PaymentPolicyDto {
     public void setCurrencyISO(String currencyISO) {
         this.currencyISO = currencyISO;
     }
-
-    /*private boolean isInAppPolicy() {
-        return true;
-    }
-
-    private boolean isCreditCardPolicy() {
-        return true;
-    }
-
-    private boolean isPayPalPolicy() {
-        return true;
-    }*/
     
     public boolean isVideoAndAudio4GSubscription() {
 		return videoAndAudio4GSubscription;
@@ -183,19 +172,23 @@ public class PaymentPolicyDto {
 		this.threeG = threeG;
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentPolicyDto [id=" + id + ", subcost=" + subcost
-				+ ", subweeks=" + subweeks + ", operator=" + operator
-				+ ", operatorName=" + operatorName + ", paymentType="
-				+ paymentType + ", shortCode=" + shortCode + ", oldSubcost="
-				+ oldSubcost + ", oldSubweeks=" + oldSubweeks
-				+ ", currencyISO=" + currencyISO
-				+ ", videoAndAudio4GSubscription="
-				+ videoAndAudio4GSubscription + ", fourG=" + fourG
-				+ ", threeG=" + threeG + ", paymentPolicyMediaType="
-				+ paymentPolicyMediaType + "]";
-	}
-
-    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("subcost", subcost)
+                .append("subweeks", subweeks)
+                .append("operator", operator)
+                .append("operatorName", operatorName)
+                .append("paymentType", paymentType)
+                .append("shortCode", shortCode)
+                .append("oldSubcost", oldSubcost)
+                .append("oldSubweeks", oldSubweeks)
+                .append("currencyISO", currencyISO)
+                .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription)
+                .append("fourG", fourG)
+                .append("threeG", threeG)
+                .append("paymentPolicyMediaType", paymentPolicyMediaType)
+                .toString();
+    }
 }

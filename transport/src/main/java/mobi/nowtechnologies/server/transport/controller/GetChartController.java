@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static java.util.Arrays.*;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.FIFTH_CHART;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.FOURTH_CHART;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
@@ -325,7 +326,7 @@ public class GetChartController extends CommonController{
         version = CharMatcher.DIGIT.retainFrom(version).substring(0,2);
         int intVersion = new Integer(version);
 
-        Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ? Arrays.asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) : Arrays.asList(VIDEO_CHART));
+        Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ? asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) : asList(VIDEO_CHART));
         PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
 		Set<Integer> removedPlaylistIds = new HashSet<Integer>();
 		Map<Integer, PlaylistDto> playlistMap = new HashMap<Integer, PlaylistDto>();
