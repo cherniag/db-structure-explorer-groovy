@@ -64,7 +64,7 @@ public class AbsoluteParserTest extends ParserTest {
     private Type expectedActionType;
 
     public void createParser() throws FileNotFoundException {
-        parserFixture = new AbsoluteParser("classpath:media/absolute/");
+        parserFixture = new AbsoluteParserCleanerWithPreCompiledXPathVersion("classpath:media/absolute/");
     }
 
     public void populateXmlPrefixMap() {
@@ -343,7 +343,7 @@ public class AbsoluteParserTest extends ParserTest {
 
     private String getPriceCode(String dealReleaseReference) throws XpathException {
         String priceType = getPriceType(dealReleaseReference);
-        if(isNull(priceType)) return getPriceRange(dealReleaseReference);
+        if(isEmpty(priceType)) return getPriceRange(dealReleaseReference);
         return priceType;
     }
 
