@@ -1,11 +1,16 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import net.sf.saxon.s9api.SaxonApiException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.joda.time.MutablePeriod;
+import org.joda.time.ReadWritablePeriod;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +21,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.google.common.primitives.Ints.checkedCast;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
@@ -55,11 +62,10 @@ public abstract class DDEXParser extends IParser {
     }
 
     private void parseAlbum(Map<String, DropTrack> result, Element albumElement) {
-        String albumTitle = null;
         String upc = null;
         String grid = null;
 
-        albumTitle = albumElement.getChild("ReferenceTitle").getChildText("TitleText");
+        String albumTitle = albumElement.getChild("ReferenceTitle").getChildText("TitleText");
         Element releaseId = albumElement.getChild("ReleaseId");
         if (releaseId != null) {
             upc = releaseId.getChildText("ICPN");
@@ -119,6 +125,7 @@ public abstract class DDEXParser extends IParser {
         track.subTitle = getSubTitle(release, details);
         track.artist = getArtist(details);
         track.label = details.getChildText("LabelName");
+        track.genre = resourceDetail.genre;
 
         XMLOutputter outPutter = new XMLOutputter();
         track.xml = outPutter.outputString(release);
@@ -359,6 +366,10 @@ public abstract class DDEXParser extends IParser {
             resourceDetail.isrc = node.getChild("SoundRecordingId").getChildText("ISRC");
             String parentalWarningType = details.getChildText("ParentalWarningType");
             resourceDetail.explicit = "Explicit".equals(parentalWarningType);
+            Element genreElement = details.getChild("Genre");
+            if (isNotNull(genreElement)){
+                resourceDetail.genre = genreElement.getChildText("GenreText");
+            }
             resourceDetails.put(reference, resourceDetail);
             if (details.getChild("PLine") != null) {
                 resourceDetail.copyright = details.getChild("PLine").getChildText("PLineText");
@@ -371,6 +382,7 @@ public abstract class DDEXParser extends IParser {
                 assetFile.file = getAssetFile(fileRoot, fileName);
                 assetFile.isrc = resourceDetail.isrc;
                 assetFile.type = getFileType(techDetail);
+                assetFile.duration = getDuration(node.getChildText("Duration"));
                 List<DropAssetFile> resourceFiles = files.get(node.getChildText("ResourceReference"));
                 if (resourceFiles == null) {
                     resourceFiles = new ArrayList<DropAssetFile>();
@@ -392,6 +404,17 @@ public abstract class DDEXParser extends IParser {
     private String getUserDefinedValue(Element techDetail) {
         return techDetail.getChild("AudioCodecType").getAttributeValue(
                 "UserDefinedValue");
+    }
+
+    protected Integer getDuration(String duration) {
+        if (isNotNull(duration)) {
+            PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
+            ReadWritablePeriod readWritablePeriod = new MutablePeriod();
+            if (periodParser.parseInto(readWritablePeriod, duration, 0, null) > 0) {
+                return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
+            }
+        }
+        return null;
     }
 
     protected String getDistributor(Element rootNode) {

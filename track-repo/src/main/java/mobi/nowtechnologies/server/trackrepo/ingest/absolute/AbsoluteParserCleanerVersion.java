@@ -85,7 +85,7 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
             dropAssetFile.isrc = isrc;
             int xPathFileIndex = i + 1;
             dropAssetFile.file = getAssetFile(fileRoot, getFileName(isrc, xPathFileIndex));
-            dropAssetFile.duration = getDuration(isrc);
+            dropAssetFile.duration = getDurationBy(isrc);
             dropAssetFile.md5 = getMD5(isrc, xPathFileIndex);
             dropAssetFile.type = getType(isrc, xPathFileIndex);
 
@@ -169,15 +169,8 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         return evaluate("(//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[" + index + "]");
     }
 
-    private Integer getDuration(String isrc) throws SaxonApiException {
-        String duration = evaluate("//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/Duration");
-
-        PeriodParser periodParser = ISOPeriodFormat.standard().getParser();
-        ReadWritablePeriod readWritablePeriod = new MutablePeriod();
-        if (periodParser.parseInto(readWritablePeriod, duration, 0, null) > 0) {
-            return checkedCast(readWritablePeriod.toPeriod().toStandardDuration().getStandardSeconds());
-        }
-        return null;
+    private Integer getDurationBy(String isrc) throws SaxonApiException {
+        return getDuration(evaluate("//ResourceList/SoundRecording[SoundRecordingId/ISRC='" + isrc + "']/Duration"));
     }
 
     private String getProprietaryId(String isrc) throws SaxonApiException {

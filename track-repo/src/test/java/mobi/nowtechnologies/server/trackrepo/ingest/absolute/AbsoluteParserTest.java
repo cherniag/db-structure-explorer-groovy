@@ -64,7 +64,7 @@ public class AbsoluteParserTest extends ParserTest {
     private Type expectedActionType;
 
     public void createParser() throws FileNotFoundException {
-        parserFixture = new AbsoluteParserCleanerVersion("classpath:media/absolute/");
+        parserFixture = new AbsoluteParser("classpath:media/absolute/");
     }
 
     public void populateXmlPrefixMap() {
@@ -116,7 +116,7 @@ public class AbsoluteParserTest extends ParserTest {
         assertThat(resultDropTrack.title, is(getTitleText(expectedIsrc)));
         assertThat(resultDropTrack.subTitle, is(getSubTitle(expectedIsrc)));
         assertThat(resultDropTrack.artist, is(getArtist(expectedIsrc)));
-        //assertThat(resultDropTrack.genre, is(getGenre(expectedIsrc)));
+        assertThat(resultDropTrack.genre, is(getGenre(expectedIsrc)));
         assertThat(resultDropTrack.copyright, is(getCopyright(expectedIsrc)));
         assertThat(resultDropTrack.label, is(expectedLabel));
         assertThat(resultDropTrack.isrc, is(expectedIsrc));
@@ -176,7 +176,7 @@ public class AbsoluteParserTest extends ParserTest {
             assertThat(asset.isrc, is(expectedIsrc));
             int xPathFileIndex = i + 1;
             assertThat(asset.file, is(getAssetFile(getFileName(expectedIsrc, xPathFileIndex))));
-            //assertThat(asset.duration, is(getDuration(expectedIsrc)));
+            assertThat(asset.duration, is(getDuration(expectedIsrc)));
             assertThat(asset.md5, is(getMD5(expectedIsrc, xPathFileIndex)));
             assertThat(asset.type, is(getType(expectedIsrc, xPathFileIndex)));
         }
