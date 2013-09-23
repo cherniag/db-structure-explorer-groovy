@@ -7,6 +7,9 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.joda.time.DateTime;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +22,16 @@ import java.util.*;
 
 public class UniversalParser extends IParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
+    private PeriodFormatter durationFormatter;
 
     public UniversalParser(String root) throws FileNotFoundException {
         super(root);
+
+        durationFormatter = new PeriodFormatterBuilder()
+                .appendHours().appendSuffix(":")
+                .appendMinutes().appendSuffix(":")
+                .appendSeconds().toFormatter();
+
         LOGGER.info("Universal parser loading from " + root);
     }
 
@@ -95,7 +105,7 @@ public class UniversalParser extends IParser {
             if (fulfillmentFiles.containsKey(isrc))
                 data.files.addAll(fulfillmentFiles.get(isrc));
 
-            if(fulfillmentFiles.containsKey(null))
+            if (fulfillmentFiles.containsKey(null))
                 data.files.addAll(fulfillmentFiles.get(null));
         }
 
@@ -120,7 +130,7 @@ public class UniversalParser extends IParser {
         String trackExplicit = track.getChildText("track_explicit");
         boolean explicit = "Y".equals(prdExplicit);
 
-        return  !"".equals(trackExplicit) ? "Y".equals(trackExplicit) : explicit;
+        return !"".equals(trackExplicit) ? "Y".equals(trackExplicit) : explicit;
     }
 
     private DropTrack.Type parseType(Element product) {
@@ -241,8 +251,16 @@ public class UniversalParser extends IParser {
         assetFile.file = file.getChildText("file_name");
         assetFile.type = getAssetType(isExcerpt, fileType, type, subType);
         assetFile.isrc = assetFile.type == AssetFile.FileType.IMAGE ? null : isrc;
+        assetFile.duration = parseDuration(assetFileEl);
 
         return assetFile;
+    }
+
+    private Integer parseDuration(Element assetFileEl) {
+        String length = assetFileEl.getChildText("track_length");
+
+        return length != null ? (int)durationFormatter.parsePeriod(length).toDurationFrom(new DateTime(0)).getMillis()
+                              : null;
     }
 
     private AssetFile.FileType getAssetType(boolean isExcerpt, String fileType, String assetType, String assetSubType) {
@@ -250,8 +268,8 @@ public class UniversalParser extends IParser {
             if (!isExcerpt)
                 return AssetFile.FileType.DOWNLOAD;
         } else if ("mp4".equalsIgnoreCase(fileType)) {
-            if("Video".equals(assetType) && "Video".equals(assetSubType)){
-                if(!isExcerpt)
+            if ("Video".equals(assetType) && "Video".equals(assetSubType)) {
+                if (!isExcerpt)
                     return AssetFile.FileType.VIDEO;
             } else if (!isExcerpt)
                 return AssetFile.FileType.MOBILE;

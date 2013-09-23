@@ -216,21 +216,21 @@ public class UniversalParserTest {
         Assert.assertEquals(AssetFile.FileType.DOWNLOAD, downloadFile.type);
         Assert.assertEquals("9ac82d0a3fb1dc43aef97dcf2c28b3e3", downloadFile.md5);
         Assert.assertEquals("ROCRP1002948", downloadFile.isrc);
-        Assert.assertEquals(null, downloadFile.duration);
+        Assert.assertEquals(266000, downloadFile.duration.intValue());
 
         DropAssetFile previewFile = track.files.get(1);
         Assert.assertTrue(previewFile.file.endsWith("UMG_audclp_05037128167051_01_003_1129.mp4"));
         Assert.assertEquals(AssetFile.FileType.PREVIEW, previewFile.type);
         Assert.assertEquals("f3623b0b4bd4ae98a77fe8554ae3f7ef", previewFile.md5);
         Assert.assertEquals("ROCRP1002948", previewFile.isrc);
-        Assert.assertEquals(null, previewFile.duration);
+        Assert.assertEquals(266000, previewFile.duration.intValue());
 
         DropAssetFile mobileFile = track.files.get(2);
         Assert.assertTrue(mobileFile.file.endsWith("UMG_audtrk_05037128167051_01_003_1129.mp4"));
         Assert.assertEquals(AssetFile.FileType.MOBILE, mobileFile.type);
         Assert.assertEquals("8908fb2efc6fe2954537c8a1745163f6", mobileFile.md5);
         Assert.assertEquals("ROCRP1002948", mobileFile.isrc);
-        Assert.assertEquals(null, mobileFile.duration);
+        Assert.assertEquals(266000, mobileFile.duration.intValue());
 
         DropAssetFile imageFile = track.files.get(3);
         Assert.assertTrue(imageFile.file.endsWith("UMG_cvrart_05037128167051_01_RGB72_1200x1200_10452455688.jpg"));
@@ -259,7 +259,7 @@ public class UniversalParserTest {
         Assert.assertEquals(AssetFile.FileType.VIDEO, downloadFile.type);
         Assert.assertEquals("4e92a9f57a74bf9146f0e627820a81c3", downloadFile.md5);
         Assert.assertEquals("FRUV71300321", downloadFile.isrc);
-        Assert.assertEquals(null, downloadFile.duration);
+        Assert.assertEquals(262000, downloadFile.duration.intValue());
 
         DropAssetFile previewFile = track.files.get(1);
         Assert.assertTrue(previewFile.file.endsWith("UMG_vidtrkimg_00602537560646_01_001_RGB300_1400x1400.jpg"));
