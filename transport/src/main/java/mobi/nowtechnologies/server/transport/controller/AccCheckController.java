@@ -128,12 +128,13 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
 
         User user = userService.findByNameAndCommunity(userName, community);
         deviceUID = user != null && DeviceType.IOS.equals(user.getDeviceType().getName()) ? null : deviceUID;
 
-        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
+        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
