@@ -27,14 +27,13 @@ public class SonyParser extends IParser {
 
 	public SonyParser(String root) throws FileNotFoundException {
 		super(root);
-		LOGGER.debug("Sony parser loadin from " + root);
 	}
 
 	protected DropTrack loadXml(String file) {
 
 		DropTrack result = new DropTrack();
 		SAXBuilder builder = new SAXBuilder();
-		LOGGER.debug("Loading " + file);
+		LOGGER.debug("Loading [{}]", file);
 		File xmlFile = new File(file);
 
 		try {
@@ -178,10 +177,10 @@ public class SonyParser extends IParser {
 							territoryData.price = Float.parseFloat(price);
 						} catch (Exception e) {
 						}
-						String startdate = territory.getChildText("SALES_START_DATE");
-						SimpleDateFormat dateparse = new SimpleDateFormat("yyyyMMdd");
+						String startDate = territory.getChildText("SALES_START_DATE");
+						SimpleDateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
 						try {
-							territoryData.startdate = dateparse.parse(startdate);
+							territoryData.startdate = dateParse.parse(startDate);
 						} catch (ParseException e) {
 						}
 						territoryData.reportingId = reportingId;

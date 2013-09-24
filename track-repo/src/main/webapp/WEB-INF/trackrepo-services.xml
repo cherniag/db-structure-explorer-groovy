@@ -44,6 +44,7 @@
         <property name="emiRoot" value="${trackRepo.ingest.emi.root}" />
         <property name="iodaRoot" value="${trackRepo.ingest.ioda.root}" />
         <property name="manualRoot" value="${trackRepo.ingest.manual.root}" />
+        <property name="absoluteRoot" value="${trackRepo.ingest.absolute.root}" />
 	</bean>
 
     <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl">

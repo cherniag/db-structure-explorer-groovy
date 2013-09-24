@@ -16,7 +16,6 @@ public class WarnerParserV34 extends DDEXParser {
 
 	public WarnerParserV34(String root) throws FileNotFoundException {
         super(root);
-        LOGGER.info("Warner parser loading from " + root);
 	}
 
 	@Override
