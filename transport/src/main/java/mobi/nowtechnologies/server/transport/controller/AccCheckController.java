@@ -60,7 +60,8 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-                        @PathVariable("community") String community) throws Exception {
+            @RequestParam(required = false, value = "IDFA") String idfa,
+            @PathVariable("community") String community) throws Exception {
 
         User user = null;
         Exception ex = null;
@@ -79,7 +80,11 @@ public class AccCheckController extends CommonController {
 
             final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
                     pushNotificationToken, deviceType, transactionReceipt);
-            
+
+            if(idfa != null){
+                user = userService.updateTockenDetails(user, idfa);
+            }
+
             user = userService.getUserWithSelectedCharts(user.getId());
             List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
 
@@ -123,12 +128,13 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
 
         User user = userService.findByNameAndCommunity(userName, community);
         deviceUID = user != null && DeviceType.IOS.equals(user.getDeviceType().getName()) ? null : deviceUID;
 
-        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
+        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -148,9 +154,10 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
 
-        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
+        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community).getModelMap().get(MODEL_NAME);
     }
 
     protected boolean isValidDeviceUID(String deviceUID){
