@@ -16,7 +16,6 @@ import static mobi.nowtechnologies.server.shared.log.LogUtils.putGlobalMDC;
 import static mobi.nowtechnologies.server.shared.log.LogUtils.removeGlobalMDC;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
 
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +53,10 @@ public class UpdateO2UserTask {
 
 	private void updateUser(User u) {
 		LOG.info("getting subscriber data for phone [{}], id=[{}]", u.getMobile(), u.getId());
+		if ( userService.isPromotedDevice(u.getMobile()) ) {
+			LOG.info("[promoted device] skipping subscriber data for [{}]", u.getMobile());
+			return;
+		}
 		O2SubscriberData o2SubscriberData = o2Service.getSubscriberData(u.getMobile());
 		LOG.debug("subscriber data: [{}] ", o2SubscriberData);
 

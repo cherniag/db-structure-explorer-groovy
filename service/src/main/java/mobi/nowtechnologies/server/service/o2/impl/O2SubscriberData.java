@@ -103,4 +103,9 @@ public class O2SubscriberData {
 		this.businessOrConsumerSegment = businessOrConsumerSegment;
 	}
 
+    public O2SubscriberData withTariff4G(boolean tariff4g){
+        setTariff4G(tariff4g);
+        return this;
+    }
+
 }

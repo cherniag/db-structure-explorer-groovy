@@ -209,7 +209,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getNextSibling()
 					.getFirstChild().getNodeValue());
 		} catch (Exception e) {
-			LOGGER.error("Error of the number validation " + phoneNumber, e);
+			LOGGER.error("Error of the number validation [{}]: [{}]", phoneNumber, e.getMessage());
 			throw new ExternalServiceException("602", "O2 server cannot be reached");
 		}
 	}

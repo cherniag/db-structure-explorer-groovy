@@ -33,8 +33,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
 	
-	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification">
-	</bean>
+	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification"/>
+
+    <bean id="service.O2UserDetailsUpdater" class="mobi.nowtechnologies.server.service.O2UserDetailsUpdater"/>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
@@ -65,6 +66,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="refundService" ref="service.RefundService" />
         <property name="o2Service" ref="service.O2Service"/>
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
+        <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
