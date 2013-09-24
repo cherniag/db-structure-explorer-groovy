@@ -159,7 +159,7 @@ public class TrackServiceImpl implements TrackService {
 
         Track track = trackRepository.findOneWithCollections(trackId);
 
-        if (track == null || track.getStatus() != TrackStatus.ENCODED || track.getStatus() != TrackStatus.PUBLISHED)
+        if (track == null || (track.getStatus() != TrackStatus.ENCODED && track.getStatus() != TrackStatus.PUBLISHED))
             return track;
 
         TrackStatus oldStatus = track.getStatus();

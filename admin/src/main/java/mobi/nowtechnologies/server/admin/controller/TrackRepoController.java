@@ -27,10 +27,11 @@ import java.util.concurrent.Callable;
 public class TrackRepoController extends AbstractCommonController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoController.class);
 	public static final String TRACK_REPO_FILES_URL = "trackRepoFilesURL";
+    private static final int DEFAULT_EXECUTOR_TIMEOUT = 60000;
 	
 	private TrackRepoService trackRepoService;
 	private String trackRepoFilesURL;
-    private Integer executorTimeout;
+    private Integer executorTimeout = DEFAULT_EXECUTOR_TIMEOUT;
 	
 	public void setTrackRepoService(TrackRepoService trackRepoService) {
 		this.trackRepoService = trackRepoService;

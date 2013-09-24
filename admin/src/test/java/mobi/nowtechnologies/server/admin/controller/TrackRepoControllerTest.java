@@ -91,13 +91,14 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test(expected=ExternalServiceException.class)
-	public void testEncodeTrack_Exception() {
+	public void testEncodeTrack_Exception() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
 		when(trackRepoService.encode(any(TrackDto.class))).thenThrow(new ExternalServiceException("tracks.encode.error", "Couldn't encode track"));
-		
-		trackRepositoryController.encodeTrack(configTrackDto);
+
+        WebAsyncTask<TrackDto> task = trackRepositoryController.encodeTrack(configTrackDto);
+        task.getCallable().call();
 	}
 	
 	@Test
@@ -114,12 +115,13 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test(expected=ServiceException.class)
-	public void testPullTrack_Exception() {
+	public void testPullTrack_Exception() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
 		when(trackRepoService.pull(any(TrackDto.class))).thenThrow(new ServiceException("tracks.pull.error", "Couldn't pull track"));
-		
-		trackRepositoryController.pullTrack(configTrackDto);
+
+        WebAsyncTask<TrackDto> task = trackRepositoryController.pullTrack(configTrackDto);
+        task.getCallable().call();
 	}
 }

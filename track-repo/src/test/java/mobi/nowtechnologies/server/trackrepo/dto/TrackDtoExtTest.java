@@ -182,19 +182,6 @@ public class TrackDtoExtTest {
         assertEquals(territory.getReportingId(), ter.getReportingId());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testTrackDtoExt_NotNullMediaType_Failure()
-            throws Exception {
-        AssetFile mediaFile = null;
-        AssetFile coverFile = null;
-
-        Track track = new Track();
-        track.setCoverFile(coverFile);
-        track.setMediaFile(mediaFile);
-
-        new TrackDtoMapper(track);
-    }
-
 	/**
 	 * Run the List<TrackDtoMapper> toList(List<Track>) method test.
 	 *

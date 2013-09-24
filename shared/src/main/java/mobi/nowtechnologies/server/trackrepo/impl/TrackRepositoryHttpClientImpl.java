@@ -59,7 +59,9 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TrackRepositoryHttpClientImpl.class);
-	private String username = "admin";
+	private static final Integer DEFAULT_NUM_QUERY_THREADS = 1;
+
+    private String username = "admin";
 	private String password = "admin";
 	private String trackRepoUrl = "http://localhost:8080/trackrepo/";
 	
@@ -70,7 +72,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	protected DateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
     protected Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
     protected Gson gsonMillis;
-    protected Integer numQuerySchedulerThreads ;
+    protected Integer numQuerySchedulerThreads = DEFAULT_NUM_QUERY_THREADS;
     protected ScheduledExecutorService queryScheduler;
 
     public void init(){

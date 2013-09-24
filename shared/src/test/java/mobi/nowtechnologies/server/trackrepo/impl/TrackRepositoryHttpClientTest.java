@@ -70,6 +70,7 @@ public class TrackRepositoryHttpClientTest {
 		client = new TrackRepositoryHttpClientImpl();
 		client.setUsername(clientUsername);
 		client.setPassword(clientPassword);
+        client.init();
 	}
 
     @Test
@@ -448,7 +449,7 @@ public class TrackRepositoryHttpClientTest {
 			public HttpEntity getEntity() {
 				try {
 					return new StringEntity(
-							"{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\",\"ingestionDate\":\"2011-09-28\",\"status\":\"ENCODED\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) 2010 Paul Simon under exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true,\"ingestionUpdateDate\":\"2011-11-14\",\"publishDate\":null,\"files\":[{\"type\":\"DOWNLOAD\",\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"},{\"type\":\"\",\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"}]}");
+							"{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\",\"ingestionDate\":\"2011-09-28\",\"status\":\"ENCODED\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) 2010 Paul Simon under exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true,\"ingestionUpdateDate\":\"2011-11-14\",\"publishDate\":\"2011-11-14\",\"files\":[{\"type\":\"DOWNLOAD\",\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"},{\"type\":\"\",\"filename\":\"/global/path/temp.aud\",\"resolution\":\"RATE_ORIGINAL\"}]}");
 				} catch (UnsupportedEncodingException e) {
 					return null;
 				}
