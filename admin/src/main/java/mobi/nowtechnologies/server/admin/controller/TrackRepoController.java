@@ -51,6 +51,11 @@ public class TrackRepoController extends AbstractCommonController{
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
+    @InitBinder({IngestWizardDataDto.INGEST_WIZARD_DATA_DTO})
+    public void initBinderForIngestWizardDataDto(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
+    }
+
 	@RequestMapping(value = "/tracks/list", method = RequestMethod.GET)
 	public ModelAndView findTracks(@RequestParam(value = "query", required = false) String query,
                                    @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,

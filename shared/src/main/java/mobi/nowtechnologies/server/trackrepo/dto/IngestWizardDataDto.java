@@ -9,7 +9,6 @@ import java.util.List;
  * User: sanya
  * Date: 7/15/13
  * Time: 2:41 PM
- * To change this template use File | Settings | File Templates.
  */
 public class IngestWizardDataDto {
     public static final String INGEST_WIZARD_DATA_DTO = "ingestWizardDataDto";
