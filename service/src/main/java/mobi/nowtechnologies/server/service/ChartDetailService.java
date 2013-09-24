@@ -57,7 +57,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> findChartDetailTree(User user, Integer chartId, boolean createDrmIfNotExists, boolean fetchLocked) {
+	public List<ChartDetail> findChartDetailTree(User user, Integer chartId, Date choosedPublishTime, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -76,7 +76,6 @@ public class ChartDetailService {
 
 		LOGGER.debug("input parameters user, chartId: [{}], [{}]", user, chartId);
 
-		Date choosedPublishTime = new Date();
 		long choosedPublishTimeMillis = choosedPublishTime.getTime();
 
 		List<ChartDetail> chartDetails;
@@ -101,6 +100,8 @@ public class ChartDetailService {
 		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);
 		return chartDetails;
 	}
+
+
 
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc) {
 		if (isrc == null)
