@@ -1,15 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
-
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentStatusDao;
@@ -21,7 +11,6 @@ import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +23,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -63,7 +59,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, null);
         
         assertEquals("ACTIVATED", getActivation(mav));
     }
@@ -77,7 +73,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, "Now Music");
 
         //then
         assertEquals("REGISTERED", getActivation(mav));
@@ -92,7 +88,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, "Now Music");
 
         //then
         assertEquals("ENTERED_NUMBER", getActivation(mav));

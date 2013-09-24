@@ -1,12 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -14,12 +7,8 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
-import mobi.nowtechnologies.server.trackrepo.enums.*;
-import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
@@ -27,6 +16,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -439,4 +434,18 @@ public class UserRepositoryIT {
 		assertEquals(testUser.getId(), actualUsers.get(1).getId());
 			
 	}
+
+    @Test
+    public void testUpdateTokenDetails_IDFA_Success() throws Exception {
+
+        Integer userId = 103;
+        String idfa = "11111122222333334444";
+
+        int result = userRepository.updateTockenDetails(userId, idfa);
+
+        assertEquals(1, result);
+
+        User user = userRepository.findOne(103);
+        assertEquals(idfa, user.getIdfa());
+    }
 }
