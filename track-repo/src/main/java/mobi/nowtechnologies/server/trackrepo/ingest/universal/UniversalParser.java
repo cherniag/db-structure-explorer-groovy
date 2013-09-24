@@ -23,6 +23,8 @@ import java.util.*;
 public class UniversalParser extends IParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
     private PeriodFormatter durationFormatter;
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+    protected SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 
     public UniversalParser(String root) throws FileNotFoundException {
         super(root);
@@ -139,12 +141,11 @@ public class UniversalParser extends IParser {
     }
 
     private Date parseStartDate(String releaseDate) {
-        SimpleDateFormat dateparse = new SimpleDateFormat("dd-MMM-yyyy");
         Date startDate = null;
 
         try {
             if (releaseDate != null) {
-                startDate = dateparse.parse(releaseDate);
+                startDate = dateFormat.parse(releaseDate);
             }
         } catch (ParseException e) {
         }
@@ -154,7 +155,6 @@ public class UniversalParser extends IParser {
 
     private String parseYear(Date startDate) {
         String year = null;
-        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 
         if (startDate != null) {
             year = yearFormat.format(startDate);

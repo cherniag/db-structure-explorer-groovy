@@ -186,7 +186,7 @@ public class UniversalParserTest {
         DropTerritory territory = track.territories.get(0);
         Assert.assertEquals("GB", territory.country);
         Assert.assertEquals("UMC", territory.label);
-        Assert.assertEquals(1378674000000L, territory.startdate.getTime());
+        Assert.assertEquals("09-Sep-2013", fixture.dateFormat.format(territory.startdate));
         Assert.assertEquals(null, territory.currency);
         Assert.assertEquals(null, territory.price);
         Assert.assertEquals("FRUV71300321", territory.reportingId);
