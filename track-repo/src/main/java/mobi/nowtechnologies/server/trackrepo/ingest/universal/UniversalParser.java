@@ -194,7 +194,7 @@ public class UniversalParser extends IParser {
 
                 List<Element> products = rootNode.getChild("products").getChildren("product");
                 for (Element product : products) {
-                    result.putAll(parseProduct(drop.getName(), product));
+                    result.putAll(parseProduct(drop.name, product));
                 }
             } catch (IOException io) {
                 LOGGER.error(io.getMessage());
