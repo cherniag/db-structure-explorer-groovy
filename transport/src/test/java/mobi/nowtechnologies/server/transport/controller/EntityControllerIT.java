@@ -59,7 +59,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, null);
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null);
         
         assertEquals("ACTIVATED", getActivation(mav));
     }
@@ -73,7 +73,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("REGISTERED", getActivation(mav));
@@ -88,7 +88,7 @@ public class EntityControllerIT {
 
         //when
         ModelAndView mav = controller.accountCheckForO2Client(
-                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", null, "Now Music");
+                null, "Now Music", null, userName, null, null, null, "deviceUID", null, null, "1234", "Now Music", "Now Music");
 
         //then
         assertEquals("ENTERED_NUMBER", getActivation(mav));
