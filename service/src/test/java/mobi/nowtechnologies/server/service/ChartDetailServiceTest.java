@@ -400,7 +400,7 @@ public class ChartDetailServiceTest {
 		User user = null;
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 	}
 
 	/**
@@ -418,7 +418,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(new UserGroup());
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(),  true, true);
 	}
 
 	/**
@@ -439,7 +439,7 @@ public class ChartDetailServiceTest {
 		user.setUserGroup(userGroup);
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 	}
 
 	/**
@@ -474,7 +474,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -525,7 +525,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 		
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, false);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, false);
 		
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -579,7 +579,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -630,7 +630,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertTrue(actualChartDetails.isEmpty());
