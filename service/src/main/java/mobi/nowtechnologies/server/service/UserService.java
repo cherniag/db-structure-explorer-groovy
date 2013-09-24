@@ -59,14 +59,16 @@ import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
-import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
+import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -1791,6 +1793,17 @@ public class UserService {
 	public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
 	}
+
+    @Transactional
+    public User updateTockenDetails(User user, String idfa) {
+        int result = userRepository.updateTockenDetails(user.getId(), idfa);
+
+        if(result > 0){
+            user.setIdfa(idfa);
+        }
+
+        return user;
+    }
 
 	@Transactional(readOnly = true)
 	public List<User> getUsersForRetryPayment() {

@@ -157,4 +157,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "  where c.rewriteUrlParameter = ?2" +
             " and u.userName = ?1 ")
     User findOne(String userName, String communityUrl);
+
+    @Modifying
+    @Query(value="update User user " +
+            "set " +
+            "user.idfa=:idfa " +
+            "where " +
+            "user.id=:id")
+    int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
 }
