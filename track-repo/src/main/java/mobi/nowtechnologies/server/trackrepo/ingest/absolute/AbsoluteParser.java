@@ -65,7 +65,7 @@ public class AbsoluteParser extends DDEXParser {
             prepareXPath(file);
             return super.loadXml(file);
         } catch (SaxonApiException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return Collections.<String, DropTrack>emptyMap();
     }
