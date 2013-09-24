@@ -31,12 +31,12 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
 
     @Override
     public TrackDto pullTrack(Long id) throws Exception {
-        return trackController.pull(id);
+        return (TrackDto) trackController.pull(id).getCallable().call();
     }
 
     @Override
     public TrackDto encodeTrack(Long id, Boolean isHighRate, Boolean licensed) throws Exception {
-        return new TrackDto(trackController.encode(id, isHighRate, licensed));
+        return new TrackDto((TrackDto) trackController.encode(id, isHighRate, licensed).getCallable().call());
     }
 
     @Override

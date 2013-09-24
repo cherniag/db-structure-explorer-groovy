@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
@@ -77,18 +78,16 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test
-	public void testEncodeTrack_Successfull() {
+	public void testEncodeTrack_Successfull() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
 		when(trackRepoService.encode(any(TrackDto.class))).thenReturn(resultTrackDto);
 		
-		ModelAndView modelAndView = trackRepositoryController.encodeTrack(configTrackDto);
+		WebAsyncTask<TrackDto> task = trackRepositoryController.encodeTrack(configTrackDto);
 		
-		assertNotNull(modelAndView);
-		Map<String, Object> model = modelAndView.getModel();
-		assertEquals(resultTrackDto, model.get(TrackDto.TRACK_DTO));
-		assertEquals(null, modelAndView.getViewName());
+		assertNotNull(task);
+		assertEquals(resultTrackDto, (TrackDto)task.getCallable().call());
 	}
 	
 	@Test(expected=ExternalServiceException.class)
@@ -102,18 +101,16 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test
-	public void testPullTrack_Successfull() {
+	public void testPullTrack_Successfull() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
 		when(trackRepoService.pull(any(TrackDto.class))).thenReturn(resultTrackDto);
+
+        WebAsyncTask<TrackDto> task = trackRepositoryController.pullTrack(configTrackDto);
 		
-		ModelAndView modelAndView = trackRepositoryController.pullTrack(configTrackDto);
-		
-		assertNotNull(modelAndView);
-		Map<String, Object> model = modelAndView.getModel();
-		assertEquals(resultTrackDto, model.get(TrackDto.TRACK_DTO));
-		assertEquals(null, modelAndView.getViewName());
+		assertNotNull(task);
+		assertEquals(resultTrackDto, (TrackDto)task.getCallable().call());
 	}
 	
 	@Test(expected=ServiceException.class)

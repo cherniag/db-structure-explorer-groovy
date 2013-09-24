@@ -83,6 +83,7 @@
 	<bean name="admin.TrackRepoController"
 		class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
 		<property name="trackRepoService" ref="service.TrackRepoService" />
+		<property name="executorTimeout" value="${trackRepo.executor.queueCapacity}" />
 		<property name="trackRepoFilesURL" value="${trackRepo.filesURL}" />
 	</bean>
 	

@@ -8,16 +8,20 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.Callable;
 
 @Controller
 public class TrackRepoController extends AbstractCommonController{
@@ -26,6 +30,7 @@ public class TrackRepoController extends AbstractCommonController{
 	
 	private TrackRepoService trackRepoService;
 	private String trackRepoFilesURL;
+    private Integer executorTimeout;
 	
 	public void setTrackRepoService(TrackRepoService trackRepoService) {
 		this.trackRepoService = trackRepoService;
@@ -34,10 +39,13 @@ public class TrackRepoController extends AbstractCommonController{
 	public void setTrackRepoFilesURL(String trackRepoFilesURL) {
 		this.trackRepoFilesURL = trackRepoFilesURL;
 	}
-	
-	@InitBinder()
+
+    public void setExecutorTimeout(Integer executorTimeout) {
+        this.executorTimeout = executorTimeout;
+    }
+
+    @InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
 	public void initBinder(WebDataBinder binder) {
-        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
@@ -63,27 +71,50 @@ public class TrackRepoController extends AbstractCommonController{
 	}
 	
 	@RequestMapping(value = "/tracks/encode", method = RequestMethod.POST)
-	public ModelAndView encodeTrack(@ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
+	public @ResponseBody WebAsyncTask<TrackDto> encodeTrack(final @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[] { track });
 
-		track = trackRepoService.encode(track);
+        WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                TrackDto result = trackRepoService.encode(track);
+                return result;
+            }
+        });
+        encodeTask.onTimeout(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
-        ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject(TrackDto.TRACK_DTO, track);
+                return trackRepoService.find(criteria, new PageRequest(0, 10)).getList().get(0);
+            }
+        });
 
-		return modelAndView;
+		return encodeTask;
 	}
 	
 	@RequestMapping(value = "/tracks/pull", method = RequestMethod.POST)
-	public ModelAndView pullTrack(@Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
+	public @ResponseBody WebAsyncTask<TrackDto> pullTrack(final @Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
-		track = trackRepoService.pull(track);
+        WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                return trackRepoService.pull(track);
+            }
+        });
+        pullTask.onTimeout(new Callable<TrackDto>() {
+            @Override
+            public TrackDto call() throws Exception {
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject(TrackDto.TRACK_DTO, track);
+                return trackRepoService.find(criteria, new PageRequest(0, 10)).getList().get(0);
+            }
+        });
 
-		return modelAndView;
+		return pullTask;
 	}
 
 	@RequestMapping(value = "/drops", method = RequestMethod.GET)

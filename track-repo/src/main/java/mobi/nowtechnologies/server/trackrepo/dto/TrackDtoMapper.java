@@ -38,13 +38,14 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 		this.setLicensed(track.getLicensed());
 		this.setResolution(track.getResolution());
 		this.setItunesUrl(track.getItunesUrl());
+        this.setPublishDate(track.getPublishDate());
 
 		this.setTerritoryCodes(track.getTerritoryCodes());
         this.setLabel(track.getLabel());
         this.setReleaseDate(track.getReleaseDate());
         this.setCoverFileName(track.getCoverFileId() != null ? track.getCoverFileId().toString() : "0");
         this.setMediaFileName(track.getMediaFileId() != null ? track.getMediaFileId().toString() : "0");
-        this.setMediaType(FileType.valueOf(track.getMediaType().name()));
+        this.setMediaType(track.getMediaType() != null ? FileType.valueOf(track.getMediaType().name()) : null);
 
         if(track.getFiles() != null){
             List<ResourceFileDto> files = new LinkedList<ResourceFileDto>();

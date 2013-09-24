@@ -21,24 +21,30 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
     @Override
     public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pagable) {
 
-        String suffixWithoutFetchQuery = createSuffixQuery(searchTrackCreateria);
-
-        Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
-        countQuery.setFirstResult(pagable.getOffset());
-        countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
-        List<Integer> ids = countQuery.getResultList();
-        Long count = new Long(ids.size() + pagable.getOffset());
-
         String suffixQuery = createSuffixQuery(searchTrackCreateria);
+
+        Long total = 1L;
+        Integer pageSize = 1;
+        if(pagable != null){
+            Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixQuery, searchTrackCreateria);
+            countQuery.setFirstResult(pagable.getOffset());
+            countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
+            List<Integer> ids = countQuery.getResultList();
+            total = new Long(ids.size() + pagable.getOffset());
+            pageSize = pagable.getPageSize();
+        }
+
         Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCreateria);
-        listQuery.setFirstResult(pagable.getOffset());
-        listQuery.setMaxResults(pagable.getPageSize());
+        if(pagable != null){
+            listQuery.setFirstResult(pagable.getOffset());
+            listQuery.setMaxResults(pagable.getPageSize());
+        }
 
         List<Track> limitedTrackList = (List<Track>) listQuery.getResultList();
 
         Iterator<Track> i = limitedTrackList.iterator();
         int j = 0;
-        while (i.hasNext() && j < pagable.getPageSize()) {
+        while (i.hasNext() && j < pageSize) {
             Track track = i.next();
 
             if (searchTrackCreateria.isWithTerritories())
@@ -54,7 +60,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             j++;
         }
 
-        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, count);
+        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, total);
         return page;
     }
 

@@ -698,7 +698,7 @@ public class UserService {
 	}
 
 	public User findById(int id) {
-		return entityService.findById(User.class, id);
+ 		return entityService.findById(User.class, id);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

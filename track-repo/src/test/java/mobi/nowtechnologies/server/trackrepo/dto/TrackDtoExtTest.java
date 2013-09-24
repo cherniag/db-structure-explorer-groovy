@@ -64,6 +64,7 @@ public class TrackDtoExtTest {
         track.setTerritoryCodes("GB, UA, US, NL");
         track.setCoverFile(coverFile);
         track.setMediaFile(mediaFile);
+        track.setPublishDate(new Date());
         track.setMediaType(AssetFile.FileType.DOWNLOAD);
 
 		TrackDtoMapper result = new TrackDtoMapper(track);
@@ -91,6 +92,7 @@ public class TrackDtoExtTest {
 		assertEquals(track.getMediaFile().getId().toString(), result.getMediaFileName());
 		assertEquals(track.getMediaType().name(), result.getMediaType().name());
 		assertEquals(track.getItunesUrl(), result.getItunesUrl());
+        assertEquals(track.getPublishDate(), result.getPublishDate());
 		assertEquals(null, result.getReleaseDate());
 		assertEquals(null, result.getTerritories());
 		assertEquals(null, result.getFiles());
