@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -62,6 +61,15 @@ public class ChartServiceTest {
 	
 	//test data
 	private User testUser;
+
+    @Test
+    public void testGetCurrentTime_Success(){
+        Community community = CommunityFactory.createCommunity();
+
+        Date result = fixture.getCurrentTime(community);
+
+        assertNotNull(result);
+    }
 
 	@Test
 	public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
@@ -414,12 +422,12 @@ public class ChartServiceTest {
         videoChartDetail.getMedia().setHeaderFile(null);
 
 		doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(1), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(2), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(3), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(4), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(5), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(6), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(1), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(2), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(3), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(4), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(5), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(6), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
 		Object[] result = fixture.processGetChartCommand(testUser, communityName, true, true);
@@ -456,11 +464,11 @@ public class ChartServiceTest {
 		assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
 		verify(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(5), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(2), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(3), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(1), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(4), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(5), any(Date.class), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(2), any(Date.class), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(3), any(Date.class), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(1), any(Date.class), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(4), any(Date.class), anyBoolean(), anyBoolean());
 	}
 	
 	@Test
