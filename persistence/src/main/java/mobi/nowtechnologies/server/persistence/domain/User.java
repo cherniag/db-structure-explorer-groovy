@@ -320,6 +320,9 @@ public class User implements Serializable {
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
 
+    @Column(name = "idfa", nullable = true)
+    private String idfa;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -341,6 +344,14 @@ public class User implements Serializable {
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
 	}
+
+    public String getIdfa() {
+        return idfa;
+    }
+
+    public void setIdfa(String idfa) {
+        this.idfa = idfa;
+    }
 
     public boolean isShowFreeTrial() {
         return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());

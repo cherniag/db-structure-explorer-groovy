@@ -1797,6 +1797,17 @@ public class UserService {
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
 	}
 
+    @Transactional
+    public User updateTockenDetails(User user, String idfa) {
+        int result = userRepository.updateTockenDetails(user.getId(), idfa);
+
+        if(result > 0){
+            user.setIdfa(idfa);
+        }
+
+        return user;
+    }
+
 	@Transactional(readOnly = true)
 	public List<User> getUsersForRetryPayment() {
 
