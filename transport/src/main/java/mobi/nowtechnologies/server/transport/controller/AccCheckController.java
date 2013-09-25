@@ -125,10 +125,16 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @PathVariable("community") String community) throws Exception {
 
-        User user = userService.findByNameAndCommunity(userName, community);
-        deviceUID = user != null && DeviceType.IOS.equals(user.getDeviceType().getName()) ? null : deviceUID;
+        // hack for IOS7 users that needs to remove it soon
+       User user = userService.findByNameAndCommunity(userName, community);
+        if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
+            user.setDeviceUID(deviceUID);
+            userService.updateUser(user);
+            deviceUID = null;
+       }
+       ///
 
-        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
+       return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -150,7 +156,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @PathVariable("community") String community) throws Exception {
 
-        return (Response)accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
+        return (Response)accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, community).getModelMap().get(MODEL_NAME);
     }
 
     protected boolean isValidDeviceUID(String deviceUID){

@@ -203,7 +203,7 @@ public class UserAsm {
         accountCheckDTO.setDisplayName(user.getDisplayName());
         accountCheckDTO.setSubBalance((byte) subBalance);
         accountCheckDTO.setDeviceType(user.getDeviceType().getName());
-        accountCheckDTO.setDeviceUID(user.getDeviceString());
+        accountCheckDTO.setDeviceUID(user.getDeviceUID());
         accountCheckDTO.setPaymentType(oldPaymentType);
         accountCheckDTO.setPaymentEnabled(paymentEnabled);
         accountCheckDTO.setPhoneNumber(user.getMobile());

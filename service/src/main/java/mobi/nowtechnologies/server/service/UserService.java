@@ -588,6 +588,7 @@ public class UserService {
 		}
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
 	public User updateUser(User user) {
 		return userRepository.save(user);
 	}
@@ -707,6 +708,7 @@ public class UserService {
 		updateUser(user);
 	}
 
+    @Transactional(readOnly = true)
 	public User findById(int id) {
  		return entityService.findById(User.class, id);
 	}
@@ -1794,17 +1796,6 @@ public class UserService {
 	public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
 		userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
 	}
-
-    @Transactional
-    public User updateTockenDetails(User user, String idfa) {
-        int result = userRepository.updateTockenDetails(user.getId(), idfa);
-
-        if(result > 0){
-            user.setIdfa(idfa);
-        }
-
-        return user;
-    }
 
 	@Transactional(readOnly = true)
 	public List<User> getUsersForRetryPayment() {
