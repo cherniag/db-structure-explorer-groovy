@@ -435,17 +435,4 @@ public class UserRepositoryIT {
 			
 	}
 
-    @Test
-    public void testUpdateTokenDetails_IDFA_Success() throws Exception {
-
-        Integer userId = 103;
-        String idfa = "11111122222333334444";
-
-        int result = userRepository.updateTockenDetails(userId, idfa);
-
-        assertEquals(1, result);
-
-        User user = userRepository.findOne(103);
-        assertEquals(idfa, user.getIdfa());
-    }
 }
