@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.google.common.primitives.Ints.checkedCast;
+import static java.io.File.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
@@ -496,14 +497,28 @@ public abstract class DDEXParser extends IParser {
         super(root);
     }
 
+    private String getXmlFileName(String parentFolderName){
+        return parentFolderName +  ".xml";
+    }
+
+    private File getXmlFileParentFolder(File fileOrDir){
+        if (fileOrDir.isDirectory()) return fileOrDir;
+        else if (fileOrDir.isFile()) return fileOrDir.getParentFile();
+        else throw new IllegalArgumentException("Unknown folder content ["+fileOrDir+"]");
+    }
+
+    private File getXmlFile(File fileOrDir){
+        File xmlFileParentFolder = getXmlFileParentFolder(fileOrDir);
+        return new File(xmlFileParentFolder + separator + getXmlFileName(xmlFileParentFolder.getName()));
+    }
+
     public Map<String, DropTrack> ingest(DropData drop) {
         Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
         try {
             File folder = new File(drop.name);
             File[] content = folder.listFiles();
             for (File file : content) {
-                String xmlFileName = file.getName() + ".xml";
-                Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
+                Map<String, DropTrack> result = loadXml(getXmlFile(file));
 
                 if (result != null) {
                     tracks.putAll(result);
@@ -511,7 +526,7 @@ public abstract class DDEXParser extends IParser {
             }
 
         } catch (Exception e) {
-            LOGGER.error("Ingest failed: [{}]", e.getMessage());
+            LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
         }
         return tracks;
     }
