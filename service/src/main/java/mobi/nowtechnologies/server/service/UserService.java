@@ -588,6 +588,7 @@ public class UserService {
 		}
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
 	public User updateUser(User user) {
 		return userRepository.save(user);
 	}
@@ -707,6 +708,7 @@ public class UserService {
 		updateUser(user);
 	}
 
+    @Transactional(readOnly = true)
 	public User findById(int id) {
 		return entityService.findById(User.class, id);
 	}

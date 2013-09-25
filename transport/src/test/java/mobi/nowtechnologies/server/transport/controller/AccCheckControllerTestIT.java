@@ -154,11 +154,11 @@ public class AccCheckControllerTestIT {
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("<deviceUID>IOS</deviceUID>"));
+        assertTrue(resultXml.contains("<deviceUID>b88106713409e92622461a876abcd74b</deviceUID>"));
     }
 
     @Test
-    public void testAccountCheckForO2Client_greaterOrEquals3d9_WithNotCorrectDeviceUID_Success() throws Exception {
+    public void testAccountCheckForO2Client_greaterOrEquals3d9_IOS_WithNotCorrectDeviceUID_Success() throws Exception {
         String userName = "+447111111114";
         String apiVersion = "3.9";
         String communityName = "o2";
@@ -180,7 +180,7 @@ public class AccCheckControllerTestIT {
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("<deviceUID>IOS</deviceUID>"));
+        assertTrue(resultXml.contains("<deviceUID>fail</deviceUID>"));
 
         apiVersion = "4.0";
 
@@ -196,6 +196,6 @@ public class AccCheckControllerTestIT {
         aHttpServletResponse = resultActions.andReturn().getResponse();
         resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("<deviceUID>IOS</deviceUID>"));
+        assertTrue(resultXml.contains("<deviceUID>fail</deviceUID>"));
     }
 }
