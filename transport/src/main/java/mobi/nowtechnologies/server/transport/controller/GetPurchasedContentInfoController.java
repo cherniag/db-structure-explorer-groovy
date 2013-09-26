@@ -81,7 +81,9 @@ public class GetPurchasedContentInfoController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO",
-            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO.json"
+            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO.json",
+            "*/{apiVersion:4\\.2}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:4\\.2}/GET_PURCHASED_CONTENT_INFO.json"
     })
     public ModelAndView getPurchasedContentInfoAcceptHeaderSupport(
             @RequestParam("APP_VERSION") String appVersion,

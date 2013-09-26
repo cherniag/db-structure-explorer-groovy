@@ -146,8 +146,10 @@ public class GetNewsController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.1}/GET_NEWS",
-            "*/{community:o2}/{apiVersion:4\\.1}/GET_NEWS.json"
-    }, produces = "application/json")
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_NEWS.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_NEWS",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_NEWS.json"
+    })
     public ModelAndView getNews_O2AcceptHeaderSupport(
             @RequestParam("APP_VERSION") String appVersion,
             @RequestParam("COMMUNITY_NAME") String communityName,

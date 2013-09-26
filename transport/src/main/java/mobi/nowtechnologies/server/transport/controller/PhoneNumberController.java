@@ -63,9 +63,11 @@ public class PhoneNumberController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER",
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json",
-            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER.json"
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER.json"
     })
     public ModelAndView activatePhoneNumberAcceptHeaderSupport(
             @RequestParam(value = "PHONE", required = false) String phone,

@@ -131,7 +131,9 @@ public class ApplyInitPromoController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO",
-            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO.json"
+            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO",
+            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO.json"
     })
     public ModelAndView applyO2PromotionAcceptHeaderSupport(
             @RequestParam("COMMUNITY_NAME") String communityName,

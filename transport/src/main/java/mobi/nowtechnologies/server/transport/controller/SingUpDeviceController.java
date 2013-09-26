@@ -181,7 +181,9 @@ public class SingUpDeviceController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE",
-            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE.json"
+            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/SIGN_UP_DEVICE",
+            "*/{community:o2}/{apiVersion:4\\.2}/SIGN_UP_DEVICE.json"
     })
     public ModelAndView signUpDevice_O2AcceptHeaderSupport(HttpServletRequest request,
                                                            @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto,

@@ -318,7 +318,9 @@ public class GetChartController extends CommonController{
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.1}/GET_CHART",
-            "*/{community:o2}/{apiVersion:4\\.1}/GET_CHART.json"
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_CHART.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_CHART",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_CHART.json"
     })
     public ModelAndView getChart_O2_AcceptHeaderSupport(
             HttpServletRequest request,
