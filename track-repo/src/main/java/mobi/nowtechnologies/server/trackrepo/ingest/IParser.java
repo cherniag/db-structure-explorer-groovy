@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class IParser {
+public abstract class IParser{
 
 	public abstract Map<String, DropTrack> ingest(DropData drop);
 
@@ -42,17 +42,10 @@ public abstract class IParser {
 	protected boolean isDirectory(File file) {
 		try {
 			if (file.isDirectory() || file.getCanonicalFile().isDirectory()) {
-				if (file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath())) { // Link
-																								// loop.....
-																								// don't
-																								// follow
-					return false;
-				} else {
-					return true;
-				}
+                boolean symlink = file.getCanonicalPath().equals(file.getParentFile().getCanonicalPath());
+                return symlink ? false : true;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;

@@ -17,6 +17,7 @@ import java.util.*;
 import static junit.framework.Assert.assertFalse;
 import static mobi.nowtechnologies.server.admin.validator.MessageDtoValidator.*;
 import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence.*;
+import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.*;
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -78,93 +79,117 @@ public class MessageDtoValidatorTest {
     
     @Test
 	public void shouldValidateAsNoErrorsRichPopup() {
-        given().richPopup().bodyLengthIs(1000).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
+        given().richPopup().bodyLengthIs(1000).and().actionLengthIs(255).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
     
     @Test
 	public void shouldValidateAsWrongRichPopupBodyLength() {
-        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().theseErrorsAreOnly(1);
 	}
     
     @Test
 	public void shouldValidateAsWrongRichPopupBodyAndActionLengths() {
-        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(256).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(256).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionLength().theseErrorsAreOnly(2);
 	}
     
     @Test
 	public void shouldValidateAsWrongRichPopupBodyAndActionButtonTextLengths() {
-        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(256);
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionButtonTextLength().theseErrorsAreOnly(2);
 	}
     
     @Test
 	public void shouldValidateAsWrongRichPopupBodyLengthAndActionButtonIsNull() {
-        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextIsNull();
+        given().richPopup().bodyLengthIs(1001).and().actionLengthIs(255).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextIsNull();
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnWrongActionButtonTextValue().theseErrorsAreOnly(2);
 	}
-    
+
+    @Test
     public void shouldValidateAsNoErrorsMobileWebPortalRichPopup() {
         given().richPopup().bodyLengthIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
-    
+
+    @Test
     public void shouldValidateAsNoErrorsExternalUrlRichPopup() {
         given().richPopup().bodyLengthIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsNoError();
 	}
-    
+
+    @Test
+    public void shouldValidateAsNotNullActionRichPopup() {
+        given().richPopup().bodyLengthIs(1000).and().actionIs("http://i.ua").and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
+        whenCustomValidate();
+        then().validateAsFalse().and().returnNotNullActionError().and().theseErrorsAreOnly(1);
+    }
+
+    @Test
+    public void shouldValidateAsNoErrorRichPopup() {
+        given().richPopup().bodyLengthIs(1000).and().actionIs(null).and().actionTypeIs(OUR_PLAYLIST).and().actionButtonTextLengthIs(255);
+        whenCustomValidate();
+        then().validateAsNoError();
+    }
+
+    @Test
     public void shouldValidateAsWrongMobileWebPortalRichPopupActionUri() {
         given().richPopup().bodyLengthIs(1000).and().actionIs("notUri").and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnNotUriActionError().and().theseErrorsAreOnly(1);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongExternalActionRichPopupActionUri() {
         given().richPopup().bodyLengthIs(1000).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(255);
         whenCustomValidate();
         then().validateAsFalse().and().returnNotUriActionError().and().theseErrorsAreOnly(1);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongExternalActionRichPopupActionUriWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs("notUri").and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNotUriActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongExternalActionRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(EXTERNAL_URL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongMobileWebPortalRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(MOBILE_WEB_PORTAL).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongSpecificNewsStoryRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_NEWS_STORY).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnNullActionError().and().theseErrorsAreOnly(3);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongSpecificTrackRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(A_SPECIFIC_TRACK).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
         then().validateAsFalse().and().returnWrongRichPopupBodyLengthError().and().returnNullActionError().and().returnWrongActionButtonTextLength().and().theseErrorsAreOnly(3);
 	}
-    
+
+    @Test
     public void shouldValidateAsWrongOfficialTop40PlaylistRichPopupActionValueWithWrongBodyAndActionButtonTextLengths() {
         given().richPopup().bodyLengthIs(1001).and().actionIs(null).and().actionTypeIs(OFFICIAL_TOP_40_PLAYLIST).and().actionButtonTextLengthIs(256);
         whenCustomValidate();
@@ -181,12 +206,12 @@ public class MessageDtoValidatorTest {
 	}
 
     private MessageDtoValidatorTest news() {
-        messageDto.setMessageType(MessageType.NEWS);
+        messageDto.setMessageType(NEWS);
         return this;
     }
     
     private MessageDtoValidatorTest richPopup() {
-        messageDto.setMessageType(MessageType.RICH_POPUP);
+        messageDto.setMessageType(RICH_POPUP);
         return this;
     }
     
@@ -331,6 +356,15 @@ public class MessageDtoValidatorTest {
     	
 		return this;
 	}
+
+    private MessageDtoValidatorTest returnNotNullActionError() {
+        FieldError fieldError = errors.getFieldError(ACTION);
+
+        assertEquals(RICH_POPUP_ACTION_SHOULD_BE_NULL, fieldError.getCode());
+        assertEquals(THE_ACTION_FIELD_SHOULD_BE_NULL_FOR_THIS_ACTION_TYPE, fieldError.getDefaultMessage());
+
+        return this;
+    }
     
     private String getChars(int size) {
 		return new String(new char[size]).replace('\0', 'm');

@@ -51,18 +51,6 @@ public class AccountLogService {
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	public List<PaymentHistoryItemDto> findByUserIdOrderedByLogTimestampDesc(int userId, Integer maxResults) {
-		LOGGER.debug("input parameters userId, maxResults: [{}], [{}]", userId, maxResults);
-		
-		List<AccountLog> accountLogs = accountLogDao.findByUserIdOrderedByLogIdDesc(userId, maxResults);
-		
-		List<PaymentHistoryItemDto> paymentHistoryItemDtos = AccountLog.toPaymentHistoryItemDto(accountLogs);
-		
-		LOGGER.debug("Output parameter paymentHistoryItemDtos=[{}]", paymentHistoryItemDtos);
-		return paymentHistoryItemDtos;
-	}
-	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public List<Integer> getRelatedMediaUIDsByLogType(final int userId, final TransactionType transactionType) {
 		LOGGER.debug("input parameters userId, transactionType: [{}], [{}]", userId, transactionType);
 		List<Integer> result = new LinkedList<Integer>();

@@ -1,0 +1,2524 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ernm:NewReleaseMessage LanguageAndScriptCode="en" MessageSchemaVersionId="/ern/341" xs:schemaLocation="http://ddex.net/xml/ern/341 http://ddex.net/xml/ern/341/release-notification.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/341">
+    <MessageHeader>
+        <MessageThreadId>G0100002442286_MQB</MessageThreadId>
+        <MessageId>9527404</MessageId>
+        <MessageSender>
+            <PartyId>PADPIDA2007040502I</PartyId>
+            <PartyName>
+                <FullName>Sony Music Entertainment</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>Musicqubed</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-25T14:05:27.628-04:00</MessageCreatedDateTime>
+        <MessageControlType>TestMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator>UpdateMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100008</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Täysikuu</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H2M59S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Täysikuu</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Täysikuu</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Toivo Kärki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Reino Helismaa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Kaj Kuittinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T1</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-001.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>e2767ec5f8a5ac0116c88f8b8e6dc533</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T2</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-001.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>9c6ab5cb9fbed0a387c880018eaebe94</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T3</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-001.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>3213c10584616aa3e41c3600193bbb21</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100015</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A2</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Muista minua</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M8S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muista minua</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muista minua</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Toivo Kärki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Orvokki Itä</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T4</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-002.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>4ad7d45a0e6faaf93ef77f897781d0b1</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T5</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-002.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>a43eae7b3412b55f9b4d43115f51d53c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T6</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-002.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ef488e41c3045b97671f6ed4dbc337ff</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100009</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A3</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tuulia</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H2M28S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuulia</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuulia</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Lassi Utsjoki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T7</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-003.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>4d211a6361e72a150c4c115ca1034ea7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T8</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-003.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>364090fe487c3f1e49fdc01d61d6ba67</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T9</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-003.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c0915890f74d1d0cf86aad1aaf07efa1</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100012</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A4</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Rakkautemme valssi</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M12S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rakkautemme valssi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rakkautemme valssi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T10</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-004.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>0afe212133dd803b0603aec4b5bf7573</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T11</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-004.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>43c90b28c49e8cdcfffd47ac028553f4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T12</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-004.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c8415a1f8e5a24a5698fd1c763871d7c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100202</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A5</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Usein itken illoin</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M17S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Usein itken illoin</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Usein itken illoin</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Georg Malmstén</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Martti Maja</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T13</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-005.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>97fbbac0f8d695e0af355cc880fb5cba</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T14</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-005.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>e9adf6b28bc62600931311b64c7fcd3d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T15</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-005.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>0315252896a30bf36f8a611e4cfa7d0d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100201</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A6</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Vihreät niityt</TitleText>
+                <SubTitle>Greenfields</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H4M20S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vihreät niityt</TitleText>
+                    <SubTitle>Greenfields</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vihreät niityt (Greenfields)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>R. Dehr</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Terry Gilkyson</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>F. Miller</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Reino Helismaa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Translator" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T16</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-006.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>6bb731fee3bae0f6719e08d71142fbfe</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T17</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-006.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>9eb5d9fa947870ff1136c61e9b953384</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T18</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-006.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>f60670a6224969251457758442f83747</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100011</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A7</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Minä soitan sulle illalla</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M35S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä soitan sulle illalla</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä soitan sulle illalla</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Toivo Kärki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Reino Helismaa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Tatu Pekkarinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Kaj Kuittinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T19</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-007.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>4718d76812092935ab138f05577e3aff</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T20</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-007.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>a88f51ce2405d917dd7893d7ba7ea4c1</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T21</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-007.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>fa350f33ea80fd3e5f4933b918a23fe5</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100203</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A8</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tähdet Meren Yllä</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M36S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tähdet Meren Yllä</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tähdet Meren Yllä</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Unto Mononen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T22</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-008.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>07db317f870bac52769168ac25657fd7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T23</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-008.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c23e5f8ea4d1999b448de9571606fa7f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T24</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-008.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>f446048144d87fcab0260e67508bc0fd</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100204</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A9</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Hiljainen kitara</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M14S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiljainen kitara</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiljainen kitara</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Cindy Walker</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Juha Vainio</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Translator" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T25</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-009.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>466b619949011b393d38acf0a6e76cf6</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T26</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-009.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>097ee3738828da765db3aaa9e7c935a8</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T27</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-009.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>cb0147cce7ffa11097ba779993e6b39d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100010</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A10</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Metsäkukkia</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H2M49S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Metsäkukkia</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Metsäkukkia</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Traditional</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Traditional </FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>トラディショナル</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Anu Tuulos</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Kaj Kuittinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Sony Music Entertainment Finland Oy</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T28</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-010.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5eea53339baf07de37d2a572b589b5b0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T29</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-010.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>c242107fb471550f21b0e55ab5a4ce39</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T30</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-010.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>22d8e2406bd2b9594e22ac8f0572dc33</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBMB9100032</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A11</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Onni jonka annoin pois</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H2M37S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Onni jonka annoin pois</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Onni jonka annoin pois</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Toivo Kärki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Reino Helismaa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Kaj Kuittinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T31</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-011.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>69e67c98f698e656c51409af9b848ec0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T32</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-011.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5033307755d88505dab6889ef414340e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T33</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-011.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>38ffd08ecbc4d34016193dae3cf44bb9</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>FIBAR9100010</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A12</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Eron hetki on kaunis</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H3M26S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Eron hetki on kaunis</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Eron hetki on kaunis</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Toivo Kärki</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>H. Neva</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Kaj Kuittinen</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Arranger" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Seppo Matintalo</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>RCA Camden</LabelName>
+                <PLine>
+                    <Year>1991</Year>
+                    <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T34</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A00002442286_T-10413_SoundRecording_001-012.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>92b909bb46b61063f2dc98ed6d8229a7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T35</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-11006_SoundRecording_001-012.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>bbe73f41426ec8058979dcba7d2d5cd9</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T36</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10253_SoundRecording_001-012.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>1fbddf6b8d952f45b8051958229eb27c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">G0100002442286</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A13</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>T37</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1500</ImageHeight>
+                    <ImageWidth>1490</ImageWidth>
+                    <ImageResolution>72</ImageResolution>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A00002442286_T-10026_Image.jpg</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>68eac0c555283fd215cff48321815ad0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <GRid>A10301A00002442286</GRid>
+                <ICPN IsEan="false">743217280925</ICPN>
+                <CatalogNumber Namespace="DPID:PADPIDA2007040502I">G0100002442286</CatalogNumber>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799209</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>UPDATED PRODUCT TITLE</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A13</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>UPDATED PRODUCT TITLE</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>UPDATED PRODUCT TITLE</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <Title TitleType="GroupingTitle">
+                            <TitleText>Disc 1</TitleText>
+                        </Title>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>2</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>3</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>4</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>5</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>6</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>7</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>8</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>9</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>10</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>11</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>12</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>13</SequenceNumber>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A13</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>RCA Camden</LabelName>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <OriginalReleaseDate>2000-01-14</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H39M41S</Duration>
+            <PLine>
+                <Year>1999</Year>
+                <PLineText>(P) 1999 BMG Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004751669W</GRid>
+                <ISRC>FIBMB9100008</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799210</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Täysikuu</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Täysikuu</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Täysikuu</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H2M59S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004751668Y</GRid>
+                <ISRC>FIBMB9100015</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799211</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R2</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Muista minua</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muista minua</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Muista minua</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M8S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516670</GRid>
+                <ISRC>FIBMB9100009</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799212</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R3</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tuulia</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuulia</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tuulia</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H2M28S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516661</GRid>
+                <ISRC>FIBMB9100012</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799213</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R4</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Rakkautemme valssi</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rakkautemme valssi</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Rakkautemme valssi</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M12S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516653</GRid>
+                <ISRC>FIBMB9100202</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799214</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R5</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Usein itken illoin</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Usein itken illoin</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Usein itken illoin</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M17S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516645</GRid>
+                <ISRC>FIBMB9100201</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799215</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R6</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Vihreät niityt</TitleText>
+                <SubTitle>Greenfields</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vihreät niityt</TitleText>
+                    <SubTitle>Greenfields</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Vihreät niityt (Greenfields)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H4M20S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516637</GRid>
+                <ISRC>FIBMB9100011</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799216</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R7</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Minä soitan sulle illalla</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä soitan sulle illalla</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Minä soitan sulle illalla</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M35S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516629</GRid>
+                <ISRC>FIBMB9100203</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799217</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R8</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tähdet Meren Yllä</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tähdet Meren Yllä</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Tähdet Meren Yllä</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M36S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004751661B</GRid>
+                <ISRC>FIBMB9100204</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799218</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R9</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Hiljainen kitara</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiljainen kitara</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Hiljainen kitara</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M14S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0004751660D</GRid>
+                <ISRC>FIBMB9100010</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799219</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R10</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Metsäkukkia</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Metsäkukkia</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Metsäkukkia</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H2M49S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Sony Music Entertainment Finland Oy</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516590</GRid>
+                <ISRC>FIBMB9100032</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799220</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R11</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Onni jonka annoin pois</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Onni jonka annoin pois</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Onni jonka annoin pois</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H2M37S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00047516581</GRid>
+                <ISRC>FIBAR9100010</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000004799221</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R12</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Eron hetki on kaunis</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Tapani Kansa</DisplayArtistName>
+                <LabelName>RCA Camden</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Eron hetki on kaunis</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Eron hetki on kaunis</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Tapani Kansa</FullName>
+                    </PartyName>
+                    <ArtistRole>Arranger</ArtistRole>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H3M26S</Duration>
+            <PLine>
+                <Year>1991</Year>
+                <PLineText>(P) 1991 Oy Bluebird Music Ab</PLineText>
+            </PLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">12.23</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.70</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R10</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.94</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R11</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.51</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R12</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.71</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R2</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.55</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R3</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.62</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R4</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.82</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R5</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.76</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R6</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.52</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R7</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.75</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R8</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.61</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R9</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.50</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2000-01-14</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ernm:NewReleaseMessage>

@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,207 +22,266 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE
 
 public abstract class DDEXParser extends IParser {
 
-    protected static final Log LOG = LogFactory.getLog(DDEXParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
     public DDEXParser(String root) throws FileNotFoundException {
         super(root);
     }
 
+    public Map<String, DropTrack> ingest(DropData drop) {
+
+        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+        try {
+            File folder = new File(drop.name);
+            File[] content = folder.listFiles();
+            for (File file : content) {
+                String xmlFileName = file.getName() + ".xml";
+                Map<String, DropTrack> result = loadXml(new File(file.getAbsolutePath() + "/" + xmlFileName));
+
+                if (result != null) {
+                    tracks.putAll(result);
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Ingest failed "+e.getMessage());
+        }
+        return tracks;
+
+    }
+
     @SuppressWarnings("unchecked")
-    protected Map<String, DropTrack> loadXml(String file) {
+    public Map<String, DropTrack> loadXml(File xmlFile) {
 
-        Map<String, DropTrack> result = new HashMap<String, DropTrack>();
         SAXBuilder builder = new SAXBuilder();
-        LOG.info("Loading " + file);
-        File xmlFile = new File(file);
-        String fileRoot = xmlFile.getParent();
-        Map<String, List<DropAssetFile>> files = new HashMap<String, List<DropAssetFile>>();
-        Map<String, DropTrack> resourceDetails = new HashMap<String, DropTrack>();
+        LOGGER.info("Loading [{}]", xmlFile.getAbsolutePath());
 
+        try {
+            String fileRoot = xmlFile.getParent();
+            Map<String, DropTrack> resourceDetails = new HashMap<String, DropTrack>();
+
+            Document document = builder.build(xmlFile);
+            Element rootNode = document.getRootElement();
+
+            String distributor = getDistributor(rootNode);
+
+            Type action = getActionType(rootNode);
+
+            Map<String, List<DropAssetFile>> files = parseMediaFiles(fileRoot, resourceDetails, rootNode);
+
+            DropAssetFile imageFile = parseImageFile(fileRoot, rootNode);
+
+            Map<String, Map<String, DropTerritory>> deals = parseDeals(rootNode);
+
+            return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
+
+        } catch (IOException io) {
+            LOGGER.error("Exception " + io.getMessage());
+        } catch (JDOMException jdomex) {
+            LOGGER.error("Exception " + jdomex.getMessage());
+        }
+        return null;
+    }
+
+    private Map<String, DropTrack> parseReleases(DropAssetFile imageFile, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, Map<String, Map<String, DropTerritory>> deals, String distributor, Type action, Element rootNode) {
+        Element albumElement = null;
+        Map<String, DropTrack> result = new HashMap<String, DropTrack>();
+        List<Element> releaseList = rootNode.getChild("ReleaseList").getChildren("Release");
+
+        for (int i = 0; i < releaseList.size(); i++) {
+            Element release = releaseList.get(i);
+            String type = release.getChildText("ReleaseType");
+            LOGGER.info("release type " + type);
+
+            boolean isAlbum = checkAlbum(type);
+
+            if (!isAlbum) {
+                DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
+
+                result.put(track.isrc + track.productCode + getClass(), track);
+            } else {
+                albumElement = release;
+            }
+        }
+
+        parseAlbum(result, albumElement);
+
+        return result;
+    }
+
+    private void parseAlbum(Map<String, DropTrack> result, Element albumElement) {
         String albumTitle = null;
         String upc = null;
         String grid = null;
 
-        try {
-            Document document = builder.build(xmlFile);
-            Element rootNode = document.getRootElement();
-            String distributor = getDistributor(rootNode);
+        albumTitle = albumElement.getChild("ReferenceTitle").getChildText("TitleText");
+        Element releaseId = albumElement.getChild("ReleaseId");
+        if (releaseId != null) {
+            upc = releaseId.getChildText("ICPN");
+            grid = releaseId.getChildText("GRid");
+        }
+        LOGGER.info("album " + albumTitle);
+        // Add album title to all tracks
+        if (albumTitle != null)
+            for (DropTrack track : result.values()) {
+                track.album = albumTitle;
+                setUpc(track, upc);
+                setGRid(track, grid);
+            }
+    }
 
-            String updateIndicator = rootNode.getChildText("UpdateIndicator");
-            Type action = "UpdateMessage".equals(updateIndicator) ? UPDATE : INSERT;
+    private DropTrack parseTrack(String distributor, Type action, Map<String, Map<String, DropTerritory>> deals, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, DropAssetFile imageFile, Element release) {
+        DropTrack track = new DropTrack();
+        track.type = action;
 
-            List<Element> mediaFiles = rootNode.getChild("ResourceList").getChildren("SoundRecording");
+        String resourceRef = release.getChild("ReleaseResourceReferenceList").getChildText("ReleaseResourceReference");
+        LOGGER.info("Resource reference " + resourceRef);
 
-            parseMediaFiles(fileRoot, files, resourceDetails, mediaFiles);
+        if (files.get(resourceRef) != null)
+            track.files.addAll(files.get(resourceRef));
 
-            DropAssetFile imageFile = parseImageFile(fileRoot, rootNode);
-            Map<String, Map<String, DropTerritory>> deals = parseDeals(rootNode);
+        if (imageFile != null)
+            track.files.add(imageFile);
 
-            // Parse releases
-            mediaFiles = rootNode.getChild("ReleaseList").getChildren("Release");
+        getIds(release, track, track.files);
 
-            for (int i = 0; i < mediaFiles.size(); i++) {
-                DropTrack track = new DropTrack();
-                Element release = mediaFiles.get(i);
-                String type = release.getChildText("ReleaseType");
-                LOG.info("release type " + type);
-                track.type = action;
+        DropTrack resourceDetail = resourceDetails.get(resourceRef);
 
-                // Add files
-                String resourceRef = release.getChild("ReleaseResourceReferenceList").getChildText("ReleaseResourceReference");
-                LOG.info("Resource reference " + resourceRef);
-                if (files.get(resourceRef) != null)
-                    track.files.addAll(files.get(resourceRef));
-                if (imageFile != null)
-                    track.files.add(imageFile);
+        if (track.isrc == null || "".equals(track.isrc)) {
+            if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
+                    && resourceDetail != null) {
+                LOGGER.info("Getting ISRC from resource " + resourceRef);
+                track.isrc = resourceDetail.isrc;
+            }
+        }
 
-                getIds(release, track, track.files);
-                DropTrack resourceDetail = resourceDetails.get(resourceRef);
-                if (track.isrc == null || "".equals(track.isrc)) {
-                    if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
-                            && resourceDetail != null) {
-                        LOG.info("Getting ISRC from resource " + resourceRef);
-                        track.isrc = resourceDetail.isrc;
+        Element pLine = release.getChild("PLine");
+        if (pLine != null) {
+            track.year = pLine.getChildText("Year");
+            track.copyright = pLine.getChildText("PLineText");
+        } else if (resourceDetail != null) {
+            track.year = resourceDetail.year;
+            track.copyright = resourceDetail.copyright;
+        }
+
+        if (resourceDetail != null) {
+            track.explicit = resourceDetail.explicit;
+        }
+
+        Element details = release.getChild("ReleaseDetailsByTerritory");
+
+        track.title = release.getChild("ReferenceTitle").getChildText("TitleText");
+        track.subTitle = getSubTitle(release, details);
+        track.artist = getArtist(details);
+        track.label = details.getChildText("LabelName");
+
+        XMLOutputter outPutter = new XMLOutputter();
+        track.xml = outPutter.outputString(release);
+
+        parseTerritories(distributor, deals, release, track);
+
+        return track;
+    }
+
+    private String getArtist(Element details) {
+        String artist = details.getChildText("DisplayArtistName");
+        if (artist == null || "".equals(artist)) {
+            // Try another format (used by CI)
+            List<Element> displayArtists = details.getChildren("DisplayArtist");
+            if (displayArtists != null && displayArtists.size() > 0) {
+                for (Element displayArtist : displayArtists) {
+                    if (displayArtist.getChildText("ArtistRole").equals("MainArtist")) {
+                        artist = displayArtist.getChild("PartyName").getChildText("FullName");
                     }
                 }
-
-                boolean isAlbum = checkAlbum(type, track);
-
-                if (!isAlbum) {
-                    Element pLine = release.getChild("PLine");
-                    if (pLine != null) {
-                        track.year = pLine.getChildText("Year");
-                        track.copyright = pLine.getChildText("PLineText");
-                    } else if (resourceDetail != null) {
-                        track.year = resourceDetail.year;
-                        track.copyright = resourceDetail.copyright;
-                    }
-
-                    if (resourceDetail != null) {
-                        track.explicit = resourceDetail.explicit;
-                    }
-
-                    Element details = release.getChild("ReleaseDetailsByTerritory");
-                    track.title = release.getChild("ReferenceTitle").getChildText("TitleText");
-                    track.subTitle = release.getChild("ReferenceTitle").getChildText("SubTitle");
-
-                    //Get all sub titles from ReleaseDetailsByTerritory
-                    Element detailsTitle = details.getChild("Title");
-                    List subTitles = detailsTitle.getChildren("SubTitle");
-                    if (subTitles != null) {
-                        String fullSubTitle = new String();
-                        for (int si = 0; si < subTitles.size(); si++) {
-                            Element subTitle = (Element) subTitles.get(si);
-                            fullSubTitle += subTitle.getText();
-                            if (si < subTitles.size() - 1)
-                                fullSubTitle += " / ";
-                        }
-                        if (!"".equals(fullSubTitle))
-                            track.subTitle = fullSubTitle;
-                    }
-                    String artist = details.getChildText("DisplayArtistName");
-                    if (artist == null || "".equals(artist)) {
-                        // Try another format (used by CI)
-                        List<Element> displayArtists = details.getChildren("DisplayArtist");
-                        if (displayArtists != null && displayArtists.size() > 0) {
-                            for (Element displayArtist : displayArtists) {
-                                if (displayArtist.getChildText("ArtistRole").equals("MainArtist")) {
-                                    artist = displayArtist.getChild("PartyName").getChildText("FullName");
-                                }
-                            }
-                            if (artist == null || "".equals(artist)) {
-                                // Default to first one.....
-                                artist = displayArtists.get(0).getChild("PartyName").getChildText("FullName");
-                            }
-                        }
-                    }
-                    track.artist = artist;
-                    String label = details.getChildText("LabelName");
-                    track.label = label;
-                    XMLOutputter outPutter = new XMLOutputter();
-                    track.xml = outPutter.outputString(release);
-
-                    // Add territory info (need to add deals....)
-                    List<Element> territoriesNodes = release.getChildren("ReleaseDetailsByTerritory");
-                    for (Element territory : territoriesNodes) {
-                        String code = territory.getChildText("TerritoryCode");
-                        String releaseReference = release.getChildText("ReleaseReference");
-                        Element genre = territory.getChild("Genre");
-                        if (genre != null)
-                            track.genre = genre.getChildText("GenreText");
-
-                        Map<String, DropTerritory> deal = deals.get(releaseReference);
-                        LOG.info("Deal for release ref  " + releaseReference + " " + deal);
-
-                        if (deal == null) {
-                            continue;
-                        }
-                        if ("Worldwide".equals(code)) {
-                            Set<String> countries = deal.keySet();
-                            Iterator<String> it = countries.iterator();
-                            while (it.hasNext()) {
-                                String country = it.next();
-                                LOG.info("Adding country " + country);
-                                DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
-                                DropTerritory dealTerritory = deal.get(country);
-                                territoryData.country = dealTerritory.country;
-                                territoryData.takeDown = dealTerritory.takeDown;
-                                territoryData.distributor = distributor;
-                                String territoryLabel = territory.getChildText("LabelName");
-                                territoryData.label = territoryLabel;
-                                territoryData.reportingId = track.isrc;
-                                territoryData.startdate = dealTerritory.startdate;
-                                territoryData.price = dealTerritory.price;
-                                territoryData.priceCode = dealTerritory.priceCode;
-                                territoryData.currency = dealTerritory.currency;
-                                territoryData.dealReference = dealTerritory.dealReference;
-                            }
-                        } else {
-                            LOG.info("Adding country " + code);
-
-                            DropTerritory dealTerritory = deal.get(code);
-                            DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
-                            territoryData.country = dealTerritory.country;
-                            territoryData.takeDown = dealTerritory.takeDown;
-                            territoryData.distributor = distributor;
-                            String territoryLabel = territory.getChildText("LabelName");
-                            territoryData.label = territoryLabel;
-                            territoryData.reportingId = track.isrc;
-                            territoryData.startdate = dealTerritory.startdate;
-                            territoryData.price = dealTerritory.price;
-                            territoryData.priceCode = dealTerritory.priceCode;
-                            territoryData.currency = dealTerritory.currency;
-                            territoryData.dealReference = dealTerritory.dealReference;
-                        }
-                    }
-
-                    result.put(track.isrc + track.productCode + getClass(), track);
-                } else {
-                    albumTitle = release.getChild("ReferenceTitle").getChildText("TitleText");
-                    Element releaseId = release.getChild("ReleaseId");
-                    if (releaseId != null) {
-                        upc = releaseId.getChildText("ICPN");
-                        grid = releaseId.getChildText("GRid");
-                    }
-                    LOG.info("album " + albumTitle);
+                if (artist == null || "".equals(artist)) {
+                    // Default to first one.....
+                    artist = displayArtists.get(0).getChild("PartyName").getChildText("FullName");
                 }
             }
-
-            // Add album title to all tracks
-            if (albumTitle != null)
-                for (DropTrack track : result.values()) {
-                    track.album = albumTitle;
-                    setUpc(track, upc);
-                    setGRid(track, grid);
-                }
-            return result;
-
-        } catch (IOException io) {
-            LOG.error("Exception " + io.getMessage());
-        } catch (JDOMException jdomex) {
-            LOG.error("Exception " + jdomex.getMessage());
         }
-        return null;
+        return artist;
+    }
+
+    private String getSubTitle(Element release, Element details) {
+        String subTitle = release.getChild("ReferenceTitle").getChildText("SubTitle");
+
+        //Get all sub titles from ReleaseDetailsByTerritory
+        Element detailsTitle = details.getChild("Title");
+        List subTitles = detailsTitle.getChildren("SubTitle");
+        if (subTitles != null) {
+            String fullSubTitle = new String();
+            for (int si = 0; si < subTitles.size(); si++) {
+                Element subTitleElement = (Element) subTitles.get(si);
+                fullSubTitle += subTitleElement.getText();
+                if (si < subTitles.size() - 1)
+                    fullSubTitle += " / ";
+            }
+            if (!"".equals(fullSubTitle))
+                subTitle = fullSubTitle;
+        }
+
+        return subTitle;
+    }
+
+    private void parseTerritories(String distributor, Map<String, Map<String, DropTerritory>> deals, Element release, DropTrack track) {
+        List<Element> territoriesNodes = release.getChildren("ReleaseDetailsByTerritory");
+        for (Element territory : territoriesNodes) {
+            String code = territory.getChildText("TerritoryCode");
+            String releaseReference = release.getChildText("ReleaseReference");
+            Element genre = territory.getChild("Genre");
+            if (genre != null)
+                track.genre = genre.getChildText("GenreText");
+
+            Map<String, DropTerritory> deal = deals.get(releaseReference);
+            LOGGER.info("Deal for release ref  " + releaseReference + " " + deal);
+
+            if (deal == null) {
+                continue;
+            }
+            if ("Worldwide".equals(code)) {
+                Set<String> countries = deal.keySet();
+                Iterator<String> it = countries.iterator();
+                while (it.hasNext()) {
+                    String country = it.next();
+                    LOGGER.info("Adding country " + country);
+                    DropTerritory territoryData = DropTerritory.getTerritory(country, track.territories);
+                    DropTerritory dealTerritory = deal.get(country);
+                    territoryData.country = dealTerritory.country;
+                    territoryData.takeDown = dealTerritory.takeDown;
+                    territoryData.distributor = distributor;
+                    String territoryLabel = territory.getChildText("LabelName");
+                    territoryData.label = territoryLabel;
+                    territoryData.reportingId = track.isrc;
+                    territoryData.startdate = dealTerritory.startdate;
+                    territoryData.price = dealTerritory.price;
+                    territoryData.priceCode = dealTerritory.priceCode;
+                    territoryData.currency = dealTerritory.currency;
+                    territoryData.dealReference = dealTerritory.dealReference;
+                }
+            } else {
+                LOGGER.info("Adding country " + code);
+
+                DropTerritory dealTerritory = deal.get(code);
+                DropTerritory territoryData = DropTerritory.getTerritory(code, track.territories);
+                territoryData.country = dealTerritory.country;
+                territoryData.takeDown = dealTerritory.takeDown;
+                territoryData.distributor = distributor;
+                String territoryLabel = territory.getChildText("LabelName");
+                territoryData.label = territoryLabel;
+                territoryData.reportingId = track.isrc;
+                territoryData.startdate = dealTerritory.startdate;
+                territoryData.price = dealTerritory.price;
+                territoryData.priceCode = dealTerritory.priceCode;
+                territoryData.currency = dealTerritory.currency;
+                territoryData.dealReference = dealTerritory.dealReference;
+            }
+        }
+    }
+
+    private Type getActionType(Element rootNode) {
+        String updateIndicator = rootNode.getChildText("UpdateIndicator");
+        return "UpdateMessage".equals(updateIndicator) ? UPDATE : INSERT;
     }
 
     private Map<String, Map<String, DropTerritory>> parseDeals(Element rootNode) {
@@ -235,71 +294,19 @@ public abstract class DDEXParser extends IParser {
             Map<String, DropTerritory> dealsMap = new HashMap<String, DropTerritory>();
 
             List<Element> dealNodes = releaseDeal.getChildren("Deal");
+
             for (Element dealNode : dealNodes) {
                 Element dealTerms = dealNode.getChild("DealTerms");
-                boolean validUseType = false;
-                Element usage = dealTerms.getChild("Usage");
-                if (usage != null) {
-                    List<Element> useTypes = usage.getChildren("UseType");
-                    for (Element useType : useTypes) {
-                        if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
-                                || "PermanentDownload".equals(useType.getText())) {
-                            LOG.info("Found valid usage " + useType.getText());
-                            validUseType = true;
-                            break;
-                        }
-                    }
-                }
-                String takeDown = dealTerms.getChildText("TakeDown");
-                if (takeDown != null || validUseType) {
-                    List<Element> countriesNodes = dealTerms.getChildren("TerritoryCode");
-                    String startDate = dealTerms.getChild("ValidityPeriod").getChildText("StartDate");
-                    Date dealStartDate = null;
-                    SimpleDateFormat dateParse = new SimpleDateFormat("yyyy-MM-dd");
-                    try {
-                        dealStartDate = dateParse.parse(startDate);
-                    } catch (ParseException e) {
-                    }
 
-                    Element priceInfo = dealTerms.getChild("PriceInformation");
-                    String price = null;
-                    String currency = null;
-                    String priceType = null;
-                    if (priceInfo != null) {
-                        Element wholeSalePrice = priceInfo.getChild("WholesalePricePerUnit");
-                        if (wholeSalePrice != null) {
-                            currency = wholeSalePrice.getAttributeValue("CurrencyCode");
-                            price = wholeSalePrice.getText();
-                        }
-                        priceType = priceInfo.getChildText("PriceType");
-                        if (priceType == null) {
-                            priceType = priceInfo.getChildText("PriceRangeType");
-                        }
-                    }
+                boolean validUseType = validDealUseType(dealTerms);
 
-                    for (Element country : countriesNodes) {
-                        LOG.info("Deal for country " + country.getText());
-                        DropTerritory territory = dealsMap.get(country.getText());
-                        if (territory == null) {
-                            territory = new DropTerritory();
-                            dealsMap.put(country.getText(), territory);
-                        }
-                        territory.country = country.getText();
-                        territory.takeDown = (takeDown != null);
-                        territory.startdate = dealStartDate;
-                        territory.dealReference = dealNode.getChildText("DealReference");
-                        try {
-                            if (price != null)
-                                territory.price = Float.valueOf(price);
-                        } catch (NumberFormatException e) {
-                        }
-                        territory.currency = currency;
-                        territory.priceCode = priceType;
-                    }
-                }
+                String reference = dealNode.getChildText("DealReference");
+
+                parseTerritoryCodes(dealsMap, reference, dealTerms, validUseType);
             }
+
             for (Element reference : references) {
-                LOG.info("Loading deal reference " + reference.getText());
+                LOGGER.info("Loading deal reference " + reference.getText());
                 Map<String, DropTerritory> ExistingDealsMap = deals.get(reference.getText());
                 if (ExistingDealsMap == null)
                     deals.put(reference.getText(), dealsMap);
@@ -308,6 +315,73 @@ public abstract class DDEXParser extends IParser {
             }
         }
         return deals;
+    }
+
+    private void parseTerritoryCodes(Map<String, DropTerritory> dealsMap, String reference, Element dealTerms, boolean validUseType) {
+        String takeDown = dealTerms.getChildText("TakeDown");
+        if (takeDown != null || validUseType) {
+            List<Element> countriesNodes = dealTerms.getChildren("TerritoryCode");
+            String startDate = dealTerms.getChild("ValidityPeriod").getChildText("StartDate");
+            Date dealStartDate = null;
+            SimpleDateFormat dateParse = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                dealStartDate = dateParse.parse(startDate);
+            } catch (ParseException e) {
+            }
+
+            Element priceInfo = dealTerms.getChild("PriceInformation");
+            String price = null;
+            String currency = null;
+            String priceType = null;
+            if (priceInfo != null) {
+                Element wholeSalePrice = priceInfo.getChild("WholesalePricePerUnit");
+                if (wholeSalePrice != null) {
+                    currency = wholeSalePrice.getAttributeValue("CurrencyCode");
+                    price = wholeSalePrice.getText();
+                }
+                priceType = priceInfo.getChildText("PriceType");
+                if (priceType == null) {
+                    priceType = priceInfo.getChildText("PriceRangeType");
+                }
+            }
+
+            for (Element country : countriesNodes) {
+                LOGGER.info("Deal for country " + country.getText());
+                DropTerritory territory = dealsMap.get(country.getText());
+                if (territory == null) {
+                    territory = new DropTerritory();
+                    dealsMap.put(country.getText(), territory);
+                }
+                territory.country = country.getText();
+                territory.takeDown = (takeDown != null);
+                territory.startdate = dealStartDate;
+                territory.dealReference = reference;
+                try {
+                    if (price != null)
+                        territory.price = Float.valueOf(price);
+                } catch (NumberFormatException e) {
+                }
+                territory.currency = currency;
+                territory.priceCode = priceType;
+            }
+        }
+    }
+
+    private boolean validDealUseType(Element dealTerms) {
+        boolean validUseType = false;
+        Element usage = dealTerms.getChild("Usage");
+        if (usage != null) {
+            List<Element> useTypes = usage.getChildren("UseType");
+            for (Element useType : useTypes) {
+                if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
+                        || "PermanentDownload".equals(useType.getText())) {
+                    LOGGER.info("Found valid usage " + useType.getText());
+                    validUseType = true;
+                    break;
+                }
+            }
+        }
+        return validUseType;
     }
 
     private DropAssetFile parseImageFile(String fileRoot, Element rootNode) {
@@ -336,7 +410,10 @@ public abstract class DDEXParser extends IParser {
         return imageFile;
     }
 
-    private void parseMediaFiles(String fileRoot, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, List<Element> list) {
+    private Map<String, List<DropAssetFile>> parseMediaFiles(String fileRoot, Map<String, DropTrack> resourceDetails, Element rootNode) {
+        Map<String, List<DropAssetFile>> files = new HashMap<String, List<DropAssetFile>>();
+        List<Element> list = rootNode.getChild("ResourceList").getChildren("SoundRecording");
+
         for (Element node: list) {
             Element details = node.getChild("SoundRecordingDetailsByTerritory");
             String reference = node.getChildText("ResourceReference");
@@ -373,7 +450,7 @@ public abstract class DDEXParser extends IParser {
                 List<DropAssetFile> resourceFiles = files.get(node.getChildText("ResourceReference"));
                 if (resourceFiles == null) {
                     resourceFiles = new ArrayList<DropAssetFile>();
-                    files.put(node.getChildText("ResourceReference"), resourceFiles);
+                    files.put(reference, resourceFiles);
                 }
                 resourceFiles.add(assetFile);
 
@@ -386,6 +463,8 @@ public abstract class DDEXParser extends IParser {
                 }
             }
         }
+
+        return files;
     }
 
     private String getDistributor(Element rootNode) {
@@ -400,20 +479,59 @@ public abstract class DDEXParser extends IParser {
         return root + "/resources/" + file;
     }
 
+    public List<DropData> getDrops(boolean auto) {
+
+        List<DropData> result = new ArrayList<DropData>();
+        File rootFolder = new File(root);
+        result.addAll(getDrops(rootFolder, auto));
+        for (int i = 0; i < result.size(); i++) {
+            LOGGER.info("Drop folder " + result.get(i));
+        }
+        return result;
+    }
+
+    protected List<DropData> getDrops(File folder, boolean auto) {
+
+        List<DropData> result = new ArrayList<DropData>();
+        File[] content = folder.listFiles();
+        boolean deliveryComplete = false;
+        boolean processed = false;
+        for (File file : content) {
+            if (isDirectory(file)) {
+                result.addAll(getDrops(file, auto));
+            } else if (file.getName().startsWith("BatchComplete")) {
+                deliveryComplete = true;
+            } else if ("ingest.ack".equals(file.getName())) {
+                processed = true;
+            } else if (auto && "autoingest.ack".equals(file.getName())) {
+                processed = true;
+            }
+        }
+        if (deliveryComplete && !processed) {
+            LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
+            DropData drop = new DropData();
+            drop.name =folder.getAbsolutePath();
+            drop.date = new Date(folder.lastModified());
+
+            result.add(drop);
+        }
+        return result;
+    }
+
     public abstract void getIds(Element release, DropTrack track, List<DropAssetFile> files);
 
     public void setUpc(DropTrack track, String upc) {
     }
 
-    public void setGRid(DropTrack track, String GRid) {
+    public void setGRid(DropTrack track, String GRid) {;
     }
 
-    public boolean checkAlbum(String type, DropTrack track) {
+    public boolean checkAlbum(String type) {
         if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
-            LOG.info("Album for " + type);
+            LOGGER.info("Album for " + type);
             return true;
         }
-        LOG.info("Track for " + type);
+        LOGGER.info("Track for " + type);
         return false;
 
     }

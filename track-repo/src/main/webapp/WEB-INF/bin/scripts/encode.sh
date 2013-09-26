@@ -2,7 +2,7 @@
 
 
 
-FFMPEG=/usr/local/bin/ffmpeg
+FFMPEG=ffmpeg
 #FFMPEG=/usr/bin/ffmpeg
 
 
@@ -57,7 +57,7 @@ case $TYPE in
 	"mp3") 
 
 		echo "MP3";;
-        "aac") 
+    "aac")
 
 		echo "AAC";;
 	"pcm_s16le")

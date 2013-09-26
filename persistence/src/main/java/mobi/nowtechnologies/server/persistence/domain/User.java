@@ -1,47 +1,44 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
-import static mobi.nowtechnologies.server.shared.AppConstants.*;
-import static mobi.nowtechnologies.server.shared.Utils.*;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import com.google.common.base.Objects;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
+import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.repository.query.Param;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
-import mobi.nowtechnologies.server.shared.enums.*;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.ITUNES_SUBSCRIPTION;
+import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -65,7 +62,7 @@ public class User implements Serializable {
 	public static final String NONE = "NONE";
 
     public static enum Fields {
-		userName, mobile, operator, id, paymentStatus, paymentType, paymentEnabled, facebookId;
+		userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
 	}
 
 	@Id
@@ -1069,12 +1066,6 @@ public class User implements Serializable {
 		return false;
 	}
 
-	public boolean isSubscribed() {
-		return isSubscribedStatus()
-				&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-				&& hasActivePaymentDetails();
-	}
-
 	public boolean isNotActivePaymentDetails() {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && !currentPaymentDetails.isActivated();
@@ -1158,10 +1149,6 @@ public class User implements Serializable {
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
-	public boolean isPending() {
-		return isSubscribed() && isBeforeExpiration(getEpochMillis(), 24);
-	}
-
 	public boolean isExpiring() {
 		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
 				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
@@ -1172,11 +1159,15 @@ public class User implements Serializable {
     }
 
     public boolean isOn4GVideoAudioBoughtPeriod(){
-        return isNextSubPaymentInTheFuture() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isOnBoughtPeriod() && is4GVideoAudioPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
     public boolean isOnAudioBoughtPeriod() {
-        return isNextSubPaymentInTheFuture() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+        return isOnBoughtPeriod() && isAudioPaymentDetails(lastSuccessfulPaymentDetails);
+    }
+
+    public boolean isOnBoughtPeriod() {
+        return isNextSubPaymentInTheFuture() && isNotNull(lastSuccessfulPaymentDetails);
     }
 
 	public boolean isNextSubPaymentInTheFuture() {
@@ -1238,7 +1229,6 @@ public class User implements Serializable {
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
-
     public SubscriptionDirection getSubscriptionDirection() {
 
         PaymentDetails currentDetails = getCurrentPaymentDetails();
@@ -1270,6 +1260,7 @@ public class User implements Serializable {
                 && is4G()) return DOWNGRADE;
         return null;
     }
+
     public boolean isOnVideoAudioFreeTrial() {
         return isLastPromoForVideo() && isOnFreeTrial();
     }
@@ -1279,7 +1270,15 @@ public class User implements Serializable {
     }
 
     public boolean isEligibleForVideo(){
-        return isO24GConsumer();
+        return isO24GConsumer() || isOnWhiteListedVideoAudioFreeTrial();
+    }
+
+    public boolean isOnWhiteListedVideoAudioFreeTrial(){
+        return isOnVideoAudioFreeTrial() && isWhiteListedLastPromo();
+    }
+
+    private boolean isWhiteListedLastPromo() {
+        return isNotNull(lastPromo) && lastPromo.isWhiteListed();
     }
 
     @Override

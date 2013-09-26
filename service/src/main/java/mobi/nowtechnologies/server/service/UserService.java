@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -59,14 +60,17 @@ import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
-import static mobi.nowtechnologies.server.shared.util.DateUtils.*;
+import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -79,7 +83,6 @@ public class UserService {
     private CountryAppVersionService countryAppVersionService;
     private DeviceTypeService deviceTypeService;
     private CountryService countryService;
-    private SagePayService sagePayService;
 	private PaymentService paymentService;
 
     private PromotionService promotionService;
@@ -105,6 +108,7 @@ public class UserService {
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
+    private O2UserDetailsUpdater o2UserDetailsUpdater;
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
     public void setO2ClientService(O2ClientService o2ClientService) {
@@ -162,10 +166,6 @@ public class UserService {
 	public void setCountryAppVersionService(
 			CountryAppVersionService countryAppVersionService) {
 		this.countryAppVersionService = countryAppVersionService;
-	}
-
-	public void setSagePayService(SagePayService sagePayService) {
-		this.sagePayService = sagePayService;
 	}
 
 	public void setPromotionService(PromotionService promotionService) {
@@ -226,7 +226,12 @@ public class UserService {
         this.communityService = communityService;
     }
 
+    public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
+        this.o2UserDetailsUpdater = o2UserDetailsUpdater;
+    }
+
     public Boolean canActivateVideoTrial(User u) {
+        if (u.isOnWhiteListedVideoAudioFreeTrial()) return false;
         String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
         Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
@@ -444,7 +449,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyO2PotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
-        Promotion promotion = null;
+        Promotion promotion;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
         String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
@@ -585,6 +590,7 @@ public class UserService {
 		}
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
 	public User updateUser(User user) {
 		return userRepository.save(user);
 	}
@@ -704,6 +710,7 @@ public class UserService {
 		updateUser(user);
 	}
 
+    @Transactional(readOnly = true)
 	public User findById(int id) {
 		return entityService.findById(User.class, id);
 	}
@@ -1630,7 +1637,14 @@ public class UserService {
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
                 user.getMobile());
         if(populateO2SubscriberData){
-        	populateO2subscriberData(user, msisdn);
+        	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
+				// if the device is promoted, we set the default field
+				user.setProvider("o2");
+				user.setSegment(SegmentType.CONSUMER);
+				user.setContract(Contract.PAYM);
+			} else {
+				populateO2subscriberData(user, msisdn);
+			}
         }
         
 		user.setMobile(msisdn);
@@ -1679,8 +1693,14 @@ public class UserService {
             }
         }
         if(updateContractAndProvider){
-        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-        	user.setProvider(ProviderType.valueOfKey(o2UserDetails.getOperator()));
+        	if ( isPromotedDevice(user.getMobile()) ) {
+				// if the device is promoted, we go with the default values
+        		user.setContract(Contract.PAYM);
+        		user.setProvider("o2");
+			} else {
+	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
+	        	user.setProvider(o2UserDetails.getOperator());
+			}
         }
         user.setActivationStatus(ActivationStatus.ACTIVATED);
         user.setUserName(user.getMobile());
@@ -1701,8 +1721,7 @@ public class UserService {
 		if (subBalance <= 0) {
 			user.setStatus(UserStatusDao.getLimitedUserStatus());
 			userRepository.save(user);
-			LOGGER.info("Unable to make weekly update balance is " + subBalance + ", user id [" + user.getId()
-					+ "]. So the user subscription status was changed on LIMITED");
+			LOGGER.info("Unable to decrease balance [{}] for user with id [{}]. So the user subscription status was changed on LIMITED", subBalance, user.getId());
 		} else {
 
 			user.setSubBalance((byte) (subBalance - 1));
@@ -1769,7 +1788,7 @@ public class UserService {
     public User downgradeUserTariff(User userWithOldTariff, Tariff newTariff) {
 
         Tariff oldTariff = userWithOldTariff.getTariff();
-        if (Tariff._4G.equals(oldTariff) && _3G.equals(newTariff)) {
+        if (_4G.equals(oldTariff) && _3G.equals(newTariff)) {
             if (userWithOldTariff.isOn4GVideoAudioBoughtPeriod()) {
                 LOGGER.info("Attempt to unsubscribe user and skip Video Audio bought period (old nextSubPayment = [{}]) because of tariff downgraded from [{}] Video Audio Subscription to [{}] ", userWithOldTariff.getNextSubPayment(), oldTariff, newTariff);
                 userWithOldTariff = skipBoughtPeriodAndUnsubscribe(userWithOldTariff, USER_DOWNGRADED_TARIFF);
@@ -1805,6 +1824,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User skipBoughtPeriodAndUnsubscribe(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
         userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, actionReason.getDescription());
         userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);
@@ -1839,16 +1859,34 @@ public class UserService {
         return user;
     }
 
-    /** called by UpdateO2User job when provider/segment/contract/4G/channel have been changed*/
-    public void o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
-		Tariff newTariff = o2SubscriberData.isTariff4G() ? Tariff._4G : Tariff._3G;
-		if (newTariff != user.getTariff()) {
-			LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(),  newTariff);
-			user = downgradeUserTariff(user, newTariff);
-		}
-        new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-        userRepository.save(user);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
+        Tariff newTariff = o2SubscriberData.isTariff4G() ? _4G : _3G;
+        if (!newTariff.equals(user.getTariff())) {
+            if (user.isOnWhiteListedVideoAudioFreeTrial()) LOGGER.info("User will not be downgraded because of he on white listed Video Audio Free Trial");
+            else {
+                LOGGER.info("tariff changed [{}] to [{}]", user.getTariff(), newTariff);
+                user = downgradeUserTariff(user, newTariff);
+            }
+        }
+        o2UserDetailsUpdater.setUserFieldsFromSubscriberData(user, o2SubscriberData);
+        return userRepository.save(user);
     }
+    
+    public boolean isPromotedDevice(String phoneNumber) {
+		boolean isPromoted = false;
+		try {
+			isPromoted = deviceService.isPromotedDevicePhone(
+					communityService.getCommunityByName("o2"),
+					phoneNumber,
+					null);
+		} catch ( Exception e ) {
+			LOGGER.error("", e);
+		}
+		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
+		
+		return isPromoted;
+	}
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID) {

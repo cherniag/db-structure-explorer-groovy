@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.After;
@@ -26,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+import static java.util.Collections.*;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -167,8 +170,8 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success()
 			throws Exception {
-		List<String> chartDetailIds = Collections.singletonList("ISRC");
-		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
+		List<String> chartDetailIds = singletonList("ISRC");
+		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		String communityName = "chartsnow";
 		
@@ -186,15 +189,16 @@ public class ChartServiceTest {
 	}
 	
 	@Test
-	public void testGetLockedChartItems_UserSubscribed_Success()
+	public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success()
 			throws Exception {
-		List<String> chartDetailIds = Collections.singletonList("ISRC");
-		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
+		List<String> chartDetailIds = singletonList("ISRC");
+		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+48*60*60);
+        user.setFreeTrialExpiredMillis(user.getNextSubPayment()*1000L);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -212,13 +216,14 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_UserPending_Success()
 			throws Exception {
-		List<String> chartDetailIds = Collections.singletonList("ISRC");
-		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
+		List<String> chartDetailIds = singletonList("ISRC");
+		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -236,14 +241,15 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_UserExpiring_Success()
 			throws Exception {
-		List<String> chartDetailIds = Collections.singletonList("ISRC");
-		List<Chart> charts = Collections.singletonList(ChartFactory.createChart());
+		List<String> chartDetailIds = singletonList("ISRC");
+		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser();
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(false);
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -257,19 +263,39 @@ public class ChartServiceTest {
 		verify(mockChartRepository, times(0)).getByCommunityName(anyString());
 		verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
 	}
+
+    @Test
+    public void shouldReturnEmptyListForUserOnWhiteListedVideoAudioFreeTrial()
+            throws Exception {
+        //given
+        User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        String communityName = "chartsnow";
+
+        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart> singletonList(new Chart()));
+        when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<String>emptyList());
+
+        //when
+        List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+
+        assertNotNull(result);
+        assertEquals(Collections.<ChartDetail>emptyList(), result);
+
+        verify(mockChartRepository, times(0)).getByCommunityName(anyString());
+        verify(mockChartDetailService, times(0)).getLockedChartItemISRCs(any(Integer.class), any(Date.class));
+    }
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetChartsByCommunity_NullNameNotNullType_Success()
 			throws Exception {
-		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = "chartsnow";
 		String communityName = null;
 		ChartType chartType = ChartType.OTHER_CHART;
 		
-		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
 		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
@@ -287,12 +313,12 @@ public class ChartServiceTest {
 	@Test
 	public void testGetChartsByCommunity_NullNameNullType_Success()
 		throws Exception {
-		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = "chartsnow";
 		String communityName = null;
 				
-		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
 		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -309,14 +335,14 @@ public class ChartServiceTest {
 	@Test
 	public void testGetChartsByCommunity_NullUrlNotNullType_Success()
 			throws Exception {
-		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = null;
 		String communityName = "chartsnow";
 		ChartType chartType = ChartType.OTHER_CHART;
 		
-		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
 		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
@@ -334,12 +360,12 @@ public class ChartServiceTest {
 	@Test
 	public void testGetChartsByCommunity_NullUrlNullType_Success()
 		throws Exception {
-		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
+		List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
 		String communityUrl = null;
 		String communityName = "chartsnow";
 				
-		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
 		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -356,12 +382,12 @@ public class ChartServiceTest {
 	@Test
 	public void testGetChartsByCommunity_NullUrlAndNullNameNullType_Success()
 		throws Exception {
-		List<ChartDetail> chartDetails = Collections.EMPTY_LIST;
+		List<ChartDetail> chartDetails = EMPTY_LIST;
 		String communityUrl = null;
 		String communityName = null;
 				
-		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.singletonList(new Chart()));
-		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(Collections.singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
+		when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
 		doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 		
 		List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
@@ -805,7 +831,7 @@ public class ChartServiceTest {
 		Drm drm = new Drm();
 		drm.setDrmValue((byte)1);
 		drm.setDrmType(new DrmType());
-		media.setDrms(Collections.singletonList(drm));
+		media.setDrms(singletonList(drm));
 		
 		media.setI(i);
 		return media;

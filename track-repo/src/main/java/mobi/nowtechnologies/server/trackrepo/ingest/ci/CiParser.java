@@ -7,17 +7,19 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class CiParser extends DDEXParser {
-	protected static final Log LOG = LogFactory.getLog(CiParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CiParser.class);
 
 	public CiParser(String root) throws FileNotFoundException {
         super(root);
-        LOG.info("CI parser loading from " + root);
+        LOGGER.info("CI parser loading from " + root);
 	}
 
 	public Map<String, DropTrack> ingest(DropData drop) {
@@ -27,7 +29,7 @@ public class CiParser extends DDEXParser {
 			File folder = new File(drop.name);
 			List<File> xmls = getXmlFile(folder);
 			for (File xml : xmls) {
-				Map<String, DropTrack> result = loadXml(xml.getAbsolutePath());
+				Map<String, DropTrack> result = loadXml(xml);
 
 				if (result != null) {
 					tracks.putAll(result);
@@ -35,7 +37,7 @@ public class CiParser extends DDEXParser {
 			}
 
 		} catch (Exception e) {
-			LOG.error("Ingest failed "+e.getMessage());
+            LOGGER.error("Ingest failed "+e.getMessage());
 		}
 		return tracks;
 
@@ -48,7 +50,7 @@ public class CiParser extends DDEXParser {
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
 		for (int i = 0; i < result.size(); i++) {
-			LOG.info("Drop folder " + result.get(i));
+			LOGGER.info("Drop folder " + result.get(i));
 		}
 		return result;
 	}
@@ -73,7 +75,7 @@ public class CiParser extends DDEXParser {
 			}
 		}
 		if (deliveryComplete && !processed) {
-			LOG.debug("Adding " + folder.getAbsolutePath() + " to drops");
+			LOGGER.debug("Adding " + folder.getAbsolutePath() + " to drops");
 			DropData drop = new DropData();
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());

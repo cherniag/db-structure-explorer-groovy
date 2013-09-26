@@ -134,20 +134,6 @@ public abstract class CommonController extends ProfileController{
 		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
 	}
 
-	@ExceptionHandler(SagePayException.class)
-	public ModelAndView handleException(SagePayException sagePayException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
-		Locale locale = httpServletRequest.getLocale();
-		String commnityUri = getCommunityUrl(httpServletRequest);
-
-		String localizedDisplayMessage = messageSource.getMessage(commnityUri, INTERNAL_SERVER_ERROR, null, locale);
-		final String message = sagePayException.getMessage();
-
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
-		LOGGER.error(message);
-
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
-	}
-
 	@ExceptionHandler(UserCredentialsException.class)
 	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();

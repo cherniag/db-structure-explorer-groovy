@@ -53,27 +53,6 @@ public class AccountLogDao extends JpaDaoSupport {
 		return accountLog;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<AccountLog> findByUserIdOrderedByLogIdDesc(final int userId, final Integer maxResults) {
-		LOGGER.debug("input parameters userId: [{}], [{}]", userId, maxResults);
-		
-		List<AccountLog> accountLogs = getJpaTemplate().executeFind(new JpaCallback<List>() {
-			@Override
-			public List<AccountLog> doInJpa(EntityManager entityManager) throws javax.persistence.PersistenceException {
-				Query query = entityManager.createNamedQuery(AccountLog.NQ_FIND_BY_USER_ID_ORDERED_BY_LOG_ID_DESC);
-				query.setParameter(1, userId);
-				query.setFirstResult(0);
-				if (maxResults!=null) query.setMaxResults(maxResults);
-				List<AccountLog> accountLogs = query.getResultList();
-				return accountLogs;
-			}
-		});
-		
-		LOGGER.debug("Output parameter accountLogs=[{}]", accountLogs);
-		return accountLogs;
-	}
-
-	
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public List<AccountLog> findByUserAndLogType(final int userId, final TransactionType transactionType) {
 		LOGGER.debug("input parameters userId, transactionType: [{}], [{}]", userId, transactionType);

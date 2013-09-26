@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -64,12 +65,10 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
- * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
  * 
  * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * @version $Revision: 1.0 $
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
@@ -113,6 +112,7 @@ public class UserServiceTest {
     private int currentTimeSeconds;
     private PromotionService promotionServiceMock;
     private UserServiceNotification userServiceNotification;
+    private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
 
 	@Test
 	public void testChangePassword_Success() throws Exception {
@@ -148,7 +148,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testFindUsers_Success() throws Exception {
-		String searchWords = "Led Zeppeling";
+		String searchWords = "Led Zeppelin";
 		String communityURL = "nowtop40";
 
 		List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
@@ -171,7 +171,7 @@ public class UserServiceTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testFindUsers_communityURLIsNull_Failure() throws Exception {
-		String searchWords = "Led Zeppeling";
+		String searchWords = "Led Zeppelin";
 		String communityURL = null;
 
 		userServiceSpy.findUsers(searchWords, communityURL);
@@ -179,7 +179,7 @@ public class UserServiceTest {
 
 	@Test(expected = RuntimeException.class)
 	public void testFindUsers_UserRepository_findUser_RuntimeException_Failure() throws Exception {
-		String searchWords = "Led Zeppeling";
+		String searchWords = "Led Zeppelin";
 		String communityURL = "nowtop40";
 
 		List<User> mockedUserCollection = UserFactory.getUserUnmodifableList();
@@ -660,7 +660,6 @@ public class UserServiceTest {
 	public void setUp() throws Exception {
 		userServiceSpy = Mockito.spy(new UserService());
 
-		SagePayService sagePayServiceMock = PowerMockito.mock(SagePayService.class);
 		PaymentPolicyService paymentPolicyServiceMock = PowerMockito.mock(PaymentPolicyService.class);
 		countryServiceMock = PowerMockito.mock(CountryService.class);
 		communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
@@ -689,8 +688,9 @@ public class UserServiceTest {
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
+
+        o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
 		
-		userServiceSpy.setSagePayService(sagePayServiceMock);
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
 		userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
@@ -720,6 +720,7 @@ public class UserServiceTest {
 		userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
+        userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -1297,7 +1298,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1375,7 +1376,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1458,7 +1459,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1542,7 +1543,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1626,7 +1627,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -1706,7 +1707,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1788,7 +1789,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1863,7 +1864,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MAX_VALUE);
 		
 		Mockito.when(getEpochMillis()).thenReturn(Long.MAX_VALUE);
 		
@@ -1945,7 +1946,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -2028,7 +2029,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(0);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -2157,7 +2158,7 @@ public class UserServiceTest {
 		
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getNewNextSubPayment(user.getNextSubPayment())).thenReturn(Integer.MIN_VALUE);
-		PowerMockito.when(getMontlyNextSubPayment(user.getNextSubPayment())).thenReturn(monthlyNextSubPayment);
+		PowerMockito.when(getMonthlyNextSubPayment(user.getNextSubPayment())).thenReturn(monthlyNextSubPayment);
 		
 		Mockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		Mockito.when(getEpochMillis()).thenReturn(currentTimeMillis);
@@ -2373,7 +2374,7 @@ public class UserServiceTest {
 		
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
 		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
-		verify(communityServiceMock, times(0)).getCommunityByName(communityName);
+		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(userServiceSpy,times(0) ).applyO2PotentialPromo(o2UserDetails, user, community);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
@@ -2917,7 +2918,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shoulNotdMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioFreeTrialBeforeMultipleFreeTrialsStopDate(){
+    public void shouldNotdMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioFreeTrialBeforeMultipleFreeTrialsStopDate(){
         //given
         user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
@@ -2985,6 +2986,21 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldNotMightActivateVideoTrialForUserOnWhiteListedVideoAudioFreeTrial(){
+        //given
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
+        Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
+
+        //when
+        boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
+
+        //then
+        assertEquals(false, canActivateVideoTrial);
+    }
+
+
+    @Test
     public void testUnsubscribeAndSkipFreeTrial_4GVideoAudioFreeTrialTo3G_Success() throws Exception {
 
         currentTimeMillis = 0L;
@@ -3003,6 +3019,50 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+    }
+
+    @Test
+    public void shouldNotDowngradeUserOnWhiteListedVideoAudioFreeTrial(){
+       //given
+        User user = new User().withTariff(_4G).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        O2SubscriberData o2SubscriberData = new O2SubscriberData().withTariff4G(false);
+
+        PowerMockito.doReturn(null).when(userServiceSpy).downgradeUserTariff(any(User.class), any(Tariff.class));
+        PowerMockito.doReturn(user).when(userRepositoryMock).save(user);
+        PowerMockito.doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(user, o2SubscriberData);
+
+        //when
+        User actualUser = userServiceSpy.o2SubscriberDataChanged(user, o2SubscriberData);
+
+        //then
+        assertNotNull(actualUser);
+        assertEquals(user, actualUser);
+
+        verify(userServiceSpy, times(0)).downgradeUserTariff(any(User.class), any(Tariff.class));
+        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(user, o2SubscriberData);
+        verify(userRepositoryMock, times(1)).save(user);
+    }
+
+    @Test
+    public void shouldDowngradeUser(){
+        //given
+        User user = new User().withTariff(_4G).withFreeTrialExpiredMillis(Long.MIN_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        O2SubscriberData o2SubscriberData = new O2SubscriberData().withTariff4G(false);
+
+        PowerMockito.doReturn(user).when(userServiceSpy).downgradeUserTariff(any(User.class), any(Tariff.class));
+        PowerMockito.doReturn(user).when(userRepositoryMock).save(user);
+        PowerMockito.doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(user, o2SubscriberData);
+
+        //when
+        User actualUser = userServiceSpy.o2SubscriberDataChanged(user, o2SubscriberData);
+
+        //then
+        assertNotNull(actualUser);
+        assertEquals(user, actualUser);
+
+        verify(userServiceSpy, times(1)).downgradeUserTariff(any(User.class), any(Tariff.class));
+        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(user, o2SubscriberData);
+        verify(userRepositoryMock, times(1)).save(user);
     }
 
     @Test

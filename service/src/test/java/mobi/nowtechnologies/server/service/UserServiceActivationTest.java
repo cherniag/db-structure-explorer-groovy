@@ -71,7 +71,6 @@ public class UserServiceActivationTest {
 		userServiceSpy = Mockito.spy(new UserService());
 
 		@SuppressWarnings("deprecation")
-		SagePayService sagePayServiceMock = PowerMockito.mock(SagePayService.class);
 		PaymentPolicyService paymentPolicyServiceMock = PowerMockito.mock(PaymentPolicyService.class);
 		countryServiceMock = PowerMockito.mock(CountryService.class);
 		communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
@@ -100,7 +99,6 @@ public class UserServiceActivationTest {
 		userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
 		refundServiceMock = PowerMockito.mock(RefundService.class);
 
-		userServiceSpy.setSagePayService(sagePayServiceMock);
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
 		userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);

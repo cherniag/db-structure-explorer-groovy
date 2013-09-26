@@ -55,19 +55,19 @@ public class PaymentDetailsService {
 	private PayPalPaymentService payPalPaymentService;
 
 	private MigPaymentService migPaymentService;
-	
+
 	private O2PaymentService o2PaymentService;
 
 	private PromotionService promotionService;
 
-	private UserService userService;
+    private UserService userService;
 	private CommunityService communityService;
 
 	private OfferService offerService;
 
     private PaymentPolicyRepository paymentPolicyRepository;
     private PaymentPolicyDao paymentPolicyDao;
-    
+
     private PaymentDetailsRepository paymentDetailsRepository;
 
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
@@ -263,7 +263,7 @@ public class PaymentDetailsService {
 		}
 		return result;
 	}
-	
+
 	public PaymentPolicyDto getPaymentPolicy(Integer paymentPolicyId)
 	{
 		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
@@ -276,84 +276,9 @@ public class PaymentDetailsService {
 		return user.getPendingPaymentDetails();
 	}
 
-	public static PaymentDetails getPaymentDetails(final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		notNull(paymentType, "The parameter paymentType is null");
-		LOGGER.debug("input parameters paymentType, token: [{}], [{}]",paymentType, token );
-
-		PaymentDetails paymentDetails;
-		if (paymentType.equals(CREDIT_CARD)) {
-			paymentDetails = new SagePayCreditCardPaymentDetails();
-		} else if (paymentType.equals(PREMIUM_USER)) {
-			paymentDetails = new MigPaymentDetails();
-		} else if (paymentType.equals(PAY_PAL)) {
-			paymentDetails = new PayPalPaymentDetails();
-		} else
-			throw new ServiceException("Unknown payment type: [" + paymentType
-					+ "]");
-
-		paymentDetails = populatePaymentDetails(paymentDetails, paymentType,
-				token, operator, phoneNumber);
-
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
-	}
-
-	public PaymentDetails findPaymentDetails(String paymentType, int userId) {
-		if (paymentType == null)
-			throw new ServiceException("The parameter paymentType is null");
-
-		LOGGER.debug("input parameters paymentType, userId: [{}], [{}]",
-				new Object[] { paymentType, userId });
-
-		PaymentDetails paymentDetails = paymentDetailsDao.findPaymentDetails(
-				paymentType, userId);
-
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
-	}
-
-	public static PaymentDetails populatePaymentDetails(PaymentDetails paymentDetails, final String paymentType, final String token, final Operator operator, final String phoneNumber) {
-		notNull(paymentType, "The parameter paymentType is null");
-		LOGGER.debug("input parameters paymentDetails, paymentType, token, operator, phoneNumber: [{}], [{}], [{}], [{}], [{}]",
-						paymentDetails, paymentType, token, operator, phoneNumber);
-
-		if (paymentType.equals(CREDIT_CARD)) {
-			SagePayCreditCardPaymentDetails creditCardPaymentDetails = (SagePayCreditCardPaymentDetails) paymentDetails;
-
-            notNull(token, "The parameter token is null");
-			creditCardPaymentDetails.setVPSTxId(token);
-		} else if (paymentType.equals(PREMIUM_USER)) {
-			MigPaymentDetails premiumSmsPaymentDetails = (MigPaymentDetails) paymentDetails;
-
-            notNull(operator, "The parameter operator is null");
-            notNull(phoneNumber, "The parameter phoneNumber is null");
-
-			premiumSmsPaymentDetails.setMigPhoneNumber(operator.getMigName() + "." + phoneNumber);
-
-		} else if (paymentType.equals(PAY_PAL)) {
-			PayPalPaymentDetails payPalPaymentDetails = (PayPalPaymentDetails) paymentDetails;
-
-            notNull(token, "The parameter token is null");
-			payPalPaymentDetails.setBillingAgreementTxId(token);
-
-		} else
-			throw new ServiceException("Unknown payment type: [" + paymentType + "]");
-
-		paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
-
-		LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
-		return paymentDetails;
-	}
-
 	@Transactional(readOnly = true)
 	public List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber) {
 		return paymentDetailsRepository.findActivatedPaymentDetails(operatorName, phoneNumber);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED)
-	public PaymentDetails updatePaymentDetailsWithPromotion(PaymentDetails paymentDetails, PromotionPaymentPolicy promotionPaymentPolicy) {
-		paymentDetails.setPromotionPaymentPolicy(promotionPaymentPolicy);
-		return paymentDetailsDao.update(paymentDetails);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)

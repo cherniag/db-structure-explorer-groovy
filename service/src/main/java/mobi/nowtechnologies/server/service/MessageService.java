@@ -35,6 +35,22 @@ public class MessageService {
 	private CommunityService communityService;
 	private CloudFileService cloudFileService;
 
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setMessageRepository(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
+    public void setFilterService(FilterService filterService) {
+        this.filterService = filterService;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
 	public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
 	}
@@ -436,22 +452,6 @@ public class MessageService {
 		List<Long> allPublishTimeMillis = messageRepository.getAllPublishTimeMillis(community);
 		LOGGER.info("Output parameter [{}]", allPublishTimeMillis);
 		return allPublishTimeMillis;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setMessageRepository(MessageRepository messageRepository) {
-		this.messageRepository = messageRepository;
-	}
-
-	public void setFilterService(FilterService filterService) {
-		this.filterService = filterService;
-	}
-
-	public void setCommunityService(CommunityService communityService) {
-		this.communityService = communityService;
 	}
 
 	@Transactional(readOnly = true)

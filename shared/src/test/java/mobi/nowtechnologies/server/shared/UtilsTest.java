@@ -278,7 +278,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -311,7 +311,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -344,7 +344,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -377,7 +377,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(nextSubPayment);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -421,7 +421,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -465,7 +465,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -509,7 +509,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
@@ -554,7 +554,7 @@ public class UtilsTest {
 		
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		int actualMontlyNextSubPayment = getMontlyNextSubPayment(nextSubPayment);
+		int actualMontlyNextSubPayment = getMonthlyNextSubPayment(nextSubPayment);
 		
 		calendar.clear();
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);

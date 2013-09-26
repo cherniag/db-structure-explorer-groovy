@@ -5,16 +5,18 @@ import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 
 public class ManualParser extends IParser {
-	protected static final Log LOG = LogFactory.getLog(ManualParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManualParser.class);
 
 	public ManualParser(String root) throws FileNotFoundException {
         super(root);
-		LOG.info("Manual parser loadin from " + root);
+		LOGGER.info("Manual parser loadin from " + root);
 	}
 
 	@Override
@@ -25,7 +27,7 @@ public class ManualParser extends IParser {
 		try {
 			commitFile.createNewFile();
 		} catch (IOException e) {
-			LOG.error("Ingest failed "+e.getMessage());
+			LOGGER.error("Ingest failed "+e.getMessage());
 		}
 	}
 
@@ -61,7 +63,7 @@ public class ManualParser extends IParser {
 			try {
 				data.name = csv.getCanonicalPath();
 			} catch (IOException e) {
-				LOG.error("getdrops failed "+e.getMessage());
+				LOGGER.error("getdrops failed "+e.getMessage());
 			}
 			result.add(data);
 		}
@@ -80,7 +82,7 @@ public class ManualParser extends IParser {
 			String line;
 			while ((line = in.readLine()) != null) {
 				String[] tokens = line.split("#");
-				LOG.info("Token lenght "+tokens.length+" "+line);
+				LOGGER.info("Token lenght "+tokens.length+" "+line);
 				DropTrack track = new DropTrack();
 				track.type = Type.INSERT;
 				track.xml="";
@@ -147,9 +149,9 @@ public class ManualParser extends IParser {
 				
 			}
 		} catch (FileNotFoundException e) {
-			LOG.error("Ingest failed "+e.getMessage());
+			LOGGER.error("Ingest failed "+e.getMessage());
 		} catch (IOException e) {
-			LOG.error("Ingest failed "+e.getMessage());
+			LOGGER.error("Ingest failed "+e.getMessage());
 		}
 		return result;
 	}

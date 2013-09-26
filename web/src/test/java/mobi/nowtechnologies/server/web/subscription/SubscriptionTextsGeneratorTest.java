@@ -30,7 +30,7 @@ public class SubscriptionTextsGeneratorTest {
 	}
 
 	@Test
-	public void testMessageSoure() {
+	public void testMessageSource() {
 		String msg = messageSource.getMessage("subscription.text.subscribed", new Object[] {}, communityLocale);
 		Assert.assertEquals(msg, "Subscribed");
 	}
@@ -87,7 +87,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDaysToNextBillingDate(DAYS);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("Free Trial", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("Due to subscribe after free trial (" + DAYS + " days left)", r.getNextBillingText());
 		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
@@ -103,7 +103,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDaysToNextBillingDate(DAYS);
 
 		SubscriptionTexts r = generator.generate(s);
-		Assert.assertEquals("4G Free Trial", r.getStatusText());
+		Assert.assertEquals("Subscribed", r.getStatusText());
 		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
 		Assert.assertEquals("Subscribed", r.getFutureText());
 	}

@@ -31,7 +31,7 @@ public class SubscriptionTextsGenerator {
 		if (state.isFreeTrial()) {
 			if (!state.isEligibleForVideo()) {
 				if (state.isFreeTrialOptedIn()) {
-					data.setStatusText(getMessage("subscription.text.freeTrial"));
+					data.setStatusText(getMessage("subscription.text.subscribed"));
 					data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.youWillBeSubscribed",
 							state.getDaysToNextBillingDate()));
 					data.setFutureText(getMessage("subscription.text.subscription_future.subscribed"));
@@ -44,7 +44,7 @@ public class SubscriptionTextsGenerator {
 			} else {
 
 				if (state.isFreeTrialOptedIn()) {
-					data.setStatusText(getMessage("subscription.text.4gfreetrialOptedIn"));
+					data.setStatusText(getMessage("subscription.text.subscribed"));
 					data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.youWillBeNotified"));
 					data.setFutureText(getMessage("subscription.text.subscription_future.subscribed"));
 					return data;

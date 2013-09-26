@@ -1,0 +1,1390 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ernm:NewReleaseMessage LanguageAndScriptCode="en" MessageSchemaVersionId="/ern/341" xs:schemaLocation="http://ddex.net/xml/ern/341 http://ddex.net/xml/ern/341/release-notification.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/341">
+    <MessageHeader>
+        <MessageThreadId>G010001406903U_MQB</MessageThreadId>
+        <MessageId>9526264</MessageId>
+        <MessageSender>
+            <PartyId>PADPIDA2007040502I</PartyId>
+            <PartyName>
+                <FullName>Sony Music Entertainment</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>PADPIDA2011063001G</PartyId>
+            <PartyName>
+                <FullName>Musicqubed</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-25T12:06:20.415-04:00</MessageCreatedDateTime>
+        <MessageControlType>TestMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator>OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USSM15900898</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A1</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>So What</TitleText>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H9M2S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>So What</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>So What</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>M. Davis</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Irving Townsend</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>Columbia</LabelName>
+                <PLine>
+                    <Year>1959</Year>
+                    <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T1</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10413_SoundRecording_001-001.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>cc1e895ffa93a97b1484ef3fe4dc4f6d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T2</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-11006_SoundRecording_001-001.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>41b1558d62fb0ce94e7cd5dd32543d18</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T3</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10253_SoundRecording_001-001.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>ea0401c664440a9147c9d66eec82a6b0</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USSM15901175</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A2</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Freddie Freeloader</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H9M43S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Freddie Freeloader</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Freddie Freeloader (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Irving Townsend</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Jimmy Cobb</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Drums" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Michael Cuscuna</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Wynton Kelly</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Piano" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Bob Belden</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>Mark Wilder</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Mastering Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Re-Mixer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Paul Chambers</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Bass" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>Cannonball Adderley</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Alto Saxophone" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Fred Plaut</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Recording Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="11">
+                    <PartyName>
+                        <FullName>John Coltrane</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Tenor Saxophone" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>Columbia</LabelName>
+                <PLine>
+                    <Year>1959</Year>
+                    <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T4</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10413_SoundRecording_001-002.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>dc503561c455efd4fdbced60b57a4fb7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T5</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-11006_SoundRecording_001-002.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>bc34445370c2fc1489a46f8d74c9c7ce</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T6</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10253_SoundRecording_001-002.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>dd5aa745fd657c4f53972bfa8311d080</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USSM15901177</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A3</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Blue In Green</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H5M37S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Blue In Green</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Blue In Green (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Irving Townsend</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Jimmy Cobb</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Drums" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Michael Cuscuna</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Bill Evans</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>比爾伊文斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Piano" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Bob Belden</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>Mark Wilder</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Mastering Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Re-Mixer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="8">
+                    <PartyName>
+                        <FullName>Paul Chambers</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Bass" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="9">
+                    <PartyName>
+                        <FullName>John Coltrane</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Tenor Saxophone" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="10">
+                    <PartyName>
+                        <FullName>Fred Plaut</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Recording Engineer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>Columbia</LabelName>
+                <PLine>
+                    <Year>1959</Year>
+                    <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T7</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10413_SoundRecording_001-003.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>d1a802b6139f6a6a6cab8694d61e6c39</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T8</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-11006_SoundRecording_001-003.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>5574e221a7cdefc467e01d85c98cd64e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T9</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10253_SoundRecording_001-003.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>eba4f09fdeb7d1fe969b651af14f12a5</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USSM15900116</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A4</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>All Blues</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H11M33S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>All Blues</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>All Blues (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Lyricist" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                    <ResourceContributorRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Irving Townsend</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>Jimmy Cobb</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Drums" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="4">
+                    <PartyName>
+                        <FullName>Bill Evans</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>比爾伊文斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Piano" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="5">
+                    <PartyName>
+                        <FullName>Paul Chambers</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Bass" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="6">
+                    <PartyName>
+                        <FullName>Julian Cannonball Adderley</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Alto Saxophone" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="7">
+                    <PartyName>
+                        <FullName>John Coltrane</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Tenor Saxophone" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>Columbia</LabelName>
+                <PLine>
+                    <Year>1959</Year>
+                    <PLineText>Originally Recorded 1959. All rights reserved by Sony Music Entertainment</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T10</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10413_SoundRecording_001-004.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>fd2c4fb593e460408678836c65e38a5c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T11</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-11006_SoundRecording_001-004.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>24fa2da5ed09b82f406b25d46c4fb203</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T12</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10253_SoundRecording_001-004.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>738e0eacc5d8138205de994ebfc383e5</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USSM15900761</ISRC>
+            </SoundRecordingId>
+            <ResourceReference>A5</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Flamenco Sketches</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <LanguageOfPerformance>en</LanguageOfPerformance>
+            <Duration>PT0H9M24S</Duration>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Flamenco Sketches</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Flamenco Sketches (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ResourceContributor SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>AssociatedPerformer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="2">
+                    <PartyName>
+                        <FullName>Irving Townsend</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Producer</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor SequenceNumber="3">
+                    <PartyName>
+                        <FullName>M. Davis</FullName>
+                    </PartyName>
+                    <ResourceContributorRole UserDefinedValue="Composer" Namespace="DPID:PADPIDA2007040502I">UserDefined</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>Columbia</LabelName>
+                <PLine>
+                    <Year>1959</Year>
+                    <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T13</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>true</IsPreview>
+                    <PreviewDetails>
+                        <StartPoint>48</StartPoint>
+                        <EndPoint>78</EndPoint>
+                        <Duration>PT0H0M30S</Duration>
+                        <ExpressionType>Informative</ExpressionType>
+                    </PreviewDetails>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10413_SoundRecording_001-005.aac</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>158982655aade9513a9602f99300a590</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T14</TechnicalResourceDetailsReference>
+                    <AudioCodecType>MP3</AudioCodecType>
+                    <BitRate>320</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>320</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-11006_SoundRecording_001-005.mp3</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>3fe5defb0c11bfcc455d1a800bc016ac</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>T15</TechnicalResourceDetailsReference>
+                    <AudioCodecType>AAC</AudioCodecType>
+                    <BitRate>48</BitRate>
+                    <NumberOfChannels>2</NumberOfChannels>
+                    <SamplingRate UnitOfMeasure="kHz">44.1</SamplingRate>
+                    <BitsPerSample>48</BitsPerSample>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10253_SoundRecording_001-005.m4a</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>93bc2a05b744ea394654696ccfb68711</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">G010001406903U</ProprietaryId>
+            </ImageId>
+            <ResourceReference>A6</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>T16</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1500</ImageHeight>
+                    <ImageWidth>1500</ImageWidth>
+                    <ImageResolution>72</ImageResolution>
+                    <IsPreview>false</IsPreview>
+                    <File>
+                        <FileName>A10301A0001406903U_T-10026_Image.jpg</FileName>
+                        <FilePath>resources/</FilePath>
+                        <HashSum>
+                            <HashSum>1dd995ba81db7ac76bc58518548d7bb4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <GRid>A10301A0001406903U</GRid>
+                <ICPN IsEan="false">5099746060329</ICPN>
+                <CatalogNumber Namespace="DPID:PADPIDA2007040502I">G010001406903U</CatalogNumber>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766777</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R0</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Kind Of Blue</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A6</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kind Of Blue</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Kind Of Blue</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroup>
+                        <Title TitleType="GroupingTitle">
+                            <TitleText>Disc 1</TitleText>
+                        </Title>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>1</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>2</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>3</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>4</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                        <ResourceGroupContentItem>
+                            <SequenceNumber>5</SequenceNumber>
+                            <ResourceType>SoundRecording</ResourceType>
+                            <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                        </ResourceGroupContentItem>
+                    </ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>6</SequenceNumber>
+                        <ResourceType>Image</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A6</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <LabelName>Columbia</LabelName>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+                <OriginalReleaseDate>1988-11-22</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H45M19S</Duration>
+            <PLine>
+                <Year>1962</Year>
+                <PLineText>1962 Sony Music Entertainment Inc.</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0002612092A</GRid>
+                <ISRC>USSM15900898</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766778</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R1</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>So What</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>So What</TitleText>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>So What</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H9M2S</Duration>
+            <PLine>
+                <Year>1959</Year>
+                <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0002612091C</GRid>
+                <ISRC>USSM15901175</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766779</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R2</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Freddie Freeloader</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Freddie Freeloader</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Freddie Freeloader (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H9M43S</Duration>
+            <PLine>
+                <Year>1959</Year>
+                <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0002612090E</GRid>
+                <ISRC>USSM15901177</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766780</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R3</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Blue In Green</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Blue In Green</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Blue In Green (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H5M37S</Duration>
+            <PLine>
+                <Year>1959</Year>
+                <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E0002612089Z</GRid>
+                <ISRC>USSM15900116</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766781</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R4</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>All Blues</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>All Blues</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>All Blues (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>Composer</ArtistRole>
+                    <ArtistRole>Lyricist</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                    <ArtistRole UserDefinedValue="Trumpet" Namespace="DPID:PADPIDA2007040502I">UserDefined</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H11M33S</Duration>
+            <PLine>
+                <Year>1959</Year>
+                <PLineText>Originally Recorded 1959. All rights reserved by Sony Music Entertainment</PLineText>
+            </PLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <GRid>A10328E00026120882</GRid>
+                <ISRC>USSM15900761</ISRC>
+                <ProprietaryId Namespace="DPID:PADPIDA2007040502I">IPID:00000000000002766782</ProprietaryId>
+            </ReleaseId>
+            <ReleaseReference>R5</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Flamenco Sketches</TitleText>
+                <SubTitle>Album Version</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>TrackRelease</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Miles Davis</DisplayArtistName>
+                <LabelName>Columbia</LabelName>
+                <Title TitleType="FormalTitle" LanguageAndScriptCode="en">
+                    <TitleText>Flamenco Sketches</TitleText>
+                    <SubTitle>Album Version</SubTitle>
+                </Title>
+                <Title TitleType="DisplayTitle" LanguageAndScriptCode="en">
+                    <TitleText>Flamenco Sketches (Album Version)</TitleText>
+                </Title>
+                <DisplayArtist SequenceNumber="1">
+                    <PartyName>
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Hani">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="ja-Kana">
+                        <FullName>Miles Davis</FullName>
+                    </PartyName>
+                    <PartyName LanguageAndScriptCode="zh-Hant">
+                        <FullName>邁爾士戴維斯</FullName>
+                    </PartyName>
+                    <ArtistRole>AssociatedPerformer</ArtistRole>
+                    <ArtistRole>MainArtist</ArtistRole>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ResourceType>SoundRecording</ResourceType>
+                        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Pop</GenreText>
+                </Genre>
+            </ReleaseDetailsByTerritory>
+            <Duration>PT0H9M24S</Duration>
+            <PLine>
+                <Year>1959</Year>
+                <PLineText>Originally Released 1959 Sony Music Entertainment Inc.</PLineText>
+            </PLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>R0</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">3.03</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R1</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.57</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R2</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.83</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R3</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.91</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R4</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.75</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>R5</DealReleaseReference>
+            <Deal>
+                <DealTerms>
+                    <CommercialModelType>PayAsYouGoModel</CommercialModelType>
+                    <Usage>
+                        <UseType>PermanentDownload</UseType>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <PriceInformation>
+                        <WholesalePricePerUnit CurrencyCode="GBP">0.56</WholesalePricePerUnit>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>1988-11-22</StartDate>
+                    </ValidityPeriod>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-25</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ernm:NewReleaseMessage>

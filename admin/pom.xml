@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.nowtechnologies.java</groupId>
 		<artifactId>server</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -50,16 +50,11 @@
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
+
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-		</dependency>
-		
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared-web</artifactId>
@@ -116,61 +111,11 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
-		
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-core-asl</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-mapper-asl</artifactId>
-			</dependency>
-			
+
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
 			</dependency>
-		
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-jaxrs</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-xc</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-core-lgpl</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-mapper-lgpl</artifactId>-->
-<!--			</dependency>-->
-<!--            -->
-<!--            <dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-smile</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-asl</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-mrbean</artifactId>-->
-<!--			</dependency>-->
-<!--			-->
-<!--			<dependency>-->
-<!--				<groupId>org.codehaus.jackson</groupId>-->
-<!--				<artifactId>jackson-lgpl</artifactId>-->
-<!--			</dependency>-->
 
 	</dependencies>
 

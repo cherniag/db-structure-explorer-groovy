@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

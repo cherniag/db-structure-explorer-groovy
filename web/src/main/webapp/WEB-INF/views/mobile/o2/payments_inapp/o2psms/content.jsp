@@ -4,8 +4,8 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="header pie">
-    <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
-    <span class="logo" style="padding-right: 49px;"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+    <%-- <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a> --%>
+    <span class="logo" style="padding-right: 49px;padding-left: 58px;"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 </div>
 
 <c:choose>

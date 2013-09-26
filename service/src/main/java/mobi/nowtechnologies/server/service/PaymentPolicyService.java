@@ -82,16 +82,6 @@ public class PaymentPolicyService {
 		return offerPaymentPolicyDtos;
 	}
 
-	@Transactional(readOnly = true)
-	public List<PaymentPolicy> getPaymentPoliciesWithouSelectedPaymentTypeGroupdeByPaymentType(Community community, String paymentType) {
-		LOGGER.debug("input parameters community, paymentType: [{}], [{}]", community, paymentType);
-		
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithoutSelectedPaymentType(community, paymentType);
-		
-		LOGGER.debug("Output parameter paymentPolicies=[{}]", paymentPolicies);
-		return paymentPolicies;
-	}
-
     @Transactional(readOnly = true)
     public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
         return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(user.getUserGroup().getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff());
