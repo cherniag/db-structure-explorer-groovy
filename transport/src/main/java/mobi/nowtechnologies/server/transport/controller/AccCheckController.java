@@ -82,7 +82,7 @@ public class AccCheckController extends CommonController {
             else
                 user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-            SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
+            logAboutSuccessfullAccountCheck();
 
             final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
                     pushNotificationToken, deviceType, transactionReceipt);
@@ -203,13 +203,6 @@ public class AccCheckController extends CommonController {
         return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
     }
 
-    public static AccountCheckDto getAccountCheckDtoFrom(ModelAndView mav) {
-        Response resp = (Response) mav.
-                getModelMap().
-                get(MODEL_NAME);
-        return (AccountCheckDto) resp.getObject()[0];
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
     public ModelAndView accountCheckWithXtifyToken(
             HttpServletRequest httpServletRequest,
@@ -261,6 +254,10 @@ public class AccCheckController extends CommonController {
             logProfileData(deviceUID, communityName, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
+    }
+
+    private void logAboutSuccessfullAccountCheck() {
+        SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
     }
 
 }

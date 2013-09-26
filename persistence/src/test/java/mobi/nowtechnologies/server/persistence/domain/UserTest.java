@@ -456,7 +456,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -690,7 +690,7 @@ public class UserTest {
     @Test
     public void shouldBeEligibleForVideoO24GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider(O2);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -702,7 +702,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO24GConsumerFromWrongCommunity(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("non-o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("non-o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider(O2);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -714,7 +714,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoNonO24GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("non-o2");
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider(NON_O2);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -726,7 +726,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO23GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_3G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_3G).withSegment(CONSUMER).withProvider(O2);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -738,7 +738,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO24GBusiness(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(BUSINESS).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(BUSINESS).withProvider(O2);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();

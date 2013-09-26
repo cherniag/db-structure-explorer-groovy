@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -896,7 +895,7 @@ public class UserService {
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		}else if (user.isO2CommunityUser() && user.isNonO2User()) {
-			user.setNextSubPayment(Utils.getMontlyNextSubPayment(oldNextSubPayment));
+			user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
 		}else if (user.isO2CommunityUser() && !user.isNonO2User()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
@@ -1639,7 +1638,7 @@ public class UserService {
         if(populateO2SubscriberData){
         	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
 				// if the device is promoted, we set the default field
-				user.setProvider("o2");
+				user.setProvider(ProviderType.O2);
 				user.setSegment(SegmentType.CONSUMER);
 				user.setContract(Contract.PAYM);
 			} else {
@@ -1696,10 +1695,10 @@ public class UserService {
         	if ( isPromotedDevice(user.getMobile()) ) {
 				// if the device is promoted, we go with the default values
         		user.setContract(Contract.PAYM);
-        		user.setProvider("o2");
+        		user.setProvider(ProviderType.O2);
 			} else {
 	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-	        	user.setProvider(o2UserDetails.getOperator());
+                user.setProvider(ProviderType.valueOfKey(o2UserDetails.getOperator()));
 			}
         }
         user.setActivationStatus(ActivationStatus.ACTIVATED);

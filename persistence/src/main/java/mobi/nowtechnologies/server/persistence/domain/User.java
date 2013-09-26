@@ -1,44 +1,47 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.Objects;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
-import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
-import mobi.nowtechnologies.server.shared.enums.*;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.query.Param;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.AppConstants.*;
+import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
+import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.ITUNES_SUBSCRIPTION;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
-import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
+import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
+import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
@@ -309,22 +312,10 @@ public class User implements Serializable {
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
-	}
-
-    public boolean isO2Direct() {
-        return DIRECT.equals(contractChannel);
     }
 
     public boolean isO24GConsumer() {
         return isO2Consumer() && is4G();
-    }
-
-    public boolean isO23GConsumer() {
-        return isO2Consumer() && is3G();
-    }
-
-    public boolean isO2Indirect() {
-        return INDIRECT.equals(contractChannel);
     }
 
     public ContractChannel getContractChannel() {
@@ -1074,21 +1065,6 @@ public class User implements Serializable {
 	public boolean hasActivePaymentDetails() {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && currentPaymentDetails.isActivated();
-	}
-
-	public boolean isUnsubscribedWithFullAccess() {
-		return isNotActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
-	}
-
-	public boolean isSubscribedViaInApp() {
-		return ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
-				new DateTime(getNextSubPaymentAsDate()).isAfterNow();
-	}
-
-	public boolean isTrialExpired() {
-		return new DateTime(freeTrialExpiredMillis).isBeforeNow()
-				&& new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
-				&& org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
 	}
 
 	public boolean isBeforeExpiration(long timestamp, int hours) {
