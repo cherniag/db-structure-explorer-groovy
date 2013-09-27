@@ -63,8 +63,10 @@ import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -110,7 +112,26 @@ public class UserService {
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
-	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+
+    private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+
+    private User checkAndMerge(User user, User mobileUser) {
+        if (mobileUser.getId() != user.getId()) {
+            user = mergeUser(mobileUser, user);
+        }
+        return user;
+    }
+
+    private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
+        if (isPromotedDevice(user.getMobile()) ) {
+            user.setContract(PAYM);
+            user.setProvider("o2");
+        } else {
+            user.setContract(Contract.valueOf(providerUserDetails.tariff));
+            user.setProvider(providerUserDetails.operator);
+        }
+        return user;
+    }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -542,7 +563,7 @@ public class UserService {
 		String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(mobile);
 		migPaymentService.createPaymentDetails(getMigPhoneNumber(operator, migPhone), user, community, paymentPolicy);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void updatePaymentDetails(User user, UserRegInfo userRegInfo) {
 
@@ -1575,7 +1596,7 @@ public class UserService {
 	public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
 		try {
 			LOGGER.debug("input parameters user: [{}]", user);
-			
+
 			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
 			Community community = user.getUserGroup().getCommunity();
@@ -1589,7 +1610,7 @@ public class UserService {
 			}
 			final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage, new Object[] { community.getDisplayName(),
 					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
-			
+
 			if ( message == null || message.isEmpty() ) {
 				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());
 				return result;
@@ -1656,7 +1677,7 @@ public class UserService {
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
-        
+
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
 				user.getMobile());
         if(populateO2SubscriberData){
@@ -1664,12 +1685,12 @@ public class UserService {
 				// if the device is promoted, we set the default field
 				user.setProvider("o2");
 				user.setSegment(SegmentType.CONSUMER);
-				user.setContract(Contract.PAYM);
+				user.setContract(PAYM);
 			} else {
 				populateO2subscriberData(user, msisdn);
 			}
         }
-        
+
 		user.setMobile(msisdn);
 		user.setActivationStatus(ENTERED_NUMBER);
 		userRepository.save(user);
@@ -1686,46 +1707,33 @@ public class UserService {
 			LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
 		}
 	}
-	
+
 	@Transactional(readOnly = true)
 	public String getRedeemServerO2Url(User user) {
 		return o2ClientService.getRedeemServerO2Url(user.getMobile());
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
-        LOGGER.info("apply init promo o2 for user with id [{}] and with user mobile [{}] in [{}] activationStatus. updateContractAndProvider={{}}", user.getId(),
+	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+        LOGGER.info("apply init promo for user with id [{}] and with user mobile [{}] in [{}] activationStatus. updateContractAndProvider={{}}", user.getId(),
                 user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-        boolean hasPromo = false;
-		ProviderUserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+		ProviderUserDetails providerUserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
                 user.getOperator());
 
-		
-		if (isNotNull(mobileUser)) {
-			if (mobileUser.getId() != user.getId()) {
-				mergeUser(mobileUser, user);
-				user = mobileUser;
-			}
-		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER && !isEmail(user.getUserName())) {
-                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
-            }
+        boolean hasPromo = false;
+        if (isNotNull(mobileUser)) {
+            user = checkAndMerge(user, mobileUser);
+        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
+             hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(providerUserDetails));
         }
-        if(updateContractAndProvider){
-        	if ( isPromotedDevice(user.getMobile()) ) {
-				// if the device is promoted, we go with the default values
-        		user.setContract(Contract.PAYM);
-        		user.setProvider("o2");
-			} else {
-	        	user.setContract(Contract.valueOf(o2UserDetails.tariff));
-	        	user.setProvider(o2UserDetails.operator);
-			}
-        }
-        user.setActivationStatus(ActivationStatus.ACTIVATED);
+
+        if(updateContractAndProvider) updateContractAndProvider(user, providerUserDetails);
+
+        user.setActivationStatus(ACTIVATED);
         user.setUserName(user.getMobile());
         userRepository.save(user);
 
@@ -1735,7 +1743,7 @@ public class UserService {
         return dto;
     }
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
 	public void saveWeeklyPayment(User user) throws Exception {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");

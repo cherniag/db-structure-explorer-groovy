@@ -2461,7 +2461,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2506,7 +2506,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);

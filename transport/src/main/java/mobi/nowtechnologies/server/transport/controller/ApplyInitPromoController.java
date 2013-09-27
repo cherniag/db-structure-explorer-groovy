@@ -87,7 +87,7 @@ public class ApplyInitPromoController extends CommonController {
             	
     			boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community, updateContractAndProvider);
+            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, updateContractAndProvider);
 
     	        final Object[] objects = new Object[]{accountCheckDTO};
     	        precessRememberMeToken(objects);
