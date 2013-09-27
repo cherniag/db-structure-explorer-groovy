@@ -196,8 +196,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("PAYG", userDetails.getTariff());	
+		assertEquals("o2", userDetails.operator);
+		assertEquals("PAYG", userDetails.tariff);
 	}
 	
 	@Test
@@ -208,8 +208,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("PAYG", userDetails.getTariff());	
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("PAYG", userDetails.tariff);
 	}
 	
 	@Test
@@ -220,8 +220,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("PAYM", userDetails.getTariff());	
+		assertEquals("o2", userDetails.operator);
+		assertEquals("PAYM", userDetails.tariff);
 	}
 	
 	@Test
@@ -232,8 +232,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("PAYM", userDetails.getTariff());	
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("PAYM", userDetails.tariff);
 	}
 	
 	@Test
@@ -244,8 +244,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("business", userDetails.getTariff());	
+		assertEquals("o2", userDetails.operator);
+		assertEquals("business", userDetails.tariff);
 	}
 	
 	@Test
@@ -256,8 +256,8 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
 		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("business", userDetails.getTariff());	
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("business", userDetails.tariff);
 	}
 	
 	@Test(expected=ExternalServiceException.class)

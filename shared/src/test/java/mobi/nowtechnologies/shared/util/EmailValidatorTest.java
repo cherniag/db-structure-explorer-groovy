@@ -57,7 +57,7 @@ public class EmailValidatorTest {
 
 	@Test
 	public void testValidate() {
-		boolean isValid = EmailValidator.validate(email);
+		boolean isValid = EmailValidator.isEmail(email);
 		if (expectedValue!=isValid)
 			LOGGER.error("Expected value: " + expectedValue
 					+ " but test returned " + isValid +" for "+email);

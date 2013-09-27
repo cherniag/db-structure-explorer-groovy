@@ -132,7 +132,7 @@ public class AccountCheckDTO {
         this.fullyRegistred = accountCheckDTO.isFullyRegistred();
         this.eligibleForVideo = accountCheckDTO.isEligibleForVideo();
 
-        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
+        accountCheckDTO.setFullyRegistred(EmailValidator.isEmail(userName));
 	}
 
 	public int getGraceCreditSeconds() {

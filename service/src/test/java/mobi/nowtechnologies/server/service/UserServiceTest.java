@@ -2448,7 +2448,7 @@ public class UserServiceTest {
 		Community community = CommunityFactory.createCommunity();
 		
 		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
-		o2UserDetails.setTariff(PAYG.name());
+		o2UserDetails.tariff = PAYG.name();
 		
 		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
 		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
@@ -2468,8 +2468,8 @@ public class UserServiceTest {
 		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
 		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
 		
-		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
-		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(Contract.valueOf(o2UserDetails.tariff), user.getContract());
+		assertEquals(o2UserDetails.operator, user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2493,7 +2493,7 @@ public class UserServiceTest {
 		Community community = CommunityFactory.createCommunity();
 		
 		O2UserDetails o2UserDetails = O2UserDetailsFactory.createO2UserDetails();
-		o2UserDetails.setTariff(PAYG.name());
+		o2UserDetails.tariff=PAYG.name();
 		
 		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
 		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
@@ -2513,8 +2513,8 @@ public class UserServiceTest {
 		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
 		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
 		
-		assertEquals(Contract.valueOf(o2UserDetails.getTariff()), user.getContract());
-		assertEquals(o2UserDetails.getOperator(), user.getProvider());
+		assertEquals(Contract.valueOf(o2UserDetails.tariff), user.getContract());
+		assertEquals(o2UserDetails.operator, user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2528,8 +2528,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyO2PotentialPromo_StaffPromotion_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator="o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
@@ -2560,8 +2560,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyO2PotentialPromo_StorePromotion_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator="o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
@@ -2594,8 +2594,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyO2PotentialPromo_O2UserPromotion_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator="o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
@@ -2629,8 +2629,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyO2PotentialPromo_DefaultPromotion_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator = "o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
@@ -2664,8 +2664,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyPromotionByPromoCode_ToSomeDate_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator ="o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
@@ -2702,8 +2702,8 @@ public class UserServiceTest {
 	@Test
 	public void testApplyPromotionByPromoCode_OnSomeWeeks_Success() {
 		O2UserDetails o2UserDetails = new O2UserDetails();
-		o2UserDetails.setOperator("o2");
-		o2UserDetails.setTariff("payg");
+		o2UserDetails.operator= "o2";
+		o2UserDetails.tariff="payg";
 		
 		User user = UserFactory.createUser();
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");

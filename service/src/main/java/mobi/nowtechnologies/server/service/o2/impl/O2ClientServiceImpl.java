@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import javax.xml.transform.dom.DOMSource;
 
 import mobi.nowtechnologies.server.dto.O2UserDetails;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
@@ -33,6 +34,8 @@ import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
 import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -215,8 +218,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 	}
 
 	@Override
-	public boolean isO2User(O2UserDetails userDetails) {
-		if (userDetails != null && "o2".equals(userDetails.getOperator())) {
+	public boolean isO2User(ProviderUserDetails userDetails) {
+		if (isNotNull(userDetails) && "o2".equals(userDetails.operator)) {
 			return true;
 		}
 		return false;

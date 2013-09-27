@@ -6,6 +6,7 @@ import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
@@ -70,6 +71,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -1692,25 +1694,24 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
-		LOGGER.info("apply init promo o2 " + user.getId() + " "
-                + user.getMobile() + " " + user.getActivationStatus()+" updateContractAndProvider="+updateContractAndProvider);
-		
-		boolean hasPromo = false;
-		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-		
-		LOGGER.info("o2 user details " + o2UserDetails.getOperator() + " "
-				+ o2UserDetails.getTariff() + " u.contract="
-				+ user.getContract() + " " + user.getMobile() + " "
-				+ user.getOperator());
+        LOGGER.info("apply init promo o2 for user with id [{}] and with user mobile [{}] in [{}] activationStatus. updateContractAndProvider={{}}", user.getId(),
+                user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
+
+        boolean hasPromo = false;
+		ProviderUserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
+                user.getContract(), user.getMobile(),
+                user.getOperator());
 
 		
-		if (null != mobileUser) {
+		if (isNotNull(mobileUser)) {
 			if (mobileUser.getId() != user.getId()) {
 				mergeUser(mobileUser, user);
 				user = mobileUser;
 			}
 		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
+			if (user.getActivationStatus() == ENTERED_NUMBER && !isEmail(user.getUserName())) {
                 hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
             }
         }
@@ -1720,8 +1721,8 @@ public class UserService {
         		user.setContract(Contract.PAYM);
         		user.setProvider("o2");
 			} else {
-	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-	        	user.setProvider(o2UserDetails.getOperator());
+	        	user.setContract(Contract.valueOf(o2UserDetails.tariff));
+	        	user.setProvider(o2UserDetails.operator);
 			}
         }
         user.setActivationStatus(ActivationStatus.ACTIVATED);
