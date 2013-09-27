@@ -15,6 +15,8 @@ alter table tb_promotionPaymentPolicy_tb_paymentPolicy modify column paymentPoli
 alter table tb_paymentDetails add index tb_paymentDetails_PK_paymentPolicyId (paymentPolicyId);
 alter table tb_promotionPaymentPolicy_tb_paymentPolicy add index tb_promotionPaymentPolicy_tb_paymentPolicy_PK_paymentPolicies_i (paymentPolicies_i);
 
+ALTER TABLE tb_paymentPolicy MODIFY COLUMN provider VARCHAR(255);
+
 start transaction;
 
 update tb_paymentPolicy set provider='O2' where provider='o2';
