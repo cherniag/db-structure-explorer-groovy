@@ -3142,7 +3142,6 @@ public class UserServiceTest {
         String deviceUID="";
 
         User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
-        expectedUser.subjectToAutoOptIn=false;
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);

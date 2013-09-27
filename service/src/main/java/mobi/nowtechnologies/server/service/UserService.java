@@ -1891,7 +1891,7 @@ public class UserService {
     public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID) {
         User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
-        if(!user.subjectToAutoOptIn) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
+        if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
 
         boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
 

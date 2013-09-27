@@ -289,9 +289,6 @@ public class User implements Serializable {
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
 
-    @Transient
-    public boolean subjectToAutoOptIn = true;
-
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -316,6 +313,10 @@ public class User implements Serializable {
 
     public boolean isO24GConsumer() {
         return isO2Consumer() && is4G();
+    }
+
+    public boolean isO23GConsumer() {
+        return isO2Consumer() && is3G();
     }
 
     public ContractChannel getContractChannel() {
@@ -1205,6 +1206,11 @@ public class User implements Serializable {
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
+
+    public boolean isSubjectToAutoOptIn(){
+        return isO24GConsumer()|| isO23GConsumer();
+    }
+
     public SubscriptionDirection getSubscriptionDirection() {
 
         PaymentDetails currentDetails = getCurrentPaymentDetails();
