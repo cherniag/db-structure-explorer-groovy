@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -22,8 +23,7 @@ import static mobi.nowtechnologies.server.transport.controller.ApplyInitPromoCon
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -42,38 +42,27 @@ public class ApplyInitPromoControllerTest {
     @Mock
     public UpdateO2UserTask updateO2UserTaskMock;
 
-    @Before
-    public void setUp(){
-        applyInitPromoControllerFixture = new ApplyInitPromoController();
+    @Mock
+    public NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
+    private User user;
+    private User mobileUser;
 
-        applyInitPromoControllerFixture.setUserService(userServiceMock);
-        applyInitPromoControllerFixture.setUpdateO2UserTask(updateO2UserTaskMock);
-    }
+    private AccountCheckDTO applyPromotion(String communityName, String userName, String userToken, String timestamp, String token, String community, String apiVersion) {
+        user = new User().withUserName(userName).withMobile("mobile").withActivationStatus(ACTIVATED);
+        mobileUser = new User();
 
-    @Test
-    public void should() throws Exception{
-        //given
-        String communityName = "o2";
-        String userName = "+380913008899";
-        String userToken = "userToken";
-        String timestamp = "0";
-        String token = "token";
-        String community = "o2";
-        String apiVersion = "4.0";
-
-        //when
-        User user = new User().withMobile("mobile").withActivationStatus(ACTIVATED);
-        User mobileUser = new User();
-
-        doReturn(user).when(userServiceMock).findByNameAndCommunity(userName, communityName);
+        doReturn(user).when(userServiceMock).findByNameAndCommunity(user.getUserName(), communityName);
         doReturn(mobileUser).when(userServiceMock).findByNameAndCommunity(user.getMobile(), communityName);
         doNothing().when(updateO2UserTaskMock).handleUserUpdate(user);
-        AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
+        AccountCheckDTO accountCheckDTO = new AccountCheckDTO().withUserName(userName).withUserToken(userToken);
         doReturn(accountCheckDTO).when(userServiceMock).applyInitPromo(user, mobileUser, token, false);
+        doReturn("rememberMeToken").when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(accountCheckDTO.getUserName(), accountCheckDTO.getUserToken());
 
         modelAndView = applyInitPromoControllerFixture.applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
+        return accountCheckDTO;
+    }
 
-        //then
+    private void verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(String communityName, AccountCheckDTO accountCheckDTO) {
         assertNotNull(modelAndView);
 
         Object model = modelAndView.getModelMap().get(MODEL_NAME);
@@ -91,5 +80,36 @@ public class ApplyInitPromoControllerTest {
         AccountCheckDTO actualAccountCheckDTO = (AccountCheckDTO) responseContent[0];
         assertThat(actualAccountCheckDTO, is(accountCheckDTO));
 
+        verify(userServiceMock, times(1)).findByNameAndCommunity(user.getUserName(), communityName);
+        verify(userServiceMock, times(1)).findByNameAndCommunity(user.getMobile(), communityName);
+        verify(nowTechTokenBasedRememberMeServicesMock, times(1)).getRememberMeToken(accountCheckDTO.getUserName(), accountCheckDTO.getUserToken());
+        verify(updateO2UserTaskMock, times(0)).handleUserUpdate(user);
+    }
+
+    @Before
+    public void setUp(){
+        applyInitPromoControllerFixture = new ApplyInitPromoController();
+
+        applyInitPromoControllerFixture.setUserService(userServiceMock);
+        applyInitPromoControllerFixture.setUpdateO2UserTask(updateO2UserTaskMock);
+        applyInitPromoControllerFixture.setNowTechTokenBasedRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
+    }
+
+    @Test
+    public void shouldApplyInitPromoWithOutCallingProviderAPIForUserUpdating() throws Exception{
+        //given
+        String communityName = "o2";
+        String userName = "+380913008899";
+        String userToken = "userToken";
+        String timestamp = "0";
+        String token = "token";
+        String community = "o2";
+        String apiVersion = "4.0";
+
+        //when
+        AccountCheckDTO accountCheckDTO = applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
+
+        //then
+        verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(communityName, accountCheckDTO);
     }
 }
