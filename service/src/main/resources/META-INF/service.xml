@@ -321,7 +321,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
-		<property name="migHttpService" ref="service.migHttpService" />
+		<property name="smsService" ref="${sms.service.bean}" />
 		<property name="userService" ref="service.UserService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="paymentsUrl" value="${payments.url}" />

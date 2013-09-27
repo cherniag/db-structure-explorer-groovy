@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.sentaca.spring.smpp.SMPPService;
+import com.sentaca.spring.smpp.mt.MTMessage;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +19,7 @@ public class SMPPServiceImpl {
 
     public void xtestMinimal() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("minimal.xml");
-        SMPPService service = context.getBean(SMPPServiceImpl.class);
+        SMPPService service = context.getBean(SMPPService.class);
 
         Thread.sleep(5000);
         service.send(new MTMessage("123", "123123", "Hello! There test3"));
@@ -28,7 +29,7 @@ public class SMPPServiceImpl {
 
     public void xtestMerging() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("merging.xml");
-        SMPPService service = context.getBean(SMPPServiceImpl.class);
+        SMPPService service = context.getBean(SMPPService.class);
 
         Thread.sleep(5000);
         service.send(new MTMessage("123", "123123", "Hello! There test3"));

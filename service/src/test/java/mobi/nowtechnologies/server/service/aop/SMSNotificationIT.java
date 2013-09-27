@@ -26,7 +26,7 @@ import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -93,7 +93,7 @@ public class SMSNotificationIT {
 	
 	private CommunityResourceBundleMessageSource mockMessageSource;
 	
-	private Response successfulResponse = new Response() {
+	private BasicResponse successfulResponse = new BasicResponse() {
 		@Override
 		public int getStatusCode() {
 			return HttpServletResponse.SC_OK;

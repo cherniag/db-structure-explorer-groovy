@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 /**
  * The class <code>MigResponseFactory</code> implements static methods that return instances of the class <code>{@link MigResponse}</code>.
@@ -46,6 +47,6 @@ public class MigResponseFactory
 	 * @generatedBy CodePro at 29.08.12 12:06
 	 */
 	public static MigResponse createMigResponse2() {
-		return new MigResponse(new mobi.nowtechnologies.server.shared.service.PostService.Response());
+		return new MigResponse(new BasicResponse());
 	}
 }

@@ -1,16 +1,16 @@
 package mobi.nowtechnologies.server.service.payment.http;
 
-import java.util.List;
-
+import mobi.nowtechnologies.server.service.payment.request.MigRequest;
+import mobi.nowtechnologies.server.service.payment.response.MigResponse;
+import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mobi.nowtechnologies.server.service.payment.request.MigRequest;
-import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import java.util.List;
 
-public class MigHttpService extends PaymentHttpService {
+public class MigHttpService extends PaymentHttpService implements SMSGatewayService<MigResponse>{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MigHttpService.class);
 	
@@ -26,6 +26,11 @@ public class MigHttpService extends PaymentHttpService {
 		List<NameValuePair> nameValuePairs = request.createFreeSMSRequest(numbers, message).build();
 		return makeMigRequest(nameValuePairs, freeSMSURL);
 	}
+
+    @Override
+    public MigResponse send(String numbers, String message, String title){
+        return makeFreeSMSRequest(numbers, message, title);
+    }
 	
     public MigResponse makeFreeSMSRequest(String numbers, String message, String title){
         List<NameValuePair> nameValuePairs = request.createFreeSMSRequest(numbers, message, title).build();
@@ -34,7 +39,7 @@ public class MigHttpService extends PaymentHttpService {
 
     private MigResponse makeMigRequest(List<NameValuePair> nameValuePairs, String url) {
         LOGGER.info("Mig request for free sms {}", nameValuePairs);
-        Response response = httpService.sendHttpPost(url, nameValuePairs, null);
+        BasicResponse response = httpService.sendHttpPost(url, nameValuePairs, null);
         LOGGER.info("Mig response for free sms {}", response);
         return new MigResponse(response);
     }
@@ -44,7 +49,7 @@ public class MigHttpService extends PaymentHttpService {
 	public MigResponse makePremiumSMSRequest(String messageId, String oadc, String numbers, String message ) {
 		List<NameValuePair> nameValuePairs = request.createPremiumSMSRequest(messageId, oadc, numbers, message, timeToLiveMin.toString()).build();
 		LOGGER.info("Mig request for premium sms {}", nameValuePairs);
-		Response response = httpService.sendHttpPost(premiumSMSURL, nameValuePairs, null);
+        BasicResponse response = httpService.sendHttpPost(premiumSMSURL, nameValuePairs, null);
 		LOGGER.info("Mig response for premium sms {}", response);
 		return new MigResponse(response);
 	}

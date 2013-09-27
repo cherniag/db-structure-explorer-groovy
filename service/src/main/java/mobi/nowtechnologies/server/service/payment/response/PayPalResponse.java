@@ -1,16 +1,14 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 public class PayPalResponse extends PaymentSystemResponse {
 	
@@ -38,7 +36,7 @@ public class PayPalResponse extends PaymentSystemResponse {
 	private Map<PayPalResponseParam, String> properties;
 	private Map<String, String> errors;
 		
-	public PayPalResponse(Response response) {
+	public PayPalResponse(BasicResponse response) {
 		super(response);
 		properties = new HashMap<PayPalResponseParam, String>();
 		errors = new HashMap<String, String>();

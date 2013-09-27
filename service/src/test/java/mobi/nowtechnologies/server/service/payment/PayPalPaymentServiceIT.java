@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import java.math.BigDecimal;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
@@ -17,18 +12,23 @@ import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
-import static junit.framework.Assert.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+
+import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
@@ -45,8 +45,8 @@ public class PayPalPaymentServiceIT {
 	private PaymentDetailsService paymentDetailsService;
 	
 	PayPalHttpService httpService = Mockito.mock(PayPalHttpService.class);
-	
-	Response successfulResponse = new Response() {
+
+    BasicResponse successfulResponse = new BasicResponse() {
 		@Override
 		public int getStatusCode() {
 			return HttpServletResponse.SC_OK;

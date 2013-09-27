@@ -1,11 +1,8 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import com.google.gson.Gson;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.ITunesService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -16,9 +13,8 @@ import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionRequestDto;
 import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionResponseDto;
 import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionResponseDto.Receipt;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,8 +22,6 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.gson.Gson;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -78,10 +72,10 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public Response processInAppSubscription(int userId, String transactionReceipt) {
+	public BasicResponse processInAppSubscription(int userId, String transactionReceipt) {
 		LOGGER.debug("input parameters userId, transactionReceipt: [{}], [{}]", userId, transactionReceipt);
 
-		final Response response;
+		final BasicResponse BasicResponse;
 		User user = userService.findById(userId);
 
 		if (user != null &&(user.getCurrentPaymentDetails() == null || !user.getCurrentPaymentDetails().isActivated()) && (((user.getBase64EncodedAppStoreReceipt() != null && user.getStatus().getI() == UserStatusDao.getLimitedUserStatus().getI())
@@ -101,13 +95,13 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 			String body = gson.toJson(iTunesInAppSubscriptionRequestDto);
 			
 			LOGGER.info("Trying to validate in-app subscription with following params [{}]", iTunesInAppSubscriptionRequestDto);
-			response = postService.sendHttpPost(iTunesUrl, null, body);
+			BasicResponse = postService.sendHttpPost(iTunesUrl, null, body);
 
-			if (response.getStatusCode() == HttpStatus.OK.value()) {
-				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(response.getMessage(), ITunesInAppSubscriptionResponseDto.class);
+			if (BasicResponse.getStatusCode() == HttpStatus.OK.value()) {
+				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(BasicResponse.getMessage(), ITunesInAppSubscriptionResponseDto.class);
 
 				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by response [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by BasicResponse [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
 					
 					Receipt latestReceiptInfo = iTunesInAppSubscriptionResponseDto.getLatestReceiptInfo();
 					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), latestReceiptInfo.getProductId());
@@ -137,17 +131,17 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
 					applicationEventPublisher.publishEvent(paymentEvent);
 				} else {
-					LOGGER.info("ITunes rejected the encoded receipt [{}] by response [{}]", base64EncodedAppStoreReceipt, response);
+					LOGGER.info("ITunes rejected the encoded receipt [{}] by BasicResponse [{}]", base64EncodedAppStoreReceipt, BasicResponse);
 				}
 			}else{
-				LOGGER.info("The request of in-app subscription validation returned unexpected response [{}]", response);
+				LOGGER.info("The request of in-app subscription validation returned unexpected BasicResponse [{}]", BasicResponse);
 			}
 		} else {
-			response = null;
+			BasicResponse = null;
 		}
 		
-		LOGGER.debug("Output parameter response=[{}]", response);
-		return response;
+		LOGGER.debug("Output parameter BasicResponse=[{}]", BasicResponse);
+		return BasicResponse;
 	}
 
 }

@@ -5,8 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +160,7 @@ public class FacebookService {
 		
 		LOGGER.info("facebook params [{}]", requestParams);
 		
-		Response response = postService.sendHttpGet(urlFacebookUserCredentions, requestParams);
+		BasicResponse response = postService.sendHttpGet(urlFacebookUserCredentions, requestParams);
 		
 		if (response.getStatusCode() != HttpStatus.SC_OK) {
 			throw new UserCredentialsException(messageSource.getMessage(communityName, "facebook.checkCredentials.response.wrongHttpStatusCode", null, null));

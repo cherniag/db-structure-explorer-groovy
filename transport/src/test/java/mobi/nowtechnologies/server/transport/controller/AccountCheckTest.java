@@ -2,11 +2,10 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +50,7 @@ public class AccountCheckTest {
 		nameValuePairs[5] = new BasicNameValuePair("TIMESTAMP", timestamp);
 
 		PostService postService = new PostService();
-		Response response = postService.sendHttpPost(URL + SERVLET_URL_PATTERN,
+        BasicResponse response = postService.sendHttpPost(URL + SERVLET_URL_PATTERN,
 				Arrays.asList(nameValuePairs), null);
 
 		String testResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"

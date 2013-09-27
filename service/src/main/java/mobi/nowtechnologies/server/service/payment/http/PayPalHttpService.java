@@ -1,22 +1,21 @@
 package mobi.nowtechnologies.server.service.payment.http;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
+import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
-import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class PayPalHttpService extends PaymentHttpService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(PayPalHttpService.class);
-	
+
 	private String apiUrl;
-	
+
 	private PayPalRequest request;
 	/**
 	 * Method requests SetExpressCheckout command to PayPal
@@ -26,7 +25,7 @@ public class PayPalHttpService extends PaymentHttpService {
 	protected PayPalResponse makeRequest(PayPalRequest request) {
 		List<NameValuePair> params = request.build();
 		LOGGER.info("PayPal http service making request with params: {}", params);
-		Response response = httpService.sendHttpPost(apiUrl, params, null);
+		BasicResponse response = httpService.sendHttpPost(apiUrl, params, null);
 		LOGGER.info("PayPal http service get response: {}", response);
 		return new PayPalResponse(response);
 	}
