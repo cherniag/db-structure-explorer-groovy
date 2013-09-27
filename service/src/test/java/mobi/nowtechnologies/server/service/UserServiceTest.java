@@ -2461,7 +2461,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromo(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2501,12 +2501,12 @@ public class UserServiceTest {
 		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
 		
 		boolean hasPromo = false;
-        doReturn(hasPromo).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(user, false);
+        doReturn(hasPromo).when(promotionServiceMock).applyPotentialPromo(user, false);
 		
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromo(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2521,7 +2521,7 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
 		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
 		verify(userRepositoryMock, times(1)).save(user);
-		verify(promotionServiceMock,times(1) ).applyO2PotentialPromoOf4ApiVersion(user, false);
+		verify(promotionServiceMock,times(1) ).applyPotentialPromo(user, false);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 	}
 	

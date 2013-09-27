@@ -37,7 +37,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
@@ -106,6 +105,7 @@ public class UserService {
     private AccountLogService accountLogService;
     private UserRepository userRepository;
     private O2ClientService o2ClientService;
+    private OtacValidationService otacValidationService;
     private O2Service o2Service;
     private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
@@ -134,7 +134,11 @@ public class UserService {
     }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
-		this.o2ClientService = o2ClientService;
+        this.o2ClientService = o2ClientService;
+    }
+
+    public void setOtacValidationService(OtacValidationService otacValidationService) {
+		this.otacValidationService = otacValidationService;
 	}
 
 	public void setO2Service(O2Service o2Service) {
@@ -1714,11 +1718,11 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
-        LOGGER.info("apply init promo for user with id [{}] and with user mobile [{}] in [{}] activationStatus. updateContractAndProvider={{}}", user.getId(),
+	public AccountCheckDTO applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+        LOGGER.info("apply init promo for user with id [{}] and with user mobile [{}] in [{}] activationStatus. updateContractAndProvider=[{}]", user.getId(),
                 user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-		ProviderUserDetails providerUserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+		ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile());
 
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
@@ -1728,7 +1732,7 @@ public class UserService {
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-             hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(providerUserDetails));
+             hasPromo = promotionService.applyPotentialPromo(user, o2ClientService.isO2User(providerUserDetails));
         }
 
         if(updateContractAndProvider) updateContractAndProvider(user, providerUserDetails);

@@ -140,7 +140,7 @@ public class PromotionService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
+    public boolean applyPotentialPromo(User user, boolean isO2User){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);

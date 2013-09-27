@@ -17,7 +17,7 @@ public interface O2ClientService {
 	String getRedeemServerO2Url(String phoneNumber);
 
 	O2UserDetails getUserDetails(String token, String phoneNumber);
-	
+
 	boolean sendFreeSms(String phoneNumber, String message);
 
 	O2Response makePremiumSMSRequest(int userId, String internalTxId, BigDecimal subCost, String o2PhoneNumber, String message, String contentCategory, String contentType, String contentDescription, String subMerchantId, boolean smsNotify);

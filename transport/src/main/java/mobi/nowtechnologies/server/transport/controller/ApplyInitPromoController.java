@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
+
 /**
  * ApplyInitPromoConroller
  *
@@ -56,7 +59,7 @@ public class ApplyInitPromoController extends CommonController {
             final Object[] objects = new Object[]{accountCheckDTO};
             precessRememberMeToken(objects);
 
-            return new ModelAndView(view, Response.class.toString(), new Response(objects));
+            return new ModelAndView(view, MODEL_NAME, new Response(objects));
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -67,7 +70,7 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
-    public ModelAndView applyO2Promotion(
+    public ModelAndView applyPromotion(
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -80,27 +83,27 @@ public class ApplyInitPromoController extends CommonController {
  		User user = null; 
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
+
+            boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
+
             user = userService.findByNameAndCommunity(userName, communityName);
-            User mobileUser = null;
-            if (null != user) {
-            	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
-            	
-    			boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, updateContractAndProvider);
+            if (isNull(user)) throw new UserCredentialsException("Bad user credentials");
 
-    	        final Object[] objects = new Object[]{accountCheckDTO};
-    	        precessRememberMeToken(objects);
+            User mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
 
-    	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
+            AccountCheckDTO accountCheckDTO = userService.applyInitPromo(user, mobileUser, token, updateContractAndProvider);
 
-                if (isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
-                    updateO2UserTask.handleUserUpdate(user);
-                }
+            final Object[] objects = new Object[]{accountCheckDTO};
+            precessRememberMeToken(objects);
 
-    	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+            user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
+
+            if (isMajorApiVersionNumberLessThan(VERSION_4, apiVersion)) {
+                updateO2UserTask.handleUserUpdate(user);
             }
-            throw new UserCredentialsException("Bad user credentials");
+
+            return new ModelAndView(view, MODEL_NAME, new Response(objects));
         }catch (UserCredentialsException ce){
         	ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);
@@ -126,6 +129,20 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) {
-        return (Response)applyO2Promotion(communityName, userName, userToken, timestamp, token, community, apiVersion).getModelMap().get(MODEL_NAME);
+        return (Response) applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion).getModelMap().get(MODEL_NAME);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO.json"
+    })
+    public ModelAndView applyInitPromo(
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) {
+        return applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
     }
 }

@@ -133,7 +133,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -156,7 +156,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -183,7 +183,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -208,7 +208,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -231,7 +231,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -254,7 +254,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
@@ -276,7 +276,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
 
-        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
         then().validateAs(true);
 
