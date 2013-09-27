@@ -63,13 +63,14 @@ public class AutoOptInControllerIT {
     public void shouldAutoOptIn() throws ServletException, IOException {
         //given
         String userName = "+447111111114";
-        String appVersion = "4.1";
-        String apiVersion = "4.1";
+        String appVersion = "4.2";
+        String apiVersion = "4.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String deviceUid = "b88106713409e92622461a876abcd74b";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = "otac";
 
         String url = "/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN";
 
@@ -83,6 +84,7 @@ public class AutoOptInControllerIT {
         httpServletRequestMock.addParameter("USER_TOKEN", userToken);
         httpServletRequestMock.addParameter("TIMESTAMP", timestamp);
         httpServletRequestMock.addParameter("DEVICE_UID", deviceUid);
+        httpServletRequestMock.addParameter("OTAC_TOKEN", otac);
 
         MockHttpServletResponse httpServletResponseMock = new MockHttpServletResponse();
 
