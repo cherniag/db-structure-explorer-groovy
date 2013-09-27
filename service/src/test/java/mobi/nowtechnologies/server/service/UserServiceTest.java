@@ -3074,7 +3074,7 @@ public class UserServiceTest {
         String communityUri="";
         String deviceUID="";
 
-        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
