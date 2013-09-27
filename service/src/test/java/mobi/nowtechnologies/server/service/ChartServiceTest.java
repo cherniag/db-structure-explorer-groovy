@@ -11,11 +11,11 @@ import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,8 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static java.util.Collections.*;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.singletonList;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -66,6 +67,7 @@ public class ChartServiceTest {
 	private User testUser;
 
     @Test
+    @Ignore
     public void testGetCurrentTime_Success(){
         Community community = CommunityFactory.createCommunity();
 
