@@ -26,6 +26,7 @@ public class AutoOptInController extends CommonController {
                                   @RequestParam("USER_TOKEN") String userToken,
                                   @RequestParam("TIMESTAMP") String timestamp,
                                   @RequestParam("DEVICE_UID") String deviceUID,
+                                  @RequestParam("OTAC_TOKEN") String otac,
                                   @PathVariable("communityUri") String communityUri,
                                   @PathVariable("apiVersion") String apiVersion) throws Exception {
         User user = null;
@@ -35,7 +36,7 @@ public class AutoOptInController extends CommonController {
 
             LOGGER.info("command processing started");
 
-            user = userService.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+            user = userService.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
 
             final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
                     null, null, null);

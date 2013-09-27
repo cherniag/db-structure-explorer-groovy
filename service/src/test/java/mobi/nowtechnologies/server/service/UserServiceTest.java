@@ -2360,7 +2360,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2405,7 +2405,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -3073,16 +3073,20 @@ public class UserServiceTest {
         String timestamp="";
         String communityUri="";
         String deviceUID="";
+        String otac = "";
 
-        User expectedUser = new User().withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
-        PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-        PowerMockito.doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
-        PowerMockito.doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        O2UserDetails o2UserDetails = new O2UserDetails();
+        doReturn(o2UserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile());
+        doReturn(true).when(o2ClientServiceMock).isO2User(o2UserDetails);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+        User actualUser = userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
 
         //then
         assertNotNull(actualUser);
@@ -3091,6 +3095,8 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         verify(promotionServiceMock, times(1)).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(o2ClientServiceMock, times(1)).getUserDetails(otac, expectedUser.getMobile());
+        verify(o2ClientServiceMock, times(1)).isO2User(o2UserDetails);
     }
 
     @Test(expected = ServiceException.class)
@@ -3101,16 +3107,20 @@ public class UserServiceTest {
         String timestamp="";
         String communityUri="";
         String deviceUID="";
+        String otac = "";
 
         User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
-        PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-        PowerMockito.doReturn(false).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
-        PowerMockito.doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(false).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        O2UserDetails o2UserDetails = new O2UserDetails();
+        doReturn(o2UserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile());
+        doReturn(true).when(o2ClientServiceMock).isO2User(o2UserDetails);
 
         //when
-        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
     }
 
     @Test(expected = RuntimeException.class)
@@ -3121,15 +3131,19 @@ public class UserServiceTest {
         String timestamp="";
         String communityUri="";
         String deviceUID="";
+        String otac = "";
 
         User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
-        PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-        PowerMockito.doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
-        PowerMockito.doThrow(new RuntimeException()).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
+        doThrow(new RuntimeException()).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        O2UserDetails o2UserDetails = new O2UserDetails();
+        doReturn(o2UserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile());
+        doReturn(true).when(o2ClientServiceMock).isO2User(o2UserDetails);
 
         //when
-        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
     }
 
     @Test(expected = ServiceException.class)
@@ -3140,16 +3154,20 @@ public class UserServiceTest {
         String timestamp="";
         String communityUri="";
         String deviceUID="";
+        String otac = "";
 
         User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
-        PowerMockito.doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-        PowerMockito.doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
-        PowerMockito.doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        O2UserDetails o2UserDetails = new O2UserDetails();
+        doReturn(o2UserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile());
+        doReturn(true).when(o2ClientServiceMock).isO2User(o2UserDetails);
 
         //when
-        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID);
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

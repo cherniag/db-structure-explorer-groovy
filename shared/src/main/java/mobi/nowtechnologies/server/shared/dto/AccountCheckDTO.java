@@ -133,8 +133,18 @@ public class AccountCheckDTO {
         this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
         this.tariff = accountCheckDTO.tariff;
 
-        accountCheckDTO.fullyRegistred = EmailValidator.validate(userName);
+        accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
 	}
+
+    public AccountCheckDTO withUserName(String userName){
+        this.userName = userName;
+        return this;
+    }
+
+    public AccountCheckDTO withUserToken(String userToken){
+        this.userToken = userToken;
+        return this;
+    }
 
     @Override
     public String toString() {

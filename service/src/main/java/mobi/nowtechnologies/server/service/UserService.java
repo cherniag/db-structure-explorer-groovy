@@ -36,7 +36,6 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
@@ -64,12 +63,14 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -108,7 +109,26 @@ public class UserService {
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
+
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+
+    private User checkAndMerge(User user, User mobileUser) {
+        if (mobileUser.getId() != user.getId()) {
+            user = mergeUser(mobileUser, user);
+        }
+        return user;
+    }
+
+    private User updateContractAndProvider(User user, O2UserDetails providerUserDetails) {
+        if (isPromotedDevice(user.getMobile()) ) {
+            user.setContract(Contract.PAYM);
+            user.setProvider(ProviderType.O2);
+        } else {
+            user.setContract(Contract.valueOf(providerUserDetails.getTariff()));
+            user.setProvider(ProviderType.valueOfKey(providerUserDetails.getOperator()));
+        }
+        return user;
+    }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -724,7 +744,7 @@ public class UserService {
 
 		userRepository.updateFields(storedToken, userId);
 
-		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[] { user });
+		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[]{user});
 		return user;
 	}
 
@@ -941,7 +961,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType, String transactionReceipt) {
-		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt });
+		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt});
 
 		try {
 			iTunesService.processInAppSubscription(userId, transactionReceipt);
@@ -1382,7 +1402,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitialPromotion(User user) {
-		LOGGER.debug("input parameters user: [{}]", new Object[] { user });
+		LOGGER.debug("input parameters user: [{}]", new Object[]{user});
 
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");
@@ -1539,7 +1559,7 @@ public class UserService {
 			throw new NullPointerException("The parameter payment is null");
 
 		BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
-				payment.getAmount());
+                payment.getAmount());
 		user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
 
 		user = updateUser(user);
@@ -1669,46 +1689,38 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
-		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]" , user.getId(), user.getMobile(),user.getActivationStatus(), updateContractAndProvider);
-		
-		boolean hasPromo = false;
-		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-		
-		LOGGER.info("o2 user details " + o2UserDetails.getOperator() + " "
-				+ o2UserDetails.getTariff() + " u.contract="
-				+ user.getContract() + " " + user.getMobile() + " "
-				+ user.getOperator());
+	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-		
-		if (null != mobileUser) {
-			if (mobileUser.getId() != user.getId()) {
-				mergeUser(mobileUser, user);
-				user = mobileUser;
-			}
-		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
-                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
-            }
-        }
-        if(updateContractAndProvider){
-        	if ( isPromotedDevice(user.getMobile()) ) {
-				// if the device is promoted, we go with the default values
-        		user.setContract(Contract.PAYM);
-        		user.setProvider(ProviderType.O2);
-			} else {
-	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-                user.setProvider(ProviderType.valueOfKey(o2UserDetails.getOperator()));
-			}
-        }
-        user.setActivationStatus(ActivationStatus.ACTIVATED);
-        user.setUserName(user.getMobile());
-        userRepository.save(user);
+        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
         dto.fullyRegistred = true;
         dto.hasPotentialPromoCodePromotion = hasPromo;
         return dto;
+    }
+
+    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
+        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
+                user.getContract(), user.getMobile(),
+                user.getOperator());
+
+        boolean hasPromo = false;
+        if (isNotNull(mobileUser)) {
+            user = checkAndMerge(user, mobileUser);
+        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
+            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
+        }
+
+        if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
+
+        user.setActivationStatus(ACTIVATED);
+        user.setUserName(user.getMobile());
+        userRepository.save(user);
+
+        return hasPromo;
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -1888,12 +1900,14 @@ public class UserService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID) {
+    public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID, String otac) {
         User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
         if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
 
-        boolean isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        User mobileUser = findByNameAndCommunity(user.getMobile(), communityUri);
+
+        boolean isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
 
         if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
 

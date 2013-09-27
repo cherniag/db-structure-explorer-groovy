@@ -55,7 +55,7 @@ public class MandatoryPropertyValidator {
 		if (aClass == null)
 			throw new NullPointerException("The parameter aClass is null");
 		validateStringPropertyOnEmpty(aClass, aPropertyName, aEmail);
-		if (!EmailValidator.validate(aEmail))
+		if (!EmailValidator.isEmail(aEmail))
 			throw new ValidationException(ServerMessage
 					.getMessageOnInvalidValue(aClass, aPropertyName, aEmail));
 	}

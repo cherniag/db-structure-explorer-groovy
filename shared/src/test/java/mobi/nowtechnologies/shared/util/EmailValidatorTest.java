@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
  * The class <code>EmailValidatorTest</code> contains tests for the class
  * <code>{@link EmailValidator}</code>.
@@ -57,10 +59,10 @@ public class EmailValidatorTest {
 
 	@Test
 	public void testValidate() {
-		boolean isValid = EmailValidator.validate(email);
+		boolean isValid = EmailValidator.isEmail(email);
 		if (expectedValue!=isValid)
 			LOGGER.error("Expected value: " + expectedValue
 					+ " but test returned " + isValid +" for "+email);
-		Assert.assertEquals(expectedValue, isValid);
+		assertEquals(expectedValue, isValid);
 	}
 }
