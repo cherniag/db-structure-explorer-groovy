@@ -111,8 +111,9 @@ public class UserServiceTest {
     private PromotionService promotionServiceMock;
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
+    private OtacValidationService otacValidationServiceMock;
 
-	@Test
+    @Test
 	public void testChangePassword_Success() throws Exception {
 		String password = "newPa$$1";
 
@@ -686,6 +687,7 @@ public class UserServiceTest {
         userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
+        otacValidationServiceMock = PowerMockito.mock(OtacValidationService.class);
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
 		
@@ -719,6 +721,7 @@ public class UserServiceTest {
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
+        userServiceSpy.setOtacValidationService(otacValidationServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -2451,7 +2454,7 @@ public class UserServiceTest {
 		o2UserDetails.tariff = PAYG.name();
 		
 		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
-		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(otacValidationServiceMock.validate(otac, user.getMobile())).thenReturn(o2UserDetails);
 		when(userRepositoryMock.save(user)).thenReturn(user);
 		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
 		
@@ -2474,7 +2477,7 @@ public class UserServiceTest {
 		assertEquals(user.getMobile(), user.getUserName());
 		
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
-		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile());
 		verify(communityServiceMock, times(1)).getCommunityByName(communityName);
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(userServiceSpy,times(0) ).applyO2PotentialPromo(o2UserDetails, user, community);
@@ -2496,7 +2499,7 @@ public class UserServiceTest {
 		o2UserDetails.tariff=PAYG.name();
 		
 		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
-		when(o2ClientServiceMock.getUserDetails(otac, user.getMobile())).thenReturn(o2UserDetails);
+		when(otacValidationServiceMock.validate(otac, user.getMobile())).thenReturn(o2UserDetails);
 		when(userRepositoryMock.save(user)).thenReturn(user);
 		when(communityServiceMock.getCommunityByName(communityName)).thenReturn(community);
 		
@@ -2519,7 +2522,7 @@ public class UserServiceTest {
 		assertEquals(user.getMobile(), user.getUserName());
 		
 		verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
-		verify(o2ClientServiceMock, times(1)).getUserDetails(otac, user.getMobile());
+		verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile());
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(promotionServiceMock,times(1) ).applyPotentialPromo(user, false);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
