@@ -36,6 +36,7 @@ import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.shared.AppConstants.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 
@@ -125,7 +126,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 	@Override
 	public String getRedeemServerO2Url(String phoneNumber) {
-		Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
+		Community o2Community = communityService.getCommunityByUrl(O2_COMMUNITY_REWRITE_URL);
 
 		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
 				? this.redeemPromotedServerO2Url
