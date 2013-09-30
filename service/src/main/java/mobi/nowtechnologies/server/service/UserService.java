@@ -58,6 +58,7 @@ import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
@@ -128,6 +129,16 @@ public class UserService {
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.getOperator()));
         }
         return user;
+    }
+
+    private boolean isO2User(User user, String otac, O2UserDetails o2UserDetails) {
+        boolean isO2User;
+        if(isNotNull(otac)){
+            isO2User = o2ClientService.isO2User(o2UserDetails);
+        }else{
+            isO2User = user.isO2User();
+        }
+        return isO2User;
     }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
@@ -695,7 +706,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(User user, final String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-		notNull(user , "The parameter user is null");
+		notNull(user, "The parameter user is null");
 
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
@@ -709,7 +720,7 @@ public class UserService {
 			String communityName) {
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
-		Byte communityId = Community.getMapAsNames().get(communityName).getId();
+		Byte communityId = getMapAsNames().get(communityName).getId();
 		List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
                 PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
                 communityId);
@@ -950,7 +961,7 @@ public class UserService {
 	public User updateUserBalance(User user, byte intSubBalance) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
-		LOGGER.debug("input parameters user, intSubBalance: [{}]", new Object[] { user, intSubBalance });
+		LOGGER.debug("input parameters user, intSubBalance: [{}]", new Object[]{user, intSubBalance});
 
 		user.setSubBalance(intSubBalance);
 
@@ -1467,7 +1478,7 @@ public class UserService {
 		User user = userRepository.findOne(userId);
 
 		if (user == null)
-			throw new ServiceException("users.management.edit.page.coudNotFindUser.error", "Coudn't find user with id [" + userId + "]");
+			throw new ServiceException("users.management.edit.page.coudNotFindUser.error", "Couldn't find user with id [" + userId + "]");
 
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
@@ -1701,7 +1712,10 @@ public class UserService {
     }
 
     private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
-        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+        LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
+
+        O2UserDetails o2UserDetails = null;
+        if (isNotNull(otac)) o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
                 user.getContract(), user.getMobile(),
@@ -1711,7 +1725,7 @@ public class UserService {
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
+            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User(user, otac, o2UserDetails));
         }
 
         if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
@@ -1723,7 +1737,7 @@ public class UserService {
         return hasPromo;
     }
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
 	public void saveWeeklyPayment(User user) throws Exception {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
@@ -1888,11 +1902,11 @@ public class UserService {
 		boolean isPromoted = false;
 		try {
 			isPromoted = deviceService.isPromotedDevicePhone(
-					communityService.getCommunityByName("o2"),
+					communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL),
 					phoneNumber,
 					null);
 		} catch ( Exception e ) {
-			LOGGER.error("", e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
 		

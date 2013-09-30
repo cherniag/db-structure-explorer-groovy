@@ -15,6 +15,8 @@ import java.util.Map;
 public class Community implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+    public static final String O2_COMMUNITY_REWRITE_URL = "o2";
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="i")

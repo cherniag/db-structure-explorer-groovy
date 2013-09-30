@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.AppConstants.*;
 import static mobi.nowtechnologies.server.shared.Utils.*;

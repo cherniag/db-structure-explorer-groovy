@@ -26,7 +26,7 @@ public class AutoOptInController extends CommonController {
                                   @RequestParam("USER_TOKEN") String userToken,
                                   @RequestParam("TIMESTAMP") String timestamp,
                                   @RequestParam("DEVICE_UID") String deviceUID,
-                                  @RequestParam("OTAC_TOKEN") String otac,
+                                  @RequestParam(value = "OTAC_TOKEN", required = false) String otac,
                                   @PathVariable("communityUri") String communityUri,
                                   @PathVariable("apiVersion") String apiVersion) throws Exception {
         User user = null;

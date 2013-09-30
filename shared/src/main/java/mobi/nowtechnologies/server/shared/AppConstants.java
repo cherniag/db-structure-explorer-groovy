@@ -17,5 +17,4 @@ public final class AppConstants {
 	public static final String FB_URL_USER_CREDENTIALS = "https://graph.facebook.com/me";
 
 	public static final int TMP_PASSWORD_LENGTH = 6;
-    public static final String O2_COMMUNITY_REWRITE_URL = "o2";
 }
