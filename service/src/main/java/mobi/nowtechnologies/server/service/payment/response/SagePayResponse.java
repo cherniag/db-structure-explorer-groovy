@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class SagePayResponse extends PaymentSystemResponse {
 		USER_CONFIRMED
 	}
 
-	public SagePayResponse(Response response) {
+	public SagePayResponse(BasicResponse response) {
 		super(response);
 
 		String message = response.getMessage();

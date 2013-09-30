@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.payment.http;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class SagePayHttpService extends PaymentHttpService {
 	
 	protected SagePayResponse sendRequest(String url, List<NameValuePair> nameValuePairs) {
 		LOGGER.debug("SagePay http request params {}", nameValuePairs);
-		Response response = getPostService().sendHttpPost(url, nameValuePairs, null);
+        BasicResponse response = getPostService().sendHttpPost(url, nameValuePairs, null);
 		LOGGER.info("SagePay http response params {}", response);
 		return new SagePayResponse(response);
 	}

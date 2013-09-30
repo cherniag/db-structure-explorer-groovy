@@ -1,16 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
@@ -19,12 +10,14 @@ import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 
 /**
  * 
@@ -122,7 +115,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 
 	@Override
 	public PaymentSystemResponse getExpiredResponse() {
-		PayPalResponse response = new PayPalResponse(new Response() {
+		PayPalResponse response = new PayPalResponse(new BasicResponse() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;

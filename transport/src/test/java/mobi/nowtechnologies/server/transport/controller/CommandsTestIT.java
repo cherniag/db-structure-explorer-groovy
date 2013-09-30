@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Ignore;
@@ -75,7 +75,7 @@ public class CommandsTestIT {
 		System.out.println(USER_NAME);
 		//System.out.println(xml);
 		PostService postService = new PostService();
-		Response response = postService.sendHttpPost(URL + "REGISTER_USER",
+        BasicResponse response = postService.sendHttpPost(URL + "REGISTER_USER",
 				null, xml);
 
 		System.out.println(response.getMessage());
@@ -96,7 +96,7 @@ public class CommandsTestIT {
 		nameValuePairs[6] = new BasicNameValuePair("PIN", "14391690");
 
 		PostService postService = new PostService();
-		Response response = postService.sendHttpPost(URL + command,
+        BasicResponse response = postService.sendHttpPost(URL + command,
 				Arrays.asList(nameValuePairs), null);
 
 		System.out.println(response.getMessage());
@@ -116,7 +116,7 @@ public class CommandsTestIT {
 		nameValuePairs[5] = new BasicNameValuePair("COMMUNITY_NAME", COMMUNTIY_NAME);
 
 		PostService postService = new PostService();
-		Response response = postService.sendHttpPost(URL + command,
+        BasicResponse response = postService.sendHttpPost(URL + command,
 				Arrays.asList(nameValuePairs), null);
 
 		System.out.println(response.getMessage());
@@ -140,7 +140,7 @@ public class CommandsTestIT {
 		nameValuePairs[8] = new BasicNameValuePair("COMMUNITY_NAME", COMMUNTIY_NAME);
 
 		PostService postService = new PostService();
-		Response response = postService.sendHttpPost(URL + command,
+        BasicResponse response = postService.sendHttpPost(URL + command,
 				Arrays.asList(nameValuePairs), null);
 
 		System.out.println(response.getMessage());

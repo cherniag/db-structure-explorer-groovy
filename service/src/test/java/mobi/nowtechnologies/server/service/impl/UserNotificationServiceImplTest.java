@@ -1,41 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.concurrent.Future;
-
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.DeviceTypeFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.domain.UserStatusFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserNotificationService;
@@ -46,7 +11,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +23,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * The class <code>UserNotificationImplTest</code> contains tests for the class
@@ -2048,7 +2025,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2060,7 +2037,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2128,7 +2105,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2140,7 +2117,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2208,7 +2185,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2220,7 +2197,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(1)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -2688,7 +2665,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.failMigResponse("error");
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2700,7 +2677,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(1)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2768,7 +2745,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2780,7 +2757,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(1)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
 	}
 	
 	@Test()
@@ -3036,7 +3013,7 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setUnsubscribeUrl("unsubscribeUrl");
 		userNotificationImplSpy.setMessageSource(communityResourceBundleMessageSourceMock);
 		userNotificationImplSpy.setRestTemplate(restTemplateMock);
-		userNotificationImplSpy.setMigHttpService(migHttpServiceMock);
+		userNotificationImplSpy.setSmsService(migHttpServiceMock);
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
 
 	}

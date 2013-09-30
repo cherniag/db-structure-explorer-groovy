@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.springframework.util.StringUtils;
-
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 public abstract class PaymentSystemResponse {
 	
@@ -12,7 +11,7 @@ public abstract class PaymentSystemResponse {
 	protected String message;
 	protected String errorCode;
 	
-	public PaymentSystemResponse(Response response) {
+	public PaymentSystemResponse(BasicResponse response) {
 		httpStatus = response.getStatusCode();
 		if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
 			message = response.getMessage().substring(0, 254);

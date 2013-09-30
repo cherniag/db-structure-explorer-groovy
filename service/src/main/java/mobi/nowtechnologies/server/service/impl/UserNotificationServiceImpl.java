@@ -1,30 +1,18 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.service.payment.response.MigResponse;
+import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
+import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -36,6 +24,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
+
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -46,7 +40,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 	private UserService userService;
 
-	private MigHttpService migService;
+	private SMSGatewayService smsService;
 
 	private CommunityResourceBundleMessageSource messageSource;
 
@@ -68,11 +62,11 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		this.userService = userService;
 	}
 
-	public void setMigHttpService(MigHttpService migService) {
-		this.migService = migService;
-	}
+    public void setSmsService(SMSGatewayService smsService) {
+        this.smsService = smsService;
+    }
 
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
@@ -438,11 +432,11 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 				if (!StringUtils.isBlank(message)) {
 					String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-					MigResponse migResponse = migService.makeFreeSMSRequest(user.getMobile(), message, title);
-					if (migResponse.isSuccessful()) {
+					SMSResponse smsResponse = smsService.send(user.getMobile(), message, title);
+					if (smsResponse.isSuccessful()) {
 						wasSmsSentSuccessfully = true;
 					} else {
-						LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", migResponse);
+						LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
 					}
 				} else {
 					LOGGER.info("The sms wasn't sent cause empty sms text message");
