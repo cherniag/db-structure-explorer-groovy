@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -8,5 +9,5 @@ import mobi.nowtechnologies.server.dto.ProviderUserDetails;
  */
 public interface OtacValidationService {
 
-    ProviderUserDetails validate(String otac, String phoneNumber);
+    ProviderUserDetails validate(String otac, String phoneNumber, Community community);
 }

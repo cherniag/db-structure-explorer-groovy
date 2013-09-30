@@ -67,6 +67,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="o2Service" ref="service.O2Service"/>
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
         <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
+        <property name="otacValidationService" ref="service.OtacValidationService" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
@@ -343,6 +344,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
 		<property name="webServiceGateway" ref="service.O2WebServiceGateway"/>
+        <property name="userService" ref="service.UserService"/>
 		
 		<property name="subscriberEndpoint" value="${o2.service.endpoint.subscriber_2_0}" />
 		<property name="chargeCustomerEndpoint" value="${o2.service.endpoint.chargecustomer_1_0}" />
@@ -433,6 +435,15 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
 	     <property name="O2TariffService" ref="service.O2TariffService"/>
 	</bean>
+
+    <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl">
+        <property name="o2ClientService" ref="service.O2ClientService" />
+        <property name="vfOtacValidationService" ref="service.VFOtacValidationService" />
+    </bean>
+
+    <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
+        <property name="userService" ref="service.UserService" />
+    </bean>
 
 	<task:annotation-driven executor="service.Executor"/>
 	<task:executor id="service.Executor" pool-size="20"/>

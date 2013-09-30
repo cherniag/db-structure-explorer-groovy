@@ -6,16 +6,26 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * User: Titov Mykhaylo (titov)
  * 27.09.13 12:57
  */
-public abstract class ProviderUserDetails {
+public class ProviderUserDetails {
 
     public String operator;
-    public String tariff;
+    public String contract;
+
+    public ProviderUserDetails withOperator(String operator){
+        this.operator = operator;
+        return this;
+    }
+
+    public ProviderUserDetails withContract(String contract){
+        this.contract = contract;
+        return this;
+    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("operator", operator)
-                .append("tariff", tariff)
+                .append("contract", contract)
                 .toString();
     }
 }

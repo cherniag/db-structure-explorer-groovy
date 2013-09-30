@@ -131,7 +131,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -140,7 +140,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -163,7 +163,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_INDIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     private void promotion() {
@@ -181,7 +181,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -190,7 +190,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -215,7 +215,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_DIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test
@@ -229,7 +229,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -238,7 +238,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_INDIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class PromotionServiceTest {
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -261,7 +261,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYM_DIRECT, null);
         verify(userServiceMock, times(1)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class PromotionServiceTest {
 
         doReturn(promotion).when(userServiceMock).setPotentialPromo(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(true).when(userServiceMock).applyPotentialPromo(user.isO2User(), user, community);
 
         isPromotionForO24GConsumerApplied = promotionService.applyPotentialPromo(user, user.isO2User());
 
@@ -283,7 +283,7 @@ public class PromotionServiceTest {
         verify(messageSourceMock, times(0)).getMessage(any(String.class), any(String.class));
         verify(userServiceMock, times(0)).setPotentialPromo(user, promoCode);
         verify(userServiceMock, times(0)).applyPromotionByPromoCode(user, promotion);
-        verify(userServiceMock, times(1)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(1)).applyPotentialPromo(user.isO2User(), user, community);
     }
 
     @Test

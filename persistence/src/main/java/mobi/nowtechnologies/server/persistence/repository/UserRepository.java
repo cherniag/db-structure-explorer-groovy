@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.QueryHint;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
 import org.springframework.data.domain.Pageable;
@@ -140,6 +141,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 
+    // TODO rewrite uses jpql to avoid native queries using
     @Query(nativeQuery = true, value = "select u.i " +
             " from tb_users u " +
             " where u.activation_status = 'ACTIVATED' " +
@@ -164,5 +166,14 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "user.idfa=:idfa " +
             "where " +
             "user.id=:id")
-    int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+    int updateTokenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+
+    @Query(value="select count(u) from User u "
+            + "join u.userGroup ug "
+            + "join ug.community c "
+            + "where "
+            + "u.pin=?1 "
+            + "and u.mobile=?2 "
+            + "and c=?3")
+    long findByOtacMobileAndCommunity(String otac, String phoneNumber, Community community);
 }

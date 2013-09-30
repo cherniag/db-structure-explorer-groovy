@@ -145,7 +145,7 @@ public class PromotionService {
         if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
-            isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
+            isPromotionApplied = userService.applyPotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;
     }

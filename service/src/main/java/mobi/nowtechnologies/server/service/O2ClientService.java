@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
 
-import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
@@ -16,7 +15,7 @@ public interface O2ClientService {
 
 	String getRedeemServerO2Url(String phoneNumber);
 
-	O2UserDetails getUserDetails(String token, String phoneNumber);
+	ProviderUserDetails getUserDetails(String token, String phoneNumber);
 
 	boolean sendFreeSms(String phoneNumber, String message);
 

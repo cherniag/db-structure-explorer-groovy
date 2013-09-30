@@ -82,7 +82,7 @@ public class AccCheckController extends CommonController {
                     pushNotificationToken, deviceType, transactionReceipt);
 
             if(idfa != null){
-                user = userService.updateTockenDetails(user, idfa);
+                user = userService.updateTokenDetails(user, idfa);
             }
 
             user = userService.getUserWithSelectedCharts(user.getId());

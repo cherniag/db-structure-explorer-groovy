@@ -5,7 +5,6 @@ import java.math.BigInteger;
 
 import javax.xml.transform.dom.DOMSource;
 
-import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
@@ -15,12 +14,14 @@ import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
 
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,6 +37,7 @@ import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 
 public class O2ClientServiceImpl implements O2ClientService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -69,6 +71,8 @@ public class O2ClientServiceImpl implements O2ClientService {
 	private UserLogRepository userLogRepository;
 	
 	private Integer limitValidatePhoneNumber;
+
+    private UserService userService;
 
 	public void init() {
 		restTemplate = new RestTemplate();
@@ -110,7 +114,11 @@ public class O2ClientServiceImpl implements O2ClientService {
 		this.restTemplate = restTemplate;
 	}
 
-	@Override
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
 	public String getServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByName("o2");
 
@@ -202,14 +210,16 @@ public class O2ClientServiceImpl implements O2ClientService {
 	}
 
 	@Override
-	public O2UserDetails getUserDetails(String token, String phoneNumber) {
+	public ProviderUserDetails getUserDetails(String token, String phoneNumber) {
+        if (userService.isPromotedDevice(phoneNumber)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
+
 		String serverO2Url = getServerO2Url(phoneNumber);
 
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
 		request.add("otac_auth_code", token);
 		try {
 			DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
-			return new O2UserDetails(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue(), response.getNode().getFirstChild().getFirstChild().getNextSibling()
+			return new ProviderUserDetails().withOperator(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue()).withContract(response.getNode().getFirstChild().getFirstChild().getNextSibling()
 					.getFirstChild().getNodeValue());
 		} catch (Exception e) {
 			LOGGER.error("Error of the number validation [{}]: [{}]", phoneNumber, e.getMessage());
@@ -246,9 +256,9 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 		BillSubscriber billSubscriber = new BillSubscriber();
 
-		final String formatedO2PhoneNumber = o2PhoneNumber.replace("+", "");
+		final String formattedO2PhoneNumber = o2PhoneNumber.replace("+", "");
 
-		billSubscriber.setMsisdn(formatedO2PhoneNumber);
+		billSubscriber.setMsisdn(formattedO2PhoneNumber);
 		billSubscriber.setSubMerchantId(subMerchantId);
 		billSubscriber.setPriceGross(subCostPences);
 		billSubscriber.setPriceNet(MULTIPLICAND_100.toBigInteger());

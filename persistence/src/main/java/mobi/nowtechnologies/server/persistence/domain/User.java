@@ -830,6 +830,11 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withDeviceType(DeviceType deviceType){
+        setDeviceType(deviceType);
+        return this;
+    }
+
     public User withContractChannel(ContractChannel contractChannel){
         setContractChannel(contractChannel);
         return this;
@@ -842,6 +847,11 @@ public class User implements Serializable {
 
     public User withMobile(String mobile){
         setMobile(mobile);
+        return this;
+    }
+
+    public User withPin(String pin){
+        setPin(pin);
         return this;
     }
 
