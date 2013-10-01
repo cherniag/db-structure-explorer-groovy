@@ -718,7 +718,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(User user, final String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-		notNull(user , "The parameter user is null");
+		notNull(user, "The parameter user is null");
 
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
@@ -1561,8 +1561,8 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long deltaSuccesfullPaymentSmsSendingTimestampMillis) {
-		LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]", new Object[] {
-				communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis });
+		LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]", new Object[]{
+                communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis});
 
 		if (communityURL == null)
 			throw new NullPointerException("The parameter communityURL is null");
