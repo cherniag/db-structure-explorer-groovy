@@ -627,6 +627,8 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User mergeUser(User user, User userByDeviceUID) {
+        LOGGER.info("Attempt to merge [{}] with [{}]", user, userByDeviceUID);
+
 		userByDeviceUID = userRepository.findOne(userByDeviceUID.getId());
 		LOGGER.debug("input parameters user, userByDeviceUID: [{}], [{}]", user, userByDeviceUID);
 		userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
@@ -1700,10 +1702,10 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isAutoOptIn) {
 		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
+        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider, isAutoOptIn);
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
         dto.fullyRegistred = true;
@@ -1711,7 +1713,7 @@ public class UserService {
         return dto;
     }
 
-    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
+    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isAutoOptIn){
         LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
 
         O2UserDetails o2UserDetails = null;
@@ -1724,7 +1726,7 @@ public class UserService {
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
-        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
+        } else if (isAutoOptIn || ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
             hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User(user, otac, o2UserDetails));
         }
 
@@ -1921,7 +1923,7 @@ public class UserService {
 
         User mobileUser = findByNameAndCommunity(user.getMobile(), communityUri);
 
-        boolean isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
+        boolean isPromotionApplied = applyInitPromo(user, mobileUser, otac, false, true);
 
         if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
 
