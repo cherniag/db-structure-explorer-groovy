@@ -210,7 +210,7 @@ public class UserAsm {
         accountCheckDTO.userName = userName;
         accountCheckDTO.userToken = user.getToken();
         accountCheckDTO.rememberMeToken = rememberMeToken;
-        accountCheckDTO.isFreeTrial = user.isOnFreeTrial();
+        accountCheckDTO.freeTrial = user.isOnFreeTrial();
         accountCheckDTO.provider = user.getProvider();
         accountCheckDTO.contract = user.getContract();
         accountCheckDTO.segment = user.getSegment();

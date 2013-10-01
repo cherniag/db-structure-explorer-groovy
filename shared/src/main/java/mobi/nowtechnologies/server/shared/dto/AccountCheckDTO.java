@@ -44,12 +44,12 @@ public class AccountCheckDTO {
 
 	public boolean fullyRegistred;
 	public OAuthProvider oAuthProvider;
-	public boolean isPromotedDevice;
+	public boolean promotedDevice;
 	public int promotedWeeks;
 	public boolean hasPotentialPromoCodePromotion;
 	
 	public boolean hasOffers;
-	public boolean isFreeTrial;
+	public boolean freeTrial;
 	public PaymentDetailsStatus lastPaymentStatus;
 	
 	public int nextSubPaymentSeconds;
@@ -105,11 +105,11 @@ public class AccountCheckDTO {
 	    this.promotionLabel = accountCheckDTO.promotionLabel;
 	    this.fullyRegistred = accountCheckDTO.fullyRegistred;
 	    this.oAuthProvider = accountCheckDTO.oAuthProvider;
-	    this.isPromotedDevice = accountCheckDTO.isPromotedDevice;
+	    this.promotedDevice = accountCheckDTO.promotedDevice;
 	    this.promotedWeeks = accountCheckDTO.promotedWeeks;
 	    this.hasPotentialPromoCodePromotion = accountCheckDTO.hasPotentialPromoCodePromotion;
 	    this.hasOffers = accountCheckDTO.hasOffers;
-	    this.isFreeTrial = accountCheckDTO.isFreeTrial;
+	    this.freeTrial = accountCheckDTO.freeTrial;
 	    this.lastPaymentStatus = accountCheckDTO.lastPaymentStatus;
 	    this.nextSubPaymentSeconds = accountCheckDTO.nextSubPaymentSeconds;
 	    this.activation = accountCheckDTO.activation;
@@ -172,11 +172,11 @@ public class AccountCheckDTO {
                 .append("promotionLabel", promotionLabel)
                 .append("fullyRegistred", fullyRegistred)
                 .append("oAuthProvider", oAuthProvider)
-                .append("isPromotedDevice", isPromotedDevice)
+                .append("promotedDevice", promotedDevice)
                 .append("promotedWeeks", promotedWeeks)
                 .append("hasPotentialPromoCodePromotion", hasPotentialPromoCodePromotion)
                 .append("hasOffers", hasOffers)
-                .append("isFreeTrial", isFreeTrial)
+                .append("isFreeTrial", freeTrial)
                 .append("lastPaymentStatus", lastPaymentStatus)
                 .append("nextSubPaymentSeconds", nextSubPaymentSeconds)
                 .append("activation", activation)

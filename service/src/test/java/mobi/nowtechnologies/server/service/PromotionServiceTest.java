@@ -120,9 +120,10 @@ public class PromotionServiceTest {
 	}
 
     @Test
-    public void shouldApplyPromotionForO2Payg4GDirectConsumer(){
+    public void shouldApplyPromotionForO2Payg4GDirectConsumerOnFreeTrial(){
 
         given().userWithCommunity("o2").withTariff(_4G).withProvider(O2).withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
+        user.withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         promotion = new Promotion();
 
@@ -133,6 +134,10 @@ public class PromotionServiceTest {
         doReturn(promotion).when(userServiceMock).setPotentialPromoByPromoCode(user, promoCode);
         doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
         doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
 
         isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
 
@@ -142,6 +147,75 @@ public class PromotionServiceTest {
         verify(userServiceMock, times(1)).setPotentialPromoByPromoCode(user, promoCode);
         verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
         verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(1)).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(0)).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+    }
+
+    @Test
+    public void shouldApplyPromotionForO2Payg4GDirectConsumerOnAudioBoughtPeriod(){
+
+        given().userWithCommunity("o2").withTariff(_4G).withProvider(O2).withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
+        user.withNextSubPayment(Integer.MAX_VALUE).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+
+        promotion = new Promotion();
+
+        promoCode = "promoCode";
+        doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
+
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
+        doReturn(promotion).when(userServiceMock).setPotentialPromoByPromoCode(user, promoCode);
+        doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
+        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
+        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+
+        then().validateAs(true);
+
+        verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
+        verify(userServiceMock, times(1)).setPotentialPromoByPromoCode(user, promoCode);
+        verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
+        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(1)).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(0)).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(0)).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+    }
+
+    @Test
+    public void shouldApplyPromotionForO2Payg4GDirectConsumerWithActivePaymentDetailsAndNextSubPaymentInThePast(){
+
+        given().userWithCommunity("o2").withTariff(_4G).withProvider(O2).withContract(PAYG).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
+        user.withNextSubPayment(Integer.MIN_VALUE).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withActivated(true)).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+
+        promotion = new Promotion();
+
+        promoCode = "promoCode";
+        doReturn(promoCode).when(messageSourceMock).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
+
+        doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
+        doReturn(promotion).when(userServiceMock).setPotentialPromoByPromoCode(user, promoCode);
+        doReturn(true).when(userServiceMock).applyPromotionByPromoCode(user, promotion);
+        doReturn(true).when(userServiceMock).applyO2PotentialPromo(user.isO2User(), user, community);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
+        isPromotionForO24GConsumerApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+
+        then().validateAs(true);
+
+        verify(messageSourceMock, times(1)).getMessage(PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT, null);
+        verify(userServiceMock, times(1)).setPotentialPromoByPromoCode(user, promoCode);
+        verify(userServiceMock, times(1)).applyPromotionByPromoCode(user, promotion);
+        verify(userServiceMock, times(0)).applyO2PotentialPromo(user.isO2User(), user, community);
+        verify(userServiceMock, times(0)).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(0)).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        verify(userServiceMock, times(1)).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
     }
 
     @Test
@@ -196,7 +270,6 @@ public class PromotionServiceTest {
 
     @Test
     public void shouldApplyPromotionForO2Paym4GDirectConsumer(){
-
         given().userWithCommunity("o2").withTariff(_4G).withProvider(O2).withContract(PAYM).withSegment(CONSUMER).withContractChannel(DIRECT).and().promotion();
 
         promotion = new Promotion();

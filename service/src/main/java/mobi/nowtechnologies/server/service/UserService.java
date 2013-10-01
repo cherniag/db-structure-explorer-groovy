@@ -502,6 +502,10 @@ public class UserService {
         return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
 	}
 
+    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
+        return isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType()) && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
         LOGGER.debug("input parameters user, promotion, freeTrialStartedTimestampSeconds: [{}], [{}], [{}]", new Object[]{user, promotion, freeTrialStartedTimestampSeconds});
@@ -515,10 +519,13 @@ public class UserService {
 
         UserBanned userBanned = getUserBanned(user.getId());
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
+            final PromoCode promoCode = promotion.getPromoCode();
+
+            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on on the same media type");
+
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
 
-            final PromoCode promoCode = promotion.getPromoCode();
             user.setLastPromo(promoCode);
             user.setNextSubPayment(nextSubPayment);
             user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
@@ -998,7 +1005,7 @@ public class UserService {
 
 		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
-		accountCheckDTO.isPromotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
+		accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
 		accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
 
 		List<Integer> relatedMediaUIDsByLogTypeList = accountLogService.getRelatedMediaUIDsByLogType(userId, OFFER_PURCHASE);
@@ -1705,7 +1712,7 @@ public class UserService {
 	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isAutoOptIn) {
 		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider, isAutoOptIn);
+        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
         dto.fullyRegistred = true;
@@ -1713,7 +1720,7 @@ public class UserService {
         return dto;
     }
 
-    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isAutoOptIn){
+    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
         LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
 
         O2UserDetails o2UserDetails = null;
@@ -1726,7 +1733,7 @@ public class UserService {
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
-        } else if (isAutoOptIn || ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
+        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
             hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User(user, otac, o2UserDetails));
         }
 
@@ -1923,7 +1930,12 @@ public class UserService {
 
         User mobileUser = findByNameAndCommunity(user.getMobile(), communityUri);
 
-        boolean isPromotionApplied = applyInitPromo(user, mobileUser, otac, false, true);
+        boolean isPromotionApplied;
+        if(isNotNull(otac)){
+            isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
+        }else{
+            isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+        }
 
         if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
 
