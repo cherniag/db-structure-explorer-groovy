@@ -1944,4 +1944,15 @@ public class UserService {
         return paymentDetails.getOwner();
     }
     
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
+    	LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
+    	User userInTransaction = findById(user.getId()); // using this to have the user updated
+    	promotionService.activateVideoAudioFreeTrial(userInTransaction);
+    	
+    	if ( userInTransaction.isSubjectToAutoOptIn() ) {
+    		paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
+    	}
+    }
+    
 }
