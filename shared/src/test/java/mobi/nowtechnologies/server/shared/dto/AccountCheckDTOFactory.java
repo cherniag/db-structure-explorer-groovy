@@ -28,7 +28,7 @@ public class AccountCheckDTOFactory{
 		accountCheckDTO.displayName = "displayName";
 		accountCheckDTO.drmType = "drmType";
 		accountCheckDTO.drmValue = Byte.MIN_VALUE;
-		accountCheckDTO.isFreeTrial = true;
+		accountCheckDTO.freeTrial = true;
 		accountCheckDTO.fullyRegistred = false;
 		accountCheckDTO.graceCreditSeconds = Integer.MIN_VALUE;
 		accountCheckDTO.hasOffers = false;
@@ -44,7 +44,7 @@ public class AccountCheckDTOFactory{
 		accountCheckDTO.paymentStatus = "paymentStatus";
 		accountCheckDTO.paymentType = "paymentType";
 		accountCheckDTO.phoneNumber = "phoneNumber";
-		accountCheckDTO.isPromotedDevice = false;
+		accountCheckDTO.promotedDevice = false;
 		accountCheckDTO.promotedWeeks = Integer.MIN_VALUE;
 		accountCheckDTO.promotionLabel = "promotionLabel";
 		accountCheckDTO.provider = O2;

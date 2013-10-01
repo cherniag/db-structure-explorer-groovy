@@ -115,8 +115,8 @@ public class AutoOptInControllerIT {
         assertEquals("PLAYS", accountCheckDTO.drmType);
         assertEquals(100, accountCheckDTO.drmValue);
         assertEquals(PaymentDetailsStatus.NONE, accountCheckDTO.lastPaymentStatus);
-        assertEquals(false, accountCheckDTO.isPromotedDevice);
-        assertEquals(true, accountCheckDTO.isFreeTrial);
+        assertEquals(false, accountCheckDTO.promotedDevice);
+        assertEquals(true, accountCheckDTO.freeTrial);
         assertEquals(1321452650, accountCheckDTO.chartTimestamp);
         assertEquals(21, accountCheckDTO.chartItems);
         assertEquals(1317300123, accountCheckDTO.newsTimestamp);
