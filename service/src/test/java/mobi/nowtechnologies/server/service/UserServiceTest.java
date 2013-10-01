@@ -3158,7 +3158,7 @@ public class UserServiceTest {
         String timestamp="";
         String communityUri="";
         String deviceUID="";
-        String otac = "";
+        String otac = "g";
 
         User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
