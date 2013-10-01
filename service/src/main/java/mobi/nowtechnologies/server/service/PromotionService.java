@@ -20,9 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
-import static mobi.nowtechnologies.server.service.exception.ServiceException.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
@@ -146,7 +144,7 @@ public class PromotionService {
     public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
@@ -163,7 +161,7 @@ public class PromotionService {
     public User activateVideoAudioFreeTrial(User user){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = applyVideoAudioPromotion(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else{
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
                     .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
@@ -174,7 +172,7 @@ public class PromotionService {
         return user;
     }
 
-    private boolean applyVideoAudioPromotion(User user){
+    private boolean skipPrevDataAndApplyPromotionForO24GConsumer(User user){
         if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
