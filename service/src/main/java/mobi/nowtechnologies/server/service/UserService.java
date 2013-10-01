@@ -72,6 +72,8 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -1304,7 +1306,7 @@ public class UserService {
 	}
 
 	private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
-		LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
+		LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[]{deviceUID, storedToken, community});
 		final String communityRedirectUrl = community.getRewriteUrlParameter();
 
 		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
@@ -1723,8 +1725,7 @@ public class UserService {
     private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
         LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
 
-        O2UserDetails o2UserDetails = null;
-        if (isNotNull(otac)) o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
                 user.getContract(), user.getMobile(),
@@ -1931,7 +1932,7 @@ public class UserService {
         User mobileUser = findByNameAndCommunity(user.getMobile(), communityUri);
 
         boolean isPromotionApplied;
-        if(isNotNull(otac)){
+        if(isNotBlank(otac)){
             isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
         }else{
             isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
@@ -1941,6 +1942,17 @@ public class UserService {
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         return paymentDetails.getOwner();
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
+    	LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
+    	User userInTransaction = findById(user.getId()); // using this to have the user updated
+    	promotionService.activateVideoAudioFreeTrial(userInTransaction);
+    	
+    	if ( userInTransaction.isSubjectToAutoOptIn() ) {
+    		paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
+    	}
     }
     
 }
