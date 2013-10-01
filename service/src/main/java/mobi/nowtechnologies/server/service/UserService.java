@@ -141,7 +141,7 @@ public class UserService {
             hasPromo = promotionService.applyPotentialPromo(user, o2ClientService.isO2User(providerUserDetails));
         }
 
-        if(updateContractAndProvider) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider || user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
 
         user.setActivationStatus(ACTIVATED);
         user.setUserName(user.getMobile());
@@ -500,7 +500,7 @@ public class UserService {
             promotion = setPotentialPromo(community, user, staffCode);
         else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
             promotion = setPotentialPromo(community, user, storeCode);
-        else if (isO2User)
+        else if (isO2User || user.isVFNZUser())
             promotion = setPotentialPromo(community.getName(), user, "promotionCode");
         else
             promotion = setPotentialPromo(community.getName(), user, "defaultPromotionCode");

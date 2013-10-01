@@ -24,8 +24,10 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.ITUNES_SUBSCRIPTION;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -376,7 +378,7 @@ public class User implements Serializable {
 		PaymentPolicy paymentPolicy = getCurrentPaymentDetails().getPaymentPolicy();
 
 		return !org.apache.commons.lang.StringUtils.equals(getProvider(), paymentPolicy.getProvider())
-				|| (ProviderType.O2.toString().equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
+				|| (O2.toString().equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
 	}
 
 	public boolean isnonO2User() {
@@ -396,8 +398,17 @@ public class User implements Serializable {
 
 	public boolean isO2User() {
 		Community community = this.getUserGroup().getCommunity();
-		return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
+		return "o2".equals(this.provider) && O2_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
 	}
+
+    public boolean isVFNZUser() {
+        return VF.toString().equals(this.provider) && isVFNZCommunityUser();
+    }
+
+    public boolean isVFNZCommunityUser() {
+        Community community = this.getUserGroup().getCommunity();
+        return VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
+    }
 
 	public boolean isO2Consumer() {
 		return isO2User() && CONSUMER.equals(segment);

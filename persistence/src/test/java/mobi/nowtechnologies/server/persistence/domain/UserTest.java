@@ -4,6 +4,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import junit.framework.Assert;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -15,12 +16,17 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -752,6 +758,78 @@ public class UserTest {
 
         //then
         assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldBeFNZCommunityUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
+
+        //when
+        boolean isVFNZCommunityUser = user.isVFNZCommunityUser();
+
+        //then
+        assertThat(isVFNZCommunityUser, is(true));
+    }
+
+    @Test
+    public void shouldBeO2CommunityUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
+
+        //when
+        boolean isVFNZCommunityUser = user.isO2CommunityUser();
+
+        //then
+        assertThat(isVFNZCommunityUser, is(true));
+    }
+
+    @Test
+    public void shouldNotBeFNZCommunityUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
+
+        //when
+        boolean isVFNZCommunityUser = user.isVFNZCommunityUser();
+
+        //then
+        assertThat(isVFNZCommunityUser, is(false));
+    }
+
+    @Test
+    public void shouldBeVFNZUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
+
+        //when
+        boolean isVFNZUser = user.isVFNZUser();
+
+        //then
+        assertThat(isVFNZUser, is(true));
+    }
+
+    @Test
+    public void shouldBeNotVFNZUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(NON_VF.toString());
+
+        //when
+        boolean isVFNZUser = user.isVFNZUser();
+
+        //then
+        assertThat(isVFNZUser, is(false));
+    }
+
+    @Test
+    public void shouldBeNotVFNZUserOnO2Community(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
+
+        //when
+        boolean isVFNZUser = user.isVFNZUser();
+
+        //then
+        assertThat(isVFNZUser, is(false));
     }
 
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
