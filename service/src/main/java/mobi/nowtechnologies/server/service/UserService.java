@@ -1740,10 +1740,10 @@ public class UserService {
 
         if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
 
-        user.setActivationStatus(ACTIVATED);
-        user.setUserName(user.getMobile());
-        userRepository.save(user);
+        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
+        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
         return hasPromo;
     }
 
