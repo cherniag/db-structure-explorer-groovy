@@ -77,7 +77,6 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
-    @XmlTransient
     public transient Object user;
 
     public AccountCheckDTO(){
