@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -76,6 +77,9 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
+    @XmlTransient
+    public transient Object user;
+
     public AccountCheckDTO(){
 		
 	}
@@ -143,6 +147,16 @@ public class AccountCheckDTO {
 
     public AccountCheckDTO withUserToken(String userToken){
         this.userToken = userToken;
+        return this;
+    }
+
+    public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
+        this.fullyRegistred = isFullyRegistered;
+        return this;
+    }
+
+    public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
+        this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
         return this;
     }
 

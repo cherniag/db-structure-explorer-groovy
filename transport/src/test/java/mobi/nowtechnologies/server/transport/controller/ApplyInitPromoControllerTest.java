@@ -1,20 +1,16 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import static junit.framework.Assert.assertNotNull;
@@ -55,7 +51,7 @@ public class ApplyInitPromoControllerTest {
         doReturn(mobileUser).when(userServiceMock).findByNameAndCommunity(user.getMobile(), communityName);
         doNothing().when(updateO2UserTaskMock).handleUserUpdate(user);
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO().withUserName(userName).withUserToken(userToken);
-        doReturn(accountCheckDTO).when(userServiceMock).applyInitPromoAndAccCheck(user, mobileUser, token, false, false);
+        doReturn(accountCheckDTO).when(userServiceMock).applyInitPromoAndAccCheck(user, mobileUser, token, false);
         doReturn("rememberMeToken").when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 
         modelAndView = applyInitPromoControllerFixture.applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);

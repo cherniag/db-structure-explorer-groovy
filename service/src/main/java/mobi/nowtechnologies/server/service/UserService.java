@@ -758,7 +758,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User changePassword(Integer userId, String newPassword) {
-		LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[] { userId, newPassword });
+		LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[]{userId, newPassword});
 
 		User user = findById(userId);
 
@@ -1711,7 +1711,7 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isAutoOptIn) {
+	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
 		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
         boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
@@ -1924,7 +1924,17 @@ public class UserService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO autoOptInAndAccountCheck(String userName, String userToken, String timestamp, String deviceUID, String otac, String communityUri) {
+        User user = autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+
+        AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(),
+                null, null, null);
+        return accountCheckDTO.withHasPotentialPromoCodePromotion(true);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     public User autoOptIn(String userName, String userToken, String timestamp, String communityUri, String deviceUID, String otac) {
+        LOGGER.info("Attempt to auto opt in");
         User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
         if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
@@ -1943,16 +1953,15 @@ public class UserService {
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         return paymentDetails.getOwner();
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRED)
     public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
     	LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
     	User userInTransaction = findById(user.getId()); // using this to have the user updated
     	promotionService.activateVideoAudioFreeTrial(userInTransaction);
-    	
+
     	if ( userInTransaction.isSubjectToAutoOptIn() ) {
     		paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
     	}
     }
-    
 }
