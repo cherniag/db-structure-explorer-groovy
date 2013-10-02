@@ -93,10 +93,10 @@ public class ApplyInitPromoController extends CommonController {
 
             AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, mobileUser, token, isMajorApiVersionNumberLessThan4);
 
+            user = (User) accountCheckDTO.user;
+
             final Object[] objects = new Object[]{accountCheckDTO};
             precessRememberMeToken(objects);
-
-            user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
 
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
