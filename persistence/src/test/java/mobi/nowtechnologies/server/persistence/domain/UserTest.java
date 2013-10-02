@@ -4,9 +4,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import junit.framework.Assert;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
@@ -17,7 +15,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.assertFalse;
@@ -437,60 +434,7 @@ public class UserTest {
         Assert.assertFalse(isOn4GVideoAudioBoughtPeriod);
     }
 
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnVideoAudioFreeTrial(){
-        //given
-        UserGroup o2 = new UserGroup().withCommunity(new Community().withRewriteUrl("o2"));
-        PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
-
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
-                .withUserGroup(o2)
-                .withLastPromo(videoPromo).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(false, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaygConsumerOnVideoAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymBusinessOnVideoAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
+     @Test
     public void shouldReturnCanPlayVideoTrueForUserOn4GVideoAudioFreeTrial(){
         //given
         user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);

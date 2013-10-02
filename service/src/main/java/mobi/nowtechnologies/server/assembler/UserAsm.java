@@ -222,7 +222,7 @@ public class UserAsm {
         accountCheckDTO.setCanPlayVideo(user.canPlayVideo());
         accountCheckDTO.setCanActivateVideoTrial(canActivateVideoTrial);
         accountCheckDTO.setHasAllDetails(user.hasAllDetails());
-        accountCheckDTO.setShowFreeTrial(user.isShowFreeTrial());
+        accountCheckDTO.setShowFreeTrial(true);
         accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
         accountCheckDTO.setEligibleForVideo(user.isEligibleForVideo());
 

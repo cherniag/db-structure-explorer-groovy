@@ -342,10 +342,6 @@ public class User implements Serializable {
         setTariff(_3G);
 	}
 
-    public boolean isShowFreeTrial() {
-        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
-    }
-
     public boolean isIOsnonO2ItunesSubscribedUser() {
 		return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
