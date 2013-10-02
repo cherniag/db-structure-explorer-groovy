@@ -15,9 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/service-test-ws.xml" })
-public class O2ServiceIT {
+public class O2PrepayServiceIT {
 
-	protected final Logger LOGGER = LoggerFactory.getLogger(O2ServiceIT.class);
+	protected final Logger LOGGER = LoggerFactory.getLogger(O2PrepayServiceIT.class);
 
 	@Autowired
 	private O2Service o2service;
@@ -28,44 +28,22 @@ public class O2ServiceIT {
 
 		KeystoreUtils.initKeystore();
 
-		O2SubscriberData res = o2service
-				.getSubscriberData(PhoneNumbers.O2_4G_CONTRACT);
+		O2SubscriberData res = o2service.getSubscriberData(PhoneNumbers.PREPAY_3G);
 		assertTrue(res.isProviderO2());
-		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertTrue(res.isTariff4G());
-		
-		res=o2service.getSubscriberData(PhoneNumbers.O2_4G_BOLTON);
-		assertTrue(res.isProviderO2());
-		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertTrue(res.isTariff4G());
-		
-		res = o2service.getSubscriberData(PhoneNumbers.O2_3G_CONTRACT);
-		assertTrue(res.isProviderO2());
-		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertFalse(res.isTariff4G());
-
-		res = o2service.getSubscriberData(PhoneNumbers.NON_O2);
-		assertFalse(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
 
-
-		res = o2service.getSubscriberData(PhoneNumbers.NON_O2_ANOTHER);
-		assertFalse(res.isProviderO2());
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G);
+		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertFalse(res.isTariff4G());
+		assertTrue(res.isTariff4G());
 		
 		LOGGER.info("competed");
 	}
+
 
 }

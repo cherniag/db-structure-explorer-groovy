@@ -12,4 +12,10 @@ public class PhoneNumbers {
 	
 	public static final String NON_O2 = "447870111111";
 	
+	
+	public static final String PREPAY_4G="+447731291081";
+	public static final String PREPAY_3G="+447731291010";
+
+	public static final String _4G_DIRECT_CHANNEL = "+447521115303";
+
 }

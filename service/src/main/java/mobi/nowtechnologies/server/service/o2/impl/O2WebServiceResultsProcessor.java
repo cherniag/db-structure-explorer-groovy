@@ -98,12 +98,10 @@ public class O2WebServiceResultsProcessor {
 		if (is4GTariffId(prepayTariff.getCurrentTariff().getTariffDetail()
 				.getTariffId().intValue())) {
 
-			data.setTariff4G(true);
-
-			if ("0".equals(prepayTariff.getCurrentTariff()
-					.getAllowanceStatusExternal())) {
-				data.setDirectOrIndirect4GChannel(true);
+			if ("ACTIVE".equals(prepayTariff.getCurrentTariff().getAllowanceStatusExternal())) {
+				data.setTariff4G(true);	
 			}
+			data.setDirectOrIndirect4GChannel(true);
 		}
 
 	}
