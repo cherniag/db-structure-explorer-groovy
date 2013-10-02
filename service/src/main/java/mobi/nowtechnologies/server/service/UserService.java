@@ -1302,15 +1302,14 @@ public class UserService {
 
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
-		DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
-		if (deviceType == null)
-			deviceType = DeviceTypeDao.getNoneDeviceType();
+        Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
 
-		Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
-		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
+        if (isNull(user)) {
+            DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
+            if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
 
-		if (null == user) {
-			user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
+            user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
 		}
 
 		if (createPotentialPromo && user.getNextSubPayment() == 0) {
@@ -1671,7 +1670,7 @@ public class UserService {
 		user.setMobile(msisdn);
 		user.setActivationStatus(ENTERED_NUMBER);
 		userRepository.save(user);
-        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
+        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, user.getActivationStatus());
 		return user;
 	}
 
