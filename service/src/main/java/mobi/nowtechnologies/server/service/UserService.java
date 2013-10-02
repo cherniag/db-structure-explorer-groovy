@@ -723,7 +723,7 @@ public class UserService {
 
 		userRepository.updateFields(storedToken, userId);
 
-		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[] { user });
+		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[]{user});
 		return user;
 	}
 
@@ -941,7 +941,7 @@ public class UserService {
 	public User updateUserBalance(User user, byte intSubBalance) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
-		LOGGER.debug("input parameters user, intSubBalance: [{}]", new Object[] { user, intSubBalance });
+		LOGGER.debug("input parameters user, intSubBalance: [{}]", new Object[]{user, intSubBalance});
 
 		user.setSubBalance(intSubBalance);
 
@@ -1297,7 +1297,7 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
+	public AccountCheckDTO registerUserAndAccCheck(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
 		LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
 
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
@@ -1319,7 +1319,7 @@ public class UserService {
 
 			final String promotionCode;
 
-			if (canBrPromoted(community, deviceUID, deviceModel)) {
+			if (canBePromoted(community, deviceUID, deviceModel)) {
 				promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
 			} else {
 				String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
@@ -1364,7 +1364,7 @@ public class UserService {
 		return user;
 	}
 
-	private boolean canBrPromoted(Community community, String deviceUID, String deviceModel) {
+	private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {
 		boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
 		boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
 		boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
@@ -1650,13 +1650,13 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User activatePhoneNumber(User user, String phone, boolean populateO2SubscriberData) {
 		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
-				user.getActivationStatus(), populateO2SubscriberData);
+                user.getActivationStatus(), populateO2SubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
         
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
-				user.getMobile());
+                user.getMobile());
         if(populateO2SubscriberData){
         	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
 				// if the device is promoted, we set the default field
@@ -1760,7 +1760,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId) {
-		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[] { user, nextSubPayment, appStoreOriginalTransactionId });
+		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
 
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");

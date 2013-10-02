@@ -57,7 +57,7 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
+			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
 			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
@@ -82,7 +82,7 @@ public class SingUpDeviceController extends CommonController {
     })
 	public ModelAndView signUpDevice_V3GT(HttpServletRequest request,
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) throws Exception {
-        LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
+        LOGGER.info("SIGN_UP_DEVICE Started for [{}]", userDeviceDetailsDto);
         
         User user = null;
         Exception ex = null;
@@ -98,7 +98,7 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
+			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
 			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 
 			final Object[] objects = new Object[] { accountCheckDTO };
@@ -142,7 +142,7 @@ public class SingUpDeviceController extends CommonController {
 		        userDeviceDetailsDto.setIpAddress(remoteAddr);
 		        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
 
-		        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
+		        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, false);
 		        user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
 
 		        final Object[] objects = new Object[] { accountCheckDTO };

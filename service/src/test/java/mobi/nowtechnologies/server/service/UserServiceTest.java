@@ -1104,7 +1104,7 @@ public class UserServiceTest {
 		final Map<Integer, Operator> operatorMap = (Map<Integer, Operator>) testData[0];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.getUserToken(), storedToken);
@@ -1143,7 +1143,7 @@ public class UserServiceTest {
 		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, true);
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.getDeviceType(), DeviceTypeDao.NONE);
@@ -1164,7 +1164,7 @@ public class UserServiceTest {
 		final User user = (User) testData[2];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.getUserToken(), user.getToken());
