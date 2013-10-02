@@ -2729,13 +2729,13 @@ public class UserServiceTest {
 				return user;
 			}
 		});
-		when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
-		when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
-		
+        doReturn(true).when(promotionServiceMock).updatePromotionNumUsers(promotion);
+        when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
+
 		userServiceSpy.applyPromotionByPromoCode(user, promotion);
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-		verify(entityServiceMock, times(1)).updateEntity(eq(promotion));
+		verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
 		verify(entityServiceMock, times(1)).updateEntity(eq(user));
 	}
 	
@@ -2767,14 +2767,14 @@ public class UserServiceTest {
 			}
 		});
         when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
-		when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
-		when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
-		
-		userServiceSpy.applyPromotionByPromoCode(user, promotion);
+        doReturn(true).when(promotionServiceMock).updatePromotionNumUsers(promotion);
+        when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
+
+        userServiceSpy.applyPromotionByPromoCode(user, promotion);
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-		verify(entityServiceMock, times(1)).updateEntity(eq(promotion));
-		verify(entityServiceMock, times(1)).updateEntity(eq(user));
+        verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
+        verify(entityServiceMock, times(1)).updateEntity(eq(user));
 	}
 
 	@Test
