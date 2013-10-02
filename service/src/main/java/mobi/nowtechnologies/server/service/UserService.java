@@ -515,7 +515,7 @@ public class UserService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public synchronized boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
+    public boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
         LOGGER.debug("input parameters user, promotion, freeTrialStartedTimestampSeconds: [{}], [{}], [{}]", new Object[]{user, promotion, freeTrialStartedTimestampSeconds});
 
         LOGGER.info("Attempt to apply promotion [{}]", promotion);
@@ -544,8 +544,8 @@ public class UserService {
             user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampSeconds * 1000L);
             user = entityService.updateEntity(user);
 
-            promotion.setNumUsers(promotion.getNumUsers() + 1);
-            promotion = entityService.updateEntity(promotion);
+            promotionService.updatePromotionNumUsers(promotion);
+
             AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
                     PROMOTION_BY_PROMO_CODE_APPLIED);
             accountLog.setPromoCode(promoCode.getCode());

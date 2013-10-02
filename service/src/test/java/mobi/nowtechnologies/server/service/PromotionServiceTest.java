@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -20,6 +21,7 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -38,10 +40,13 @@ public class PromotionServiceTest {
     private PromotionService promotionService;
 
     @Mock
-    private UserService userServiceMock;
+    UserService userServiceMock;
 
     @Mock
-    private CommunityResourceBundleMessageSource messageSourceMock;
+    CommunityResourceBundleMessageSource messageSourceMock;
+
+    @Mock
+    PromotionRepository promotionRepositoryMock;
 
     private String promoCode;
     private Promotion promotion;
@@ -64,6 +69,7 @@ public class PromotionServiceTest {
 		promotionService.setEntityService(entityServiceMock);
         promotionService.setMessageSource(messageSourceMock);
         promotionService.setUserService(userServiceMock);
+        promotionService.setPromotionRepository(promotionRepositoryMock);
 	}
 	
 	@Test
@@ -446,6 +452,32 @@ public class PromotionServiceTest {
         //when
         promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
     }
+
+    @Test
+    public void shouldUpdatePromotionNumUsers(){
+        //given
+        promotion = new Promotion();
+
+        doReturn(1).when(promotionRepositoryMock).updatePromotionNumUsers(promotion);
+
+        //when
+        boolean isUpdated = promotionService.updatePromotionNumUsers(promotion);
+
+        //then
+        assertThat(isUpdated, is(true));
+    }
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotUpdatePromotionNumUsers(){
+        //given
+        promotion = new Promotion();
+
+        doReturn(0).when(promotionRepositoryMock).updatePromotionNumUsers(promotion);
+
+        //when
+        promotionService.updatePromotionNumUsers(promotion);
+    }
+
 
     private PromotionServiceTest validateAs(boolean b) {
         assertEquals(b, isPromotionForO24GConsumerApplied);

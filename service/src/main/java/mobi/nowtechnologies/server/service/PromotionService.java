@@ -210,4 +210,11 @@ public class PromotionService {
         }
         return messageCodeForPromoCode;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean updatePromotionNumUsers(Promotion promotion) {
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
+        if (updatedRowsCount!=1) throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        return true;
+    }
 }
