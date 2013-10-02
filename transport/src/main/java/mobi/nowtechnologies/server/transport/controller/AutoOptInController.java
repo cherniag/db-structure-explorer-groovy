@@ -36,10 +36,9 @@ public class AutoOptInController extends CommonController {
 
             LOGGER.info("command processing started");
 
-            user = userService.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+            final AccountCheckDTO accountCheckDTO = userService.autoOptInAndAccountCheck(userName, userToken, timestamp, deviceUID, otac, communityUri);
 
-            final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
-                    null, null, null);
+            user = (User) accountCheckDTO.user;
 
             final Object[] objects = new Object[] { accountCheckDTO };
             precessRememberMeToken(objects);

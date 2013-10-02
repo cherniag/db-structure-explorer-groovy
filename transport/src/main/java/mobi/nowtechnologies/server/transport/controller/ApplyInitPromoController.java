@@ -91,7 +91,7 @@ public class ApplyInitPromoController extends CommonController {
 
             User mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
 
-            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, mobileUser, token, isMajorApiVersionNumberLessThan4, false);
+            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, mobileUser, token, isMajorApiVersionNumberLessThan4);
 
             final Object[] objects = new Object[]{accountCheckDTO};
             precessRememberMeToken(objects);

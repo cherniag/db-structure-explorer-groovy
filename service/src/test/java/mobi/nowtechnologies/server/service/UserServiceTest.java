@@ -2362,7 +2362,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true, false);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2407,7 +2407,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true, false);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -3287,6 +3287,36 @@ public class UserServiceTest {
 
         //when
         userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+    }
+
+    @Test
+    public void shouldAutoOptInAndAccountCheck(){
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "";
+
+        User expectedUser = new User();
+        AccountCheckDTO expectedAccountCheckDTO = new AccountCheckDTO();
+
+        doReturn(expectedUser).when(userServiceSpy).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+        doReturn(expectedAccountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
+                null, null, null);
+
+        //when
+        AccountCheckDTO accountCheckDTO = userServiceSpy.autoOptInAndAccountCheck(userName, userToken, timestamp, deviceUID, otac, communityUri);
+
+        //then
+        assertThat(accountCheckDTO, is(expectedAccountCheckDTO));
+        assertThat(expectedAccountCheckDTO.hasPotentialPromoCodePromotion, is(true));
+
+        verify(userServiceSpy, times(1)).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+        verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
+                null, null, null);
+
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
