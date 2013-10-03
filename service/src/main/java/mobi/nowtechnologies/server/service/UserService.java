@@ -1712,11 +1712,6 @@ public class UserService {
 				o2SubscriberData.setTariff4G(false);
 				
 				new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-        	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
-				// if the device is promoted, we set the default field
-				user.setProvider("o2");
-				user.setSegment(SegmentType.CONSUMER);
-				user.setContract(PAYM);
 			} else {
 				populateO2subscriberData(user, msisdn);
 			}
