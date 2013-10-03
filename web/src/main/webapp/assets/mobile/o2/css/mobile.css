@@ -2149,6 +2149,8 @@ p.itemsTrackName {
 }
 
 .videoOptHR {
-	border-top: 1px solid #5476bb;
 	margin: 10px 0;
+	background: #5476bb;
+	border: none;
+	height: 1px;
 }

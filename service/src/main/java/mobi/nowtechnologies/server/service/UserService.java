@@ -1721,10 +1721,10 @@ public class UserService {
 
         boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
+        user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
+
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
-        dto.fullyRegistred = true;
-        dto.hasPotentialPromoCodePromotion = hasPromo;
-        return dto;
+        return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);
     }
 
     private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
