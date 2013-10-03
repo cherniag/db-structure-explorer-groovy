@@ -290,6 +290,9 @@ public class User implements Serializable {
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
 
+    @Column(name = "idfa", nullable = true)
+    private String idfa;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -338,6 +341,14 @@ public class User implements Serializable {
 
     private boolean isLastPromoForVideo() {
         return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
+    }
+
+    public String getIdfa() {
+        return idfa;
+    }
+
+    public void setIdfa(String idfa) {
+        this.idfa = idfa;
     }
 
     public boolean isShowFreeTrial() {
