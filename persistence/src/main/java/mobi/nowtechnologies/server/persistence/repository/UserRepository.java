@@ -171,8 +171,16 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "join u.userGroup ug " +
             "join ug.community c " +
             "where " +
-            "and u.userName = ?1 " +
+            "u.userName = ?1 " +
             "and u.deviceUID = ?1 " +
             "and c = ?2")
     User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findByDeviceUIDAndCommunity(String deviceUID, Community community);
 }

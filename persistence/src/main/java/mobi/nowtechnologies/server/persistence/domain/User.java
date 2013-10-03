@@ -44,7 +44,6 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
-		@NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
@@ -56,7 +55,6 @@ public class User implements Serializable {
 	public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
 	public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
 	public static final String NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN = "getUserCountByDeviceUID_UserGroup_StoredToken";
-	public static final String NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL = "getUserByDeviceUIDAndCommunityRedirectUrl";
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";

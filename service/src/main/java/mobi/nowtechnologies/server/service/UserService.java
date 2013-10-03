@@ -61,6 +61,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
@@ -674,7 +675,7 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(User user, final String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-		notNull(user , "The parameter user is null");
+		notNull(user, "The parameter user is null");
 
 		user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 
@@ -876,7 +877,7 @@ public class UserService {
 		final String paymentSystem = payment.getPaymentSystem();
 
 		// Update last Successful payment time
-		final long epochMillis = Utils.getEpochMillis();
+		final long epochMillis = getEpochMillis();
 		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
 		user.setLastSubscribedPaymentSystem(paymentSystem);
         user.setLastSuccessfulPaymentDetails(payment.getPaymentDetails());
@@ -952,7 +953,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType, String transactionReceipt) {
-		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt });
+		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt});
 
 		try {
 			iTunesService.processInAppSubscription(userId, transactionReceipt);
@@ -1265,7 +1266,7 @@ public class UserService {
 			user = userByDeviceUID;
 			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
 			user.setFacebookId(userCredentions.getId());
-			user.setFirstUserLoginMillis(Utils.getEpochMillis());
+			user.setFirstUserLoginMillis(getEpochMillis());
 
 			updateUser(user);
 		}
@@ -1277,22 +1278,14 @@ public class UserService {
 
 	private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
 		LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
-		final String communityRedirectUrl = community.getRewriteUrlParameter();
 
-		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+        User user = findByDeviceUIDAndCommunity(deviceUID, community);
 		if (user == null || !user.getToken().equals(storedToken)) {
-			ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, communityRedirectUrl);
+			ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, community.getRewriteUrlParameter());
 			throw new UserCredentialsException(serverMessage);
 		}
 
 		LOGGER.debug("Output parameter result=[{}]", user);
-		return user;
-	}
-
-	public User findByDeviceUIDAndCommunityRedirectURL(String deviceUID, String communityRedirectUrl) {
-		LOGGER.debug("input parameters deviceUID, communityRedirectUrl: [{}], [{}]", deviceUID, communityRedirectUrl);
-		User user = userDao.findByDeviceUIDAndCommunityRedirectUrl(deviceUID, communityRedirectUrl);
-		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
 	}
 
@@ -1316,6 +1309,12 @@ public class UserService {
         User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
         if (isNull(user)) {
+            user = findByDeviceUIDAndCommunity(deviceUID, community);
+            if (isNotNull(user)) {
+                user.setDeviceUID(deviceUID + "_" + getEpochMillis());
+                updateUser(user);
+            }
+
             DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
             if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
 
@@ -1349,7 +1348,11 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-	private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
+    private User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
+        return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
+    }
+
+    private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
 		User user;
 		user = new User();
 		user.setUserName(deviceUID);
@@ -1533,7 +1536,7 @@ public class UserService {
 		if (amountOfMoneyToUserNotification == null)
 			throw new NullPointerException("The parameter amountOfMoneyToUserNotification is null");
 
-		List<User> users = userRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, Utils.getEpochMillis(), deltaSuccesfullPaymentSmsSendingTimestampMillis);
+		List<User> users = userRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, getEpochMillis(), deltaSuccesfullPaymentSmsSendingTimestampMillis);
 
 		LOGGER.info("Output parameter users=[{}]", users);
 		return users;
@@ -1547,7 +1550,7 @@ public class UserService {
 			throw new NullPointerException("The parameter user is null");
 
 		user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
-		user.setLastSuccesfullPaymentSmsSendingTimestampMillis(Utils.getEpochMillis());
+		user.setLastSuccesfullPaymentSmsSendingTimestampMillis(getEpochMillis());
 
 		final int id = user.getId();
 		int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
@@ -1569,7 +1572,7 @@ public class UserService {
 			throw new NullPointerException("The parameter payment is null");
 
 		BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
-				payment.getAmount());
+                payment.getAmount());
 		user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
 
 		user = updateUser(user);
@@ -1628,7 +1631,7 @@ public class UserService {
 	public int resetLastSuccesfullPaymentSmsSendingTimestampMillis(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
 
-		int updatedRowCount = userRepository.updateFields(Utils.getEpochMillis(), userId);
+		int updatedRowCount = userRepository.updateFields(getEpochMillis(), userId);
 		if (updatedRowCount != 1)
 			throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + userId + "]");
 
@@ -1706,15 +1709,15 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
 		LOGGER.info("apply init promo o2 " + user.getId() + " "
-                + user.getMobile() + " " + user.getActivationStatus()+" updateContractAndProvider="+updateContractAndProvider);
+                + user.getMobile() + " " + user.getActivationStatus() + " updateContractAndProvider=" + updateContractAndProvider);
 		
 		boolean hasPromo = false;
 		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
 		
 		LOGGER.info("o2 user details " + o2UserDetails.getOperator() + " "
-				+ o2UserDetails.getTariff() + " u.contract="
-				+ user.getContract() + " " + user.getMobile() + " "
-				+ user.getOperator());
+                + o2UserDetails.getTariff() + " u.contract="
+                + user.getContract() + " " + user.getMobile() + " "
+                + user.getOperator());
 
 		
 		if (null != mobileUser) {
