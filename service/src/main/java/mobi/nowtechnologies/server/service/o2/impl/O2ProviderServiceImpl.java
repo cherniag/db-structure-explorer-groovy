@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import javax.xml.transform.dom.DOMSource;
-
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
@@ -13,20 +8,20 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.data.SubsriberData;
+import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import org.w3c.dom.DOMException;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
@@ -34,7 +29,11 @@ import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
-public class O2ClientServiceImpl implements O2ClientService {
+import javax.xml.transform.dom.DOMSource;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+public class O2ProviderServiceImpl implements O2ProviderService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
 	private static final String VALIDATE_PHONE_NUMBER_DESC = "validate_phonenumber";
 
@@ -67,11 +66,17 @@ public class O2ClientServiceImpl implements O2ClientService {
 	
 	private Integer limitValidatePhoneNumber;
 
+    private O2Service o2Service;
+
 	public void init() {
 		restTemplate = new RestTemplate();
 	}
-	
-	public void setLimitValidatePhoneNumber(Integer limitValidatePhoneNumber) {
+
+    public void setO2Service(O2Service o2Service) {
+        this.o2Service = o2Service;
+    }
+
+    public void setLimitValidatePhoneNumber(Integer limitValidatePhoneNumber) {
 		this.limitValidatePhoneNumber = limitValidatePhoneNumber;
 	}
 
@@ -146,7 +151,7 @@ public class O2ClientServiceImpl implements O2ClientService {
 	}
 
 	@Override
-	public String validatePhoneNumber(String phoneNumber) {
+	public PhoneNumberValidationData validatePhoneNumber(String phoneNumber) {
 		String serverO2Url = getServerO2Url(phoneNumber);
 		String url = serverO2Url + VALIDATE_PHONE_REQ;
 
@@ -155,10 +160,15 @@ public class O2ClientServiceImpl implements O2ClientService {
 
 		String result = handleValidatePhoneNumber(phoneNumber, url, request);
 
-		return result;
+		return new PhoneNumberValidationData().withPhoneNumber(result);
 	}
 
-	private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+    @Override
+    public SubsriberData getSubscriberData(String phoneNumber) {
+        return o2Service.getSubscriberData(phoneNumber);
+    }
+
+    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 		
 		Long curDay = new Long(Utils.getEpochDays());

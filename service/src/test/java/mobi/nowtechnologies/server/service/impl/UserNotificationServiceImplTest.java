@@ -1714,6 +1714,68 @@ public class UserNotificationServiceImplTest {
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 
+    @Test
+    public void testSendActivationPinSMS_Success() throws Exception {
+        final User user = UserFactory.createUser();
+        user.setPin("0000");
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+
+        final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                assertNotNull(argument);
+                Object[] args = (Object[]) argument;
+
+                assertEquals(2, args.length);
+
+                String pUrl = (String) args[0];
+                String pin = (String) args[1];
+
+                assertEquals(null, pUrl);
+                assertEquals(user.getPin(), pin);
+
+                return true;
+            }
+        };
+
+        doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
+                eq("sms.activation.pin.text"), argThat(matcher));
+
+        Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
+
+        assertNotNull(result);
+        assertEquals(true, result.get());
+
+        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+        verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
+                eq("sms.activation.pin.text"), argThat(matcher));
+    }
+
+    @Test
+    public void testSendActivationPinSMS_RejectDevice_Success() throws Exception {
+        User user = UserFactory.createUser();
+
+        doReturn(true).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+
+        Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
+
+        assertNotNull(result);
+        assertEquals(false, result.get());
+
+        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
+                eq("sms.activation.pin.text"), any(String[].class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSendActivationPinSMS_NullUser_Failure() throws Exception {
+        User user = null;
+
+        userNotificationImplSpy.sendActivationPinSMS(user);
+    }
+
 	@Test
 	public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success()
 			throws Exception {
@@ -2023,7 +2085,9 @@ public class UserNotificationServiceImplTest {
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
-	
+
+        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
@@ -2103,7 +2167,9 @@ public class UserNotificationServiceImplTest {
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
-	
+
+        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
@@ -2183,7 +2249,9 @@ public class UserNotificationServiceImplTest {
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
-	
+
+        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
@@ -2265,7 +2333,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2277,7 +2345,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2345,7 +2413,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2357,7 +2425,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2425,7 +2493,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2437,7 +2505,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2505,7 +2573,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2517,7 +2585,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(1)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2585,7 +2653,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2597,7 +2665,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(1)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test
@@ -2663,10 +2731,12 @@ public class UserNotificationServiceImplTest {
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
-	
-		MigResponse migResponse = MigResponse.failMigResponse("error");
-		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
-		
+
+        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+
+        MigResponse migResponse = MigResponse.failMigResponse("error");
+        doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
+
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
 		assertFalse(wasSmsSentSuccessfully);
@@ -2743,7 +2813,9 @@ public class UserNotificationServiceImplTest {
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
-	
+
+        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
@@ -2825,7 +2897,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2837,7 +2909,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -2896,7 +2968,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(any(String.class), eq(message), eq(title));
+		doReturn(migResponse).when(migHttpServiceMock).send(any(String.class), eq(message), eq(title));
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2908,7 +2980,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(any(String.class), eq(message), eq(title));
+		verify(migHttpServiceMock, times(0)).send(any(String.class), eq(message), eq(title));
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -2974,7 +3046,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 	
 		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).makeFreeSMSRequest(user.getMobile(), message, title);
+		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
 		
 		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
 		
@@ -2986,7 +3058,7 @@ public class UserNotificationServiceImplTest {
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(0)).makeFreeSMSRequest(user.getMobile(), message, title);
+		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
 
 	/**
@@ -3013,7 +3085,7 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setUnsubscribeUrl("unsubscribeUrl");
 		userNotificationImplSpy.setMessageSource(communityResourceBundleMessageSourceMock);
 		userNotificationImplSpy.setRestTemplate(restTemplateMock);
-		userNotificationImplSpy.setSmsService(migHttpServiceMock);
+		userNotificationImplSpy.setSmsProviderBeanName("service.SmsProvider");
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
 
 	}

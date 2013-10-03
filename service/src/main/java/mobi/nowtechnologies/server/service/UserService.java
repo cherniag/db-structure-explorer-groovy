@@ -8,15 +8,19 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -101,16 +105,29 @@ public class UserService {
     private DrmService drmService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
-    private O2ClientService o2ClientService;
-    private O2Service o2Service;
     private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
-    private O2UserDetailsUpdater o2UserDetailsUpdater;
-	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+    private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
-    public void setO2ClientService(O2ClientService o2ClientService) {
+    private O2ProviderService o2ClientService;
+    private O2Service o2Service;
+    private O2UserDetailsUpdater o2UserDetailsUpdater;
+
+    private UserDetailsUpdater userDetailsUpdater;
+    private MobileProviderService mobileProviderService;
+
+    public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
+        this.userDetailsUpdater = userDetailsUpdater;
+    }
+
+    public void setMobileProviderService(MobileProviderService mobileProviderService) {
+
+        this.mobileProviderService = mobileProviderService;
+    }
+
+    public void setO2ClientService(O2ProviderService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
 
@@ -1648,41 +1665,41 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public User activatePhoneNumber(User user, String phone, boolean populateO2SubscriberData) {
+	public User activatePhoneNumber(User user, String phone, boolean populateSubscriberData) {
 		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
-				user.getActivationStatus(), populateO2SubscriberData);
+				user.getActivationStatus(), populateSubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
-        String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
+        PhoneNumberValidationData result = mobileProviderService.validatePhoneNumber(phoneNumber);
         
-		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
-				user.getMobile());
-        if(populateO2SubscriberData){
-        	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
-				// if the device is promoted, we set the default field
-				user.setProvider("o2");
-				user.setSegment(SegmentType.CONSUMER);
-				user.setContract(Contract.PAYM);
-			} else {
-				populateO2subscriberData(user, msisdn);
-			}
-        }
+		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", result.getPhoneNumber(), phone, user.getMobile());
+
+        if(phone != null && populateSubscriberData)
+            populateSubscriberData(user, phoneNumber);
         
-		user.setMobile(msisdn);
+		user.setMobile(result.getPhoneNumber());
 		user.setActivationStatus(ENTERED_NUMBER);
+        if(result.getPin() != null)
+            user.setPin(result.getPin());
+
 		userRepository.save(user);
         LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
 		return user;
 	}
 
-	private void populateO2subscriberData(User user, String phoneNumber) {
-		try {
-			O2SubscriberData o2SubscriberData = o2Service.getSubscriberData(phoneNumber);
-			new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-		} catch (Exception ex) {
-			// intentionally swallowing the exception to enable user to continue with activation
-			LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
-		}
+	private void populateSubscriberData(User user, String phoneNumber) {
+            if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
+                // if the device is promoted, we set the default field
+                userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
+            } else {
+                try {
+                    mobi.nowtechnologies.server.service.data.SubsriberData subscriberData = mobileProviderService.getSubscriberData(phoneNumber);
+                    userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
+                } catch (Exception ex) {
+                    // intentionally swallowing the exception to enable user to continue with activation
+                    LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
+                }
+            }
 	}
 	
 	@Transactional(readOnly = true)

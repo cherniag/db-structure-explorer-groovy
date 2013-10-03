@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.o2;
 
 
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2Response;

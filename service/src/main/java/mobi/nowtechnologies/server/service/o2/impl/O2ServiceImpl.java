@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import mobi.nowtechnologies.server.service.O2Service;
-import mobi.nowtechnologies.server.service.O2TariffService;
+import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect;
 
 import org.slf4j.Logger;

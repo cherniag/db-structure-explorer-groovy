@@ -1,26 +1,16 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import javax.xml.transform.dom.DOMSource;
-
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
-import mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl;
-
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;
 import org.apache.xerces.dom.TextImpl;
@@ -33,12 +23,21 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.web.client.RestTemplate;
 
+import javax.xml.transform.dom.DOMSource;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ O2ClientServiceImpl.class})
+@PrepareForTest({ O2ProviderServiceImpl.class})
 public class O2ClientServiceImplIT {
-	private O2ClientServiceImpl fixture;
+	private O2ProviderServiceImpl fixture;
 	
-	private O2ClientServiceImpl fixture2;
+	private O2ProviderServiceImpl fixture2;
 	
 	@Mock
 	private RestTemplate mockRestTemplate;
@@ -74,12 +73,12 @@ public class O2ClientServiceImplIT {
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
 		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
 
-		String result = fixture.validatePhoneNumber(phoneNumber);
+		PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
 		
 		//verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
 
 		assertNotNull(result);
-		assertEquals(expectedPhoneNumber, result);
+		assertEquals(expectedPhoneNumber, result.getPhoneNumber());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -105,12 +104,12 @@ public class O2ClientServiceImplIT {
 		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 
-		String result = fixture.validatePhoneNumber(phoneNumber);
+        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
 		
 		//verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
 
 		assertNotNull(result);
-		assertEquals(expectedPhoneNumber, result);
+		assertEquals(expectedPhoneNumber, result.getPhoneNumber());
 		
 		verify(mockUserLogRepository).save(any(UserLog.class));
 		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
@@ -322,7 +321,7 @@ public class O2ClientServiceImplIT {
 		community.setName("o2");
 		when(mockCommunityService.getCommunityByName(eq("o2"))).thenReturn(community);
 		
-		fixture = new O2ClientServiceImpl();
+		fixture = new O2ProviderServiceImpl();
 		fixture.setCommunityService(mockCommunityService);
 		fixture.setDeviceService(mockDeviceService);
 		fixture.setServerO2Url("https://prod.mqapi.com");
@@ -335,7 +334,7 @@ public class O2ClientServiceImplIT {
 		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
 		fixture.setRestTemplate(new RestTemplate());
 		
-		fixture2 = new O2ClientServiceImpl();
+		fixture2 = new O2ProviderServiceImpl();
 		fixture2.setServerO2Url("https://uat.mqapi.com");
 		fixture2.setCommunityService(mockCommunityService);
 		fixture2.setRestTemplate(new RestTemplate());

@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.util;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 
 public abstract class BaseValidator implements org.springframework.validation.Validator {
 	

@@ -9,9 +9,13 @@ import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -48,19 +52,27 @@ import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * 
@@ -87,7 +99,7 @@ public class UserServiceTest {
 	private PaymentDetailsService paymentDetailsServiceMock;
 	private CommunityService communityServiceMock;
 	private CountryService countryServiceMock;
-	private O2ClientService o2ClientServiceMock;
+	private O2ProviderService o2ClientServiceMock;
 	private O2Service o2ServiceMock;
 	private DeviceService deviceServiceMock;
 	private FacebookService facebookServiceMock;
@@ -679,7 +691,7 @@ public class UserServiceTest {
 		migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
 		PaymentService paymentServiceMock = PowerMockito.mock(PaymentService.class);
 		accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
-		o2ClientServiceMock = PowerMockito.mock(O2ClientService.class);
+		o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);
 		o2ServiceMock = PowerMockito.mock(O2Service.class);
 		MailService mailServiceMock = PowerMockito.mock(MailService.class);
 		iTunesServiceMock = PowerMockito.mock(ITunesService.class);
@@ -719,6 +731,9 @@ public class UserServiceTest {
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
+
+        userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
+        userServiceSpy.setMobileProviderService(o2ClientServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -1189,9 +1204,11 @@ public class UserServiceTest {
 	@Test()
 	public void testActivatePhoneNumber_Success() throws Exception {
 		final String phone = "07870111111";
+		final String pin = "1111";
 		final User user = UserFactory.createUser();
+        user.setPin("1234");
 
-		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn("+447870111111");
+		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn(new PhoneNumberValidationData().withPhoneNumber("+447870111111").withPin(pin));
 
 		boolean populateO2SubscriberData = false;
 		User userResult = userServiceSpy.activatePhoneNumber(user, phone, populateO2SubscriberData);
@@ -1199,6 +1216,7 @@ public class UserServiceTest {
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
 		assertEquals("+447870111111", userResult.getMobile());
+		assertEquals(pin, userResult.getPin());
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
@@ -1207,15 +1225,17 @@ public class UserServiceTest {
 	@Test()
 	public void testActivatePhoneNumber_NullPhone_Success() throws Exception {
 		final String phone = null;
+        final String pin = null;
 		final User user = UserFactory.createUser();
+        user.setPin("1234");
 
-		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<String>() {
+		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<PhoneNumberValidationData>() {
 			@Override
-			public String answer(InvocationOnMock invocation) throws Throwable {
+			public PhoneNumberValidationData answer(InvocationOnMock invocation) throws Throwable {
 				String phone = (String)invocation.getArguments()[0];
 				assertEquals(user.getMobile(), phone);
 				
-				return "+447870111111";
+				return new PhoneNumberValidationData().withPhoneNumber("+447870111111").withPin(pin);
 			}
 		});
 		boolean populateO2SubscriberData = false;
@@ -1224,6 +1244,7 @@ public class UserServiceTest {
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
 		assertEquals("+447870111111", userResult.getMobile());
+		assertEquals("1234", userResult.getPin());
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
