@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  */
 @Controller
-public class SingUpDeviceController extends CommonController {
+public class SignUpDeviceController extends CommonController {
 		
 	private UserService userService;
 	

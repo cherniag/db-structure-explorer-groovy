@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.QueryHint;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
 import org.springframework.data.domain.Pageable;
@@ -165,4 +166,13 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "where " +
             "user.id=:id")
     int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "and u.userName = ?1 " +
+            "and u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community);
 }

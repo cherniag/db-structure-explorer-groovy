@@ -1296,6 +1296,16 @@ public class UserService {
 		return user;
 	}
 
+    @Transactional(readOnly = true)
+    public User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
+        LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
+
+        User user = userRepository.findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
+
+        LOGGER.debug("Output parameter user=[{}]", user);
+        return user;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO registerUserAndAccCheck(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
 		LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
@@ -1303,7 +1313,7 @@ public class UserService {
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
         Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
-        User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
+        User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
         if (isNull(user)) {
             DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
@@ -1329,7 +1339,6 @@ public class UserService {
 			}
 
 			setPotentialPromoCodePromotion(community, user, promotionCode);
-
 		}
 
 		user.setActivationStatus(REGISTERED);

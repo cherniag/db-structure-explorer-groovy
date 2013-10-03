@@ -150,6 +150,6 @@ public class UserDao extends JpaDaoSupport {
 		
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
-	}
+    }
 
 }
