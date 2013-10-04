@@ -1131,7 +1131,7 @@ public class UserServiceTest {
         //then
         assertNotNull(actualAccountCheckDTO);
         assertThat(actualAccountCheckDTO, is(expectedAccountCheckDTO));
-        assertThat(userAccountWithSameDevice.getDeviceUID(), is(deviceUID + "_mark_at_" + getEpochMillis()));
+        assertThat(userAccountWithSameDevice.getDeviceUID(), is(deviceUID + "_disable_at_" + getEpochMillis()));
 
         verify(userRepositoryMock, times(1)).save(userAccountWithSameDevice);
     }

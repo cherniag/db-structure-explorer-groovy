@@ -133,7 +133,7 @@ public class UserService {
     private void detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
         User user = findByDeviceUIDAndCommunity(deviceUID, community);
         if (isNotNull(user)) {
-            user.setDeviceUID(deviceUID + "_mark_at_" + getEpochMillis());
+            user.setDeviceUID(deviceUID + "_disable_at_" + getEpochMillis());
             updateUser(user);
         }
     }
