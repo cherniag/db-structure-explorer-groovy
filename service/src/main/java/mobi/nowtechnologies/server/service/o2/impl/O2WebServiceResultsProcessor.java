@@ -116,8 +116,7 @@ public class O2WebServiceResultsProcessor {
 		boolean direct = false;
 		if ((orderList.getOrder() != null) || (orderList.getOrder().size() > 0)) {
 
-			Order2SummaryType order = orderList.getOrder().get(
-					orderList.getOrder().size() - 1);
+			Order2SummaryType order = orderList.getOrder().get(0);
 
 			String partner = order.getPartner();
 			if (partner == null) {

@@ -27,20 +27,58 @@ public class O2PrepayServiceIT {
 		LOGGER.info("start");
 
 		KeystoreUtils.initKeystore();
+		O2SubscriberData res;
 
-		O2SubscriberData res = o2service.getSubscriberData(PhoneNumbers.PREPAY_3G);
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_3G);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertFalse(res.isTariff4G());
+		
+
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF43);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF44);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+		
+		
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF45);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF43_NEED_RECHARGE);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
 
-		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G);
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF44_NEED_RECHARGE);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertTrue(res.isTariff4G());
+		assertFalse(res.isTariff4G());
+		
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF45_NEED_RECHARGE);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertFalse(res.isTariff4G());
 		
 		LOGGER.info("competed");
 	}
