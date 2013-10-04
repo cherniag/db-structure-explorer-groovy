@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.UserNotificationService;
@@ -2021,6 +2022,48 @@ public class UserNotificationServiceImplTest {
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
+
+    @Test
+    public void testGetMessageCode_SegmentContractAreNullDeviceTypeProviderPaymentTypeAreNotNull_Success()
+            throws Exception {
+        final String rewriteUrlParameter = "o2";
+
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        User user = UserFactory.createUser();
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(ProviderType.ON_NET.toString());
+        user.setDeviceType(deviceType);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setCurrentPaymentDetails(new PaymentDetails() {
+            @Override
+            public String getPaymentType() {
+                return PaymentDetails.VF_PSMS_TYPE;
+            }
+        });
+
+        String msgCodeBase = "msgCodeBase";
+
+        String expectedMsg = "expectedMsg";
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
+
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
 	
 	@Test
 	public void testSendSMSWithUrl_MsgArgsDoesNotContainBaseUrl_Success() throws UnsupportedEncodingException {
