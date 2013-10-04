@@ -176,7 +176,7 @@ public class UserServiceActivationTest {
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
-		verify(o2ClientServiceMock, times(1)).getSubscriberData(anyString());
+		//verify(o2ClientServiceMock, times(1)).getSubscriberData(anyString());
 		assertEquals(user.getSegment(), SegmentType.CONSUMER);
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);

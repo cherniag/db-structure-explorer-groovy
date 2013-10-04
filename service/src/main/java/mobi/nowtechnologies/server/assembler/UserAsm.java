@@ -226,7 +226,7 @@ public class UserAsm {
         accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
         accountCheckDTO.setEligibleForVideo(user.isEligibleForVideo());
 
-        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
+        accountCheckDTO.setFullyRegistred(EmailValidator.isEmail(userName));
 
         accountCheckDTO.setoAuthProvider((StringUtils.hasText(user.getFacebookId())) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
         accountCheckDTO.setNextSubPaymentSeconds(nextSubPayment);

@@ -1,11 +1,20 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.dto.O2UserDetails;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import javax.xml.transform.dom.DOMSource;
+
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
@@ -47,6 +56,9 @@ public class O2ClientServiceImplIT {
 	
 	@Mock
 	private DeviceService mockDeviceService;
+
+    @Mock
+    private UserService userServiceMock;
 	
 	@Mock
 	private UserLogRepository mockUserLogRepository;
@@ -193,10 +205,13 @@ public class O2ClientServiceImplIT {
 		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("PAYG", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("o2", userDetails.operator);
+		assertEquals("PAYG", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test
@@ -205,10 +220,13 @@ public class O2ClientServiceImplIT {
 		String otac_auth_code = "11111111-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("PAYG", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("PAYG", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test
@@ -217,10 +235,13 @@ public class O2ClientServiceImplIT {
 		String otac_auth_code = "22222222-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("PAYM", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("o2", userDetails.operator);
+		assertEquals("PAYM", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test
@@ -229,34 +250,43 @@ public class O2ClientServiceImplIT {
 		String otac_auth_code = "33333333-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("PAYM", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("PAYM", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_O2User_and_Businesstariff() {
+	public void getUserDetail_Success_with_O2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "44444444-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("o2", userDetails.getOperator());
-		assertEquals("business", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("o2", userDetails.operator);
+		assertEquals("business", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_notO2User_and_Businesstariff() {
+	public void getUserDetail_Success_with_notO2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "55555555-c768-4fe7-bb56-a5e0c722cd44";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		
-		O2UserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
-		assertEquals("non-o2", userDetails.getOperator());
-		assertEquals("business", userDetails.getTariff());	
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+		assertEquals("non-o2", userDetails.operator);
+		assertEquals("business", userDetails.contract);
+
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
 	}
 	
 	@Test(expected=ExternalServiceException.class)
@@ -265,25 +295,26 @@ public class O2ClientServiceImplIT {
 		String otac_auth_code = "6666fasdffwqe";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
 		
 		fixture.getUserDetails(otac_auth_code, phoneNumber);
 	}
 	
 	@Test
 	public void isO2User_Successful() {
-		boolean o2User = fixture.isO2User(new O2UserDetails("o2", "any"));
+		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator("o2").withContract("any"));
 		assertEquals(true, o2User);
 	}
 	
 	@Test
 	public void isO2User_Fail() {
-		boolean o2User = fixture.isO2User(new O2UserDetails("non-o2", "any"));
+		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator("non-o2").withContract("any"));
 		assertEquals(false, o2User);
 	}
 	
 	@Test
 	public void isO2User_Fail_with_badResponse() {
-		boolean o2User = fixture.isO2User(new O2UserDetails(null, "any"));
+		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator(null).withContract("any"));
 		assertEquals(false, o2User);
 	}
 	
@@ -330,6 +361,7 @@ public class O2ClientServiceImplIT {
 		fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
 		fixture.setUserLogRepository(mockUserLogRepository);
 		fixture.setLimitValidatePhoneNumber(9);
+        fixture.setUserService(userServiceMock);
 		
 		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
 		fixture.setRestTemplate(new RestTemplate());
@@ -338,5 +370,6 @@ public class O2ClientServiceImplIT {
 		fixture2.setServerO2Url("https://uat.mqapi.com");
 		fixture2.setCommunityService(mockCommunityService);
 		fixture2.setRestTemplate(new RestTemplate());
+        fixture2.setUserService(userServiceMock);
 	}
 }

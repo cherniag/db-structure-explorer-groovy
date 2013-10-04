@@ -63,6 +63,6 @@ public class VFNZProviderServiceImplTest {
 
         VFNZSubscriberData result = fixture.getSubscriberData(phoneNumber);
 
-        Assert.assertEquals(ProviderType.ON_NET, result.getProvider());
+        Assert.assertEquals(ProviderType.VF, result.getProvider());
     }
 }

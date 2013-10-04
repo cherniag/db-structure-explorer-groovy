@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
@@ -14,6 +15,9 @@ import java.util.Map;
 @Table(name="tb_communities")
 public class Community implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+    public static final String O2_COMMUNITY_REWRITE_URL = "o2";
+    public static final String VF_NZ_COMMUNITY_REWRITE_URL = "vf_nz";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -45,7 +49,12 @@ public class Community implements Serializable {
     }
 
     public Community withRewriteUrl(String url){
-        rewriteUrlParameter = url;
+        setRewriteUrlParameter(url);
+        return  this;
+    }
+
+    public Community withName(String name){
+        setName(name);
         return  this;
     }
 
@@ -113,15 +122,26 @@ public class Community implements Serializable {
 	public static Map<String,Community> getMapAsNames() {
 		return CommunityDao.getMapAsNames();
 	}
-	
-	public static Map<String, Community> getMapAsUrls() {
-		return CommunityDao.getMapAsUrls();
-	}
 
-	@Override
-	public String toString() {
-		return "Community [appVersionId=" + appVersionId + ", assetName=" + assetName + ", communityTypeID=" + communityTypeID + ", displayName="
-				+ displayName + ", id=" + id + ", name=" + name + ", rewriteUrlParameter=" + rewriteUrlParameter + "]";
-	}
+    public boolean isO2Community(){
+        return O2_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
+    }
+
+    public boolean isVFNZCommunity(){
+        return VF_NZ_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("appVersionId", appVersionId)
+                .append("id", id)
+                .append("communityTypeID", communityTypeID)
+                .append("name", name)
+                .append("displayName", displayName)
+                .append("assetName", assetName)
+                .append("rewriteUrlParameter", rewriteUrlParameter)
+                .toString();
+    }
 
 }

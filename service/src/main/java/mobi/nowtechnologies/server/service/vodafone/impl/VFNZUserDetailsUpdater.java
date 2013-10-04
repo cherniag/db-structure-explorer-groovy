@@ -12,7 +12,7 @@ public class VFNZUserDetailsUpdater implements UserDetailsUpdater{
         VFNZSubscriberData data = (VFNZSubscriberData)subsriberData;
 
         if(data == null){
-            user.setProvider(ProviderType.ON_NET.toString());
+            user.setProvider(ProviderType.VF.toString());
         } else {
             user.setProvider(data.getProvider() != null ? data.getProvider().toString() : null);
         }

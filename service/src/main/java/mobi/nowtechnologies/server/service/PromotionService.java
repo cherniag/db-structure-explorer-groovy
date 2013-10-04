@@ -140,12 +140,12 @@ public class PromotionService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
+    public boolean applyPotentialPromo(User user, boolean isO2User){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = applyPromotionForO24GConsumer(user);
         }else {
-            isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
+            isPromotionApplied = userService.applyPotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;
     }
@@ -209,5 +209,12 @@ public class PromotionService {
             messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
         return messageCodeForPromoCode;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean updatePromotionNumUsers(Promotion promotion) {
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
+        if (updatedRowsCount!=1) throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        return true;
     }
 }

@@ -20,6 +20,8 @@ import static junit.framework.Assert.assertNull;
 import static mobi.nowtechnologies.server.persistence.dao.UserGroupDao.*;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -173,6 +175,42 @@ public class PromotionRepositoryIT {
         validateAsReturnedPromotionAfter2014StartDate();
     }
 
+    @Test
+    public void shouldUpdatePromotionNumUsers(){
+        //given
+        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+
+        // when
+        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+
+        //then
+        assertThat(updatedRowsCount, is(1));
+    }
+
+    @Test
+    public void shouldUpdateNotMaxUsersLimitedPromotionNumUsers(){
+        //given
+        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+
+        // when
+        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+
+        //then
+        assertThat(updatedRowsCount, is(1));
+    }
+
+    @Test
+    public void shouldDoNotUpdatePromotionNumUsers(){
+        //given
+        Promotion maxUsersLimitedPromotion = saved(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withNumUsers(5).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription(""));
+
+        // when
+        int  updatedRowsCount = promotionRepository.updatePromotionNumUsers(maxUsersLimitedPromotion);
+
+        //then
+        assertThat(updatedRowsCount, is(0));
+    }
+
     Promotion o2PromotionByPromoCodeAfter2014StartDate() {
         o2PromotionByPromoCodeAfter2014StartDate = new Promotion().withStartDate(2014).withEndDate(2016).withIsActive(true).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
         return o2PromotionByPromoCodeAfter2014StartDate;
@@ -207,8 +245,8 @@ public class PromotionRepositoryIT {
         assertNull(activePromoCodePromotion);
     }
 
-    void saved(Promotion promotion){
-        promotionRepository.save(promotion);
+    Promotion saved(Promotion promotion){
+        return promotionRepository.save(promotion);
     };
 
     void saved(PromoCode promoCode){

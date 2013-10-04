@@ -132,7 +132,7 @@ public class AccountCheckDTO {
         this.fullyRegistred = accountCheckDTO.isFullyRegistred();
         this.eligibleForVideo = accountCheckDTO.isEligibleForVideo();
 
-        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
+        accountCheckDTO.setFullyRegistred(EmailValidator.isEmail(userName));
 	}
 
 	public int getGraceCreditSeconds() {
@@ -505,5 +505,15 @@ public class AccountCheckDTO {
 
     public SubscriptionDirection getSubscriptionChanged() {
         return subscriptionChanged;
+    }
+
+    public AccountCheckDTO withUserName(String userName){
+        setUserName(userName);
+        return this;
+    }
+
+    public AccountCheckDTO withUserToken(String userToken){
+        setUserToken(userToken);
+        return this;
     }
 }

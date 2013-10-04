@@ -2037,7 +2037,7 @@ public class UserNotificationServiceImplTest {
 
         User user = UserFactory.createUser();
         user.setUserGroup(o2UserGroup);
-        user.setProvider(ProviderType.ON_NET.toString());
+        user.setProvider(ProviderType.VF.toString());
         user.setDeviceType(deviceType);
         user.setSegment(null);
         user.setContract(null);
