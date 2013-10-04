@@ -1658,11 +1658,16 @@ public class UserService {
 		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
 				user.getMobile());
         if(populateO2SubscriberData){
-        	if ( isPromotedDevice(phoneNumber != null ? phoneNumber : user.getMobile()) ) {
-				// if the device is promoted, we set the default field
-				user.setProvider("o2");
-				user.setSegment(SegmentType.CONSUMER);
-				user.setContract(Contract.PAYM);
+			if (isPromotedDevice(msisdn)){
+				// if the device is promoted, we set the default fields
+				O2SubscriberData o2SubscriberData = new O2SubscriberData();
+				o2SubscriberData.setBusinessOrConsumerSegment(false);
+				o2SubscriberData.setContractPostPayOrPrePay(true);
+				o2SubscriberData.setDirectOrIndirect4GChannel(true);
+				o2SubscriberData.setProviderO2(true);
+				o2SubscriberData.setTariff4G(false);
+				
+				new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
 			} else {
 				populateO2subscriberData(user, msisdn);
 			}
