@@ -5,14 +5,13 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.O2PaymentService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 
 import org.slf4j.Logger;
@@ -28,10 +27,10 @@ public class O2PaymentServiceImpl extends AbstractPaymentSystemService implement
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(O2PaymentServiceImpl.class);
 	
-	private O2ClientService o2ClientService;
+	private O2ProviderService o2ClientService;
 	private CommunityResourceBundleMessageSource messageSource;
 	
-	public void setO2ClientService(O2ClientService o2ClientService) {
+	public void setO2ClientService(O2ProviderService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
 	

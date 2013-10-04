@@ -8,12 +8,11 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.*;
-import mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
@@ -103,7 +102,7 @@ public class SMSNotificationIT {
 		}
 	};
 
-	private O2ClientService mockO2ClientService;
+	private O2ProviderService mockO2ClientService;
 	
 	@Test
 	public void testUpdateLastBefore48SmsMillis_Success()
@@ -283,7 +282,7 @@ public class SMSNotificationIT {
 		mockPaypalHttpService = mock(PayPalHttpService.class);
 		mockSagePayHttpService = mock(SagePayHttpService.class);
 		mockMessageSource = mock(CommunityResourceBundleMessageSource.class);
-		mockO2ClientService = mock(O2ClientService.class);
+		mockO2ClientService = mock(O2ProviderService.class);
 		
 		userNotificationServiceMock = mock(UserNotificationService.class);
 		

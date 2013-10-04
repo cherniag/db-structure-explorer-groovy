@@ -35,7 +35,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	
 	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification"/>
 
-    <bean id="service.O2UserDetailsUpdater" class="mobi.nowtechnologies.server.service.O2UserDetailsUpdater"/>
+    <bean id="service.O2UserDetailsUpdater" class="mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater"/>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
@@ -67,8 +67,20 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="o2Service" ref="service.O2Service"/>
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
         <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
+
+        <property name="mobileProviderService" ref="service.O2ClientService" />
+        <property name="userDetailsUpdater" ref="service.O2UserDetailsUpdater" />
         <property name="otacValidationService" ref="service.OtacValidationService" />
 	</bean>
+
+    <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
+        <property name="mobileProviderService" ref="service.VFNZProviderService" />
+        <property name="userDetailsUpdater" ref="service.VFNZUserDetailsUpdater" />
+    </bean>
+
+    <bean id="service.VFNZProviderService" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZProviderServiceImpl"/>
+
+    <bean id="service.VFNZUserDetailsUpdater" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUserDetailsUpdater"/>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
@@ -322,7 +334,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
-		<property name="smsService" ref="${sms.service.bean}" />
+		<property name="smsProviderBeanName" value="service.SmsProvider" />
 		<property name="userService" ref="service.UserService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="paymentsUrl" value="${payments.url}" />
@@ -333,7 +345,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 	</bean>
 
-	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl">
+    <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
+    <alias name="service.migHttpService" alias="vf_nz.service.SmsProvider"/>
+
+	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
 		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />

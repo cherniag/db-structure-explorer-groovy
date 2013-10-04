@@ -55,6 +55,7 @@
 	
 	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" parent="transport.CommonController">
 		<property name="userService" ref="service.UserService" />
+		<property name="vfUserService" ref="vf_nz.service.UserService" />
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.MigController">

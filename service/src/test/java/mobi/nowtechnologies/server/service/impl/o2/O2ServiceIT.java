@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import mobi.nowtechnologies.server.service.O2Service;
+import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
 import org.junit.Test;

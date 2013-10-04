@@ -1,13 +1,12 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.o2.impl;
+
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
+import mobi.nowtechnologies.server.service.MobileProviderService;
+import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import java.math.BigDecimal;
 
-import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-import mobi.nowtechnologies.server.service.payment.response.O2Response;
-
-public interface O2ClientService {
-	
-	String validatePhoneNumber(String phoneNumber);
+public interface O2ProviderService extends MobileProviderService {
 	
 	boolean isO2User(ProviderUserDetails userDetails);
 
