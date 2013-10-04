@@ -528,6 +528,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 		final SegmentType segment = user.getSegment();
 		final Contract contract = user.getContract();
 		final DeviceType deviceType = user.getDeviceType();
+        final PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
 		String deviceTypeName = null;
 		
 		if (deviceType != null) {
@@ -540,7 +541,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 		codes[3] = getCode(codes, 2, contract);
 		codes[4] = getCode(codes, 3, deviceTypeName);
 		codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
-		
+		codes[5] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
+
 		for (int i = codes.length - 1; i >= 0; i--) {
 			if (codes[i] != null) {
 				msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);

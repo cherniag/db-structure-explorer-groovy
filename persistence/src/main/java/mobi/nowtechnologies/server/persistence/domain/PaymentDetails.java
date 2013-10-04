@@ -40,6 +40,7 @@ public abstract class PaymentDetails {
 	public static final String PAYPAL_TYPE = "payPal";
 	public static final String MIG_SMS_TYPE = "migSms";
 	public static final String O2_PSMS_TYPE = "o2Psms";
+	public static final String VF_PSMS_TYPE = "vfPsms";
 	public static final String ITUNES_SUBSCRIPTION="iTunesSubscription";
 	public static final String FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE = "FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE";
 

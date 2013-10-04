@@ -1,8 +1,7 @@
-package mobi.nowtechnologies.server.service.impl.o2;
+package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.enums.Contract;
