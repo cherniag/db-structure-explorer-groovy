@@ -38,9 +38,12 @@ public class WebServiceGateway extends WebServiceGatewaySupport {
 	@SuppressWarnings("unchecked")
 	public <T> T sendAndReceive(String endpoint, Object requestPayload) {
 		try {
+			LOGGER.info("send And Receive "+endpoint);
 			JAXBElement<T> element = (JAXBElement<T>)getWebServiceTemplate().marshalSendAndReceive(endpoint, requestPayload, defaultWebServiceMessageHandler);
+			
 			return element.getValue();
 		} catch (SoapFaultClientException e) {
+			LOGGER.error("Error sendAndReceive "+endpoint +" "+e+" "+e.getWebServiceMessage() , e);
 			SoapFaultDetailElement detailElement = e.getSoapFault().getFaultDetail().getDetailEntries().next();
 			SoapFaultException faultExcp = new SoapFaultException((SoapMessage)e.getWebServiceMessage());
 			try {
