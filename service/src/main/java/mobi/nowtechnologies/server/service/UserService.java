@@ -1716,7 +1716,11 @@ public class UserService {
 			}
 		} else {
 			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
-                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
+				boolean isO2 = user.isO2User();
+				if (updateContractAndProvider) {
+					isO2 = o2ClientService.isO2User(o2UserDetails);
+				}
+                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2);
             }
         }
         if(updateContractAndProvider){
