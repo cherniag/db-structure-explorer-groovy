@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
 /**
  * ApplyInitPromoConroller
  *
@@ -80,27 +82,24 @@ public class ApplyInitPromoController extends CommonController {
  		User user = null; 
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
+
+            boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
+
             user = userService.findByNameAndCommunity(userName, communityName);
-            User mobileUser = null;
-            if (null != user) {
-            	mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
-            	
-    			boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            	AccountCheckDTO accountCheckDTO = userService.applyInitPromoO2(user, mobileUser, token, community, updateContractAndProvider);
+            if (isNull(user)) throw new UserCredentialsException("Bad user credentials");
 
-    	        final Object[] objects = new Object[]{accountCheckDTO};
-    	        precessRememberMeToken(objects);
+            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, token, isMajorApiVersionNumberLessThan4);
 
-    	        user = user.getActivationStatus() != ActivationStatus.ACTIVATED ? mobileUser : user;
+            user = (User) accountCheckDTO.user;
 
-                if (isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
-                    updateO2UserTask.handleUserUpdate(user);
-                }
+            final Object[] objects = new Object[]{accountCheckDTO};
+            precessRememberMeToken(objects);
 
-    	    	return new ModelAndView(view, Response.class.toString(), new Response(objects));
+            if (isMajorApiVersionNumberLessThan4) {
+                updateO2UserTask.handleUserUpdate(user);
             }
-            throw new UserCredentialsException("Bad user credentials");
+            return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (UserCredentialsException ce){
         	ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);

@@ -139,17 +139,4 @@ public class UserDao extends JpaDaoSupport {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public User findByDeviceUIDAndCommunityRedirectUrl(String deviceUID, String communityRedirectUrl) {
-		LOGGER.debug("input parameters deviceUID, communityRedirectUrl: [{}], [{}]", deviceUID, communityRedirectUrl);
-		
-		User user = null;
-		List<User> users = getJpaTemplate().findByNamedQuery(User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, new Object[]{deviceUID, communityRedirectUrl});
-		if (users.size() != 0)
-			user = users.get(0);
-		
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return user;
-    }
-
 }

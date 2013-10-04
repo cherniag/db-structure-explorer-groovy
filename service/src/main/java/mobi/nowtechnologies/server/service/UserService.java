@@ -8,7 +8,7 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.O2UserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -65,6 +65,7 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -110,6 +111,24 @@ public class UserService {
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
+
+    private User checkAndMerge(User user, User mobileUser) {
+        if (mobileUser.getId() != user.getId()) {
+            user = mergeUser(mobileUser, user);
+        }
+        return user;
+    }
+
+    private User updateContractAndProvider(User user, O2UserDetails providerUserDetails) {
+        if (isPromotedDevice(user.getMobile()) ) {
+            user.setContract(Contract.PAYM);
+            user.setProvider(ProviderType.O2.toString());
+        } else {
+            user.setContract(Contract.valueOf(providerUserDetails.getTariff()));
+            user.setProvider(providerUserDetails.getOperator());
+        }
+        return user;
+    }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
@@ -596,9 +615,9 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User mergeUser(User user, User userByDeviceUID) {
-		userByDeviceUID = userRepository.findOne(userByDeviceUID.getId());
 		LOGGER.debug("input parameters user, userByDeviceUID: [{}], [{}]", user, userByDeviceUID);
-		userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+
+        userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
 
 		drmService.moveDrms(userByDeviceUID, user);
 
@@ -1289,8 +1308,7 @@ public class UserService {
 		return user;
 	}
 
-    @Transactional(readOnly = true)
-    public User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
+    private User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
         LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
 
         User user = userRepository.findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
@@ -1311,7 +1329,7 @@ public class UserService {
         if (isNull(user)) {
             user = findByDeviceUIDAndCommunity(deviceUID, community);
             if (isNotNull(user)) {
-                user.setDeviceUID(deviceUID + "_" + getEpochMillis());
+                user.setDeviceUID(deviceUID + "_mark_at_" + getEpochMillis());
                 updateUser(user);
             }
 
@@ -1348,7 +1366,8 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-    private User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
+    @Transactional(readOnly = true)
+    public User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
         return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
     }
 
@@ -1706,48 +1725,48 @@ public class UserService {
 		return o2ClientService.getRedeemServerO2Url(user.getMobile());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoO2(User user, User mobileUser, String otac, String communityName, boolean updateContractAndProvider) {
-		LOGGER.info("apply init promo o2 " + user.getId() + " "
-                + user.getMobile() + " " + user.getActivationStatus() + " updateContractAndProvider=" + updateContractAndProvider);
-		
-		boolean hasPromo = false;
-		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-		
-		LOGGER.info("o2 user details " + o2UserDetails.getOperator() + " "
-                + o2UserDetails.getTariff() + " u.contract="
-                + user.getContract() + " " + user.getMobile() + " "
-                + user.getOperator());
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO applyInitPromoAndAccCheck(User user, String otac, boolean updateContractAndProvider) {
+        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-		
-		if (null != mobileUser) {
+        User mobileUser = findByNameAndCommunity(user.getMobile(), user.getUserGroup().getCommunity().getName());
+
+        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
+
+        user = !ActivationStatus.ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
+
+        AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+        return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);
+    }
+
+	private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
+        LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
+
+		O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
+
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
+                user.getContract(), user.getMobile(),
+                user.getOperator());
+
+        boolean hasPromo = false;
+        if (isNotNull(mobileUser)) {
 			if (mobileUser.getId() != user.getId()) {
 				mergeUser(mobileUser, user);
 				user = mobileUser;
 			}
 		} else {
-			if (user.getActivationStatus() == ENTERED_NUMBER && !EmailValidator.validate(user.getUserName())) {
+			if (ENTERED_NUMBER.equals(user.getActivationStatus()) && !EmailValidator.isEmail(user.getUserName())) {
                 hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
             }
         }
-        if(updateContractAndProvider){
-        	if ( isPromotedDevice(user.getMobile()) ) {
-				// if the device is promoted, we go with the default values
-        		user.setContract(Contract.PAYM);
-        		user.setProvider("o2");
-			} else {
-	        	user.setContract(Contract.valueOf(o2UserDetails.getTariff()));
-	        	user.setProvider(o2UserDetails.getOperator());
-			}
-        }
-        user.setActivationStatus(ActivationStatus.ACTIVATED);
-        user.setUserName(user.getMobile());
-        userRepository.save(user);
 
-        AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
-        dto.setFullyRegistred(true);
-        dto.setHasPotentialPromoCodePromotion(hasPromo);
-        return dto;
+        if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
+
+        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
+
+        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
+        return hasPromo;
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)

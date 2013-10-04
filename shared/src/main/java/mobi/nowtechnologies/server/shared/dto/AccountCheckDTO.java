@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -77,6 +76,8 @@ public class AccountCheckDTO {
     private String lastSubscribedPaymentSystem;
     private SubscriptionDirection subscriptionChanged;
 
+    public transient Object user;
+
     public AccountCheckDTO(){
 		
 	}
@@ -132,8 +133,18 @@ public class AccountCheckDTO {
         this.fullyRegistred = accountCheckDTO.isFullyRegistred();
         this.eligibleForVideo = accountCheckDTO.isEligibleForVideo();
 
-        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
+        accountCheckDTO.setFullyRegistred(EmailValidator.isEmail(userName));
 	}
+
+    public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
+        this.fullyRegistred = isFullyRegistered;
+        return this;
+    }
+
+    public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
+        this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
+        return this;
+    }
 
 	public int getGraceCreditSeconds() {
 		return graceCreditSeconds;

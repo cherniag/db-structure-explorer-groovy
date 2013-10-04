@@ -838,6 +838,16 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withMobile(String mobile){
+        setMobile(mobile);
+        return this;
+    }
+
+    public User withActivationStatus(ActivationStatus activationStatus){
+        setActivationStatus(activationStatus);
+        return this;
+    }
+
 	public int getPaymentStatus() {
 		return paymentStatus;
 	}

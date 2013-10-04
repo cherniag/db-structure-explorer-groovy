@@ -46,7 +46,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
@@ -61,10 +60,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 
 /**
- * 
- * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  */
@@ -1085,7 +1083,7 @@ public class UserServiceTest {
 				return accountCheckDTO;
 			}
 		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
-		PowerMockito.doReturn(notExistUser ? null : user).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(anyString(), anyString());
+		PowerMockito.doReturn(notExistUser ? null : user).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
 		whenNew(User.class).withNoArguments().thenReturn(user);
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
@@ -1152,7 +1150,7 @@ public class UserServiceTest {
 		DeviceTypeDao.getNoneDeviceType();
 	}
 
-	@Test()
+	@Test
 	public void testRegisterUser_WOPotentialPromo_ExistUser_Success() throws Exception {
 		final String storedToken = "50c86945713ac8c870eafbc19980706b";
 		final String communityName = "chartsnow";
@@ -1176,7 +1174,7 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(0));
 		createStoredToken(anyString(), anyString());
-		verifyStatic(times(1));
+		verifyStatic(times(0));
 		DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
 		verifyStatic(times(0));
 		UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
@@ -2396,7 +2394,7 @@ public class UserServiceTest {
 		userByDeviceUID.setFacebookId(null);
 		userByDeviceUID.setFirstUserLoginMillis(null);
 		
-		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		
 		User userByFacebookId = UserFactory.createUser();
 		userByFacebookId.setId(userByDeviceUID.getId());
@@ -2428,7 +2426,7 @@ public class UserServiceTest {
 		
 		verify(communityServiceMock, times(1)).getCommunityByName(userFacebookDetailsDto.getCommunityName());
 		verify(facebookServiceMock, times(1)).getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken());
-		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		verify(userServiceSpy, times(1)).findByFacebookId(userCredentions.getId(), passedCommunityName);
 		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
 		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
@@ -2461,7 +2459,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2506,7 +2504,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoO2(user, mobileUser, otac, communityName, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
