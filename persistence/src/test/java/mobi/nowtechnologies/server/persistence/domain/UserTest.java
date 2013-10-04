@@ -14,12 +14,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -805,6 +808,126 @@ public class UserTest {
 
         //then
         assertEquals(false, isEligibleForVideo);
+    }
+
+    @Test
+    public void shouldBeSubjectToAutoOptInO23GConsumerWithoutPromo(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(CONSUMER);
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(true));
+    }
+
+    @Test
+    public void shouldBeSubjectToAutoOptInO23GConsumerWithVideoAudioLastPromo(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(true));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInNotO2Community(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(""))).withTariff(_3G).withProvider(O2).withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInBusinessSegmentUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInNonO2User(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(NON_O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInO23GConsumerWithAudioLastPromo(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldBeSubjectToAutoOptInO24GConsumerWithoutPromo(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(O2).withSegment(CONSUMER);
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(true));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInNotO2Community4G(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(""))).withTariff(_4G).withProvider(O2).withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInBusinessSegment4GUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(O2).withSegment(BUSINESS).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    @Test
+    public void shouldNotBeSubjectToAutoOptInNonO24GUser(){
+        //given
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_4G).withProvider(NON_O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
     }
 
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
