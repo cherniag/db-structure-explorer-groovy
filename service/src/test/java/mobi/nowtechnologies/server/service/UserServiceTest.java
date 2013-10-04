@@ -54,6 +54,7 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
@@ -3162,6 +3163,56 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).downgradeUserTariff(any(User.class), any(Tariff.class));
         verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(user, o2SubscriberData);
         verify(userRepositoryMock, times(1)).save(user);
+    }
+
+    @Test
+    public void shouldMergeUsers() {
+        //given
+        User oldUser = new User().withDeviceUID("a");
+        User currentUser = new User().withDeviceUID("b");
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        User actualUser = userServiceSpy.mergeUser(oldUser, currentUser);
+
+        //then
+        assertThat(actualUser, is(oldUser));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+
+        verify(userRepositoryMock, times(1)).delete(currentUser);
+        verify(userRepositoryMock, times(1)).save(oldUser);
+        verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenOldUserIsNull() {
+        //given
+        User oldUser = null;
+        User currentUser = new User().withDeviceUID("b");
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenCurrentUserIsNull() {
+        //given
+        User oldUser = new User().withDeviceUID("a");
+        User currentUser = null;
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

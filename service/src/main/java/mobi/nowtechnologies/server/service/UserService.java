@@ -130,6 +130,14 @@ public class UserService {
         return user;
     }
 
+    private void detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
+        User user = findByDeviceUIDAndCommunity(deviceUID, community);
+        if (isNotNull(user)) {
+            user.setDeviceUID(deviceUID + "_mark_at_" + getEpochMillis());
+            updateUser(user);
+        }
+    }
+
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}
@@ -614,26 +622,15 @@ public class UserService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public User mergeUser(User user, User userByDeviceUID) {
-		LOGGER.debug("input parameters user, userByDeviceUID: [{}], [{}]", user, userByDeviceUID);
+	public User mergeUser(User oldUser, User userByDeviceUID) {
+        LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
-        userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+        userRepository.delete(userByDeviceUID);
+        userRepository.save(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()));
+        accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
 
-		drmService.moveDrms(userByDeviceUID, user);
-
-		entityService.removeEntity(userByDeviceUID);
-
-		user.setDeviceUID(userByDeviceUID.getDeviceUID());
-		user.setDeviceString(userByDeviceUID.getDeviceString());
-		user.setDeviceModel(userByDeviceUID.getDeviceModel());
-		user.setDevice(userByDeviceUID.getDevice());
-		user.setDeviceType(userByDeviceUID.getDeviceType());
-		user.setIpAddress(userByDeviceUID.getIpAddress());
-		user.setTempToken(userByDeviceUID.getToken());
-		entityService.updateEntity(user);
-
-		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
+		LOGGER.info("The current user after merge now is [{}]", oldUser);
+		return oldUser;
 	}
 
 	public String getCommunityNameByUserGroup(byte userGroup) {
@@ -1327,11 +1324,7 @@ public class UserService {
         User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
         if (isNull(user)) {
-            user = findByDeviceUIDAndCommunity(deviceUID, community);
-            if (isNotNull(user)) {
-                user.setDeviceUID(deviceUID + "_mark_at_" + getEpochMillis());
-                updateUser(user);
-            }
+            detectUserAccountWithSameDeviceAndDisableIt(deviceUID, community);
 
             DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
             if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
@@ -1750,14 +1743,9 @@ public class UserService {
 
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
-			if (mobileUser.getId() != user.getId()) {
-				mergeUser(mobileUser, user);
-				user = mobileUser;
-			}
-		} else {
-			if (ENTERED_NUMBER.equals(user.getActivationStatus()) && !EmailValidator.isEmail(user.getUserName())) {
-                hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
-            }
+            user = checkAndMerge(user, mobileUser);
+		} else if (ENTERED_NUMBER.equals(user.getActivationStatus()) && !EmailValidator.isEmail(user.getUserName())) {
+            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
         }
 
         if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
