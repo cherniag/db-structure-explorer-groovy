@@ -23,9 +23,10 @@ public class O2UserDetailsUpdater implements UserDetailsUpdater{
         O2SubscriberData data = (O2SubscriberData)subsriberData;
 
         if(data == null){
-            user.setProvider("o2");
+            user.setProvider(ProviderType.O2.toString());
             user.setSegment(SegmentType.CONSUMER);
             user.setContract(Contract.PAYM);
+            user.setTariff(Tariff._3G);
         } else {
             user.setProvider((data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2).toString());
             user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);

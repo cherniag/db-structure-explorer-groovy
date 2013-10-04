@@ -36,7 +36,9 @@ import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.ActionReason;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -65,17 +67,14 @@ import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
-import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -1706,52 +1705,43 @@ public class UserService {
 		return user;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public User activatePhoneNumber(User user, String phone, boolean populateSubscriberData) {
-		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User activatePhoneNumber(User user, String phone, boolean populateSubscriberData) {
+        LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
                 user.getActivationStatus(), populateSubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
-        PhoneNumberValidationData phoneNumberValidationData = o2ClientService.validatePhoneNumber(phoneNumber);
+        PhoneNumberValidationData result = mobileProviderService.validatePhoneNumber(phoneNumber);
 
-        String msisdn = phoneNumberValidationData.getPhoneNumber();
-        LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
-                user.getMobile());
-        if(populateSubscriberData){
-            if (isPromotedDevice(msisdn)){
-				// if the device is promoted, we set the default fields
-				O2SubscriberData o2SubscriberData = new O2SubscriberData();
-				o2SubscriberData.setBusinessOrConsumerSegment(false);
-				o2SubscriberData.setContractPostPayOrPrePay(true);
-				o2SubscriberData.setDirectOrIndirect4GChannel(true);
-				o2SubscriberData.setProviderO2(true);
-				o2SubscriberData.setTariff4G(false);
-				
-				new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-			} else {
-				populateO2subscriberData(user, msisdn);
-			}
-        }
-        
-		user.setMobile(msisdn);
-		user.setActivationStatus(ENTERED_NUMBER);
-        if(phoneNumberValidationData.getPin() != null)
-            user.setPin(phoneNumberValidationData.getPin());
+        LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", result.getPhoneNumber(), phone, user.getMobile());
 
-		userRepository.save(user);
+        if(phone != null && populateSubscriberData)
+            populateSubscriberData(user, result.getPhoneNumber());
+
+        user.setMobile(result.getPhoneNumber());
+        user.setActivationStatus(ENTERED_NUMBER);
+        if(result.getPin() != null)
+            user.setPin(result.getPin());
+
+        userRepository.save(user);
         LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
-		return user;
-	}
+        return user;
+    }
 
-	private void populateO2subscriberData(User user, String phoneNumber) {
-		try {
-			O2SubscriberData o2SubscriberData = o2Service.getSubscriberData(phoneNumber);
-			new O2UserDetailsUpdater().setUserFieldsFromSubscriberData(user, o2SubscriberData);
-		} catch (Exception ex) {
-			// intentionally swallowing the exception to enable user to continue with activation
-			LOGGER.error("Unable to get subscriber data during activation phone={{}}", phoneNumber, ex);
-		}
-	}
+    private void populateSubscriberData(User user, String phoneNumber) {
+        if ( isPromotedDevice(phoneNumber)) {
+            // if the device is promoted, we set the default field
+            userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
+        } else {
+            try {
+                mobi.nowtechnologies.server.service.data.SubsriberData subscriberData = mobileProviderService.getSubscriberData(phoneNumber);
+                userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
+            } catch (Exception ex) {
+                // intentionally swallowing the exception to enable user to continue with activation
+                LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
+            }
+        }
+    }
 
 	@Transactional(readOnly = true)
 	public String getRedeemServerO2Url(User user) {
