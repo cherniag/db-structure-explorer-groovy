@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.service.O2ClientService;
 import mobi.nowtechnologies.server.service.VFOtacValidationService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class OtacValidationServiceImplTest {
     private OtacValidationServiceImpl otacValidationServiceImplFixture;
 
     @Mock
-    public O2ClientService o2ClientServiceMock;
+    public O2ProviderService o2ProviderServiceMock;
 
     @Mock
     public VFOtacValidationService vfOtacValidationServiceMock;
@@ -35,7 +35,7 @@ public class OtacValidationServiceImplTest {
     public void setUp(){
         otacValidationServiceImplFixture = new OtacValidationServiceImpl();
 
-        otacValidationServiceImplFixture.setO2ClientService(o2ClientServiceMock);
+        otacValidationServiceImplFixture.setO2ProviderService(o2ProviderServiceMock);
         otacValidationServiceImplFixture.setVfOtacValidationService(vfOtacValidationServiceMock);
     }
 
@@ -48,7 +48,7 @@ public class OtacValidationServiceImplTest {
 
         ProviderUserDetails expectedProviderUserDetails = new ProviderUserDetails();
 
-        doReturn(expectedProviderUserDetails).when(o2ClientServiceMock).getUserDetails(otac, phoneNumber);
+        doReturn(expectedProviderUserDetails).when(o2ProviderServiceMock).getUserDetails(otac, phoneNumber);
         doReturn(null).when(vfOtacValidationServiceMock).validate(otac, phoneNumber, community);
 
         //when
@@ -57,7 +57,7 @@ public class OtacValidationServiceImplTest {
         //then
         assertThat(providerUserDetails, is(expectedProviderUserDetails));
 
-        verify(o2ClientServiceMock, times(1)).getUserDetails(otac, phoneNumber);
+        verify(o2ProviderServiceMock, times(1)).getUserDetails(otac, phoneNumber);
         verify(vfOtacValidationServiceMock, times(0)).validate(otac, phoneNumber, community);
     }
 
@@ -70,7 +70,7 @@ public class OtacValidationServiceImplTest {
 
         ProviderUserDetails expectedProviderUserDetails = new ProviderUserDetails();
 
-        doReturn(null).when(o2ClientServiceMock).getUserDetails(otac, phoneNumber);
+        doReturn(null).when(o2ProviderServiceMock).getUserDetails(otac, phoneNumber);
         doReturn(expectedProviderUserDetails).when(vfOtacValidationServiceMock).validate(otac, phoneNumber, community);
 
         //when
@@ -79,7 +79,7 @@ public class OtacValidationServiceImplTest {
         //then
         assertThat(providerUserDetails, is(expectedProviderUserDetails));
 
-        verify(o2ClientServiceMock, times(0)).getUserDetails(otac, phoneNumber);
+        verify(o2ProviderServiceMock, times(0)).getUserDetails(otac, phoneNumber);
         verify(vfOtacValidationServiceMock, times(1)).validate(otac, phoneNumber, community);
     }
 
@@ -92,7 +92,7 @@ public class OtacValidationServiceImplTest {
 
         ProviderUserDetails expectedProviderUserDetails = new ProviderUserDetails();
 
-        doReturn(expectedProviderUserDetails).when(o2ClientServiceMock).getUserDetails(otac, phoneNumber);
+        doReturn(expectedProviderUserDetails).when(o2ProviderServiceMock).getUserDetails(otac, phoneNumber);
         doReturn(expectedProviderUserDetails).when(vfOtacValidationServiceMock).validate(otac, phoneNumber, community);
 
         //when

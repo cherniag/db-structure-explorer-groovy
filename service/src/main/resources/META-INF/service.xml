@@ -452,7 +452,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
     <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl">
-        <property name="o2ClientService" ref="service.O2ClientService" />
+        <property name="o2ProviderService" ref="service.O2ClientService" />
         <property name="vfOtacValidationService" ref="service.VFOtacValidationService" />
     </bean>
 

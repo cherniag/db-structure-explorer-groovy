@@ -107,9 +107,7 @@ public class UserService {
     private DrmService drmService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
-    private O2ClientService o2ClientService;
     private OtacValidationService otacValidationService;
-    private O2Service o2Service;
     private ITunesService iTunesService;
     private UserBannedRepository userBannedRepository;
     private RefundService refundService;
@@ -122,18 +120,6 @@ public class UserService {
 
     private UserDetailsUpdater userDetailsUpdater;
     private MobileProviderService mobileProviderService;
-
-    public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
-        this.userDetailsUpdater = userDetailsUpdater;
-    }
-
-    public void setMobileProviderService(MobileProviderService mobileProviderService) {
-
-        this.mobileProviderService = mobileProviderService;
-    }
-
-    public void setO2ClientService(O2ProviderService o2ClientService) {
-		this.o2ClientService = o2ClientService;
 
     private User checkAndMerge(User user, User mobileUser) {
         if (mobileUser.getId() != user.getId()) {
@@ -171,8 +157,16 @@ public class UserService {
         return hasPromo;
     }
 
-    public void setO2ClientService(O2ClientService o2ClientService) {
-        this.o2ClientService = o2ClientService;
+    public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
+        this.userDetailsUpdater = userDetailsUpdater;
+    }
+
+    public void setMobileProviderService(MobileProviderService mobileProviderService) {
+        this.mobileProviderService = mobileProviderService;
+    }
+
+    public void setO2ClientService(O2ProviderService o2ClientService) {
+		this.o2ClientService = o2ClientService;
     }
 
     public void setOtacValidationService(OtacValidationService otacValidationService) {
@@ -788,7 +782,7 @@ public class UserService {
 
 		userRepository.updateFields(storedToken, userId);
 
-		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[] { user });
+		LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[]{user});
 		return user;
 	}
 
@@ -1017,7 +1011,7 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AccountCheckDTO proceessAccountCheckCommandForAuthorizedUser(int userId, String pushNotificationToken, String deviceType, String transactionReceipt) {
-		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[] { String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt });
+		LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(userId), pushNotificationToken, deviceType, transactionReceipt});
 
 		try {
 			iTunesService.processInAppSubscription(userId, transactionReceipt);
@@ -1534,7 +1528,7 @@ public class UserService {
 		User user = userRepository.findOne(userId);
 
 		if (user == null)
-			throw new ServiceException("users.management.edit.page.coudNotFindUser.error", "Coudn't find user with id [" + userId + "]");
+			throw new ServiceException("users.management.edit.page.coudNotFindUser.error", "Coudln't find user with id [" + userId + "]");
 
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
@@ -1715,15 +1709,16 @@ public class UserService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User activatePhoneNumber(User user, String phone, boolean populateSubscriberData) {
 		LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
-				user.getActivationStatus(), populateSubscriberData);
+                user.getActivationStatus(), populateSubscriberData);
 
         String phoneNumber = phone != null ? phone : user.getMobile();
-        String msisdn = o2ClientService.validatePhoneNumber(phoneNumber);
-        
-		LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
-				user.getMobile());
-        if(populateO2SubscriberData){
-			if (isPromotedDevice(msisdn)){
+        PhoneNumberValidationData phoneNumberValidationData = o2ClientService.validatePhoneNumber(phoneNumber);
+
+        String msisdn = phoneNumberValidationData.getPhoneNumber();
+        LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", msisdn, phone,
+                user.getMobile());
+        if(populateSubscriberData){
+            if (isPromotedDevice(msisdn)){
 				// if the device is promoted, we set the default fields
 				O2SubscriberData o2SubscriberData = new O2SubscriberData();
 				o2SubscriberData.setBusinessOrConsumerSegment(false);
@@ -1740,8 +1735,8 @@ public class UserService {
         
 		user.setMobile(msisdn);
 		user.setActivationStatus(ENTERED_NUMBER);
-        if(result.getPin() != null)
-            user.setPin(result.getPin());
+        if(phoneNumberValidationData.getPin() != null)
+            user.setPin(phoneNumberValidationData.getPin());
 
 		userRepository.save(user);
         LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);

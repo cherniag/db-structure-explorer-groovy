@@ -2495,7 +2495,7 @@ public class UserServiceTest {
 
         assertEquals(Contract.valueOf(providerUserDetails.contract), user.getContract());
         assertEquals(providerUserDetails.operator, user.getProvider());
-        assertEquals(ACTIVATED, user.getActivationStatus());
+        assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
 
         verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);

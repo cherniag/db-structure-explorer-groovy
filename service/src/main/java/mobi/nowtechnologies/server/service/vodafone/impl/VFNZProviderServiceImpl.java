@@ -53,7 +53,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     public VFNZSubscriberData getSubscriberData(String phoneNumber) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        VFNZSubscriberData result = new VFNZSubscriberData().withProvider(ProviderType.ON_NET);
+        VFNZSubscriberData result = new VFNZSubscriberData().withProvider(ProviderType.VF);
 
         LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}] with [{}]", new Object[]{phoneNumber, result});
         return result;
