@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import mobi.nowtechnologies.server.service.O2TariffService;
+import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
 
 import org.junit.Test;

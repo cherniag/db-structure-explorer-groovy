@@ -5,20 +5,20 @@ import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
+import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
+import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-import mobi.nowtechnologies.server.service.O2Service;
-import mobi.nowtechnologies.server.service.O2UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
 import static mobi.nowtechnologies.server.shared.log.LogUtils.putGlobalMDC;
 import static mobi.nowtechnologies.server.shared.log.LogUtils.removeGlobalMDC;
 import static org.apache.commons.lang.exception.ExceptionUtils.getStackTrace;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class UpdateO2UserTask {
 

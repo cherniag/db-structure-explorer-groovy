@@ -42,17 +42,18 @@ public class UserNotificationServiceImplIT {
 		messageSource.setCacheSeconds(180);
 		messageSource.setUseCodeAsDefaultMessage(true);
 		
-		userNotificationService = new UserNotificationServiceImpl();
+		userNotificationService = spy(new UserNotificationServiceImpl());
 		userNotificationService.setMessageSource(messageSource);
-		userNotificationService.setAvailableCommunities(new String[]{"o2"});
+		userNotificationService.setAvailableCommunities(new String[]{"o2","vf_nz"});
 		migHttpService = mock(MigHttpService.class);
-		userNotificationService.setSmsService(migHttpService);
+		userNotificationService.setSmsProviderBeanName("service.SmsProvider");
 		MigResponse migResponse = mock(MigResponse.class);
 		
 		Mockito.when(migResponse.getHttpStatus()).thenReturn(200);
 		Mockito.when(migResponse.getMessage()).thenReturn("000=[GEN] OK ");
 		Mockito.when(migResponse.isSuccessful()).thenReturn(true);
-		Mockito.when(migHttpService.makeFreeSMSRequest(anyString(), anyString(), anyString())).thenReturn(migResponse);
+        doReturn(migHttpService).when(userNotificationService).getSMSProvider(anyString());
+		Mockito.when(migHttpService.send(anyString(), anyString(), anyString())).thenReturn(migResponse);
 		
 		audioOnlyUsers = new ArrayList<User>();
 		addAudioUsers( audioOnlyUsers );
@@ -66,7 +67,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendSmsOnFreeTrialExpired(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -75,7 +76,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendUnsubscribeAfterSMS(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -84,7 +85,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendUnsubscribePotentialSMS(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -96,7 +97,7 @@ public class UserNotificationServiceImplIT {
 				continue;
 			}
 			userNotificationService.sendLowBalanceWarning(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -105,16 +106,29 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
+
+    @Test
+    public void testForNonVideo_sendActivationPinSMS() throws Exception {
+        int times = 0;
+        for ( User u : audioOnlyUsers ) {
+            userNotificationService.sendActivationPinSMS(u);
+
+            if("vf_nz".equals(u.getUserGroup().getCommunity().getRewriteUrlParameter()))
+                times++;
+
+            verify(migHttpService, times(times)).send(anyString(), anyString(), anyString());
+        }
+    }
 	
 	@Test
 	public void testForVideo_sendSmsOnFreeTrialExpired() throws Exception {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.sendSmsOnFreeTrialExpired(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -123,7 +137,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.sendUnsubscribeAfterSMS(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -132,7 +146,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.sendUnsubscribePotentialSMS(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -144,7 +158,7 @@ public class UserNotificationServiceImplIT {
 				continue;
 			}
 			userNotificationService.sendLowBalanceWarning(u);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -153,7 +167,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -162,7 +176,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.send4GDowngradeSMS(u,UserNotificationServiceImpl.DOWNGRADE_FROM_4G_FREETRIAL);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -171,7 +185,7 @@ public class UserNotificationServiceImplIT {
 		int times = 1;
 		for ( User u : videoUsers ) {
 			userNotificationService.send4GDowngradeSMS(u,UserNotificationServiceImpl.DOWNGRADE_FROM_4G_SUBSCRIBED);
-			verify(migHttpService, times(times++)).makeFreeSMSRequest(anyString(), anyString(), anyString());
+			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -197,7 +211,7 @@ public class UserNotificationServiceImplIT {
 		return pp;
 	}
 	
-	private User createUser(String provider, SegmentType st,Contract c, String device, Tariff tariff) {
+	private User createUser(String community, String provider, SegmentType st,Contract c, String device, Tariff tariff,final String paymentType) {
 		User user = new User();
 
 		user.setProvider( provider );
@@ -205,8 +219,8 @@ public class UserNotificationServiceImplIT {
 		user.setContract( c );
 		
 		Community com = new Community();
-		com.setRewriteUrlParameter("o2");
-		com.setName("o2");
+		com.setRewriteUrlParameter(community);
+		com.setName(community);
 		
 		UserGroup ug = new UserGroup();
 		ug.setCommunity(com);
@@ -223,7 +237,7 @@ public class UserNotificationServiceImplIT {
 		user.setCurrentPaymentDetails(new PaymentDetails() {
 			@Override
 			public String getPaymentType() {
-				return "o2Psms";
+				return paymentType;
 			}
 		});
 		
@@ -231,6 +245,11 @@ public class UserNotificationServiceImplIT {
 		
 		return user;
 	}
+
+    private User createUser(String provider, SegmentType st,Contract c, String device, Tariff tariff) {
+
+        return createUser("o2", provider, st, c, device, tariff, "o2Psms");
+    }
 	
 	private void addVideoUsers(List<User> ret) {
 		//o2 business
@@ -302,5 +321,23 @@ public class UserNotificationServiceImplIT {
 		list.add( createUser("non-o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, null) );
 		list.add( createUser("non-o2", null, null, DeviceType.WINDOWS_PHONE, null) );
 		list.add( createUser("non-o2", null, null, DeviceType.ANDROID, null) );
+
+		// vf_nz on-net
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
+
+        // vf_nz off-net
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
 	}
 }

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import mobi.nowtechnologies.server.service.O2TariffService;
+import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

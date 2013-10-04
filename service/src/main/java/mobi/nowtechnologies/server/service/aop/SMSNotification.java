@@ -1,21 +1,20 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Aspect
 public class SMSNotification {
@@ -213,4 +212,16 @@ public class SMSNotification {
 		}
 		return object;
 	}
+
+    @Around("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    public Object sendSmsPinForVFNZ(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object object = joinPoint.proceed();
+        User user = (User) joinPoint.getArgs()[0];
+        try {
+            userNotificationService.sendActivationPinSMS(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return object;
+    }
 }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
-import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import org.junit.Test;
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class O2ClientServiceIT {
 
 	@Resource(name = "service.O2ClientService")
-	private O2ClientService o2ClientService;
+	private O2ProviderService o2ClientService;
 	
 	@Test
 	public void testMakePremiumSMSRequest_Failure() throws Exception {

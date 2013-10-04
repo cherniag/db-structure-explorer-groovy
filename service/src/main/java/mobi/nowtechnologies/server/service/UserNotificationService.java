@@ -29,4 +29,5 @@ public interface UserNotificationService {
 	
 	Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException;
 
+    Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException;
 }

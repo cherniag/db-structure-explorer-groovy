@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -24,10 +24,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class ApplyInitPromoController extends CommonController {
 
     private UserService userService;
-    private O2ClientService o2ClientService;
+    private O2ProviderService o2ClientService;
     private UpdateO2UserTask updateO2UserTask;
 
-    public void setO2ClientService(O2ClientService o2ClientService) {
+    public void setO2ClientService(O2ProviderService o2ClientService) {
         this.o2ClientService = o2ClientService;
     }
 

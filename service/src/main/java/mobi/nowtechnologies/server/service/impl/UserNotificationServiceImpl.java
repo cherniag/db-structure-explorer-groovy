@@ -18,6 +18,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,13 +37,13 @@ import java.util.concurrent.Future;
  * @author Titov Mykhaylo (titov)
  * 
  */
-public class UserNotificationServiceImpl implements UserNotificationService {
+public class UserNotificationServiceImpl implements UserNotificationService, ApplicationContextAware {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
 
 	private UserService userService;
 
-	private SMSGatewayService smsService;
+    private String smsProviderBeanName;
 
 	private CommunityResourceBundleMessageSource messageSource;
 
@@ -58,19 +61,21 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
 	private String rememberMeTokenCookieName;
 
-	public void setUserService(UserService userService) {
+    private ApplicationContext applicationContext;
+
+    public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-
-    public void setSmsService(SMSGatewayService smsService) {
-        this.smsService = smsService;
-    }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
-	public void setAvailableCommunities(String[] availableCommunities) {
+    public void setSmsProviderBeanName(String smsProviderBeanName) {
+        this.smsProviderBeanName = smsProviderBeanName;
+    }
+
+    public void setAvailableCommunities(String[] availableCommunities) {
 		if (availableCommunities == null)
 			return;
 
@@ -395,6 +400,46 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		}
 	}
 
+    @Async
+    @Override
+    public Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("sendActivationPinSMS [{}, {}]", user);
+            if ( user == null ) {
+                throw new NullPointerException("The parameter user is null");
+            }
+
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
+
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+
+            LOGGER.info("Attempt to send activation pin sms async in memory");
+
+            if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
+
+                String smsPrefix = "sms.activation.pin.text";
+
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] { null, user.getPin() });
+
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The activation pin sms was sent successfully");
+                    result = new AsyncResult<Boolean>(Boolean.TRUE);
+                } else {
+                    LOGGER.info("The activation pin sms wasn't sent");
+                }
+            } else {
+                LOGGER.info("The activation pin sms wasn't sent cause rejecting");
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
+
 	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
 		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 		
@@ -431,8 +476,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 				String message = getMessage(user, community, msgCode, msgArgs);
 
 				if (!StringUtils.isBlank(message)) {
-					String title = messageSource.getMessage(community.getRewriteUrlParameter(), "sms.title", null, null);
-					SMSResponse smsResponse = smsService.send(user.getMobile(), message, title);
+					String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
+					SMSResponse smsResponse = getSMSProvider(communityUrl).send(user.getMobile(), message, title);
 					if (smsResponse.isSuccessful()) {
 						wasSmsSentSuccessfully = true;
 					} else {
@@ -451,6 +496,10 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
 		return wasSmsSentSuccessfully;
 	}
+
+    public SMSGatewayService getSMSProvider(String communityUrl){
+        return (SMSGatewayService) applicationContext.getBean(communityUrl+"."+smsProviderBeanName);
+    }
 
 	public boolean rejectDevice(User user, String code) {
 		Community community = user.getUserGroup().getCommunity();
@@ -479,6 +528,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		final SegmentType segment = user.getSegment();
 		final Contract contract = user.getContract();
 		final DeviceType deviceType = user.getDeviceType();
+        final PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
 		String deviceTypeName = null;
 		
 		if (deviceType != null) {
@@ -491,7 +541,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		codes[3] = getCode(codes, 2, contract);
 		codes[4] = getCode(codes, 3, deviceTypeName);
 		codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
-		
+		codes[5] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
+
 		for (int i = codes.length - 1; i >= 0; i--) {
 			if (codes[i] != null) {
 				msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
@@ -541,4 +592,8 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 		return code;
 	}
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

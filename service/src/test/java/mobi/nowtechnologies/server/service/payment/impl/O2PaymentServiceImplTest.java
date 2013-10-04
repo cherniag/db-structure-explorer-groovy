@@ -24,7 +24,7 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsReposito
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
-import mobi.nowtechnologies.server.service.payment.MigPaymentService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -57,7 +57,7 @@ public class O2PaymentServiceImplTest {
 	private PaymentDetailsService mockPaymentDetailsService;
 	private CommunityService mockCommunityService;
 	private CountryService mockCountryService;
-	private O2ClientService mockO2ClientService;
+	private O2ProviderService mockO2ClientService;
 	private DeviceService mockDeviceService;
 	private O2PaymentServiceImpl o2PaymentServiceImplSpy;
 	private ApplicationEventPublisher mockApplicationEventPublisher;
@@ -80,7 +80,7 @@ public class O2PaymentServiceImplTest {
 		mockDeviceService = mock(DeviceService.class);
 		mockMigHttpService = mock(MigHttpService.class);
 		mockAccountLogService = mock(AccountLogService.class);
-		mockO2ClientService = mock(O2ClientService.class);
+		mockO2ClientService = mock(O2ProviderService.class);
 		mockUserRepository = mock(UserRepository.class);
 		mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
