@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
 
@@ -32,8 +33,12 @@ public class PromoCode {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
-    public boolean forVideoAndMusic() {
+    public boolean forVideoAndAudio() {
         return isNotNull(mediaType) && VIDEO_AND_AUDIO.equals(mediaType);
+    }
+
+    public boolean forAudio() {
+        return isNotNull(mediaType) && AUDIO.equals(mediaType);
     }
 
     public MediaType getMediaType() {

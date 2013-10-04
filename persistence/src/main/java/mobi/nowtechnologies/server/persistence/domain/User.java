@@ -3,14 +3,12 @@ package mobi.nowtechnologies.server.persistence.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
-import static mobi.nowtechnologies.server.shared.AppConstants.*;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
@@ -30,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
@@ -339,8 +336,8 @@ public class User implements Serializable {
         this.lastPromo = lastPromo;
     }
 
-    private boolean isLastPromoForVideo() {
-        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
+    private boolean isLastPromoForVideoAndAudio() {
+        return isNotNull(lastPromo) && lastPromo.forVideoAndAudio();
     }
 
     public String getIdfa() {
@@ -1230,7 +1227,11 @@ public class User implements Serializable {
     }
 
     public boolean isSubjectToAutoOptIn(){
-        return isO24GConsumer()|| isO23GConsumer();
+        return (isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio());
+    }
+
+    private boolean isLastPromoForAudio(){
+        return isNotNull(lastPromo) && lastPromo.forAudio();
     }
 
     public SubscriptionDirection getSubscriptionDirection() {
@@ -1266,7 +1267,7 @@ public class User implements Serializable {
     }
 
     public boolean isOnVideoAudioFreeTrial() {
-        return isLastPromoForVideo() && isOnFreeTrial();
+        return isLastPromoForVideoAndAudio() && isOnFreeTrial();
     }
 
     public boolean canPlayVideo(){

@@ -73,7 +73,6 @@ import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
@@ -562,7 +561,7 @@ public class UserService {
     }
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
-        return isNotNull(promoCode) && promoCode.forVideoAndMusic();
+        return isNotNull(promoCode) && promoCode.forVideoAndAudio();
     }
 
 	public void updateMobile(User user, String mobile, Integer operator, String communityName) {
@@ -1778,7 +1777,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId) {
-		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[] { user, nextSubPayment, appStoreOriginalTransactionId });
+		LOGGER.debug("input parameters user, nextSubPayment, appStoreOriginalTransactionId: [{}], [{}], [{}]", new Object[]{user, nextSubPayment, appStoreOriginalTransactionId});
 
 		if (user == null)
 			throw new NullPointerException("The parameter user is null");
