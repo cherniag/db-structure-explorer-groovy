@@ -46,6 +46,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static java.util.Collections.*;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
@@ -1033,9 +1035,9 @@ public class UserServiceTest {
 		user.setStatus(userStatus);
 		final Community community = CommunityFactory.createCommunity();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-		final Map<Byte, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
-		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
+		final Map<String, DeviceType> deviceTypeMap = singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
+		final Map<Byte, UserGroup> userGroupMap = singletonMap(community.getId(), userGroup);
+		final Map<Integer, Operator> operatorMap = singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
 		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
@@ -1089,6 +1091,50 @@ public class UserServiceTest {
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
 	}
+
+    @Test
+    public void shouldDetectUserAccountWithSameDeviceAndDisableIt() throws Exception {
+        //given
+        String deviceUID = "imei_357841034540704";
+        final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
+        User userAccountWithSameDevice = new User();
+
+        Community community = new Community();
+        doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        doReturn(null).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).findByDeviceUIDAndCommunity(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).save(userAccountWithSameDevice);
+        PowerMockito.mockStatic(DeviceTypeDao.class);
+        PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
+        PowerMockito.mockStatic(UserGroupDao.class);
+        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Byte, UserGroup>());
+        PowerMockito.mockStatic(OperatorDao.class);
+        PowerMockito.when(OperatorDao.getMapAsIds()).thenReturn(singletonMap(0, new Operator()));
+        PowerMockito.mockStatic(UserStatusDao.class);
+        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(new UserStatus());
+        Answer returnFirsParamAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        };
+        Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
+        Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).save(any(User.class));
+        AccountCheckDTO expectedAccountCheckDTO = new AccountCheckDTO();
+        doReturn(expectedAccountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(any(int.class), (String)isNull(), (String)isNull(), (String)isNull());
+        PowerMockito.mockStatic(Utils.class);
+        PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+
+        //when
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+
+        //then
+        assertNotNull(actualAccountCheckDTO);
+        assertThat(actualAccountCheckDTO, is(expectedAccountCheckDTO));
+        assertThat(userAccountWithSameDevice.getDeviceUID(), is(deviceUID + "_mark_at_" + getEpochMillis()));
+
+        verify(userRepositoryMock, times(1)).save(userAccountWithSameDevice);
+    }
 
 	@SuppressWarnings("unchecked")
 	@Test()
