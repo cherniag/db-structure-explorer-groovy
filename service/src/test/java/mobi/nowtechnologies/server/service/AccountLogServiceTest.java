@@ -71,7 +71,7 @@ public class AccountLogServiceTest {
     @Test(expected = NullPointerException.class)
     public void shouldNotLogAccountMergeEventWhenUserIsNull() throws Exception {
         //given
-        User user = new User();
+        User user = null;
         User removedUser = new User();
 
         PowerMockito.mockStatic(Utils.class);
