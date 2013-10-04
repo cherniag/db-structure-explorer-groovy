@@ -92,6 +92,7 @@ public class AccountLog implements Serializable {
 	@Column(insertable=false, updatable=false)
 	private Integer offerId;
 
+    @Column(length = 10000)
     private String description;
 
     public AccountLog() {

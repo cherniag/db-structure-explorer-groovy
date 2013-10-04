@@ -5,5 +5,5 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 -- http://jira.musicqubed.com/browse/IMP-1532
 insert into tb_accountLogTypes values (13, 'ACCOUNT_MERGE');
 
-alter table tb_accountLog add column description varchar (1000) default null;
+alter table tb_accountLog add column description varchar (10000) default null;
 
