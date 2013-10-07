@@ -1336,7 +1336,10 @@ public class User implements Serializable {
     }
 
     public boolean hasAllDetails() {
-        return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
+        if(ProviderType.O2.name().equalsIgnoreCase(provider) || ProviderType.NON_O2.name().equalsIgnoreCase(provider))
+            return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
+        else
+            return this.provider != null;
     }
 
     public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
