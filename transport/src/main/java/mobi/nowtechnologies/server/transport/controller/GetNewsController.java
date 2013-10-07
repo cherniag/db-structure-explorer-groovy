@@ -142,8 +142,23 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             @PathVariable("community") String community) throws Exception {
-
         return (Response)getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community).getModelMap().get(MODEL_NAME);
+    }
 
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_NEWS",
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_NEWS.json"
+    })
+    public ModelAndView getNewsAcceptHeaderSupporting(
+            @RequestParam("APP_VERSION") String appVersion,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("API_VERSION") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @PathVariable("community") String community) throws Exception {
+        return getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community);
     }
 }

@@ -67,7 +67,8 @@ public class PhoneNumberController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER"
+            "*/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER.json"
     })
     public ModelAndView activatePhoneNumber_VF_NZ(
             @RequestParam(value = "PHONE", required = false) String phone,

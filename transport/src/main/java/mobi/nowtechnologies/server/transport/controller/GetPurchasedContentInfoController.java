@@ -36,10 +36,11 @@ public class GetPurchasedContentInfoController extends CommonController {
             "/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
 			"*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}\\.[0-9]{1,3}}/GET_PURCHASED_CONTENT_INFO",
             "*/{apiVersion:[3-9]{1,2}\\.[4-9][0-9]{0,2}}/GET_PURCHASED_CONTENT_INFO",
-            "*/{apiVersion:4\\.0}/GET_PURCHASED_CONTENT_INFO"
+            "*/{apiVersion:4\\.0}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:5\\.0}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:5\\.0}/GET_PURCHASED_CONTENT_INFO.json"
     })
 	public ModelAndView getPurchasedContentInfo(
-				HttpServletRequest request,
 				@RequestParam("APP_VERSION") String appVersion,
 				@RequestParam("COMMUNITY_NAME") String communityName,
 				@RequestParam("API_VERSION") String apiVersion,

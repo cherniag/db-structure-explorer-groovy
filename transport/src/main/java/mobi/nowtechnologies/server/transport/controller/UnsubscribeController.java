@@ -79,7 +79,8 @@ public class UnsubscribeController extends CommonController {
 			"/{community:.+}/{apiVersion:[3-9]\\.[8-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
 			"/{community:.+}/{apiVersion:[3-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
 			"/{community:.+}/{apiVersion:[1-9][0-9]\\.[1-9][0-9]\\.[1-9][0-9]{0,2}}/stop_subscription",
-            "/{community:.+}/{apiVersion:4\\.0}/stop_subscription"
+            "/{community:.+}/{apiVersion:4\\.0}/stop_subscription",
+            "/{community:.+}/{apiVersion:5\\.0}/stop_subscription"
     })
 	public @ResponseBody
 	String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {
