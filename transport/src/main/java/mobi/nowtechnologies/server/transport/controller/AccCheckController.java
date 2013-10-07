@@ -172,7 +172,6 @@ public class AccCheckController extends CommonController {
     })
     public ModelAndView accountCheckWithAcceptHeaderSupporting(
             HttpServletRequest httpServletRequest,
-            @RequestParam("COMMUNITY_NAME") String communityName,
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -186,7 +185,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
 
-        return accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+        return accountCheckForO2Client_4d0(httpServletRequest, community, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
     }
 
     protected boolean isValidDeviceUID(String deviceUID){
