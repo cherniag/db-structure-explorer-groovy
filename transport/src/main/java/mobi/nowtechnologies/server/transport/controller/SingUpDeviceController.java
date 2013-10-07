@@ -179,8 +179,13 @@ public class SingUpDeviceController extends CommonController {
     })
     public ModelAndView signUpDeviceWithAcceptHeaderSupporting(HttpServletRequest request,
                                                       @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
-                                                      @PathVariable("community") String community) {
-        return signUpDevice_O2(request, userDeviceDetailsDto, result, community);
+                                                      @PathVariable("community") String community,
+                                                      @PathVariable("apiVersion") String apiVersion) {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = signUpDevice_O2(request, userDeviceDetailsDto, result, community);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
     }
 
     public void setCommunityService(CommunityService communityService) {

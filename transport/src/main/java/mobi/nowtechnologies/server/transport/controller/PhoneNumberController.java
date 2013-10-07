@@ -86,7 +86,7 @@ public class PhoneNumberController extends CommonController {
 
             user = vfUserService.activatePhoneNumber(user, phone, true);
 
-            return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
+            return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
         }catch(Exception e){
             ex = e;
             throw e;
