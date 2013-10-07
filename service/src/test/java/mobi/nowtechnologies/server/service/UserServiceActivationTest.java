@@ -156,16 +156,16 @@ public class UserServiceActivationTest {
 		o2SubscriberData.setContractPostPayOrPrePay(true);
 		o2SubscriberData.setTariff4G(false);
 
-		Mockito.when(o2ClientServiceMock.getSubscriberData(anyString())).thenAnswer(new Answer<O2SubscriberData>() {
-			@Override
-			public O2SubscriberData answer(InvocationOnMock invocation) throws Throwable {
-
-				String phone = (String) invocation.getArguments()[0];
-				assertEquals(user.getMobile(), phone);
-
-				return o2SubscriberData;
-			}
-		});
+//		Mockito.when(o2ClientServiceMock.getSubscriberData(anyString())).thenAnswer(new Answer<O2SubscriberData>() {
+//			@Override
+//			public O2SubscriberData answer(InvocationOnMock invocation) throws Throwable {
+//
+//				String phone = (String) invocation.getArguments()[0];
+//				assertEquals(user.getMobile(), phone);
+//
+//				return o2SubscriberData;
+//			}
+//		});
 
 		boolean populateO2SubscriberData = true;
 		User userResult = userServiceSpy.activatePhoneNumber(user, phoneNumber, populateO2SubscriberData);

@@ -1734,8 +1734,8 @@ public class UserService {
             userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
         } else {
             try {
-                mobi.nowtechnologies.server.service.data.SubsriberData subscriberData = mobileProviderService.getSubscriberData(phoneNumber);
-                userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
+                mobileProviderService.getSubscriberData(phoneNumber, null);
+                userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);

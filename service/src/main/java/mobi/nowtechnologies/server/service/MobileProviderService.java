@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.shared.Processor;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,8 +11,8 @@ import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException
  * Time: 10:09 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface MobileProviderService {
+public interface MobileProviderService<T extends mobi.nowtechnologies.server.service.data.SubsriberData> {
     PhoneNumberValidationData validatePhoneNumber(String phoneNumber) throws InvalidPhoneNumberException;
 
-    mobi.nowtechnologies.server.service.data.SubsriberData getSubscriberData(String phoneNumber);
+    void getSubscriberData(String phoneNumber, Processor<T> processor);
 }

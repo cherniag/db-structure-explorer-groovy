@@ -61,8 +61,8 @@ public class VFNZProviderServiceImplTest {
     public void testGetSubscriberData_Success() throws Exception {
         String phoneNumber = "+642111111111";
 
-        VFNZSubscriberData result = fixture.getSubscriberData(phoneNumber);
+        fixture.getSubscriberData(null, null);
 
-        Assert.assertEquals(ProviderType.VF, result.getProvider());
+        Assert.assertEquals(ProviderType.VF, null);
     }
 }

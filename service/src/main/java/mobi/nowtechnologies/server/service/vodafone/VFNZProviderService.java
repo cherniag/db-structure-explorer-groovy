@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone;
 
 import mobi.nowtechnologies.server.service.MobileProviderService;
+import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,5 +10,5 @@ import mobi.nowtechnologies.server.service.MobileProviderService;
  * Time: 10:28 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface VFNZProviderService extends MobileProviderService {
+public interface VFNZProviderService extends MobileProviderService<VFNZSubscriberData> {
 }

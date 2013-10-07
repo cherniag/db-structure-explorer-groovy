@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.payment.http;
 import mobi.nowtechnologies.server.service.payment.request.MigRequest;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
@@ -30,6 +31,11 @@ public class MigHttpService extends PaymentHttpService implements SMSGatewayServ
     @Override
     public MigResponse send(String numbers, String message, String title){
         return makeFreeSMSRequest(numbers, message, title);
+    }
+
+    @Override
+    public MigResponse send(String numbers, String message, String title, Processor processor){
+        return send(numbers, message, title);
     }
 	
     public MigResponse makeFreeSMSRequest(String numbers, String message, String title){

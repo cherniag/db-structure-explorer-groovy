@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.service.vodafone.VFNZProviderService;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,8 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
+    private VFNZSMSGatewayService gatewayService;
+    private String providerNumber;
 
     @Override
     public PhoneNumberValidationData validatePhoneNumber(String phoneNumber) throws InvalidPhoneNumberException {
@@ -50,16 +52,23 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     }
 
     @Override
-    public VFNZSubscriberData getSubscriberData(String phoneNumber) {
+    public void getSubscriberData(String phoneNumber, Processor<VFNZSubscriberData> processor) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        VFNZSubscriberData result = new VFNZSubscriberData().withProvider(ProviderType.VF);
+        gatewayService.send(providerNumber, phoneNumber, "GET_PROVIDER", processor);
 
-        LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}] with [{}]", new Object[]{phoneNumber, result});
-        return result;
+        LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}] with [{}]", new Object[]{phoneNumber});
     }
 
     public void setPhoneValidator(NZCellNumberValidator phoneValidator) {
         this.phoneValidator = phoneValidator;
+    }
+
+    public void setGatewayService(VFNZSMSGatewayService gatewayService) {
+        this.gatewayService = gatewayService;
+    }
+
+    public void setProviderNumber(String providerNumber) {
+        this.providerNumber = providerNumber;
     }
 }

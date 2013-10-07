@@ -467,4 +467,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<import resource="payment.xml" />
 
+	<import resource="smpp.xml" />
+
 </beans>

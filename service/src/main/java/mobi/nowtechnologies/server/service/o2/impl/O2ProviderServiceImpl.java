@@ -8,17 +8,15 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
-import mobi.nowtechnologies.server.service.data.SubsriberData;
-import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
+import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
-
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,12 +30,12 @@ import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-
 import javax.xml.transform.dom.DOMSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 
 public class O2ProviderServiceImpl implements O2ProviderService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -176,8 +174,9 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	}
 
     @Override
-    public SubsriberData getSubscriberData(String phoneNumber) {
-        return o2Service.getSubscriberData(phoneNumber);
+    public void getSubscriberData(String phoneNumber, Processor<O2SubscriberData> processor) {
+        O2SubscriberData data = o2Service.getSubscriberData(phoneNumber);
+        processor.process(data);
     }
 
     private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
