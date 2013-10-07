@@ -132,6 +132,7 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO",
             "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO.json"
     })
     public ModelAndView applyInitPromo(

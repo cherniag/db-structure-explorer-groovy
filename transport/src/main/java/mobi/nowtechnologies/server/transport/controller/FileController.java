@@ -76,7 +76,11 @@ public class FileController extends CommonController {
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
+    @RequestMapping(method = RequestMethod.POST, value = {"" +
+            "/{community:o2}/{apiVersion:4\\.[0-9]{1,3}}/GET_FILE",
+            "*/{community:o2}/{apiVersion:4\\.[0-9]{1,3}}/GET_FILE",
+            "*/{community:.}/{apiVersion:5\\.0/GET_FILE"
+    })
     public ModelAndView getFile(
             @PathVariable("community") String communityName,
             @RequestParam("ID") final String mediaId,
