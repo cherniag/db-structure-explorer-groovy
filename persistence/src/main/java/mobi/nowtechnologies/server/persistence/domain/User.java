@@ -13,7 +13,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.query.Param;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -351,10 +350,6 @@ public class User implements Serializable {
 
     public void setIdfa(String idfa) {
         this.idfa = idfa;
-    }
-
-    public boolean isShowFreeTrial() {
-        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
     }
 
     public boolean isIOsnonO2ItunesSubscribedUser() {
