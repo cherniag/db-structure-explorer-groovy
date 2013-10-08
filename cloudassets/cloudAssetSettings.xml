@@ -1,0 +1,11 @@
+<com.musicqubed.cloudassets.CloudAssetsSettings>
+  <dir>../web/src/main/webapp/assets</dir>
+  <prefix>my17/assets</prefix>
+  <settings>
+    <userName>chartsnow</userName>
+    <password>b283a8dec498dee9e6a11f459bdcb194</password>
+    <containerName>ldntestCloudFiles</containerName>
+    <provider>cloudfiles-uk</provider>
+    <authenticationURL>https://lon.auth.api.rackspacecloud.com/v1.0</authenticationURL>
+  </settings>
+</com.musicqubed.cloudassets.CloudAssetsSettings>
