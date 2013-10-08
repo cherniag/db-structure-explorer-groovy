@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class SMSMessageProcessorContainer<T> extends DeliverSmMessageProcessor {
+public class SMSMessageProcessorContainer<T> extends DeliverSmMessageProcessor {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private static final int MAX_QUEUE_SIZE = 10;
     protected ConcurrentHashMap<String, ArrayBlockingQueue<Processor<T>>> processors = new ConcurrentHashMap<String, ArrayBlockingQueue<Processor<T>>>();
-    private Parser<String, T> messageParser;
+    protected Parser<String, T> messageParser;
 
     @Override
     public void processInboundMessage(DeliverSm deliverSm, MOMessage inboundMessage) {
@@ -26,7 +26,11 @@ public abstract class SMSMessageProcessorContainer<T> extends DeliverSmMessagePr
         T data = messageParser.parse(inboundMessage.getText());
 
         Processor<T> processor = getMessageProcessor(inboundMessage);
-        processor.process(data);
+        if(processor != null)
+            processor.process(data);
+        else {
+            LOGGER.info("SMSMessageProcessorContainer doesn't have any processor for message with messageId = [{}]", new Object[]{getMessageId(inboundMessage.getOriginator(), inboundMessage.getDestAddress())});
+        }
     }
 
     public void registerMessageProcessor(MTMessage message, Processor<T> processor) {
@@ -49,7 +53,8 @@ public abstract class SMSMessageProcessorContainer<T> extends DeliverSmMessagePr
     public Processor<T> getMessageProcessor(MOMessage message) {
         String msgId = getMessageId(message.getOriginator(), message.getDestAddress());
 
-        Processor<T> processor = processors.get(msgId).poll();
+        ArrayBlockingQueue<Processor<T>> queue = processors.get(msgId);
+        Processor<T> processor = queue != null ? queue.poll() : null;
 
         if(processor != null)
             LOGGER.info("SMSMessageProcessorContainer has found processor: [{}] for messageId = [{}]", new Object[]{processor, msgId});
@@ -60,7 +65,7 @@ public abstract class SMSMessageProcessorContainer<T> extends DeliverSmMessagePr
     }
 
     public String getMessageId(String src, String dest) {
-        return src + ":" + dest;
+        return src.replaceFirst("\\+","") + ":" + dest.replaceFirst("\\+","");
     }
 
     public void setMessageParser(Parser<String, T> messageParser) {

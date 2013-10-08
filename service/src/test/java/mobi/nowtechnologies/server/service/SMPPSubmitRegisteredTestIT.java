@@ -20,7 +20,7 @@ import java.io.IOException;
  * Time: 12:39 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SubmitRegisteredTestIT {
+public class SMPPSubmitRegisteredTestIT {
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
 
     public static void main(String[] args) {
@@ -44,8 +44,12 @@ public class SubmitRegisteredTestIT {
         }
 
         try {
-            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "+64279000456", new ESMClass(),
-                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
+
+            String phoneNumber = "+642111111111";
+//            String phoneNumber = "+64279000456";
+
+            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
+                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
 
             /*
              * you can save the submitted message to database.

@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -34,6 +35,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -141,6 +144,12 @@ public class UserServiceActivationTest {
 		final String phoneNumber = "+447870111111";
 		user.setMobile(phoneNumber);
 		user.setUserName(phoneNumber);
+        final Processor processor = spy(new Processor() {
+            @Override
+            public void process(Object data) {
+                userServiceSpy.LOGGER.info("process msg");
+            }
+        });
 
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<PhoneNumberValidationData>() {
 			@Override
@@ -156,16 +165,7 @@ public class UserServiceActivationTest {
 		o2SubscriberData.setContractPostPayOrPrePay(true);
 		o2SubscriberData.setTariff4G(false);
 
-//		Mockito.when(o2ClientServiceMock.getSubscriberData(anyString())).thenAnswer(new Answer<O2SubscriberData>() {
-//			@Override
-//			public O2SubscriberData answer(InvocationOnMock invocation) throws Throwable {
-//
-//				String phone = (String) invocation.getArguments()[0];
-//				assertEquals(user.getMobile(), phone);
-//
-//				return o2SubscriberData;
-//			}
-//		});
+		Mockito.doNothing().when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), eq(processor));
 
 		boolean populateO2SubscriberData = true;
 		User userResult = userServiceSpy.activatePhoneNumber(user, phoneNumber, populateO2SubscriberData);
@@ -176,7 +176,7 @@ public class UserServiceActivationTest {
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
-		//verify(o2ClientServiceMock, times(1)).getSubscriberData(anyString());
+		verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), eq(processor));
 		assertEquals(user.getSegment(), SegmentType.CONSUMER);
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);

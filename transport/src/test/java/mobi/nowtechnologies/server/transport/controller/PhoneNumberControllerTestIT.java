@@ -83,5 +83,18 @@ public class PhoneNumberControllerTestIT {
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+
+        resultActions = mockMvc.perform(
+                post("someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<provider>VF</provider>"));
     }
 }

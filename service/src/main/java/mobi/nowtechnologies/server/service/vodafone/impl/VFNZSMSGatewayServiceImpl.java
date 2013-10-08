@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * Time: 10:03 AM
  * To change this template use File | Settings | File Templates.
  */
-public class VFNZSMSGatewayService implements SMSGatewayService<SMSResponse> {
+public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse> {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private SMPPService smppService;
@@ -31,6 +31,7 @@ public class VFNZSMSGatewayService implements SMSGatewayService<SMSResponse> {
     protected SMSResponse send(MTMessage messageObject){
         LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[]{messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
         try {
+
             smppService.send(messageObject);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

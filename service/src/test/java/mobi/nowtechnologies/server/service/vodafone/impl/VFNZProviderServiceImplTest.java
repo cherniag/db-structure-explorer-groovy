@@ -1,20 +1,20 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import junit.framework.Assert;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 
 /**
@@ -30,19 +30,24 @@ public class VFNZProviderServiceImplTest {
     private VFNZProviderServiceImpl fixture;
 
     @Mock
+    private VFNZSMSGatewayServiceImpl gatewayService;
+
+    @Mock
     private NZCellNumberValidator mockNzCellNumberValidator;
 
     @Before
     public void setUp() throws Exception {
           fixture = new VFNZProviderServiceImpl();
           fixture.setPhoneValidator(mockNzCellNumberValidator);
+          fixture.setGatewayService(gatewayService);
+          fixture.setProviderNumber("5803");
     }
 
     @Test
     public void testValidatePhoneNumber_Success() throws Exception {
         String phoneNumber = "2111111111";
 
-        Mockito.when(mockNzCellNumberValidator.validate(Matchers.eq(phoneNumber))).thenReturn("+642111111111");
+        Mockito.when(mockNzCellNumberValidator.validate(eq(phoneNumber))).thenReturn("+642111111111");
         PowerMockito.mockStatic(Utils.class);
 
         Mockito.when(Utils.generateRandomPIN()).thenReturn(1000);
@@ -52,17 +57,25 @@ public class VFNZProviderServiceImplTest {
         Assert.assertEquals("+642111111111", result.getPhoneNumber());
         Assert.assertEquals("1000", result.getPin());
 
-        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validate(Matchers.eq(phoneNumber));
+        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validate(eq(phoneNumber));
         PowerMockito.verifyStatic(times(1));
         Utils.generateRandomPIN();
     }
 
     @Test
     public void testGetSubscriberData_Success() throws Exception {
-        String phoneNumber = "+642111111111";
+        final String phoneNumber = "+642111111111";
+        final Processor processor = new Processor() {
+            @Override
+            public void process(Object data) {
+                fixture.LOGGER.info("process msg");
+            }
+        };
 
-        fixture.getSubscriberData(null, null);
+        Mockito.doReturn(null).when(gatewayService).send(eq(fixture.providerNumber), eq(phoneNumber), eq("GET_PROVIDER"), eq(processor));
 
-        Assert.assertEquals(ProviderType.VF, null);
+        fixture.getSubscriberData(phoneNumber, processor);
+
+        Mockito.verify(gatewayService, Mockito.times(1)).send(eq(phoneNumber), eq("GET_PROVIDER"), eq(fixture.providerNumber), eq(processor));
     }
 }

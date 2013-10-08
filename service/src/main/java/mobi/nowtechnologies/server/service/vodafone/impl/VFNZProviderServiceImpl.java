@@ -21,8 +21,8 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
-    private VFNZSMSGatewayService gatewayService;
-    private String providerNumber;
+    private VFNZSMSGatewayServiceImpl gatewayService;
+    protected String providerNumber;
 
     @Override
     public PhoneNumberValidationData validatePhoneNumber(String phoneNumber) throws InvalidPhoneNumberException {
@@ -55,7 +55,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     public void getSubscriberData(String phoneNumber, Processor<VFNZSubscriberData> processor) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        gatewayService.send(providerNumber, phoneNumber, "GET_PROVIDER", processor);
+        gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber, processor);
 
         LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}] with [{}]", new Object[]{phoneNumber});
     }
@@ -64,7 +64,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
         this.phoneValidator = phoneValidator;
     }
 
-    public void setGatewayService(VFNZSMSGatewayService gatewayService) {
+    public void setGatewayService(VFNZSMSGatewayServiceImpl gatewayService) {
         this.gatewayService = gatewayService;
     }
 
