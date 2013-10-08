@@ -100,7 +100,7 @@ public class SubscriptionTextsGenerator {
 	}
 
 	private String getLongDate(Date date) {
-		DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
+		DateFormat df = new SimpleDateFormat("dd MMMMM yyyy", Locale.ENGLISH);
 		return df.format(date);
 	}
 
