@@ -165,7 +165,7 @@ public class UserServiceActivationTest {
 		o2SubscriberData.setContractPostPayOrPrePay(true);
 		o2SubscriberData.setTariff4G(false);
 
-		Mockito.doNothing().when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), eq(processor));
+		Mockito.doNothing().when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
 
 		boolean populateO2SubscriberData = true;
 		User userResult = userServiceSpy.activatePhoneNumber(user, phoneNumber, populateO2SubscriberData);
@@ -176,7 +176,7 @@ public class UserServiceActivationTest {
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
-		verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), eq(processor));
+		verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), any(Processor.class));
 		assertEquals(user.getSegment(), SegmentType.CONSUMER);
 		assertEquals(user.getProvider(), ProviderType.O2.toString());
 		assertEquals(user.getTariff(), Tariff._3G);
