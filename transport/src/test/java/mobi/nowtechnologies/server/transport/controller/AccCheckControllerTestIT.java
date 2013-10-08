@@ -198,4 +198,33 @@ public class AccCheckControllerTestIT {
 
         assertTrue(resultXml.contains("<deviceUID>fail</deviceUID>"));
     }
+
+    @Test
+    public void testAccountCheckForFVClient_HasAllDetails_Success() throws Exception {
+        String userName = "+642111111111";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setProvider("non_vf");
+        userService.updateUser(user);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/somekey/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+    }
 }

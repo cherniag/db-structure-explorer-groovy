@@ -173,16 +173,21 @@ public class SingUpDeviceController extends CommonController {
         return (Response)signUpDevice_O2(request, userDeviceDetailsDto, result, community).getModelMap().get(MODEL_NAME);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value ={
+            "*/{community:.*}/{apiVersion:5\\.0}/SIGN_UP_DEVICE",
+            "*/{community:.*}/{apiVersion:5\\.0}/SIGN_UP_DEVICE.json"
+    })
+    public ModelAndView signUpDeviceWithAcceptHeaderSupporting(HttpServletRequest request,
+                                                      @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
+                                                      @PathVariable("community") String community) {
+        return signUpDevice_O2(request, userDeviceDetailsDto, result, community);
+    }
+
     public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-	
-	public static void main(String[] args) {
-		  Long device = 1357207434453L;
-		  System.out.println(new Date(device));
 	}
 }

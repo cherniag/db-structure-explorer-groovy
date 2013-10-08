@@ -302,8 +302,23 @@ public class GetChartController extends CommonController{
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-
         return (Response) getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID).getModelMap().get(MODEL_NAME);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_CHART",
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_CHART.json"
+    })
+    public ModelAndView getChartWithAcceptHeaderSupporting(
+            HttpServletRequest request,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        return getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID);
     }
 
 	protected void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {
