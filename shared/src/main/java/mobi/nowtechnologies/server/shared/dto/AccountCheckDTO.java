@@ -159,16 +159,6 @@ public class AccountCheckDTO {
         return this;
     }
 
-    public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
-        this.fullyRegistred = isFullyRegistered;
-        return this;
-    }
-
-    public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
-        this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
-        return this;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)

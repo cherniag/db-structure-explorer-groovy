@@ -1357,7 +1357,7 @@ public class UserService {
 					promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
 			}
 
-			setPotentialPromoCodePromotion(community, user, promotionCode);
+			setPotentialPromoByPromoCode(user, promotionCode);
 		}
 
 		user.setActivationStatus(REGISTERED);
@@ -1729,31 +1729,6 @@ public class UserService {
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
         return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);
-    }
-
-    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
-        LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
-
-        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
-                user.getContract(), user.getMobile(),
-                user.getOperator());
-
-        boolean hasPromo = false;
-        if (isNotNull(mobileUser)) {
-            user = checkAndMerge(user, mobileUser);
-        } else if (ENTERED_NUMBER.equals(user.getActivationStatus()) && !EmailValidator.isEmail(user.getUserName())) {
-            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, o2ClientService.isO2User(o2UserDetails));
-        }
-
-        if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
-
-        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
-
-        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
-        return hasPromo;
     }
 
     private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
