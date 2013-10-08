@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.web.subscription;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+// TODO should be marked as integration test
 public class SubscriptionTextsGeneratorTest {
 
 	private static Locale communityLocale = new Locale("o2");
@@ -25,7 +27,12 @@ public class SubscriptionTextsGeneratorTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		messageSource.setBasename("file:src/main/webapp/i18n/messages");
+        File file = new File(".");
+        if (file.getAbsolutePath().endsWith("/web/.")){
+            messageSource.setBasename("file:src/main/webapp/i18n/messages");
+        }else{
+            messageSource.setBasename("file:web/src/main/webapp/i18n/messages");
+        }
 		messageSource.setDefaultEncoding("UTF-8");
 	}
 

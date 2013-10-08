@@ -184,8 +184,12 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @RequestParam(required = false, value = "IDFA") String idfa,
             @PathVariable("community") String community) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
 
-        return accountCheckForO2Client_4d0(httpServletRequest, community, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+        ModelAndView modelAndView = accountCheckForO2Client_4d0(httpServletRequest, community, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
     }
 
     protected boolean isValidDeviceUID(String deviceUID){

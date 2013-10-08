@@ -136,13 +136,12 @@ public class ApplyInitPromoController extends CommonController {
             "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO.json"
     })
     public ModelAndView applyInitPromo(
-            @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) {
-        return applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
+        return applyPromotion(community, userName, userToken, timestamp, token, community, apiVersion);
     }
 }
