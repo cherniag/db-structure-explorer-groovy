@@ -67,6 +67,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="o2Service" ref="service.O2Service"/>
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
         <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
+        <property name="userGroupRepository" ref="userGroupRepository" />
 	</bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
