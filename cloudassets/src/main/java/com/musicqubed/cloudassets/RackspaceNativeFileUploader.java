@@ -1,12 +1,14 @@
 package com.musicqubed.cloudassets;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
 import com.musicqubed.cloudassets.uploader.FileUploader;
 import com.musicqubed.cloudassets.uploader.FileWithName;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
@@ -52,6 +54,13 @@ public class RackspaceNativeFileUploader implements FileUploader {
 
 	}
 
+	private Map<String, String> CORS_MAP = ImmutableMap.of(
+            "Access-Control-Allow-Origin", "*",
+            "X-Container-Meta-Access-Control-Allow-Origin", "*",
+//            "Access-Control-Max-Age", "600",
+//            "Access-Control-Allow-Headers", "X-My-Header",
+            "X-Object-Meta-Access-Control-Allow-Origin","*");
+	
 	@Override
 	public String uploadFile(FileWithName f) throws Exception {
 		File file = new File(f.getFilePath());
@@ -67,8 +76,10 @@ public class RackspaceNativeFileUploader implements FileUploader {
 		if (contentType == null) {
 			contentType = defaultContentType;
 		}
+		
+		String tag = null;
+		tag = filesClient.storeObjectAs(settings.getContainerName(), file, contentType, name, CORS_MAP);
 
-		String tag = filesClient.storeObjectAs(settings.getContainerName(), file, contentType, name);
 		LOGGER.info("uploading file completed " + name + " " + tag);
 		return tag;
 	}

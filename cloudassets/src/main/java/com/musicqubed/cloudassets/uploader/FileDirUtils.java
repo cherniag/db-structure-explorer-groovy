@@ -69,6 +69,18 @@ public class FileDirUtils {
 		if (name.endsWith("htm") || name.endsWith("html")) {
 			return "text/html;charset=UTF-8";
 		}
+		if(name.endsWith("woff")) {
+			return "application/font-woff";
+		}
+		if(name.endsWith("ttf")) {
+			return "application/font-ttf";
+		}
+		if(name.endsWith("otf")) {
+			return "application/font-otf";
+		}
+		if(name.endsWith("eot")) {
+			return "application/vnd.ms-fontobject";
+		}
 		return null;
 	}
 
