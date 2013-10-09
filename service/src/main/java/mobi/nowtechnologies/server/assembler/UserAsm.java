@@ -218,7 +218,7 @@ public class UserAsm {
         accountCheckDTO.setSegment(toStringIfNull(user.getSegment()));
         accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
 
-        accountCheckDTO.setCanGetVideo(true);
+        accountCheckDTO.setCanGetVideo(user.isO2CommunityUser());
         accountCheckDTO.setCanPlayVideo(user.canPlayVideo());
         accountCheckDTO.setCanActivateVideoTrial(canActivateVideoTrial);
         accountCheckDTO.setHasAllDetails(user.hasAllDetails());
