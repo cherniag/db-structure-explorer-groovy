@@ -151,14 +151,6 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private void detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
-        User user = findByDeviceUIDAndCommunity(deviceUID, community);
-        if (isNotNull(user)) {
-            user.setDeviceUID(deviceUID + "_disable_at_" + getEpochMillis());
-            updateUser(user);
-        }
-    }
-
     public void setO2ClientService(O2ClientService o2ClientService) {
 		this.o2ClientService = o2ClientService;
 	}

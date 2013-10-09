@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static org.junit.Assert.*;
@@ -32,18 +34,15 @@ import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDe
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.*;
 
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -134,7 +133,7 @@ public class UserServiceIT {
 		User o2ConsumerPaymUser = new User();
 		o2ConsumerPaymUser.setProvider(O2);
 		o2ConsumerPaymUser.setSegment(CONSUMER);
-		o2ConsumerPaymUser.setContract(PAYM);
+		o2ConsumerPaymUser.setContract(Contract.PAYM);
 
 		User o2BussinessPaygUser = new User();
 		o2BussinessPaygUser.setProvider(O2);
