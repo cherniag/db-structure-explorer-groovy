@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -79,6 +80,7 @@ public class UserService {
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
 	private UserDao userDao;
+    private UserGroupRepository userGroupRepository;
 
     private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
@@ -130,12 +132,9 @@ public class UserService {
         return user;
     }
 
-    private void detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
-        User user = findByDeviceUIDAndCommunity(deviceUID, community);
-        if (isNotNull(user)) {
-            user.setDeviceUID(deviceUID + "_disable_at_" + getEpochMillis());
-            updateUser(user);
-        }
+    private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
+        UserGroup userGroup = userGroupRepository.findByCommunity(community);
+        return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
@@ -255,6 +254,10 @@ public class UserService {
 
     public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
         this.o2UserDetailsUpdater = o2UserDetailsUpdater;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
     }
 
     public Boolean canActivateVideoTrial(User u) {
@@ -1365,8 +1368,7 @@ public class UserService {
     }
 
     private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
-		User user;
-		user = new User();
+		User user = new User();
 		user.setUserName(deviceUID);
 		user.setToken(Utils.createStoredToken(deviceUID, Utils.getRandomString(20)));
 
@@ -1383,8 +1385,7 @@ public class UserService {
 		user.setFirstDeviceLoginMillis(System.currentTimeMillis());
 		user.setActivationStatus(REGISTERED);
 
-		entityService.saveEntity(user);
-		return user;
+		return userRepository.save(user);
 	}
 
 	private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {

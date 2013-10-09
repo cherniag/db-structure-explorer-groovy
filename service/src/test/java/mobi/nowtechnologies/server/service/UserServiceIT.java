@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,10 +32,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -114,6 +121,9 @@ public class UserServiceIT {
 	@Resource(name = "service.UserService")
 	private UserService userService;
 
+    @Resource(name = "userRepository")
+    private UserRepository userRepository;
+
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 	private PaymentPolicy paymentPolicy;
@@ -164,6 +174,8 @@ public class UserServiceIT {
 		paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 		paymentPolicy.setSubcost(BigDecimal.TEN);
 		paymentPolicy.setSubweeks((byte) 0);
+        paymentPolicy.setTariff(_3G);
+        paymentPolicy.setMediaType(AUDIO);
 		entityDao.saveEntity(paymentPolicy);
 
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
@@ -341,5 +353,21 @@ public class UserServiceIT {
 
 		return user;
 	}
+
+    @Test
+    public void shouldRegisterUserAndAccCheck(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withDeviceUID("d").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
+
+        UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
+        userDeviceRegDetailsDto.setDEVICE_UID(user.getDeviceUID());
+        userDeviceRegDetailsDto.setCOMMUNITY_NAME("o2");
+
+        //when
+        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+
+        //then
+        assertNotNull(accountCheckDTO);
+    }
 
 }
