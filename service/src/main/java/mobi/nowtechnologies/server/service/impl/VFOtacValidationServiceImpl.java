@@ -27,13 +27,17 @@ public class VFOtacValidationServiceImpl implements VFOtacValidationService {
     @Override
     public ProviderUserDetails validate(String otac, String phoneNumber, Community community) {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails().withContract(PAYG.name());
-        if (userService.isPromotedDevice(phoneNumber) && TEST_OTAC_NON_VF.equals(otac)) {
+
+        boolean promotedDevice = userService.isPromotedDevice(phoneNumber);
+        if (promotedDevice && TEST_OTAC_NON_VF.equals(otac)) {
+
             providerUserDetails.withOperator(NON_VF.toString());
+        }else if (promotedDevice && TEST_OTAC_VF.equals(otac)) {
+
+            providerUserDetails.withOperator(VF.toString());
         }else{
             boolean isOtacValid = userService.isVFNZOtacValid(otac, phoneNumber, community);
             if (!isOtacValid) throw new ServiceException("Otac ["+otac+"] isn't valid for user with mobile ["+phoneNumber+"] and community ["+community.getRewriteUrlParameter()+"]");
-
-            providerUserDetails.withOperator(VF.toString());
         }
 
         return providerUserDetails;

@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.dto.ProviderUserDetails;
  */
 public interface VFOtacValidationService extends OtacValidationService{
 
-    String TEST_OTAC_NON_VF = "111111";
+    String TEST_OTAC_NON_VF = "1111";
+    String TEST_OTAC_VF = "0000";
 
 }

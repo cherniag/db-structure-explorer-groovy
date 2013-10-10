@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static junit.framework.Assert.assertNull;
 import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.NON_VF;
 import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.VF;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.*;
@@ -65,7 +66,7 @@ public class VFOtacValidationServiceImplTest {
     @Test
     public void shouldValidateAsPromotedVFDevice() throws Exception{
         //given
-        String otac = "";
+        String otac = TEST_OTAC_VF;
         String phoneNumber = "phoneNumber";
         Community community = new Community().withRewriteUrl("vf_nz");
 
@@ -78,6 +79,27 @@ public class VFOtacValidationServiceImplTest {
         //then
         assertThat(providerUserDetails.contract, is(PAYG.name()));
         assertThat(providerUserDetails.operator, is(VF.toString()));
+
+        verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+    }
+
+    @Test
+    public void shouldValidateAsPromotedVFDeviceWithNotTestedOtac() throws Exception{
+        //given
+        String otac = "";
+        String phoneNumber = "phoneNumber";
+        Community community = new Community().withRewriteUrl("vf_nz");
+
+        doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
+        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber);
+
+        //when
+        ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
+
+        //then
+        assertThat(providerUserDetails.contract, is(PAYG.name()));
+        assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
@@ -98,7 +120,7 @@ public class VFOtacValidationServiceImplTest {
 
         //then
         assertThat(providerUserDetails.contract, is(PAYG.name()));
-        assertThat(providerUserDetails.operator, is(VF.toString()));
+        assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
