@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.service.sms;
 import com.sentaca.spring.smpp.mo.MOMessage;
 import com.sentaca.spring.smpp.mt.MTMessage;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSmsMessageParser;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
+import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberDataParser;
 import mobi.nowtechnologies.server.shared.Processor;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import org.smslib.Message;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,11 +24,12 @@ import static org.mockito.Mockito.*;
  */
 public class SMSMessageProcessorContainerTest {
     private SMSMessageProcessorContainer fixture;
+    private VFNZSubscriberDataParser parserSpy;
 
     @Before
     public void setUp() throws Exception {
         fixture = spy(new SMSMessageProcessorContainer());
-        fixture.setMessageParser(spy(new VFNZSmsMessageParser()));
+        parserSpy = (spy(new VFNZSubscriberDataParser()));
     }
 
     @Test
@@ -41,9 +41,12 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor processor = spy(new Processor() {
+        final Processor<VFNZSubscriberData> processor = spy(new Processor<VFNZSubscriberData>() {
+            {
+                messageParser = parserSpy;
+            }
             @Override
-            public void process(Object data) {
+            public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
             }
         });
@@ -51,13 +54,42 @@ public class SMSMessageProcessorContainerTest {
         queue.offer(processor);
         fixture.processors.put(msgId, queue);
 
-        doReturn(data).when(fixture.messageParser).parse(eq(msg));
+        doReturn(data).when(parserSpy).parse(eq(msg));
         doReturn(processor).when(fixture).getMessageProcessor(eq(moMessage));
 
         fixture.processInboundMessage(null, moMessage);
 
-        verify(fixture.messageParser, times(1)).parse(msg);
-        verify(processor, times(1)).process(any(Object.class));
+        verify(parserSpy, times(1)).parse(eq(msg));
+        verify(processor, times(1)).process(eq(data));
+        verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
+    }
+
+    @Test
+    public void testProcessInboundMessage_NoParser_Success() throws Exception {
+        final String source = "4003";
+        final String dest = "+64212345678";
+        final String msg = "onnet";
+        final String msgId = source + ":" + dest;
+        final VFNZSubscriberData data = new VFNZSubscriberData();
+        data.setProvider(ProviderType.VF);
+        MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
+        final Processor<MOMessage> processor = spy(new Processor<MOMessage>() {
+            @Override
+            public void process(MOMessage data) {
+                fixture.LOGGER.info("process msg");
+            }
+        });
+        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
+        queue.offer(processor);
+        fixture.processors.put(msgId, queue);
+
+        doReturn(data).when(parserSpy).parse(eq(msg));
+        doReturn(processor).when(fixture).getMessageProcessor(eq(moMessage));
+
+        fixture.processInboundMessage(null, moMessage);
+
+        verify(parserSpy, times(0)).parse(eq(msg));
+        verify(processor, times(1)).process(eq(moMessage));
         verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
     }
 
@@ -70,9 +102,12 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor processor = spy(new Processor() {
+        final Processor<VFNZSubscriberData> processor = spy(new Processor<VFNZSubscriberData>() {
+            {
+                messageParser = parserSpy;
+            }
             @Override
-            public void process(Object data) {
+            public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
             }
         });
@@ -80,13 +115,13 @@ public class SMSMessageProcessorContainerTest {
         queue.offer(processor);
         fixture.processors.put(msgId, queue);
 
-        doReturn(data).when(fixture.messageParser).parse(eq(msg));
+        doReturn(data).when(parserSpy).parse(eq(msg));
         doReturn(null).when(fixture).getMessageProcessor(eq(moMessage));
 
         fixture.processInboundMessage(null, moMessage);
 
-        verify(fixture.messageParser, times(1)).parse(msg);
-        verify(processor, times(0)).process(any(Object.class));
+        verify(parserSpy, times(0)).parse(eq(msg));
+        verify(processor, times(0)).process(eq(data));
         verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
     }
 

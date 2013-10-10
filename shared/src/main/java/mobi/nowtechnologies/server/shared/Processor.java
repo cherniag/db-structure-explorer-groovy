@@ -7,6 +7,16 @@ package mobi.nowtechnologies.server.shared;
  * Time: 5:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface Processor<T> {
-    void process(T data);
+public abstract class Processor<T> {
+    protected Parser<String, T> messageParser;
+
+    public abstract void process(T data);
+
+    public Parser<String, T> getMessageParser() {
+        return messageParser;
+    }
+
+    public void setMessageParser(Parser<String, T> messageParser) {
+        this.messageParser = messageParser;
+    }
 }

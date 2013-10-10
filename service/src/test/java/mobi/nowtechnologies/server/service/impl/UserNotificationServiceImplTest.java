@@ -3128,7 +3128,6 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setUnsubscribeUrl("unsubscribeUrl");
 		userNotificationImplSpy.setMessageSource(communityResourceBundleMessageSourceMock);
 		userNotificationImplSpy.setRestTemplate(restTemplateMock);
-		userNotificationImplSpy.setSmsProviderBeanName("service.SmsProvider");
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
 
 	}
