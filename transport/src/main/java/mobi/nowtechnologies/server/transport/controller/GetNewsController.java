@@ -151,7 +151,6 @@ public class GetNewsController extends CommonController {
     })
     public ModelAndView getNewsAcceptHeaderSupporting(
             @RequestParam("APP_VERSION") String appVersion,
-            @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("API_VERSION") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -159,6 +158,10 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             @PathVariable("community") String community) throws Exception {
-        return getNews_O2(appVersion, communityName, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community);
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = getNews_O2(appVersion, community, apiVersion, userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, community);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
     }
 }

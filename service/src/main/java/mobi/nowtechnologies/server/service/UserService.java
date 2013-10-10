@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.data.SubsriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -27,6 +28,7 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
@@ -78,7 +80,7 @@ import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
 import static org.apache.commons.lang.Validate.notNull;
 
 public class UserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
 	private UserDao userDao;
@@ -1728,19 +1730,34 @@ public class UserService {
         return user;
     }
 
-    private void populateSubscriberData(User user, String phoneNumber) {
+    private void populateSubscriberData(final User user, String phoneNumber) {
         if ( isPromotedDevice(phoneNumber)) {
             // if the device is promoted, we set the default field
-            userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
+            populateSubscriberData(user, (SubsriberData) null);
         } else {
             try {
-                mobi.nowtechnologies.server.service.data.SubsriberData subscriberData = mobileProviderService.getSubscriberData(phoneNumber);
-                userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
+                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubsriberData>() {
+                    @Override
+                    public void process(SubsriberData data) {
+                        populateSubscriberData(user, data);
+                    }
+                });
+                userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
             }
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void populateSubscriberData(User user, SubsriberData subscriberData) {
+        LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
+        userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
+
+        userRepository.save(user);
+
+        LOGGER.info("Subsriber data was populated for user[{}] with data [{}]", new Object[]{user, subscriberData});
     }
 
 	@Transactional(readOnly = true)
