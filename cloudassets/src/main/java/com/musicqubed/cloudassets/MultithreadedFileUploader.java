@@ -42,8 +42,9 @@ public class MultithreadedFileUploader {
 
 				@Override
 				public FileUploader newInstance() {
-					return new RackspaceNativeFileUploader(settings);
+					//return new RackspaceNativeFileUploader(settings);
 					//return createDummyNewFileUploader();
+					return new CloudFileOpenSourceUploader(settings);
 				}
 			};
 

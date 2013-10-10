@@ -14,7 +14,7 @@ public class SampleCloudAssetsSettingsFileCreator {
 	public static CloudAssetsSettings createTestSettings() {
 		CloudAssetsSettings s = new CloudAssetsSettings();
 		s.setDir("../web/src/main/webapp/assets");
-		s.setPrefix("my17/assets");
+		s.setPrefix("my33/assets");
 		s.setSettings(createTestCloudSettings());
 		return s;
 	}
@@ -23,7 +23,7 @@ public class SampleCloudAssetsSettingsFileCreator {
 		CloudFileSettings settings = new CloudFileSettings();
 		settings.setUserName("chartsnow");
 		settings.setPassword("b283a8dec498dee9e6a11f459bdcb194");
-		settings.setContainerName("ldntestCloudFiles");
+		settings.setContainerName("aaaa15");
 		settings.setProvider("cloudfiles-uk");
 		settings.setAuthenticationURL("https://lon.auth.api.rackspacecloud.com/v1.0");
 		return settings;
