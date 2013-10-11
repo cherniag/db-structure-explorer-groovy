@@ -100,8 +100,8 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_NON_VF_Success() throws Exception {
-        String userName = "+642111111111";
-        String phone = "+642111111111";
+        String userName = "+64279000456";
+        String phone = "+64279000456";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
@@ -121,7 +121,7 @@ public class PhoneNumberControllerTestIT {
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
@@ -134,6 +134,6 @@ public class PhoneNumberControllerTestIT {
         aHttpServletResponse = resultActions.andReturn().getResponse();
         resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("<provider>vf</provider>"));
+        assertTrue(resultXml.contains("<provider>non-vf</provider>"));
     }
 }

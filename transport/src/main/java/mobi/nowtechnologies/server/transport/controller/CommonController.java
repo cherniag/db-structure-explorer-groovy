@@ -16,6 +16,8 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,7 +40,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author Alexander Kollpakov (akolpakov)
  * 
  */
-public abstract class CommonController extends ProfileController{
+public abstract class CommonController extends ProfileController implements ApplicationContextAware{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 	public static final String MODEL_NAME = Response.class.toString();
@@ -55,6 +57,12 @@ public abstract class CommonController extends ProfileController{
     private UserRepository userRepository;
     protected String defaultViewName = "default";
     protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    protected ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     public void setView(View view) {
 		this.view = view;
@@ -82,6 +90,12 @@ public abstract class CommonController extends ProfileController{
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    protected UserService getUserService(String communityUrl){
+        String userServiceBeanName = messageSource.getMessage(communityUrl, "service.bean.userService", null, null);
+
+        return (UserService)applicationContext.getBean(userServiceBeanName);
     }
 
     @ExceptionHandler(Exception.class)

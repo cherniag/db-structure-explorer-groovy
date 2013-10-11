@@ -43,8 +43,6 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
 	private UserService userService;
 
-    private String smsProviderBeanName;
-
 	private CommunityResourceBundleMessageSource messageSource;
 
 	private List<String> availableCommunities = Collections.emptyList();
@@ -70,10 +68,6 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-
-    public void setSmsProviderBeanName(String smsProviderBeanName) {
-        this.smsProviderBeanName = smsProviderBeanName;
-    }
 
     public void setAvailableCommunities(String[] availableCommunities) {
 		if (availableCommunities == null)
@@ -498,7 +492,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 	}
 
     public SMSGatewayService getSMSProvider(String communityUrl){
-        return (SMSGatewayService) applicationContext.getBean(communityUrl+"."+smsProviderBeanName);
+        String smsProviderBeanName = messageSource.getMessage(communityUrl, "service.bean.smsProvider", null, null);
+        return (SMSGatewayService) applicationContext.getBean(smsProviderBeanName);
     }
 
 	public boolean rejectDevice(User user, String code) {

@@ -14,11 +14,11 @@ import org.junit.Test;
  */
 public class VFNZSmsMessageParserTest {
 
-    private VFNZSmsMessageParser fixture;
+    private VFNZSubscriberDataParser fixture;
 
     @Before
     public void setUp() throws Exception {
-        fixture = new VFNZSmsMessageParser();
+        fixture = new VFNZSubscriberDataParser();
     }
 
     @Test
