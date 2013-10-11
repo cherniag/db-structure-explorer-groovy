@@ -978,7 +978,7 @@ public class UserService {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		User user = findUserTree(userId);
+		User user = userDao.findUserById(userId);
 
 		user = assignPotentialPromotion(user);
 		user = updateLastDeviceLogin(user);
@@ -992,7 +992,7 @@ public class UserService {
 		Community community = user.getUserGroup().getCommunity();
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-
+        user = findUserTree(user.getId());
 		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
 		accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
