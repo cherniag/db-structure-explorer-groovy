@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -61,9 +62,11 @@ import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
@@ -80,6 +83,7 @@ public class UserService {
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
 	private UserDao userDao;
+    private UserGroupRepository userGroupRepository;
 
     private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
@@ -140,6 +144,11 @@ public class UserService {
             isO2User = user.isO2User();
         }
         return isO2User;
+    }
+
+    private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
+        UserGroup userGroup = userGroupRepository.findByCommunity(community);
+        return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
     public void setO2ClientService(O2ClientService o2ClientService) {
@@ -259,6 +268,10 @@ public class UserService {
 
     public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
         this.o2UserDetailsUpdater = o2UserDetailsUpdater;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
     }
 
     public Boolean canActivateVideoTrial(User u) {
@@ -522,7 +535,7 @@ public class UserService {
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
             final PromoCode promoCode = promotion.getPromoCode();
 
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on on the same media type");
+            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
 
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
@@ -633,30 +646,17 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public User mergeUser(User user, User userByDeviceUID) {
-        LOGGER.info("Attempt to merge [{}] with [{}]", user, userByDeviceUID);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User mergeUser(User oldUser, User userByDeviceUID) {
+        LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
-		userByDeviceUID = userRepository.findOne(userByDeviceUID.getId());
-		LOGGER.debug("input parameters user, userByDeviceUID: [{}], [{}]", user, userByDeviceUID);
-		userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+        userRepository.delete(userByDeviceUID);
+        userRepository.save(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()));
+        accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
 
-		drmService.moveDrms(userByDeviceUID, user);
-
-		entityService.removeEntity(userByDeviceUID);
-
-		user.setDeviceUID(userByDeviceUID.getDeviceUID());
-		user.setDeviceString(userByDeviceUID.getDeviceString());
-		user.setDeviceModel(userByDeviceUID.getDeviceModel());
-		user.setDevice(userByDeviceUID.getDevice());
-		user.setDeviceType(userByDeviceUID.getDeviceType());
-		user.setIpAddress(userByDeviceUID.getIpAddress());
-		user.setTempToken(userByDeviceUID.getToken());
-		entityService.updateEntity(user);
-
-		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
-	}
+        LOGGER.info("The current user after merge now is [{}]", oldUser);
+        return oldUser;
+    }
 
 	public String getCommunityNameByUserGroup(byte userGroup) {
 		return userDao.getCommunityNameByUserGroup(userGroup);
@@ -918,7 +918,7 @@ public class UserService {
 		final String paymentSystem = payment.getPaymentSystem();
 
 		// Update last Successful payment time
-		final long epochMillis = Utils.getEpochMillis();
+		final long epochMillis = getEpochMillis();
 		user.setLastSuccessfulPaymentTimeMillis(epochMillis);
 		user.setLastSubscribedPaymentSystem(paymentSystem);
         user.setLastSuccessfulPaymentDetails(payment.getPaymentDetails());
@@ -1294,7 +1294,7 @@ public class UserService {
 			user = userByDeviceUID;
 			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
 			user.setFacebookId(userCredentions.getId());
-			user.setFirstUserLoginMillis(Utils.getEpochMillis());
+			user.setFirstUserLoginMillis(getEpochMillis());
 
 			updateUser(user);
 		}
@@ -1305,12 +1305,11 @@ public class UserService {
 	}
 
 	private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
-		LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[]{deviceUID, storedToken, community});
-		final String communityRedirectUrl = community.getRewriteUrlParameter();
+		LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
 
-		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+        User user = findByDeviceUIDAndCommunity(deviceUID, community);
 		if (user == null || !user.getToken().equals(storedToken)) {
-			ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, communityRedirectUrl);
+			ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, community.getRewriteUrlParameter());
 			throw new UserCredentialsException(serverMessage);
 		}
 
@@ -1318,28 +1317,31 @@ public class UserService {
 		return user;
 	}
 
-	public User findByDeviceUIDAndCommunityRedirectURL(String deviceUID, String communityRedirectUrl) {
-		LOGGER.debug("input parameters deviceUID, communityRedirectUrl: [{}], [{}]", deviceUID, communityRedirectUrl);
-		User user = userDao.findByDeviceUIDAndCommunityRedirectUrl(deviceUID, communityRedirectUrl);
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return user;
-	}
+    private User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
+        LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
+
+        User user = userRepository.findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
+
+        LOGGER.debug("Output parameter user=[{}]", user);
+        return user;
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
+	public AccountCheckDTO registerUserAndAccCheck(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
 		LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
 
 		final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
-		DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
-		if (deviceType == null)
-			deviceType = DeviceTypeDao.getNoneDeviceType();
+        Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
-		Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
-		User user = findByDeviceUIDAndCommunityRedirectURL(deviceUID, community.getRewriteUrlParameter());
+        if (isNull(user)) {
+            detectUserAccountWithSameDeviceAndDisableIt(deviceUID, community);
 
-		if (null == user) {
-			user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
+            DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
+            if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
+
+            user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
 		}
 
 		if (createPotentialPromo && user.getNextSubPayment() == 0) {
@@ -1348,7 +1350,7 @@ public class UserService {
 
 			final String promotionCode;
 
-			if (canBrPromoted(community, deviceUID, deviceModel)) {
+			if (canBePromoted(community, deviceUID, deviceModel)) {
 				promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
 			} else {
 				String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
@@ -1358,8 +1360,7 @@ public class UserService {
 					promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
 			}
 
-            setPotentialPromoByPromoCode(user, promotionCode);
-
+			setPotentialPromoByPromoCode(user, promotionCode);
 		}
 
 		user.setActivationStatus(REGISTERED);
@@ -1370,9 +1371,13 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-	private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
-		User user;
-		user = new User();
+    @Transactional(readOnly = true)
+    public User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
+        return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
+    }
+
+    private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
+		User user = new User();
 		user.setUserName(deviceUID);
 		user.setToken(Utils.createStoredToken(deviceUID, Utils.getRandomString(20)));
 
@@ -1389,11 +1394,10 @@ public class UserService {
 		user.setFirstDeviceLoginMillis(System.currentTimeMillis());
 		user.setActivationStatus(REGISTERED);
 
-		entityService.saveEntity(user);
-		return user;
+		return userRepository.save(user);
 	}
 
-	private boolean canBrPromoted(Community community, String deviceUID, String deviceModel) {
+	private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {
 		boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
 		boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
 		boolean doesNotExistInNotPromotedList = !deviceService.existsInNotPromotedList(community, deviceUID);
@@ -1544,7 +1548,7 @@ public class UserService {
 		if (amountOfMoneyToUserNotification == null)
 			throw new NullPointerException("The parameter amountOfMoneyToUserNotification is null");
 
-		List<User> users = userRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, Utils.getEpochMillis(), deltaSuccesfullPaymentSmsSendingTimestampMillis);
+		List<User> users = userRepository.findActivePsmsUsers(communityURL, amountOfMoneyToUserNotification, getEpochMillis(), deltaSuccesfullPaymentSmsSendingTimestampMillis);
 
 		LOGGER.info("Output parameter users=[{}]", users);
 		return users;
@@ -1558,7 +1562,7 @@ public class UserService {
 			throw new NullPointerException("The parameter user is null");
 
 		user.setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
-		user.setLastSuccesfullPaymentSmsSendingTimestampMillis(Utils.getEpochMillis());
+		user.setLastSuccesfullPaymentSmsSendingTimestampMillis(getEpochMillis());
 
 		final int id = user.getId();
 		int updatedRowCount = userRepository.updateFields(user.getAmountOfMoneyToUserNotification(), user.getLastSuccesfullPaymentSmsSendingTimestampMillis(), id);
@@ -1580,7 +1584,7 @@ public class UserService {
 			throw new NullPointerException("The parameter payment is null");
 
 		BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
-                payment.getAmount());
+				payment.getAmount());
 		user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
 
 		user = updateUser(user);
@@ -1639,7 +1643,7 @@ public class UserService {
 	public int resetLastSuccesfullPaymentSmsSendingTimestampMillis(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
 
-		int updatedRowCount = userRepository.updateFields(Utils.getEpochMillis(), userId);
+		int updatedRowCount = userRepository.updateFields(getEpochMillis(), userId);
 		if (updatedRowCount != 1)
 			throw new ServiceException("Unexpected updated users count [" + updatedRowCount + "] for id [" + userId + "]");
 
@@ -1695,7 +1699,7 @@ public class UserService {
 		user.setMobile(msisdn);
 		user.setActivationStatus(ENTERED_NUMBER);
 		userRepository.save(user);
-        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
+        LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, user.getActivationStatus());
 		return user;
 	}
 
@@ -1714,13 +1718,15 @@ public class UserService {
 		return o2ClientService.getRedeemServerO2Url(user.getMobile());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public AccountCheckDTO applyInitPromoAndAccCheck(User user, User mobileUser, String otac, boolean updateContractAndProvider) {
-		LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO applyInitPromoAndAccCheck(User user, String otac, boolean updateContractAndProvider) {
+        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
+
+        User mobileUser = findByNameAndCommunity(user.getMobile(), user.getUserGroup().getCommunity().getName());
 
         boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
-        user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
+        user = !ActivationStatus.ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
 
         AccountCheckDTO dto = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
         return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);

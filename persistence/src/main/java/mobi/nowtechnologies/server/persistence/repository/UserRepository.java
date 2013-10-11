@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.persistence.QueryHint;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -165,4 +167,30 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "where " +
             "user.id=:id")
     int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.userName = ?1 " +
+            "and u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findByDeviceUIDAndCommunity(String deviceUID, Community community);
+
+    @Modifying
+    @Query(value = "update User u " +
+            "set u.deviceUID=CONCAT(u.deviceUID,'_disable_at_', CURRENT_TIMESTAMP()) " +
+            "where " +
+            "u.deviceUID = ?1 "+
+            "and u.userGroup=?2 "
+    )
+    int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
 }

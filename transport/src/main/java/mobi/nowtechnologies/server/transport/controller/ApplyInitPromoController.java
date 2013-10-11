@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
 /**
  * ApplyInitPromoConroller
  *
@@ -89,9 +91,7 @@ public class ApplyInitPromoController extends CommonController {
 
             if (isNull(user)) throw new UserCredentialsException("Bad user credentials");
 
-            User mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
-
-            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, mobileUser, token, isMajorApiVersionNumberLessThan4);
+            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, token, isMajorApiVersionNumberLessThan4);
 
             user = (User) accountCheckDTO.user;
 
@@ -101,8 +101,7 @@ public class ApplyInitPromoController extends CommonController {
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
             }
-
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+            return new ModelAndView(view, Response.class.toString(), new Response(objects));
         }catch (UserCredentialsException ce){
         	ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);

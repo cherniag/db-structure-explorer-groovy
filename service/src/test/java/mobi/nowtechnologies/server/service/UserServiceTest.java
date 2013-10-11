@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -46,6 +47,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static java.util.Collections.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
@@ -67,8 +69,6 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
- * 
- * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  */
@@ -115,6 +115,7 @@ public class UserServiceTest {
     private PromotionService promotionServiceMock;
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
+    private UserGroupRepository userGroupRepositoryMock;
 
 	@Test
 	public void testChangePassword_Success() throws Exception {
@@ -692,6 +693,7 @@ public class UserServiceTest {
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
+        userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
 		
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
@@ -723,6 +725,7 @@ public class UserServiceTest {
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
+        userServiceSpy.setUserGroupRepository(userGroupRepositoryMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -1038,9 +1041,9 @@ public class UserServiceTest {
 		user.setStatus(userStatus);
 		final Community community = CommunityFactory.createCommunity();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-		final Map<Byte, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
-		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
+		final Map<String, DeviceType> deviceTypeMap = singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
+		final Map<Byte, UserGroup> userGroupMap = singletonMap(community.getId(), userGroup);
+		final Map<Integer, Operator> operatorMap = singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
 		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
@@ -1089,11 +1092,69 @@ public class UserServiceTest {
 				return accountCheckDTO;
 			}
 		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
-		PowerMockito.doReturn(notExistUser ? null : user).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(anyString(), anyString());
+		PowerMockito.doReturn(notExistUser ? null : user).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
 		whenNew(User.class).withNoArguments().thenReturn(user);
+        PowerMockito.doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        }).when(userRepositoryMock).save(any(User.class));
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
 	}
+
+    @Test
+    public void shouldDetectUserAccountWithSameDeviceAndDisableIt() throws Exception {
+        //given
+        final String deviceUID = "imei_357841034540704";
+        final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
+        User userAccountWithSameDevice = new User();
+
+        Community community = new Community();
+        doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        doReturn(null).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).findByDeviceUIDAndCommunity(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).save(userAccountWithSameDevice);
+        PowerMockito.mockStatic(DeviceTypeDao.class);
+        PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
+        PowerMockito.mockStatic(UserGroupDao.class);
+        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Byte, UserGroup>());
+        PowerMockito.mockStatic(OperatorDao.class);
+        PowerMockito.when(OperatorDao.getMapAsIds()).thenReturn(singletonMap(0, new Operator()));
+        PowerMockito.mockStatic(UserStatusDao.class);
+        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(new UserStatus());
+        Answer returnFirsParamAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User) invocation.getArguments()[0];
+
+                assertThat(user.getDeviceUID(), is(deviceUID));
+                assertThat(user.getUserName(), is(deviceUID));
+
+                return user;
+            }
+        };
+        Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
+        Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).save(any(User.class));
+        AccountCheckDTO expectedAccountCheckDTO = new AccountCheckDTO();
+        doReturn(expectedAccountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(any(int.class), (String)isNull(), (String)isNull(), (String)isNull());
+        PowerMockito.mockStatic(Utils.class);
+        PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+        UserGroup userGroup = new UserGroup();
+        PowerMockito.doReturn(userGroup).when(userGroupRepositoryMock).findByCommunity(community);
+        PowerMockito.doReturn(1).when(userRepositoryMock).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+
+        //when
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+
+        //then
+        assertNotNull(actualAccountCheckDTO);
+        assertThat(actualAccountCheckDTO, is(expectedAccountCheckDTO));
+
+        verify(userRepositoryMock, times(2)).save(any(User.class));
+        verify(userRepositoryMock, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+    }
 
 	@SuppressWarnings("unchecked")
 	@Test()
@@ -1108,7 +1169,7 @@ public class UserServiceTest {
 		final Map<Integer, Operator> operatorMap = (Map<Integer, Operator>) testData[0];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.userToken, storedToken);
@@ -1122,7 +1183,7 @@ public class UserServiceTest {
 
 		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
-		verify(entityServiceMock, times(1)).saveEntity(any(User.class));
+		verify(userRepositoryMock, times(2)).save(any(User.class));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());
@@ -1147,7 +1208,7 @@ public class UserServiceTest {
 		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, true);
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.deviceType, DeviceTypeDao.NONE);
@@ -1156,7 +1217,7 @@ public class UserServiceTest {
 		DeviceTypeDao.getNoneDeviceType();
 	}
 
-	@Test()
+	@Test
 	public void testRegisterUser_WOPotentialPromo_ExistUser_Success() throws Exception {
 		final String storedToken = "50c86945713ac8c870eafbc19980706b";
 		final String communityName = "chartsnow";
@@ -1168,7 +1229,7 @@ public class UserServiceTest {
 		final User user = (User) testData[2];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
 		assertEquals(accountCheckDTO.userToken, user.getToken());
@@ -1180,7 +1241,7 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(0));
 		createStoredToken(anyString(), anyString());
-		verifyStatic(times(1));
+		verifyStatic(times(0));
 		DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
 		verifyStatic(times(0));
 		UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
@@ -2296,8 +2357,8 @@ public class UserServiceTest {
 		userByDeviceUID.setUserName(oldUserName);
 		userByDeviceUID.setFacebookId(null);
 		userByDeviceUID.setFirstUserLoginMillis(null);
-		
-		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+
+		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		
 		User userByFacebookId = UserFactory.createUser();
 		userByFacebookId.setId(userByDeviceUID.getId());
@@ -2329,7 +2390,7 @@ public class UserServiceTest {
 		
 		verify(communityServiceMock, times(1)).getCommunityByName(userFacebookDetailsDto.getCommunityName());
 		verify(facebookServiceMock, times(1)).getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken());
-		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		verify(userServiceSpy, times(1)).findByFacebookId(userCredentions.getId(), passedCommunityName);
 		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
 		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
@@ -2362,7 +2423,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -2407,7 +2468,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
@@ -3148,6 +3209,56 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).downgradeUserTariff(any(User.class), any(Tariff.class));
         verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(user, o2SubscriberData);
         verify(userRepositoryMock, times(1)).save(user);
+    }
+
+    @Test
+    public void shouldMergeUsers() {
+        //given
+        User oldUser = new User().withDeviceUID("a");
+        User currentUser = new User().withDeviceUID("b");
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        User actualUser = userServiceSpy.mergeUser(oldUser, currentUser);
+
+        //then
+        assertThat(actualUser, is(oldUser));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+
+        verify(userRepositoryMock, times(1)).delete(currentUser);
+        verify(userRepositoryMock, times(1)).save(oldUser);
+        verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenOldUserIsNull() {
+        //given
+        User oldUser = null;
+        User currentUser = new User().withDeviceUID("b");
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenCurrentUserIsNull() {
+        //given
+        User oldUser = new User().withDeviceUID("a");
+        User currentUser = null;
+
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
     }
 
     @Test

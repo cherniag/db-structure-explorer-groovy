@@ -5,12 +5,9 @@ import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.dao.AccountLogDao;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.Offer;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 
@@ -18,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -36,6 +36,12 @@ public class AccountLogService {
 	public void setAccountLogRepository(AccountLogRepository accountLogRepository) {
 		this.accountLogRepository = accountLogRepository;
 	}
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    public AccountLog logAccountMergeEvent(User user, User removedUser) {
+        String description = "Account was merged with " + removedUser.toString();
+        return accountLogRepository.save(new AccountLog().withUser(user).withBalanceAfter(user.getSubBalance()).withTransactionType(ACCOUNT_MERGE).withDescription(description).withLogTimestamp(getEpochSeconds()));
+    }
 
 	@Transactional(propagation=Propagation.REQUIRED)
 	public AccountLog logAccountEvent(int userId, int balanceAfter, Media relatedMedia, SubmittedPayment relatedPayment, TransactionType accountLogType, Offer offer) {

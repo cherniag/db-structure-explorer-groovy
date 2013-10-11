@@ -139,16 +139,6 @@ public class AccountCheckDTO {
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
 	}
 
-    public AccountCheckDTO withUserName(String userName){
-        this.userName = userName;
-        return this;
-    }
-
-    public AccountCheckDTO withUserToken(String userToken){
-        this.userToken = userToken;
-        return this;
-    }
-
     public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
         this.fullyRegistred = isFullyRegistered;
         return this;
@@ -156,6 +146,16 @@ public class AccountCheckDTO {
 
     public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
         this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
+        return this;
+    }
+
+    public AccountCheckDTO withUserName(String userName){
+        this.userName = userName;
+        return this;
+    }
+
+    public AccountCheckDTO withUserToken(String userToken){
+        this.userToken = userToken;
         return this;
     }
 
