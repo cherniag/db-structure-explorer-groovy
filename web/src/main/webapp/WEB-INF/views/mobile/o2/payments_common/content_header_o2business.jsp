@@ -6,7 +6,7 @@
 <c:set var="optionPrice" />
 <c:set var="numWeeks" />
 <c:set var="monthlyOrWeekly" />
-<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 	<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
 	<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
 	<c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />

@@ -7,7 +7,7 @@
 	<%--we have 2 cases:
 	(1) user is 4G and opted-in (we display the video options)
 	(2) user is 4g and not opted-in (we display a "link" for the user to opt-in) --%>
-	<c:when test="${userIsOptedInToVideo eq true}">
+	<c:when test="${paymentsPage.userIsOptedInToVideo eq true}">
 
 		<div class="rel tapArea videoOption">
 			<a class="subscription-selector" href="javascript: void(0)"	onclick="videoCheckbox.switchState()" type="button">
@@ -28,13 +28,13 @@
 					
 				<c:set var="buttonClassOnStyle" value="display: none" />
 				<c:set var="buttonClassOffStyle" value="display: block" />
-				<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated) && (paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
+				<c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentsPage.paymentDetails.activated) && (paymentsPage.paymentDetails.paymentPolicy.videoAndAudio4GSubscription==true)}">
 					<%-- <c:set var="buttonClass" value="button-on" /> --%>
 					<%-- Activate the video checkbox if the user has a video subscription --%>
 					<c:set var="buttonClassOnStyle" value="display: block" />
 					<c:set var="buttonClassOffStyle" value="display: none" />
 				</c:if>
-				<c:if test="${(paymentDetails==null) || (false==paymentDetails.activated)}">
+				<c:if test="${(paymentsPage.paymentDetails==null) || (false==paymentsPage.paymentDetails.activated)}">
 					<%-- <c:set var="buttonClass" value="button-on" /> --%>
 					<%--Activate the video checkbox if the user has no subscription --%>
 					<c:set var="buttonClassOnStyle" value="display: block" />
@@ -48,7 +48,7 @@
 	</c:when>
 	
 	
-	<c:when test="${userIsOptedInToVideo eq false}">
+	<c:when test="${paymentsPage.userIsOptedInToVideo eq false}">
 		<div class="rel tapArea" style="margin-top: 10px">
 			<div class="subscription-selector videoNotOptedIn">
 				<div class="clr videoNotOptedInHeader">

@@ -4,7 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 
-<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
     <c:if test="${paymentPolicy.paymentType == 'PSMS'}">
         <c:set var="method_name" value="psms" />
     </c:if>
@@ -39,7 +39,7 @@
 	   	<c:set var="disabledAttrib" />
 	   	<c:set var="buttonStyle" value="button-off" />
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
-	   	<c:if test="${paymentDetails != null && activePolicy != null && paymentDetails.activated && activePolicy.subcost == paymentPolicy.subcost && activePolicy.subweeks == paymentPolicy.subweeks}">
+	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.subweeks == paymentPolicy.subweeks}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
 	   		<c:set var="buttonStyle" value="button-on" />
 	   		<c:set var="hrefValue" value="" />

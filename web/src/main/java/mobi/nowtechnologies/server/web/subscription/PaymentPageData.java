@@ -6,7 +6,6 @@ public class PaymentPageData implements java.io.Serializable {
 
 	private SubscriptionState subscriptionState = new SubscriptionState();
 	private SubscriptionTexts subscriptionTexts = new SubscriptionTexts();
-	private boolean appleIOSNonO2Business = false;
 	
 	public PaymentPageData(SubscriptionState subscriptionState, SubscriptionTexts subscriptionTexts) {
 		super();
@@ -29,15 +28,5 @@ public class PaymentPageData implements java.io.Serializable {
 	public void setSubscriptionTexts(SubscriptionTexts subscriptionTexts) {
 		this.subscriptionTexts = subscriptionTexts;
 	}
-
-	public boolean isAppleIOSNonO2Business() {
-		return appleIOSNonO2Business;
-	}
-
-	public void setAppleIOSNonO2Business(boolean appleIOSNonO2Business) {
-		this.appleIOSNonO2Business = appleIOSNonO2Business;
-	}
-
-
 
 }
