@@ -21,7 +21,8 @@ public enum TransactionType {
 	TRIAL_TOPUP((byte) 9),
 	TRACK_GIFT((byte) 10),
     TRIAL_SKIPPING((byte) 11),
-    BOUGHT_PERIOD_SKIPPING((byte) 12);
+    BOUGHT_PERIOD_SKIPPING((byte) 12),
+    ACCOUNT_MERGE((byte) 13);
 	
 	private byte code;
 	

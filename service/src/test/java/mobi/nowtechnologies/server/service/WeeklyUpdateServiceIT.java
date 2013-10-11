@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 /**
- * WeeklyUpdateServiceTest
+ * WeeklyUpdateServiceIT
  * 
  * @author Anton Rogachevskiy
  * 
@@ -28,7 +28,7 @@ import javax.annotation.Resource;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
 @Transactional
 @Ignore
-public class WeeklyUpdateServiceTest {
+public class WeeklyUpdateServiceIT {
 
 	@Resource(name = "service.WeeklyUpdateService")
 	private WeeklyUpdateService weeklyUpdateService;
@@ -96,11 +96,6 @@ public class WeeklyUpdateServiceTest {
 		testUser.setUserType(UserType.NORMAL);
 
 		entityDao.saveEntity(testUser);
-	}
-
-	@AfterTransaction
-	public void tearDown() throws Exception {
-		// Add additional tear down code here
 	}
 
 }

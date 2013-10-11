@@ -35,7 +35,7 @@
         <property name="updateO2UserTask" ref="job.UpdateO2UserTask"/>
     </bean>
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.SingUpDeviceController" parent="transport.CommonController">
+	<bean class="mobi.nowtechnologies.server.transport.controller.SignUpDeviceController" parent="transport.CommonController">
 		<property name="communityService" ref="service.communityService" />
 	</bean>
 
