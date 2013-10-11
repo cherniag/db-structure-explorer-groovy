@@ -187,7 +187,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 
     @Modifying
     @Query(value = "update User u " +
-            "set u.deviceUID=CONCAT(u.deviceUID,'_disable_at_', CURRENT_TIMESTAMP()) " +
+            "set u.deviceUID=CONCAT(u.deviceUID,'_disabled_at_', CURRENT_TIMESTAMP()) " +
             "where " +
             "u.deviceUID = ?1 "+
             "and u.userGroup=?2 "

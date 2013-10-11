@@ -978,7 +978,7 @@ public class UserService {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		User user = userDao.findUserById(userId);
+		User user = findUserTree(userId);
 
 		user = assignPotentialPromotion(user);
 		user = updateLastDeviceLogin(user);
@@ -1716,7 +1716,7 @@ public class UserService {
     public AccountCheckDTO applyInitPromoAndAccCheck(User user, String otac, boolean updateContractAndProvider) {
         LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-        User mobileUser = findByNameAndCommunity(user.getMobile(), user.getUserGroup().getCommunity().getName());
+        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
@@ -1737,7 +1737,7 @@ public class UserService {
 
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
-            user = checkAndMerge(user, mobileUser);
+            user = mergeUser(mobileUser, user);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
             hasPromo = checkO2UserAndApplyPromo(user, updateContractAndProvider, o2UserDetails);
         }
