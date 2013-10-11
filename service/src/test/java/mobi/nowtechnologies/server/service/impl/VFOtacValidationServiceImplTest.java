@@ -50,7 +50,7 @@ public class VFOtacValidationServiceImplTest {
         Community community = new Community().withRewriteUrl("vf_nz");
 
         doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -60,7 +60,7 @@ public class VFOtacValidationServiceImplTest {
         assertThat(providerUserDetails.operator, is(NON_VF.toString()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class VFOtacValidationServiceImplTest {
         Community community = new Community().withRewriteUrl("vf_nz");
 
         doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -81,7 +81,7 @@ public class VFOtacValidationServiceImplTest {
         assertThat(providerUserDetails.operator, is(VF.toString()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class VFOtacValidationServiceImplTest {
         Community community = new Community().withRewriteUrl("vf_nz");
 
         doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(true).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -102,7 +102,7 @@ public class VFOtacValidationServiceImplTest {
         assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class VFOtacValidationServiceImplTest {
         Community community = new Community().withRewriteUrl("vf_nz");
 
         doReturn(true).when(userServiceMock).isVFNZOtacValid(otac, phoneNumber, community);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
         //when
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
@@ -123,6 +123,6 @@ public class VFOtacValidationServiceImplTest {
         assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
     }
 }

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 
 /**
@@ -13,5 +14,5 @@ import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException
 public interface MobileProviderService {
     PhoneNumberValidationData validatePhoneNumber(String phoneNumber) throws InvalidPhoneNumberException;
 
-    mobi.nowtechnologies.server.service.data.SubsriberData getSubscriberData(String phoneNumber);
+    SubscriberData getSubscriberData(String phoneNumber);
 }

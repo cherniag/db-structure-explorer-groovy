@@ -10,5 +10,5 @@ import mobi.nowtechnologies.server.persistence.domain.User;
  * To change this template use File | Settings | File Templates.
  */
 public interface UserDetailsUpdater {
-    User setUserFieldsFromSubscriberData(User user, SubsriberData subsriberData);
+    User setUserFieldsFromSubscriberData(User user, SubscriberData subsriberData);
 }

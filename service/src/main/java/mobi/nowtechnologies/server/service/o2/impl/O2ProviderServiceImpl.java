@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
-import mobi.nowtechnologies.server.service.data.SubsriberData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -18,7 +18,6 @@ import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationE
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
 
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -176,7 +175,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	}
 
     @Override
-    public SubsriberData getSubscriberData(String phoneNumber) {
+    public SubscriberData getSubscriberData(String phoneNumber) {
         return o2Service.getSubscriberData(phoneNumber);
     }
 
@@ -221,8 +220,8 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	}
 
 	@Override
-	public ProviderUserDetails getUserDetails(String token, String phoneNumber) {
-        if (userService.isPromotedDevice(phoneNumber)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
+	public ProviderUserDetails getUserDetails(String token, String phoneNumber, Community community) {
+        if (userService.isPromotedDevice(phoneNumber, community)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
 
 		String serverO2Url = getServerO2Url(phoneNumber);
 
