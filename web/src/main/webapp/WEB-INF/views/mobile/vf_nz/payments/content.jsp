@@ -3,11 +3,6 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="header pie">
-    <span class="logo" style="padding-left: 49px;"><s:message code='m.page.main.header' /></span>
-    <a href="${pageContext.request.contextPath}/account.html" class="button-small button-right pie"><s:message code='m.page.main.menu.close' /></a>
-</div>
-
 <div style="margin: 0 14px">
 
 <jsp:include page="../payments_common/content_banner.jsp" />
@@ -56,14 +51,13 @@
     </div>
     <c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentsPage.paymentDetails.activated)}">
          <div class="rel" style="padding: 0px 5px 10px 5px;">
-             <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
+             <a class="button-white no-margin pie S15 lightGray" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
          </div>
      </c:if>
 </div>
 
  <div class="content no-bg">
-
-     <div class="rel" style="text-align: center; margin-top: 10px;">
+     <div class="rel" style="text-align: center; margin-top: 15px;">
          <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
      </div>
 

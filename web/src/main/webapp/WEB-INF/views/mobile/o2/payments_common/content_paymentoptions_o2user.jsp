@@ -9,7 +9,7 @@
         <c:set var="method_name" value="psms" />
     </c:if>
     <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
-        <c:set var="method_name" value="o2psms" />
+        <c:set var="method_name" value="oppsms" />
     </c:if>
     
 	<c:choose>
