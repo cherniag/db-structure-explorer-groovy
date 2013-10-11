@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -23,7 +25,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
     private VFNZSubscriberDataParser subscriberDataParser;
+    private DeviceService deviceService;
     protected String providerNumber;
+    private Community vfnzCommunity = new Community().withRewriteUrl("vf_nz");
 
     @Override
     public PhoneNumberValidationData validatePhoneNumber(String phoneNumber) throws InvalidPhoneNumberException {
@@ -31,7 +35,10 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
         PhoneNumberValidationData result = null;
         try {
-            String normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
+            String normalizedPhoneNumber = phoneNumber;
+            if(!deviceService.isPromotedDevicePhone(vfnzCommunity, phoneNumber, null)){
+                normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
+            }
 
             if(normalizedPhoneNumber == null){
                 throw new ServiceException("Invalid phone number");
@@ -83,5 +90,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     public void setSubscriberDataParser(VFNZSubscriberDataParser subscriberDataParser) {
         this.subscriberDataParser = subscriberDataParser;
+    }
+
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
     }
 }
