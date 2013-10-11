@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import mobi.nowtechnologies.server.service.data.SubsriberData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
 
 /** Represents O2 mobile network subscriber information */
-public class O2SubscriberData extends SubsriberData{
+public class O2SubscriberData extends SubscriberData {
 
 	private boolean providerO2;
 

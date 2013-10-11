@@ -25,7 +25,7 @@ public class OtacValidationServiceImpl implements OtacValidationService{
 
     @Override
     public ProviderUserDetails validate(String otac, String phoneNumber, Community community) {
-        if (community.isO2Community()) return o2ProviderService.getUserDetails(otac, phoneNumber);
+        if (community.isO2Community()) return o2ProviderService.getUserDetails(otac, phoneNumber, community);
         else if (community.isVFNZCommunity()) return vfOtacValidationService.validate(otac, phoneNumber, community);
         else throw new UnsupportedOperationException("Unknown community [" + community + "]");
     }

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.service.data.SubsriberData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
@@ -19,7 +19,7 @@ import java.util.List;
 public class O2UserDetailsUpdater implements UserDetailsUpdater{
 
 	/** Updates given user */
-	public User setUserFieldsFromSubscriberData(User user, SubsriberData subsriberData) {
+	public User setUserFieldsFromSubscriberData(User user, SubscriberData subsriberData) {
         O2SubscriberData data = (O2SubscriberData)subsriberData;
 
         if(data == null){

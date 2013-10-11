@@ -12,7 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
-import mobi.nowtechnologies.server.service.data.SubsriberData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -1718,7 +1718,7 @@ public class UserService {
         LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", result.getPhoneNumber(), phone, user.getMobile());
 
         if(phone != null && populateSubscriberData)
-            populateSubscriberData(user, result.getPhoneNumber());
+            populateSubscriberData(user, result.getPhoneNumber(), user.getUserGroup().getCommunity());
 
         user.setMobile(result.getPhoneNumber());
         user.setActivationStatus(ENTERED_NUMBER);
@@ -1730,34 +1730,34 @@ public class UserService {
         return user;
     }
 
-    private void populateSubscriberData(final User user, String phoneNumber) {
-        if ( isPromotedDevice(phoneNumber)) {
+    private void populateSubscriberData(final User user, String phoneNumber, Community community) {
+        if ( isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
-            populateSubscriberData(user, (SubsriberData) null);
+            populateSubscriberData(user, (SubscriberData) null);
         } else {
             try {
-                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubsriberData>() {
+                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubscriberData>() {
                     @Override
-                    public void process(SubsriberData data) {
+                    public void process(SubscriberData data) {
                         populateSubscriberData(user, data);
                     }
                 });
                 userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
-                LOGGER.error("Unable to get subscriber data during activation phone=" + phoneNumber, ex);
+                LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);
             }
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void populateSubscriberData(User user, SubsriberData subscriberData) {
+    private void populateSubscriberData(User user, SubscriberData subscriberData) {
         LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
         userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
 
         userRepository.save(user);
 
-        LOGGER.info("Subsriber data was populated for user[{}] with data [{}]", new Object[]{user, subscriberData});
+        LOGGER.info("Subscriber data was populated for user[{}] with data [{}]", new Object[]{user, subscriberData});
     }
 
 	@Transactional(readOnly = true)
@@ -1950,15 +1950,15 @@ public class UserService {
         return userRepository.save(user);
     }
     
-    public boolean isPromotedDevice(String phoneNumber) {
+    public boolean isPromotedDevice(String phoneNumber, Community community) {
 		boolean isPromoted = false;
 		try {
 			isPromoted = deviceService.isPromotedDevicePhone(
-					communityService.getCommunityByName("o2"),
+					community,
 					phoneNumber,
 					null);
 		} catch ( Exception e ) {
-			LOGGER.error("", e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
 		

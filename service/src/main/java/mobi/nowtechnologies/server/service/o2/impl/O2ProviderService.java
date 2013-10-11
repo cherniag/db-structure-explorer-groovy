@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.MobileProviderService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
@@ -14,7 +15,7 @@ public interface O2ProviderService extends MobileProviderService<O2SubscriberDat
 
 	String getRedeemServerO2Url(String phoneNumber);
 
-	ProviderUserDetails getUserDetails(String token, String phoneNumber);
+	ProviderUserDetails getUserDetails(String token, String phoneNumber, Community community);
 
 	boolean sendFreeSms(String phoneNumber, String message);
 
