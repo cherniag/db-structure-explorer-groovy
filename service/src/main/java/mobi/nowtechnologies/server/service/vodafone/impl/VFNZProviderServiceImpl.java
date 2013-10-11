@@ -22,7 +22,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
-    private  VFNZSubscriberDataParser vfnzSubscriberDataParser;
+    private VFNZSubscriberDataParser subscriberDataParser;
     protected String providerNumber;
 
     @Override
@@ -58,7 +58,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
         gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber, new Processor<VFNZSubscriberData>() {
             {
-                messageParser = vfnzSubscriberDataParser;
+                messageParser = subscriberDataParser;
             }
             @Override
             public void process(VFNZSubscriberData data) {
@@ -79,5 +79,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     public void setProviderNumber(String providerNumber) {
         this.providerNumber = providerNumber;
+    }
+
+    public void setSubscriberDataParser(VFNZSubscriberDataParser subscriberDataParser) {
+        this.subscriberDataParser = subscriberDataParser;
     }
 }

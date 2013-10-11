@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.shared.Processor;
  */
 public class VFNZUnsubscribeProccessor extends Processor<MOMessage> {
     public static final String STOP_MSG = "stop";
+    public static final String OPERATOR_NAME = "vf";
 
     private UserService userService;
 
@@ -25,7 +26,7 @@ public class VFNZUnsubscribeProccessor extends Processor<MOMessage> {
         String text = message.getText();
         String phoneNumber = message.getOriginator();
         if (text.toLowerCase().contains(STOP_MSG)) {
-             userService.unsubscribeUser(phoneNumber, "vf_nz");
+             userService.unsubscribeUser(phoneNumber, OPERATOR_NAME);
         }
     }
 }

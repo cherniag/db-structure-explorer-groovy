@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface PaymentDetailsRepository extends JpaRepository<PaymentDetails, Long> {
 
-	@Query(value="select pd from PaymentDetails pd where pd.activated=true and (pd.migPhoneNumber=CONCAT(?1, '.', ?2) or (?2=TRIM('+' from pd.phoneNumber)))")
+	@Query(value="select pd from PaymentDetails pd where pd.activated=true and (pd.migPhoneNumber=CONCAT(?1, '.', ?2) or (TYPE(pd) like CONCAT(LOWER(?1),'%') and ?2=TRIM('+' from pd.phoneNumber)))")
 	List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber);
-	
-
 }
