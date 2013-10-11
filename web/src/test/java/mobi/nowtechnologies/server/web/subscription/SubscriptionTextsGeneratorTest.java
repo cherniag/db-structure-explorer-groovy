@@ -57,10 +57,11 @@ public class SubscriptionTextsGeneratorTest {
 		s.setEligibleForVideo(true);
 		s.setUnlimitedFreeTrialFor4G(true);
 		s.setFreeTrialAudioOnly(true);
+		s.setDaysToNextBillingDate(DAYS);
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
+		Assert.assertEquals("You have 10 days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -71,10 +72,11 @@ public class SubscriptionTextsGeneratorTest {
 		s.setFreeTrial(true);
 		s.setEligibleForVideo(true);
 		s.setUnlimitedFreeTrialFor4G(true);
+		s.setDaysToNextBillingDate(DAYS);
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
+		Assert.assertEquals("You have 10 days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -104,7 +106,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("You will be notified towards the end of your trial", r.getNextBillingText());
+		Assert.assertEquals("Due to subscribe after free trial (10 days left)", r.getNextBillingText());
 		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
 

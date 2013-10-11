@@ -348,10 +348,6 @@ public class User implements Serializable {
         this.idfa = idfa;
     }
 
-    public boolean isShowFreeTrial() {
-        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
-    }
-
     public boolean isIOsNonO2ITunesSubscribedUser() {
 		return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
