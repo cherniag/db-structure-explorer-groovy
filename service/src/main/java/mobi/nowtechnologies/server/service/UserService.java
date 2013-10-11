@@ -1739,7 +1739,7 @@ public class UserService {
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-            hasPromo = promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User(user, otac, o2UserDetails));
+            hasPromo = checkO2UserAndApplyPromo(user, updateContractAndProvider, o2UserDetails);
         }
 
         if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
@@ -1749,6 +1749,14 @@ public class UserService {
 
         LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
         return hasPromo;
+    }
+
+    private boolean checkO2UserAndApplyPromo(User user, boolean updateContractAndProvider, O2UserDetails o2UserDetails) {
+        boolean isO2User = user.isO2User();
+        if (updateContractAndProvider) {
+            isO2User = o2ClientService.isO2User(o2UserDetails);
+        }
+        return promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

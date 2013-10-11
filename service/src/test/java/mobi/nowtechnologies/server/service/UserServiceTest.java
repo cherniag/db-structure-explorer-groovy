@@ -3181,7 +3181,7 @@ public class UserServiceTest {
         verify(promotionServiceMock, times(1)).applyO2PotentialPromoOf4ApiVersion(expectedUser, expectedUser.isO2User());
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
         verify(o2ClientServiceMock, times(1)).getUserDetails(otac, expectedUser.getMobile());
-        verify(o2ClientServiceMock, times(1)).isO2User(o2UserDetails);
+        verify(o2ClientServiceMock, times(0)).isO2User(o2UserDetails);
     }
 
     @Test
