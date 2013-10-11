@@ -21,10 +21,10 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
  * UserDao
- * 
  * @author Maksym Chernolevskyi (maksym)
- * 
+ * @deprecated should be replaced on {@link mobi.nowtechnologies.server.persistence.repository.UserRepository}
  */
+@Deprecated
 public class UserDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
 
@@ -47,7 +47,7 @@ public class UserDao extends JpaDaoSupport {
 								+ "(select oo.community from UserGroup oo where oo.i = ?1)",
 						userGroup).get(0)).getName();
 	}
-	
+
 	public User findByNameAndCommunity(String userName, String communityName) {
 		if (userName == null)
 			throw new PersistenceException("The parameter userName is null");

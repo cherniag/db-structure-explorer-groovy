@@ -60,7 +60,7 @@ public class PhoneNumberControllerTestIT {
     }
 
     @Test
-    public void testActivatePhoneNumber_NZ_Success() throws Exception {
+    public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
     	String userName = "+642111111111";
     	String phone = "+642111111111";
 		String apiVersion = "5.0";
@@ -83,5 +83,57 @@ public class PhoneNumberControllerTestIT {
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+
+        resultActions = mockMvc.perform(
+                post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<provider>vf</provider>"));
+    }
+
+    @Test
+    public void testActivatePhoneNumber_NZ_NON_VF_Success() throws Exception {
+        String userName = "+642111111111";
+        String phone = "+642111111111";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+
+        resultActions = mockMvc.perform(
+                post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<provider>vf</provider>"));
     }
 }

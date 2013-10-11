@@ -318,7 +318,11 @@ public class GetChartController extends CommonController{
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID);
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
     }
 
 	protected void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {

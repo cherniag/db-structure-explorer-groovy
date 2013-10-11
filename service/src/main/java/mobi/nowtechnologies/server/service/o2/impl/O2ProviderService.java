@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
 import java.math.BigDecimal;
 
-public interface O2ProviderService extends MobileProviderService {
+public interface O2ProviderService extends MobileProviderService<O2SubscriberData> {
 	
 	boolean isO2User(ProviderUserDetails userDetails);
 

@@ -3,12 +3,12 @@ package mobi.nowtechnologies.server.service;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.*;
-import org.jsmpp.examples.MessageReceiverListenerImpl;
 import org.jsmpp.extra.NegativeResponseException;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
-import org.jsmpp.session.BindParameter;
-import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.*;
 import org.jsmpp.util.AbsoluteTimeFormatter;
+import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
 
 import java.io.IOException;
@@ -20,13 +20,13 @@ import java.io.IOException;
  * Time: 12:39 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SubmitRegisteredTestIT {
+public class SMPPSubmitRegisteredTestIT {
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
 
     public static void main(String[] args) {
         SMPPSession session = new SMPPSession();
         // Set listener to receive deliver_sm
-        session.setMessageReceiverListener(new MessageReceiverListenerImpl());
+        session.setMessageReceiverListener(new MessageReceiverListenerImplTest());
 
         DataCoding ZERO = new DataCoding() {
             @Override
@@ -44,8 +44,12 @@ public class SubmitRegisteredTestIT {
         }
 
         try {
-            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "4003", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "64279000456", new ESMClass(),
-                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
+
+            String phoneNumber = "+642111111111";
+//            String phoneNumber = "+64279000456";
+
+            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
+                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
 
             /*
              * you can save the submitted message to database.
@@ -85,6 +89,48 @@ public class SubmitRegisteredTestIT {
         session.unbindAndClose();
     }
 
+    public static class MessageReceiverListenerImplTest implements MessageReceiverListener {
+        public void onAcceptDeliverSm(DeliverSm deliverSm)
+                throws ProcessRequestException {
+
+            if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
+                // this message is delivery receipt
+                try {
+                    DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
+
+                    // lets cover the id to hex string format
+                    long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
+                    String messageId = Long.toString(id, 16).toUpperCase();
+
+                /*
+                 * you can update the status of your submitted message on the
+                 * database based on messageId
+                 */
+
+                    System.out.println("Receiving delivery receipt for message '" + messageId + " ' from " + deliverSm.getSourceAddr() + " to " + deliverSm.getDestAddress() + " : " + delReceipt);
+                } catch (InvalidDeliveryReceiptException e) {
+                    System.err.println("Failed getting delivery receipt");
+                    e.printStackTrace();
+                }
+            } else {
+                // this message is regular short message
+
+            /*
+             * you can save the incoming message to database.
+             */
+
+                System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
+            }
+        }
+
+        public void onAcceptAlertNotification(AlertNotification alertNotification) {
+        }
+
+        public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
+                throws ProcessRequestException {
+            return null;
+        }
+    }
 
 }
 
