@@ -17,12 +17,12 @@
 
 <div class="maincontainer">
 	<c:choose>
-		<c:when test="${isO2Consumer eq true}">
+		<c:when test="${paymentsPage.consumerUser eq true}">
 			<jsp:include page="../payments_common/content_header_o2user.jsp">
 				<jsp:param name="callingPage" value="payments_inapp" />
 			</jsp:include>
 		</c:when>
-		<c:when test="${paymentPageData.appleIOSNonO2Business}">
+		<c:when test="${paymentsPage.appleIOSAndNotBusiness}">
 			<jsp:include page="../payments_common/content_header_itunes.jsp">
 				<jsp:param name="callingPage" value="payments_inapp" />
 			</jsp:include>
@@ -37,12 +37,12 @@
 		
 	<div class="paymentscontainer">
 		<c:choose>
-			<c:when test="${isO2Consumer eq true}">
+			<c:when test="${paymentsPage.consumerUser eq true}">
 				<jsp:include page="../payments_common/content_paymentoptions_o2user.jsp">
 					<jsp:param name="callingPage" value="payments_inapp" />
 				</jsp:include>
 			</c:when>
-			<c:when test="${paymentPageData.appleIOSNonO2Business}">
+			<c:when test="${paymentsPage.appleIOSAndNotBusiness}">
 				<%--we are not including the iTunes payment option because this is an external page and the link will not be intercepted (as it's happening in the page loaded by O2 Tracks app...) --%>
 			</c:when>
 			<c:otherwise>
@@ -54,7 +54,7 @@
 		</c:choose>
 
 	</div>
-	<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+	<c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentsPage.paymentDetails.activated)}">
         <div class="rel" style="padding: 0px 5px 10px 5px;">
             <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html"><s:message code='pays.deactivate.submit' /></a>
         </div>

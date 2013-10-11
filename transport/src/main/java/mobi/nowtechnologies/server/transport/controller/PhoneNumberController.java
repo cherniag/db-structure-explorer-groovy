@@ -19,18 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PhoneNumberController extends CommonController {
-		
-	private UserService userService;
-
-    private UserService vfUserService;
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setVfUserService(UserService vfUserService) {
-        this.vfUserService = vfUserService;
-    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "/{community:o2}/{apiVersion:3\\.[0-9]{1,3}}/PHONE_NUMBER",
@@ -66,9 +54,9 @@ public class PhoneNumberController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
-            "*/{community:vf_nz}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER.json"
+            "/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER.json"
     })
     public ModelAndView activatePhoneNumber_VF_NZ(
             @RequestParam(value = "PHONE", required = false) String phone,
@@ -82,9 +70,11 @@ public class PhoneNumberController extends CommonController {
         Exception ex = null;
         User user = null;
         try {
-            user = vfUserService.checkCredentials(userName, userToken, timestamp, community);
+            UserService userService = getUserService(community);
 
-            user = vfUserService.activatePhoneNumber(user, phone, true);
+            user = userService.checkCredentials(userName, userToken, timestamp, community);
+
+            user = userService.activatePhoneNumber(user, phone, true);
 
             return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
         }catch(Exception e){
@@ -100,6 +90,7 @@ public class PhoneNumberController extends CommonController {
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
     })
+
     public ModelAndView activatePhoneNumberJson(
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,

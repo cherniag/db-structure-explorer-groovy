@@ -13,10 +13,10 @@
 					<div class="wholePart">						
 						<div class="details noBg">
 							<h2><s:message code="pays.page.h1.options" /></h2>
-							<h3>${paymentPoliciesNote}</h3>
+							<h3>${paymentsPage.paymentPoliciesNote}</h3>
 							<div class="oneInputsGroup">
 								<div class="methodsBox">
-									<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+									<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 										<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 											<c:set var="method_name" value="creditcard" />
 											<s:message code='pays.select.creditcard' var="payment_label" />
@@ -84,7 +84,7 @@
 							</div>
 							 -->
 							 
-							<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+							<c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentsPage.paymentDetails.activated)}">
 								<h1 class="azHeader"><s:message code="pays.deactivate.header" /></h1>
 								<div class="buttonShadow rad7">
 									<div class="buttonBox rad7">

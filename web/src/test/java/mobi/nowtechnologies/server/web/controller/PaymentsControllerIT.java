@@ -88,7 +88,7 @@ public class PaymentsControllerIT extends TestCase {
 
 		String viewName = modelAndView.getViewName();
 		String paymentPoliciesNote = (String) modelMap.get("paymentPoliciesNote");
-		List<PaymentPolicyDto> paymentPolicies = (List<PaymentPolicyDto>) modelMap.get("paymentPolicies");
+		List<PaymentPolicyDto> paymentPolicies = (List<PaymentPolicyDto>) modelMap.get("paymentsPage.paymentPolicies");
 
 		assertEquals("payments", viewName);
 		assertNotNull(paymentPolicies);

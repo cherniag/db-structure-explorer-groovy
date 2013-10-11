@@ -4,9 +4,6 @@ import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.web.context.ServletContextAware;
@@ -19,6 +16,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -29,6 +27,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 	private static final String MOBILE_PATH_PARAM = "mobilePath";
 	private static final String VIEW_PATH_ACCORDING_TO_DEVICE = "viewPathAccordingToDevice";
 	private static final String ASSETS_PATH_ACCORDING_TO_COMMUNITY = "assetsPathAccordingToCommunity";
+	private static final String ASSETS_PATH_WITHOUT_COMMUNITY = "assetsPathWithoutCommunity";
+	private static final String ASSETS_PATH_ACCORDING_TO_COMMUNITY_WITHOUT_HOST = "assetsPathAccordingToCommunityWithoutHost";
 	private static final String VIEWS_PATH = "/WEB-INF/views/";
 	private static final String MOBILE_FOLDER_NAME = "mobile";
 	private static final String WWW_FOLDER_NAME = "www";
@@ -36,11 +36,13 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 	private static final String MOBILE_PATH = VIEWS_PATH + MOBILE_FOLDER_NAME;
 	private static final String WEB_PATH = VIEWS_PATH + WWW_FOLDER_NAME;
 	private static final String ASSETS_FOLDER_NAME = "assets";
+	private static final String CDN_SUFFIX = "CDN";
 
 	private static final Map<Boolean, String> deviceMap;
 	private static final String IS_MOBILE_REQUEST = "isMobileRequest";
 	
 	private ServletContext servletContext;
+	private Properties cdnProperties;
 	
 	static {
 		Map<Boolean, String> map = new HashMap<Boolean, String>();
@@ -76,7 +78,16 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 				requestScopeMap.put(VIEW_PATH_ACCORDING_TO_DEVICE, path);
 				requestScopeMap.put(IS_MOBILE_REQUEST, isMobile);
 				
-				requestScopeMap.put(ASSETS_PATH_ACCORDING_TO_COMMUNITY, ASSETS_FOLDER_NAME + "/" + deviceFolderName + "/" + communityName + "/");
+				String assetsCDN = getAssetsCDN(
+						communityName,
+						new StringBuilder().append(httpServletRequest.getContextPath()).append("/").toString());
+
+				String internalPath = new StringBuilder().append(ASSETS_FOLDER_NAME).append("/").
+						append(deviceFolderName).append("/").append(communityName).append("/").toString();
+
+				requestScopeMap.put(ASSETS_PATH_ACCORDING_TO_COMMUNITY_WITHOUT_HOST, internalPath);
+				requestScopeMap.put(ASSETS_PATH_ACCORDING_TO_COMMUNITY,new StringBuilder().append(assetsCDN).append(internalPath).toString() );
+				requestScopeMap.put(ASSETS_PATH_WITHOUT_COMMUNITY, new StringBuilder().append(assetsCDN).append(ASSETS_FOLDER_NAME).append("/").toString());
 				
 				requestScopeMap.put("community", communityName);
 				requestScopeMap.put("samsungCommunity", "samsung");
@@ -84,6 +95,29 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 			}
 		}
 
+	}
+
+	/**
+	 * Returns a path for assets based on assetsCDNMap values.
+	 * 
+	 * @param communityName the community name for this CDN
+	 * @param webAppContext the default web app context to be returned if no CDN value is present 
+	 * @return
+	 */
+	private String getAssetsCDN(String communityName, String webAppContext) {
+		// use specific CDN for community or a general CDN if no specific CDN is present...
+		String communityCdn = cdnProperties.getProperty( communityName + CDN_SUFFIX );
+		if ( communityCdn != null && !communityCdn.trim().isEmpty() ) {
+			return communityCdn.trim();
+		}
+		
+		String generalCDN = cdnProperties.getProperty( CDN_SUFFIX );
+		if ( generalCDN != null && !generalCDN.trim().isEmpty() ) {
+			return generalCDN.trim();
+		}
+		
+		// if no assets CDN is specified, we use the assets from the web application - this is done for backward compatibility if no CND property is specified
+		return webAppContext;
 	}
 	
 	protected String getViewPath(boolean isMobile, String communityName){
@@ -101,4 +135,9 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
+
+	public void setCdnProperties(Properties cdnProperties) {
+		this.cdnProperties = cdnProperties;
+	}
+
 }

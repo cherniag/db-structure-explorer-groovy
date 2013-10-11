@@ -46,7 +46,6 @@ public class UserNotificationServiceImplIT {
 		userNotificationService.setMessageSource(messageSource);
 		userNotificationService.setAvailableCommunities(new String[]{"o2","vf_nz"});
 		migHttpService = mock(MigHttpService.class);
-		userNotificationService.setSmsProviderBeanName("service.SmsProvider");
 		MigResponse migResponse = mock(MigResponse.class);
 		
 		Mockito.when(migResponse.getHttpStatus()).thenReturn(200);

@@ -22,6 +22,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
+    private VFNZSubscriberDataParser subscriberDataParser;
     protected String providerNumber;
 
     @Override
@@ -52,12 +53,20 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     }
 
     @Override
-    public void getSubscriberData(String phoneNumber, Processor<VFNZSubscriberData> processor) {
+    public void getSubscriberData(String phoneNumber,final Processor<VFNZSubscriberData> processor) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber, processor);
+        gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber, new Processor<VFNZSubscriberData>() {
+            {
+                messageParser = subscriberDataParser;
+            }
+            @Override
+            public void process(VFNZSubscriberData data) {
+                processor.process(data);
+            }
+        });
 
-        LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}] with [{}]", new Object[]{phoneNumber});
+        LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}]", new Object[]{phoneNumber});
     }
 
     public void setPhoneValidator(NZCellNumberValidator phoneValidator) {
@@ -70,5 +79,9 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     public void setProviderNumber(String providerNumber) {
         this.providerNumber = providerNumber;
+    }
+
+    public void setSubscriberDataParser(VFNZSubscriberDataParser subscriberDataParser) {
+        this.subscriberDataParser = subscriberDataParser;
     }
 }

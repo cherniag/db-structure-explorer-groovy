@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.Parser;
 
-public class VFNZSmsMessageParser implements Parser<String, VFNZSubscriberData> {
+public class VFNZSubscriberDataParser implements Parser<String, VFNZSubscriberData> {
 
     @Override
     public VFNZSubscriberData parse(String data) {

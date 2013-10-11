@@ -214,7 +214,7 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
-        if(user.isNonO2Community()){
+        if(user.isNonO2Community() && !user.isVFNZCommunityUser()){
             return mergePaymentPolicies(user, paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community));
         }
         if(isNull(segment))

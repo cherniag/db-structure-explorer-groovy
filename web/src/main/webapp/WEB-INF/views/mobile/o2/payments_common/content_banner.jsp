@@ -3,20 +3,20 @@
 
 <div class="paymentscontainer" style="background-color: inherit;margin-top: 20px; margin-bottom: 17px;">
 	<div class="userStatusText">
-		<c:if test="${not empty paymentPageData and not empty paymentPageData.subscriptionTexts and not empty paymentPageData.subscriptionTexts.statusText}">
-			<c:out value="${paymentPageData.subscriptionTexts.statusText}" />
+		<c:if test="${not empty paymentsPage.paymentPageData and not empty paymentsPage.paymentPageData.subscriptionTexts and not empty paymentsPage.paymentPageData.subscriptionTexts.statusText}">
+			<c:out value="${paymentsPage.paymentPageData.subscriptionTexts.statusText}" />
 			
-			<%-- <c:if test="${not empty paymentPageData.subscriptionTexts.futureText}">
-				&nbsp;/&nbsp;<c:out value="${paymentPageData.subscriptionTexts.futureText}" />
+			<%-- <c:if test="${not empty paymentsPage.paymentPageData.subscriptionTexts.futureText}">
+				&nbsp;/&nbsp;<c:out value="${paymentsPage.paymentPageData.subscriptionTexts.futureText}" />
 			</c:if> --%>
 			
-			<c:if test="${not empty paymentPageData.subscriptionTexts.nextBillingText}">
-				<br /><c:out value="${paymentPageData.subscriptionTexts.nextBillingText}" />
+			<c:if test="${not empty paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}">
+				<br /><c:out value="${paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}" />
 			</c:if>
 		</c:if>
 	</div>
 	<div class="userStatusPhone">
 		<img style="width: 9px; height: 15px; margin-right: 4px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_phone_account.png" />
-		${mobilePhoneNumber}
+		${paymentsPage.mobilePhoneNumber}
 	</div>
 </div>
