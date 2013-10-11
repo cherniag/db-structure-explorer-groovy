@@ -61,6 +61,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
@@ -1109,7 +1110,7 @@ public class UserServiceTest {
         //given
         final String deviceUID = "imei_357841034540704";
         final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
-        User userAccountWithSameDevice = new User();
+        User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
 
         Community community = new Community();
         doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
@@ -3427,7 +3428,57 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
         verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
                 null, null, null);
+    }
 
+    @Test
+    public void shouldFindUserTree(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(expectedUser.getOldUser()).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(expectedUser.getOldUser()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldFindUserTreeWithOutOldUser(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(null).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(nullValue()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldNotFindUserTree(){
+        //given
+        int userId = Integer.MAX_VALUE;
+        doReturn(null).when(userRepositoryMock).findUserTree(userId);
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(userId);
+
+        //then
+        assertThat(actualUser, is((User) null));
+
+        verify(userRepositoryMock, times(1)).findUserTree(userId);
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

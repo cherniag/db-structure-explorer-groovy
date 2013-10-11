@@ -20,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -432,7 +434,32 @@ public class UserRepositoryIT {
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());
 		assertEquals(testUser.getId(), actualUsers.get(1).getId());
-			
 	}
+
+    @Test
+    public void shouldFindUserTree(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withUserName("1").withMobile("2").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+
+        //when
+        User actualUser = userRepository.findUserTree(user.getId());
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(user.getId()));
+    }
+
+    @Test
+    public void shouldFindByUserNameAndCommunityAndOtherThanPassedId(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withUserName("1").withMobile("2").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+
+        //when
+        User actualUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getUserName(), user.getUserGroup().getCommunity(), Integer.MAX_VALUE);
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(user.getId()));
+    }
 
 }

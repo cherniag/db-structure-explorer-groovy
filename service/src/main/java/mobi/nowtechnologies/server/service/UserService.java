@@ -67,7 +67,6 @@ import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRA
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -134,16 +133,6 @@ public class UserService {
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.getOperator()));
         }
         return user;
-    }
-
-    private boolean isO2User(User user, String otac, O2UserDetails o2UserDetails) {
-        boolean isO2User;
-        if(isNotNull(otac)){
-            isO2User = o2ClientService.isO2User(o2UserDetails);
-        }else{
-            isO2User = user.isO2User();
-        }
-        return isO2User;
     }
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
@@ -1022,10 +1011,15 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-	// TODO Review this method
+    @Transactional(readOnly = true)
 	public User findUserTree(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
-		User user = userDao.findUserTree(userId);
+		User user = userRepository.findUserTree(userId);
+
+        if(isNotNull(user)){
+            User oldUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+            user.withOldUser(oldUser);
+        }
 
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;

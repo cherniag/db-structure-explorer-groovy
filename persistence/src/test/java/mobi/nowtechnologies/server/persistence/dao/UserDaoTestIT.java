@@ -36,9 +36,6 @@ public class UserDaoTestIT {
 	
 	@Resource(name = "persistence.UserDao")
 	private UserDao userDao;
-	
-	@Resource(name = "persistence.EntityDao")
-	private EntityDao entityDao;
 
 
 	@Test
@@ -49,12 +46,5 @@ public class UserDaoTestIT {
 	@Test
 	public void testFindUserGroupByCommunity() {
 		System.out.println(userDao.getUserGroupByCommunity("Metal Hammer"));
-	}
-	
-	@Test
-	public void testFindUserTree() {
-		int userId = 1;
-		User user = userDao.findUserTree(userId);
-		assertNotNull(user);
 	}
 }

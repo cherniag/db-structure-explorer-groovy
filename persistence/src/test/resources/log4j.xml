@@ -47,7 +47,7 @@
 		<appender-ref ref="stderr" />
 	</logger>
 	<logger name="org.hibernate">
-		<level value="TRACE"></level>
+		<level value="DEBUG"></level>
 		<appender-ref ref="stdout" />
 		<appender-ref ref="stderr" />
 	</logger>
