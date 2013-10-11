@@ -1736,9 +1736,9 @@ public class UserService {
             populateSubscriberData(user, (SubscriberData) null);
         } else {
             try {
-                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubsriberData>() {
+                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubscriberData>() {
                     @Override
-                    public void process(SubsriberData data) {
+                    public void process(SubscriberData data) {
                         populateSubscriberData(user, data);
                     }
                 });
@@ -1751,13 +1751,13 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void populateSubscriberData(User user, SubsriberData subscriberData) {
+    private void populateSubscriberData(User user, SubscriberData subscriberData) {
         LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
         userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
 
         userRepository.save(user);
 
-        LOGGER.info("Subsriber data was populated for user[{}] with data [{}]", new Object[]{user, subscriberData});
+        LOGGER.info("Subscriber data was populated for user[{}] with data [{}]", new Object[]{user, subscriberData});
     }
 
 	@Transactional(readOnly = true)
