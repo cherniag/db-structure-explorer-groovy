@@ -53,7 +53,7 @@ public class UpdateO2UserTask {
 
 	private void updateUser(User u) {
 		LOG.info("getting subscriber data for phone [{}], id=[{}]", u.getMobile(), u.getId());
-		if ( userService.isPromotedDevice(u.getMobile()) ) {
+		if ( userService.isPromotedDevice(u.getMobile(), u.getUserGroup().getCommunity()) ) {
 			LOG.info("[promoted device] skipping subscriber data for [{}]", u.getMobile());
 			return;
 		}

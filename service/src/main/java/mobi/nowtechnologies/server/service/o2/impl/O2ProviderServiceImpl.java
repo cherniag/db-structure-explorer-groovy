@@ -8,6 +8,9 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.data.SubscriberData;
+import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -220,8 +223,8 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	}
 
 	@Override
-	public ProviderUserDetails getUserDetails(String token, String phoneNumber) {
-        if (userService.isPromotedDevice(phoneNumber)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
+	public ProviderUserDetails getUserDetails(String token, String phoneNumber, Community community) {
+        if (userService.isPromotedDevice(phoneNumber, community)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
 
 		String serverO2Url = getServerO2Url(phoneNumber);
 

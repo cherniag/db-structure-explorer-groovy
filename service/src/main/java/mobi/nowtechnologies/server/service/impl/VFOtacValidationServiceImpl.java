@@ -28,7 +28,7 @@ public class VFOtacValidationServiceImpl implements VFOtacValidationService {
     public ProviderUserDetails validate(String otac, String phoneNumber, Community community) {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails().withContract(PAYG.name());
 
-        boolean promotedDevice = userService.isPromotedDevice(phoneNumber);
+        boolean promotedDevice = userService.isPromotedDevice(phoneNumber, community);
         if (promotedDevice && TEST_OTAC_NON_VF.equals(otac)) {
 
             providerUserDetails.withOperator(NON_VF.toString());

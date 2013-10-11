@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import javax.xml.transform.dom.DOMSource;
@@ -32,14 +31,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.transform.dom.DOMSource;
-
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ O2ProviderServiceImpl.class})
@@ -200,104 +195,111 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_O2User_and_PAYGtariff() {
+	public void getUserDetail_Success_with_O2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("o2", userDetails.operator);
 		assertEquals("PAYG", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_notO2User_and_PAYGtariff() {
+	public void getUserDetail_Success_with_notO2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "11111111-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("non-o2", userDetails.operator);
 		assertEquals("PAYG", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_O2User_and_PAYGMtariff() {
+	public void getUserDetail_Success_with_O2User_and_PAYGMTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "22222222-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("o2", userDetails.operator);
 		assertEquals("PAYM", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test
-	public void getUserDetail_Success_with_notO2User_and_PAYGMtariff() {
+	public void getUserDetail_Success_with_notO2User_and_PAYGMTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "33333333-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("non-o2", userDetails.operator);
 		assertEquals("PAYM", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test
 	public void getUserDetail_Success_with_O2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "44444444-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("o2", userDetails.operator);
 		assertEquals("business", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test
 	public void getUserDetail_Success_with_notO2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "55555555-c768-4fe7-bb56-a5e0c722cd44";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 
-        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber);
+        ProviderUserDetails userDetails = fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 		assertEquals("non-o2", userDetails.operator);
 		assertEquals("business", userDetails.contract);
 
-        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber);
+        verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
 	}
 	
 	@Test(expected=ExternalServiceException.class)
 	public void getUserDetail_Fail() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "6666fasdffwqe";
+        Community community = new Community();
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber);
+        doReturn(false).when(userServiceMock).isPromotedDevice(phoneNumber, community);
 		
-		fixture.getUserDetails(otac_auth_code, phoneNumber);
+		fixture.getUserDetails(otac_auth_code, phoneNumber, community);
 	}
 	
 	@Test
