@@ -15,10 +15,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
 
@@ -216,4 +217,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             +"and community=?2 "
             +"and user.id<>?3")
     User findByUserNameAndCommunityAndOtherThanPassedId(String userName, Community community, int userId);
+
+    @Modifying
+    @Query(value = "update User u " +
+            "set u.deviceUID=?1 " +
+            "where " +
+            "u.id = ?2 ")
+    int updateUserDeviceUid(String newDeviceUID, int userId);
 }

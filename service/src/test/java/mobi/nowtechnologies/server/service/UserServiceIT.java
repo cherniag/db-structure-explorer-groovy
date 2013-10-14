@@ -5,6 +5,7 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -358,6 +359,21 @@ public class UserServiceIT {
 
         //then
         assertNotNull(accountCheckDTO);
+    }
+
+    @Test
+    public void shouldMerge(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("new").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
+        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("old").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
+
+        //when
+        User actualUser = userService.mergeUser(oldUser, user);
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(oldUser.getId()));
+        assertThat(actualUser.getDeviceUID(), is(user.getDeviceUID()));
     }
 
 }

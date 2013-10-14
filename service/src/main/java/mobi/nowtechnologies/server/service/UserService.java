@@ -117,13 +117,6 @@ public class UserService {
 
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
-    private User checkAndMerge(User user, User mobileUser) {
-        if (mobileUser.getId() != user.getId()) {
-            user = mergeUser(mobileUser, user);
-        }
-        return user;
-    }
-
     private User updateContractAndProvider(User user, O2UserDetails providerUserDetails) {
         if (isPromotedDevice(user.getMobile()) ) {
             user.setContract(Contract.PAYM);
@@ -640,7 +633,9 @@ public class UserService {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
         userRepository.delete(userByDeviceUID);
-        userRepository.save(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()));
+        int updatedUsersCount = userRepository.updateUserDeviceUid(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()).getDeviceUID(), oldUser.getId());
+        if (updatedUsersCount!=1) throw new ServiceException("Couldn't update user deviceUid");
+
         accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
 
         LOGGER.info("The current user after merge now is [{}]", oldUser);
@@ -1283,7 +1278,7 @@ public class UserService {
 
 		if (user != null && userByDeviceUID != null && user.getId() != userByDeviceUID.getId()) {
 			user.setFacebookId(userCredentions.getId());
-			mergeUser(user, userByDeviceUID);
+            user = mergeUser(user, userByDeviceUID);
 		} else {
 			user = userByDeviceUID;
 			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
@@ -1578,7 +1573,7 @@ public class UserService {
 			throw new NullPointerException("The parameter payment is null");
 
 		BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
-				payment.getAmount());
+                payment.getAmount());
 		user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
 
 		user = updateUser(user);
