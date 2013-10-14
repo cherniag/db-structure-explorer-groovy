@@ -2493,7 +2493,7 @@ public class UserServiceTest {
         assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
         assertEquals(expectedHasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
 
-        assertEquals(Contract.valueOf(providerUserDetails.contract), user.getContract());
+        assertNull(user.getContract());
         assertEquals(providerUserDetails.operator, user.getProvider());
         assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
