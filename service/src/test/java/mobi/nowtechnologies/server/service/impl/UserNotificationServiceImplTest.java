@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -55,6 +56,7 @@ public class UserNotificationServiceImplTest {
 	private RestTemplate restTemplateMock;
 	private MigHttpService migHttpServiceMock;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
+    private DeviceService deviceServiceMock;
 
 	/**
 	 * Run the UserNotificationImpl() constructor test.
@@ -2470,6 +2472,88 @@ public class UserNotificationServiceImplTest {
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
 		verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
 	}
+
+    @Test
+    public void testSendSMSWithUrl_promotedPhoneNumber_Success() throws UnsupportedEncodingException {
+
+        String msgCode = "msgCode";
+        final String baseUrl = "baseUrl";
+        String[] msgArgs = {baseUrl};
+
+
+        final String rewriteUrlParameter = "o2";
+        final String rememberMeTokenCookieName = "rememberMeTokenCookieName";
+
+        userNotificationImplSpy.setAvailableCommunities(new String[]{rewriteUrlParameter});
+        userNotificationImplSpy.setRememberMeTokenCookieName(rememberMeTokenCookieName);
+
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        User user = UserFactory.createUser();
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(null);
+        user.setSegment(SegmentType.BUSINESS);
+        user.setContract(null);
+        user.setDeviceType(deviceType);
+
+        String message = "message";
+        String title = "title";
+        final String rememberMeToken = "rememberMeToken";
+        String url = "url";
+
+        String tinyUrlService ="tinyUrlService";
+        userNotificationImplSpy.setTinyUrlService(tinyUrlService );
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.not.for.device.type");
+        doReturn(true).when(deviceServiceMock).isPromotedDevicePhone(o2Community, user.getMobile(), null);
+        doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(user.getUserName(), user.getToken());
+
+        ResponseEntity responseEntiytMock = mock(ResponseEntity.class);
+        doReturn(url).when(responseEntiytMock).getBody();
+
+        final ArgumentMatcher<MultiValueMap<String, Object>> matcher = new ArgumentMatcher<MultiValueMap<String, Object>>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                MultiValueMap<String, Object> request = (MultiValueMap<String, Object>) argument;
+
+                assertNotNull(request);
+                String expectedUrl = baseUrl + "?community=" + rewriteUrlParameter + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+                LinkedList<String> expectedLinkedList = new LinkedList<String>();
+                expectedLinkedList.add(expectedUrl);
+
+                assertEquals(expectedLinkedList, request.get("url"));
+
+                return true;
+            }
+        };
+
+        doReturn(responseEntiytMock).when(restTemplateMock).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
+
+        doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
+        doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
+
+        MigResponse migResponse = MigResponse.successfulMigResponse();
+        doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
+
+        boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
+
+        assertFalse(wasSmsSentSuccessfully);
+
+        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
+        verify(deviceServiceMock, times(1)).isPromotedDevicePhone(o2Community, user.getMobile(), null);
+        verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
+        verify(responseEntiytMock, times(0)).getBody();
+        verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
+        verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
+        verify(migHttpServiceMock, times(0)).send(user.getMobile(), message, title);
+    }
 	
 	@Test
 	public void testSendSMSWithUrl_AvailableCommunitiesDoesNotContainSuchCommunity_Success() throws UnsupportedEncodingException {
@@ -3122,6 +3206,7 @@ public class UserNotificationServiceImplTest {
 		nowTechTokenBasedRememberMeServicesMock = mock(NowTechTokenBasedRememberMeServices.class);
 		restTemplateMock = mock(RestTemplate.class);
 		migHttpServiceMock = mock(MigHttpService.class);
+		deviceServiceMock = mock(DeviceService.class);
 
 		userNotificationImplSpy.setUserService(userServiceMock);
 		userNotificationImplSpy.setPaymentsUrl("paymentsUrl");
@@ -3129,6 +3214,6 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setMessageSource(communityResourceBundleMessageSourceMock);
 		userNotificationImplSpy.setRestTemplate(restTemplateMock);
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
-
+		userNotificationImplSpy.setDeviceService(deviceServiceMock);
 	}
 }

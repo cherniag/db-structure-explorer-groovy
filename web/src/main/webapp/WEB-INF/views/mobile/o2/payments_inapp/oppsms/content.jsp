@@ -4,11 +4,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="header pie">
-	<%-- <a href="${pageContext.request.contextPath}/payments.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a> --%>
-	<span class="logo" style="margin-left: 58px"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-	<a href="${pageContext.request.contextPath}/account.html" class="button-small button-right"><s:message code='m.page.main.menu.close' /></a>
+    <%-- <a href="payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a> --%>
+    <span class="logo" style="padding-right: 49px;padding-left: 58px;"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
 </div>
-
 
 <c:choose>
     <c:when test="${suweeks == 1}">
@@ -44,8 +42,8 @@
         </a>
         
         <div class="rel" style="margin:12px 6px; padding:6px 0; border-top: 1px solid #a0a0a0">
-            <input class="button-grey no-margin left pie" title="${pageContext.request.contextPath}/payments.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
-            <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/payments/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
+            <input class="button-grey no-margin left pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
+            <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/payments_inapp/oppsms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
             <div style="clear: both;"></div>
         </div>
         

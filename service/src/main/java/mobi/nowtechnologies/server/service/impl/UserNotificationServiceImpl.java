@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
@@ -35,371 +36,365 @@ import java.util.concurrent.Future;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserNotificationServiceImpl implements UserNotificationService, ApplicationContextAware {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
-
-	private UserService userService;
-
-	private CommunityResourceBundleMessageSource messageSource;
-
-	private List<String> availableCommunities = Collections.emptyList();
-
-	private NowTechTokenBasedRememberMeServices rememberMeServices;
-
-	private RestTemplate restTemplate = new RestTemplate();
-
-	private String paymentsUrl;
-
-	private String unsubscribeUrl;
-
-	private String tinyUrlService;
-
-	private String rememberMeTokenCookieName;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
+    private UserService userService;
+    private CommunityResourceBundleMessageSource messageSource;
+    private List<String> availableCommunities = Collections.emptyList();
+    private NowTechTokenBasedRememberMeServices rememberMeServices;
+    private RestTemplate restTemplate = new RestTemplate();
+    private String paymentsUrl;
+    private String unsubscribeUrl;
+    private String tinyUrlService;
+    private String rememberMeTokenCookieName;
+    private DeviceService deviceService;
     private ApplicationContext applicationContext;
 
     public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+        this.userService = userService;
+    }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
+        this.messageSource = messageSource;
+    }
+
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
 
     public void setAvailableCommunities(String[] availableCommunities) {
-		if (availableCommunities == null)
-			return;
+        if (availableCommunities == null)
+            return;
 
-		this.availableCommunities = Arrays.asList(availableCommunities);
-	}
+        this.availableCommunities = Arrays.asList(availableCommunities);
+    }
 
-	public void setRememberMeServices(NowTechTokenBasedRememberMeServices rememberMeServices) {
-		this.rememberMeServices = rememberMeServices;
-	}
+    public void setRememberMeServices(NowTechTokenBasedRememberMeServices rememberMeServices) {
+        this.rememberMeServices = rememberMeServices;
+    }
 
-	public void setPaymentsUrl(String paymentsUrl) {
-		this.paymentsUrl = paymentsUrl;
-	}
+    public String getPaymentsUrl() {
+        return paymentsUrl;
+    }
 
-	public String getPaymentsUrl() {
-		return paymentsUrl;
-	}
+    public void setPaymentsUrl(String paymentsUrl) {
+        this.paymentsUrl = paymentsUrl;
+    }
 
-	public void setUnsubscribeUrl(String unsubscribeUrl) {
-		this.unsubscribeUrl = unsubscribeUrl;
-	}
+    public String getUnsubscribeUrl() {
+        return unsubscribeUrl;
+    }
 
-	public String getUnsubscribeUrl() {
-		return unsubscribeUrl;
-	}
+    public void setUnsubscribeUrl(String unsubscribeUrl) {
+        this.unsubscribeUrl = unsubscribeUrl;
+    }
 
-	public void setTinyUrlService(String tinyUrlService) {
-		this.tinyUrlService = tinyUrlService;
-	}
+    public void setTinyUrlService(String tinyUrlService) {
+        this.tinyUrlService = tinyUrlService;
+    }
 
-	public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
-		this.rememberMeTokenCookieName = rememberMeTokenCookieName;
-	}
-	
-	public void setRestTemplate(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
+    public void setRememberMeTokenCookieName(String rememberMeTokenCookieName) {
+        this.rememberMeTokenCookieName = rememberMeTokenCookieName;
+    }
 
-	@Async
-	@Override
-	public Future<Boolean> notifyUserAboutSuccesfullPayment(User user) {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
-			if (user == null)
-				throw new NullPointerException("The parameter user is null");
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
-			LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity()
-					.getName()), UserNotificationService.class);
+    @Async
+    @Override
+    public Future<Boolean> notifyUserAboutSuccesfullPayment(User user) {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
+            if (user == null)
+                throw new NullPointerException("The parameter user is null");
 
-			Future<Boolean> result;
-			try {
+            LogUtils.putPaymentMDC(String.valueOf(user.getId()), String.valueOf(user.getUserName()), String.valueOf(user.getUserGroup().getCommunity()
+                    .getName()), UserNotificationService.class);
 
-				result = userService.makeSuccesfullPaymentFreeSMSRequest(user);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-				result = new AsyncResult<Boolean>(Boolean.FALSE);
-			}
-			LOGGER.info("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removePaymentMDC();
-		}
-	}
+            Future<Boolean> result;
+            try {
 
-	@Async
-	@Override
-	public Future<Boolean> sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
+                result = userService.makeSuccesfullPaymentFreeSMSRequest(user);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                result = new AsyncResult<Boolean>(Boolean.FALSE);
+            }
+            LOGGER.info("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removePaymentMDC();
+        }
+    }
 
-			if (user == null)
-				throw new NullPointerException("The parameter user is null");
-			if (user.getCurrentPaymentDetails() == null)
-				throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+    @Async
+    @Override
+    public Future<Boolean> sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+            if (user == null)
+                throw new NullPointerException("The parameter user is null");
+            if (user.getCurrentPaymentDetails() == null)
+                throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
-			LOGGER.info("Attempt to send unsubscription confirmation sms async in memory");
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-			Integer days = Days.daysBetween(new DateTime(Utils.getEpochMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
-			if (!rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")) {
-				boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.after.text",
-						new String[] { paymentsUrl, days.toString() });
+            LOGGER.info("Attempt to send unsubscription confirmation sms async in memory");
 
-				if (wasSmsSentSuccessfully) {
-					LOGGER.info("The unsubscription confirmation sms was sent successfully");
-					result = new AsyncResult<Boolean>(Boolean.TRUE);
-				} else {
-					LOGGER.info("The unsubscription confirmation sms wasn't sent");
-				}
-			} else {
-				LOGGER.info("The unsubscription confirmation sms wasn't sent cause rejecting");
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
+            Integer days = Days.daysBetween(new DateTime(Utils.getEpochMillis()).toDateMidnight(), new DateTime(user.getNextSubPayment() * 1000L).toDateMidnight()).getDays();
+            if (!rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type")) {
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.after.text",
+                        new String[]{paymentsUrl, days.toString()});
 
-	@Async
-	@Override
-	public Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
-			if (user == null)
-				throw new NullPointerException("The parameter user is null");
-			if (user.getCurrentPaymentDetails() == null)
-				throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The unsubscription confirmation sms was sent successfully");
+                    result = new AsyncResult<Boolean>(Boolean.TRUE);
+                } else {
+                    LOGGER.info("The unsubscription confirmation sms wasn't sent");
+                }
+            } else {
+                LOGGER.info("The unsubscription confirmation sms wasn't sent cause rejecting");
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+    @Async
+    @Override
+    public Future<Boolean> sendUnsubscribePotentialSMS(User user) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
+            if (user == null)
+                throw new NullPointerException("The parameter user is null");
+            if (user.getCurrentPaymentDetails() == null)
+                throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
-			LOGGER.info("Attempt to send subscription confirmation sms async in memory");
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-			if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
+            LOGGER.info("Attempt to send subscription confirmation sms async in memory");
 
-				boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[] { unsubscribeUrl });
+            if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
 
-				if (wasSmsSentSuccessfully) {
-					LOGGER.info("The subscription confirmation sms was sent successfully");
-					result = new AsyncResult<Boolean>(Boolean.TRUE);
-				} else {
-					LOGGER.info("The subscription confirmation sms wasn't sent");
-				}
-			} else {
-				LOGGER.info("The subscription confirmation sms wasn't sent cause rejecting");
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl});
 
-	@Async
-	@Override
-	public Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
-			if (user == null)
-				throw new NullPointerException("The parameter user is null");
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The subscription confirmation sms was sent successfully");
+                    result = new AsyncResult<Boolean>(Boolean.TRUE);
+                } else {
+                    LOGGER.info("The subscription confirmation sms wasn't sent");
+                }
+            } else {
+                LOGGER.info("The subscription confirmation sms wasn't sent cause rejecting");
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
-			final mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = user.getStatus();
-			final String userStatusName = userStatus.getName();
-			final List<PaymentDetails> paymentDetailsList = user.getPaymentDetailsList();
+    @Async
+    @Override
+    public Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
+            if (user == null)
+                throw new NullPointerException("The parameter user is null");
 
-			if (userStatusName == null)
-				throw new NullPointerException("The parameter userStatusName is null");
-			if (paymentDetailsList == null)
-				throw new NullPointerException("The parameter paymentDetailsList is null");
+            final mobi.nowtechnologies.server.persistence.domain.UserStatus userStatus = user.getStatus();
+            final String userStatusName = userStatus.getName();
+            final List<PaymentDetails> paymentDetailsList = user.getPaymentDetailsList();
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+            if (userStatusName == null)
+                throw new NullPointerException("The parameter userStatusName is null");
+            if (paymentDetailsList == null)
+                throw new NullPointerException("The parameter paymentDetailsList is null");
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			if (userStatusName.equals(UserStatus.LIMITED.name()) && paymentDetailsList.isEmpty()) {
-				if (!rejectDevice(user, "sms.notification.limited.not.for.device.type")) {
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-					boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.freeTrialExpired.text", new String[] { paymentsUrl });
+            if (userStatusName.equals(UserStatus.LIMITED.name()) && paymentDetailsList.isEmpty()) {
+                if (!rejectDevice(user, "sms.notification.limited.not.for.device.type")) {
 
-					if (wasSmsSentSuccessfully) {
-						LOGGER.info("The free trial expired sms was sent successfully");
-						result = new AsyncResult<Boolean>(Boolean.TRUE);
-					} else {
-						LOGGER.info("The free trial expired sms wasn't sent");
-					}
-				} else {
-					LOGGER.info("The free trial expired sms wasn't sent cause rejecting");
-				}
-			} else {
-				LOGGER.info("The free trial expired sms wasn't send cause the user has [{}] status and [{}] payment details", userStatusName, paymentDetailsList);
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
+                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.freeTrialExpired.text", new String[]{paymentsUrl});
 
-	@Async
-	@Override
-	public Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
+                    if (wasSmsSentSuccessfully) {
+                        LOGGER.info("The free trial expired sms was sent successfully");
+                        result = new AsyncResult<Boolean>(Boolean.TRUE);
+                    } else {
+                        LOGGER.info("The free trial expired sms wasn't sent");
+                    }
+                } else {
+                    LOGGER.info("The free trial expired sms wasn't sent cause rejecting");
+                }
+            } else {
+                LOGGER.info("The free trial expired sms wasn't send cause the user has [{}] status and [{}] payment details", userStatusName, paymentDetailsList);
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
-			if (user == null)
-				throw new NullPointerException("The parameter user is null");
-			if (user.getCurrentPaymentDetails() == null)
-				throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
+    @Async
+    @Override
+    public Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+            if (user == null)
+                throw new NullPointerException("The parameter user is null");
+            if (user.getCurrentPaymentDetails() == null)
+                throw new NullPointerException("The parameter user.getCurrentPaymentDetails() is null");
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			if (user.isO2PAYGConsumer()) {
-				if (!rejectDevice(user, "sms.notification.lowBalance.not.for.device.type")) {
-					boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.lowBalance.text", null);
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-					if (wasSmsSentSuccessfully) {
-						LOGGER.info("The low balance sms was sent successfully");
-						result = new AsyncResult<Boolean>(Boolean.TRUE);
-					} else {
-						LOGGER.info("The low balance sms wasn't sent");
-					}
-				} else {
-					LOGGER.info("The low balance sms wasn't sent cause rejecting");
-				}
-			} else {
-				LOGGER.info("The low balance sms wasn't sent cause user isn't o2 PAYG consumer [{}]", user);
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
+            if (user.isO2PAYGConsumer()) {
+                if (!rejectDevice(user, "sms.notification.lowBalance.not.for.device.type")) {
+                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.lowBalance.text", null);
 
-	@Async
-	@Override
-	public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("input parameters pendingPayment: [{}]", pendingPayment);
+                    if (wasSmsSentSuccessfully) {
+                        LOGGER.info("The low balance sms was sent successfully");
+                        result = new AsyncResult<Boolean>(Boolean.TRUE);
+                    } else {
+                        LOGGER.info("The low balance sms wasn't sent");
+                    }
+                } else {
+                    LOGGER.info("The low balance sms wasn't sent cause rejecting");
+                }
+            } else {
+                LOGGER.info("The low balance sms wasn't sent cause user isn't o2 PAYG consumer [{}]", user);
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
-			if (pendingPayment == null)
-				throw new NullPointerException("The parameter pendingPayment is null");
+    @Async
+    @Override
+    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("input parameters pendingPayment: [{}]", pendingPayment);
 
-			User user = pendingPayment.getUser();
+            if (pendingPayment == null)
+                throw new NullPointerException("The parameter pendingPayment is null");
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+            User user = pendingPayment.getUser();
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-			final int madeRetries = paymentDetails.getMadeRetries();
-			final int retriesOnError = paymentDetails.getRetriesOnError();
+            PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 
-			if (madeRetries == retriesOnError) {
+            final int madeRetries = paymentDetails.getMadeRetries();
+            final int retriesOnError = paymentDetails.getRetriesOnError();
 
-				int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-				if (!rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type")) {
-					boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[] { paymentsUrl });
+            if (madeRetries == retriesOnError) {
 
-					if (wasSmsSentSuccessfully) {
-						LOGGER.info("The payment fail sms was sent successfully");
-						result = new AsyncResult<Boolean>(Boolean.TRUE);
-					} else {
-						LOGGER.info("The payment fail sms wasn't sent");
-					}
-				} else {
-					LOGGER.info("The payment fail sms wasn't sent cause rejecting");
-				}
-			} else {
-				LOGGER.info("The payment fail sms wasn't sent cause madeRetries [{}] and retriesOnError [{}] aren't matched", madeRetries, retriesOnError);
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
-	
-	@Async
-	@Override
-	public Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException {
-		try {
-			LOGGER.debug("send4GDowngradeSMS [{}, {}]", user, smsType);
-			if ( user == null ) {
-				throw new NullPointerException("The parameter user is null");
-			}
-			if ( smsType == null ) {
-				throw new NullPointerException("smsType is null");
-			}
+                int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
+                if (!rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type")) {
+                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[]{paymentsUrl});
 
-			final UserGroup userGroup = user.getUserGroup();
-			final Community community = userGroup.getCommunity();
+                    if (wasSmsSentSuccessfully) {
+                        LOGGER.info("The payment fail sms was sent successfully");
+                        result = new AsyncResult<Boolean>(Boolean.TRUE);
+                    } else {
+                        LOGGER.info("The payment fail sms wasn't sent");
+                    }
+                } else {
+                    LOGGER.info("The payment fail sms wasn't sent cause rejecting");
+                }
+            } else {
+                LOGGER.info("The payment fail sms wasn't sent cause madeRetries [{}] and retriesOnError [{}] aren't matched", madeRetries, retriesOnError);
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
-			LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+    @Async
+    @Override
+    public Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException {
+        try {
+            LOGGER.debug("send4GDowngradeSMS [{}, {}]", user, smsType);
+            if (user == null) {
+                throw new NullPointerException("The parameter user is null");
+            }
+            if (smsType == null) {
+                throw new NullPointerException("smsType is null");
+            }
 
-			Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
 
-			LOGGER.info("Attempt to send downgrade sms async in memory");
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
-			if (!rejectDevice(user, "sms.notification.downgrade.not.for.device.type")) {
-				
-				String smsPrefix = "sms.downgrade.subscriber.text";
-				if ( UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL.equals(smsType) ) {
-					smsPrefix = "sms.downgrade.freetrial.text";
-				}
+            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
-				boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] { paymentsUrl });
+            LOGGER.info("Attempt to send downgrade sms async in memory");
 
-				if (wasSmsSentSuccessfully) {
-					LOGGER.info("The downgrade sms was sent successfully");
-					result = new AsyncResult<Boolean>(Boolean.TRUE);
-				} else {
-					LOGGER.info("The downgrade sms wasn't sent");
-				}
-			} else {
-				LOGGER.info("The downgrade sms wasn't sent cause rejecting");
-			}
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} finally {
-			LogUtils.removeGlobalMDC();
-		}
-	}
+            if (!rejectDevice(user, "sms.notification.downgrade.not.for.device.type")) {
+
+                String smsPrefix = "sms.downgrade.subscriber.text";
+                if (UserNotificationService.DOWNGRADE_FROM_4G_FREETRIAL.equals(smsType)) {
+                    smsPrefix = "sms.downgrade.freetrial.text";
+                }
+
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{paymentsUrl});
+
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The downgrade sms was sent successfully");
+                    result = new AsyncResult<Boolean>(Boolean.TRUE);
+                } else {
+                    LOGGER.info("The downgrade sms wasn't sent");
+                }
+            } else {
+                LOGGER.info("The downgrade sms wasn't sent cause rejecting");
+            }
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+    }
 
     @Async
     @Override
     public Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException {
         try {
             LOGGER.debug("sendActivationPinSMS [{}, {}]", user);
-            if ( user == null ) {
+            if (user == null) {
                 throw new NullPointerException("The parameter user is null");
             }
 
@@ -416,7 +411,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
                 String smsPrefix = "sms.activation.pin.text";
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[] { null, user.getPin() });
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The activation pin sms was sent successfully");
@@ -434,158 +429,161 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
     }
 
-	public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
-		LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
-		
-		if (msgCode == null)
-			throw new NullPointerException("The parameter msgCode is null");
+    public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
+        LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 
-		final UserGroup userGroup = user.getUserGroup();
-		Community community = userGroup.getCommunity();
-		String communityUrl = community.getRewriteUrlParameter();
+        if (msgCode == null)
+            throw new NullPointerException("The parameter msgCode is null");
 
-		boolean wasSmsSentSuccessfully = false;
+        final UserGroup userGroup = user.getUserGroup();
+        Community community = userGroup.getCommunity();
+        String communityUrl = community.getRewriteUrlParameter();
 
-		if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
+        boolean wasSmsSentSuccessfully = false;
 
-			if (availableCommunities.contains(communityUrl)) {
+        if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
+            if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
+                if (availableCommunities.contains(communityUrl)) {
 
-				String baseUrl = msgArgs != null ? msgArgs[0] : null;
-				if (baseUrl != null) {
-					String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
-					String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+                    String baseUrl = msgArgs != null ? msgArgs[0] : null;
+                    if (baseUrl != null) {
+                        String rememberMeToken = rememberMeServices.getRememberMeToken(user.getUserName(), user.getToken());
+                        String url = baseUrl + "?community=" + communityUrl + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
 
-					MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-					request.add("url", url);
+                        MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+                        request.add("url", url);
 
-					try {
-						url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
-					} catch (Exception e) {
-						LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
-					}
+                        try {
+                            url = restTemplate.postForEntity(tinyUrlService, request, String.class).getBody();
+                        } catch (Exception e) {
+                            LOGGER.error("Error get tinyUrl. tinyLink:[{}], error:[{}]", tinyUrlService, e.getMessage());
+                        }
 
-					msgArgs[0] = url;
-				}
+                        msgArgs[0] = url;
+                    }
 
-				String message = getMessage(user, community, msgCode, msgArgs);
+                    String message = getMessage(user, community, msgCode, msgArgs);
 
-				if (!StringUtils.isBlank(message)) {
-					String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
-					SMSResponse smsResponse = getSMSProvider(communityUrl).send(user.getMobile(), message, title);
-					if (smsResponse.isSuccessful()) {
-						wasSmsSentSuccessfully = true;
-					} else {
-						LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
-					}
-				} else {
-					LOGGER.info("The sms wasn't sent cause empty sms text message");
-				}
-			} else {
-				LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
-			}
-		} else {
-			LOGGER.info("The sms wasn't sent cause rejecting");
-		}
+                    if (!StringUtils.isBlank(message)) {
+                        String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
+                        SMSResponse smsResponse = getSMSProvider(communityUrl).send(user.getMobile(), message, title);
+                        if (smsResponse.isSuccessful()) {
+                            wasSmsSentSuccessfully = true;
+                        } else {
+                            LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
+                        }
+                    } else {
+                        LOGGER.info("The sms wasn't sent cause empty sms text message");
+                    }
+                } else {
+                    LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
+                }
+            } else {
+                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[]{user.getMobile(), communityUrl});
+            }
+        } else {
+            LOGGER.info("The sms wasn't sent cause rejecting");
+        }
 
-		LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-		return wasSmsSentSuccessfully;
-	}
+        LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
+        return wasSmsSentSuccessfully;
+    }
 
-    public SMSGatewayService getSMSProvider(String communityUrl){
+    public SMSGatewayService getSMSProvider(String communityUrl) {
         String smsProviderBeanName = messageSource.getMessage(communityUrl, "service.bean.smsProvider", null, null);
         return (SMSGatewayService) applicationContext.getBean(smsProviderBeanName);
     }
 
-	public boolean rejectDevice(User user, String code) {
-		Community community = user.getUserGroup().getCommunity();
-		String communityUrl = community.getRewriteUrlParameter();
-		String devices = messageSource.getMessage(communityUrl, code, null, null, null);
-		for (String device : devices.split(",")) {
-			if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
-				LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean rejectDevice(User user, String code) {
+        Community community = user.getUserGroup().getCommunity();
+        String communityUrl = community.getRewriteUrlParameter();
+        String devices = messageSource.getMessage(communityUrl, code, null, null, null);
+        for (String device : devices.split(",")) {
+            if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
+                LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-		LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
-		
-		if (msgCodeBase == null)
-			throw new NullPointerException("The parameter msgCodeBase is null");
+    protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
+        LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
 
-		String msg = null;
+        if (msgCodeBase == null)
+            throw new NullPointerException("The parameter msgCodeBase is null");
 
-		String[] codes = new String[6];
+        String msg = null;
 
-		final String provider = user.getProvider();
-		final SegmentType segment = user.getSegment();
-		final Contract contract = user.getContract();
-		final DeviceType deviceType = user.getDeviceType();
+        String[] codes = new String[6];
+
+        final String provider = user.getProvider();
+        final SegmentType segment = user.getSegment();
+        final Contract contract = user.getContract();
+        final DeviceType deviceType = user.getDeviceType();
         final PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
-		String deviceTypeName = null;
-		
-		if (deviceType != null) {
-			deviceTypeName = deviceType.getName();
-		}
+        String deviceTypeName = null;
 
-		codes[0] = msgCodeBase;
-		codes[1] = getCode(codes, 0, provider);
-		codes[2] = getCode(codes, 1, segment);
-		codes[3] = getCode(codes, 2, contract);
-		codes[4] = getCode(codes, 3, deviceTypeName);
-		codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
-		codes[5] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
+        if (deviceType != null) {
+            deviceTypeName = deviceType.getName();
+        }
 
-		for (int i = codes.length - 1; i >= 0; i--) {
-			if (codes[i] != null) {
-				msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-				if (StringUtils.isNotEmpty(msg))
-					break;
-			}
-		}
-		
-		if ( msg == null ) {
-			LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
-		}
+        codes[0] = msgCodeBase;
+        codes[1] = getCode(codes, 0, provider);
+        codes[2] = getCode(codes, 1, segment);
+        codes[3] = getCode(codes, 2, contract);
+        codes[4] = getCode(codes, 3, deviceTypeName);
+        codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
+        codes[5] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
 
-		LOGGER.debug("Output parameter msg=[{}]", msg);
-		return msg;
-	}
+        for (int i = codes.length - 1; i >= 0; i--) {
+            if (codes[i] != null) {
+                msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
+                if (StringUtils.isNotEmpty(msg))
+                    break;
+            }
+        }
 
-	private String getCode(String[] codes, int i, Object value) {
-		LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
+        if (msg == null) {
+            LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
+        }
 
-		if (codes == null)
-			throw new NullPointerException("The parameter codes is null");
-		if (codes.length == 0)
-			throw new IllegalArgumentException("The parameter codes of array type has 0 size");
-		if (codes[0] == null) {
-			throw new IllegalArgumentException("The parameter codes of array type has null value as first element");
-		}
-		if (i >= codes.length)
-			throw new IllegalArgumentException("The parameter i>=codes.length. i=" + i);
-		if (i < 0)
-			throw new IllegalArgumentException("The parameter i less than 0. i=" + i);
+        LOGGER.debug("Output parameter msg=[{}]", msg);
+        return msg;
+    }
 
-		String code = null;
+    private String getCode(String[] codes, int i, Object value) {
+        LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
 
-		if (value != null) {
-			final String prefix = codes[i];
-			if (prefix != null) {
-				if (i == 0) {
-					code = prefix + ".for." + value;
-				} else {
-					code = prefix + "." + value;
-				}
-			} else {
-				code = getCode(codes, i - 1, value);
-			}
-		}
-		LOGGER.debug("Output parameter code=[{}]", code);
-		return code;
-	}
+        if (codes == null)
+            throw new NullPointerException("The parameter codes is null");
+        if (codes.length == 0)
+            throw new IllegalArgumentException("The parameter codes of array type has 0 size");
+        if (codes[0] == null) {
+            throw new IllegalArgumentException("The parameter codes of array type has null value as first element");
+        }
+        if (i >= codes.length)
+            throw new IllegalArgumentException("The parameter i>=codes.length. i=" + i);
+        if (i < 0)
+            throw new IllegalArgumentException("The parameter i less than 0. i=" + i);
+
+        String code = null;
+
+        if (value != null) {
+            final String prefix = codes[i];
+            if (prefix != null) {
+                if (i == 0) {
+                    code = prefix + ".for." + value;
+                } else {
+                    code = prefix + "." + value;
+                }
+            } else {
+                code = getCode(codes, i - 1, value);
+            }
+        }
+        LOGGER.debug("Output parameter code=[{}]", code);
+        return code;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

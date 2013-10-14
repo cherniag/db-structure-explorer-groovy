@@ -5,27 +5,16 @@
 
 
 <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
-    <c:if test="${paymentPolicy.paymentType == 'PSMS'}">
-        <c:set var="method_name" value="psms" />
-    </c:if>
-    <c:if test="${paymentPolicy.paymentType == 'o2Psms'}">
-        <c:set var="method_name" value="o2psms" />
+    <c:if test="${paymentPolicy.paymentType == 'vfPsms'}">
+        <c:set var="method_name" value="oppsms" />
     </c:if>
     
 	<c:choose>
 	    <c:when test="${paymentPolicy.subweeks == 1}">
-	        <c:set var="paymentPolicyOptionNo" value="3" />
-	        <c:set var="imageWeeks" value="3" />
-	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 2}">
 	        <c:set var="paymentPolicyOptionNo" value="2" />
 	        <c:set var="imageWeeks" value="2" />
 	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 3}">
-	        <c:set var="paymentPolicyOptionNo" value="4" />
-	        <c:set var="imageWeeks" value="1" />
-	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 5}">
+	    <c:when test="${paymentPolicy.subweeks == 4}">
 	        <c:set var="paymentPolicyOptionNo" value="1" />
 	        <c:set var="imageWeeks" value="1" />
 	    </c:when>
@@ -46,10 +35,10 @@
 	   	</c:if>
 	   	
 	    <a class="subscription-selector option-${paymentPolicyOptionNo}" type="button" ${disabledAttrib} ${hrefValue} style="height: 46px;">
-			<img width="51px" height="51px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
-	        <div class="rel o2UserPaymentOption">
-	            <div class="title"><s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.title' /></div>
-	            <span class="price">&#163;<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.o2psms.option${paymentPolicyOptionNo}.weeks' />
+			<img width="52px" height="52px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
+	        <div class="rel networkUserPaymentOption">
+	            <div class="title"><s:message code='pays.select.payby.networkuserpsms.option${paymentPolicyOptionNo}.title' /></div>
+	            <span class="price">$<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.networkuserpsms.option${paymentPolicyOptionNo}.weeks' />
 	        </div>
 	        <span class="${buttonStyle}"></span>
 		</a>
