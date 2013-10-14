@@ -24,23 +24,16 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.UserDeviceDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserIPhoneDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -118,6 +111,9 @@ public class UserServiceIT {
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 	private PaymentPolicy paymentPolicy;
+
+    @Resource(name = "userIPhoneDetailsRepository")
+    private UserIPhoneDetailsRepository userIPhoneDetailsRepository;
 
 	@BeforeClass
 	public static void generateDataPoints() throws Exception {
@@ -364,8 +360,11 @@ public class UserServiceIT {
     @Test
     public void shouldMerge(){
         //given
-        User user = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("new").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
-        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("old").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
+        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId());
+        User user = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("new").withUserGroup(o2UserGroup));
+        UserDeviceDetails userAndroidDetails = userIPhoneDetailsRepository.save((UserIPhoneDetails) new UserIPhoneDetails().withUser(user).withUserGroup(o2UserGroup).withToken(""));
+
+        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("old").withUserGroup(o2UserGroup));
 
         //when
         User actualUser = userService.mergeUser(oldUser, user);

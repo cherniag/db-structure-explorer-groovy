@@ -288,6 +288,12 @@ public class User implements Serializable {
     @Column(name = "idfa", nullable = true)
     private String idfa;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserIPhoneDetails> userIPhoneDetailsList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserAndroidDetails> userAndroidDetailsList;
+
     @Transient
     private User oldUser;
 
