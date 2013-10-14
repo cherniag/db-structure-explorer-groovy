@@ -452,15 +452,15 @@ public class UserRepositoryIT {
     @Test
     public void shouldFindByUserNameAndCommunityAndOtherThanPassedId(){
         //given
-        User user = userRepository.save(UserFactory.createUser().withUserName("145645").withMobile("+447766666666").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
-        User user2 = userRepository.save(UserFactory.createUser().withUserName("+447766666666").withMobile("222").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+        User user = userRepository.save(UserFactory.createUser().withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+        User user2 = userRepository.save(UserFactory.createUser().withUserName("+447766666667").withMobile("222").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
 
         //when
         User actualUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         //then
         assertNotNull(actualUser);
-        assertThat(actualUser.getId(), is(user.getId()));
+        assertThat(actualUser.getId(), is(user2.getId()));
     }
 
 }
