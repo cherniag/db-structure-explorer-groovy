@@ -130,7 +130,7 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        user.setContract(Contract.valueOf(providerUserDetails.contract));
+        if (user.isO2CommunityUser()) user.setContract(Contract.valueOf(providerUserDetails.contract));
         user.setProvider(providerUserDetails.operator);
         return user;
     }
