@@ -632,6 +632,8 @@ public class UserService {
     public User mergeUser(User oldUser, User userByDeviceUID) {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
+        userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+
         int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());
         if(deletedUsers!=1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]");
 
