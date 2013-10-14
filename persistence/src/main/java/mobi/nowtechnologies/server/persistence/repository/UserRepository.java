@@ -103,7 +103,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1) "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
-    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
 	List<User> getUsersForRetryPayment(int epochSeconds);
 	
 	@Query(value="select u from User u " +
@@ -217,6 +217,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             +"and community=?2 "
             +"and user.id<>?3")
     User findByUserNameAndCommunityAndOtherThanPassedId(String userName, Community community, int userId);
+
+    @Modifying
+    @Query(value = "delete User u " +
+            "where " +
+            "u.id = ?1 ")
+    int deleteUser(int userId);
 
     @Modifying
     @Query(value = "update User u " +

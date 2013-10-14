@@ -3218,8 +3218,7 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("a");
         User currentUser = new User().withDeviceUID("b");
 
-        //Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
-        Mockito.doNothing().when(entityServiceMock).removeEntity(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(1).when(userRepositoryMock).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
 
@@ -3230,8 +3229,7 @@ public class UserServiceTest {
         assertThat(actualUser, is(oldUser));
         assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
 
-        //verify(userRepositoryMock, times(1)).delete(currentUser);
-        verify(entityServiceMock, times(1)).removeEntity(currentUser);
+        verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
     }
@@ -3242,7 +3240,7 @@ public class UserServiceTest {
         User oldUser = null;
         User currentUser = new User().withDeviceUID("b");
 
-        //Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doNothing().when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doNothing().when(entityServiceMock).removeEntity(currentUser);
         Mockito.doReturn(1).when(userRepositoryMock).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
