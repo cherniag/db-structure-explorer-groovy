@@ -149,7 +149,7 @@ public class UserService {
             hasPromo = promotionService.applyPotentialPromo(user, o2ClientService.isO2User(providerUserDetails));
         }
 
-        if(updateContractAndProvider || user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider || (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator))) updateContractAndProvider(user, providerUserDetails);
 
         user.setActivationStatus(ACTIVATED);
         user.setUserName(user.getMobile());

@@ -56,7 +56,6 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.contract, is(PAYG.name()));
         assertThat(providerUserDetails.operator, is(NON_VF.toString()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
@@ -77,7 +76,6 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.contract, is(PAYG.name()));
         assertThat(providerUserDetails.operator, is(VF.toString()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
@@ -98,7 +96,6 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.contract, is(PAYG.name()));
         assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
@@ -119,7 +116,6 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.contract, is(PAYG.name()));
         assertNull(providerUserDetails.operator);
 
         verify(userServiceMock, times(1)).isVFNZOtacValid(otac, phoneNumber, community);
