@@ -3240,8 +3240,7 @@ public class UserServiceTest {
         User oldUser = null;
         User currentUser = new User().withDeviceUID("b");
 
-        Mockito.doNothing().when(userRepositoryMock).deleteUser(currentUser.getId());
-        Mockito.doNothing().when(entityServiceMock).removeEntity(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(1).when(userRepositoryMock).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
 
