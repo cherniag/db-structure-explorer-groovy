@@ -632,7 +632,7 @@ public class UserService {
     public User mergeUser(User oldUser, User userByDeviceUID) {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
-        userRepository.delete(userByDeviceUID);
+        entityService.removeEntity(userByDeviceUID);
         int updatedUsersCount = userRepository.updateUserDeviceUid(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()).getDeviceUID(), oldUser.getId());
         if (updatedUsersCount!=1) throw new ServiceException("Couldn't update user deviceUid");
 
