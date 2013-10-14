@@ -288,6 +288,9 @@ public class User implements Serializable {
     @Column(name = "idfa", nullable = true)
     private String idfa;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<UserDeviceDetails> userDeviceDetailsList;
+
     @Transient
     private User oldUser;
 
@@ -1295,6 +1298,14 @@ public class User implements Serializable {
     private Integer getOldUserId(){
         if (isNull(oldUser)) return null;
         return oldUser.getId();
+    }
+
+    public List<UserDeviceDetails> getUserDeviceDetailsList() {
+        return userDeviceDetailsList;
+    }
+
+    public void setUserDeviceDetailsList(List<UserDeviceDetails> userDeviceDetailsList) {
+        this.userDeviceDetailsList = userDeviceDetailsList;
     }
 
     @Override
