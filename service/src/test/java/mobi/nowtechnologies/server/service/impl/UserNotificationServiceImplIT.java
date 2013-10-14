@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 public class UserNotificationServiceImplIT {
 
 	private CommunityResourceBundleMessageSourceImpl messageSource;
+	private DeviceService deviceService;
 	private UserNotificationServiceImpl userNotificationService;
 	private List<User> audioOnlyUsers;
 	private List<User> videoUsers;
@@ -41,9 +43,13 @@ public class UserNotificationServiceImplIT {
 		messageSource.setDefaultEncoding("utf8");
 		messageSource.setCacheSeconds(180);
 		messageSource.setUseCodeAsDefaultMessage(true);
-		
+
+        deviceService = new DeviceService();
+        deviceService.setMessageSource(messageSource);
+
 		userNotificationService = spy(new UserNotificationServiceImpl());
 		userNotificationService.setMessageSource(messageSource);
+        userNotificationService.setDeviceService(deviceService);
 		userNotificationService.setAvailableCommunities(new String[]{"o2","vf_nz"});
 		migHttpService = mock(MigHttpService.class);
 		MigResponse migResponse = mock(MigResponse.class);
@@ -216,6 +222,7 @@ public class UserNotificationServiceImplIT {
 		user.setProvider( provider );
 		user.setSegment( st );
 		user.setContract( c );
+        user.setMobile("+642111111111");
 		
 		Community com = new Community();
 		com.setRewriteUrlParameter(community);

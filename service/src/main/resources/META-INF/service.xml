@@ -84,6 +84,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
         <property name="subscriberDataParser" ref="vf_nz.service.SubsriberDataParser" />
+        <property name="deviceService" ref="service.DeviceService" />
     </bean>
 
     <bean id="vf_nz.service.UserDetailsUpdater" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUserDetailsUpdater"/>
@@ -348,6 +349,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="availableCommunities" value="${sms.available.communities}" />
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
+		<property name="deviceService" ref="service.DeviceService"/>
 	</bean>
 
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
