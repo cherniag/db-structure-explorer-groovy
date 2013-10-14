@@ -47,6 +47,11 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
+        if ( user.isO2CommunityUser() ) {
+        }
+        if ( user.isVFNZCommunityUser() ) {
+        }
+
         O2PSMSPaymentDetails details = paymentService.commitPaymentDetails(user, policy);
         user.setCurrentPaymentDetails(details);
         paymentDetailsService.update(details);

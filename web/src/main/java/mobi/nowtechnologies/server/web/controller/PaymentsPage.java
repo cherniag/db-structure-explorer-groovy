@@ -124,4 +124,7 @@ public class PaymentsPage {
         return paymentType;
 	}
 	
+	public boolean isPaymentDetailsActivated() {
+		return paymentDetails!=null && paymentDetails.isActivated();
+	}
 }

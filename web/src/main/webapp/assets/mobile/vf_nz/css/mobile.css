@@ -370,3 +370,66 @@ body {
 	line-height: 130%;
 	margin-top: 12px;
 }
+
+.itunesHeader {
+	padding: 10px 10px 0;
+}
+
+.itunesSubImage {
+	height: 19px;
+	width: 67px;
+	margin-left: 6px;
+	vertical-align: bottom;
+}
+
+.pypalImage {
+	height: 25px;
+	width: 58px;
+	margin-left: 6px;
+	vertical-align: bottom;
+}
+
+.itunesheaderText {
+	color: #767676;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	margin-bottom: 15px;
+}
+
+.paypalHeader {
+	padding: 10px 10px 0;
+}
+
+.paypalHeaderLeft {
+	float: left;
+	line-height: 160%;
+}
+
+.paypalHeaderRight {
+	float: right;
+	line-height: 160%;
+}
+
+.paypalpaymentsButton {
+	padding-bottom: 20px;
+}
+
+.paypalImageContainer {
+	margin-top: 6px;
+	margin: 6px 0 15px;
+}
+
+.paypalMessgeHeader {
+	color: #e60000;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.paypalMessageText {
+	color: #333;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 130%;
+	margin-bottom: 27px;
+}

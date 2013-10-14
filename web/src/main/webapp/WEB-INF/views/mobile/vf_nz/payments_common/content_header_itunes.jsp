@@ -3,12 +3,24 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="o2TracksHeader frR15">
-	<s:message code='pays.page.header.txt.itunes' />
-</div>
+<c:set var="optionPrice" />
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
+	<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
+		<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
+	</c:if>
+</c:forEach>
 
-<hr class="itunesHr" />
+<div class="itunesHeader vfR S15 redColor">
+	<div style="float: left;">
+		<s:message code='pays.page.header.txt.itunes' /> <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_itunes.png" align="bottom" class="itunesSubImage" />
+	</div>
+	<div style="float: right;">
+		$<fmt:formatNumber pattern="0.00" value="${optionPrice}" /><s:message code='pays.page.header.txt.itunes.month' />
+	</div>
+	<div style="clear: both; height: 18px;">&nbsp;</div>
 
-<div class="itunesheader frL11">
-	<div><s:message code='pays.page.header.txt' /></div>
+	<div class="itunesheaderText">
+		<s:message code='pays.page.header.txt.itunes.middleText' />
+	</div>
+
 </div>

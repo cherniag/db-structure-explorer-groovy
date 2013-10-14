@@ -48,16 +48,16 @@
 		</c:choose>
 
 	</div>
-	<c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentsPage.paymentDetails.activated)}">
+	<c:if test="${paymentsPage.paymentDetailsActivated}">
         <div class="rel" style="padding: 0px 5px 10px 5px;">
             <a class="button-white no-margin pie S15 lightGray" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html"><s:message code='pays.deactivate.submit' /></a>
         </div>
     </c:if>
 </div>
 
-	<div class="content no-bg">
-		<div class="rel" style="text-align: center; margin-top: 15px;">
-			<img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png" />
-		</div>
+<div class="content no-bg">
+	<div class="rel" style="text-align: center; margin-top: 15px;">
+		<img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png" />
 	</div>
+</div>
 </div>
