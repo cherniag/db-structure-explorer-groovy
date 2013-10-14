@@ -778,7 +778,7 @@ public class ChartServiceTest {
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 
         PowerMockito.mockStatic(UserAsm.class);
-        when(UserAsm.toAccountCheckDTO(eq(testUser), anyString(), any(List.class), anyBoolean())).thenReturn(new AccountCheckDTO());
+        when(mockUserService.getAccountCheckDTO(eq(testUser), any(List.class))).thenReturn(new AccountCheckDTO().withUser(testUser));
 
 		fixture = spy(new ChartService());
 		fixture.setChartRepository(mockChartRepository);	

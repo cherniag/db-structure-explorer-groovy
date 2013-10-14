@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
+@Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = { "deviceUID", "userGroup" }), @UniqueConstraint(columnNames = { "userName", "userGroup" })} )
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
 		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
@@ -290,6 +290,9 @@ public class User implements Serializable {
 
     @Transient
     private User oldUser;
+
+    @Transient
+    private boolean isAutoOptInEnabled = true;
 
 	public User() {
 		setDisplayName("");
@@ -1224,7 +1227,7 @@ public class User implements Serializable {
     }
 
     public boolean isSubjectToAutoOptIn(){
-        return isNull(oldUser) && ((isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio()));
+        return isAutoOptInEnabled && isNull(oldUser) && ((isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio()));
     }
 
     private boolean isLastPromoForAudio(){
@@ -1297,6 +1300,11 @@ public class User implements Serializable {
         return oldUser.getId();
     }
 
+    public User withAutoOptInEnabled(boolean isAutoOptInEnabled){
+        this.isAutoOptInEnabled = isAutoOptInEnabled;
+        return this;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
@@ -1359,6 +1367,7 @@ public class User implements Serializable {
                 .add("tariff", tariff)
                 .add("contractChannel", contractChannel)
                 .add("lastPromoId", getLastPromoId())
-                .add("contract", contract).toString();
+                .add("contract", contract)
+                .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 }

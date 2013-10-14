@@ -159,6 +159,11 @@ public class AccountCheckDTO {
         return this;
     }
 
+    public AccountCheckDTO withUser(Object user){
+        this.user = user;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
