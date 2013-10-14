@@ -868,7 +868,7 @@ public class UserTest {
     @Test
     public void shouldNotBeSubjectToAutoOptInUserWithOldUser(){
         //given
-        User user = new User().withOldUser(new User());
+        User user = new User().withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
         //when
         boolean s = user.isSubjectToAutoOptIn();
@@ -878,7 +878,6 @@ public class UserTest {
     }
 
     private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
-
         mockStatic(Utils.class);
         when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
 

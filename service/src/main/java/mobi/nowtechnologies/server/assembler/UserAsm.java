@@ -166,6 +166,7 @@ public class UserAsm {
 	}
 
     public static AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial){
+        LOGGER.debug("user=[{}]", user);
         UserGroup userGroup = user.getUserGroup();
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();

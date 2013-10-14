@@ -1224,7 +1224,7 @@ public class User implements Serializable {
     }
 
     public boolean isSubjectToAutoOptIn(){
-        return isNull(oldUser) && (isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio());
+        return isNull(oldUser) && ((isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio()));
     }
 
     private boolean isLastPromoForAudio(){
@@ -1294,7 +1294,7 @@ public class User implements Serializable {
 
     private Integer getOldUserId(){
         if (isNull(oldUser)) return null;
-        return oldUser.getOldUserId();
+        return oldUser.getId();
     }
 
     @Override
