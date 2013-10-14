@@ -117,6 +117,7 @@ public class UserServiceTest {
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
     private UserGroupRepository userGroupRepositoryMock;
+    private UserDeviceDetailsService userDeviceDetailsServiceMock;
 
 	@Test
 	public void testChangePassword_Success() throws Exception {
@@ -672,7 +673,6 @@ public class UserServiceTest {
 		CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
 		OfferService offerServiceMock = PowerMockito.mock(OfferService.class);
 		paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
-		UserDeviceDetailsService userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
 		userDaoMock = PowerMockito.mock(UserDao.class);
 		CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
@@ -695,6 +695,7 @@ public class UserServiceTest {
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
         userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
+        userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
 		
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
@@ -727,6 +728,7 @@ public class UserServiceTest {
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setUserGroupRepository(userGroupRepositoryMock);
+        userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -3218,6 +3220,7 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("a");
         User currentUser = new User().withDeviceUID("b");
 
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
         Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(1).when(userRepositoryMock).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
@@ -3229,6 +3232,7 @@ public class UserServiceTest {
         assertThat(actualUser, is(oldUser));
         assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
 
+        verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
         verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
@@ -3240,6 +3244,7 @@ public class UserServiceTest {
         User oldUser = null;
         User currentUser = new User().withDeviceUID("b");
 
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
         Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(1).when(userRepositoryMock).updateUserDeviceUid(currentUser.getDeviceUID() ,oldUser.getId());
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
@@ -3254,6 +3259,7 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("a");
         User currentUser = null;
 
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
         Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
