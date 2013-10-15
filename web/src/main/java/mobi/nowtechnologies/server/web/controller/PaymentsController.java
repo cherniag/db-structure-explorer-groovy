@@ -66,7 +66,7 @@ public class PaymentsController extends CommonController {
         paymentsPage.setPaymentPoliciesNote( paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE) );
         paymentsPage.setUserCanGetVideo( user.is4G() );
         paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
-        paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(user.isO2Business()) );
+        paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
 
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
@@ -143,6 +143,10 @@ public class PaymentsController extends CommonController {
     
     private boolean isNotFromNetwork(User user) {
     	return ProviderType.NON_O2.toString().equals(user.getProvider()) || ProviderType.NON_VF.toString().equals(user.getProvider());
+    }
+    
+    private boolean isBusinessUser(User u) {
+    	return (ProviderType.O2.toString().equals(u.getProvider()) || ProviderType.VF.toString().equals(u.getProvider()) && u.getSegment()==SegmentType.BUSINESS);
     }
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
