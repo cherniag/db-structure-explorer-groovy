@@ -60,6 +60,45 @@ public class PhoneNumberControllerTestIT {
     }
 
     @Test
+    public void testActivatePhoneNumber_O2_Success() throws Exception {
+        String userName = "+447111111114";
+        String phone = "+447111111114";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber>"));
+
+        resultActions = mockMvc.perform(
+                post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("<provider>o2</provider>"));
+    }
+
+    @Test
     public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
     	String userName = "+642111111111";
     	String phone = "+642111111111";
