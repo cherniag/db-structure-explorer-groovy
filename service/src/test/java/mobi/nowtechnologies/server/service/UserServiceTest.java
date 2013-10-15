@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -20,6 +19,7 @@ import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
+import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTOFactory;
@@ -50,7 +50,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import static mobi.nowtechnologies.server.persistence.domain.Community.*;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.VF;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
@@ -3295,6 +3295,68 @@ public class UserServiceTest {
         assertThat(isOtacValid, is(false));
 
         verify(userRepositoryMock, times(1)).findByOtacMobileAndCommunity(otac, phoneNumber, community);
+    }
+
+    @Test
+    public void testPopulateSubscriberData_IsPromotedNumber_Success() throws Exception{
+        //given
+        User user = UserFactory.createUser();
+        String phoneNumber="+6421111111";
+        Community community = user.getUserGroup().getCommunity();
+        final O2SubscriberData subscriberData = new O2SubscriberData();
+
+        doReturn(user).when(userRepositoryMock).save(eq(user));
+        doReturn(true).when(userServiceSpy).isPromotedDevice(eq(phoneNumber), eq(community));
+        doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(eq(user), any(O2SubscriberData.class));
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Processor<O2SubscriberData> processor = (Processor<O2SubscriberData>)invocationOnMock.getArguments()[1];
+                processor.process(subscriberData);
+                return null;
+            }
+        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
+
+        //when
+        userServiceSpy.populateSubscriberData(user, phoneNumber, community);
+
+        //then
+        verify(userRepositoryMock, times(1)).save(eq(user));
+        verify(userServiceSpy, times(1)).isPromotedDevice(eq(phoneNumber), eq(community));
+        verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
+        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData)null));
+        verify(o2ClientServiceMock, times(0)).getSubscriberData(eq(phoneNumber), any(Processor.class));
+    }
+
+    @Test
+    public void testPopulateSubscriberData_IsNotPromotedNumber_Success() throws Exception{
+        //given
+        User user = UserFactory.createUser();
+        String phoneNumber="+6421111111";
+        Community community = user.getUserGroup().getCommunity();
+        final O2SubscriberData subscriberData = new O2SubscriberData();
+
+        doReturn(user).when(userRepositoryMock).save(eq(user));
+        doReturn(false).when(userServiceSpy).isPromotedDevice(eq(phoneNumber), eq(community));
+        doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(eq(user), any(O2SubscriberData.class));
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Processor<O2SubscriberData> processor = (Processor<O2SubscriberData>)invocationOnMock.getArguments()[1];
+                processor.process(subscriberData);
+                return null;
+            }
+        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
+
+        //when
+        userServiceSpy.populateSubscriberData(user, phoneNumber, community);
+
+        //then
+        verify(userRepositoryMock, times(1)).save(eq(user));
+        verify(userServiceSpy, times(1)).isPromotedDevice(eq(phoneNumber), eq(community));
+        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
+        verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData)null));
+        verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), any(Processor.class));
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

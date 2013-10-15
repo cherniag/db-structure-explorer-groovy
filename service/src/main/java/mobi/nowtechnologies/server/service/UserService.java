@@ -1730,7 +1730,7 @@ public class UserService {
         return user;
     }
 
-    private void populateSubscriberData(final User user, String phoneNumber, Community community) {
+    protected void populateSubscriberData(final User user, String phoneNumber, Community community) {
         if ( isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
             populateSubscriberData(user, (SubscriberData) null);
@@ -1742,7 +1742,6 @@ public class UserService {
                         populateSubscriberData(user, data);
                     }
                 });
-                userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);
