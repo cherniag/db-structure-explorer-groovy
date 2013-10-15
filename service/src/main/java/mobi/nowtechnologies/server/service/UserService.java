@@ -130,7 +130,7 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        if (user.isO2CommunityUser()) user.setContract(Contract.valueOf(providerUserDetails.contract));
+        user.setContract(Contract.valueOf(providerUserDetails.contract));
         user.setProvider(providerUserDetails.operator);
         return user;
     }
@@ -146,16 +146,26 @@ public class UserService {
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-            hasPromo = promotionService.applyPotentialPromo(user, o2ClientService.isO2User(providerUserDetails));
+            hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
         }
 
-        if(updateContractAndProvider || (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator))) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider && !user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
 
-        user.setActivationStatus(ACTIVATED);
-        user.setUserName(user.getMobile());
-        userRepository.save(user);
+        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
+        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
         return hasPromo;
+    }
+
+    private boolean checkUserAndApplyPromo(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
+        boolean isO2User = user.isO2User();
+        if (!user.isVFNZCommunityUser() && updateContractAndProvider) {
+            isO2User = o2ClientService.isO2User(providerUserDetails);
+        }else if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
+            user.setProvider(providerUserDetails.operator);
+        }
+        return promotionService.applyPotentialPromo(user, isO2User);
     }
 
     public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
