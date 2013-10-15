@@ -223,11 +223,4 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "where " +
             "u.id = ?1 ")
     int deleteUser(int userId);
-
-    @Modifying
-    @Query(value = "update User u " +
-            "set u.deviceUID=?1 " +
-            "where " +
-            "u.id = ?2 ")
-    int updateUserDeviceUid(String newDeviceUID, int userId);
 }
