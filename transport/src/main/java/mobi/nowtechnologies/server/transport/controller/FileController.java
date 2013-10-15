@@ -62,7 +62,7 @@ public class FileController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			user = checkCredentials(userName, userToken, timestamp, communityName);
 
             FileType fileType = FileType.valueOf(fileTypeName);
@@ -93,7 +93,7 @@ public class FileController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
 
             user = checkCredentials(userName, userToken, timestamp, communityName);
 

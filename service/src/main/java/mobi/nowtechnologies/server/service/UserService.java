@@ -1682,7 +1682,7 @@ public class UserService {
 			return result;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new ServiceCheckedException("", "Coudn't make free sms request on successfull payment", e);
+			throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
 		}
 	}
 
@@ -1789,7 +1789,7 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	public void saveWeeklyPayment(User user) throws Exception {
+	public void saveWeeklyPayment(User user) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -1971,7 +1971,6 @@ public class UserService {
 			LOGGER.error(e.getMessage(), e);
 		}
 		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
-		
 		return isPromoted;
 	}
 
