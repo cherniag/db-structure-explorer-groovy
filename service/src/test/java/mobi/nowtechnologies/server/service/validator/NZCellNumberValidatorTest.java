@@ -7,11 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 9/27/13
  * Time: 5:30 PM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class NZCellNumberValidatorTest {

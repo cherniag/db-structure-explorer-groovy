@@ -2464,7 +2464,7 @@ public class UserServiceTest {
 	}
 
     @Test
-    public void shouldApplyInitPromoAndAccCheck() {
+    public void shouldApplyInitPromoAndAccCheckWitoutUpdateContractAndProvider() {
         //given
         Community community = new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL).withName(VF_NZ_COMMUNITY_REWRITE_URL);
         User user = new User().withActivationStatus(ENTERED_NUMBER).withDeviceType(new DeviceType()).withUserName("g@g.gg").withUserGroup(new UserGroup().withCommunity(community));
@@ -2494,7 +2494,49 @@ public class UserServiceTest {
         assertEquals(expectedHasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
 
         assertNull(user.getContract());
-        assertEquals(providerUserDetails.operator, user.getProvider());
+        assertNull(user.getProvider());
+        assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+        assertEquals(user.getMobile(), user.getUserName());
+
+        verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
+        verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
+        verify(userRepositoryMock, times(1)).save(user);
+        verify(userServiceSpy,times(0) ).applyO2PotentialPromo(providerUserDetails, user, community);
+        verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+    }
+
+    @Test
+    public void shouldApplyInitPromoAndAccCheck() {
+        //given
+        Community community = new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL).withName(VF_NZ_COMMUNITY_REWRITE_URL);
+        User user = new User().withActivationStatus(ENTERED_NUMBER).withDeviceType(new DeviceType()).withUserName("+380913158096").withUserGroup(new UserGroup().withCommunity(community));
+
+        User mobileUser = null;
+        String otac = "otac";
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails().withOperator(VF.toString()).withContract(PAYG.name());
+
+        doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
+        when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(providerUserDetails);
+        when(userRepositoryMock.save(user)).thenReturn(user);
+
+        boolean expectedHasPromo = false;
+        doReturn(expectedHasPromo).when(userServiceSpy).applyO2PotentialPromo(providerUserDetails, user, community);
+
+        AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
+        doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
+
+        //when
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, false);
+
+        //then
+        assertNotNull(actualAccountCheckDTO);
+        assertEquals(accountCheckDTO, actualAccountCheckDTO);
+        assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
+        assertEquals(expectedHasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+
+        assertNull(user.getContract());
+        assertThat(user.getProvider(), is(providerUserDetails.operator));
         assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
 
