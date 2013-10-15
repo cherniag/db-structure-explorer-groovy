@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
@@ -176,7 +177,7 @@ public class UserServiceIT {
 				} else {
 					user.setUserGroup(chartsNowUserGroup);
 				}
-				user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+				user.setDeviceType(getAndroidDeviceType());
 				user.setUserName(UUID.randomUUID().toString());
 				user.setLastDeviceLogin(55);
 				user.setStatus(UserStatusDao.getLimitedUserStatus());
@@ -361,18 +362,22 @@ public class UserServiceIT {
     public void shouldMerge(){
         //given
         UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId());
-        User user = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("new").withUserGroup(o2UserGroup));
-        UserDeviceDetails userAndroidDetails = userIPhoneDetailsRepository.save((UserIPhoneDetails) new UserIPhoneDetails().withUser(user).withUserGroup(o2UserGroup).withToken(""));
+        User currentUser = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(getAndroidDeviceType()).withIpAddress("ip1").withUserGroup(o2UserGroup));
+        UserDeviceDetails userAndroidDetails = userIPhoneDetailsRepository.save((UserIPhoneDetails) new UserIPhoneDetails().withUser(currentUser).withUserGroup(o2UserGroup).withToken(""));
 
-        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("old").withUserGroup(o2UserGroup));
+        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(getBlackberryDeviceType()).withIpAddress("ip2").withUserGroup(o2UserGroup));
 
         //when
-        User actualUser = userService.mergeUser(oldUser, user);
+        User actualUser = userService.mergeUser(oldUser, currentUser);
 
         //then
         assertNotNull(actualUser);
         assertThat(actualUser.getId(), is(oldUser.getId()));
-        assertThat(actualUser.getDeviceUID(), is(user.getDeviceUID()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceType(), is(currentUser.getDeviceType()));
+        assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
+        assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
     }
 
 }

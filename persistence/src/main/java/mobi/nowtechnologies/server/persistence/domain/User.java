@@ -1311,6 +1311,22 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+        return this;
+    }
+
+    public User withDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel;
+        return this;
+    }
+
+    public User withIpAddress(String ipAddress){
+        this.ipAddress = ipAddress;
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

@@ -635,10 +635,14 @@ public class UserService {
         userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
 
         int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());
-        if(deletedUsers!=1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]");
+        if(deletedUsers>1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]. There are ["+deletedUsers +"] users with id ["+userByDeviceUID.getId()+"]");
 
-        int updatedUsersCount = userRepository.updateUserDeviceUid(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()).getDeviceUID(), oldUser.getId());
-        if (updatedUsersCount!=1) throw new ServiceException("Couldn't update user deviceUid");
+        oldUser.setDeviceUID(userByDeviceUID.getDeviceUID());
+        oldUser.setDeviceType(userByDeviceUID.getDeviceType());
+        oldUser.setDeviceModel(userByDeviceUID.getDeviceModel());
+        oldUser.setIpAddress(userByDeviceUID.getIpAddress());
+
+        oldUser = userRepository.save(oldUser);
 
         accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
 
