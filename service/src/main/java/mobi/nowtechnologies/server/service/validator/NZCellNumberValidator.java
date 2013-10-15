@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Titov Mykhaylo (titov)
+ * @author Alexsandr_Kolpakov
  * 
  */
 public class NZCellNumberValidator {

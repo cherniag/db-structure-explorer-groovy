@@ -5,11 +5,9 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Processor;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/10/13
  * Time: 10:26 AM
- * To change this template use File | Settings | File Templates.
  */
 public class VFNZUnsubscribeProccessor extends Processor<MOMessage> {
     public static final String STOP_MSG = "stop";
