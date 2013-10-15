@@ -45,7 +45,7 @@
         
         <div class="rel" style="margin:12px 6px; padding:6px 0; border-top: 1px solid #a0a0a0">
             <input class="button-grey no-margin left pie" title="${pageContext.request.contextPath}/payments.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.cansel.button"/>" />
-            <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/payments/o2psms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
+            <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/payments/oppsms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.o2psms.ok.button"/>" />
             <div style="clear: both;"></div>
         </div>
         

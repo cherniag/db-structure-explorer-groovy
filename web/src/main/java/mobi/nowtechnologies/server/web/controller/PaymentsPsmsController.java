@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class PaymentsO2PsmsController extends CommonController {
-	public static final String VIEW_PAYMENTS_O2PSMS = "/o2psms";
-	public static final String VIEW_PAYMENTS_O2PSMS_CONFIRM = "/o2psms_confirm";
+public class PaymentsPsmsController extends CommonController {
+	public static final String VIEW_PAYMENTS_O2PSMS = "/oppsms";
+	public static final String VIEW_PAYMENTS_O2PSMS_CONFIRM = "/oppsms_confirm";
 	
 	public static final String PAGE_PAYMENTS_O2PSMS = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS + PAGE_EXT;
 	public static final String PAGE_PAYMENTS_O2PSMS_CONFIRM = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS_CONFIRM + PAGE_EXT;
@@ -42,10 +42,15 @@ public class PaymentsO2PsmsController extends CommonController {
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS_CONFIRM}, method = RequestMethod.GET)
     public ModelAndView getO2PsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId) {
-        LOG.info("Create o2psms payment details by paymentPolicy.id=" + policyId);
+        LOG.info("Create psms payment details by paymentPolicy.id=" + policyId);
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
+
+        if ( user.isO2CommunityUser() ) {
+        }
+        if ( user.isVFNZCommunityUser() ) {
+        }
 
         O2PSMSPaymentDetails details = paymentService.commitPaymentDetails(user, policy);
         user.setCurrentPaymentDetails(details);

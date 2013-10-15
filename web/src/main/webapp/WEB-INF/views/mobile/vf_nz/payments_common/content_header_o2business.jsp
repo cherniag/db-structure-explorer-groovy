@@ -10,12 +10,27 @@
 	<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
 	<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
 	<c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
-	
 </c:forEach>
 
+
+<div class="paypalHeader vfR S15 redColor">
+	<div class="paypalHeaderLeft">
+		<s:message code='pays.page.header.txt.itunes' /> <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_paypal.png" align="bottom" class="pypalImage" />
+	</div>
+	<div class="paypalHeaderRight">
+		$<fmt:formatNumber pattern="0.00" value="${optionPrice}" /><s:message code='pays.page.header.txt.itunes.month' />
+	</div>
+	<div style="clear: both; height: 18px;">&nbsp;</div>
+
+	<div class="itunesheaderText">
+		<s:message code='pays.page.header.txt.itunes.middleText' />
+	</div>
+
+</div>
+<%-- 
 <div class="paymentscontainer">
-	<div class="o2TracksHeader frR15">
-		<s:message code='pays.page.header.txt.business_1' />
+	<div class="paypalHeader vfR S15 redColor">
+		<s:message code='pays.page.header.txt.business.header' />
 		<fmt:formatNumber pattern="0.00" value="${optionPrice}" />
 		<c:choose>
 			<c:when test="${monthlyOrWeekly eq true}">
@@ -34,4 +49,4 @@
 	<div class="frL11 o2BusinessHeader">
 		<s:message code='pays.page.header.txt' />
 	</div>
-</div>
+</div> --%>

@@ -130,7 +130,7 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        user.setContract(Contract.valueOf(providerUserDetails.contract));
+        if (user.isO2CommunityUser()) user.setContract(Contract.valueOf(providerUserDetails.contract));
         user.setProvider(providerUserDetails.operator);
         return user;
     }
@@ -149,7 +149,7 @@ public class UserService {
             hasPromo = promotionService.applyPotentialPromo(user, o2ClientService.isO2User(providerUserDetails));
         }
 
-        if(updateContractAndProvider || user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider || (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator))) updateContractAndProvider(user, providerUserDetails);
 
         user.setActivationStatus(ACTIVATED);
         user.setUserName(user.getMobile());

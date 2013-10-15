@@ -3,7 +3,32 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<script type="text/javascript">
+function submitPaypal() {
+	$("#payPalDto").submit();
+}
+</script>
+
+<c:set var="paypalUrl" />
+<c:set var="paymentPolicyId" />
 <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
+	<c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
+		<c:set var="paymentPage"><%=request.getParameter("callingPage")%></c:set>
+		<c:set var="paypalUrl" value="${pageContext.request.contextPath}/${paymentPage}/paypal.html?paymentPolicyId=${paymentPolicy.id}" />
+		<c:set var="paymentPolicyId" value="${paymentPolicy.id}" />
+	</c:if>
+</c:forEach>
+
+<div class="paypalpaymentsButton">
+	<input class="button-turquoise no-margin pie" <%--title="${paypalUrl}"--%>title="javascript:submitPaypal()" type="button" onClick="location.href=this.title"	value="<s:message code='pays.page.header.txt.itunes.paynowbutton' />" />
+
+	<form:form modelAttribute="payPalDto" action="/web/${paymentPage}/paypal.html" method="post">
+		<input type="hidden" name="paymentPolicyId" value="${paymentPolicyId}"/>
+	</form:form>
+</div>
+
+
+<%-- <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
 
 	<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
@@ -43,4 +68,4 @@
 
 </c:if>
 </c:forEach>
-<div style="height: 5px">&nbsp;</div><%--clearfix --%>
+<div style="height: 5px">&nbsp;</div> --%><%--clearfix --%>

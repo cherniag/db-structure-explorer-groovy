@@ -5,3 +5,7 @@
 <meta name="description" content="" />
 <meta name="keywords" content="" />
 <meta name = "format-detection" content = "telephone=no">
+
+<div class="header pie">
+    <span class="logo"><s:message code='m.page.main.header' /></span>
+</div>

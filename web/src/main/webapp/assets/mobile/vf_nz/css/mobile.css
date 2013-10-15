@@ -29,16 +29,6 @@ body {
 	-webkit-text-size-adjust: none;
 }
 
-/*Cookie Conteiner*/
-
-.cookie_conteiner {
-	position: absolute;
-	margin: 0;
-	width: 100%;
-	z-index: 1000;
-	display: none;
-}
-	
 .left {
 	width:10%;
 	float:left;
@@ -49,6 +39,48 @@ body {
 	float:right;
 }
 
+.rel { position: relative; }
+
+.bottom6 {margin-bottom: 6px;}
+.bottom8 {margin-bottom: 8px;}
+.bottom15 {margin-bottom: 15px;}
+.top15 {margin-top: 15px;}
+
+.redColor {color: #e60000;}
+.grayBlackColor {color: #333;}
+.blackColor {color: #000;}
+.lightGray {color: #767676;}
+
+.S9 { font-size: 9px; }
+.S10{ font-size: 10px; }
+.S11{ font-size: 11px; }
+.S12{ font-size: 12px; }
+.S13{ font-size: 13px; }
+.S14{ font-size: 14px; }
+.S15{ font-size: 15px; }
+.S16{ font-size: 16px; }
+.S17{ font-size: 17px; }
+.S20{ font-size: 20px; }
+
+.vfR { font-family: vodafoneRegular, Helvetica, Arial, sans-serif;}
+.vfL { font-family: vodafoneLight, Helvetica, Arial, sans-serif;}
+.vfB { font-family: vodafoneBold, Helvetica, Arial, sans-serif;}
+
+
+
+
+
+
+/*Cookie Conteiner*/
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 100%;
+	z-index: 1000;
+	display: none;
+}
+	
 .header {
     text-align: center;
     height: 45px;
@@ -107,24 +139,297 @@ body {
 	padding: 10px 5px 0;
 }
 
-.bottom6 {margin-bottom: 6px;}
-.bottom8 {margin-bottom: 8px;}
+.consumerUserHeader2 {
+	padding: 14px 5px 9px;
+}
 
-.redColor {color: #e60000;}
-.grayBlackColor {color: #333;}
-.blackColor {color: #000;}
+.consumerUserHeader2 > div.vfL {
+	margin-top: 8px;
+}
 
-.S9 { font-size: 9px; }
-.S10{ font-size: 10px; }
-.S11{ font-size: 11px; }
-.S12{ font-size: 12px; }
-.S13{ font-size: 13px; }
-.S14{ font-size: 14px; }
-.S15{ font-size: 15px; }
-.S16{ font-size: 16px; }
-.S17{ font-size: 17px; }
-.S20{ font-size: 20px; }
+.tapArea {
+	border: 1px solid rgba(0, 0, 0, .2);
+	border-radius: 5px;
+	margin-bottom: 8px;
+}
 
-.vfR { font-family: vodafoneRegular, Helvetica, Arial, sans-serif;}
-.vfL { font-family: vodafoneLight, Helvetica, Arial, sans-serif;}
-.vfB { font-family: vodafoneBold, Helvetica, Arial, sans-serif;}
+.maincontainer {
+	background-color: #fff;
+	border-right: 1px solid rgba(0, 0, 0, .2);
+	border-left: 1px solid rgba(0, 0, 0, .2);
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.subscription-selector {
+	color: #003399;
+	background: #ffffff;
+    border-width: 0;
+    border-radius: 5px;
+    display: block;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size:11px;
+    font-weight: lighter;
+    margin-bottom: 5px;
+    padding: 6px;
+    padding-left: 5px;
+    text-align: left;
+    text-decoration: none;
+}
+
+.subscription-selector .button-off, 
+.subscription-selector .button-on {
+    display: block;
+    position: absolute;
+    top: 14px;
+    right: 9px;
+    width: 37px;
+    height: 37px;
+    background-size: 39px 39px;
+}
+
+.subscription-selector .button-on {
+    /* background: transparent url(../imgs/icon_plan_selected.png) no-repeat; */
+    background: transparent url(../imgs/ic_tick_selected.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
+}
+
+.subscription-selector .button-off{
+    /*background: transparent url(../imgs/icon_plan_normal.png) no-repeat;*/
+    background: transparent url(../imgs/ic_tick_normal.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
+}
+
+.subscription-selector img,
+.subscription-selected img {
+    display:block;
+    float:left;
+    margin-right: 10px;
+}
+.subscription-selector .title {
+	color:#e60000;
+    font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.subscription-selector.option-1 .title {
+	/*color:#e60000;*/
+}
+.subscription-selector.option-2 .title {
+	/*color:#e60000;*/
+}
+.subscription-selector .price {
+	color: #767676;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+.subscription-container {
+	padding: 0;
+	background-color: #ffffff;
+    border-radius: 5px;
+}
+.container {
+	background-color: #ebebeb;
+	padding: 10px;
+}
+
+.button1, .button-turquoise, .button-white, .button-disabled{
+    border-radius: 5px;
+    border-width: 0;
+    color: #ffffff;
+    display: block;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-weight: lighter;
+    height: 41px;
+    line-height: 41px;
+    margin-bottom: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+}
+
+.button1.no-margin, .button-turquoise.no-margin, .button-white.no-margin, .button-disabled.no-margin {
+    margin-bottom:0;
+}
+
+.button1.no-margin.left, .button-turquoise.no-margin.left, .button-white.no-margin.left, .button-disabled.no-margin.left {
+    width:48.5%;
+    float:left;
+}
+
+.button1.no-margin.right, .button-turquoise.no-margin.right, .button-white.no-margin.right, .button-disabled.no-margin.right {
+    width:48.5%;
+    float:right;
+}
+
+.button-turquoise:active{
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#094467', endColorstr='#1399E7'); for IE */
+    background-image: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    -pie-background: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(156,42,160)),
+        color-stop(0.8, rgb(156,42,160))
+    );
+}
+
+.button-turquoise {
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1399E7', endColorstr='#094467'); for IE */
+    background-image: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    -pie-background: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(156,42,160)),
+        color-stop(0.8, rgb(156,42,160))
+    );
+}
+
+.button-white{
+    color: #4d4d4d;
+/*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E8E9E9', endColorstr='#C8C8C9'); for IE */
+    background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    -pie-background: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(255,255,255)),
+        color-stop(0.8, rgb(255,255,255))
+    );
+    -webkit-box-sizing: border-box;
+    border: 1px solid #bfbfc0;
+}
+
+.button-white:active{
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#C8C8C9', endColorstr='#E8E9E9'); for IE */
+    background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    -pie-background: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(255,255,255)),
+        color-stop(0.8, rgb(255,255,255))
+    );
+}
+
+.networkUserPaymentOption {
+	color: #767676;
+	padding-top: 8px;
+}
+
+.terms {
+    margin-top:12px;
+    color:#767676;
+    font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+    font-size:12px;
+    text-align:center;
+}
+.terms a {
+    color:#767676;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size:12px;
+}
+
+.unsubscribeText {
+	color: #767676;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 130%;
+	margin-top: 12px;
+}
+
+.itunesHeader {
+	padding: 10px 10px 0;
+}
+
+.itunesSubImage {
+	height: 19px;
+	width: 67px;
+	margin-left: 6px;
+	vertical-align: bottom;
+}
+
+.pypalImage {
+	height: 25px;
+	width: 58px;
+	margin-left: 6px;
+	vertical-align: bottom;
+}
+
+.itunesheaderText {
+	color: #767676;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	margin-bottom: 15px;
+}
+
+.paypalHeader {
+	padding: 10px 10px 0;
+}
+
+.paypalHeaderLeft {
+	float: left;
+	line-height: 160%;
+}
+
+.paypalHeaderRight {
+	float: right;
+	line-height: 160%;
+}
+
+.paypalpaymentsButton {
+	padding-bottom: 20px;
+}
+
+.paypalImageContainer {
+	margin-top: 6px;
+	margin: 6px 0 15px;
+}
+
+.paypalMessgeHeader {
+	color: #e60000;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.paypalMessageText {
+	color: #333;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 130%;
+	margin-bottom: 27px;
+}
