@@ -15,16 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ChartDetailDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailDao.class);
-
-	
-	@SuppressWarnings("unchecked")
-	public List<ChartDetail> findChartDetailTreeForDrmUpdate(int userId, byte chartId) {
-		LOGGER.debug("input parameters userId, chartId: [{}], [{}]",  userId, chartId);
-		
-		List<ChartDetail> chartDetails = getJpaTemplate().findByNamedQuery("ChartDetail.findChartDetailTreeForDrmUpdate", chartId);
-		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
 	
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc){
 		if (isrc == null)

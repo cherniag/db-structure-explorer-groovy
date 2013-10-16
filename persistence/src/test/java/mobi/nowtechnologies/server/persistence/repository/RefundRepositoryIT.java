@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActionReason;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +14,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -41,6 +43,7 @@ public class RefundRepositoryIT {
         refund.paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         refund.logTimeMillis = Utils.getEpochMillis();
         refund.user = UserFactory.createUser();
+        refund.actionReason = USER_DOWNGRADED_TARIFF;
 
         refund.user = userRepository.save(refund.user);
 
