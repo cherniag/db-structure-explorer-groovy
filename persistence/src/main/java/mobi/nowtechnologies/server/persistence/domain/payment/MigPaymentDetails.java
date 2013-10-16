@@ -1,9 +1,7 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
 @Entity
 @DiscriminatorValue(PaymentDetails.MIG_SMS_TYPE)

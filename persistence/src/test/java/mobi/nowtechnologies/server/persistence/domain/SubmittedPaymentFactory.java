@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 
 /**
- * The class <code>SubmittedPaymentFactory</code> implements static methods that return instances of the class <code>{@link SubmittedPayment}</code>.
+ * The class <code>SubmittedPaymentFactory</code> implements static methods that return instances of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment}</code>.
  *
  * @generatedBy CodePro at 29.08.12 17:23
  * @author Titov Mykhaylo (titov)
@@ -21,7 +23,7 @@ public class SubmittedPaymentFactory
 
 
 	/**
-	 * Create an instance of the class <code>{@link SubmittedPayment}</code>.
+	 * Create an instance of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment}</code>.
 	 *
 	 * @generatedBy CodePro at 29.08.12 17:23
 	 */

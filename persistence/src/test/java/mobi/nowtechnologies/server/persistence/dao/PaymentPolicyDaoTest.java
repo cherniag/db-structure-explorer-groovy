@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

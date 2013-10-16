@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.assembler;
 
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.dto.admin.SubmittedPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.CurrencyCode;
 import org.slf4j.Logger;

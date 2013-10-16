@@ -23,4 +23,11 @@ public class SubscriberData {
 
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "SubscriberData{" +
+                "provider=" + provider +
+                "} " + super.toString();
+    }
 }

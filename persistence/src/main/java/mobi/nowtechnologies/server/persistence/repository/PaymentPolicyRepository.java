@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import org.springframework.data.jpa.repository.JpaRepository;

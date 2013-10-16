@@ -1,12 +1,12 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(PaymentDetails.VF_PSMS_TYPE)
-public class VFPSMSPaymentDetails extends PaymentDetails {
+@DiscriminatorValue(PaymentDetails.PSMS_TYPE)
+public class PSMSPaymentDetails extends PaymentDetails {
 	
 	@Column(name="phone_number")
 	private String phoneNumber;
@@ -21,12 +21,12 @@ public class VFPSMSPaymentDetails extends PaymentDetails {
 
 	@Override
 	public String getPaymentType() {
-		return PaymentDetails.VF_PSMS_TYPE;
+		return PaymentDetails.PSMS_TYPE;
 	}
 
 	@Override
 	public String toString() {
-		return "VFPSMSPaymentDetails ["+ super.toString()+", phoneNumber=" + phoneNumber + "]";
+		return "PSMSPaymentDetails ["+ super.toString()+", phoneNumber=" + phoneNumber + "]";
 	}
 
 }

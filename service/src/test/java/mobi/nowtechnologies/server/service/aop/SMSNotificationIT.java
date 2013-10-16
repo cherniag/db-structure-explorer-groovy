@@ -11,6 +11,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;

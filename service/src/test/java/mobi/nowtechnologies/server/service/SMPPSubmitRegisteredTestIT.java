@@ -45,7 +45,7 @@ public class SMPPSubmitRegisteredTestIT {
 
         try {
 
-            String phoneNumber = "+642111111111";
+            String phoneNumber = "+6425321321";
 //            String phoneNumber = "+64279000456";
 
             String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),

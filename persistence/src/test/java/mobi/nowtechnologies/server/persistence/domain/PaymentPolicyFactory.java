@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import java.math.BigDecimal;
@@ -7,7 +8,7 @@ import java.math.BigDecimal;
 
 
 /**
- * The class <code>PaymentPolicyFactory</code> implements static methods that return instances of the class <code>{@link PaymentPolicy}</code>.
+ * The class <code>PaymentPolicyFactory</code> implements static methods that return instances of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy}</code>.
  *
  * @generatedBy CodePro at 29.08.12 11:09
  * @author Titov Mykhaylo (titov)
@@ -25,7 +26,7 @@ public class PaymentPolicyFactory
 
 
 	/**
-	 * Create an instance of the class <code>{@link PaymentPolicy}</code>.
+	 * Create an instance of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy}</code>.
 	 *
 	 * @generatedBy CodePro at 29.08.12 11:09
 	 */

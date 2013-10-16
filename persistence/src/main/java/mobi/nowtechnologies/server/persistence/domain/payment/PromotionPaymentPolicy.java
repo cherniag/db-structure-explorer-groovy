@@ -1,4 +1,6 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
+
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
 
 import java.math.BigDecimal;
 import java.util.List;

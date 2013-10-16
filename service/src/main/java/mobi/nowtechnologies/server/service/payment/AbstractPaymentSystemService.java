@@ -1,8 +1,9 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import javax.servlet.http.HttpServletResponse;
-
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -13,13 +14,14 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
 
 public abstract class AbstractPaymentSystemService implements PaymentSystemService, ApplicationEventPublisherAware {
 	
@@ -37,7 +39,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	
 	private PaymentDetailsRepository paymentDetailsRepository;
 	
-	private UserService userService;
+	protected UserService userService;
 
     private RefundService refundService;
 	
