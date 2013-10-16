@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static java.util.Collections.*;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
@@ -61,6 +62,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
@@ -116,6 +118,7 @@ public class UserServiceTest {
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
     private UserGroupRepository userGroupRepositoryMock;
+    private UserDeviceDetailsService userDeviceDetailsServiceMock;
 
 	@Test
 	public void testChangePassword_Success() throws Exception {
@@ -671,7 +674,6 @@ public class UserServiceTest {
 		CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
 		OfferService offerServiceMock = PowerMockito.mock(OfferService.class);
 		paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
-		UserDeviceDetailsService userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
 		userDaoMock = PowerMockito.mock(UserDao.class);
 		CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
@@ -694,6 +696,7 @@ public class UserServiceTest {
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
         userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
+        userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
 		
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
@@ -726,6 +729,7 @@ public class UserServiceTest {
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setUserGroupRepository(userGroupRepositoryMock);
+        userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
 
 		PowerMockito.mockStatic(UserStatusDao.class);
 	}
@@ -1109,7 +1113,7 @@ public class UserServiceTest {
         //given
         final String deviceUID = "imei_357841034540704";
         final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
-        User userAccountWithSameDevice = new User();
+        User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
 
         Community community = new Community();
         doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
@@ -3214,10 +3218,11 @@ public class UserServiceTest {
     @Test
     public void shouldMergeUsers() {
         //given
-        User oldUser = new User().withDeviceUID("a");
-        User currentUser = new User().withDeviceUID("b");
+        User oldUser = new User().withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(new DeviceType()).withIpAddress("ip1");
+        User currentUser = new User().withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(new DeviceType()).withIpAddress("ip2");
 
-        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
 
@@ -3227,8 +3232,12 @@ public class UserServiceTest {
         //then
         assertThat(actualUser, is(oldUser));
         assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceType(), is(currentUser.getDeviceType()));
+        assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
+        assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
 
-        verify(userRepositoryMock, times(1)).delete(currentUser);
+        verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
+        verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).save(oldUser);
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
     }
@@ -3239,7 +3248,8 @@ public class UserServiceTest {
         User oldUser = null;
         User currentUser = new User().withDeviceUID("b");
 
-        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
 
@@ -3253,6 +3263,7 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("a");
         User currentUser = null;
 
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
         Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
@@ -3427,7 +3438,57 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
         verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
                 null, null, null);
+    }
 
+    @Test
+    public void shouldFindUserTree(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(expectedUser.getOldUser()).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(expectedUser.getOldUser()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldFindUserTreeWithOutOldUser(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(null).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(nullValue()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldNotFindUserTree(){
+        //given
+        int userId = Integer.MAX_VALUE;
+        doReturn(null).when(userRepositoryMock).findUserTree(userId);
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(userId);
+
+        //then
+        assertThat(actualUser, is((User) null));
+
+        verify(userRepositoryMock, times(1)).findUserTree(userId);
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

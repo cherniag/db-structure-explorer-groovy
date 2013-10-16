@@ -67,7 +67,6 @@ import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRA
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -118,13 +117,6 @@ public class UserService {
 
 	private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
-    private User checkAndMerge(User user, User mobileUser) {
-        if (mobileUser.getId() != user.getId()) {
-            user = mergeUser(mobileUser, user);
-        }
-        return user;
-    }
-
     private User updateContractAndProvider(User user, O2UserDetails providerUserDetails) {
         if (isPromotedDevice(user.getMobile()) ) {
             user.setContract(Contract.PAYM);
@@ -134,16 +126,6 @@ public class UserService {
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.getOperator()));
         }
         return user;
-    }
-
-    private boolean isO2User(User user, String otac, O2UserDetails o2UserDetails) {
-        boolean isO2User;
-        if(isNotNull(otac)){
-            isO2User = o2ClientService.isO2User(o2UserDetails);
-        }else{
-            isO2User = user.isO2User();
-        }
-        return isO2User;
     }
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
@@ -650,8 +632,18 @@ public class UserService {
     public User mergeUser(User oldUser, User userByDeviceUID) {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
-        userRepository.delete(userByDeviceUID);
-        userRepository.save(oldUser.withDeviceUID(userByDeviceUID.getDeviceUID()));
+        userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+
+        int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());
+        if(deletedUsers>1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]. There are ["+deletedUsers +"] users with id ["+userByDeviceUID.getId()+"]");
+
+        oldUser.setDeviceUID(userByDeviceUID.getDeviceUID());
+        oldUser.setDeviceType(userByDeviceUID.getDeviceType());
+        oldUser.setDeviceModel(userByDeviceUID.getDeviceModel());
+        oldUser.setIpAddress(userByDeviceUID.getIpAddress());
+
+        oldUser = userRepository.save(oldUser);
+
         accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
 
         LOGGER.info("The current user after merge now is [{}]", oldUser);
@@ -1003,7 +995,7 @@ public class UserService {
 		Community community = user.getUserGroup().getCommunity();
 
 		List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-
+        user = findUserTree(user.getId());
 		AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial(user));
 
 		accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
@@ -1022,10 +1014,15 @@ public class UserService {
 		return accountCheckDTO;
 	}
 
-	// TODO Review this method
+    @Transactional(readOnly = true)
 	public User findUserTree(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
-		User user = userDao.findUserTree(userId);
+		User user = userRepository.findUserTree(userId);
+
+        if(isNotNull(user)){
+            User oldUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+            user.withOldUser(oldUser);
+        }
 
 		LOGGER.debug("Output parameter user=[{}]", user);
 		return user;
@@ -1289,7 +1286,7 @@ public class UserService {
 
 		if (user != null && userByDeviceUID != null && user.getId() != userByDeviceUID.getId()) {
 			user.setFacebookId(userCredentions.getId());
-			mergeUser(user, userByDeviceUID);
+            user = mergeUser(user, userByDeviceUID);
 		} else {
 			user = userByDeviceUID;
 			user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
@@ -1584,7 +1581,7 @@ public class UserService {
 			throw new NullPointerException("The parameter payment is null");
 
 		BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
-				payment.getAmount());
+                payment.getAmount());
 		user.setAmountOfMoneyToUserNotification(newAmountOfMoneyToUserNotification);
 
 		user = updateUser(user);
@@ -1722,7 +1719,7 @@ public class UserService {
     public AccountCheckDTO applyInitPromoAndAccCheck(User user, String otac, boolean updateContractAndProvider) {
         LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
-        User mobileUser = findByNameAndCommunity(user.getMobile(), user.getUserGroup().getCommunity().getName());
+        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
 
@@ -1743,7 +1740,7 @@ public class UserService {
 
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
-            user = checkAndMerge(user, mobileUser);
+            user = mergeUser(mobileUser, user);
         } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
             hasPromo = checkO2UserAndApplyPromo(user, updateContractAndProvider, o2UserDetails);
         }

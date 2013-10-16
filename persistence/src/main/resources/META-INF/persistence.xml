@@ -5,19 +5,7 @@
 	<persistence-unit name="mobi.nowtechnologies.persistence"
 		transaction-type="RESOURCE_LOCAL">
 		<mapping-file>META-INF/jpql/paymentPolicy.xml</mapping-file>
-		<!--
-		<mapping-file>META-INF/jpql/paymentDetails.xml</mapping-file>
-		<mapping-file>META-INF/jpql/newsDetail.xml</mapping-file>
-		 -->
 		<mapping-file>META-INF/jpql/chartDetail.xml</mapping-file>
 		<mapping-file>META-INF/jpql/drm.xml</mapping-file>
-		<mapping-file>META-INF/jpql/user.xml</mapping-file>
-		
-		<properties>
-			<!--
-			<property name="hibernate.hbm2ddl.auto" value="validate" />
-			<property name="hibernate.show_sql" value="false"/>
-			-->
-		</properties>
 	</persistence-unit>
 </persistence>

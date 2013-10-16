@@ -288,6 +288,15 @@ public class User implements Serializable {
     @Column(name = "idfa", nullable = true)
     private String idfa;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserIPhoneDetails> userIPhoneDetailsList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserAndroidDetails> userAndroidDetailsList;
+
+    @Transient
+    private User oldUser;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -1221,7 +1230,7 @@ public class User implements Serializable {
     }
 
     public boolean isSubjectToAutoOptIn(){
-        return (isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio());
+        return isNull(oldUser) && ((isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio()));
     }
 
     private boolean isLastPromoForAudio(){
@@ -1280,10 +1289,41 @@ public class User implements Serializable {
         return isNotNull(lastPromo) && lastPromo.isWhiteListed();
     }
 
+    public User withOldUser(User oldUser) {
+        this.oldUser = oldUser;
+        return this;
+    }
+
+    public User getOldUser() {
+        return oldUser;
+    }
+
+    private Integer getOldUserId(){
+        if (isNull(oldUser)) return null;
+        return oldUser.getId();
+    }
+
+    public User withDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+        return this;
+    }
+
+    public User withDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel;
+        return this;
+    }
+
+    public User withIpAddress(String ipAddress){
+        this.ipAddress = ipAddress;
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
+                .add("old_user_id", getOldUserId())
                 .add("userName", userName)
                 .add("facebookId", facebookId)
                 .add("deviceUID", deviceUID)

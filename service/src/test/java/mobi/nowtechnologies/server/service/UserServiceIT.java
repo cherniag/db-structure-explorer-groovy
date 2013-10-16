@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,23 +25,16 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.UserDeviceDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserIPhoneDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -118,6 +113,9 @@ public class UserServiceIT {
 	private EntityDao entityDao;
 	private PaymentPolicy paymentPolicy;
 
+    @Resource(name = "userIPhoneDetailsRepository")
+    private UserIPhoneDetailsRepository userIPhoneDetailsRepository;
+
 	@BeforeClass
 	public static void generateDataPoints() throws Exception {
 		User o2ConsumerUser = new User();
@@ -179,7 +177,7 @@ public class UserServiceIT {
 				} else {
 					user.setUserGroup(chartsNowUserGroup);
 				}
-				user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+				user.setDeviceType(getAndroidDeviceType());
 				user.setUserName(UUID.randomUUID().toString());
 				user.setLastDeviceLogin(55);
 				user.setStatus(UserStatusDao.getLimitedUserStatus());
@@ -358,6 +356,28 @@ public class UserServiceIT {
 
         //then
         assertNotNull(accountCheckDTO);
+    }
+
+    @Test
+    public void shouldMerge(){
+        //given
+        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId());
+        User currentUser = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(getAndroidDeviceType()).withIpAddress("ip1").withUserGroup(o2UserGroup));
+        UserDeviceDetails userAndroidDetails = userIPhoneDetailsRepository.save((UserIPhoneDetails) new UserIPhoneDetails().withUser(currentUser).withUserGroup(o2UserGroup).withToken(""));
+
+        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(getBlackberryDeviceType()).withIpAddress("ip2").withUserGroup(o2UserGroup));
+
+        //when
+        User actualUser = userService.mergeUser(oldUser, currentUser);
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(oldUser.getId()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceType(), is(currentUser.getDeviceType()));
+        assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
+        assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
     }
 
 }

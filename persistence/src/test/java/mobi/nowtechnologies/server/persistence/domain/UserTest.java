@@ -39,10 +39,6 @@ public class UserTest {
     private int nextSubPayment;
     private int epochSeconds;
 
-    /**
-	 * user.isOnFreeTrial() returns true
-	 * only if freeTrialExpiredMillis > System.currentMillis  
-	 */
 	@Test
 	public void isOnFreeTrial_true_when_freeTrialExpiredMillis_Gt_currentMillis() {
 		User user = new User();
@@ -50,10 +46,6 @@ public class UserTest {
 		assertEquals(true, user.isOnFreeTrial());
 	}
 	
-	/**
-	 * user.isOnFreeTrial() returns false
-	 * only if freeTrialExpiredMillis < System.currentMillis  
-	 */
 	@Test
 	public void isOnFreeTrial_false_when_freeTrialExpiredMillis_Lt_currentMillis() {
 		User user = new User();
@@ -61,10 +53,6 @@ public class UserTest {
 		assertEquals(false, user.isOnFreeTrial());
 	}
 	
-	/**
-	 * user.isOnFreeTrial() returns false
-	 * only if freeTrialExpiredMillis == null  
-	 */
 	@Test
 	public void isOnFreeTrial_false_when_freeTrialExpiredMillis_Eq_Null() {
 		User user = new User();
@@ -877,8 +865,19 @@ public class UserTest {
         assertThat(s, is(false));
     }
 
-    private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
+    @Test
+    public void shouldNotBeSubjectToAutoOptInUserWithOldUser(){
+        //given
+        User user = new User().withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withTariff(_3G).withProvider(O2).withSegment(CONSUMER).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
 
+        //when
+        boolean s = user.isSubjectToAutoOptIn();
+
+        //then
+        assertThat(s, is(false));
+    }
+
+    private void prepareDataToIsOn4GVideoAudioBoughtPeriod() {
         mockStatic(Utils.class);
         when(Utils.getEpochSeconds()).thenReturn(epochSeconds);
 
