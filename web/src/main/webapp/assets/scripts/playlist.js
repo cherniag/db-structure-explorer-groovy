@@ -24,6 +24,7 @@ var Player = {
         Player.player.load();
         Player.player.addEventListener("loadeddata", function(){
             Player.player.play();
+            GA.trackPlaying(track.get('id'));
         });
 	},
 	stop : function() {
@@ -140,6 +141,7 @@ var PlaylistView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).addClass('color-bg');
+        GA.trackClick('playlists_screen');
     }
 });
 
@@ -150,6 +152,7 @@ var HomeView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).removeClass('color-bg');
+        GA.trackClick('home_screen');
     }
 });
 
@@ -160,6 +163,7 @@ var SwapView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).removeClass('color-bg');
+        GA.trackClick('swap_screen');
     }
 });
 
@@ -214,6 +218,7 @@ var TracksView = Backbone.View.extend({
 		$(me.el).empty();
 		$(me.el).html(html);
         $(me.el).addClass('color-bg');
+        GA.trackClick('playlist_'+currentPL['title']);
 	}
 });
 
@@ -259,6 +264,7 @@ var PlaylistRouter = Backbone.Router.extend({
         $(Backbone.tracksView.el).show();
     },
     back: function(){
+        GA.trackClick('back_to_app');
         window.location.href = '/web/playlist/swap.html';
     },
     apply: function () {
@@ -268,6 +274,7 @@ var PlaylistRouter = Backbone.Router.extend({
             list.save({selected: true});
         }
         Player.stop();
+        GA.trackClick('apply_swapping_'+listID);
         window.location.href = '/web/playlist/swap.html';
     },
     gotoView: function(view){
