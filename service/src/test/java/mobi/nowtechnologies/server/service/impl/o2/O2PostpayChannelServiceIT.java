@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.impl.o2;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import mobi.nowtechnologies.server.service.O2Service;
+import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
 import org.junit.Test;
