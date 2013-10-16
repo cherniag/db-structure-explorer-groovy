@@ -1,12 +1,10 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import java.util.Date;
 

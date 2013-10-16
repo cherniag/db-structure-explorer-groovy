@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;

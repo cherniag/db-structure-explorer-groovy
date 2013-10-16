@@ -1,4 +1,6 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
+
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.persistence.repository;
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 

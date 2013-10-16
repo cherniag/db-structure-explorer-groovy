@@ -4,10 +4,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import junit.framework.Assert;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COM
 import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.hamcrest.CoreMatchers.is;

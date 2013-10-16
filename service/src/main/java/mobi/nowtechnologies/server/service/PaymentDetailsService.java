@@ -5,11 +5,12 @@ import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
-import mobi.nowtechnologies.server.service.payment.O2PaymentService;
+import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -20,7 +21,6 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -55,7 +55,7 @@ public class PaymentDetailsService {
 
 	private MigPaymentService migPaymentService;
 
-	private O2PaymentService o2PaymentService;
+	private PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService;
 
 	private PromotionService promotionService;
 
@@ -113,7 +113,7 @@ public class PaymentDetailsService {
         this.paymentPolicyDao = paymentPolicyDao;
     }
 
-    public void setO2PaymentService(O2PaymentService o2PaymentService) {
+    public void setO2PaymentService(PSMSPaymentService<O2PSMSPaymentDetails> o2PaymentService) {
         this.o2PaymentService = o2PaymentService;
     }
 

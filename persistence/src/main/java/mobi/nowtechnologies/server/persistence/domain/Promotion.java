@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.server.shared.ObjectUtils;
+import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;

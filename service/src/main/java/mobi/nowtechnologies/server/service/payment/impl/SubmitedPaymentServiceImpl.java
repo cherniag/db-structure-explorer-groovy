@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.SubmitedPaymentRepository;
 import mobi.nowtechnologies.server.service.payment.SubmitedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;

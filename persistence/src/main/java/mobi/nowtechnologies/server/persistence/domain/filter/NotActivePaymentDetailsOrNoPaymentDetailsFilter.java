@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.filter;
 
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

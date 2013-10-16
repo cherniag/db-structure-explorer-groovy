@@ -6,8 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.AppConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

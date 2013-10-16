@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain;
+package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public abstract class PaymentDetails {
 	public static final String MIG_SMS_TYPE = "migSms";
 	public static final String O2_PSMS_TYPE = "o2Psms";
 	public static final String VF_PSMS_TYPE = "vfPsms";
+	public static final String PSMS_TYPE = "psms";
 	public static final String ITUNES_SUBSCRIPTION="iTunesSubscription";
 	public static final String FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE = "FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE";
 
