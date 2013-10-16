@@ -2,10 +2,7 @@ package mobi.nowtechnologies.server.service.impl.o2;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
-import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
 import org.junit.Test;
@@ -18,9 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/service-test-ws.xml" })
-public class O2ServiceIT {
+public class O2PrepayServiceIT {
 
-	protected final Logger LOGGER = LoggerFactory.getLogger(O2ServiceIT.class);
+	protected final Logger LOGGER = LoggerFactory.getLogger(O2PrepayServiceIT.class);
 
 	@Autowired
 	private O2Service o2service;
@@ -30,39 +27,54 @@ public class O2ServiceIT {
 		LOGGER.info("start");
 
 		KeystoreUtils.initKeystore();
+		O2SubscriberData res;
 
-		O2SubscriberData res = o2service
-				.getSubscriberData(PhoneNumbers.O2_4G_CONTRACT);
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_3G);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertTrue(res.isTariff4G());
-		
-		res=o2service.getSubscriberData(PhoneNumbers.O2_4G_BOLTON);
-		assertTrue(res.isProviderO2());
-		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());
-		assertTrue(res.isTariff4G());
-		
-		res = o2service.getSubscriberData(PhoneNumbers.O2_3G_CONTRACT);
-		assertTrue(res.isProviderO2());
-		assertFalse(res.isBusinessOrConsumerSegment());
-		assertTrue(res.isContractPostPayOrPrePay());
+		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
+		
 
-		res = o2service.getSubscriberData(PhoneNumbers.NON_O2);
-		assertFalse(res.isProviderO2());
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF43);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF44);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+		
+		
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF45);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
+
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF43_NEED_RECHARGE);
+		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
 
-
-		res = o2service.getSubscriberData(PhoneNumbers.NON_O2_ANOTHER);
-		assertFalse(res.isProviderO2());
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF44_NEED_RECHARGE);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertFalse(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertFalse(res.isTariff4G());
+		
+		res = o2service.getSubscriberData(PhoneNumbers.PREPAY_4G_TARIFF45_NEED_RECHARGE);
+		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
@@ -70,5 +82,6 @@ public class O2ServiceIT {
 		
 		LOGGER.info("competed");
 	}
+
 
 }

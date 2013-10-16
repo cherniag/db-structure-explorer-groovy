@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceSet;
 import mobi.nowtechnologies.server.persistence.repository.NotPromotedDeviceRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotedDeviceRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -21,7 +20,8 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
  * 
  */
 public class DeviceService {
-	private final static String DEFAULT_PROMO_PHONE_MSG_CODE = "promoted.device.phones"; 
+	private final static String DEFAULT_PROMO_PHONE_MSG_CODE = "promoted.device.phones";
+	private final static String DEFAULT_PROMO_PHONE_OTAC_MSG_CODE = "promoted.otac.only.device.phones"; 
 	
 	private NotPromotedDeviceRepository notPromotedDeviceRepository;
 	private PromotedDeviceRepository promotedDeviceRepository;
@@ -59,11 +59,28 @@ public class DeviceService {
 		return false;
 	}
 	
+	/**
+	 * Checks if a phone number is 'otac promoted'. This is used to avoid otac checks with o2 but to have all other checks
+	 * in place (as user information). Used by test devices, where we don't want otac validation but we want user details 
+	 * 
+	 * @param community
+	 * @param phoneNumber
+	 * @param promoCode
+	 * @return
+	 */
+	public boolean isOtacPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {
+		return isPromotedDevicePhone(community, phoneNumber, promoCode, DEFAULT_PROMO_PHONE_OTAC_MSG_CODE);
+	}
+	
 	public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode) {
+		return isPromotedDevicePhone(community, phoneNumber, promoCode, DEFAULT_PROMO_PHONE_MSG_CODE);
+	}
+	
+	public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode, String propertyName) {
 		if (null!=phoneNumber) {
 			
 			String[] msgCodes = new String[3];
-			msgCodes[0] = DEFAULT_PROMO_PHONE_MSG_CODE;
+			msgCodes[0] = propertyName;
 			msgCodes[1] = community.getRewriteUrlParameter().toLowerCase()+"."+msgCodes[0];
 			
 			if(promoCode != null){
@@ -87,7 +104,7 @@ public class DeviceService {
 		}
 		return false;
 	}
-
+	
 	public void setNotPromotedDeviceRepository(
 			NotPromotedDeviceRepository notPromotedDeviceRepository) {
 		this.notPromotedDeviceRepository = notPromotedDeviceRepository;

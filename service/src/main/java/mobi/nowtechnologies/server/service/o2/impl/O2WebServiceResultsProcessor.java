@@ -98,12 +98,10 @@ public class O2WebServiceResultsProcessor {
 		if (is4GTariffId(prepayTariff.getCurrentTariff().getTariffDetail()
 				.getTariffId().intValue())) {
 
-			data.setTariff4G(true);
-
-			if ("0".equals(prepayTariff.getCurrentTariff()
-					.getAllowanceStatusExternal())) {
-				data.setDirectOrIndirect4GChannel(true);
+			if ("ACTIVE".equals(prepayTariff.getCurrentTariff().getAllowanceStatusExternal())) {
+				data.setTariff4G(true);	
 			}
+			data.setDirectOrIndirect4GChannel(true);
 		}
 
 	}
@@ -118,8 +116,7 @@ public class O2WebServiceResultsProcessor {
 		boolean direct = false;
 		if ((orderList.getOrder() != null) || (orderList.getOrder().size() > 0)) {
 
-			Order2SummaryType order = orderList.getOrder().get(
-					orderList.getOrder().size() - 1);
+			Order2SummaryType order = orderList.getOrder().get(0);
 
 			String partner = order.getPartner();
 			if (partner == null) {
