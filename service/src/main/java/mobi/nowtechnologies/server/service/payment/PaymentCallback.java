@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 
 public class PaymentCallback {
 	

@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.assembler.AccountLogAsm;
 import mobi.nowtechnologies.server.assembler.PendingPaymentAsm;
 import mobi.nowtechnologies.server.assembler.SubmittedPaymentAsm;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.AccountLogService;

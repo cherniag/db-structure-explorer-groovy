@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
 import java.io.UnsupportedEncodingException;
