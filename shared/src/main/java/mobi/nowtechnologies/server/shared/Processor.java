@@ -19,4 +19,10 @@ public abstract class Processor<T> {
     public void setMessageParser(Parser<String, T> messageParser) {
         this.messageParser = messageParser;
     }
+
+    public Processor<T> withMessageParser(Parser<String, T> messageParser) {
+        setMessageParser(messageParser);
+
+        return this;
+    }
 }
