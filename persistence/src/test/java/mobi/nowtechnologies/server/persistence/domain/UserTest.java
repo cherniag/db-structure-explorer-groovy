@@ -80,7 +80,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -100,7 +100,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -120,7 +120,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -140,7 +140,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("chartsnow");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -160,7 +160,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -180,7 +180,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter(null);
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -212,7 +212,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -231,7 +231,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -250,7 +250,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("o2");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -269,7 +269,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter("chartsnow");
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -289,7 +289,7 @@ public class UserTest {
 		Community community = new Community();
 		community.setRewriteUrlParameter(null);
 		
-		UserGroup userGroup = new UserGroup();
+		UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		User user = new User();
@@ -444,7 +444,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnVideoAudioFreeTrial(){
         //given
-        UserGroup o2 = new UserGroup().withCommunity(new Community().withRewriteUrl("o2"));
+        UserGroup o2 = new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"));
         PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
 
         user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
@@ -461,7 +461,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -473,7 +473,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaygConsumerOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -485,7 +485,7 @@ public class UserTest {
     @Test
     public void shouldNotShowFreeTrialFor4GO2PaymBusinessOnVideoAudioFreeTrial(){
         //given
-        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isShowPromotion = user.isShowFreeTrial();
@@ -641,7 +641,7 @@ public class UserTest {
     @Test
     public void shouldBeEligibleForVideoO24GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -653,7 +653,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO24GConsumerFromWrongCommunity(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("non-o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("non-o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("o2");
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -665,7 +665,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoNonO24GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("non-o2");
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(CONSUMER).withProvider("non-o2");
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -677,7 +677,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO23GConsumer(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_3G).withSegment(CONSUMER).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_3G).withSegment(CONSUMER).withProvider("o2");
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -689,7 +689,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoO24GBusiness(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(BUSINESS).withProvider("o2");
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withTariff(_4G).withSegment(BUSINESS).withProvider("o2");
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -701,7 +701,7 @@ public class UserTest {
     @Test
     public void shouldBeEligibleForVideoUserOnWhiteListedVideoAudioFreeTrial(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -713,7 +713,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnExpiredWhiteListedVideoAudioFreeTrial(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MIN_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MIN_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -725,7 +725,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnNotWhiteListedVideoAudioFreeTrial(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -737,7 +737,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnNotWhiteListedFreeTrial(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE);
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE);
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -749,7 +749,7 @@ public class UserTest {
     @Test
     public void shouldNotBeEligibleForVideoUserOnWhiteListedAudioFreeTrial(){
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
+        user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(false)));
 
         //when
         boolean isEligibleForVideo = user.isEligibleForVideo();
@@ -761,7 +761,7 @@ public class UserTest {
     @Test
     public void shouldBeFNZCommunityUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
 
         //when
         boolean isVFNZCommunityUser = user.isVFNZCommunityUser();
@@ -773,7 +773,7 @@ public class UserTest {
     @Test
     public void shouldBeO2CommunityUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
 
         //when
         boolean isVFNZCommunityUser = user.isO2CommunityUser();
@@ -785,7 +785,7 @@ public class UserTest {
     @Test
     public void shouldNotBeFNZCommunityUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL)));
 
         //when
         boolean isVFNZCommunityUser = user.isVFNZCommunityUser();
@@ -797,7 +797,7 @@ public class UserTest {
     @Test
     public void shouldBeVFNZUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
 
         //when
         boolean isVFNZUser = user.isVFNZUser();
@@ -809,7 +809,7 @@ public class UserTest {
     @Test
     public void shouldBeNotVFNZUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(NON_VF.toString());
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(NON_VF.toString());
 
         //when
         boolean isVFNZUser = user.isVFNZUser();
@@ -821,7 +821,7 @@ public class UserTest {
     @Test
     public void shouldBeNotVFNZUserOnO2Community(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
 
         //when
         boolean isVFNZUser = user.isVFNZUser();

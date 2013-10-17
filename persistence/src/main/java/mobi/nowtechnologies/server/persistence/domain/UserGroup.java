@@ -14,8 +14,8 @@ import java.io.Serializable;
 @Table(name="tb_userGroups")
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	public static enum Fields {
+
+    public static enum Fields {
 		i,chartId,communityId,drmPolicyId,name,newsId
 	}
 
@@ -127,6 +127,11 @@ public class UserGroup implements Serializable {
 
     public UserGroup withCommunity(Community community){
         setCommunity(community);
+        return this;
+    }
+
+    public UserGroup withId(Integer id) {
+        setId(id);
         return this;
     }
 
