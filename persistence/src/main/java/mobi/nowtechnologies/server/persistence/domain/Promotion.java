@@ -10,10 +10,6 @@ import javax.persistence.*;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
 
-/**
- * The persistent class for the tb_promotions database table.
- * 
- */
 @Entity
 @Table(name = "tb_promotions")
 @NamedQueries( { @NamedQuery(name = Promotion.NQ_GET_PROMOTION_WITH_FILTER, query = "select distinct prom from Promotion prom join prom.filters where isActive=true and (numUsers<maxUsers or maxUsers=0) and endDate>?1 and startDate<?1 and userGroup=?2") })

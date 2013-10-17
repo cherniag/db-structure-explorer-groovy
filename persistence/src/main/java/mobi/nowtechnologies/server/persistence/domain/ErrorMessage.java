@@ -1,7 +1,6 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.persistence.domain;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Map;
@@ -55,8 +54,15 @@ public class ErrorMessage {
 		this.displayMessage = displayMessage;
 	}
 
-	@Override
-	public String toString() {
-		return "ErrorMessage [displayMessage=" + displayMessage + ", errorCode=" + errorCode + ", message=" + message + ", parammeters=" + parammeters + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("displayMessage", displayMessage)
+                .append("message", message)
+                .append("errorCode", errorCode)
+                .append("parammeters", parammeters)
+                .toString();
+    }
+
+
 }

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
@@ -59,13 +60,13 @@ public class Refund {
 
     @Override
     public String toString() {
-        return "Refund[" +
-                "id=" + id +
-                ", getUserId()=" + getUserId() +
-                ", getPaymentDetailsId()=" + getPaymentDetailsId() +
-                ", logTimeMillis=" + logTimeMillis +
-                ", nextSubPaymentMillis=" + nextSubPaymentMillis +
-                ", actionReason=" + actionReason +
-                ']';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("getUserId()", getUserId())
+                .append("getPaymentDetailsId()", getPaymentDetailsId())
+                .append("logTimeMillis", logTimeMillis)
+                .append("nextSubPaymentMillis", nextSubPaymentMillis)
+                .append("actionReason", actionReason)
+                .toString();
     }
 }

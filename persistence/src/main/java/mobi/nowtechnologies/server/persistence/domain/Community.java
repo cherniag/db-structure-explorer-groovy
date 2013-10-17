@@ -9,8 +9,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-
-
 @Entity
 @Table(name="tb_communities")
 public class Community implements Serializable {
@@ -21,8 +19,7 @@ public class Community implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="i")
-	private byte id;
+	private Integer id;
 
 	@Column(name="appVersion", insertable=false,updatable=false)
 	private byte appVersionId;
@@ -58,11 +55,11 @@ public class Community implements Serializable {
         return  this;
     }
 
-	public byte getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	void setId(byte id) {
+	void setId(Integer id) {
 		this.id = id;
 	}
 

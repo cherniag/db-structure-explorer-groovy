@@ -29,14 +29,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * The persistent class for the tb_accountLog database table.
- * 
- */
 @Entity
 @Table(name="tb_accountLog")
 @NamedQueries({
@@ -240,11 +236,18 @@ public class AccountLog implements Serializable {
 		return offerId;
 	}
 
-	@Override
-	public String toString() {
-		return "AccountLog [id=" + id + ", userId=" + userId + ", relatedPaymentUID=" + relatedPaymentUID + ", transactionType=" + transactionType
-				+ ", balanceAfter=" + balanceAfter + ", logTimestamp=" + logTimestamp + ", promoCode=" + promoCode + ", relatedMediaUID=" + relatedMediaUID
-				+ ", offerId=" + offerId + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("balanceAfter", balanceAfter)
+                .append("logTimestamp", logTimestamp)
+                .append("relatedMediaUID", relatedMediaUID)
+                .append("relatedPaymentUID", relatedPaymentUID)
+                .append("transactionType", transactionType)
+                .append("userId", userId)
+                .append("promoCode", promoCode)
+                .append("offerId", offerId)
+                .toString();
+    }
 }

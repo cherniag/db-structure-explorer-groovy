@@ -51,7 +51,7 @@ public class AdItemDtoTest {
 		assertEquals(adItemDto.getAction(), result.getTitle());
 		assertEquals(adItemDto.getImageFileName(), result.getImageFileName());
 		assertEquals(null, result.getCommunity());
-		assertEquals((byte) 0, result.getCommunityId());
+		assertEquals(new Integer(0), result.getCommunityId());
 		assertEquals(null, result.getFrequence());
 		assertEquals(0L, result.getPublishTimeMillis());
 	}

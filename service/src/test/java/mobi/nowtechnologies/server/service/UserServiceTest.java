@@ -1057,7 +1057,7 @@ public class UserServiceTest {
 		final Community community = CommunityFactory.createCommunity();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-		final Map<Byte, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
+		final Map<Integer, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
 		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);

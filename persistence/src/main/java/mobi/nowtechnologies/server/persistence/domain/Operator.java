@@ -11,11 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
-/**
- * The persistent class for the tb_operators database table.
- * 
- */
 @Entity
 @Table(name = "tb_operators")
 public class Operator implements Serializable {
@@ -58,4 +55,12 @@ public class Operator implements Serializable {
 		return OperatorDao.getMapAsIds();
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .append("migName", migName)
+                .toString();
+    }
 }

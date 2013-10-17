@@ -1,15 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
-/**
- * The persistent class for the tb_appVersions database table.
- * 
- */
 @Entity
 @Table(name = "tb_appVersions")
 public class AppVersion implements Serializable {
@@ -64,4 +62,12 @@ public class AppVersion implements Serializable {
 		this.countries = countries;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("description", description)
+                .append("name", name)
+                .toString();
+    }
 }

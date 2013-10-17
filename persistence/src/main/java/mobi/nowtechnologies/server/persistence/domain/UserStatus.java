@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
-
-/**
- * The persistent class for the tb_userStatus database table.
- * 
- */
 @Entity
 @Table(name="tb_userStatus")
 public class UserStatus implements Serializable {
@@ -71,8 +68,13 @@ public class UserStatus implements Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "UserStatus [i=" + i + ", name=" + name + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .toString();
+    }
+
+
 }

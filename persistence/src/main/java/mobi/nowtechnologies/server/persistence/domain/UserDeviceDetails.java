@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-
 @MappedSuperclass
 public abstract class UserDeviceDetails {
 	
@@ -101,9 +101,18 @@ public abstract class UserDeviceDetails {
 		this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
 	}
 
-	@Override
-	public String toString() {
-		return "id=" + id + ", lastPushOfContentUpdateMillis="+lastPushOfContentUpdateMillis + ", nbUpdates=" + nbUpdates + ", status=" + status + ", token=" + token + ", userGroupId=" + userGroupId
-				+ ", userId=" + userId;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("userId", userId)
+                .append("token", token)
+                .append("userGroupId", userGroupId)
+                .append("nbUpdates", nbUpdates)
+                .append("status", status)
+                .append("lastPushOfContentUpdateMillis", lastPushOfContentUpdateMillis)
+                .toString();
+    }
+
+
 }

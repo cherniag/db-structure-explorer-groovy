@@ -3,11 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_accountLogTypes database table.
- * 
- */
 @Entity
 @Table(name="tb_accountLogTypes")
 public class AccountLogType implements Serializable {
@@ -19,9 +14,6 @@ public class AccountLogType implements Serializable {
 
 	@Column(name="name",columnDefinition="char(40)")
 	private String name;
-
-    public AccountLogType() {
-    }
 
 	public byte getI() {
 		return this.i;

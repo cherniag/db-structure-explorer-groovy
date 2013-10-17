@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 
 @Entity
@@ -74,11 +76,13 @@ public class UserBanned {
 
     @Override
     public String toString() {
-        return "UserBanned{" +
-                ", userId=" + userId +
-                ", timestamp=" + timestamp +
-                ", description='" + description + '\'' +
-                ", giveAnyPromotion=" + giveAnyPromotion +
-                "} " + super.toString();
+        return new ToStringBuilder(this)
+                .append("userId", userId)
+                .append("timestamp", timestamp)
+                .append("description", description)
+                .append("giveAnyPromotion", giveAnyPromotion)
+                .toString();
     }
+
+
 }

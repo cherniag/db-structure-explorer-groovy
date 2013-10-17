@@ -768,7 +768,7 @@ public class UserService {
 			String communityName) {
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
-		Byte communityId = Community.getMapAsNames().get(communityName).getId();
+        Integer communityId = Community.getMapAsNames().get(communityName).getId();
 		List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
                 PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
                 communityId);
@@ -835,7 +835,7 @@ public class UserService {
 		user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
 		user.setDeviceString(userRegInfo.getDeviceString());
 		user.setDevice("");
-		byte communityId = CommunityDao.getCommunityId(communityName);
+		int communityId = CommunityDao.getCommunityId(communityName);
 		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
 		user.setAddress1(userRegInfo.getAddress());
 		user.setAddress2(userRegInfo.getAddress());

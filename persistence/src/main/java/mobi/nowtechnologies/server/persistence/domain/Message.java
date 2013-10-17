@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,6 @@ import java.util.Set;
 /**
  * @author Mayboroda Dmytro
  * @author Titov Mykhaylo (titov)
- * 
  */
 @Entity
 @Table(name = "messages", uniqueConstraints = @UniqueConstraint(columnNames = { "position", "community_id", "messageType", "publishTimeMillis" }))
@@ -27,7 +27,7 @@ public class Message {
 
 	private Community community;
 
-	private byte communityId;
+	private Integer communityId;
 
 	private String title;
 
@@ -75,12 +75,12 @@ public class Message {
 			communityId = community.getId();
 	}
 
-	protected void setCommunityId(byte communityId) {
+	protected void setCommunityId(Integer communityId) {
 		this.communityId = communityId;
 	}
 
 	@Column(name = "community_id", insertable = false, updatable = false)
-	public byte getCommunityId() {
+	public Integer getCommunityId() {
 		return communityId;
 	}
 
@@ -220,12 +220,22 @@ public class Message {
 		return clonedMessage;
 	}
 
-	@Override
-	public String toString() {
-		return "Message [activated=" + activated + ", actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", body=" + body + ", communityId=" + communityId
-				+ ", filterWithCtiteria="
-				+ filterWithCtiteria
-				+ ", frequence=" + frequence + ", id=" + id + ", messageType=" + messageType + ", position=" + position + ", publishTimeMillis="
-				+ publishTimeMillis + ", title=" + title + ", imageFileName=" + imageFileName + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("communityId", communityId)
+                .append("title", title)
+                .append("body", body)
+                .append("activated", activated)
+                .append("frequence", frequence)
+                .append("messageType", messageType)
+                .append("publishTimeMillis", publishTimeMillis)
+                .append("position", position)
+                .append("imageFileName", imageFileName)
+                .append("actionType", actionType)
+                .append("action", action)
+                .append("actionButtonText", actionButtonText)
+                .toString();
+    }
 }

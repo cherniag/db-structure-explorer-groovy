@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_systemLog database table.
- * 
- */
 @Entity
 @Table(name="tb_systemLog")
 public class SystemLog implements Serializable {
@@ -50,4 +47,12 @@ public class SystemLog implements Serializable {
 		this.timestamp = timestamp;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("entry", entry)
+                .append("timestamp", timestamp)
+                .toString();
+    }
 }

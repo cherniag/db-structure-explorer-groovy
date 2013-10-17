@@ -31,7 +31,7 @@ public class UserGroup implements Serializable {
 	private Chart chart;
 
 	@Column(name="community", insertable=false,updatable=false)
-	private byte communityId;
+	private Integer communityId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="community")
@@ -78,7 +78,7 @@ public class UserGroup implements Serializable {
 		chartId=chart.getI();
 	}
 
-	public byte getCommunityId() {
+	public Integer getCommunityId() {
 		return communityId;
 	}
 

@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 
 @Entity
@@ -69,12 +71,14 @@ public class DeviceUserData {
 
     @Override
     public String toString() {
-        return "DeviceUserData{" +
-                "id=" + id +
-                ", communityUrl='" + communityUrl + '\'' +
-                ", userId=" + userId +
-                ", xtifyToken='" + xtifyToken + '\'' +
-                ", deviceUID='" + deviceUid + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("communityUrl", communityUrl)
+                .append("userId", userId)
+                .append("xtifyToken", xtifyToken)
+                .append("deviceUid", deviceUid)
+                .toString();
     }
+
+
 }

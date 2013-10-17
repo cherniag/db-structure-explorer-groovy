@@ -43,13 +43,13 @@ public class CommunityDao {
 		return COMMUNITY_MAP_REWRITE_URL_PARAMETER_AS_KEY;
 	}
 	
-	public static byte getCommunityId(String communityName){
+	public static int getCommunityId(String communityName){
 		if (communityName == null)
 			throw new PersistenceException("The parameter communityName is null");
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		Community community = getCommunity(communityName);
-		
-		byte communityId = community.getId();
+
+        Integer communityId = community.getId();
 		LOGGER.debug("Output parameter community=[{}]", community);
 		return communityId;
 	}
