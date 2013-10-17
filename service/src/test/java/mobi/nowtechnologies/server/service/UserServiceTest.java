@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service;
+/*package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
@@ -78,12 +78,12 @@ import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-/**
+*//**
  * 
  * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- */
+ *//*
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class })
@@ -3520,3 +3520,4 @@ public class UserServiceTest {
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
     }
 }
+*/
