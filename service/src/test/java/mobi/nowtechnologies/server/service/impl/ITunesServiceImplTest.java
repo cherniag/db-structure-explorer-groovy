@@ -30,7 +30,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SubmittedPayment.class, Utils.class, PaymentEvent.class, UserStatusDao.class})
@@ -207,7 +206,7 @@ public class ITunesServiceImplTest {
 
 		Community community = CommunityFactory.createCommunity();
 
-		UserGroup userGroup = UserGroupFactory.createUserGroup();
+		UserGroup userGroup = UserGroupFactory.createUserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
 		final User user = UserFactory.createUser();

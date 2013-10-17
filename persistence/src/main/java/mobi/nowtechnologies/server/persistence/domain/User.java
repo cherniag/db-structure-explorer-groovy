@@ -204,7 +204,7 @@ public class User implements Serializable {
 	private String token;
 
 	@Column(name = "userGroup", insertable = false, updatable = false)
-	private int userGroupId;
+	private Integer userGroupId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userGroup", nullable = false)
@@ -688,7 +688,7 @@ public class User implements Serializable {
 			userGroupId = userGroup.getId();
 	}
 
-	public int getUserGroupId() {
+	public Integer getUserGroupId() {
 		return userGroupId;
 	}
 
