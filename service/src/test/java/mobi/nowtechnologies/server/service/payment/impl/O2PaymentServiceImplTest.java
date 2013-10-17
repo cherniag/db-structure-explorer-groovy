@@ -1,4 +1,4 @@
-/*package mobi.nowtechnologies.server.service.payment.impl;
+package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -36,9 +36,10 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class })
@@ -521,4 +522,4 @@ public class O2PaymentServiceImplTest {
 		verify(o2PaymentServiceImplSpy, times(1)).getRetriesOnError();
 		verify(mockPaymentDetailsRepository, times(1)).save(any(O2PSMSPaymentDetails.class));
 	}
-}*/
+}
