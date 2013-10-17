@@ -326,6 +326,9 @@ public class User implements Serializable {
     @Column(name = "idfa", nullable = true)
     private String idfa;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserLog> userLogs;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -1089,7 +1092,15 @@ public class User implements Serializable {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
 	}
 
-	@Override
+    public List<UserLog> getUserLogs() {
+        return userLogs;
+    }
+
+    public void setUserLogs(List<UserLog> userLogs) {
+        this.userLogs = userLogs;
+    }
+
+    @Override
 	public String toString() {
 		return Objects.toStringHelper(this)
 				.add("id", id)

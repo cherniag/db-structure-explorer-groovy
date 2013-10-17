@@ -4,10 +4,12 @@ import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 @Entity
 @Table(name = "user_logs")
@@ -24,26 +26,27 @@ public class UserLog {
     @Column(columnDefinition = "char(25)")
     private String phoneNumber;
 
-    private long last_update;
+    @Column(name = "last_update")
+    private long logTimeMillis;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(255)")
-    private UserLogStatus status;
+    @Column(columnDefinition = "char(255)", name = "status")
+    private UserLogStatus userLogStatus;
     
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(25)")
-    private UserLogType type;
+    @Column(columnDefinition = "char(25)", name = "type")
+    private UserLogType userLogType;
 
     private String description;
 
     public UserLog(){/* 4hibernate*/}
 
-    protected UserLog(UserLog oldLog, UserLogStatus status, UserLogType userLogType, String description) {
+    protected UserLog(UserLog oldLog, UserLogStatus userLogStatus, UserLogType userLogType, String description) {
         if(oldLog != null)
             id = oldLog.getId();
-        this.type = userLogType;
-        this.last_update = System.currentTimeMillis();
-        this.status = status;
+        this.userLogType = userLogType;
+        this.logTimeMillis = System.currentTimeMillis();
+        this.userLogStatus = userLogStatus;
         this.description = Utils.substring(description, 255);
     }
     
@@ -66,15 +69,15 @@ public class UserLog {
     }
 
     public DateTime getLastUpdate() {
-        return new DateTime(last_update);
+        return new DateTime(logTimeMillis);
     }
     
     public void setLastUpdateMillis(long last_update) {
-		this.last_update = last_update;
+		this.logTimeMillis = last_update;
 	}
 
 	public long getLastUpdateMillis() {
-		return last_update;
+		return logTimeMillis;
 	}
 
 	public String getPhoneNumber() {
@@ -85,20 +88,56 @@ public class UserLog {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public UserLogType getType() {
-		return type;
+	public UserLogType getUserLogType() {
+		return userLogType;
 	}
 
-	public UserLogStatus getStatus() {
-        return status;
+	public UserLogStatus getUserLogStatus() {
+        return userLogStatus;
+    }
+
+    public UserLog withOldUserLog(UserLog oldUserLog){
+        if (isNotNull(oldUserLog)){
+            id = oldUserLog.getId();
+        }
+        return this;
+    }
+
+    public UserLog withUser(User user){
+        this.user = user;
+        return this;
+    }
+
+    public UserLog withUserLogStatus(UserLogStatus userLogStatus){
+        this.userLogStatus = userLogStatus;
+        return this;
+    }
+
+    public UserLog withUserLogType(UserLogType userLogType){
+        this.userLogType = userLogType;
+        return this;
+    }
+
+    public UserLog withDescription(String description){
+        this.description = description;
+        return this;
+    }
+
+    public UserLog withLogTimeMillis(long logTimeMillis){
+        this.logTimeMillis = logTimeMillis;
+        return this;
     }
 
     @Override
-    public String toString(){
-        return Objects.toStringHelper(this)
-                .add("userId", getUserId())
-                .add("last_update", last_update)
-                .add("status", status)
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("userId", getUserId())
+                .append("phoneNumber", phoneNumber)
+                .append("logTimeMillis", logTimeMillis)
+                .append("userLogStatus", userLogStatus)
+                .append("userLogType", userLogType)
+                .append("description", description)
                 .toString();
     }
 }

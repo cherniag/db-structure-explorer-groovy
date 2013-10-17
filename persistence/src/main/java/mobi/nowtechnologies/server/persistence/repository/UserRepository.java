@@ -141,17 +141,14 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 
-    // TODO rewrite uses jpql to avoid native queries using
-    @Query(nativeQuery = true, value = "select u.i " +
-            " from tb_users u " +
-            " where u.activation_status = 'ACTIVATED' " +
-            "      and u.userGroup = 10 " +
-            "      and not exists (select log.user_id from user_logs log " +
-            " where log.user_id = u.i " +
-            "      and log.user_id is not null " +
-            "      and log.type = 'UPDATE_O2_USER' " +
-            "      and log.last_update >  ?1)")
-    List<Integer> getUsersForUpdate(long after);
+    @Query(value = "select u.id from User u " +
+            "join u.userLogs log " +
+            "where " +
+            "u.activationStatus = 'ACTIVATED' " +
+            "and u.userGroup = 10 " +
+            "group by log.userLogType " +
+            "having max(log.logTimeMillis)<?1 and log.userLogType = 'UPDATE_O2_USER') or log.userLogType != 'UPDATE_O2_USER'")
+    List<Integer> getUsersForUpdate(long timeMillis);
 
     @Query(value = "select u from User u " +
             " join u.userGroup ug " +
