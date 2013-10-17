@@ -61,7 +61,7 @@ public abstract class UserDeviceDetails {
 	}
 
 	public void setUserGroup(UserGroup userGroup) {
-		this.userGroupId = userGroup.getI();
+		this.userGroupId = userGroup.getId();
 		this.userGroup = userGroup;
 	}
 

@@ -39,4 +39,18 @@ INSERT INTO tb_paymentPolicy
 content_description,sub_merchant_id,provider,tariff,media_type,is_default)
 VALUES(11, 0, 8.29,'iTunesSubscription',null,'','NZD',1,'com.musicqubed.vfnz.subscription',null,null,null,null,null,null,'non_vf','_3G','AUDIO', 0);
 
+-- http://jira.musicqubed.com/browse/IMP-2606
+-- IMP-2606 - [Backend] Schedule the automatic unsubscription notifications to users for the time between 8am and 8 pm
+ ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F766159605;
+ ALTER TABLE tb_users DROP INDEX FKFAEDF4F766159605;
+
+ ALTER TABLE tb_promotions DROP FOREIGN KEY FK81812EA166159605;
+ ALTER TABLE tb_promotions DROP INDEX FK81812EA166159605;
+
+ alter table tb_users modify userGroup int not null;
+ alter table tb_userGroups change i id int not null auto_increment;
+ alter table tb_promotions modify userGroup int not null;
+
+ alter table tb_users add index tb_users_PK_userGroup (userGroup), add constraint tb_users_U_userGroup foreign key (userGroup) references tb_userGroups (id);
+ alter table tb_promotions add index tb_promotions_PK_userGroup (userGroup), add constraint tb_promotions_U_userGroup foreign key (userGroup) references tb_userGroups (id);
 

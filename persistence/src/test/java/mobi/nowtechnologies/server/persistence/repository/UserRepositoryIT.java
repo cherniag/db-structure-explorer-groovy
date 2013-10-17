@@ -3,12 +3,8 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
-import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -381,7 +377,7 @@ public class UserRepositoryIT {
         User testUser2 = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(0L).withUser(testUser2).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         
-		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis);
+		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getId());
 		
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());		

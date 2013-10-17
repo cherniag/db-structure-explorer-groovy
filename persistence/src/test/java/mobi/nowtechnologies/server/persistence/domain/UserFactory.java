@@ -60,7 +60,7 @@ public class UserFactory
 		
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = new UserGroup();
-		userGroup.setI((byte)7);
+		userGroup.setId(7);
 		userGroup.setCommunity(community);
 		
 		User testUser= new User();

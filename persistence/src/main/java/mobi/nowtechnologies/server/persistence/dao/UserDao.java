@@ -39,7 +39,7 @@ public class UserDao extends JpaDaoSupport {
 				communityName).get(0);
 	}
 
-	public String getCommunityNameByUserGroup(byte userGroup) {
+	public String getCommunityNameByUserGroup(int userGroup) {
 		return ((Community) getJpaTemplate().find(
 						"select o from "
 								+ Community.class.getSimpleName()

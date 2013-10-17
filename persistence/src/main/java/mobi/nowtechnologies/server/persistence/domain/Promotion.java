@@ -200,9 +200,9 @@ public class Promotion implements Serializable {
 		this.promoCode = promoCode;
 	}
 
-    public Byte getUserGroupId() {
+    public Integer getUserGroupId() {
         if(isNotNull(userGroup)){
-            return userGroup.getI();
+            return userGroup.getId();
         }
         return null;
     }

@@ -696,7 +696,7 @@ public class UserService {
 		return user;
 	}
 
-	public String getCommunityNameByUserGroup(byte userGroup) {
+	public String getCommunityNameByUserGroup(int userGroup) {
 		return userDao.getCommunityNameByUserGroup(userGroup);
 	}
 
