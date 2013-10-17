@@ -25,8 +25,8 @@ public class PaymentsPsmsController extends CommonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
     
-    
-    private PaymentDetailsService paymentDetailsService;
+    @SuppressWarnings("unused")
+	private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
     private O2PaymentServiceImpl paymentService;
@@ -49,7 +49,6 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        // TODO change with the new objects created by Sasha
         paymentService.commitPaymentDetails(user, policy);
 
         return new ModelAndView("redirect:/"+scopePrefix+".html");

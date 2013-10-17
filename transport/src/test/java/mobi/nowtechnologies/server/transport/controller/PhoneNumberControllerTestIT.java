@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.smslib.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,16 +43,8 @@ public class PhoneNumberControllerTestIT {
 	private ApplicationContext applicationContext;
 	
 	@Autowired
-	@Qualifier("service.UserService")
-	private UserService userService;
-	
-	@Autowired
-	private ChartRepository chartRepository;
+	private SMSMessageProcessorContainer processorContainer;
 
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
-
-	
     @Before
     public void setUp() {
         mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
@@ -96,6 +87,7 @@ public class PhoneNumberControllerTestIT {
         resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<provider>o2</provider>"));
+        assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
     }
 
     @Test
@@ -123,6 +115,9 @@ public class PhoneNumberControllerTestIT {
 		
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
 
+        MOMessage message = new MOMessage("5804", "642111111111", "OnNet", Message.MessageEncodings.ENC8BIT);
+        processorContainer.processInboundMessage(null, message);
+
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
@@ -135,6 +130,7 @@ public class PhoneNumberControllerTestIT {
         resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<provider>vf</provider>"));
+        assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
     }
 
     @Test
@@ -162,6 +158,9 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
 
+        MOMessage message = new MOMessage("5804", "64279000456", "OffNet", Message.MessageEncodings.ENC8BIT);
+        processorContainer.processInboundMessage(null, message);
+
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
@@ -174,5 +173,6 @@ public class PhoneNumberControllerTestIT {
         resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<provider>non-vf</provider>"));
+        assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
     }
 }
