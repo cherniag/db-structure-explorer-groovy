@@ -138,7 +138,7 @@ public class PaymentsController extends CommonController {
     }
     
     private boolean isConsumerUser(User user) {
-    	return user.isO2Consumer() || (user.isVFNZUser() && user.getSegment() == SegmentType.CONSUMER);
+    	return (user.isO2Consumer() && user.getSegment() == SegmentType.CONSUMER) || user.isVFNZUser();
     }
     
     private boolean isNotFromNetwork(User user) {
@@ -146,7 +146,7 @@ public class PaymentsController extends CommonController {
     }
     
     private boolean isBusinessUser(User u) {
-    	return (ProviderType.O2.toString().equals(u.getProvider()) || ProviderType.VF.toString().equals(u.getProvider()) && u.getSegment()==SegmentType.BUSINESS);
+    	return u.isO2Business(); // for VF NZ we don't have business users, so always will be false
     }
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
@@ -155,6 +155,12 @@ public class PaymentsController extends CommonController {
         if( isNotFromNetwork(user) ) {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         } else {
+        	if ( user.isVFNZCommunityUser() ) {
+        		// this workaround is also used in PaymentDetailsService (it's used to have the sql queries working)...
+        		// we need a better way to define payment policies... We should filter by provider/segment/contract/tariff
+        		segment = SegmentType.CONSUMER;
+        	}
+        	
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
             paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
         }
@@ -176,7 +182,7 @@ public class PaymentsController extends CommonController {
     		return ret;
     	}
     	
-    	if(user.isO2Business()){     		
+    	if(user.isO2Business()){
     		//no filtering required
     		ret.addAll(paymentPolicyList);
     		return ret;
