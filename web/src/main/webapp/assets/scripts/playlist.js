@@ -239,15 +239,21 @@ var PlaylistRouter = Backbone.Router.extend({
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
         "apply": "apply",
-        "back": "back"
+        "back": "back",
+        "backOrExit": "backOrExit"
     },
     swap: function(listID){
         Backbone.playlistView.willBeSelected = listID;
         this.gotoView(Backbone.swapView);
     },
     home: function () {
-        //this.gotoView(Backbone.homeView);
-    	this.allPlaylists();
+    	// if the user checked 'don't show me...', the view for 'home' will be playlistView
+    	var cookieSaved = readCookie("playlist_NoHomepage");
+    	if ( "1" === cookieSaved ) {
+    		this.allPlaylists();
+    	} else {
+    		this.gotoView(Backbone.homeView);
+    	}
     },
     allPlaylists: function () {
         Player.stop();
@@ -260,6 +266,18 @@ var PlaylistRouter = Backbone.Router.extend({
     },
     back: function(){
         window.location.href = '/web/playlist/swap.html';
+    },
+    backOrExit: function() {
+    	/* this is called from the playlists template for the close button and we can be in two situations:
+    	 	1. if user does not want to see the home page, we just exit
+    	 	2. otherwise, the user will go to the home page, as before
+    	 */
+    	var cookieSaved = readCookie("playlist_NoHomepage");
+    	if ( "1" === cookieSaved ) {
+    		this.back();
+    	} else {
+    		this.gotoView(Backbone.homeView);
+    	}
     },
     apply: function () {
         var listID = Backbone.playlistView.willBeSelected;
@@ -282,3 +300,29 @@ var PlaylistRouter = Backbone.Router.extend({
     }
 });
 
+var ChckboxElement = (function() {
+	switchState = function() {
+		var imgOff = $("#doNotShowCheckboxOff");
+		var imgOn  = $("#doNotShowCheckboxOn");
+		
+		if ( imgOff.length === 0 || imgOn.length === 0 ) {
+			return;
+		}
+		
+		imgOff.toggle();
+		imgOn.toggle();
+		
+		if ( imgOn.is(":visible") ) {
+			// set the cookie for 6 months
+			createCookie("playlist_NoHomepage", "1", 365);
+		} else {
+			// remove the cookie
+			createCookie("playlist_NoHomepage", "0", -1);
+		}
+	};
+	
+	return {
+		// updateOptions: updateOptions,
+		switchState: switchState
+	};
+})();

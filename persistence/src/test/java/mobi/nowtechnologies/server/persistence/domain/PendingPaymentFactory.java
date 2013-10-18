@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+
 /**
  * @author Titov Mykhaylo (titov)
  *

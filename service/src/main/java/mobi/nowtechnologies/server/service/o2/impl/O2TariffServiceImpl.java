@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
+import java.math.BigInteger;
+
 import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Component;
 import uk.co.o2.soa.coredata_1.AccountType;
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2;
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2Response;
+import uk.co.o2.soa.manageorderdata_2.OrdersSelectionCriteriaType;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltons;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContract;
@@ -90,9 +93,12 @@ public class O2TariffServiceImpl implements O2TariffService {
     
     @Override
     public GetOrderList2Response getOrderList(String phoneNumber) {
-
     	GetOrderList2 input = new GetOrderList2();
+
     	input.setMsisdn(phoneNumber);
+    	input.setOrdersSelectionCriteria(new OrdersSelectionCriteriaType());
+    	input.getOrdersSelectionCriteria().setStartOrderNumber(BigInteger.valueOf(1));
+    	input.getOrdersSelectionCriteria().setNumOrdersRequired(BigInteger.valueOf(30));
     	
         uk.co.o2.soa.manageorderdata_2.ObjectFactory objectFactory = new uk.co.o2.soa.manageorderdata_2.ObjectFactory();
         JAXBElement<GetOrderList2> wrappedInput = objectFactory.createGetOrderList2(input);

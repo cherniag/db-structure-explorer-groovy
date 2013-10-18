@@ -29,31 +29,28 @@ public class O2ServiceIT {
 	public void testService() throws Exception {
 		LOGGER.info("start");
 
-		initKeystore();
+		KeystoreUtils.initKeystore();
 
 		O2SubscriberData res = o2service
 				.getSubscriberData(PhoneNumbers.O2_4G_CONTRACT);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
+		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertTrue(res.isTariff4G());
 		
 		res=o2service.getSubscriberData(PhoneNumbers.O2_4G_BOLTON);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
+		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertTrue(res.isTariff4G());
-		
-		//TODO: pay as you go numbers!!!???
-		//business numbers
 		
 		res = o2service.getSubscriberData(PhoneNumbers.O2_3G_CONTRACT);
 		assertTrue(res.isProviderO2());
 		assertFalse(res.isBusinessOrConsumerSegment());
 		assertTrue(res.isContractPostPayOrPrePay());
-		assertTrue(res.isDirectOrIndirect4GChannel());//might be incorrect since we are not contacting o2 for this yet
+		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
 
 		res = o2service.getSubscriberData(PhoneNumbers.NON_O2);
@@ -70,15 +67,8 @@ public class O2ServiceIT {
 		assertFalse(res.isContractPostPayOrPrePay());
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertFalse(res.isTariff4G());
-
 		
 		LOGGER.info("competed");
-	}
-
-	private void initKeystore() {
-		System.setProperty("javax.net.ssl.keyStore", new File(
-				"./src/main/resources/META-INF/keystore.jks").getAbsolutePath());
-		System.setProperty("javax.net.ssl.keyStorePassword", "Fb320p007++");
 	}
 
 }

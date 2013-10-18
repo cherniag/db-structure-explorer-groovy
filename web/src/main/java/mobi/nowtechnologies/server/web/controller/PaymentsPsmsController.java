@@ -49,11 +49,7 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        if ( user.isO2CommunityUser() ) {
-        }
-        if ( user.isVFNZCommunityUser() ) {
-        }
-
+        // TODO change with the new objects created by Sasha
         paymentService.commitPaymentDetails(user, policy);
 
         return new ModelAndView("redirect:/"+scopePrefix+".html");

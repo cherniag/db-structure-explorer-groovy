@@ -1,6 +1,4 @@
-package mobi.nowtechnologies.server.persistence.domain;
-
-import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
+package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;

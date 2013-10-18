@@ -56,7 +56,7 @@
             </c:otherwise>
         </c:choose>
     </div>
-    <c:if test="${(paymentsPage.paymentDetails!=null) && (true==paymentDetails.activated)}">
+    <c:if test="${paymentsPage.paymentDetailsActivated}">
          <div class="rel" style="padding: 0px 5px 10px 5px;">
              <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments/unsubscribe.html" ><s:message code='pays.deactivate.submit' /></a>
          </div>

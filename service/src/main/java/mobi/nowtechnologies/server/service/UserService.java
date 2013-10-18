@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -134,8 +135,13 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        user.setContract(Contract.valueOf(providerUserDetails.contract));
-        user.setProvider(providerUserDetails.operator);
+        if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
+            user.setContract(Contract.PAYM);
+            user.setProvider(ProviderType.O2.toString());
+        }else{
+            user.setContract(Contract.valueOf(providerUserDetails.contract));
+            user.setProvider(providerUserDetails.operator);
+        }
         return user;
     }
 
