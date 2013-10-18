@@ -24,7 +24,6 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     private NZCellNumberValidator phoneValidator = new NZCellNumberValidator();
     private VFNZSMSGatewayServiceImpl gatewayService;
-    private VFNZSubscriberDataParser subscriberDataParser;
     private DeviceService deviceService;
     protected String providerNumber;
     private Community vfnzCommunity = new Community().withRewriteUrl("vf_nz");
@@ -63,15 +62,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     public void getSubscriberData(String phoneNumber,final Processor<VFNZSubscriberData> processor) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
-        gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber, new Processor<VFNZSubscriberData>() {
-            {
-                messageParser = subscriberDataParser;
-            }
-            @Override
-            public void process(VFNZSubscriberData data) {
-                processor.process(data);
-            }
-        });
+        gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber);
 
         LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}]", new Object[]{phoneNumber});
     }
@@ -86,10 +77,6 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
 
     public void setProviderNumber(String providerNumber) {
         this.providerNumber = providerNumber;
-    }
-
-    public void setSubscriberDataParser(VFNZSubscriberDataParser subscriberDataParser) {
-        this.subscriberDataParser = subscriberDataParser;
     }
 
     public void setDeviceService(DeviceService deviceService) {

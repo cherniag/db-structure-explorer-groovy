@@ -6,12 +6,15 @@ import org.springframework.util.StringUtils;
 public abstract class PaymentSystemResponse {
 	
 	protected boolean isSuccessful;
+    protected boolean isFuture;
 	protected String descriptionError;
 	protected int httpStatus;
 	protected String message;
 	protected String errorCode;
 	
-	public PaymentSystemResponse(BasicResponse response) {
+	public PaymentSystemResponse(BasicResponse response, boolean isFuture) {
+        this(isFuture);
+
 		httpStatus = response.getStatusCode();
 		if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
 			message = response.getMessage().substring(0, 254);
@@ -20,7 +23,15 @@ public abstract class PaymentSystemResponse {
 		descriptionError="";
 	}
 
-	public boolean isSuccessful() {
+    public PaymentSystemResponse(boolean isFuture) {
+        this.isFuture = isFuture;
+    }
+
+    public boolean isFuture() {
+        return isFuture;
+    }
+
+    public boolean isSuccessful() {
 		return isSuccessful;
 	}
 	
@@ -40,8 +51,15 @@ public abstract class PaymentSystemResponse {
 		return errorCode;
 	}
 
-	@Override
-	public String toString() {
-		return "httpStatus=" + httpStatus + ", errorCode=" + errorCode + ", descriptionError=" + descriptionError + ", isSuccessful=" + isSuccessful + ", message=" + message;
-	}
+    @Override
+    public String toString() {
+        return "PaymentSystemResponse{" +
+                "isSuccessful=" + isSuccessful +
+                ", isFuture=" + isFuture +
+                ", descriptionError='" + descriptionError + '\'' +
+                ", httpStatus=" + httpStatus +
+                ", message='" + message + '\'' +
+                ", errorCode='" + errorCode + '\'' +
+                "} ";
+    }
 }

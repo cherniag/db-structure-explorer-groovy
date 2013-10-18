@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
-import mobi.nowtechnologies.server.shared.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +39,6 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
         LOGGER.debug("Sms was sent successfully from [{}] to [{}] with message [{}]", new Object[]{messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
         return generateSuccessfulResponse(messageObject);
-    }
-
-    @Override
-    public SMSResponse send(String numbers, String message, String originator, Processor processor) {
-        MTMessage messageObject = new MTMessage(originator, numbers, message);
-        smppMessageProcessorContainer.registerMessageProcessor(messageObject, processor);
-
-        return send(messageObject);
     }
 
     private SMSResponse generateSuccessfulResponse(final MTMessage message){

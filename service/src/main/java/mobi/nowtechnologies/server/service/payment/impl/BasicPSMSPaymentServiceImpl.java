@@ -1,14 +1,14 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,26 +23,51 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private Class<T> paymentDetailsClass;
+    protected CommunityResourceBundleMessageSource messageSource;
 
     protected BasicPSMSPaymentServiceImpl(Class<T> clazz){
         this.paymentDetailsClass = clazz;
     }
 
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void startPayment(PendingPayment pendingPayment) throws Exception {
-        LOGGER.debug("input parameters pendingPayment: [{}]", pendingPayment);
+    public void startPayment(final PendingPayment pendingPayment) throws Exception {
+        final User user = pendingPayment.getUser();
+        final O2PSMSPaymentDetails paymentDetails = (O2PSMSPaymentDetails)pendingPayment.getPaymentDetails();
+        final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+        Community community = user.getUserGroup().getCommunity();
+
+        LOGGER.debug("Start psms payment pendingPayment: [{}]", pendingPayment);
+
+
+        Boolean smsNotify = Boolean.valueOf(messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms."+paymentPolicy.getPaymentType()+".send",
+                null, null));
+
+        String message = smsNotify ? messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms."+paymentPolicy.getPaymentType(),
+                new Object[]{community.getDisplayName(), pendingPayment.getAmount(), pendingPayment.getSubweeks(), paymentPolicy.getShortCode()}, null) : null;
+
+        PaymentSystemResponse response = makePayment(pendingPayment, message);
+
+        if(!response.isFuture()){
+            commitPayment(pendingPayment, response);
+        }
+    }
+
+    @Override
+    public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
         final User user = pendingPayment.getUser();
         final T paymentDetails = (T)pendingPayment.getPaymentDetails();
 
-        PaymentSystemResponse response = makePayment(pendingPayment);
-
-        LOGGER.info("Sent request to external system with pending payment [{}] and received response [{}]", pendingPayment.getI(), response);
+        LOGGER.info("Sent request to [{}] external system with pending payment [{}] and received response [{}]", new Object[]{paymentDetails.getPaymentType(), pendingPayment.getI(), response});
         if (!response.isSuccessful()) {
-            LOGGER.error("External exception while making payment psms transaction for user with id: [{}] and paymentDetails [{}] ", new Object[]{user.getId(), paymentDetails});
+            LOGGER.error("External exception while making payment [{}] psms transaction for user with id: [{}] and paymentDetails ", new Object[]{paymentDetails.getPaymentType(), user.getId()});
         }
 
-        commitPayment(pendingPayment, response);
+        return super.commitPayment(pendingPayment, response);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -81,7 +106,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         return details;
     }
     
-    protected abstract PaymentSystemResponse makePayment(PendingPayment pendingPayment);
+    protected abstract PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message);
 
     protected T newPSMSPaymentDetails(){
         try {

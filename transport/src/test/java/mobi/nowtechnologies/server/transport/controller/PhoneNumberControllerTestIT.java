@@ -92,8 +92,8 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
-    	String userName = "+642111111111";
-    	String phone = "+642111111111";
+    	String userName = "+642102247311";
+    	String phone = "+642102247311";
 		String apiVersion = "5.0";
 		String communityName = "vf_nz";
 		String communityUrl = "vf_nz";
@@ -113,10 +113,11 @@ public class PhoneNumberControllerTestIT {
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
-        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
 
-        MOMessage message = new MOMessage("5804", "642111111111", "OnNet", Message.MessageEncodings.ENC8BIT);
-        processorContainer.processInboundMessage(null, message);
+//        MOMessage message = new MOMessage("5804", "642111111111", "OnNet", Message.MessageEncodings.ENC8BIT);
+//        processorContainer.processInboundMessage(null, message);
+        Thread.sleep(10000);
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")

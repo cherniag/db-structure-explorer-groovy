@@ -1,16 +1,16 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
+import com.sentaca.spring.smpp.mo.MOMessage;
 import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
+import org.smslib.Message;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/7/13
  * Time: 2:13 PM
- * To change this template use File | Settings | File Templates.
  */
 public class VFNZSmsMessageParserTest {
 
@@ -23,7 +23,7 @@ public class VFNZSmsMessageParserTest {
 
     @Test
     public void testParse_onNet_Success() throws Exception {
-        String data = "onNet";
+        MOMessage data = createMessage("onNet");
 
         VFNZSubscriberData result = fixture.parse(data);
 
@@ -32,7 +32,7 @@ public class VFNZSmsMessageParserTest {
 
     @Test
     public void testParse_onnet_Success() throws Exception {
-        String data = "onnet";
+        MOMessage data = createMessage("onnet");
 
         VFNZSubscriberData result = fixture.parse(data);
 
@@ -41,7 +41,7 @@ public class VFNZSmsMessageParserTest {
 
     @Test
     public void testParse_offNet_Success() throws Exception {
-        String data = "offNet";
+        MOMessage data = createMessage("offNet");
 
         VFNZSubscriberData result = fixture.parse(data);
 
@@ -50,10 +50,14 @@ public class VFNZSmsMessageParserTest {
 
     @Test
     public void testParse_offnet_Success() throws Exception {
-        String data = "offnet";
+        MOMessage data = createMessage("offnet");
 
         VFNZSubscriberData result = fixture.parse(data);
 
         Assert.assertEquals(ProviderType.NON_VF, result.getProvider());
+    }
+
+    private MOMessage createMessage(String message){
+        return new MOMessage("+6421111111", "4003", message, Message.MessageEncodings.ENC8BIT);
     }
 }

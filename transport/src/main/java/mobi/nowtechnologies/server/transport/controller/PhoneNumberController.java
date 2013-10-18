@@ -39,7 +39,10 @@ public class PhoneNumberController extends CommonController {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
 			
 			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
-			user = userService.activatePhoneNumber(user, phone, populateO2SubscriberData);
+			user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null && populateO2SubscriberData)
+                userService.populateSubscriberData(user);
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
@@ -74,7 +77,10 @@ public class PhoneNumberController extends CommonController {
 
             user = userService.checkCredentials(userName, userToken, timestamp, community);
 
-            user = userService.activatePhoneNumber(user, phone, true);
+            user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null)
+                userService.populateSubscriberData(user);
 
             return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
         }catch(Exception e){

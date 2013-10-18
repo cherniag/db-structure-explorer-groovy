@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.payment.response;
 
 import mobi.nowtechnologies.server.shared.Parser;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import org.jsmpp.bean.DeliverSm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Titov Mykhaylo (titov)
  * 
  */
-public class VFResponse extends PaymentSystemResponse implements Parser<String, VFResponse> {
+public class VFResponse extends PaymentSystemResponse implements Parser<DeliverSm, VFResponse> {
 
 	private static final BillSubscriberResponse BILL_SUBSCRIBER_RESPONSE;
 
@@ -75,7 +76,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<String, 
 	}
 
 	public VFResponse(Object objectResponse, BasicResponse response) {
-		super(response);
+		super(response, false);
 
 	}
 
@@ -90,7 +91,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<String, 
             public String getMessage() {
                 return "";
             }
-        });
+        }, true);
 
     }
 	
@@ -108,7 +109,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<String, 
 	}
 
     @Override
-    public VFResponse parse(String data) {
+    public VFResponse parse(DeliverSm receipt) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

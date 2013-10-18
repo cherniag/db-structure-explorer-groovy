@@ -1218,7 +1218,7 @@ public class UserServiceTest {
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn(new PhoneNumberValidationData().withPhoneNumber("+447870111111").withPin(pin));
 
 		boolean populateO2SubscriberData = false;
-		User userResult = userServiceSpy.activatePhoneNumber(user, phone, populateO2SubscriberData);
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
 
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
@@ -1246,7 +1246,7 @@ public class UserServiceTest {
 			}
 		});
 		boolean populateO2SubscriberData = false;
-		User userResult = userServiceSpy.activatePhoneNumber(user, phone, populateO2SubscriberData);
+		User userResult = userServiceSpy.activatePhoneNumber(user, phone);
 
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
@@ -3343,8 +3343,9 @@ public class UserServiceTest {
     @Test
     public void testPopulateSubscriberData_IsPromotedNumber_Success() throws Exception{
         //given
-        User user = UserFactory.createUser();
+        final User user = UserFactory.createUser();
         String phoneNumber="+6421111111";
+        user.setMobile(phoneNumber);
         Community community = user.getUserGroup().getCommunity();
         final O2SubscriberData subscriberData = new O2SubscriberData();
 
@@ -3354,34 +3355,10 @@ public class UserServiceTest {
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Processor<O2SubscriberData> processor = (Processor<O2SubscriberData>)invocationOnMock.getArguments()[1];
-                processor.process(subscriberData);
-                return null;
+                userServiceSpy.populateSubscriberData(user, (O2SubscriberData)invocationOnMock.getArguments()[0]);
+                return user;
             }
-        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
-
-        //when
-        userServiceSpy.populateSubscriberData(user, phoneNumber, community);
-
-        //then
-        verify(userRepositoryMock, times(1)).save(eq(user));
-        verify(userServiceSpy, times(1)).isPromotedDevice(eq(phoneNumber), eq(community));
-        verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
-        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData)null));
-        verify(o2ClientServiceMock, times(0)).getSubscriberData(eq(phoneNumber), any(Processor.class));
-    }
-
-    @Test
-    public void testPopulateSubscriberData_IsNotPromotedNumber_Success() throws Exception{
-        //given
-        User user = UserFactory.createUser();
-        String phoneNumber="+6421111111";
-        Community community = user.getUserGroup().getCommunity();
-        final O2SubscriberData subscriberData = new O2SubscriberData();
-
-        doReturn(user).when(userRepositoryMock).save(eq(user));
-        doReturn(false).when(userServiceSpy).isPromotedDevice(eq(phoneNumber), eq(community));
-        doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(eq(user), any(O2SubscriberData.class));
+        }).when(o2UserDetailsUpdaterMock).process(any(O2SubscriberData.class));
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -3392,14 +3369,53 @@ public class UserServiceTest {
         }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
 
         //when
-        userServiceSpy.populateSubscriberData(user, phoneNumber, community);
+        userServiceSpy.populateSubscriberData(user);
+
+        //then
+        verify(userRepositoryMock, times(1)).save(eq(user));
+        verify(userServiceSpy, times(1)).isPromotedDevice(eq(phoneNumber), eq(community));
+        verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
+        verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData)null));
+        verify(o2ClientServiceMock, times(0)).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
+    }
+
+    @Test
+    public void testPopulateSubscriberData_IsNotPromotedNumber_Success() throws Exception{
+        //given
+        final User user = UserFactory.createUser();
+        String phoneNumber="+6421111111";
+        user.setMobile(phoneNumber);
+        Community community = user.getUserGroup().getCommunity();
+        final O2SubscriberData subscriberData = new O2SubscriberData();
+
+        doReturn(user).when(userRepositoryMock).save(eq(user));
+        doReturn(false).when(userServiceSpy).isPromotedDevice(eq(phoneNumber), eq(community));
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                userServiceSpy.populateSubscriberData(user, (O2SubscriberData)invocationOnMock.getArguments()[0]);
+                return user;
+            }
+        }).when(o2UserDetailsUpdaterMock).process(any(O2SubscriberData.class));
+        doReturn(user).when(o2UserDetailsUpdaterMock).setUserFieldsFromSubscriberData(eq(user), any(O2SubscriberData.class));
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Processor<O2SubscriberData> processor = (Processor<O2SubscriberData>)invocationOnMock.getArguments()[1];
+                processor.process(subscriberData);
+                return null;
+            }
+        }).when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
+
+        //when
+        userServiceSpy.populateSubscriberData(user);
 
         //then
         verify(userRepositoryMock, times(1)).save(eq(user));
         verify(userServiceSpy, times(1)).isPromotedDevice(eq(phoneNumber), eq(community));
         verify(o2UserDetailsUpdaterMock, times(1)).setUserFieldsFromSubscriberData(eq(user), eq(subscriberData));
         verify(o2UserDetailsUpdaterMock, times(0)).setUserFieldsFromSubscriberData(eq(user), eq((O2SubscriberData)null));
-        verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), any(Processor.class));
+        verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), eq(o2UserDetailsUpdaterMock));
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

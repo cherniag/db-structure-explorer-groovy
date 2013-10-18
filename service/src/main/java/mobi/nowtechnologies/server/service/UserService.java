@@ -33,7 +33,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.UserFacebookDetailsDto;
@@ -1728,17 +1727,14 @@ public class UserService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public User activatePhoneNumber(User user, String phone, boolean populateSubscriberData) {
-        LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}] populateO2SubscriberData=[{}]", phone, user.getId(),
-                user.getActivationStatus(), populateSubscriberData);
+    public User activatePhoneNumber(User user, String phone) {
+        LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}]", phone, user.getId(),
+                user.getActivationStatus());
 
         String phoneNumber = phone != null ? phone : user.getMobile();
         PhoneNumberValidationData result = mobileProviderService.validatePhoneNumber(phoneNumber);
 
         LOGGER.info("after validating phone number msidn:[{}] phone:[{}] u.mobile:[{}]", result.getPhoneNumber(), phone, user.getMobile());
-
-        if(phone != null && populateSubscriberData)
-            populateSubscriberData(user, result.getPhoneNumber(), user.getUserGroup().getCommunity());
 
         user.setMobile(result.getPhoneNumber());
         user.setActivationStatus(ENTERED_NUMBER);
@@ -1750,18 +1746,16 @@ public class UserService {
         return user;
     }
 
-    protected void populateSubscriberData(final User user, String phoneNumber, Community community) {
+    public void populateSubscriberData(final User user) {
+        String phoneNumber = user.getMobile();
+        Community community = user.getUserGroup().getCommunity();
+
         if ( isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
             populateSubscriberData(user, (SubscriberData) null);
         } else {
             try {
-                mobileProviderService.getSubscriberData(phoneNumber, new Processor<SubscriberData>() {
-                    @Override
-                    public void process(SubscriberData data) {
-                        populateSubscriberData(user, data);
-                    }
-                });
+                mobileProviderService.getSubscriberData(phoneNumber, userDetailsUpdater);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);
@@ -1770,7 +1764,7 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void populateSubscriberData(User user, SubscriberData subscriberData) {
+    public void populateSubscriberData(User user, SubscriberData subscriberData) {
         LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
         userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
 
