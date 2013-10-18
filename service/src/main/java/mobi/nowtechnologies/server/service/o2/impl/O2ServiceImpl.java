@@ -97,11 +97,8 @@ public class O2ServiceImpl implements O2Service {
 	}
 
 	private void prePayPopulate4G(String digitOnlyPhoneNumber, O2SubscriberData data) {
-		//GetTariff1Response prepayTariff = o2TariffService.getManagePrepayTariff(digitOnlyPhoneNumber);
-		//resultsProcessor.populatePrepay4G(prepayTariff, data);
-		//temporary disable manage prepay tariff 
-		data.setDirectOrIndirect4GChannel(true);
-		data.setTariff4G(false);
+		GetTariff1Response prepayTariff = o2TariffService.getManagePrepayTariff(digitOnlyPhoneNumber);
+		resultsProcessor.populatePrepay4G(prepayTariff, data);
 	}
 
 	public void setO2TariffService(O2TariffService o2TariffService) {
