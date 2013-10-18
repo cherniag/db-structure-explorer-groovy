@@ -22,7 +22,7 @@ body {
 <c:set var="callingPage"><%=request.getParameter("callingPage")%></c:set>
 
 <c:choose>
-<c:when test="result!='fail'">
+<c:when test="${result!='fail'}">
 	<%--successful paypal payment --%>
 	<div class="paypalMessgeHeader"><s:message code='pay.paypal.dialog.successful.title' /></div>
 	<div class="paypalMessageText"><s:message code='pay.paypal.dialog.successful.message' /></div>

@@ -3,7 +3,7 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 
 -- insert VF NZ community
 INSERT INTO tb_communities(i,name,appVersion,communityTypeID,displayName,assetName,rewriteURLParameter)
-VALUES (11,'vfnz', 1, 10, 'VFNZ', 'vf_nz', 'vf_nz');
+VALUES (11,'vf_nz', 1, 10, 'VFNZ', 'vf_nz', 'vf_nz');
 
 -- insert VF NZ userGroup
 -- TODO this is not complete, we should change chart/news/drmpolicy ids to vf-nz specific
@@ -22,11 +22,6 @@ INSERT INTO tb_paymentPolicy
 (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,
 content_description,sub_merchant_id,provider,tariff,media_type,is_default)
 VALUES(11, 4, 6,'vfPsms',null,'','NZD',1,null,null,'CONSUMER',null,null,null,'VF NZ Tracks','vf','_3G','AUDIO', 0);
-
-INSERT INTO tb_paymentPolicy
-(communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,
-content_description,sub_merchant_id,provider,tariff,media_type,is_default)
-VALUES(11, 4, 8.29,'PAY_PAL',null,'','NZD',1,null,null,'BUSINESS',null,null,null,null,'vf','_3G','AUDIO', 0);
 
 INSERT INTO tb_paymentPolicy
 (communityID,subWeeks,subCost,paymentType,operator,shortCode,currencyIso,availableInStore,app_store_product_id,contract,segment,content_category,content_type,
