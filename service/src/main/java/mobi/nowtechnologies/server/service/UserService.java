@@ -724,13 +724,11 @@ public class UserService {
 		final String reason = "STOP sms";
 		for (PaymentDetails paymentDetail : paymentDetails) {
 			final User owner = paymentDetail.getOwner();
-			if(owner!=null && paymentDetail.equals(owner.getCurrentPaymentDetails())){
+			if(isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())){
 				unsubscribeUser(owner, reason);
-			}
-			paymentDetail.setActivated(false);
-			paymentDetail.setDescriptionError(reason);
-			paymentDetail.setDisableTimestampMillis(System.currentTimeMillis());
-			entityService.updateEntity(paymentDetail);
+            }else {
+                paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
+            }
 			LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
 		}
 
@@ -743,7 +741,7 @@ public class UserService {
 		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
 		User user = entityService.findById(User.class, userId);
 		String reason = dto.getReason();
-		if (reason == null || reason.isEmpty()) {
+		if (!StringUtils.hasText(reason)) {
 			reason = "Unsubscribed by user manually via web portal";
 		}
 		user = unsubscribeUser(user, reason);
@@ -1586,7 +1584,7 @@ public class UserService {
 
 		user = updateUser(user);
 
-		if (!userDto.getPaymentEnabled() && currentPaymentDetails != null) {
+		if (!userDto.getPaymentEnabled() && isNotNull(currentPaymentDetails)) {
 			unsubscribeUser(user, "Unsubscribed by admin");
 		}
 

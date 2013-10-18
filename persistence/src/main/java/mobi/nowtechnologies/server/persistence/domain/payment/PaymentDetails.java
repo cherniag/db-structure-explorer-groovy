@@ -2,25 +2,10 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import java.util.List;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,10 +200,29 @@ public abstract class PaymentDetails {
         setActivated(activated);
         return this;
     }
-	
+
+    public PaymentDetails withDisableTimestampMillis(long disableTimestampMillis){
+        this.disableTimestampMillis = disableTimestampMillis;
+        return this;
+    }
+
+    public PaymentDetails withDescriptionError(String descriptionError){
+        this.descriptionError = descriptionError;
+        return this;
+    }
+
 	@Override
 	public String toString() {
-		return "i=" + i + ", activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
-		+ disableTimestampMillis + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", retriesOnError=" + retriesOnError;
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("madeRetries", madeRetries)
+                .append("retriesOnError", retriesOnError)
+                .append("lastPaymentStatus", lastPaymentStatus)
+                .append("descriptionError", descriptionError)
+                .append("errorCode", errorCode)
+                .append("creationTimestampMillis", creationTimestampMillis)
+                .append("disableTimestampMillis", disableTimestampMillis)
+                .append("activated", activated)
+                .toString();
 	}
 }

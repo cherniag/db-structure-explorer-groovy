@@ -79,8 +79,6 @@ import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * 
- * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  */
