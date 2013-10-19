@@ -33,7 +33,8 @@ public class PaymentDetailsServiceTest {
 
     @Before
     public void setUp(){
-        paymentDetailsServiceFixture =new PaymentDetailsService();
+        paymentDetailsServiceFixture = new PaymentDetailsService();
+        paymentDetailsServiceFixture.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
     }
 
     @Test
