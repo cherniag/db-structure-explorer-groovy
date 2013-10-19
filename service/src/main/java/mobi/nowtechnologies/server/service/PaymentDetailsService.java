@@ -23,6 +23,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -402,4 +403,8 @@ public class PaymentDetailsService {
         return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
 	}
 
+    @Transactional(readOnly = true)
+    public List<PaymentDetails> findFailurePaymentPaymentDetailsWithNoNotification(String communityUrl, Pageable pageable) {
+        return paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(communityUrl, pageable);
+    }
 }

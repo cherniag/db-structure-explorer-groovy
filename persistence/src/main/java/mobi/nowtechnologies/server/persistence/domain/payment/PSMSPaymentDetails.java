@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -22,11 +25,13 @@ public class PSMSPaymentDetails extends PaymentDetails {
 	@Override
 	public String getPaymentType() {
 		return PaymentDetails.PSMS_TYPE;
-	}
+    }
 
-	@Override
-	public String toString() {
-		return "PSMSPaymentDetails ["+ super.toString()+", phoneNumber=" + phoneNumber + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("phoneNumber", phoneNumber)
+                .toString();
+    }
 }

@@ -66,6 +66,9 @@ public abstract class PaymentDetails {
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="paymentDetails")
 	private List<SubmittedPayment> submittedPayments;
 
+    @Column(name = "last_failure_payment_notification_send_millis", nullable = true)
+    private Long lastFailurePaymentNotificationSendMillis;
+
 	public void incrementRetries() {
 		this.madeRetries++;
 	}
@@ -211,6 +214,26 @@ public abstract class PaymentDetails {
         return this;
     }
 
+    public PaymentDetails withLastFailurePaymentNotificationSendMillis(Long lastFailurePaymentNotificationSendMillis){
+        this.lastFailurePaymentNotificationSendMillis = lastFailurePaymentNotificationSendMillis;
+        return this;
+    }
+
+    public PaymentDetails withMadeRetries(int madeRetries){
+        this.madeRetries = madeRetries;
+        return this;
+    }
+
+    public PaymentDetails withRetriesOnError(int retriesOnError){
+        this.retriesOnError = retriesOnError;
+        return this;
+    }
+
+    public PaymentDetails withOwner(User user) {
+        this.owner = user;
+        return this;
+    }
+
 	@Override
 	public String toString() {
         return new ToStringBuilder(this)
@@ -222,6 +245,7 @@ public abstract class PaymentDetails {
                 .append("errorCode", errorCode)
                 .append("creationTimestampMillis", creationTimestampMillis)
                 .append("disableTimestampMillis", disableTimestampMillis)
+                .append("lastFailurePaymentNotificationSendMillis", lastFailurePaymentNotificationSendMillis)
                 .append("activated", activated)
                 .toString();
 	}
