@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ public class PaymentDetailsServiceTest {
     @Mock
     PaymentDetailsRepository paymentDetailsRepositoryMock;
 
+    @Before
     public void setUp(){
         paymentDetailsServiceFixture =new PaymentDetailsService();
     }
