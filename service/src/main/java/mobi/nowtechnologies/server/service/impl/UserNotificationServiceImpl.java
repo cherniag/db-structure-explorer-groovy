@@ -310,14 +310,20 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Async
     @Override
-    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
-        int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-        return new AsyncResult<Boolean>(sendPaymentFailSMS(pendingPayment.getPaymentDetails(), hoursBefore));
+    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
+        try{
+            int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
+            return new AsyncResult<Boolean>(sendPaymentFailSMS(pendingPayment.getPaymentDetails(), hoursBefore));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }finally {
+            return new AsyncResult<Boolean>(Boolean.FALSE);
+        }
      }
 
     @Override
     @Transactional
-    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) throws UnsupportedEncodingException {
+    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) {
         try {
             LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 
@@ -350,9 +356,12 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
             return wasSmsSentSuccessfully;
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
         } finally {
             LogUtils.removeGlobalMDC();
         }
+        return false;
     }
 
 
