@@ -316,9 +316,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             return new AsyncResult<Boolean>(sendPaymentFailSMS(pendingPayment.getPaymentDetails(), hoursBefore));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }finally {
-            return new AsyncResult<Boolean>(Boolean.FALSE);
         }
+        return new AsyncResult<Boolean>(Boolean.FALSE);
      }
 
     @Override

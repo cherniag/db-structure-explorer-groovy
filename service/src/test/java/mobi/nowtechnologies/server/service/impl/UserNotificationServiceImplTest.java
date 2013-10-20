@@ -1629,7 +1629,7 @@ public class UserNotificationServiceImplTest {
         verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testSendPaymentFailSMS_UserIsNull_Failure() throws Exception {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
@@ -1665,6 +1665,7 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
         mockStatic(Utils.class);
         when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
@@ -1680,14 +1681,43 @@ public class UserNotificationServiceImplTest {
         verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testSendPaymentFailSMS_PendingPaymentIsNull_Failure() throws Exception {
 		PendingPayment pendingPayment = null;
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(any(User.class), eq("sms.notification.paymentFail.at.0h.not.for.device.type"));
+
+        final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                assertNotNull(argument);
+                Object[] args = (Object[]) argument;
+
+                assertEquals(1, args.length);
+
+                String pUrl = (String) args[0];
+
+                assertEquals(userNotificationImplSpy.getPaymentsUrl(), pUrl);
+
+                return true;
+            }
+        };
+
+        doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(any(User.class),
+                eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
+
+        verify(userNotificationImplSpy, times(0)).rejectDevice(any(User.class), eq("sms.notification.paymentFail.at.0h.not.for.device.type"));
+        verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(any(User.class),
+                eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(any(PaymentDetails.class));
 	}
 	
 	@Test
