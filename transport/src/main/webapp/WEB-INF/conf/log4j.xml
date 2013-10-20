@@ -47,7 +47,23 @@
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>
-	
+
+    <appender name="sendSmsAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/sendSms.log" />
+        <param name="encoding" value="UTF-8" />
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/sendSms_%d{yyyy-ww}.gz" />
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+        </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+            <param name="contextKey" value="class" />
+            <param name="classNames" value="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean" />
+            <param name="acceptOnMatch" value="true" />
+        </filter>
+    </appender>
+
 	<!-- Notification Job -->
 	<appender name="notificationJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
 		<param name="File" value="${catalina.base}/logs/jobs-push-notification.log" />
@@ -351,7 +367,6 @@
 		<appender-ref ref="paymentExecutionAppender"/>
 	</logger>
 
-	<!-- MIG Logger -->
 	<logger name="mobi.nowtechnologies">
 		<level value="INFO" />
 		<appender-ref ref="accCheckAppender" />
@@ -362,8 +377,8 @@
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
         <appender-ref ref="updateO2UserTaskAppender" />
+        <appender-ref ref="sendSmsAppender"/>
 	</logger>
-	<!-- END MIG Logger -->
 	
 	<logger name="PROFILE_LOGGER">
 		<level value="INFO" />

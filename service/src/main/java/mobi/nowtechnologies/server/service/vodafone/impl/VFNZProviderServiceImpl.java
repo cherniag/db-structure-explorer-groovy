@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/1/13
  * Time: 6:06 PM
- * To change this template use File | Settings | File Templates.
  */
 public class VFNZProviderServiceImpl implements VFNZProviderService {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());

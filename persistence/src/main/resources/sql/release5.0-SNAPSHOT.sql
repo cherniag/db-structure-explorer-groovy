@@ -85,4 +85,4 @@ VALUES(11, 0, 8.29,'iTunesSubscription',null,'','NZD',1,'com.musicqubed.vfnz.sub
  alter table promoted_devices add index offers_PK_community_id (community_id), add constraint offers_U_community_id foreign key (community_id) references tb_communities (id);
  alter table promoted_devices add index promoted_devices_PK_community_id (community_id), add constraint promoted_devices_U_community_id foreign key (community_id) references tb_communities (id);
 
-alter table tb_paymentDetails add column last_failure_payment_notification_send_millis bigint(20) DEFAULT NULL;
+alter table tb_paymentDetails add column last_failed_payment_notification_millis bigint(20) DEFAULT NULL;

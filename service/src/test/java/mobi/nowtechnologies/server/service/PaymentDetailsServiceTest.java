@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,10 +44,10 @@ public class PaymentDetailsServiceTest {
 
         List<PaymentDetails> expectedPaymentDetailsList = Collections.<PaymentDetails>singletonList(new O2PSMSPaymentDetails());
 
-        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailurePaymentPaymentDetailsWithNoNotification(communityUrl, pageable);;
+        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);;
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsServiceFixture.findFailurePaymentPaymentDetailsWithNoNotification(communityUrl, pageable);
+        List<PaymentDetails> paymentDetailsList = paymentDetailsServiceFixture.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
 
         //then
         assertThat(paymentDetailsList, is(expectedPaymentDetailsList));

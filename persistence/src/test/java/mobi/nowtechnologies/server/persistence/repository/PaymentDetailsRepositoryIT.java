@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.persistence.repository;
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
@@ -16,7 +14,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -117,10 +114,10 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailurePaymentNotificationSendMillis(null));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
 
         //then
         assertNotNull(paymentDetailsList);
@@ -133,10 +130,10 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(2).withMadeRetries(1).withLastFailurePaymentNotificationSendMillis(null));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(2).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
 
         //then
         assertNotNull(paymentDetailsList);
@@ -148,10 +145,10 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailurePaymentNotificationSendMillis(Long.MAX_VALUE));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(Long.MAX_VALUE));
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
 
         //then
         assertNotNull(paymentDetailsList);
@@ -163,10 +160,10 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailurePaymentNotificationSendMillis(null));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(null, new PageRequest(0, Integer.MAX_VALUE));
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(null, new PageRequest(0, Integer.MAX_VALUE));
 
         //then
         assertNotNull(paymentDetailsList);
@@ -178,10 +175,10 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(true).withRetriesOnError(1).withMadeRetries(1).withLastFailurePaymentNotificationSendMillis(null));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(true).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
-        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
 
         //then
         assertNotNull(paymentDetailsList);

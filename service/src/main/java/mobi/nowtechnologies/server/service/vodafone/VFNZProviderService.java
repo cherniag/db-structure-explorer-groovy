@@ -4,11 +4,9 @@ import mobi.nowtechnologies.server.service.MobileProviderService;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/2/13
  * Time: 10:28 AM
- * To change this template use File | Settings | File Templates.
  */
 public interface VFNZProviderService extends MobileProviderService<VFNZSubscriberData> {
 }

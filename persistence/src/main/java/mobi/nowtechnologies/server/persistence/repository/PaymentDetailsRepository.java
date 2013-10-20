@@ -24,8 +24,8 @@ public interface PaymentDetailsRepository extends PagingAndSortingRepository<Pay
             "where " +
             "pd.activated=false " +
             "and pd.madeRetries=pd.retriesOnError " +
-            "and pd.lastFailurePaymentNotificationSendMillis is null " +
+            "and pd.lastFailedPaymentNotificationMillis is null " +
             "and c.rewriteUrlParameter = ?1")
-    List<PaymentDetails> findFailurePaymentPaymentDetailsWithNoNotification(String communityUrl, Pageable pageable);
+    List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable);
 
 }

@@ -404,7 +404,7 @@ public class PaymentDetailsService {
 	}
 
     @Transactional(readOnly = true)
-    public List<PaymentDetails> findFailurePaymentPaymentDetailsWithNoNotification(String communityUrl, Pageable pageable) {
-        return paymentDetailsRepository.findFailurePaymentPaymentDetailsWithNoNotification(communityUrl, pageable);
+    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
+        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
     }
 }
