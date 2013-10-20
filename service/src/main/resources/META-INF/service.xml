@@ -350,6 +350,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="rememberMeServices" ref="nowTechBasedRememberMeServices"/>
 		<property name="rememberMeTokenCookieName" value="${rememberMe.cookieName}"/>
 		<property name="deviceService" ref="service.DeviceService"/>
+        <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
 	</bean>
 
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>

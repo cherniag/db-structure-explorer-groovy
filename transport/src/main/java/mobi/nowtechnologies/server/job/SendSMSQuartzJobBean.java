@@ -66,10 +66,9 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
         List<PaymentDetails> paymentDetails = paymentDetailsService.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
         LOGGER.info("Fetched [{}] failed payment with no notification payment details");
 
-        HashMap<PaymentDetails, Future<Boolean>> g = new HashMap<PaymentDetails, Future<Boolean>>(paymentDetails.size());
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {
-                 userNotificationService.sendPaymentFailSMS(null);
+                 userNotificationService.sendPaymentFailSMS(paymentDetail, 0);
             } catch (UnsupportedEncodingException e) {
                 LOGGER.error(e.getMessage(), e);
             }

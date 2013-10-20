@@ -180,8 +180,11 @@ public abstract class PaymentDetails {
 		}
 	}
 
+    public Long getLastFailedPaymentNotificationMillis() {
+        return lastFailedPaymentNotificationMillis;
+    }
 
-	public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
+    public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
 		
 		paymentDetailsByPaymentDto.setPaymentType(getPaymentType());
