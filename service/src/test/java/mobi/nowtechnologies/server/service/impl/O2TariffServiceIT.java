@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,6 +33,7 @@ public class O2TariffServiceIT {
     private O2TariffService o2TariffService;
 
     @Test
+    @Ignore
     public void testGetManagePostpayContractDirectToO2TestServer() throws Exception {
 
         GetContractResponse contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT);
@@ -54,6 +56,7 @@ public class O2TariffServiceIT {
     }
 
     @Test
+    @Ignore
     public void testGetManagePostpayCurrentBoltonsDirectToO2TestServer() throws Exception {
 
         GetCurrentBoltonsResponse getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_CONTRACT);

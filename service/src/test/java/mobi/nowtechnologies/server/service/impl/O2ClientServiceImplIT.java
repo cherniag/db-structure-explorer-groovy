@@ -23,6 +23,7 @@ import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;
 import org.apache.xerces.dom.TextImpl;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -195,6 +196,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_O2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -211,6 +213,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_notO2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "11111111-c768-4fe7-bb56-a5e0c722cd44";
@@ -275,6 +278,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_notO2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "55555555-c768-4fe7-bb56-a5e0c722cd44";

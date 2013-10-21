@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
@@ -15,6 +16,7 @@ import uk.co.o2.soa.utils.SubscriberPortDecorator;
 public class WSTestIT {
 
     @Test
+    @Ignore
     public void pingO2() throws Exception {
         ClassLoader loader = SubscriberService.class.getClassLoader();
         URL resource = loader.getResource("META-INF/keystore.jks");
