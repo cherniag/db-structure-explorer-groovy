@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -27,8 +29,10 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
@@ -156,7 +160,7 @@ public class UserServiceIT {
 		paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 		paymentPolicy.setSubcost(BigDecimal.TEN);
 		paymentPolicy.setSubweeks((byte) 0);
-		entityDao.saveEntity(paymentPolicy);
+		entityDao.saveEntity(paymentPolicy.withMediaType(AUDIO).withTariff(_3G));
 
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		UserGroup chartsNowUserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(chartsNowCommunityId);
