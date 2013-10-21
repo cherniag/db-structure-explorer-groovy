@@ -32,6 +32,13 @@
 
 <div class="paymentscontainer">
 	<div class="frL11 o2BusinessHeader">
-		<s:message code='pays.page.header.txt' />
+		<c:choose>
+			<c:when test="${showTwoWeeksPromotion eq true}">
+				<s:message code='pays.page.header.TwoWeeksPromotionText' />
+			</c:when>
+			<c:otherwise>
+				<s:message code='pays.page.header.txt' />
+			</c:otherwise>
+		</c:choose>
 	</div>
 </div>

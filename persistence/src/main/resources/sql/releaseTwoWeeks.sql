@@ -33,13 +33,12 @@
   ,0   -- is_white_listed - IN bit(1)
 );
 
-INSERT INTO uat11oct.tb_promocode(
+INSERT INTO tb_promoCode(
   code
   ,promotionId
   ,media_type
 ) VALUES (
   'TwoWeeksOnSubscription' -- code - IN varchar(255)
-  , LAST_INSERT_ID()  -- promotionId - IN int(11)
+  , (SELECT i FROM tb_promotions where label='TwoWeeksOnSubscription')  -- promotionId - IN int(11)
   ,'AUDIO' -- media_type - IN char(255)
 );
-

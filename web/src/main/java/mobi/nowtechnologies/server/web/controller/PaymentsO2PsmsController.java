@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
+import javax.servlet.http.Cookie;
+
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -26,8 +28,10 @@ public class PaymentsO2PsmsController extends CommonController {
     
     private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyRepository paymentPolicyRepository;
-    private UserRepository userRepository;
-    private O2PaymentServiceImpl paymentService;
+    @SuppressWarnings("unused")
+	private UserRepository userRepository;
+    @SuppressWarnings("unused")
+	private O2PaymentServiceImpl paymentService;
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS}, method = RequestMethod.GET)
     public ModelAndView createO2PaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId){
@@ -41,16 +45,16 @@ public class PaymentsO2PsmsController extends CommonController {
     }
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS_CONFIRM}, method = RequestMethod.GET)
-    public ModelAndView getO2PsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId) {
+    public ModelAndView getO2PsmsConfirmationPage(
+    		@PathVariable("scopePrefix") String scopePrefix,
+    		@RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId,
+    		@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+    	
         LOG.info("Create o2psms payment details by paymentPolicy.id=" + policyId);
 
-        User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        O2PSMSPaymentDetails details = paymentService.commitPaymentDetails(user, policy);
-        user.setCurrentPaymentDetails(details);
-        paymentDetailsService.update(details);
-        userRepository.save(user);
+        paymentDetailsService.createPaymentDetailsForO2Payment(getSecurityContextDetails().getUserId(), policy, communityUrl.getValue());
 
         return new ModelAndView("redirect:/"+scopePrefix+".html");
     }

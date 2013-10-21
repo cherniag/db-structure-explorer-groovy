@@ -86,6 +86,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="offerService" ref="service.OfferService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+		
+		<property name="userRepository" ref="userRepository" />
 	</bean>
 
 	<bean id="service.DeviceService" class="mobi.nowtechnologies.server.service.DeviceService">
