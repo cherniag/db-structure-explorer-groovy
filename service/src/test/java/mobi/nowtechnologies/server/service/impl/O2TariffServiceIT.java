@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
@@ -26,6 +28,9 @@ import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/service-test-ws.xml" })
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
+@Ignore
 public class O2TariffServiceIT {
 
 	
@@ -33,7 +38,6 @@ public class O2TariffServiceIT {
     private O2TariffService o2TariffService;
 
     @Test
-    @Ignore
     public void testGetManagePostpayContractDirectToO2TestServer() throws Exception {
 
         GetContractResponse contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT);
@@ -56,7 +60,6 @@ public class O2TariffServiceIT {
     }
 
     @Test
-    @Ignore
     public void testGetManagePostpayCurrentBoltonsDirectToO2TestServer() throws Exception {
 
         GetCurrentBoltonsResponse getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_CONTRACT);
