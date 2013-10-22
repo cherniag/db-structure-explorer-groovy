@@ -15,12 +15,14 @@ public abstract class PaymentSystemResponse {
 	public PaymentSystemResponse(BasicResponse response, boolean isFuture) {
         this(isFuture);
 
-		httpStatus = response.getStatusCode();
-		if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
-			message = response.getMessage().substring(0, 254);
-		else
-			message = response.getMessage();
-		descriptionError="";
+        if(!isFuture){
+            httpStatus = response.getStatusCode();
+            if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
+                message = response.getMessage().substring(0, 254);
+            else
+                message = response.getMessage();
+            descriptionError="";
+        }
 	}
 
     public PaymentSystemResponse(boolean isFuture) {

@@ -394,6 +394,12 @@ public class UserService {
 		return entityService.findByProperty(User.class, User.Fields.userName.toString(), userName);
 	}
 
+    public List<User> findByMobile(String mobile) {
+        if (mobile == null)
+            throw new ServiceException("The parameter mobile is null");
+        return userRepository.findByMobile(mobile);
+    }
+
 	public User findByFacebookId(String facebookId, String communityName) {
 		LOGGER.debug("input parameters facebookId, communityName: [{}], [{}]", facebookId, communityName);
 		if (facebookId == null)

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.sms;
 
-import mobi.nowtechnologies.server.shared.BasicProcessor;
+import mobi.nowtechnologies.server.shared.Processor;
 import org.jsmpp.bean.DeliverSm;
 
 /**
@@ -8,6 +8,8 @@ import org.jsmpp.bean.DeliverSm;
  * Date: 10/18/13
  * Time: 11:49 AM
  */
-public abstract class SMSMessageProcessor<OUT> extends BasicProcessor<OUT> {
-    public abstract boolean supports(DeliverSm deliverSm);
+public interface SMSMessageProcessor<OUT> extends Processor<OUT> {
+    boolean supports(DeliverSm deliverSm);
+
+    void parserAndProcess(final Object data);
 }

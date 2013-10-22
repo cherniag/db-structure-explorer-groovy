@@ -10,8 +10,9 @@ public class VFNZSubscriberDataParser implements Parser<MOMessage, VFNZSubscribe
     public VFNZSubscriberData parse(MOMessage data) {
         String text = data.getText();
 
+        String phoneNumber = "+"+data.getDestAddress();
         ProviderType providerType = "offnet".equalsIgnoreCase(text) ? ProviderType.NON_VF : ProviderType.VF;
 
-        return new VFNZSubscriberData().withProvider(providerType);
+        return new VFNZSubscriberData().withProvider(providerType).withPhoneNumber(phoneNumber);
     }
 }

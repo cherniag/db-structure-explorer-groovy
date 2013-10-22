@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.sms.SMSMessageProcessor;
+import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
 import org.jsmpp.bean.DeliverSm;
 
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Set;
  * Date: 10/10/13
  * Time: 10:26 AM
  */
-public class VFNZUnsubscribeProccessor extends SMSMessageProcessor<MOMessage> {
+public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessage> {
     public static final String STOP_MSG = "stop";
     public static final String OPERATOR_NAME = "vf";
 
@@ -30,10 +30,10 @@ public class VFNZUnsubscribeProccessor extends SMSMessageProcessor<MOMessage> {
     public void process(MOMessage message) {
         String text = message.getText();
         String phoneNumber = message.getOriginator();
-        if (text.toLowerCase().contains(STOP_MSG)) {
+        if (text.toLowerCase().contains(stopText)) {
             LOGGER.debug("Start proccess stop sms [{}]", message);
 
-            userService.unsubscribeUser(phoneNumber, OPERATOR_NAME);
+            userService.unsubscribeUser(phoneNumber, operatorName);
 
             LOGGER.debug("Finish proccess stop sms [{}]", message);
         }
@@ -41,7 +41,7 @@ public class VFNZUnsubscribeProccessor extends SMSMessageProcessor<MOMessage> {
 
     @Override
     public boolean supports(DeliverSm deliverSm) {
-        return supportedNumbers.contains(deliverSm.getDestAddress());
+        return !deliverSm.isSmscDeliveryReceipt() && supportedNumbers.contains(deliverSm.getDestAddress());
     }
 
     public void setStopText(String stopText) {

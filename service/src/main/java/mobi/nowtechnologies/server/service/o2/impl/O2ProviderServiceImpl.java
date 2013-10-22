@@ -176,6 +176,8 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     @Override
     public void getSubscriberData(String phoneNumber, Processor<O2SubscriberData> processor) {
         O2SubscriberData data = o2Service.getSubscriberData(phoneNumber);
+        data.setPhoneNumber(phoneNumber);
+
         processor.process(data);
     }
 

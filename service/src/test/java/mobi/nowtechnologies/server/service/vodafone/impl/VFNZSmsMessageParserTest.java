@@ -28,6 +28,7 @@ public class VFNZSmsMessageParserTest {
         VFNZSubscriberData result = fixture.parse(data);
 
         Assert.assertEquals(ProviderType.VF, result.getProvider());
+        Assert.assertEquals("+6421111111", result.getPhoneNumber());
     }
 
     @Test
@@ -37,6 +38,7 @@ public class VFNZSmsMessageParserTest {
         VFNZSubscriberData result = fixture.parse(data);
 
         Assert.assertEquals(ProviderType.VF, result.getProvider());
+        Assert.assertEquals("+6421111111", result.getPhoneNumber());
     }
 
     @Test
@@ -46,6 +48,7 @@ public class VFNZSmsMessageParserTest {
         VFNZSubscriberData result = fixture.parse(data);
 
         Assert.assertEquals(ProviderType.NON_VF, result.getProvider());
+        Assert.assertEquals("+6421111111", result.getPhoneNumber());
     }
 
     @Test
@@ -55,9 +58,10 @@ public class VFNZSmsMessageParserTest {
         VFNZSubscriberData result = fixture.parse(data);
 
         Assert.assertEquals(ProviderType.NON_VF, result.getProvider());
+        Assert.assertEquals("+6421111111", result.getPhoneNumber());
     }
 
     private MOMessage createMessage(String message){
-        return new MOMessage("+6421111111", "4003", message, Message.MessageEncodings.ENC8BIT);
+        return new MOMessage("5803", "6421111111", message, Message.MessageEncodings.ENC8BIT);
     }
 }

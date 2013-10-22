@@ -37,7 +37,7 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final SMSMessageProcessor<VFNZSubscriberData> processor = spy(new SMSMessageProcessor<VFNZSubscriberData>() {
+        final BasicSMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
             @Override
             public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
@@ -67,7 +67,7 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final SMSMessageProcessor<MOMessage> processor = spy(new SMSMessageProcessor<MOMessage>() {
+        final BasicSMSMessageProcessor<MOMessage> processor = spy(new BasicSMSMessageProcessor<MOMessage>() {
             @Override
             public boolean supports(DeliverSm deliverSm) {
                 return true;
@@ -96,7 +96,7 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final SMSMessageProcessor<VFNZSubscriberData> processor = spy(new SMSMessageProcessor<VFNZSubscriberData>() {
+        final SMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
             @Override
             public boolean supports(DeliverSm deliverSm) {
                 return true;
@@ -125,7 +125,7 @@ public class SMSMessageProcessorContainerTest {
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final SMSMessageProcessor<VFNZSubscriberData> processor = spy(new SMSMessageProcessor<VFNZSubscriberData>() {
+        final BasicSMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
             @Override
             public boolean supports(DeliverSm deliverSm) {
                 return false;
@@ -155,7 +155,7 @@ public class SMSMessageProcessorContainerTest {
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
         DeliverSm deliverSm = new DeliverSm();
-        final SMSMessageProcessor<DeliverSm> processor = spy(new SMSMessageProcessor<DeliverSm>() {
+        final BasicSMSMessageProcessor<DeliverSm> processor = spy(new BasicSMSMessageProcessor<DeliverSm>() {
             @Override
             public void process(DeliverSm data) {
                 fixture.LOGGER.info("process msg");

@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
+import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -16,13 +15,7 @@ import java.util.List;
  * updates user with O2 subscriber information
  * (segment/contract/provider/4G/directChannel)
  */
-public class O2UserDetailsUpdater implements UserDetailsUpdater<O2SubscriberData> {
-    private UserService userService;
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
+public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberData> {
     /**
      * Updates given user
      */
@@ -90,10 +83,5 @@ public class O2UserDetailsUpdater implements UserDetailsUpdater<O2SubscriberData
         data.setTariff4G(user.getTariff() == Tariff._4G);
         data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
         return data;
-    }
-
-    @Override
-    public void process(O2SubscriberData data) {
-        userService.populateSubscriberData(null, data);
     }
 }

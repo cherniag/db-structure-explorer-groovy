@@ -3,47 +3,30 @@ package mobi.nowtechnologies.server.service.payment.response;
 import mobi.nowtechnologies.server.shared.Parser;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.util.DeliveryReceiptState;
+import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
-import uk.co.o2.soa.chargecustomerdata.ServiceResult;
 
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Titov Mykhaylo (titov)
+ * @author Alexander Kolpakov
  * 
  */
 public class VFResponse extends PaymentSystemResponse implements Parser<DeliverSm, VFResponse> {
 
-	private static final BillSubscriberResponse BILL_SUBSCRIBER_RESPONSE;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(VFResponse.class);
 
-	static{
-		BILL_SUBSCRIBER_RESPONSE = new BillSubscriberResponse();
+	private String phoneNumber;
 
-		BILL_SUBSCRIBER_RESPONSE.setResult(new ServiceResult());
-	}
-
-	private String externalTxId;
-
-	public static VFResponse successfulResponse() {
-		return new VFResponse(BILL_SUBSCRIBER_RESPONSE, new BasicResponse() {
-			@Override
-			public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-
-			@Override
-			public String getMessage() {
-				return "";
-			}
-		});
-	}
+    public static VFResponse futureResponse() {
+        return new VFResponse();
+    }
 
 	public static VFResponse failResponse(final String message) {
-		final VFResponse failO2Response = new VFResponse(null, new BasicResponse() {
+		final VFResponse failVFResponse = new VFResponse(null, new BasicResponse() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
@@ -54,62 +37,59 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
 				return message;
 			}
 		});
-		return failO2Response;
+		return failVFResponse;
 	}
 
-	public static VFResponse valueOf(Object objectResponse) {
-		final BasicResponse response = new BasicResponse();
-		final int statusCode = HttpServletResponse.SC_OK;
-		final String message;
-
-		if (objectResponse == null) {
-			message = null;
-		} else {
-			message = objectResponse.toString();
-		}
-
-		response.setStatusCode(statusCode);
-		response.setMessage(message);
-
-		VFResponse o2Response = new VFResponse(objectResponse, response);
-		return o2Response;
-	}
-
-	public VFResponse(Object objectResponse, BasicResponse response) {
+	protected VFResponse(DeliverSm deliverSm, BasicResponse response) {
 		super(response, false);
 
+        try {
+            phoneNumber = deliverSm.getSourceAddr();
+            DeliveryReceipt deliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
+            isSuccessful = deliveryReceipt.getFinalStatus() == DeliveryReceiptState.ACCEPTD || deliveryReceipt.getFinalStatus() == DeliveryReceiptState.DELIVRD;
+
+            if(!isSuccessful){
+                descriptionError = deliveryReceipt.getFinalStatus().toString();
+                errorCode = deliveryReceipt.getError();
+            }
+        } catch (InvalidDeliveryReceiptException e) {
+            LOGGER.error(e.getMessage(), e);
+            descriptionError = e.getMessage();
+        }
+
 	}
 
-    public VFResponse() {
-        super(new BasicResponse() {
-            @Override
-            public int getStatusCode() {
-                return HttpServletResponse.SC_OK;
-            }
-
-            @Override
-            public String getMessage() {
-                return "";
-            }
-        }, true);
-
+    protected VFResponse() {
+        super(null, true);
     }
-	
-	public void setExternalTxId(String externalTxId) {
-		this.externalTxId = externalTxId;
-	}
 
-	public String getExternalTxId() {
-		return externalTxId;
-	}
+    @Override
+    public String toString() {
+        return "VFResponse{" +
+                "phoneNumber='" + phoneNumber + '\'' +
+                "} " + super.toString();
+    }
 
-	@Override
-	public String toString() {
-		return "O2Response [externalTxId=" + externalTxId + ", " + super.toString() + "]";
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
     @Override
     public VFResponse parse(DeliverSm receipt) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final BasicResponse response = new BasicResponse();
+        final int statusCode = HttpServletResponse.SC_OK;
+        final String message;
+
+        if (receipt == null) {
+            message = null;
+        } else {
+            message = receipt.toString();
+        }
+
+        response.setStatusCode(statusCode);
+        response.setMessage(message);
+
+        VFResponse vfResponse = new VFResponse(receipt, response);
+        return vfResponse;
     }
 }

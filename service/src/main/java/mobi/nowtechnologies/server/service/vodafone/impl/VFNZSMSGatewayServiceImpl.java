@@ -3,9 +3,11 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 import com.sentaca.spring.smpp.SMPPService;
 import com.sentaca.spring.smpp.mt.MTMessage;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.sms.SMPPMessage;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,11 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
     @Override
     public SMSResponse send(String numbers, String message, String originator) {
-        return send(new MTMessage(originator, numbers, message));
+        return send(originator, numbers, message, SMSCDeliveryReceipt.SUCCESS_FAILURE, -1L);
+    }
+
+    public SMSResponse send(String numbers, String message, String originator, SMSCDeliveryReceipt smscDeliveryReceipt, long expireTimeMillis) {
+        return send(new SMPPMessage(originator, numbers, message, smscDeliveryReceipt, expireTimeMillis));
     }
 
     protected SMSResponse send(MTMessage messageObject){
