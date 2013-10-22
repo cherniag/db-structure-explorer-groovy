@@ -8,6 +8,19 @@
 -- In your Quartz properties file, you'll need to set 
 -- org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate
 
+drop table QRTZ_CALENDARS if exists;
+drop table QRTZ_CRON_TRIGGERS if exists;
+drop table QRTZ_FIRED_TRIGGERS if exists;
+drop table QRTZ_PAUSED_TRIGGER_GRPS if exists;
+drop table QRTZ_SCHEDULER_STATE if exists;
+drop table QRTZ_LOCKS if exists;
+drop table QRTZ_JOB_DETAILS if exists;
+drop table QRTZ_JOB_LISTENERS if exists;
+drop table QRTZ_SIMPLE_TRIGGERS if exists;
+drop table QRTZ_BLOB_TRIGGERS if exists;
+drop table QRTZ_TRIGGER_LISTENERS if exists;
+drop table QRTZ_TRIGGERS if exists;
+
 CREATE TABLE QRTZ_CALENDARS (
   CALENDAR_NAME VARCHAR (200)  NOT NULL ,
   CALENDAR IMAGE NOT NULL
