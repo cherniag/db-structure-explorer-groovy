@@ -64,7 +64,7 @@
                         <version>2.16</version>
                         <configuration>
                             <forkCount>0</forkCount>
-                            <argLine>-Xms800m -Xmx800m -XX:MaxPermSize=1024m -XX:-UseSplitVerifier</argLine>
+                            <argLine>-Xms800m -Xmx1024m -XX:MaxPermSize=1024m -XX:-UseSplitVerifier</argLine>
                             <includes>
                                 <include>**/*IT.java</include>
                             </includes>
