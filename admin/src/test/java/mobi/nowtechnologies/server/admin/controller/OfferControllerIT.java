@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockMultipartFile;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.xmlConfi
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:META-INF/shared.xml"})
+@Ignore
 public class OfferControllerIT {
 
     MockMvc mockMvc;
