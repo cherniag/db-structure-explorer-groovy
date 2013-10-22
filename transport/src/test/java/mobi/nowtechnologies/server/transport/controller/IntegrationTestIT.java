@@ -342,15 +342,8 @@ public class IntegrationTestIT {
 		}
 	}
 
-	@Test(expected = ServiceException.class)
-	public void test_setFreeSmsURL() {
-	}
-
-	@Test(expected = ServiceException.class)
-	public void test_setPremiumSmsURL() {
-	}
-
 	@Test
+    @Ignore
 	public void test_GET_PAYMENT_POLICY_command() {
 		try {
 			String apiVersion = "V1.2";
@@ -479,6 +472,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void test_ACC_CHECK_UNKNOWN_NO_PROMOCODE() {
 		try {
 			String password = "zzz@z.com";
@@ -548,6 +542,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void getPromoCode_Successful() {
 		try {
 			String apiVersion = "V1.2";
@@ -657,6 +652,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testBUY_TRACK() throws Exception {
 		try {
 			String userName = "zzz@z.com";
@@ -748,6 +744,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testGET_CHART() throws Exception {
 		try {
 			String userName = "zzz@z.com";
@@ -926,6 +923,7 @@ public class IntegrationTestIT {
     }
 
 	@Test
+    @Ignore
 	public void testGET_NEWS() throws Exception {
 		try {
 			String password = "zzz@z.com";
@@ -996,6 +994,7 @@ public class IntegrationTestIT {
 	}
 	
 	@Test
+    @Ignore
 	public void testGET_NEWS_with_uniqId() throws Exception {
 		try {
 			String password = "zzz@z.com";
@@ -1166,6 +1165,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testBUY_BONUS_TRACK() throws Exception {
 		try {
 			String password = "zzz@z.com";
@@ -1262,6 +1262,7 @@ public class IntegrationTestIT {
 
 	@SuppressWarnings("unchecked")
 	@Test
+    @Ignore
 	public void testGET_FILTERED_NEWS() throws Exception {
 		try {
 			String userName = "zzz@z.com";
@@ -1501,6 +1502,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testExceptionHandler() throws Exception {
 		String password = "zzz@z.com";
 		String userName = "zzz@z.com";
@@ -1599,6 +1601,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testSIGN_UP() throws Exception {
 		String password = "zzz@z.com";
 		String userName = "zzz@z.com";
@@ -1628,6 +1631,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testACC_CHECK() throws Exception {
 		try {
 			String password = "zzz@z.com";
@@ -1699,6 +1703,7 @@ public class IntegrationTestIT {
 	}
 
 	@Test
+    @Ignore
 	public void testUPDATE_USER_DETAILS() throws Exception {
 		String password = "zzz@z.com";
 		String userName = "zzz@z.com";
@@ -1915,6 +1920,7 @@ public class IntegrationTestIT {
 	}
 	
 	@Test
+    @Ignore
 	public void testPHONE_NUMBER_O2_InvalidNumber() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
@@ -1965,6 +1971,7 @@ public class IntegrationTestIT {
 	}
 	
 	@Test
+    @Ignore
 	public void testPHONE_NUMBER_O2_ResendSMS() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
@@ -2034,6 +2041,7 @@ public class IntegrationTestIT {
 	}
 	
 	@Test
+    @Ignore
 	public void testACC_CHECK_with_TRANSACTION_RECEIPT_param() throws Exception {
 		String userName = "+447111111114";
 		String apiVersion = "V3.6";
@@ -2085,6 +2093,7 @@ public class IntegrationTestIT {
 	}
 	
 	@Test
+    @Ignore
 	public void testUPDATE_USER_FACEBOOK_DETAILS() throws Exception {
 		String userName = "zzz@z.com";
 		String apiVersion = "V3.6";
