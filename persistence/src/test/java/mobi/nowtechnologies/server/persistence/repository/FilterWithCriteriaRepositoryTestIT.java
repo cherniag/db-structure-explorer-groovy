@@ -18,7 +18,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class FilterWithCriteriaRepositoryTestIT {
 	
@@ -26,7 +26,7 @@ public class FilterWithCriteriaRepositoryTestIT {
 	private FilterWithCriteriaRepository filterWithCriteriaRepository;
 	
 	@Test
-	public void testname() throws Exception {
+	public void testFindByNames() throws Exception {
 		List<String> names = Arrays.asList("LAST_TRIAL_DAY", "NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS");
 		List<AbstractFilterWithCtiteria> abstractFilterWithCtiterias = filterWithCriteriaRepository.findByNames(names);
 		Assert.notEmpty(abstractFilterWithCtiterias);
