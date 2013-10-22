@@ -8,7 +8,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
+				value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut [%15.15t] userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
 			<param name="LevelMin" value="DEBUG" />
@@ -22,7 +22,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
+				value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut [%15.15t] userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
 			<param name="LevelMin" value="WARN" />
