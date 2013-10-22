@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })

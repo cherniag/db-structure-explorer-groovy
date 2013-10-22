@@ -13,10 +13,10 @@ import uk.co.o2.soa.utils.SOAPLoggingHandler;
 import uk.co.o2.soa.utils.SecurityHandler;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
+@Ignore
 public class WSTestIT {
 
     @Test
-    @Ignore
     public void pingO2() throws Exception {
         ClassLoader loader = SubscriberService.class.getClassLoader();
         URL resource = loader.getResource("META-INF/keystore.jks");

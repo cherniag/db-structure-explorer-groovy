@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  *
  */
 @RunWith(PowerMockRunner.class)
-public class UserNotificationServiceImplIT {
+public class UserNotificationServiceImplTest2 {
 
 	private CommunityResourceBundleMessageSourceImpl messageSource;
 	private DeviceService deviceService;
