@@ -57,8 +57,10 @@
 		<property name="locations">
 			<list>
 				<value>classpath:cdn.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/cdn.properties</value>
 			</list>
 		</property>
+        <property name="ignoreResourceNotFound" value="true" />
 	</bean>
 
     <bean id="web.CommunityViewPreparer" class="mobi.nowtechnologies.server.web.view.CommunityViewPreparer">
