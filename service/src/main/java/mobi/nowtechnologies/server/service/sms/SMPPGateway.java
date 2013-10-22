@@ -122,7 +122,7 @@ public class SMPPGateway extends JSMPPGateway {
         this.messageReceiver = messageReceiver;
         this.smppMonitoringAgent = smppMonitoringAgent;
         this.useUdhi = useUdhi;
-        messageReceiver.init(this);
+
         setAttributes(AGateway.GatewayAttributes.SEND | AGateway.GatewayAttributes.CUSTOMFROM | AGateway.GatewayAttributes.BIGMESSAGES
                 | AGateway.GatewayAttributes.FLASHSMS | AGateway.GatewayAttributes.RECEIVE);
         this.setSourceAddress(smscConfig.getSourceAddress());

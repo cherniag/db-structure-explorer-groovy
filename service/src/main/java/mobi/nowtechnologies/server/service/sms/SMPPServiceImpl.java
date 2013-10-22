@@ -6,7 +6,6 @@ import com.sentaca.spring.smpp.SMSCGatewayConfiguration;
 import com.sentaca.spring.smpp.mo.MessageReceiver;
 import com.sentaca.spring.smpp.monitoring.LoggingSMPPMonitoringAgent;
 import com.sentaca.spring.smpp.monitoring.SMPPMonitoringAgent;
-import com.sentaca.spring.smpp.mt.DefaultOutboundMessageCreator;
 import com.sentaca.spring.smpp.mt.OutboundMessageCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,7 @@ public class SMPPServiceImpl extends SMPPService {
 
     private Set<SMSCGatewayConfiguration> gatewaysConfigurations = new HashSet<SMSCGatewayConfiguration>();
     private SMPPMonitoringAgent smppMonitoringAgent = new LoggingSMPPMonitoringAgent();
-    private OutboundMessageCreator outboundMessageCreator = new DefaultOutboundMessageCreator();
+    private OutboundMessageCreator outboundMessageCreator = new SMPPOutboundMessageCreator();
 
     public SMPPServiceImpl(){
         super.setAutoStart(false);
@@ -51,6 +50,13 @@ public class SMPPServiceImpl extends SMPPService {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void setGatewaysConfiguration(java.util.Set<com.sentaca.spring.smpp.SMSCGatewayConfiguration> gatewaysConfigurations) {
+        super.setGatewaysConfiguration(gatewaysConfigurations);
+
+        this.gatewaysConfigurations = gatewaysConfigurations;
     }
 
     protected SMPPGateway createGateway(BindConfiguration cfg, MessageReceiver receiver, boolean isUseUdhiInSubmitSm){

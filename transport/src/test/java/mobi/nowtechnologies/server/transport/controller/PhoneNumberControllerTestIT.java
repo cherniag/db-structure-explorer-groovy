@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.jsmpp.bean.DeliverSm;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,9 +116,11 @@ public class PhoneNumberControllerTestIT {
 		
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
 
-//        MOMessage message = new MOMessage("5804", "642111111111", "OnNet", Message.MessageEncodings.ENC8BIT);
-//        processorContainer.processInboundMessage(null, message);
-        Thread.sleep(10000);
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSourceAddr("5804");
+        deliverSm.setDestAddress("642102247311");
+        MOMessage message = new MOMessage("5804", "642102247311", "OnNet", Message.MessageEncodings.ENC8BIT);
+        processorContainer.processInboundMessage(deliverSm, message);
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")

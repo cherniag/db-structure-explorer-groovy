@@ -25,6 +25,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
@@ -84,7 +85,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("5003");
-        fixture.setPaymentCodes(Arrays.asList(deliverSm.getDestAddress()));
+        fixture.setPaymentCodes(new HashSet(Arrays.asList(deliverSm.getDestAddress())));
 
         boolean result = fixture.supports(deliverSm);
 
@@ -96,7 +97,7 @@ public class VFPaymentServiceImplTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("5000");
-        fixture.setPaymentCodes(Arrays.asList("5003"));
+        fixture.setPaymentCodes(new HashSet(Arrays.asList("5003")));
 
         boolean result = fixture.supports(deliverSm);
 
@@ -107,7 +108,7 @@ public class VFPaymentServiceImplTest {
     public void testSupports_NotSupported_NotDeliveryReceipt_Success() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setDestAddress("5003");
-        fixture.setPaymentCodes(Arrays.asList("5003"));
+        fixture.setPaymentCodes(new HashSet(Arrays.asList("5003")));
 
         boolean result = fixture.supports(deliverSm);
 

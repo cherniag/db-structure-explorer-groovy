@@ -16,6 +16,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Alexander Kolpakov
@@ -23,7 +24,7 @@ import java.util.List;
 public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaymentDetails> implements SMSMessageProcessor<VFResponse>{
 
     private VFNZSMSGatewayServiceImpl gatewayService;
-    private List<String> paymentCodes;
+    private Set<String> paymentCodes;
     private UserService userService;
     private PendingPaymentService pendingPaymentService;
     private VFResponse futureResponse = VFResponse.futureResponse();
@@ -43,7 +44,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         super(VFPSMSPaymentDetails.class);
     }
 
-    public void setPaymentCodes(List<String> paymentCodes) {
+    public void setPaymentCodes(Set<String> paymentCodes) {
         this.paymentCodes = paymentCodes;
     }
 

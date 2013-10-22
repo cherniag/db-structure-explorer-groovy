@@ -101,6 +101,15 @@
         <property name="retriesOnError" value="${vf.retriesOnError}" />
         <property name="expireMillis" value="${vf.pendingExpireMillis}" />
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
+        <property name="userService" ref="vf_nz.service.UserService" />
+        <property name="pendingPaymentService" ref="service.PendingPaymentService" />
+        <property name="paymentCodes">
+            <set>
+                <value>"${vf.nz.smpp.service.source.address.unsubscribe}"</value>
+                <value>"${vf.nz.smpp.service.source.address.billing.6gbp}"</value>
+                <value>"${vf.nz.smpp.service.source.address.billing.1_5gbp}"</value>
+            </set>
+        </property>
     </bean>
 
 	<util:map id="service.map.paymentSystems" key-type="java.lang.String" value-type="mobi.nowtechnologies.server.service.payment.PaymentSystemService">

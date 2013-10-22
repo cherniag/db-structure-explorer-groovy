@@ -1769,7 +1769,7 @@ public class UserService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public void populateSubscriberData(User user, SubscriberData subscriberData) {
         LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
         userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);
