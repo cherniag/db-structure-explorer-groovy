@@ -19,11 +19,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * The class <code>PaymentPolicyDaoTest</code> contains tests for the class <code>{@link PaymentPolicyDao}</code>.
- *
- * @generatedBy CodePro at 20.10.11 10:32
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)

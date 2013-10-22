@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * EntityDao Test
- * 
  * @author Maksym Chernolevskyi (maksym)
  * 
  */
@@ -35,27 +33,6 @@ public class EntityDaoTest  {
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 24.06.11 11:56
-	 */
-	@AfterClass
-	public static void tearDown()
-		throws Exception {
-		// Add additional tear down code here
-	}
-
-	/**
-	 * Run the void updateEntity(Object) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 24.06.11 11:56
-	 */
 	@Test
 	//@TODO Complete test writing
 	public void testUpdateEntity_1()
@@ -196,13 +173,4 @@ public class EntityDaoTest  {
 		Media media=entityDao.findByProperties(entityClass, fieldNameValueMap);
 		assertNotNull(media);
 	}
-	
-	
-	
-	/*
-	 * SELECT * FROM `cn_service`.`tb_accountLog` where useruid = 99000;
-
-insert into tb_accountLog(useruid,transactionType,balanceAfter, relatedmediauid,relatedpaymentuid,logtimestamp)
-values (99000,2,3,0,0,12345)
-	 */
 }

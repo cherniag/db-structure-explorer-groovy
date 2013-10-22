@@ -31,16 +31,12 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The class <code>UserDaoTest</code> contains tests for the class <code>{@link UserDao}</code>.
- *
- * @generatedBy CodePro at 24.06.11 11:19
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class UserDaoTestIT {
 	private static final Logger LOGGER = LoggerFactory
