@@ -18,14 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 /**
- * WeeklyUpdateServiceTest
- * 
  * @author Anton Rogachevskiy
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
 public class WeeklyUpdateServiceTest {
@@ -96,11 +93,6 @@ public class WeeklyUpdateServiceTest {
 		testUser.setUserType(UserType.NORMAL);
 
 		entityDao.saveEntity(testUser);
-	}
-
-	@AfterTransaction
-	public void tearDown() throws Exception {
-		// Add additional tear down code here
 	}
 
 }

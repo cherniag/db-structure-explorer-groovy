@@ -20,6 +20,7 @@ import static junit.framework.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 public class PaymentDetailsRepositoryIT {
 	
 	@Resource(name = "paymentDetailsRepository")

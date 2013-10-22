@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -13,15 +14,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The class <code>FilterWithCriteriaRepositoryTest</code> contains tests for the class <code>{@link FilterWithCriteriaRepository}</code>.
- *
- * @generatedBy CodePro at 28.05.12 17:33
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(defaultRollback = true)
+@Transactional
 public class FilterWithCriteriaRepositoryTestIT {
 	
 	@Resource(name="filterWithCriteriaRepository")

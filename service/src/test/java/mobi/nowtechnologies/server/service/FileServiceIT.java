@@ -56,13 +56,6 @@ public class FileServiceIT {
 		assertTrue(result.exists());
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = ServiceException.class)
     @Ignore
 	public void testGetFile_WhenImageDoesNotExist()
@@ -76,13 +69,6 @@ public class FileServiceIT {
 		assertNull(result);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test
     @Ignore
 	public void testGetFile_WhenMediaFileExists()
@@ -98,13 +84,6 @@ public class FileServiceIT {
 		assertTrue(result.exists());
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = ServiceException.class)
     @Ignore
 	public void testGetFile_WhenMediaFileDoesNotExists()
@@ -118,13 +97,6 @@ public class FileServiceIT {
 		assertNull(result);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = ServiceException.class)
     @Ignore
 	public void testGetFile_WhenMediaIdIsNull()
@@ -137,13 +109,6 @@ public class FileServiceIT {
 		File result = fileService.getFile(mediaId, fileType, fileResolution, user);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = ServiceException.class)
     @Ignore
 	public void testGetFile_WhenFileTypeIsNull()
@@ -156,13 +121,6 @@ public class FileServiceIT {
 		File result = fileService.getFile(mediaId, fileType, fileResolution, user);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = java.lang.NumberFormatException.class)
     @Ignore
 	public void testGetFile_InvalidMediaId()
@@ -175,13 +133,6 @@ public class FileServiceIT {
 		File result = fileService.getFile(mediaId, fileType, fileResolution, user);
 	}
 
-	/**
-	 * Run the File getFile(String,FileType,int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 12.07.11 15:44
-	 */
 	@Test(expected = PersistenceException.class)
     @Ignore
 	public void testGetFile_WrongUserId()

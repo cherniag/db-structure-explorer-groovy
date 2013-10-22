@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })

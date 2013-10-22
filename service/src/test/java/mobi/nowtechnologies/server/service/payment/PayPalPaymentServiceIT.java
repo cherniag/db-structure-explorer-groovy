@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 @Ignore
 public class PayPalPaymentServiceIT {
 	
