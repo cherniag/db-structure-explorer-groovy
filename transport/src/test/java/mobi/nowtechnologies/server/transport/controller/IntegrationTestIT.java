@@ -81,7 +81,6 @@ import org.xml.sax.SAXException;
 @MockWebApplication(name = "transport.EntityController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class IntegrationTestIT {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(IntegrationTestIT.class.getName());
