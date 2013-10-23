@@ -53,11 +53,11 @@
 	</c:choose>
 	
 	<!--[if IE]>
-		<script type="text/javascript" src="assets/scripts/PIE.js"></script>
+		<script type="text/javascript" src="${requestScope.assetsPathWithoutCommunity}scripts/PIE.js"></script>
 	<![endif]-->
-	<script src="assets/scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
-	<script src="assets/scripts/jquery.simplemodal.1.4.2.min.js" type="text/javascript"></script>
-	<script src="assets/scripts/main.js" type="text/javascript"></script>
+	<script src="${requestScope.assetsPathWithoutCommunity}scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+	<script src="${requestScope.assetsPathWithoutCommunity}scripts/jquery.simplemodal.1.4.2.min.js" type="text/javascript"></script>
+	<script src="${requestScope.assetsPathWithoutCommunity}scripts/main.js" type="text/javascript"></script>
 	
 	<script type="text/javascript">$(document).ready(function(){onStart();});</script>
 	<tiles:insertAttribute name="headSection" />
