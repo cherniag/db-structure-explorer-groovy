@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -10,7 +9,10 @@ import mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -23,8 +25,8 @@ public class PaymentsPsmsController extends CommonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
     
-    
-    private PaymentDetailsService paymentDetailsService;
+    @SuppressWarnings("unused")
+	private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyRepository paymentPolicyRepository;
     private UserRepository userRepository;
     private O2PaymentServiceImpl paymentService;
@@ -47,15 +49,7 @@ public class PaymentsPsmsController extends CommonController {
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        if ( user.isO2CommunityUser() ) {
-        }
-        if ( user.isVFNZCommunityUser() ) {
-        }
-
-        O2PSMSPaymentDetails details = paymentService.commitPaymentDetails(user, policy);
-        user.setCurrentPaymentDetails(details);
-        paymentDetailsService.update(details);
-        userRepository.save(user);
+        paymentService.commitPaymentDetails(user, policy);
 
         return new ModelAndView("redirect:/"+scopePrefix+".html");
     }

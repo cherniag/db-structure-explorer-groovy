@@ -3,6 +3,8 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<jsp:include page="pageHeaderSection.jsp" />
+
 <div style="margin: 0 14px">
 
 <jsp:include page="../payments_common/content_banner.jsp" />

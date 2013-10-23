@@ -18,15 +18,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The class <code>ChartRepositoryTest</code> contains tests for the class <code>{@link ChartRepository}</code>.
- * 
- * @generatedBy CodePro at 28.05.12 17:33
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 public class ChartRepositoryIT {
 
 	@Resource(name = "chartRepository")

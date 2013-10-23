@@ -17,14 +17,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 7/22/13
  * Time: 9:14 AM
- * To change this template use File | Settings | File Templates.
  */
 public class ReadApiTestIT {
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         Logger log = Logger.getLogger("ApiTests");
 
         if(args.length != 14){

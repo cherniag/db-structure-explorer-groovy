@@ -13,17 +13,15 @@ import org.jsmpp.util.TimeFormatter;
 
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
+/*
  * User: Alexsandr_Kolpakov
  * Date: 10/1/13
  * Time: 12:39 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SMPPSubmitRegisteredTestIT {
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         SMPPSession session = new SMPPSession();
         // Set listener to receive deliver_sm
         session.setMessageReceiverListener(new MessageReceiverListenerImplTest());
@@ -45,8 +43,8 @@ public class SMPPSubmitRegisteredTestIT {
 
         try {
 
-            String phoneNumber = "+642111111111";
-//            String phoneNumber = "+64279000456";
+//            String phoneNumber = "+6425321321";
+            String phoneNumber = "+64279000456";
 
             String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
                     (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());

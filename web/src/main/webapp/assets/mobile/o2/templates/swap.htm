@@ -1,21 +1,24 @@
 <div class="wide color-swap-bg">
     <div class="height-header color-swap-header" xmlns="http://www.w3.org/1999/html">
-        <div style="left: 77px; top: 12px" class="absolute font-main S17 text-shadow">
-            <div style="margin-right: 0px;margin-bottom: -1px;" class="inline icon-playlist"/><%=Messages['page.swap.header.text']%></div>
+        <div style="left: 121px; top: 12px" class="absolute font-main S18 text-shadow">
+            <img src="<%=Messages['assetPath']%>imgs/ic_backstage_header.png" width="9px" height="15px" style="margin-right: 6px" /><%=Messages['page.swap.header.text']%></div>
         <a href="#allPlaylists" style="top:8px;left:6px;" class="absolute border-swap transparent button-swap S11">
             <%=Messages['page.swap.button.back.text']%></a>
     </div>
-    <div class="pad5">
-        <div style="top: 62px;left: 6px" class="absolute font-main S20 color-current-theme">
+    <div class="pad8-rl">
+        <div class="font-main S20 color-current-theme swapPlaylistConfirmationHeader">
             <div class="inline icon-playlist-large"/>
             <%=Messages['page.swap.title.text']%>
         </div>
-        <div style="width: 130px;left: 10px;top: 116px;" class="absolute font-light S15 line14">
-            <%=Messages['page.swap.message.text']%>
-            <div style="margin-top:19px;width: 120px;margin-left: 4px;" onclick="location.href='#apply'"
-                 class="button-turquoise font-light S15 shadow">
-                <%=Messages['page.swap.button.ok.text']%> </div>
-        </div>
-        <div class="icon_swap_confirmation"/>
+
+		<div class="swapPlaylistConfirmationMiddleText"><%=Messages['page.swap.message.text']%></div>
+        
+        <div>
+			<img width="100%" src="<%=Messages['assetPath']%>imgs/img_swap_confirmation.png" />
+		</div>
+        
+		<div onclick="location.href='#apply'" class="button-turquoise font-light S15 shadow">
+			<%=Messages['page.swap.button.ok.text']%>
+		</div>
     </div>
 </div>

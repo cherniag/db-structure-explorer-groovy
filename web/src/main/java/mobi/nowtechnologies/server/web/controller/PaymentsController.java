@@ -66,7 +66,7 @@ public class PaymentsController extends CommonController {
         paymentsPage.setPaymentPoliciesNote( paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE) );
         paymentsPage.setUserCanGetVideo( user.is4G() );
         paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
-        paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(user.isO2Business()) );
+        paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
 
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
@@ -138,11 +138,15 @@ public class PaymentsController extends CommonController {
     }
     
     private boolean isConsumerUser(User user) {
-    	return user.isO2Consumer() || (user.isVFNZUser() && user.getSegment() == SegmentType.CONSUMER);
+    	return (user.isO2Consumer() && user.getSegment() == SegmentType.CONSUMER) || user.isVFNZUser();
     }
     
     private boolean isNotFromNetwork(User user) {
     	return ProviderType.NON_O2.toString().equals(user.getProvider()) || ProviderType.NON_VF.toString().equals(user.getProvider());
+    }
+    
+    private boolean isBusinessUser(User u) {
+    	return u.isO2Business(); // for VF NZ we don't have business users, so always will be false
     }
 
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
@@ -151,6 +155,12 @@ public class PaymentsController extends CommonController {
         if( isNotFromNetwork(user) ) {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         } else {
+        	if ( user.isVFNZCommunityUser() ) {
+        		// this workaround is also used in PaymentDetailsService (it's used to have the sql queries working)...
+        		// we need a better way to define payment policies... We should filter by provider/segment/contract/tariff
+        		segment = SegmentType.CONSUMER;
+        	}
+        	
             paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
             paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
         }
@@ -172,7 +182,7 @@ public class PaymentsController extends CommonController {
     		return ret;
     	}
     	
-    	if(user.isO2Business()){     		
+    	if(user.isO2Business()){
     		//no filtering required
     		ret.addAll(paymentPolicyList);
     		return ret;

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.assembler;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.dto.admin.PaymentDetailsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

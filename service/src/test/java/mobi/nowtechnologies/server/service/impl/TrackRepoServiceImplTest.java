@@ -48,11 +48,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * The class <code>TrackRepoServiceImplTest</code> contains tests for the class <code>{@link TrackRepoServiceImpl}</code>.
- *
  * @author Alexander Kolpakov (akolpakov)
- * @version $Revision: 1.0 $
- * @generatedBy CodePro at 8/13/12 1:26 PM
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRepoServiceImplTest {

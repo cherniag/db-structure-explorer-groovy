@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.event;
 
-import mobi.nowtechnologies.server.persistence.domain.AbstractPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
 
 import org.springframework.context.ApplicationEvent;
 

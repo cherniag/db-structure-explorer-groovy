@@ -9,25 +9,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * The class <code>MediaServiceTest</code> contains tests for the class <code>{@link MediaService}</code>.
- *
- * @generatedBy CodePro at 01.07.11 9:41
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @Ignore
 public class MediaServiceTest {
 	private static MediaService mediaService;
-	/**
-	 * Run the MediaService() constructor test.
-	 *
-	 * @generatedBy CodePro at 01.07.11 9:41
-	 */
+
 	@Test
 	public void testMediaService()
 		throws Exception {
 		assertNotNull(mediaService);
-		// add additional test code here
 	}
 
 /*	*//**
@@ -217,33 +208,11 @@ public class MediaServiceTest {
 		assertNotNull(result);
 	}*/
 
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 01.07.11 9:41
-	 */
 	@BeforeClass
 	public static void setUp()
 		throws Exception {
 		ClassPathXmlApplicationContext appServiceContext = new ClassPathXmlApplicationContext(
 				new String[] {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" });
 		mediaService = (MediaService) appServiceContext.getBean("service.MediaService");
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 01.07.11 9:41
-	 */
-	@AfterClass
-	public static void tearDown()
-		throws Exception {
-		// Add additional tear down code here
 	}
 }

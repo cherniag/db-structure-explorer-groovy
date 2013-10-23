@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
@@ -13,7 +15,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.query.Param;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -25,8 +26,8 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.Community.*;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.ITUNES_SUBSCRIPTION;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -1403,5 +1404,17 @@ public class User implements Serializable {
 
     private boolean isWhiteListedLastPromo() {
         return isNotNull(lastPromo) && lastPromo.isWhiteListed();
+    }
+
+    public PaymentDetails getPaymentDetails(Class<?> clazz){
+        if(paymentDetailsList != null && clazz != null){
+            for(PaymentDetails paymentDetails : paymentDetailsList){
+                if(paymentDetails.getPaymentType().getClass() == clazz){
+                    return paymentDetails;
+                }
+            }
+        }
+
+        return null;
     }
 }

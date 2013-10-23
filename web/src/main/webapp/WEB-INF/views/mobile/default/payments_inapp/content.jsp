@@ -69,7 +69,7 @@
 				
 			</c:forEach>
 		</div>
-		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+		<c:if test="${paymentsPage.paymentDetailsActivated}">
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="contentButton contentButtonGrey formButton rad5 rel formButtonGrey" >

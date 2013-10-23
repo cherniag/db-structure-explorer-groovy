@@ -13,32 +13,17 @@ import javax.annotation.Resource;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * The class <code>DrmServiceTest</code> contains tests for the class <code>{@link DrmService}</code>.
- *
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class DrmServiceTestIT {
-	/**
-	 * An instance of the class being tested.
-	 *
-	 * @see DrmService
-	 *
-	 */
+
 	@Resource(name="service.DrmService")
 	private DrmService drmService;
 
-	/**
-	 * Run the Object[] getDrm(Integer[],int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test
 	public void testGetDrmSuccess() throws Exception {
 		int userId = 1;
@@ -51,13 +36,6 @@ public class DrmServiceTestIT {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Object[] getDrm(Integer[],int,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test(expected=ServiceException.class)
 	public void testGetDrmWithCommunityNameIsNull()
 		throws Exception {
@@ -70,10 +48,4 @@ public class DrmServiceTestIT {
 
 		assertNotNull(result);
 	}
-	
-//	@Test
-//	public void testBuyTrack() {
-//		
-//		drmService.buyTrack(userWithCommunity, isrc);
-//	}
 }

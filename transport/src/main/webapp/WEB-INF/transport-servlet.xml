@@ -50,7 +50,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.BuyTrackDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.ErrorMessage</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.PaymentPolicy</value>
+				<value>mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>

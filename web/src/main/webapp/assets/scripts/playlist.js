@@ -24,6 +24,7 @@ var Player = {
         Player.player.load();
         Player.player.addEventListener("loadeddata", function(){
             Player.player.play();
+            GA.trackPlaying(track.get('id'));
         });
 	},
 	stop : function() {
@@ -140,6 +141,7 @@ var PlaylistView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).addClass('color-bg');
+        GA.trackClick('playlists_screen');
     }
 });
 
@@ -150,6 +152,7 @@ var HomeView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).removeClass('color-bg');
+        GA.trackClick('home_screen');
     }
 });
 
@@ -160,6 +163,7 @@ var SwapView = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).html(html);
         $(this.el).removeClass('color-bg');
+        GA.trackClick('swap_screen');
     }
 });
 
@@ -214,6 +218,7 @@ var TracksView = Backbone.View.extend({
 		$(me.el).empty();
 		$(me.el).html(html);
         $(me.el).addClass('color-bg');
+        GA.trackClick('playlist_'+currentPL['title']);
 	}
 });
 
@@ -239,15 +244,21 @@ var PlaylistRouter = Backbone.Router.extend({
         "tracks/:listID": "goTracks",
         "allPlaylists": "allPlaylists",
         "apply": "apply",
-        "back": "back"
+        "back": "back",
+        "backOrExit": "backOrExit"
     },
     swap: function(listID){
         Backbone.playlistView.willBeSelected = listID;
         this.gotoView(Backbone.swapView);
     },
     home: function () {
-        //this.gotoView(Backbone.homeView);
-    	this.allPlaylists();
+    	// if the user checked 'don't show me...', the view for 'home' will be playlistView
+    	var cookieSaved = readCookie("playlist_NoHomepage");
+    	if ( "1" === cookieSaved ) {
+    		this.allPlaylists();
+    	} else {
+    		this.gotoView(Backbone.homeView);
+    	}
     },
     allPlaylists: function () {
         Player.stop();
@@ -259,7 +270,20 @@ var PlaylistRouter = Backbone.Router.extend({
         $(Backbone.tracksView.el).show();
     },
     back: function(){
+        GA.trackClick('back_to_app');
         window.location.href = '/web/playlist/swap.html';
+    },
+    backOrExit: function() {
+    	/* this is called from the playlists template for the close button and we can be in two situations:
+    	 	1. if user does not want to see the home page, we just exit
+    	 	2. otherwise, the user will go to the home page, as before
+    	 */
+    	var cookieSaved = readCookie("playlist_NoHomepage");
+    	if ( "1" === cookieSaved ) {
+    		this.back();
+    	} else {
+    		this.gotoView(Backbone.homeView);
+    	}
     },
     apply: function () {
         var listID = Backbone.playlistView.willBeSelected;
@@ -268,6 +292,7 @@ var PlaylistRouter = Backbone.Router.extend({
             list.save({selected: true});
         }
         Player.stop();
+        GA.trackClick('apply_swapping_'+listID);
         window.location.href = '/web/playlist/swap.html';
     },
     gotoView: function(view){
@@ -282,3 +307,29 @@ var PlaylistRouter = Backbone.Router.extend({
     }
 });
 
+var ChckboxElement = (function() {
+	switchState = function() {
+		var imgOff = $("#doNotShowCheckboxOff");
+		var imgOn  = $("#doNotShowCheckboxOn");
+		
+		if ( imgOff.length === 0 || imgOn.length === 0 ) {
+			return;
+		}
+		
+		imgOff.toggle();
+		imgOn.toggle();
+		
+		if ( imgOn.is(":visible") ) {
+			// set the cookie for 6 months
+			createCookie("playlist_NoHomepage", "1", 365);
+		} else {
+			// remove the cookie
+			createCookie("playlist_NoHomepage", "0", -1);
+		}
+	};
+	
+	return {
+		// updateOptions: updateOptions,
+		switchState: switchState
+	};
+})();

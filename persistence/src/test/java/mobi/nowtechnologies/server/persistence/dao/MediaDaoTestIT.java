@@ -9,23 +9,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * The class <code>MediaDaoTest</code> contains tests for the class <code>{@link MediaDao}</code>.
- *
- * @generatedBy CodePro at 01.07.11 10:27
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @Ignore
 public class MediaDaoTestIT {
 	private static MediaDao mediaDao;
 
-	/**
-	 * Run the boolean isBalanceOk(int,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 01.07.11 10:27
-	 */
 	@Test
 	@Ignore
 	public void testIsBalanceOk_StatusTrue()
@@ -38,13 +27,6 @@ public class MediaDaoTestIT {
 		assertTrue(result);
 	}
 
-	/**
-	 * Run the boolean isBalanceOk(int,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 01.07.11 10:27
-	 */
 	@Test
 	public void testIsBalanceOk_StatusFalse()
 		throws Exception {
@@ -56,13 +38,6 @@ public class MediaDaoTestIT {
 		assertFalse(result);
 	}
 
-	/**
-	 * Run the boolean isBalanceOk(int,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 01.07.11 10:27
-	 */
 	@Test
 	@Ignore
 	public void testIsBalanceOk_3()
@@ -75,13 +50,6 @@ public class MediaDaoTestIT {
 		assertTrue(result);
 	}
 
-	/**
-	 * Run the boolean isBalanceOk(int,int) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 01.07.11 10:27
-	 */
 	@Test(expected = PersistenceException.class)
 	public void testIsBalanceOk_4()
 		throws Exception {
@@ -90,18 +58,9 @@ public class MediaDaoTestIT {
 
 		boolean result = mediaDao.isBalanceOk(aUserId, aMediaUID);
 
-		// add additional test code here
 		assertTrue(result);
 	}
 
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 01.07.11 10:27
-	 */
 	@BeforeClass
 	public static void setUp()
 		throws Exception {

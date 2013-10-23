@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import mobi.nowtechnologies.server.trackrepo.mock.MockWebApplication;
 import mobi.nowtechnologies.server.trackrepo.mock.MockWebApplicationContextLoader;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
 /**
- * The class <code>SignInControllerTest</code> contains tests for the class <code>{@link mobi.nowtechnologies.server.trackrepo.controller.SignInController}</code>.
- *
- * @generatedBy CodePro at 11/13/12 5:09 PM, using the Spring generator
  * @author Alexander Kolpakov (akolpakov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -85,6 +82,7 @@ public class IngestTracksWizardControllerTestIT extends TestCase {
     }
 
     @Test
+    @Ignore
     public void testSelectTrackDrops_Success() throws Exception {
         ResultActions resultActions = mockMvc.perform(
                 get("/drops.json")
@@ -120,6 +118,7 @@ public class IngestTracksWizardControllerTestIT extends TestCase {
     }
 
     @Test
+    @Ignore
     public void testCommitDrops_Success() throws Exception {
         ResultActions resultActions = mockMvc.perform(
                 get("/drops.json")

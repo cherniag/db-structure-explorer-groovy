@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.job;
 import java.util.List;
 
 import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 

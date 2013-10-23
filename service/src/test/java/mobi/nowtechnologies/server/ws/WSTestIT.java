@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.co.o2.soa.subscriberdata.SubscriberProfileType;
@@ -12,6 +13,7 @@ import uk.co.o2.soa.utils.SOAPLoggingHandler;
 import uk.co.o2.soa.utils.SecurityHandler;
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
+@Ignore
 public class WSTestIT {
 
     @Test

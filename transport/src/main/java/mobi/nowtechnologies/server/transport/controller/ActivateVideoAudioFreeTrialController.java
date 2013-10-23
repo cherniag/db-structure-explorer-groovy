@@ -60,8 +60,8 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json"
+            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
+            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json"
     })
     public ModelAndView activateVideoAcceptHeaderSupport(@RequestParam("APP_VERSION") String appVersion,
                                       @RequestParam("USER_NAME") String userName,

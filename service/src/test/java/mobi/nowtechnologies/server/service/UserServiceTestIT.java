@@ -1,29 +1,18 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.SetPassword;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,20 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 
 /**
- * The class <code>UserServiceTest</code> contains tests for the class <code>{@link UserService}</code>.
- *
- * @generatedBy CodePro at 29.06.11 13:05
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" })
@@ -66,26 +49,14 @@ public class UserServiceTestIT {
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 
-	/**
-	 * Run the UserService() constructor test.
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Test
 	public void testUserService()
 		throws Exception {
 		assertNotNull(userService);
-		// add additional test code here
 	}
 
-	/**
-	 * Run the int checkCredentialsAndStatus(String,String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Test
+    @Ignore
 	public void testCheckCredentialsAndStatus_Success()
 		throws Exception {
 		
@@ -104,13 +75,6 @@ public class UserServiceTestIT {
 		assertEquals(1, result.getId());
 	}
 
-	/**
-	 * Run the int checkCredentialsAndStatus(String,String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Test(expected=UserCredentialsException.class)
 	public void testCheckCredentialsAndStatus_Wrong()
 		throws Exception {
@@ -125,13 +89,6 @@ public class UserServiceTestIT {
 				userName, userToken, timestamp, "CN Commercial Beta");
 	}
 
-	/**
-	 * Run the Object[] setPassword(int,String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Ignore
 	@Test
 	public void testSetPassword_Success()
@@ -153,13 +110,6 @@ public class UserServiceTestIT {
 		
 	}
 
-	/**
-	 * Run the Object[] setPassword(int,String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Ignore
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetPassword_2()
@@ -170,17 +120,9 @@ public class UserServiceTestIT {
 
 		Object[] result = userService.processSetPasswordCommand(aUserId, token,aCommunityName);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Object[] setPassword(int,String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 29.06.11 13:05
-	 */
 	@Ignore
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetPassword_3()
@@ -191,7 +133,6 @@ public class UserServiceTestIT {
 
 		Object[] result = userService.processSetPasswordCommand(aUserId, token,aCommunityName);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 	
@@ -214,7 +155,6 @@ public class UserServiceTestIT {
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {		
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(1);
@@ -240,7 +180,6 @@ public class UserServiceTestIT {
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactiveMigPaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsPSMS_Success() {
         User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
@@ -265,7 +204,6 @@ public class UserServiceTestIT {
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_FreeTrial_Success() {
 		User testUser = UserFactory.createUser();
 		testUser.setSubBalance(0);
@@ -282,7 +220,6 @@ public class UserServiceTestIT {
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
 		
 		User testUser = UserFactory.createUser();
@@ -304,11 +241,10 @@ public class UserServiceTestIT {
 		
 		List<User> users = userService.getListOfUsersForWeeklyUpdate();
 		assertNotNull(users);
-		assertEquals(0, users.size());
+		assertEquals(1, users.size());
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
 		
 		User testUser = UserFactory.createUser();
@@ -335,7 +271,6 @@ public class UserServiceTestIT {
 	}
 	
 	@Test
-	@Rollback
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsMIG_Success() {
 		
 		User testUser = UserFactory.createUser();
@@ -357,7 +292,7 @@ public class UserServiceTestIT {
 		
 		List<User> users = userService.getListOfUsersForWeeklyUpdate();
 		assertNotNull(users);
-		assertEquals(0, users.size());
+		assertEquals(1, users.size());
 	}
 
 }

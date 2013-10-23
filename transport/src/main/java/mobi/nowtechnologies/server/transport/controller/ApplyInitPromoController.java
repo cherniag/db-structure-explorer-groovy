@@ -17,8 +17,6 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 
 /**
- * ApplyInitPromoConroller
- *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */

@@ -27,26 +27,3 @@
 	</div>
 
 </div>
-<%-- 
-<div class="paymentscontainer">
-	<div class="paypalHeader vfR S15 redColor">
-		<s:message code='pays.page.header.txt.business.header' />
-		<fmt:formatNumber pattern="0.00" value="${optionPrice}" />
-		<c:choose>
-			<c:when test="${monthlyOrWeekly eq true}">
-				<span style="font-size: 12px"><s:message code='pays.page.header.txt.business_2.month' /></span>
-			</c:when>
-			<c:otherwise>
-				<span style="font-size: 12px"><s:message code='pays.page.header.txt.business_2.weeks' arguments="${numWeeks}"/></span>
-			</c:otherwise>
-		</c:choose>	
-	</div>
-</div>
-	
-<hr class="o2Businesshr" />
-
-<div class="paymentscontainer">
-	<div class="frL11 o2BusinessHeader">
-		<s:message code='pays.page.header.txt' />
-	</div>
-</div> --%>

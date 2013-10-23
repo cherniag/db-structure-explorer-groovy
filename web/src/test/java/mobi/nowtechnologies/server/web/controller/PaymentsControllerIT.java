@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsIm
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * The class <code>ChartControllerTest</code> contains tests for the class <code>{@link ChartController}</code>.
- * 
  * @author Alexander Kolpakov (akolpakov)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -55,6 +54,7 @@ import org.springframework.web.servlet.ModelAndView;
 @MockWebApplication(name = "web.PaymentsController")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class PaymentsControllerIT extends TestCase {
 
 	@Autowired
@@ -157,27 +157,13 @@ public class PaymentsControllerIT extends TestCase {
 		assertEquals("<strong>You are on a free trial and have full access to O2 Tracks.</strong><br /><br />We want you to get the most out of your trial so there's no need to upgrade yet.<br /><br />Don't worry, we'll let you know when it's time.", paymentPoliciesNote);
 	}
 
-	/**
-	 * Perform pre-test initialization.
-	 * 
-	 * @throws Exception
-	 *             if the initialization fails for some reason
-	 * 
-	 * @see TestCase#setUp()
-	 * 
-	 */
+
 	@Before
 	public void setUp()
 			throws Exception {
 		super.setUp();
 
 		mockMvc = MockMvcBuilders.webApplicationContextSetup((WebApplicationContext) this.wac).build();
-	}
-
-	@After
-	public void tearDown()
-			throws Exception {
-		super.setUp();
 	}
 
 	/**

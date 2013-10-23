@@ -8,6 +8,7 @@ import javax.persistence.QueryHint;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -141,17 +142,17 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 
-    // TODO rewrite uses jpql to avoid native queries using
+    // TODO rewrite uses jpql to avoid log tables and native queries using
     @Query(nativeQuery = true, value = "select u.i " +
             " from tb_users u " +
             " where u.activation_status = 'ACTIVATED' " +
-            "      and u.userGroup = 10 " +
+            "      and u.userGroup = ?2 " +
             "      and not exists (select log.user_id from user_logs log " +
             " where log.user_id = u.i " +
             "      and log.user_id is not null " +
             "      and log.type = 'UPDATE_O2_USER' " +
             "      and log.last_update >  ?1)")
-    List<Integer> getUsersForUpdate(long after);
+    List<Integer> getUsersForUpdate(long timeMillis, byte userGroupId);
 
     @Query(value = "select u from User u " +
             " join u.userGroup ug " +

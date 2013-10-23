@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -16,8 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 
 /**

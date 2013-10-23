@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.job.executor;
 
 import java.util.Map;
 
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;

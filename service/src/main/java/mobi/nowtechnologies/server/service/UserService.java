@@ -8,6 +8,11 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
@@ -130,8 +135,13 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        user.setContract(Contract.valueOf(providerUserDetails.contract));
-        user.setProvider(providerUserDetails.operator);
+        if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
+            user.setContract(Contract.PAYM);
+            user.setProvider(ProviderType.O2.toString());
+        }else{
+            user.setContract(Contract.valueOf(providerUserDetails.contract));
+            user.setProvider(providerUserDetails.operator);
+        }
         return user;
     }
 
@@ -1682,7 +1692,7 @@ public class UserService {
 			return result;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new ServiceCheckedException("", "Coudn't make free sms request on successfull payment", e);
+			throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
 		}
 	}
 
@@ -1740,7 +1750,7 @@ public class UserService {
         return user;
     }
 
-    private void populateSubscriberData(final User user, String phoneNumber, Community community) {
+    protected void populateSubscriberData(final User user, String phoneNumber, Community community) {
         if ( isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
             populateSubscriberData(user, (SubscriberData) null);
@@ -1752,7 +1762,6 @@ public class UserService {
                         populateSubscriberData(user, data);
                     }
                 });
-                userDetailsUpdater.setUserFieldsFromSubscriberData(user, null);
             } catch (Exception ex) {
                 // intentionally swallowing the exception to enable user to continue with activation
                 LOGGER.error("Unable to get subscriber data during activation phone=[{}]", phoneNumber, ex);
@@ -1789,7 +1798,7 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	public void saveWeeklyPayment(User user) throws Exception {
+	public void saveWeeklyPayment(User user) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 
@@ -1971,7 +1980,6 @@ public class UserService {
 			LOGGER.error(e.getMessage(), e);
 		}
 		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
-		
 		return isPromoted;
 	}
 

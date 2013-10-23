@@ -63,6 +63,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.16</version>
                         <configuration>
+                            <forkCount>0</forkCount>
+                            <argLine>-Xms800m -Xmx1024m -XX:MaxPermSize=1024m -XX:-UseSplitVerifier</argLine>
                             <includes>
                                 <include>**/*IT.java</include>
                             </includes>
@@ -132,7 +134,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -349,11 +351,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.0</version>
@@ -410,7 +407,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test-mvc</artifactId>
-                <version>1.0.0.BUILD-SNAPSHOT</version>
+                <version>1.0.0.M2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

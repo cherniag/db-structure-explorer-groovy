@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +19,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * The class <code>PaymentPolicyDaoTest</code> contains tests for the class <code>{@link PaymentPolicyDao}</code>.
- *
- * @generatedBy CodePro at 20.10.11 10:32
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
