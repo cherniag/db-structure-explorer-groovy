@@ -68,12 +68,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * The class <code>EntityControllerTest</code> contains tests for the class
- * <code>{@link EntityController}</code>.
- * 
- * @generatedBy CodePro at 20.07.11 15:17, using the Spring generator
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -87,6 +82,7 @@ import org.xml.sax.SAXException;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @PrepareForTest(Utils.class)
+@Ignore
 public class IntegrationTestIT {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(IntegrationTestIT.class.getName());
