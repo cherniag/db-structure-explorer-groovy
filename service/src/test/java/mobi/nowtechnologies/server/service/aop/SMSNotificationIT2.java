@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })

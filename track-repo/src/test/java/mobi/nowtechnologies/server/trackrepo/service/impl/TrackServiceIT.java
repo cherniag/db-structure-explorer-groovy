@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ public class TrackServiceIT {
 	private CloudFileService cloudFileService;
 	
 	@Test
+    @Ignore
 	public void testPull_Success() throws Exception {
 		//test preparation
 		Track anyTrack = TrackFactory.anyTrack();

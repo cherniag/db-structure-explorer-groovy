@@ -13,12 +13,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * The class <code>DrmDaoTest</code> contains tests for the class
- * <code>{@link DrmDao}</code>.
- * 
- * @generatedBy CodePro at 20.12.11 13:47
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
@@ -29,13 +24,6 @@ public class DrmDaoTestIT {
 	@Resource(name = "persistence.DrmDao")
 	private DrmDao drmDao;
 
-	/**
-	 * Run the List<Drm> findDrmTree(int,String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 20.12.11 13:47
-	 */
 	@Test(expected = mobi.nowtechnologies.server.persistence.dao.PersistenceException.class)
 	public void testFindDrmTree_incorrectParam() throws Exception {
 		int userId = 1;

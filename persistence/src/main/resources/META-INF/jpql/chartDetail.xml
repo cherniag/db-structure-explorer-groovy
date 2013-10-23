@@ -3,21 +3,6 @@
 	xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd ">
 
-	<named-query name="ChartDetail.findChartDetailTreeForDrmUpdate">
-		<query><![CDATA[select chartDetail from ChartDetail chartDetail 
-		join FETCH chartDetail.chart chart 
-		join FETCH chartDetail.media media 
-		join FETCH chart.genre genre1 
-		join FETCH media.artist artist 
-		join FETCH media.genre genre2 
-		join FETCH media.headerFile headerFile 
-		join FETCH media.audioFile audioFile 
-		join FETCH media.imageFIleLarge imageFileLarge 
-		join FETCH media.imageFileSmall imageFileSmall
-		where chart.i=?
-		]]></query>
-	</named-query>
-	
 	<named-query name="ChartDetail.findContentInfoByDrmType">
 		<query><![CDATA[select distinct chartDetail from ChartDetail chartDetail 
 		join FETCH chartDetail.chart chart 

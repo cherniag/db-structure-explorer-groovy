@@ -30,7 +30,7 @@
 		<property name="chartService" ref="service.ChartService" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
+	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
         <property name="o2ClientService" ref="service.O2ClientService"/>
         <property name="updateO2UserTask" ref="job.UpdateO2UserTask"/>
     </bean>

@@ -13,17 +13,15 @@ import org.jsmpp.util.TimeFormatter;
 
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
+/*
  * User: Alexsandr_Kolpakov
  * Date: 10/1/13
  * Time: 12:39 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SMPPSubmitRegisteredTestIT {
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         SMPPSession session = new SMPPSession();
         // Set listener to receive deliver_sm
         session.setMessageReceiverListener(new MessageReceiverListenerImplTest());

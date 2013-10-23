@@ -15,10 +15,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * CommandsTestIT
- * 
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 @Ignore
 public class CommandsTestIT {

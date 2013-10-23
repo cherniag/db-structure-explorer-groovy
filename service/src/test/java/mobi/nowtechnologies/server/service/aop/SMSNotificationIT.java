@@ -29,6 +29,7 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class SMSNotificationIT {
 
 	@Rule

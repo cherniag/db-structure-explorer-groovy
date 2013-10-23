@@ -23,6 +23,7 @@ import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;
 import org.apache.xerces.dom.TextImpl;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,7 +39,7 @@ import static org.mockito.Matchers.eq;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ O2ProviderServiceImpl.class})
-public class O2ClientServiceImplIT {
+public class O2ClientServiceImplTest {
 	private O2ProviderServiceImpl fixture;
 	
 	private O2ProviderServiceImpl fixture2;
@@ -195,6 +196,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_O2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "00000000-c768-4fe7-bb56-a5e0c722cd44";
@@ -211,6 +213,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_notO2User_and_PAYGTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "11111111-c768-4fe7-bb56-a5e0c722cd44";
@@ -227,6 +230,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_O2User_and_PAYGMTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "22222222-c768-4fe7-bb56-a5e0c722cd44";
@@ -243,6 +247,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_notO2User_and_PAYGMTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "33333333-c768-4fe7-bb56-a5e0c722cd44";
@@ -259,6 +264,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_O2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "44444444-c768-4fe7-bb56-a5e0c722cd44";
@@ -275,6 +281,7 @@ public class O2ClientServiceImplIT {
 	}
 	
 	@Test
+    @Ignore
 	public void getUserDetail_Success_with_notO2User_and_BusinessTariff() {
 		String phoneNumber = "+447870111111";
 		String otac_auth_code = "55555555-c768-4fe7-bb56-a5e0c722cd44";
@@ -364,9 +371,7 @@ public class O2ClientServiceImplIT {
 		fixture.setUserLogRepository(mockUserLogRepository);
 		fixture.setLimitValidatePhoneNumber(9);
         fixture.setUserService(userServiceMock);
-		
-		//whenNew(RestTemplate.class).withNoArguments().thenReturn(mockRestTemplate);
-		fixture.setRestTemplate(new RestTemplate());
+		fixture.setRestTemplate(mockRestTemplate);
 		
 		fixture2 = new O2ProviderServiceImpl();
 		fixture2.setServerO2Url("https://uat.mqapi.com");

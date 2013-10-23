@@ -10,11 +10,14 @@ import javax.annotation.Resource;
 import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
@@ -25,6 +28,9 @@ import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/service-test-ws.xml" })
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
+@Ignore
 public class O2TariffServiceIT {
 
 	

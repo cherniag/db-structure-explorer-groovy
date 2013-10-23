@@ -2,17 +2,20 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -21,6 +24,7 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 public class PaymentPolicyRepositoryIT {
 
     @Resource(name = "paymentPolicyRepository")
@@ -31,7 +35,7 @@ public class PaymentPolicyRepositoryIT {
 
     @Test
     public void testSave_Success() {
-        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
+        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity().withMediaType(AUDIO);
 
         PaymentPolicy actualPaymentPolicy = paymentPolicyRepository.save(paymentPolicy);
 
@@ -40,7 +44,7 @@ public class PaymentPolicyRepositoryIT {
 
     @Test
     public void testFindOne_Success() {
-        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity();
+        PaymentPolicy paymentPolicy = createPaymentPolicyWithCommunity().withMediaType(AUDIO);
 
         paymentPolicy = paymentPolicyRepository.save(paymentPolicy);
 
