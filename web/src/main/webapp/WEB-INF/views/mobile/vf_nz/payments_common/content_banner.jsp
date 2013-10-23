@@ -1,10 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
-<div class="paymentscontainer" style="background-color: inherit;margin-top: 20px; margin-bottom: 20px;">
+<div style="background-color: inherit;margin-top: 16px; margin-bottom: 18px;">
 	<div class="vfL S12 grayBlackColor bottom6">
 		<c:if test="${not empty paymentsPage.paymentPageData and not empty paymentsPage.paymentPageData.subscriptionTexts and not empty paymentsPage.paymentPageData.subscriptionTexts.statusText}">
-			<div class="redColor vfR S16 bottom8"><c:out value="${paymentsPage.paymentPageData.subscriptionTexts.statusText}" /></div>
+			<div class="redColor vfR S16 bottom4"><c:out value="${paymentsPage.paymentPageData.subscriptionTexts.statusText}" /></div>
 			
 			<%-- <c:if test="${not empty paymentsPage.paymentPageData.subscriptionTexts.futureText}">
 				&nbsp;/&nbsp;<c:out value="${paymentsPage.paymentPageData.subscriptionTexts.futureText}" />

@@ -20,7 +20,7 @@
 	<div class="paypalHeaderRight">
 		$<fmt:formatNumber pattern="0.00" value="${optionPrice}" /><s:message code='pays.page.header.txt.itunes.month' />
 	</div>
-	<div style="clear: both; height: 18px;">&nbsp;</div>
+	<div style="clear: both; height: 8px;">&nbsp;</div>
 
 	<div class="itunesheaderText">
 		<s:message code='pays.page.header.txt.itunes.middleText' />

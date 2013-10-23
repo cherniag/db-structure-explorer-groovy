@@ -41,6 +41,7 @@ body {
 
 .rel { position: relative; }
 
+.bottom4 {margin-bottom: 4px;}
 .bottom6 {margin-bottom: 6px;}
 .bottom8 {margin-bottom: 8px;}
 .bottom15 {margin-bottom: 15px;}
@@ -83,7 +84,7 @@ body {
 	
 .header {
     text-align: center;
-    height: 45px;
+    height: 44px;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e60000', endColorstr='#e60000'); for IE */
     background-image: linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
     background-image: -o-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
@@ -242,14 +243,15 @@ body {
 }
 
 .button1, .button-turquoise, .button-white, .button-disabled{
-    border-radius: 5px;
+    border-radius: 3px;
     border-width: 0;
     color: #ffffff;
     display: block;
     font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size: 17px;
     font-weight: lighter;
-    height: 41px;
-    line-height: 41px;
+    height: 48px;
+    line-height: 48px;
     margin-bottom: 10px;
     text-align: center;
     text-decoration: none;
@@ -389,7 +391,7 @@ body {
 .pypalImage {
 	height: 25px;
 	width: 58px;
-	margin-left: 6px;
+	margin-left: 4px;
 	vertical-align: bottom;
 }
 
@@ -412,10 +414,12 @@ body {
 .paypalHeaderRight {
 	float: right;
 	line-height: 160%;
+	padding-top: 2px;
 }
 
 .paypalpaymentsButton {
 	padding-bottom: 20px;
+	padding-top: 15px;
 }
 
 .paypalImageContainer {
