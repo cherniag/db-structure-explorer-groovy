@@ -29,12 +29,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
 /**
- * The class <code>SmsAccordingToLawJobTest</code> contains tests for the class
- * <code>{@link SmsAccordingToLawJob}</code>.
- * 
- * @generatedBy CodePro at 29.08.12 10:04
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(PowerMockRunner.class)
 public class SmsAccordingToLawJobTest {
