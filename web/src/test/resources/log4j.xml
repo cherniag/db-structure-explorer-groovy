@@ -53,7 +53,7 @@
         <appender-ref ref="stderr" />
 	</logger>
     <logger name="org.hibernate.tool.hbm2ddl.SchemaExport">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="stdout" />
         <appender-ref ref="stderr" />
 	</logger>
