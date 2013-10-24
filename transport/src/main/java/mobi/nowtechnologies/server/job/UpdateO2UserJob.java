@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static mobi.nowtechnologies.server.service.HazelcastService.QUEUE_O2_USERS_FOR_UPDATE;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -41,11 +42,19 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
         	for (int i = 0; i < POOL_SIZE; i++) {
         		submitTaskForExecution();
             }
-            
+
         } catch (Throwable t) {
             LOG.error("Job ended with error.", t);
         } finally {
-            LOG.info("finished!");
+            
+        	LOG.info("finished, cleaning up executor!");
+            try{
+            	executor.shutdown();
+            	executor.awaitTermination(2, TimeUnit.HOURS);
+            }catch(Exception ex){
+            	LOG.error("Error while awiting termination:"+ex, ex);
+            }
+            LOG.info("job completed!");
         }
     }
 
@@ -54,6 +63,7 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
 		if (isNotEmpty(usersId)){
 		    executor.submit(new UpdateO2UserBatchTask(usersId));
 		}
+
 	}
 
     private void readProperties() {
