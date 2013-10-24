@@ -8,6 +8,7 @@ body {
 }
 .container {
 	background-color: #fff;
+	padding-bottom: 0px;
 }
 </style>
 
@@ -17,7 +18,7 @@ body {
 	<div class="content" style="padding: 0 3px;">
 		<c:choose>
 			<c:when test="${result == null||result == 'fail'}">
-				<div class="vfR S15 redColor top15"><s:message code="unsub.page.header" /></div>
+				<div class="vfR S15 redColor top10"><s:message code="unsub.page.header" /></div>
 				<div class="unsubscribeText"><s:message code="unsub.page.description" /></div>
 				
 				<form:form modelAttribute="unsubscribeDto" method="post">							
@@ -27,8 +28,8 @@ body {
 								<form:errors path="reason" />
 							</div>
 					</s:hasBindErrors>
-					<div class="rel" style="margin-top: 20px;">
-						<input type="submit" class="button-white pie" value="<s:message code='unsub.page.form.submit' />" />
+					<div class="rel" style="margin-top: 30px;">
+						<input style="margin-bottom: 13px" type="submit" class="button-white pie" value="<s:message code='unsub.page.form.submit' />" />
 						
 						<c:choose>
 							<c:when test="${callingPage == 'payments_inapp'}">
@@ -42,15 +43,15 @@ body {
 				</form:form>
 			</c:when>
 			<c:otherwise>
-				<div class="vfR S15 redColor top15"><s:message code="unsub.page.header" /></div>
-				<div class="unsubscribeText bottom15"><s:message code="unsub.page.description.unsubscribed" /></div>
+				<div class="vfR S15 redColor top10"><s:message code="unsub.page.header" /></div>
+				<div class="unsubscribeText bottom25"><s:message code="unsub.page.description.unsubscribed" /></div>
 				<div class="rel" >
 					<c:choose>
 						<c:when test="${callingPage == 'payments_inapp'}">
-							<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
+							<input class="button-turquoise pie" style="margin-bottom: 17px;" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
 						</c:when>
 						<c:otherwise>
-							<input class="button-turquoise pie" title="${pageContext.request.contextPath}/account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
+							<input class="button-turquoise pie" style="margin-bottom: 17px;" title="${pageContext.request.contextPath}/account.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.inapp.form.btn.back' />" />
 						</c:otherwise>
 					</c:choose>
 					<span class="button-arrow"/>

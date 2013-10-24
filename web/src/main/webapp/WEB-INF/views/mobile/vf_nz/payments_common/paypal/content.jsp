@@ -15,8 +15,8 @@ body {
 <div class="container">
 <div class="content" style="padding: 3px;">
 
-	<div class="paypalImageContainer">
-		<img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_paypal.png" align="bottom" class="pypalImage" style="margin: 0px;" />
+	<div class="paypalImageContainerCongrats">
+		<img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_paypal_congratulation.png" align="bottom" class="pypalImageCongrat" style="margin: 0px;" />
 	</div>
 
 <c:set var="callingPage"><%=request.getParameter("callingPage")%></c:set>
@@ -24,8 +24,8 @@ body {
 <c:choose>
 <c:when test="${result!='fail'}">
 	<%--successful paypal payment --%>
-	<div class="paypalMessgeHeader"><s:message code='pay.paypal.dialog.successful.title' /></div>
-	<div class="paypalMessageText"><s:message code='pay.paypal.dialog.successful.message' /></div>
+	<div class="paypalMessgeHeader" style="margin-bottom: 7px"><s:message code='pay.paypal.dialog.successful.title' /></div>
+	<div class="paypalMessageText" style="line-height: 140%;"><s:message code='pay.paypal.dialog.successful.message' /></div>
 	
 	<c:choose>
 	<c:when test="${callingPage == 'payments_inapp'}">
