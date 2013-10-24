@@ -374,7 +374,7 @@ body {
 }
 
 .itunesHeader {
-	padding: 10px 10px 0;
+	padding: 13px 10px 0;
 }
 
 .itunespaymentheader {
@@ -384,7 +384,7 @@ body {
 .itunesSubImage {
 	height: 19px;
 	width: 67px;
-	margin-left: 6px;
+	margin-left: 3px;
 	vertical-align: bottom;
 }
 
