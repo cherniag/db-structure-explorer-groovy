@@ -45,6 +45,8 @@ body {
 .bottom6 {margin-bottom: 6px;}
 .bottom8 {margin-bottom: 8px;}
 .bottom15 {margin-bottom: 15px;}
+.bottom25 {margin-bottom: 25px;}
+.top10 {margin-top: 10px;}
 .top15 {margin-top: 15px;}
 
 .redColor {color: #e60000;}
@@ -370,7 +372,7 @@ body {
 	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	line-height: 130%;
-	margin-top: 12px;
+	margin-top: 10px;
 }
 
 .itunesHeader {
@@ -391,6 +393,13 @@ body {
 .pypalImage {
 	height: 25px;
 	width: 58px;
+	margin-left: 4px;
+	vertical-align: bottom;
+}
+
+.pypalImageCongrat {
+	height: 30px;
+	width: 70px;
 	margin-left: 4px;
 	vertical-align: bottom;
 }
@@ -425,6 +434,10 @@ body {
 .paypalImageContainer {
 	margin-top: 6px;
 	margin: 6px 0 15px;
+}
+
+.paypalImageContainerCongrats {
+	margin: 2px 0 13px;
 }
 
 .paypalMessgeHeader {
