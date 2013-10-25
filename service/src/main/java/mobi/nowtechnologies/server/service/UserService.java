@@ -1023,7 +1023,7 @@ public class UserService {
     private User prepareUserConversionToAccountCheckDto(User user) {
         Community community = user.getUserGroup().getCommunity();
         boolean isAutoOptInEnabled = messageSource.readBoolean(community.getRewriteUrlParameter(), "auto.opt.in.enabled", true);
-        if (isAutoOptInEnabled) user = findUserTree(user.getId());
+        user = findUserTree(user.getId());
         return user.withAutoOptInEnabled(isAutoOptInEnabled);
     }
 
