@@ -211,6 +211,12 @@ public class PaymentDetailsService {
 		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community);
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<PaymentPolicyDto> getPaymentPolicyWithNullSegment(Community community, User user) {
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithNullSegment(community, user.getProvider());
+		return mergePaymentPolicies(user, paymentPolicies);
+	}
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {

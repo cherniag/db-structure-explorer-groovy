@@ -156,13 +156,11 @@ public class PaymentsController extends CommonController {
             paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
         } else {
         	if ( user.isVFNZCommunityUser() ) {
-        		// this workaround is also used in PaymentDetailsService (it's used to have the sql queries working)...
-        		// we need a better way to define payment policies... We should filter by provider/segment/contract/tariff
-        		segment = SegmentType.CONSUMER;
+        		paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
+        	} else {
+        		paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
+        		paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
         	}
-        	
-            paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-            paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
         }
         
         if(isEmpty(paymentPolicy)) {
