@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.service.data;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/2/13
  * Time: 3:12 PM
- * To change this template use File | Settings | File Templates.
  */
 public class PhoneNumberValidationData {
     private String phoneNumber;

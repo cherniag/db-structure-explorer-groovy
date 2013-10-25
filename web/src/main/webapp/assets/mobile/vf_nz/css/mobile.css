@@ -41,9 +41,12 @@ body {
 
 .rel { position: relative; }
 
+.bottom4 {margin-bottom: 4px;}
 .bottom6 {margin-bottom: 6px;}
 .bottom8 {margin-bottom: 8px;}
 .bottom15 {margin-bottom: 15px;}
+.bottom25 {margin-bottom: 25px;}
+.top10 {margin-top: 10px;}
 .top15 {margin-top: 15px;}
 
 .redColor {color: #e60000;}
@@ -83,7 +86,7 @@ body {
 	
 .header {
     text-align: center;
-    height: 45px;
+    height: 44px;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e60000', endColorstr='#e60000'); for IE */
     background-image: linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
     background-image: -o-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
@@ -242,14 +245,15 @@ body {
 }
 
 .button1, .button-turquoise, .button-white, .button-disabled{
-    border-radius: 5px;
+    border-radius: 3px;
     border-width: 0;
     color: #ffffff;
     display: block;
     font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size: 17px;
     font-weight: lighter;
-    height: 41px;
-    line-height: 41px;
+    height: 48px;
+    line-height: 48px;
     margin-bottom: 10px;
     text-align: center;
     text-decoration: none;
@@ -368,11 +372,11 @@ body {
 	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	line-height: 130%;
-	margin-top: 12px;
+	margin-top: 10px;
 }
 
 .itunesHeader {
-	padding: 10px 10px 0;
+	padding: 13px 10px 0;
 }
 
 .itunespaymentheader {
@@ -382,14 +386,21 @@ body {
 .itunesSubImage {
 	height: 19px;
 	width: 67px;
-	margin-left: 6px;
+	margin-left: 3px;
 	vertical-align: bottom;
 }
 
 .pypalImage {
 	height: 25px;
 	width: 58px;
-	margin-left: 6px;
+	margin-left: 4px;
+	vertical-align: bottom;
+}
+
+.pypalImageCongrat {
+	height: 30px;
+	width: 70px;
+	margin-left: 4px;
 	vertical-align: bottom;
 }
 
@@ -412,15 +423,21 @@ body {
 .paypalHeaderRight {
 	float: right;
 	line-height: 160%;
+	padding-top: 2px;
 }
 
 .paypalpaymentsButton {
 	padding-bottom: 20px;
+	padding-top: 15px;
 }
 
 .paypalImageContainer {
 	margin-top: 6px;
 	margin: 6px 0 15px;
+}
+
+.paypalImageContainerCongrats {
+	margin: 2px 0 13px;
 }
 
 .paypalMessgeHeader {

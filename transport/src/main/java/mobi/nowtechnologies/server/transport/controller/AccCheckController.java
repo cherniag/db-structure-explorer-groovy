@@ -136,7 +136,6 @@ public class AccCheckController extends CommonController {
         if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
             user.setDeviceUID(deviceUID);
             userService.updateUser(user);
-            deviceUID = null;
        }
        ///
 
