@@ -18,10 +18,10 @@
 </c:choose>
 
 <div class="container" style="margin-top: 10px;">
-    <img style="width:100%;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
-    <div class="subscription-container">
+    <img style="width:100%;display: block" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_header_payment.png" />
+    <div class="maincontainer" style="padding-top: 5px;">
     	
-    	<div class="rel tapArea" style="margin:10px 6px 0;">
+    	<div class="rel tapArea" style="margin:0px 6px 0;">
         <a class="subscription-selector option-${paymentPolicyOptionNo}" disabled="true" style="height: 46px;">
             <img style="width:52px; height:52px;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
             <div class="rel networkUserPaymentOption" style="padding-top:8px;margin-bottom: 12px;">
@@ -31,7 +31,7 @@
         </a>
         </div>
         
-        <div class="rel" style="margin: 4px 6px 12px; padding:6px 0;">
+        <div class="rel" style="margin: 10px 6px 24px; padding:6px 0;">
             <input class="button-white no-margin left pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.oppsms.cansel.button"/>" />
             <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/oppsms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.oppsms.ok.button"/>" />
             <div style="clear: both;"></div>
