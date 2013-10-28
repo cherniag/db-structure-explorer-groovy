@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.data;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * User: Alexsandr_Kolpakov
@@ -26,8 +27,8 @@ public class SubscriberData {
 
     @Override
     public String toString() {
-        return "SubscriberData{" +
-                "provider=" + provider +
-                "} " + super.toString();
+        return new ToStringBuilder(this)
+                .append("provider", provider)
+                .toString();
     }
 }
