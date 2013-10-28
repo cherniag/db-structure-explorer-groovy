@@ -258,7 +258,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
 	@Override
 	public boolean isO2User(ProviderUserDetails userDetails) {
-		if (isNotNull(userDetails) && O2.toString().equals(userDetails.operator)) {
+		if (isNotNull(userDetails) && O2.getKey().equals(userDetails.operator)) {
 			return true;
 		}
 		return false;

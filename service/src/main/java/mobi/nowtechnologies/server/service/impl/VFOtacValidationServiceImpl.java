@@ -33,11 +33,11 @@ public class VFOtacValidationServiceImpl implements VFOtacValidationService {
         if (promotedDevice && TEST_OTAC_NON_VF.equals(otac)) {
             LOGGER.info("The phone number [{}] is promoted and pin [{}] is stub so the operator will be NON_VF", phoneNumber, otac);
 
-            providerUserDetails.withOperator(NON_VF.toString());
+            providerUserDetails.withOperator(NON_VF.getKey());
         }else if (promotedDevice && TEST_OTAC_VF.equals(otac)) {
             LOGGER.info("The phone number [{}] is promoted and pin [{}] is stub so the operator will be VF", phoneNumber, otac);
 
-            providerUserDetails.withOperator(VF.toString());
+            providerUserDetails.withOperator(VF.getKey());
         }else{
             boolean isOtacValid = userService.isVFNZOtacValid(otac, phoneNumber, community);
             if (!isOtacValid) throw new ServiceException("Otac ["+otac+"] isn't valid for user with mobile ["+phoneNumber+"] and community ["+community.getRewriteUrlParameter()+"]");
