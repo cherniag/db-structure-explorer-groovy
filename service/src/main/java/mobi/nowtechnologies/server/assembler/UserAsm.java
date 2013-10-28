@@ -18,7 +18,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
 /**
