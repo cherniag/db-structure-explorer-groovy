@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.Parser;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
 public class VFNZSubscriberDataParser implements Parser<String, VFNZSubscriberData> {
 
