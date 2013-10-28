@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
@@ -14,9 +13,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +35,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -522,7 +521,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         String[] codes = new String[6];
 
-        final String provider = user.getProvider();
+        final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
         final Contract contract = user.getContract();
         final DeviceType deviceType = user.getDeviceType();
@@ -534,7 +533,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
 
         codes[0] = msgCodeBase;
-        codes[1] = getCode(codes, 0, provider);
+        codes[1] = getCode(codes, 0, providerKey);
         codes[2] = getCode(codes, 1, segment);
         codes[3] = getCode(codes, 2, contract);
         codes[4] = getCode(codes, 3, deviceTypeName);
