@@ -29,7 +29,7 @@ public class O2UserDetailsUpdater implements UserDetailsUpdater{
             user.setContractChannel(ContractChannel.DIRECT);
             user.setTariff(Tariff._3G);
         } else {
-            user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2));
+            user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2);
             user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
             user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
             user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
