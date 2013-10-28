@@ -2498,7 +2498,7 @@ public class UserServiceTest {
         assertEquals(expectedHasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 
         assertNull(user.getContract());
-        assertThat(user.getProvider(), is(ProviderType.valueOf(providerUserDetails.operator)));
+        assertThat(user.getProvider(), is(ProviderType.valueOfKey(providerUserDetails.operator)));
         assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
 
