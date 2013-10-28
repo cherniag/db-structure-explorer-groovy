@@ -1,7 +1,13 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -19,23 +25,25 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.persistence.repository.UserDeviceDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserIPhoneDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.shared.enums.*;
 
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -71,10 +79,6 @@ public class UserServiceIT {
 		sagePayCreditCard, o2Psms
 	}
 
-	public enum Provider {
-		o2, non_o2
-	}
-
 	public static int count;
 
 	@DataPoints
@@ -82,9 +86,6 @@ public class UserServiceIT {
 
 	@DataPoints
 	public static final int[] nextSubPayments = new int[] { EPOCH_SECONDS - DAY_SECONDS, EPOCH_SECONDS + HOUR_SECONDS, EPOCH_SECONDS + DAY_SECONDS, EPOCH_SECONDS + TWO_DAY_SECONDS };
-
-	@DataPoints
-	public static final Provider[] providers = Arrays.copyOf(Provider.values(), Provider.values().length + 1);
 
 	@DataPoints
 	public static final Contract[] contracts = Arrays.copyOf(Contract.values(), Contract.values().length + 1);
@@ -112,36 +113,42 @@ public class UserServiceIT {
 	@Resource(name = "service.UserService")
 	private UserService userService;
 
+    @Resource(name = "userRepository")
+    private UserRepository userRepository;
+
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 	private PaymentPolicy paymentPolicy;
 
+    @Resource(name = "userIPhoneDetailsRepository")
+    private UserIPhoneDetailsRepository userIPhoneDetailsRepository;
+
 	@BeforeClass
 	public static void generateDataPoints() throws Exception {
 		User o2ConsumerUser = new User();
-		o2ConsumerUser.setProvider(Provider.o2.name());
-		o2ConsumerUser.setSegment(SegmentType.CONSUMER);
-		o2ConsumerUser.setContract(Contract.PAYG);
+		o2ConsumerUser.setProvider(O2);
+		o2ConsumerUser.setSegment(CONSUMER);
+		o2ConsumerUser.setContract(PAYG);
 
 		User o2BussinessUser = new User();
-		o2BussinessUser.setProvider(Provider.o2.name());
-		o2BussinessUser.setSegment(SegmentType.CONSUMER);
-		o2BussinessUser.setContract(Contract.PAYG);
+		o2BussinessUser.setProvider(O2);
+		o2BussinessUser.setSegment(CONSUMER);
+		o2BussinessUser.setContract(PAYG);
 
 		User o2ConsumerPaymUser = new User();
-		o2ConsumerPaymUser.setProvider(Provider.o2.name());
-		o2ConsumerPaymUser.setSegment(SegmentType.CONSUMER);
+		o2ConsumerPaymUser.setProvider(O2);
+		o2ConsumerPaymUser.setSegment(CONSUMER);
 		o2ConsumerPaymUser.setContract(Contract.PAYM);
 
 		User o2BussinessPaygUser = new User();
-		o2BussinessPaygUser.setProvider(Provider.o2.name());
-		o2BussinessPaygUser.setSegment(SegmentType.CONSUMER);
-		o2BussinessPaygUser.setContract(Contract.PAYG);
+		o2BussinessPaygUser.setProvider(O2);
+		o2BussinessPaygUser.setSegment(CONSUMER);
+		o2BussinessPaygUser.setContract(PAYG);
 
 		User notO2User = new User();
-		notO2User.setProvider(Provider.non_o2.name());
-		notO2User.setSegment(SegmentType.CONSUMER);
-		notO2User.setContract(Contract.PAYG);
+		notO2User.setProvider(NON_O2);
+		notO2User.setSegment(CONSUMER);
+		notO2User.setContract(PAYG);
 
 		User chartsNowUser = new User();
 
@@ -162,7 +169,7 @@ public class UserServiceIT {
 		paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 		paymentPolicy.setSubcost(BigDecimal.TEN);
 		paymentPolicy.setSubweeks((byte) 0);
-		entityDao.saveEntity(paymentPolicy.withMediaType(AUDIO).withTariff(_3G));
+		entityDao.saveEntity(paymentPolicy);
 
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		UserGroup chartsNowUserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(chartsNowCommunityId);
@@ -175,7 +182,7 @@ public class UserServiceIT {
 				} else {
 					user.setUserGroup(chartsNowUserGroup);
 				}
-				user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+				user.setDeviceType(getAndroidDeviceType());
 				user.setUserName(UUID.randomUUID().toString());
 				user.setLastDeviceLogin(55);
 				user.setStatus(UserStatusDao.getLimitedUserStatus());
@@ -242,7 +249,7 @@ public class UserServiceIT {
 	private boolean isExpectedO2CommunityUser(User user) {
 		boolean isExpectedO2CommunityUser;
 
-		if ("o2".equals(user.getProvider())) {
+		if (O2.equals(user.getProvider())) {
 			isExpectedO2CommunityUser = isExpectedO2User(user);
 		} else {
 			isExpectedO2CommunityUser = isExpectedNotO2User(user);
@@ -255,7 +262,7 @@ public class UserServiceIT {
 		final PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
-		boolean isExpectedNotO2User = !"o2".equals(user.getProvider()) && nextSubPayment <= currentTimeSeconds + DAY_SECONDS && currentPaymentDetails.isActivated() && user.getLastDeviceLogin() != 0
+		boolean isExpectedNotO2User = !O2.equals(user.getProvider()) && nextSubPayment <= currentTimeSeconds + DAY_SECONDS && currentPaymentDetails.isActivated() && user.getLastDeviceLogin() != 0
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()));
 
 		return isExpectedNotO2User;
@@ -264,9 +271,9 @@ public class UserServiceIT {
 	
 	private boolean isExpectedO2User(User user) {	
 		boolean isExpectedO2User;
-		if (user.getSegment().equals(SegmentType.CONSUMER)) {
+		if (user.getSegment().equals(CONSUMER)) {
 			isExpectedO2User = isExpectedO2ConsumerUser(user);
-		} else if (user.getSegment().equals(SegmentType.BUSINESS)){
+		} else if (user.getSegment().equals(BUSINESS)){
 			isExpectedO2User = isExpectedO2BusinessUser(user);
 		}else{
 			isExpectedO2User = false;
@@ -282,7 +289,7 @@ public class UserServiceIT {
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 		
-		boolean isExpectedO2BussinessUser = SegmentType.BUSINESS.equals(user.getSegment())
+		boolean isExpectedO2BussinessUser = BUSINESS.equals(user.getSegment())
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
 				&& currentPaymentDetails.isActivated()
 				&& user.getLastDeviceLogin() != 0
@@ -297,7 +304,7 @@ public class UserServiceIT {
 
 		final int currentTimeSeconds = EPOCH_SECONDS;
 
-		boolean isExpectedO2User = SegmentType.CONSUMER.equals(user.getSegment())
+		boolean isExpectedO2User = CONSUMER.equals(user.getSegment())
 				&& (PaymentDetailsStatus.NONE.equals(currentPaymentDetails.getLastPaymentStatus()) || PaymentDetailsStatus.SUCCESSFUL.equals(currentPaymentDetails.getLastPaymentStatus()))
 				//&& Contract.PAYG.equals(userWithCommunity.getContract())
 				&& currentPaymentDetails.isActivated()
@@ -339,5 +346,43 @@ public class UserServiceIT {
 
 		return user;
 	}
+
+    @Test
+    public void shouldRegisterUserAndAccCheck(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withDeviceUID("d").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId())));
+
+        UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
+        userDeviceRegDetailsDto.setDEVICE_UID(user.getDeviceUID());
+        userDeviceRegDetailsDto.setCOMMUNITY_NAME("o2");
+
+        //when
+        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+
+        //then
+        assertNotNull(accountCheckDTO);
+    }
+
+    @Test
+    public void shouldMerge(){
+        //given
+        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId());
+        User currentUser = userRepository.save(UserFactory.createUser().withUserName("new user").withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(getAndroidDeviceType()).withIpAddress("ip1").withUserGroup(o2UserGroup));
+        UserDeviceDetails userAndroidDetails = userIPhoneDetailsRepository.save((UserIPhoneDetails) new UserIPhoneDetails().withUser(currentUser).withUserGroup(o2UserGroup).withToken(""));
+
+        User oldUser = userRepository.save(UserFactory.createUser().withUserName("old user").withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(getBlackberryDeviceType()).withIpAddress("ip2").withUserGroup(o2UserGroup));
+
+        //when
+        User actualUser = userService.mergeUser(oldUser, currentUser);
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(oldUser.getId()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceType(), is(currentUser.getDeviceType()));
+        assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
+        assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
+    }
 
 }

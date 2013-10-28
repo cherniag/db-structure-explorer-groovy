@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -51,22 +52,23 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static java.util.Collections.*;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.VF;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
+import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -79,8 +81,6 @@ import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * 
- * @generatedBy CodePro at 20.08.12 18:31
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
  */
@@ -128,6 +128,8 @@ public class UserServiceTest {
     private UserServiceNotification userServiceNotification;
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
     private OtacValidationService otacValidationServiceMock;
+    private UserGroupRepository userGroupRepositoryMock;
+    private UserDeviceDetailsService userDeviceDetailsServiceMock;
 
     @Test
 	public void testChangePassword_Success() throws Exception {
@@ -240,9 +242,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
@@ -257,8 +259,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.TRIAL_TOPUP, null);
-		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP, null);
+		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -291,9 +293,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
@@ -308,8 +310,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -343,9 +345,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
@@ -360,8 +362,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -396,9 +398,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
@@ -413,8 +415,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -449,9 +451,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
@@ -466,8 +468,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -500,9 +502,9 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
@@ -517,8 +519,8 @@ public class UserServiceTest {
 		assertEquals(userDto.getSubBalance(), actualUser.getSubBalance());
 		assertEquals(userDto.getNextSubPayment().getTime() / 1000, actualUser.getNextSubPayment());
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -549,17 +551,17 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(1)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -583,17 +585,17 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -629,17 +631,17 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null)).thenReturn(
 				new AccountLog());
-		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null)).thenReturn(
+		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenReturn(USER_STATUS_MAP_USER_STATUS_AS_KEY);
 		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
 
 		userServiceSpy.updateUser(userDto);
 
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, TransactionType.SUBSCRIPTION_CHARGE, null);
-		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, TransactionType.SUPPORT_TOPUP, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), originalSubBalance, null, null, SUBSCRIPTION_CHARGE, null);
+		verify(accountLogServiceMock, times(0)).logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null);
 		verify(userServiceSpy, times(0)).unsubscribeUser(Mockito.eq(mockedUser), Mockito.eq(UNSUBSCRIBED_BY_ADMIN));
 	}
 
@@ -683,7 +685,6 @@ public class UserServiceTest {
 		CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
 		OfferService offerServiceMock = PowerMockito.mock(OfferService.class);
 		paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
-		UserDeviceDetailsService userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
 		userDaoMock = PowerMockito.mock(UserDao.class);
 		CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
@@ -706,6 +707,8 @@ public class UserServiceTest {
         otacValidationServiceMock = PowerMockito.mock(OtacValidationService.class);
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
+        userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
+        userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
 		
 		userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 		userServiceSpy.setCountryService(countryServiceMock);
@@ -738,6 +741,8 @@ public class UserServiceTest {
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setOtacValidationService(otacValidationServiceMock);
+        userServiceSpy.setUserGroupRepository(userGroupRepositoryMock);
+        userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
 
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
@@ -1056,9 +1061,9 @@ public class UserServiceTest {
 		user.setStatus(userStatus);
 		final Community community = CommunityFactory.createCommunity();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-		final Map<Byte, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
-		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
+		final Map<String, DeviceType> deviceTypeMap = singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
+		final Map<Byte, UserGroup> userGroupMap = singletonMap(community.getId(), userGroup);
+		final Map<Integer, Operator> operatorMap = singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
 		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
@@ -1096,22 +1101,80 @@ public class UserServiceTest {
 					assertEquals(user.getFirstDeviceLoginMillis() - user.getFirstDeviceLoginMillis() % 100000, curTime - curTime % 100000);
 				}
 
-				accountCheckDTO.setUserName(user.getUserName());
-				accountCheckDTO.setUserToken(user.getToken());
-				accountCheckDTO.setDeviceType(user.getDeviceType().getName());
-				accountCheckDTO.setOperator(user.getOperator());
-				accountCheckDTO.setStatus(user.getStatus().getName());
-				accountCheckDTO.setDeviceUID(user.getDeviceUID());
-				accountCheckDTO.setActivation(ActivationStatus.REGISTERED);
+				accountCheckDTO.userName = user.getUserName();
+				accountCheckDTO.userToken = user.getToken();
+				accountCheckDTO.deviceType = user.getDeviceType().getName();
+				accountCheckDTO.operator = user.getOperator();
+				accountCheckDTO.status = user.getStatus().getName();
+				accountCheckDTO.deviceUID = user.getDeviceUID();
+				accountCheckDTO.activation = ActivationStatus.REGISTERED;
 
 				return accountCheckDTO;
 			}
 		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
-		PowerMockito.doReturn(notExistUser ? null : user).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(anyString(), anyString());
+		PowerMockito.doReturn(notExistUser ? null : user).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
 		whenNew(User.class).withNoArguments().thenReturn(user);
+        PowerMockito.doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        }).when(userRepositoryMock).save(any(User.class));
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
 	}
+
+    @Test
+    public void shouldDetectUserAccountWithSameDeviceAndDisableIt() throws Exception {
+        //given
+        final String deviceUID = "imei_357841034540704";
+        final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
+        User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
+
+        Community community = new Community();
+        doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        doReturn(null).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).findByDeviceUIDAndCommunity(userDeviceRegDetailsDto.getDeviceUID(), community);
+        doReturn(userAccountWithSameDevice).when(userRepositoryMock).save(userAccountWithSameDevice);
+        PowerMockito.mockStatic(DeviceTypeDao.class);
+        PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
+        PowerMockito.mockStatic(UserGroupDao.class);
+        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Byte, UserGroup>());
+        PowerMockito.mockStatic(OperatorDao.class);
+        PowerMockito.when(OperatorDao.getMapAsIds()).thenReturn(singletonMap(0, new Operator()));
+        PowerMockito.mockStatic(UserStatusDao.class);
+        PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(new UserStatus());
+        Answer returnFirsParamAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User) invocation.getArguments()[0];
+
+                assertThat(user.getDeviceUID(), is(deviceUID));
+                assertThat(user.getUserName(), is(deviceUID));
+
+                return user;
+            }
+        };
+        Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
+        Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).save(any(User.class));
+        AccountCheckDTO expectedAccountCheckDTO = new AccountCheckDTO();
+        doReturn(expectedAccountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(any(int.class), (String)isNull(), (String)isNull(), (String)isNull());
+        PowerMockito.mockStatic(Utils.class);
+        PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
+        UserGroup userGroup = new UserGroup();
+        PowerMockito.doReturn(userGroup).when(userGroupRepositoryMock).findByCommunity(community);
+        PowerMockito.doReturn(1).when(userRepositoryMock).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+
+        //when
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+
+        //then
+        assertNotNull(actualAccountCheckDTO);
+        assertThat(actualAccountCheckDTO, is(expectedAccountCheckDTO));
+
+        verify(userRepositoryMock, times(2)).save(any(User.class));
+        verify(userRepositoryMock, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
+    }
 
 	@SuppressWarnings("unchecked")
 	@Test()
@@ -1126,21 +1189,21 @@ public class UserServiceTest {
 		final Map<Integer, Operator> operatorMap = (Map<Integer, Operator>) testData[0];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getUserToken(), storedToken);
-		assertEquals(accountCheckDTO.getUserName(), deviceUID);
-		assertEquals(accountCheckDTO.getDeviceType(), deviceTypeName);
+		assertEquals(accountCheckDTO.userToken, storedToken);
+		assertEquals(accountCheckDTO.userName, deviceUID);
+		assertEquals(accountCheckDTO.deviceType, deviceTypeName);
 		Entry<Integer, Operator> entry = operatorMap.entrySet().iterator().next();
-		assertEquals(accountCheckDTO.getOperator(), entry.getKey());
-		assertEquals(accountCheckDTO.getDeviceUID(), deviceUID);
-		assertEquals(accountCheckDTO.getStatus(), UserStatusDao.LIMITED);
-		assertEquals(accountCheckDTO.getActivation(), ActivationStatus.REGISTERED);
+		assertEquals(accountCheckDTO.operator, entry.getKey());
+		assertEquals(accountCheckDTO.deviceUID, deviceUID);
+		assertEquals(accountCheckDTO.status, UserStatusDao.LIMITED);
+		assertEquals(accountCheckDTO.activation, ActivationStatus.REGISTERED);
 
 		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
-		verify(entityServiceMock, times(1)).saveEntity(any(User.class));
+		verify(userRepositoryMock, times(2)).save(any(User.class));
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());
@@ -1165,16 +1228,16 @@ public class UserServiceTest {
 		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, true);
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getDeviceType(), DeviceTypeDao.NONE);
+		assertEquals(accountCheckDTO.deviceType, DeviceTypeDao.NONE);
 		
 		verifyStatic(times(1));
 		DeviceTypeDao.getNoneDeviceType();
 	}
 
-	@Test()
+	@Test
 	public void testRegisterUser_WOPotentialPromo_ExistUser_Success() throws Exception {
 		final String storedToken = "50c86945713ac8c870eafbc19980706b";
 		final String communityName = "chartsnow";
@@ -1186,11 +1249,11 @@ public class UserServiceTest {
 		final User user = (User) testData[2];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		AccountCheckDTO accountCheckDTO = userServiceSpy.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
 
 		assertNotNull(accountCheckDTO);
-		assertEquals(accountCheckDTO.getUserToken(), user.getToken());
-		assertEquals(accountCheckDTO.getUserName(), user.getUserName());
+		assertEquals(accountCheckDTO.userToken, user.getToken());
+		assertEquals(accountCheckDTO.userName, user.getUserName());
 
 		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
 		verify(countryServiceMock, times(0)).findIdByFullName(anyString());
@@ -1198,7 +1261,7 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		verifyStatic(times(0));
 		createStoredToken(anyString(), anyString());
-		verifyStatic(times(1));
+		verifyStatic(times(0));
 		DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue();
 		verifyStatic(times(0));
 		UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY();
@@ -1255,110 +1318,7 @@ public class UserServiceTest {
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
-	}
-
-	@Test
-	public void testIsnonO2User_nonO2User_Success() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("provider");
-		
-		boolean isnonO2User = userServiceSpy.isnonO2User(user);
-		assertTrue(isnonO2User);
-	}
-	
-	@Test
-	public void testIsnonO2User_O2User_Success() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		
-		boolean isnonO2User = userServiceSpy.isnonO2User(user);
-		assertFalse(isnonO2User);
-	}
-	
-	@Test
-	public void testIsnonO2User_UserFromNotO2Community_Success() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("r");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		boolean isnonO2User = userServiceSpy.isnonO2User(user);
-		assertFalse(isnonO2User);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_UserIsNull_Failure() throws Exception{
-		final User user = null;
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_UserGroupIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = null;
-		
-		user.setUserGroup(userGroup);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_CommunityIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = null;
-		
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-    @Ignore //TODO review
-	public void testIsnonO2User_RewriteUrlParameterIsO2AndProviderIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_RewriteUrlParameterIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter(null);
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		userServiceSpy.isnonO2User(user);
-	}
+    }
 	
 	@Test
 	public void testProcessPaymentSubBalanceCommand_nonO2User_Success() throws Exception{
@@ -1379,7 +1339,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("provider");
+		user.setProvider(NON_O2);
 		user.setSubBalance(0);
 		user.setStatus(limitedUserStatus);
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
@@ -1391,12 +1351,12 @@ public class UserServiceTest {
 		submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
 		submittedPayment.setPaymentSystem(iTunesSubscriptionType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, user.getSubBalance(), SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, user.getSubBalance(), SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1457,7 +1417,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(limitedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1468,12 +1428,12 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1536,7 +1496,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(limitedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1549,12 +1509,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(migSmsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1620,7 +1580,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1633,12 +1593,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(migSmsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1704,7 +1664,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1717,12 +1677,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(migSmsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1788,7 +1748,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(oldSubBalance);
 		user.setStatus(eulaUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -1798,12 +1758,12 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1868,7 +1828,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(oldSubBalance);
 		user.setStatus(subscribedUserStatus);
 		user.setLastSubscribedPaymentSystem(migSmsType);
@@ -1880,12 +1840,12 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -1957,12 +1917,12 @@ public class UserServiceTest {
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 6, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -2024,7 +1984,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2039,12 +1999,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(paymentDetailsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -2107,7 +2067,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2122,12 +2082,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(paymentDetailsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -2210,7 +2170,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsnonO2ItunesSubscribedUser();
+		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsNonO2ITunesSubscribedUser();
 		
 		assertFalse(isIOsnonO2ItunesSubscribedUser);
 	}
@@ -2236,7 +2196,7 @@ public class UserServiceTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("non-o2");
+		user.setProvider(NON_O2);
 		user.setSubBalance(2);
 		user.setStatus(subscribedUserStatus);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
@@ -2251,12 +2211,12 @@ public class UserServiceTest {
 		submittedPayment.setPaymentSystem(paymentDetailsType);
 		submittedPayment.setSubweeks(5);
 		
-		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
+		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(cardTopUpAccountLog)).thenReturn(cardTopUpAccountLog);
 		
-		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE); 
-		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, TransactionType.SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
+		AccountLog subscriptionChargeAccountLog = new AccountLog(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE);
+		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 2, SUBSCRIPTION_CHARGE).thenReturn(subscriptionChargeAccountLog);
 		Mockito.when(entityServiceMock.saveEntity(subscriptionChargeAccountLog)).thenReturn(subscriptionChargeAccountLog);
 		
 		PowerMockito.mockStatic(UserStatusDao.class);
@@ -2311,7 +2271,7 @@ public class UserServiceTest {
 		user.setStatus(subscribedUserStatus);
 		user.setDeviceType(iosDeviceType);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-        user.setProvider("nonO2");
+        user.setProvider(NON_O2);
 		
 		PowerMockito.mockStatic(DeviceTypeDao.class);
 		PowerMockito.when(DeviceTypeDao.getIOSDeviceType()).thenReturn(iosDeviceType);
@@ -2319,7 +2279,7 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(UserStatusDao.class);
 		PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 		
-		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsnonO2ItunesSubscribedUser();
+		boolean isIOsnonO2ItunesSubscribedUser = user.isIOsNonO2ITunesSubscribedUser();
 		
 		assertTrue(isIOsnonO2ItunesSubscribedUser);
 	}
@@ -2423,8 +2383,8 @@ public class UserServiceTest {
 		userByDeviceUID.setUserName(oldUserName);
 		userByDeviceUID.setFacebookId(null);
 		userByDeviceUID.setFirstUserLoginMillis(null);
-		
-		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+
+		doReturn(userByDeviceUID).when(userServiceSpy).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		
 		User userByFacebookId = UserFactory.createUser();
 		userByFacebookId.setId(userByDeviceUID.getId());
@@ -2456,7 +2416,7 @@ public class UserServiceTest {
 		
 		verify(communityServiceMock, times(1)).getCommunityByName(userFacebookDetailsDto.getCommunityName());
 		verify(facebookServiceMock, times(1)).getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken());
-		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunityRedirectURL(deviceUID, communityRedirectUrl);
+		verify(userServiceSpy, times(1)).findByDeviceUIDAndCommunity(anyString(), any(Community.class));
 		verify(userServiceSpy, times(1)).findByFacebookId(userCredentions.getId(), passedCommunityName);
 		verify(userServiceSpy, times(0)).findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
 		verify(userServiceSpy, times(0)).mergeUser(userByDeviceUID, userByDeviceUID);
@@ -2486,13 +2446,13 @@ public class UserServiceTest {
         doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
         //when
-        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, false);
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, false);
 
         //then
         assertNotNull(actualAccountCheckDTO);
         assertEquals(accountCheckDTO, actualAccountCheckDTO);
-        assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-        assertEquals(expectedHasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+        assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+        assertEquals(expectedHasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 
         assertNull(user.getContract());
         assertNull(user.getProvider());
@@ -2528,16 +2488,16 @@ public class UserServiceTest {
         doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
         //when
-        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, false);
+        AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, false);
 
         //then
         assertNotNull(actualAccountCheckDTO);
         assertEquals(accountCheckDTO, actualAccountCheckDTO);
-        assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-        assertEquals(expectedHasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+        assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+        assertEquals(expectedHasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 
         assertNull(user.getContract());
-        assertThat(user.getProvider(), is(providerUserDetails.operator));
+        assertThat(user.getProvider(), is(ProviderType.valueOf(providerUserDetails.operator)));
         assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
 
@@ -2569,15 +2529,15 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 		
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
-		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
+		assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
 		
 		assertEquals(Contract.valueOf(o2UserDetails.contract), user.getContract());
-		assertEquals(o2UserDetails.operator, user.getProvider());
+		assertEquals(ProviderType.valueOfKey(o2UserDetails.operator), user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2609,15 +2569,15 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(accountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 
-		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, mobileUser, otac, true);
+		AccountCheckDTO actualAccountCheckDTO = userServiceSpy.applyInitPromoAndAccCheck(user, otac, true);
 		
 		assertNotNull(actualAccountCheckDTO);
 		assertEquals(accountCheckDTO, actualAccountCheckDTO);
-		assertEquals(true, actualAccountCheckDTO.isFullyRegistred());
-		assertEquals(hasPromo, actualAccountCheckDTO.isHasPotentialPromoCodePromotion());
-		
-		assertEquals(Contract.valueOf(o2UserDetails.contract), user.getContract());
-		assertEquals(o2UserDetails.operator, user.getProvider());
+		assertEquals(true, actualAccountCheckDTO.fullyRegistred);
+		assertEquals(hasPromo, actualAccountCheckDTO.hasPotentialPromoCodePromotion);
+
+        assertEquals(Contract.valueOf(o2UserDetails.contract), user.getContract());
+        assertEquals(ProviderType.valueOfKey(o2UserDetails.operator), user.getProvider());
 		assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
 		assertEquals(user.getMobile(), user.getUserName());
 		
@@ -2627,6 +2587,89 @@ public class UserServiceTest {
 		verify(promotionServiceMock,times(1) ).applyPotentialPromo(user, false);
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 	}
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotApplyPromotionByPromoCode() {
+        //given
+        User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
+
+        Promotion promotion = new Promotion().withPromoCode(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
+
+        //when
+        userServiceSpy.applyPromotionByPromoCode(user, promotion, 0);
+    }
+
+    @Test
+    public void shouldApplyPromotionByPromoCode() {
+        //given
+        final User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
+
+        final Promotion promotion = new Promotion().withFreeWeeks((byte)3).withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
+
+        int freeTrialStartedTimestampSeconds = 1;
+
+        Mockito.doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
+
+        mockStatic(UserStatusDao.class);
+        mockStatic(Utils.class);
+
+        final int currentTimeSeconds = Integer.MAX_VALUE;
+        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+
+        UserStatus subscribedUserStatus = new UserStatus();
+        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
+
+        doReturn(user).when(entityServiceMock).updateEntity(user);
+        doReturn(promotion).when(entityServiceMock).updateEntity(promotion);
+        Answer answer = new Answer() {
+            int count = -1;
+
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                AccountLog accountLog = (AccountLog) invocation.getArguments()[0];
+                assertNotNull(accountLog);
+                assertThat(accountLog.getUserId(), is(user.getId()));
+                assertNull(accountLog.getSubmittedPayment());
+                assertThat(accountLog.getLogTimestamp(), is(currentTimeSeconds));
+                if(count==-1){
+                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance()+ (int) promotion.getFreeWeeks()));
+                    assertThat(accountLog.getTransactionType(), is(PROMOTION_BY_PROMO_CODE_APPLIED));
+                    assertThat(accountLog.getPromoCode(), is(promotion.getPromoCode().getCode()));
+                    count = 1;
+                }else{
+                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance() + (int) promotion.getFreeWeeks() - count));
+                    assertThat(accountLog.getTransactionType(), is(SUBSCRIPTION_CHARGE));
+                    count++;
+                }
+
+                return accountLog;
+            }
+        };
+        Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
+
+        //when
+        boolean isPromotionApplied = userServiceSpy.applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
+
+        //than
+        assertThat(isPromotionApplied, is(true));
+        assertThat(user.getLastPromo(), is(promotion.getPromoCode()));
+        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
+        assertThat(user.getNextSubPayment(), is(expectedNextSubPaymentSeconds));
+        assertThat(user.getFreeTrialExpiredMillis(), is(expectedNextSubPaymentSeconds*1000L));
+        assertNull(user.getPotentialPromoCodePromotion());
+        assertThat(user.getStatus(), is(subscribedUserStatus));
+        assertThat(user.getFreeTrialStartedTimestampMillis(), is(freeTrialStartedTimestampSeconds*1000L));
+        assertThat(user.isVideoFreeTrialHasBeenActivated(), is(false));
+
+        assertThat(promotion.getNumUsers(), is(1));
+
+        verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
+        verify(entityServiceMock, times(1)).updateEntity(user);
+        verify(entityServiceMock, times(1)).updateEntity(promotion);
+        verify(entityServiceMock, times(promotion.getFreeWeeks()+1)).saveEntity(any(AccountLog.class));
+    }
 	
 	@Test
 	public void testApplyO2PotentialPromo_StaffPromotion_Success() {
@@ -2642,8 +2685,8 @@ public class UserServiceTest {
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(true);
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
 		Mockito.when(o2ClientServiceMock.isO2User(any(ProviderUserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), anyString());
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(any(User.class), anyString());
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), anyString());
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2655,8 +2698,8 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(0)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(ProviderUserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
-		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), anyString());
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(any(User.class), anyString());
+        verify(userServiceSpy, times(1)).setPotentialPromoByPromoCode(any(User.class), anyString());
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2674,9 +2717,9 @@ public class UserServiceTest {
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(true);
 		Mockito.when(o2ClientServiceMock.isO2User(any(ProviderUserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(any(User.class), anyString());
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2688,9 +2731,9 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(ProviderUserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), anyString());
-		verify(userServiceSpy, times(1)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(any(User.class), anyString());
+        verify(userServiceSpy, times(1)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2708,9 +2751,9 @@ public class UserServiceTest {
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
 		Mockito.when(o2ClientServiceMock.isO2User(any(ProviderUserDetails.class))).thenReturn(true);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(any(User.class), anyString());
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2722,10 +2765,10 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(ProviderUserDetails.class));
-		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+        verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(any(User.class), eq("promotionCode"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(any(User.class), eq("defaultPromotionCode"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2743,9 +2786,9 @@ public class UserServiceTest {
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"))).thenReturn(false);
 		Mockito.when(deviceServiceMock.isPromotedDevicePhone(any(Community.class), anyString(), eq("store"))).thenReturn(false);
 		Mockito.when(o2ClientServiceMock.isO2User(any(ProviderUserDetails.class))).thenReturn(false);
-		doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), any(User.class), anyString());
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
-		doReturn(null).when(userServiceSpy).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(any(User.class), anyString());
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByPromoCode(any(User.class), eq("store"));
 		doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 		
 		boolean result = userServiceSpy.applyO2PotentialPromo(o2UserDetails, user, user.getUserGroup().getCommunity());
@@ -2757,10 +2800,10 @@ public class UserServiceTest {
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("staff"));
 		verify(deviceServiceMock, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), eq("store"));
 		verify(o2ClientServiceMock, times(1)).isO2User(any(ProviderUserDetails.class));
-		verify(userServiceSpy, times(0)).setPotentialPromo(anyString(), any(User.class), eq("promotionCode"));
-		verify(userServiceSpy, times(1)).setPotentialPromo(anyString(), any(User.class), eq("defaultPromotionCode"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("store"));
-		verify(userServiceSpy, times(0)).setPotentialPromo(any(Community.class), any(User.class), eq("staff"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(any(User.class), eq("promotionCode"));
+        verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(any(User.class), eq("defaultPromotionCode"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("store"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByPromoCode(any(User.class), eq("staff"));
 		verify(userServiceSpy, times(1)).applyPromotionByPromoCode(any(User.class), any(Promotion.class), any(int.class));
 	}
 	
@@ -2774,7 +2817,7 @@ public class UserServiceTest {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2013, 0, 1);
+		calendar.set(2013, Calendar.JANUARY, 1);
 		PromoCode promoCode = new PromoCode();
 		promoCode.setCode("staff");
 		final Promotion promotion = new Promotion();
@@ -2812,7 +2855,7 @@ public class UserServiceTest {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2013, 0, 1);
+		calendar.set(2013, Calendar.JANUARY, 1);
 		PromoCode promoCode = new PromoCode();
 		promoCode.setCode("store");
 		final Promotion promotion = new Promotion();
@@ -2847,7 +2890,7 @@ public class UserServiceTest {
         UserBanned userBanned = new UserBanned(user);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2013, 0, 1);
+        calendar.set(2013, Calendar.JANUARY, 1);
         PromoCode promoCode = new PromoCode();
         promoCode.setCode("store");
         final Promotion promotion = new Promotion();
@@ -2873,9 +2916,9 @@ public class UserServiceTest {
 	}
 
     @Test
-    public void shouldApplyaPotentialPromo() {
+    public void shouldApplyPotentialPromo() {
         //given
-        User user = new User().withProvider(VF.toString()).withUserGroup(new UserGroup().withCommunity(new Community().withName(VF_NZ_COMMUNITY_REWRITE_URL).withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
+        User user = new User().withProvider(VF).withUserGroup(new UserGroup().withCommunity(new Community().withName(VF_NZ_COMMUNITY_REWRITE_URL).withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
 
         Promotion promotion = new Promotion();
 
@@ -2883,11 +2926,10 @@ public class UserServiceTest {
         Mockito.when(communityResourceBundleMessageSourceMock.getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
         Mockito.when(deviceServiceMock.isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("staff"))).thenReturn(false);
         Mockito.when(deviceServiceMock.isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("store"))).thenReturn(false);
-        doReturn(null).when(userServiceSpy).setPotentialPromo(anyString(), eq(user), anyString());
-        doReturn(null).when(userServiceSpy).setPotentialPromo(eq(user.getUserGroup().getCommunity()), eq(user), eq("staff"));
-        doReturn(null).when(userServiceSpy).setPotentialPromo(eq(user.getUserGroup().getCommunity()), eq(user), eq("store"));
-        doReturn(promotion).when(userServiceSpy).setPotentialPromo(eq(user.getUserGroup().getCommunity().getName()), eq(user), eq("promotionCode"));
-        doReturn(null).when(userServiceSpy).setPotentialPromo(eq(user.getUserGroup().getCommunity().getName()), eq(user), eq("defaultPromotionCode"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("staff"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("store"));
+        doReturn(promotion).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("promotionCode"));
+        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
         doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
 
         //when
@@ -2900,10 +2942,10 @@ public class UserServiceTest {
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
         verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("staff"));
         verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("store"));
-        verify(userServiceSpy, times(1)).setPotentialPromo(eq(user.getUserGroup().getCommunity().getName()), eq(user), eq("promotionCode"));
-        verify(userServiceSpy, times(0)).setPotentialPromo(eq(user.getUserGroup().getCommunity().getName()), eq(user), eq("defaultPromotionCode"));
-        verify(userServiceSpy, times(0)).setPotentialPromo(eq(user.getUserGroup().getCommunity()), eq(user), eq("store"));
-        verify(userServiceSpy, times(0)).setPotentialPromo(eq(user.getUserGroup().getCommunity()), eq(user), eq("staff"));
+        verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(eq(user), eq("promotionCode"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("store"));
+        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("staff"));
         verify(userServiceSpy, times(1)).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
     }
 
@@ -2950,7 +2992,7 @@ public class UserServiceTest {
 
         verify(refundServiceMock, times(1)).logSkippedBoughtPeriod(user, USER_DOWNGRADED_TARIFF);
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
     }
 
     @Test
@@ -2972,8 +3014,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(1)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -2995,8 +3037,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -3018,8 +3060,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -3040,8 +3082,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -3062,8 +3104,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -3084,8 +3126,8 @@ public class UserServiceTest {
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         verify(userServiceSpy, times(0)).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
 
@@ -3093,7 +3135,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Payg4GConsumerWithVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -3105,7 +3147,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GIndirectConsumerWithVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -3117,7 +3159,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Paym4GIndirectConsumerWithVideoAudioFreeTrialHasBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(true).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(true).withContractChanel(INDIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365*24*60*60*1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3131,7 +3173,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GConsumerWithNullContractChannelNotOnVideoAudioFreeTrialAndNotOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(null).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+        user = new User().withContractChanel(null).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3145,7 +3187,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Paym4GDirectConsumerNotOnVideoAudioFreeTrialAndNotOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withLastSuccessfulPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withMediaType(AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3159,7 +3201,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotdMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioFreeTrialBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3173,7 +3215,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Paym4GDirectConsumerOnVideoAudioSubscriptionBeforeMultipleFreeTrialsStopDate(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withCurrentPaymentDetails(new O2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy().withTariff(_4G).withMediaType(VIDEO_AND_AUDIO)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3187,7 +3229,7 @@ public class UserServiceTest {
     @Test
      public void shouldNotMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         //when
         boolean canActivateVideoTrial = userServiceSpy.canActivateVideoTrial(user);
@@ -3199,7 +3241,7 @@ public class UserServiceTest {
     @Test
     public void shouldMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasNotBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(false).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().minus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3213,7 +3255,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForO2Payg4GConsumerVideoAudioFreeTrialHasBeenActivated(){
         //given
-        user = new User().withVideoFreeTrialHasBeenActivated(true).withContract(PAYG).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        user = new User().withVideoFreeTrialHasBeenActivated(true).withContract(PAYG).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         Date multipleFreeTrialsStopDate = new DateTime().minus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3227,7 +3269,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotMightActivateVideoTrialForUserOnWhiteListedVideoAudioFreeTrial(){
         //given
-        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider("o2").withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        user = new User().withContractChanel(DIRECT).withContract(PAYM).withSegment(CONSUMER).withProvider(O2).withTariff(_4G).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2"))).withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
         Date multipleFreeTrialsStopDate = new DateTime().plus(365 * 24 * 60 * 60 * 1000L).toDate();
         Mockito.when(communityResourceBundleMessageSourceMock.readDate("o2", UserService.MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014))).thenReturn(multipleFreeTrialsStopDate);
 
@@ -3257,7 +3299,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 
     @Test
@@ -3402,6 +3444,282 @@ public class UserServiceTest {
         verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), any(Processor.class));
     }
 
+    @Test
+    public void shouldMergeUsers() {
+        //given
+        User oldUser = new User().withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(new DeviceType()).withIpAddress("ip1");
+        User currentUser = new User().withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(new DeviceType()).withIpAddress("ip2");
+
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        User actualUser = userServiceSpy.mergeUser(oldUser, currentUser);
+
+        //then
+        assertThat(actualUser, is(oldUser));
+        assertThat(actualUser.getDeviceUID(), is(currentUser.getDeviceUID()));
+        assertThat(actualUser.getDeviceType(), is(currentUser.getDeviceType()));
+        assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
+        assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
+
+        verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
+        verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
+        verify(userRepositoryMock, times(1)).save(oldUser);
+        verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenOldUserIsNull() {
+        //given
+        User oldUser = null;
+        User currentUser = new User().withDeviceUID("b");
+
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldDoNotMergeUsersWhenCurrentUserIsNull() {
+        //given
+        User oldUser = new User().withDeviceUID("a");
+        User currentUser = null;
+
+        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
+        Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
+
+        //when
+        userServiceSpy.mergeUser(oldUser, currentUser);
+    }
+
+    @Test
+    public void shouldAutoOptIn() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "g";
+
+        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+
+        //when
+        User actualUser = userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+
+        //then
+        assertNotNull(actualUser);
+        assertEquals(expectedUser, actualUser);
+
+        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(o2ClientServiceMock, times(1)).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        verify(o2ClientServiceMock, times(0)).isO2User(providerUserDetails);
+    }
+
+    @Test
+    public void shouldAutoOptInWhenOtacIsNull() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = null;
+
+        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+
+        //when
+        User actualUser = userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+
+        //then
+        assertNotNull(actualUser);
+        assertEquals(expectedUser, actualUser);
+
+        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(o2ClientServiceMock, times(0)).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        verify(o2ClientServiceMock, times(0)).isO2User(providerUserDetails);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotAutoOptInBecauseOfNoPromotion() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "";
+
+        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(false).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+
+        //when
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldDoNotAutoOptInBecauseOfException() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "";
+
+        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        Mockito.doThrow(new RuntimeException()).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+
+        //when
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotAutoOptInBecauseOfUserIsNotSubjectToAutoOptIn() {
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "";
+
+        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+
+        //when
+        userServiceSpy.autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+    }
+
+    @Test
+    public void shouldAutoOptInAndAccountCheck(){
+        //given
+        String userName="";
+        String userToken="";
+        String timestamp="";
+        String communityUri="";
+        String deviceUID="";
+        String otac = "";
+
+        User expectedUser = new User();
+        AccountCheckDTO expectedAccountCheckDTO = new AccountCheckDTO();
+
+        doReturn(expectedUser).when(userServiceSpy).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+        doReturn(expectedAccountCheckDTO).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
+                null, null, null);
+
+        //when
+        AccountCheckDTO accountCheckDTO = userServiceSpy.autoOptInAndAccountCheck(userName, userToken, timestamp, deviceUID, otac, communityUri);
+
+        //then
+        assertThat(accountCheckDTO, is(expectedAccountCheckDTO));
+        assertThat(expectedAccountCheckDTO.hasPotentialPromoCodePromotion, is(true));
+
+        verify(userServiceSpy, times(1)).autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
+        verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(expectedUser.getId(),
+                null, null, null);
+    }
+
+    @Test
+    public void shouldFindUserTree(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(expectedUser.getOldUser()).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(expectedUser.getOldUser()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldFindUserTreeWithOutOldUser(){
+        //given
+        User expectedUser = new User().withMobile("mobile").withDeviceUID("deviceUID").withOldUser(new User()).withUserGroup(new UserGroup().withCommunity(new Community()));
+        doReturn(expectedUser).when(userRepositoryMock).findUserTree(expectedUser.getId());
+        doReturn(null).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(expectedUser.getId());
+
+        //then
+        assertThat(actualUser, is(expectedUser));
+        assertThat(actualUser.getOldUser(), is(nullValue()));
+
+        verify(userRepositoryMock, times(1)).findUserTree(expectedUser.getId());
+        verify(userRepositoryMock, times(1)).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+    }
+
+    @Test
+    public void shouldNotFindUserTree(){
+        //given
+        int userId = Integer.MAX_VALUE;
+        doReturn(null).when(userRepositoryMock).findUserTree(userId);
+
+        //when
+        User actualUser = userServiceSpy.findUserTree(userId);
+
+        //then
+        assertThat(actualUser, is((User) null));
+
+        verify(userRepositoryMock, times(1)).findUserTree(userId);
+    }
+
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = _4G;
         mediaType = VIDEO_AND_AUDIO;
@@ -3493,7 +3811,7 @@ public class UserServiceTest {
 
         user.setCurrentPaymentDetails(o2PSMSPaymentDetails);
         user.setUserGroup(userGroup);
-        user.setProvider("o2");
+        user.setProvider(O2);
         user.setLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails);
     }
 
@@ -3516,7 +3834,7 @@ public class UserServiceTest {
         Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
         Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
         Mockito.doReturn(true).when(userServiceSpy).applyPotentialPromo(true, user, user.getUserGroup().getCommunity(), currentTimeSeconds);
-        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.BOUGHT_PERIOD_SKIPPING, null);
-        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TransactionType.TRIAL_SKIPPING, null);
+        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
+        Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
 }

@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -200,7 +200,7 @@ public class PaymentsController extends CommonController {
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {
-        if (!user.isIOsnonO2ItunesSubscribedUser()) {
+        if (!user.isIOsNonO2ITunesSubscribedUser()) {
             return paymentDetailsService.getPaymentDetailsTypeByPayment(user.getId());
         }
         return null;
@@ -212,7 +212,7 @@ public class PaymentsController extends CommonController {
         	String[] codes = new String[4];
     		codes[3] = msgCodeBase;
     		if (user.getProvider() != null) {
-    			codes[2] = msgCodeBase + "." + user.getProvider();
+    			codes[2] = msgCodeBase + "." + user.getProvider().getKey();
     			if (user.getSegment() != null) {
     				codes[1] = codes[2] + "." + user.getSegment();
     				if (user.getContract() != null) {
@@ -223,7 +223,7 @@ public class PaymentsController extends CommonController {
 
             paymentsNoteMsg = getFirstSutableMessage(locale, codes);
         } else {
-            if (user.isIOsnonO2ItunesSubscribedUser())
+            if (user.isIOsNonO2ITunesSubscribedUser())
                 paymentsNoteMsg = message(locale, msgCodeBase+".not.o2.inapp.subs");
             else
                 paymentsNoteMsg = message(locale, msgCodeBase);

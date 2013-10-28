@@ -46,13 +46,12 @@ public class O2PostpayChannelServiceIT {
 		assertFalse(res.isDirectOrIndirect4GChannel());
 		assertTrue(res.isTariff4G());
 
-		//TODO: uncomment when o2 fixes this number
-//		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_INDIRECT_TESCO);
-//		assertTrue(res.isProviderO2());
-//		assertFalse(res.isBusinessOrConsumerSegment());
-//		assertTrue(res.isContractPostPayOrPrePay());
-//		assertFalse(res.isDirectOrIndirect4GChannel());
-//		assertTrue(res.isTariff4G());
+		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_INDIRECT_TESCO);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertTrue(res.isContractPostPayOrPrePay());
+		assertFalse(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
 
 		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_INDIRECT_MASS_DISTRIBUTION);
 		assertTrue(res.isProviderO2());
@@ -103,27 +102,26 @@ public class O2PostpayChannelServiceIT {
 		assertTrue(res.isDirectOrIndirect4GChannel());
 		assertTrue(res.isTariff4G());
 
-		//TODO: uncomment when o2 fixes this number
-//		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_CONSUMER);
-//		assertTrue(res.isProviderO2());
-//		assertFalse(res.isBusinessOrConsumerSegment());
-//		assertTrue(res.isContractPostPayOrPrePay());
-//		assertTrue(res.isDirectOrIndirect4GChannel());
-//		assertTrue(res.isTariff4G());
+		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_CONSUMER);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertTrue(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
 
-//		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_LBM2_OUT);
-//		assertTrue(res.isProviderO2());
-//		assertFalse(res.isBusinessOrConsumerSegment());
-//		assertTrue(res.isContractPostPayOrPrePay());
-//		assertTrue(res.isDirectOrIndirect4GChannel());
-//		assertTrue(res.isTariff4G());
+		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_LBM2_OUT);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertTrue(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
 
-//		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_AGENT);
-//		assertTrue(res.isProviderO2());
-//		assertFalse(res.isBusinessOrConsumerSegment());
-//		assertTrue(res.isContractPostPayOrPrePay());
-//		assertTrue(res.isDirectOrIndirect4GChannel());
-//		assertTrue(res.isTariff4G());
+		res = o2service.getSubscriberData(PhoneNumbers.POSTPAY_DIRECT_AGENT);
+		assertTrue(res.isProviderO2());
+		assertFalse(res.isBusinessOrConsumerSegment());
+		assertTrue(res.isContractPostPayOrPrePay());
+		assertTrue(res.isDirectOrIndirect4GChannel());
+		assertTrue(res.isTariff4G());
 
 		LOGGER.info("competed");
 	}

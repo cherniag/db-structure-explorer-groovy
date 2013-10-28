@@ -4,8 +4,9 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -199,6 +200,21 @@ public class PaymentDetailsService {
 		pdto.setPhoneNumber(userService.getMigPhoneNumber(dto.getOperator(), convertedPhone));
 		return (MigPaymentDetails) createPaymentDetails(pdto, user, community);
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public O2PSMSPaymentDetails createDefaultO2PsmsPaymentDetails(User user) throws ServiceException {
+
+        PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
+
+        if (isNull(defaultPaymentPolicy)) throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
+
+        Community community = user.getUserGroup().getCommunity();
+        PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
+        paymentDetailsDto.setPaymentType(O2_PSMS);
+        paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicy.getId());
+
+        return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user, community);
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {

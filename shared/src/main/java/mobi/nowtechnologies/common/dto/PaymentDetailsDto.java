@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.common.dto;
 
-
-
 public class PaymentDetailsDto {
 	
 	private Integer paymentPolicyId;
@@ -36,8 +34,7 @@ public class PaymentDetailsDto {
 	
 	// MIG options
 	private String phoneNumber;
-	
-	
+
 	public String getPaymentType() {
 		return paymentType;
 	}

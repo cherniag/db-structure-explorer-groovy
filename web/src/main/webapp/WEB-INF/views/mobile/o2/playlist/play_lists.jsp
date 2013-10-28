@@ -61,10 +61,6 @@
             	Backbone.history.start();
             });
         });
-        
-        /* $(window).bind("beforeunload", 
-			function() {
-			}); */
     </script>
     <script type="text/javascript">  
       var _gaq = _gaq || [];  

@@ -15,10 +15,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
 
@@ -102,7 +103,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1) "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
-    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
 	List<User> getUsersForRetryPayment(int epochSeconds);
 	
 	@Query(value="select u from User u " +
@@ -177,4 +178,60 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             + "and u.mobile=?2 "
             + "and c=?3")
     long findByOtacMobileAndCommunity(String otac, String phoneNumber, Community community);
+    int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.userName = ?1 " +
+            "and u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findByDeviceUIDAndCommunity(String deviceUID, Community community);
+
+    @Modifying
+    @Query(value = "update User u " +
+            "set u.deviceUID=CONCAT(u.deviceUID,'_disabled_at_', CURRENT_TIMESTAMP()) " +
+            "where " +
+            "u.deviceUID = ?1 "+
+            "and u.userGroup=?2 "
+    )
+    int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
+
+    @Query(value = "select user from User user "
+            +"join FETCH user.deviceType deviceType "
+            +"join FETCH user.userGroup userGroup "
+            +"join FETCH userGroup.chart chart "
+            +"join FETCH userGroup.news news "
+            +"join FETCH userGroup.drmPolicy drmPolicy "
+            +"join FETCH drmPolicy.drmType drmType "
+            +"join FETCH userGroup.community community "
+            +"join FETCH community.appVersion appVersion "
+            +"join FETCH user.status status "
+            +"where "
+            +"user.id=?1")
+    User findUserTree(int userId);
+
+    @Query(value = "select user from User user "
+            +"join user.userGroup userGroup "
+            +"join userGroup.community community "
+            +"where "
+            +"user.userName=?1 "
+            +"and community=?2 "
+            +"and user.id<>?3")
+    User findByUserNameAndCommunityAndOtherThanPassedId(String userName, Community community, int userId);
+
+    @Modifying
+    @Query(value = "delete User u " +
+            "where " +
+            "u.id = ?1 ")
+    int deleteUser(int userId);
 }

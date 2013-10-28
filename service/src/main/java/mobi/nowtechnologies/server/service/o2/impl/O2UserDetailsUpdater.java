@@ -2,8 +2,8 @@ package mobi.nowtechnologies.server.service.o2.impl;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -23,13 +23,13 @@ public class O2UserDetailsUpdater implements UserDetailsUpdater{
         O2SubscriberData data = (O2SubscriberData)subsriberData;
 
         if(data == null){
-            user.setProvider(ProviderType.O2.toString());
+            user.setProvider(ProviderType.O2);
             user.setSegment(SegmentType.CONSUMER);
             user.setContract(Contract.PAYM);
             user.setContractChannel(ContractChannel.DIRECT);
             user.setTariff(Tariff._3G);
         } else {
-            user.setProvider((data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2).toString());
+            user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2));
             user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
             user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
             user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
@@ -75,7 +75,7 @@ public class O2UserDetailsUpdater implements UserDetailsUpdater{
 		O2SubscriberData data = new O2SubscriberData();
 		data.setBusinessOrConsumerSegment(user.getSegment() == SegmentType.BUSINESS);
 		data.setContractPostPayOrPrePay(user.getContract() == Contract.PAYM);
-		data.setProviderO2(ProviderType.O2.toString().equals(user.getProvider()));
+		data.setProviderO2(ProviderType.O2.equals(user.getProvider()));
 		data.setTariff4G(user.getTariff() == Tariff._4G);
 		data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
 		return data;

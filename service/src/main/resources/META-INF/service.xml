@@ -71,6 +71,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="mobileProviderService" ref="service.O2ClientService" />
         <property name="userDetailsUpdater" ref="service.O2UserDetailsUpdater" />
         <property name="otacValidationService" ref="service.OtacValidationService" />
+        <property name="userGroupRepository" ref="userGroupRepository" />
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">

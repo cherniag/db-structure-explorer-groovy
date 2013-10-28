@@ -18,10 +18,4 @@ public class ObjectUtils {
             return false;
         return true;
     }
-
-    public static <T> String toStringIfNull(T obj) {
-        if(obj == null)
-            return  null;
-        return obj.toString();
-    }
 }

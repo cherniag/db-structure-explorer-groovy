@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
  * @author Titov Mykhaylo (titov)
  * 
  */
-public class AccountCheckTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckTest.class);
+public class AccountCheckIT {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckIT.class);
 
 	private static final String URL = "http://pc-myti.kyiv.ciklum.net:8080";
 	private static final String SERVLET_URL_PATTERN = "/transport/request.php";
@@ -72,10 +72,10 @@ public class AccountCheckTest {
 	}
 	
 	public static void main(String[] args) {
-		AccountCheckTest accountCheckTest= new AccountCheckTest();
+		AccountCheckIT accountCheckIT = new AccountCheckIT();
 		try {
-			accountCheckTest.initServletContainer();
-			accountCheckTest.testCheckCredentialsAndStatus_Success();
+			accountCheckIT.initServletContainer();
+			accountCheckIT.testCheckCredentialsAndStatus_Success();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
 		}

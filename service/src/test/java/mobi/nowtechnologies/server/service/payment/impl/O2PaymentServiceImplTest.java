@@ -27,7 +27,8 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Locale;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -36,10 +37,9 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class })
@@ -114,7 +114,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
@@ -241,7 +241,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(epochSeconds - 50*60*60);
@@ -369,7 +369,7 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
 		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);

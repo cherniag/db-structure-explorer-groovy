@@ -24,16 +24,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * SingUpDeviceController
- * 
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  * 
  */
 @Controller
-public class SingUpDeviceController extends CommonController {
+public class SignUpDeviceController extends CommonController {
 		
 	private UserService userService;
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 	
 	@InitBinder(UserDeviceRegDetailsDto.NAME)
 	public void initUserDeviceRegDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -57,8 +63,8 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
+			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 						
 			accountCheckDTO = userService.applyInitialPromotion(user);
 			final Object[] objects = new Object[]{accountCheckDTO};
@@ -82,7 +88,7 @@ public class SingUpDeviceController extends CommonController {
     })
 	public ModelAndView signUpDevice_V3GT(HttpServletRequest request,
 			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) throws Exception {
-        LOGGER.info("SIGN_UP_DEVICE Started for [{}]",userDeviceDetailsDto);
+        LOGGER.info("SIGN_UP_DEVICE Started for [{}]", userDeviceDetailsDto);
         
         User user = null;
         Exception ex = null;
@@ -98,8 +104,8 @@ public class SingUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
-			AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
+			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 
 			final Object[] objects = new Object[] { accountCheckDTO };
 			precessRememberMeToken(objects);
@@ -142,8 +148,8 @@ public class SingUpDeviceController extends CommonController {
 		        userDeviceDetailsDto.setIpAddress(remoteAddr);
 		        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
 
-		        AccountCheckDTO accountCheckDTO = userService.registerUser(userDeviceDetailsDto, false);
-		        user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userDeviceDetailsDto.getCommunityName());
+		        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, false);
+		        user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
 
 		        final Object[] objects = new Object[] { accountCheckDTO };
 		        precessRememberMeToken(objects);
@@ -188,11 +194,22 @@ public class SingUpDeviceController extends CommonController {
         return modelAndView;
     }
 
-    public void setCommunityService(CommunityService communityService) {
-		this.communityService = communityService;
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE",
+            "*/{community:o2}/{apiVersion:4\\.1}/SIGN_UP_DEVICE.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/SIGN_UP_DEVICE",
+            "*/{community:o2}/{apiVersion:4\\.2}/SIGN_UP_DEVICE.json"
+    })
+    public ModelAndView signUpDevice_O2AcceptHeaderSupport(HttpServletRequest request,
+                                                           @Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto,
+                                                           BindingResult result,
+                                                           @PathVariable("community") String community,
+                                                           @PathVariable("apiVersion") String apiVersion) {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = signUpDevice_O2(request, userDeviceDetailsDto, result, community);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
+    }
 }

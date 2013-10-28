@@ -15,13 +15,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import static mobi.nowtechnologies.server.web.controller.PaymentsController.*;
+
 @Controller
 public class PaymentsPsmsController extends CommonController {
 	public static final String VIEW_PAYMENTS_O2PSMS = "/oppsms";
 	public static final String VIEW_PAYMENTS_O2PSMS_CONFIRM = "/oppsms_confirm";
 	
-	public static final String PAGE_PAYMENTS_O2PSMS = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS + PAGE_EXT;
-	public static final String PAGE_PAYMENTS_O2PSMS_CONFIRM = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS_CONFIRM + PAGE_EXT;
+	public static final String PAGE_PAYMENTS_O2PSMS = SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS + PAGE_EXT;
+	public static final String PAGE_PAYMENTS_O2PSMS_CONFIRM = SCOPE_PREFIX + VIEW_PAYMENTS_O2PSMS_CONFIRM + PAGE_EXT;
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsController.class);
     
@@ -32,19 +34,19 @@ public class PaymentsPsmsController extends CommonController {
     private O2PaymentServiceImpl paymentService;
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS}, method = RequestMethod.GET)
-    public ModelAndView createO2PaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId){
+    public ModelAndView createO2PaymentDetails(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(POLICY_REQ_PARAM) Integer policyId){
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
         
         return new ModelAndView(scopePrefix+VIEW_PAYMENTS_O2PSMS)
-                .addObject(PaymentsController.POLICY_REQ_PARAM, policyId)
+                .addObject(POLICY_REQ_PARAM, policyId)
                 .addObject("subcost", policy.getSubcost())
                 .addObject("suweeks", policy.getSubweeks())
                 .addObject("isVideoPaymentPolicy", policy.is4GVideoAudioSubscription());
     }
 
     @RequestMapping(value = {PAGE_PAYMENTS_O2PSMS_CONFIRM}, method = RequestMethod.GET)
-    public ModelAndView getO2PsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(PaymentsController.POLICY_REQ_PARAM) Short policyId) {
-        LOG.info("Create psms payment details by paymentPolicy.id=" + policyId);
+    public ModelAndView getO2PsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(POLICY_REQ_PARAM) Integer policyId) {
+        LOG.info("Create o2psms payment details by paymentPolicy.id=[{}]" , policyId);
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);

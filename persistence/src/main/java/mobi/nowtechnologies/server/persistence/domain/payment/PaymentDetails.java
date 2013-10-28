@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,10 +216,24 @@ public abstract class PaymentDetails {
         setActivated(activated);
         return this;
     }
-	
-	@Override
-	public String toString() {
-		return "i=" + i + ", activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
-		+ disableTimestampMillis + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", retriesOnError=" + retriesOnError;
-	}
+
+    public PaymentDetails withOwner(User user) {
+        setOwner(user);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("activated", activated)
+                .append("madeRetries", madeRetries)
+                .append("retriesOnError", retriesOnError)
+                .append("lastPaymentStatus", lastPaymentStatus)
+                .append("descriptionError", descriptionError)
+                .append("errorCode", errorCode)
+                .append("creationTimestampMillis", creationTimestampMillis)
+                .append("disableTimestampMillis", disableTimestampMillis)
+                .toString();
+    }
 }

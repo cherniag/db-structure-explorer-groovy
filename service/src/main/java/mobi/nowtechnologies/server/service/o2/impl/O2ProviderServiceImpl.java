@@ -19,7 +19,10 @@ import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationE
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Processor;
+import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
+
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -39,6 +42,10 @@ import java.math.BigInteger;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
+import static mobi.nowtechnologies.server.shared.AppConstants.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+
 
 public class O2ProviderServiceImpl implements O2ProviderService {
 	private static final BigDecimal MULTIPLICAND_100 = new BigDecimal("100");
@@ -128,7 +135,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     @Override
 	public String getServerO2Url(String phoneNumber) {
-		Community o2Community = communityService.getCommunityByName("o2");
+		Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
 
 		String serverO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community))
 				? this.promotedServerO2Url
@@ -139,7 +146,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
 	@Override
 	public String getRedeemServerO2Url(String phoneNumber) {
-		Community o2Community = communityService.getCommunityByName("o2");
+		Community o2Community = communityService.getCommunityByUrl(O2_COMMUNITY_REWRITE_URL);
 
 		String redeemServerO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community))
 				? this.redeemPromotedServerO2Url
@@ -251,7 +258,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
 	@Override
 	public boolean isO2User(ProviderUserDetails userDetails) {
-		if (isNotNull(userDetails) && "o2".equals(userDetails.operator)) {
+		if (isNotNull(userDetails) && O2.toString().equals(userDetails.operator)) {
 			return true;
 		}
 		return false;

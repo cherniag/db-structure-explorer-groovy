@@ -13,11 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
@@ -114,7 +115,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 				String existedPaymentPolicies = null;
 				Contract userContract = null;
 				SegmentType userSegment = null;
-				String userProvider = null;
+				ProviderType userProvider = null;
 				Object currentPaymentDetailsId = null;
 				Boolean isCurrentPaymentDetailsActivated = null;
 

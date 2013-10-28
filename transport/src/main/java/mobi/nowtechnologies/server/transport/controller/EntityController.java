@@ -103,9 +103,17 @@ public class EntityController extends CommonController {
         this.promoService = promoService;
     }
 
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = {"/ECHO", "**/ECHO"})
     public ModelAndView echo() {
-        ModelAndView modelAndView = new ModelAndView(view, MODEL_NAME, new Response(new Object[]{}));
+        ModelAndView modelAndView = new ModelAndView(defaultViewName, MODEL_NAME, new Response(new Object[]{}));
         return modelAndView;
     }
 
@@ -143,15 +151,15 @@ public class EntityController extends CommonController {
                                @RequestParam(USER_TOKEN) String userToken,
                                @RequestParam(TIMESTAMP) String timestamp) {
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
             notNull( userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
 
-            LOGGER.info("Reguest query string: [{}]", httpServletRequest.getQueryString());
+            LOGGER.info("Request query string: [{}]", httpServletRequest.getQueryString());
             Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
             String mediaIsrc = null;
             while (parameterNames.hasMoreElements()) {
-                String parameterName = (String) parameterNames.nextElement();
+                String parameterName = parameterNames.nextElement();
                 if (!(parameterName.equals(APP_VERSION) || parameterName.equals(COMMUNITY_NAME) || parameterName.equals(API_VERSION)
                         || parameterName.equals(USER_NAME) || parameterName.equals(USER_TOKEN) || parameterName.equals(TIMESTAMP))) {
                     mediaIsrc = parameterName;
@@ -191,7 +199,7 @@ public class EntityController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
             notNull(userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
 
@@ -218,7 +226,6 @@ public class EntityController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {"/SET_PASSWORD", "**/SET_PASSWORD"})
     public ModelAndView setPassword(
-            HttpServletRequest httpServletRequest,
             @RequestParam("NEW_TOKEN") String newToken,
             @RequestParam("APP_VERSION") String appVersion,
             @RequestParam("COMMUNITY_NAME") String communityName,
@@ -227,7 +234,7 @@ public class EntityController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp) {
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
             notNull(userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
             notNull(newToken, "The argument aNewToken is null");
@@ -262,7 +269,7 @@ public class EntityController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
             notNull(userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
             notNull(deviceType, "The argument deviceType is null");
@@ -309,11 +316,9 @@ public class EntityController extends CommonController {
                          @RequestParam("USER_NAME") String userName,
                          @RequestParam("USER_TOKEN") String userToken,
                          @RequestParam("TIMESTAMP") String timestamp,
-                         @RequestParam("PIN") String pin,
-                         HttpServletResponse response,
-                         HttpServletRequest request) {
+                         @RequestParam("PIN") String pin) {
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
             notNull(userName , "The parameter userName is null");
             notNull(communityName , "The parameter communityName is null");
             notNull(pin , "The parameter pin is null");
@@ -365,9 +370,7 @@ public class EntityController extends CommonController {
                             @RequestParam("USER_TOKEN") String userToken,
                             @RequestParam("TIMESTAMP") String timestamp,
                             @RequestParam("PHONE_NUMBER") String mobile,
-                            @RequestParam("OPERATOR") Integer operator,
-                            HttpServletResponse response,
-                            HttpServletRequest request) {
+                            @RequestParam("OPERATOR") Integer operator) {
 
         try {
             LOGGER.info("command proccessing started");
@@ -398,9 +401,7 @@ public class EntityController extends CommonController {
             @RequestParam("API_VERSION") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            HttpServletResponse response,
-            HttpServletRequest request) {
+            @RequestParam("TIMESTAMP") String timestamp) {
 
         try {
             LOGGER.info("command processing started");
@@ -459,7 +460,6 @@ public class EntityController extends CommonController {
             @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
             @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            HttpServletResponse response,
             HttpServletRequest request) {
         try {
             LOGGER.info("command processing started");
@@ -527,7 +527,7 @@ public class EntityController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {"/SIGN_UP", "**/SIGN_UP"})
-    public void signUp(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
+    public void signUp(HttpServletRequest request, @Valid @ModelAttribute(UserRegDetailsDto.USER_REG_DETAILS_DTO) UserRegDetailsDto userRegDetailsDto,
                        BindingResult result) throws Exception {
         User user = null;
         Exception ex = null;
@@ -575,7 +575,7 @@ public class EntityController extends CommonController {
             AccountCheckDTO accountCheckDTO = userService.updateUserFacebookDetails(userFacebookDetailsDto);
             try {
                 if (PROFILE_LOGGER.isDebugEnabled()) {
-                    user = userService.findByNameAndCommunity(accountCheckDTO.getUserName(), userFacebookDetailsDto.getCommunityName());
+                    user = userService.findByNameAndCommunity(accountCheckDTO.userName, userFacebookDetailsDto.getCommunityName());
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -592,13 +592,5 @@ public class EntityController extends CommonController {
             logProfileData(userFacebookDetailsDto.getDeviceUID(), userFacebookDetailsDto.getCommunityName(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
     }
 }

@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
-public class WeeklyUpdateServiceTest {
+public class WeeklyUpdateServiceIT {
 
 	@Resource(name = "service.WeeklyUpdateService")
 	private WeeklyUpdateService weeklyUpdateService;

@@ -1,22 +1,19 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.text.MessageFormat;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.AppConstants.*;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 /**
@@ -122,34 +119,12 @@ public class UserDao extends JpaDaoSupport {
 		return list == null || list.size() == 0 ? null : (Promotion) list.get(0);
 	}
 	
-	public User findUserTree(int userId) {
-		LOGGER.debug("input parameters userId: [{}]", userId);
-		List<User> users = getJpaTemplate().findByNamedQuery("User.findUserTree", userId);
-		User user = null;
-		if(users.size()==1) user = users.get(0);
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return user;
-	}
-	
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public User findUserById(int userId) {
 		List<User> users = getJpaTemplate().findByNamedQuery(User.NQ_FIND_USER_BY_ID, userId);
 		if (null!=users && users.size()>0)
 			return users.get(0);
 		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public User findByDeviceUIDAndCommunityRedirectUrl(String deviceUID, String communityRedirectUrl) {
-		LOGGER.debug("input parameters deviceUID, communityRedirectUrl: [{}], [{}]", deviceUID, communityRedirectUrl);
-		
-		User user = null;
-		List<User> users = getJpaTemplate().findByNamedQuery(User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, new Object[]{deviceUID, communityRedirectUrl});
-		if (users.size() != 0)
-			user = users.get(0);
-		
-		LOGGER.debug("Output parameter user=[{}]", user);
-		return user;
 	}
 
 }

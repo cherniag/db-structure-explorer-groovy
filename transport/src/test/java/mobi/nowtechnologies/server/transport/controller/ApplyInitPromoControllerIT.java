@@ -6,6 +6,8 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
@@ -19,6 +21,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:META-INF/service-test.xml",
@@ -52,8 +57,8 @@ public class ApplyInitPromoControllerIT {
         user = userService.findByName(user.getMobile());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
-        Assert.assertEquals("o2", user.getProvider());
-        Assert.assertEquals("PAYG", user.getContract());
+        Assert.assertEquals(O2, user.getProvider());
+        Assert.assertEquals(PAYG, user.getContract());
     }
     
     @Test

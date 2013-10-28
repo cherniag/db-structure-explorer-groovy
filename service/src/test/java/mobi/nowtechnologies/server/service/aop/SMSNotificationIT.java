@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -25,6 +26,7 @@ import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
@@ -175,7 +177,7 @@ public class SMSNotificationIT {
 		
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
 		user.setSegment(null);
-		user.setProvider("non-o2");
+		user.setProvider(NON_O2);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setReleased(true);

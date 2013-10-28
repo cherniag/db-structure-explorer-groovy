@@ -397,7 +397,7 @@ public class UserRepositoryIT {
 		
 		testUser = userRepository.save(testUser);
 		
-		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne((short)228);
+		PaymentPolicy paymentPolicy = paymentPolicyRepository.findOne(228);
 		
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		
@@ -447,6 +447,33 @@ public class UserRepositoryIT {
 
         //then
         assertThat(count, is(0L));
+    }
+
+    @Test
+    public void shouldFindUserTree(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withUserName("1").withMobile("2").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+
+        //when
+        User actualUser = userRepository.findUserTree(user.getId());
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(user.getId()));
+    }
+
+    @Test
+    public void shouldFindByUserNameAndCommunityAndOtherThanPassedId(){
+        //given
+        User user = userRepository.save(UserFactory.createUser().withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+        User user2 = userRepository.save(UserFactory.createUser().withUserName("+447766666667").withMobile("222").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
+
+        //when
+        User actualUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+
+        //then
+        assertNotNull(actualUser);
+        assertThat(actualUser.getId(), is(user2.getId()));
     }
 
 }
