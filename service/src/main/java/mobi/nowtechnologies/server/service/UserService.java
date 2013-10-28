@@ -184,7 +184,7 @@ public class UserService {
         if (!user.isVFNZCommunityUser() && updateContractAndProvider) {
             isO2User = o2ClientService.isO2User(providerUserDetails);
         }else if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
-            user.setProvider(providerUserDetails.operator);
+            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
         }
         return promotionService.applyPotentialPromo(user, isO2User);
     }
@@ -553,9 +553,9 @@ public class UserService {
         else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
             promotion = setPotentialPromoByPromoCode(user, storeCode);
         else if (isO2User || user.isVFNZUser())
-            promotion = setPotentialPromoByMessageCode(community.getName(), user, "promotionCode");
+            promotion = setPotentialPromoByMessageCode(user, "promotionCode");
         else
-            promotion = setPotentialPromoByMessageCode(community.getName(), user, "defaultPromotionCode");
+            promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
 
         return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
     }
@@ -1805,36 +1805,10 @@ public class UserService {
         return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
-        LOGGER.info("Attempt to apply promotion for user which send [{}] as otac", otac);
-
-        O2UserDetails o2UserDetails = o2ClientService.getUserDetails(otac, user.getMobile());
-
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", o2UserDetails,
-                user.getContract(), user.getMobile(),
-                user.getOperator());
-
-        boolean hasPromo = false;
-        if (isNotNull(mobileUser)) {
-            user = mergeUser(mobileUser, user);
-        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-            hasPromo = checkO2UserAndApplyPromo(user, updateContractAndProvider, o2UserDetails);
-        }
-
-        if(updateContractAndProvider) updateContractAndProvider(user, o2UserDetails);
-
-        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
-
-        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
-        return hasPromo;
-    }
-
-    private boolean checkO2UserAndApplyPromo(User user, boolean updateContractAndProvider, O2UserDetails o2UserDetails) {
+    private boolean checkO2UserAndApplyPromo(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
         boolean isO2User = user.isO2User();
         if (updateContractAndProvider) {
-            isO2User = o2ClientService.isO2User(o2UserDetails);
+            isO2User = o2ClientService.isO2User(providerUserDetails);
         }
         return promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User);
     }
@@ -2044,13 +2018,13 @@ public class UserService {
 
         if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
 
-        User mobileUser = findByNameAndCommunity(user.getMobile(), communityUri);
+        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         boolean isPromotionApplied;
         if(isNotBlank(otac)){
             isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
         }else{
-            isPromotionApplied = promotionService.applyO2PotentialPromoOf4ApiVersion(user, user.isO2User());
+            isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
         }
 
         if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
