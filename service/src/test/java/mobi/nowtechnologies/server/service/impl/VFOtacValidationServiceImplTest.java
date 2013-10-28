@@ -57,7 +57,7 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.operator, is(NON_VF.toString()));
+        assertThat(providerUserDetails.operator, is(NON_VF.getKey()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
@@ -77,7 +77,7 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.operator, is(VF.toString()));
+        assertThat(providerUserDetails.operator, is(VF.getKey()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
