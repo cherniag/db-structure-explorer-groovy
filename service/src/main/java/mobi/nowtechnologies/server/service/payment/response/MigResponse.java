@@ -18,7 +18,7 @@ public class MigResponse extends PaymentSystemResponse implements SMSResponse{
 	MigSuccessfulResponse jsonResonpse;
 	
 	public MigResponse(BasicResponse response) {
-		super(response);
+		super(response, false);
 		if (response.getMessage().startsWith(SUCCESSFUL_RESPONSE_START)) {
 			isSuccessful = true;
 			parseResponse(response.getMessage());

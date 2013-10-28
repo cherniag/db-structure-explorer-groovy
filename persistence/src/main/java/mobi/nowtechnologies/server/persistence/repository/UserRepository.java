@@ -177,4 +177,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             + "and u.mobile=?2 "
             + "and c=?3")
     long findByOtacMobileAndCommunity(String otac, String phoneNumber, Community community);
+
+    @Query(value="select u from User u "
+            + "where u.mobile = ?1")
+    List<User> findByMobile(String phoneNumber);
 }

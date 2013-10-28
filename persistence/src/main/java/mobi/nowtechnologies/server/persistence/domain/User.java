@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -386,12 +387,24 @@ public class User implements Serializable {
 		return !"o2".equals(this.provider);
 	}
 
+    public boolean isnonVFUser() {
+        return !ProviderType.VF.toString().equals(this.provider);
+    }
+
 	public boolean isO2CommunityUser() {
 		Community community = userGroup.getCommunity();
 		String rewriteUrlParameter = community.getRewriteUrlParameter();
 		boolean isO2CommunityUser = rewriteUrlParameter.equalsIgnoreCase("o2");
 		return isO2CommunityUser;
 	}
+
+    public boolean isSMSActivatedUser() {
+        return getActivationStatus() == ActivationStatus.ACTIVATED || StringUtils.equals(getMobile(), getUserName()) || isVFNZCommunityUser() || isO2CommunityUser();
+    }
+
+    public boolean isMonthlyPaidUser() {
+        return (isO2CommunityUser() && isnonO2User()) || (isVFNZCommunityUser() && isnonVFUser());
+    }
 
 	public boolean isO2PAYGConsumer() {
 		return isO2Consumer() && Contract.PAYG.equals(contract);

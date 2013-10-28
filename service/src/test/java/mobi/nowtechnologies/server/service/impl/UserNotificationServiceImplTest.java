@@ -1735,6 +1735,23 @@ public class UserNotificationServiceImplTest {
                 eq("sms.activation.pin.text"), any(String[].class));
     }
 
+    @Test
+    public void testSendActivationPinSMS_NotHasAllDetails_Success() throws Exception {
+        User user = UserFactory.createUser();
+        user.setProvider(null);
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+
+        Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
+
+        assertNotNull(result);
+        assertEquals(false, result.get());
+
+        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
+                eq("sms.activation.pin.text"), any(String[].class));
+    }
+
     @Test(expected = NullPointerException.class)
     public void testSendActivationPinSMS_NullUser_Failure() throws Exception {
         User user = null;

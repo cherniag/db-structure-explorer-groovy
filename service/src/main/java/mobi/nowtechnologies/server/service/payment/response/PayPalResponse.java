@@ -37,7 +37,7 @@ public class PayPalResponse extends PaymentSystemResponse {
 	private Map<String, String> errors;
 		
 	public PayPalResponse(BasicResponse response) {
-		super(response);
+		super(response, false);
 		properties = new HashMap<PayPalResponseParam, String>();
 		errors = new HashMap<String, String>();
 		if (HttpServletResponse.SC_OK == response.getStatusCode()) {

@@ -3,13 +3,17 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.jsmpp.bean.DeliverSm;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.smslib.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,6 +24,7 @@ import org.springframework.test.web.server.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
@@ -45,6 +50,10 @@ public class PhoneNumberControllerTestIT {
 	
 	@Autowired
 	private SMSMessageProcessorContainer processorContainer;
+
+    @Autowired
+    @Qualifier("vf_nz.service.UserService")
+    private UserService vfUserService;
 
     @Before
     public void setUp() {
@@ -93,8 +102,8 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
-    	String userName = "+642111111111";
-    	String phone = "+642111111111";
+    	String userName = "+642102247311";
+    	String phone = "+642102247311";
 		String apiVersion = "5.0";
 		String communityName = "vf_nz";
 		String communityUrl = "vf_nz";
@@ -114,10 +123,16 @@ public class PhoneNumberControllerTestIT {
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
 		
-        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642111111111</phoneNumber></phoneActivation></response>"));
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
 
-        MOMessage message = new MOMessage("5804", "642111111111", "OnNet", Message.MessageEncodings.ENC8BIT);
-        processorContainer.processInboundMessage(null, message);
+        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        assertEquals(null, user.getProvider());
+
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSourceAddr("5804");
+        deliverSm.setDestAddress("642102247311");
+        MOMessage message = new MOMessage("5804", "642102247311", "OnNet", Message.MessageEncodings.ENC8BIT);
+        processorContainer.processInboundMessage(deliverSm, message);
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
@@ -158,6 +173,9 @@ public class PhoneNumberControllerTestIT {
         String resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
+
+        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        assertEquals(null, user.getProvider());
 
         MOMessage message = new MOMessage("5804", "64279000456", "OffNet", Message.MessageEncodings.ENC8BIT);
         processorContainer.processInboundMessage(null, message);

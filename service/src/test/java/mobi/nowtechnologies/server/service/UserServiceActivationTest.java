@@ -4,21 +4,16 @@ import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
-import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.junit.Before;
@@ -35,8 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -142,45 +135,27 @@ public class UserServiceActivationTest {
 	public void testActivatePhoneNumber_NullPhone_Success_Populate4G() throws Exception {
 		final User user = UserFactory.createUser();
 		final String phoneNumber = "+447870111111";
+		final String pin = "111111";
 		user.setMobile(phoneNumber);
 		user.setUserName(phoneNumber);
-        final Processor processor = spy(new Processor() {
-            @Override
-            public void process(Object data) {
-                userServiceSpy.LOGGER.info("process msg");
-            }
-        });
 
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<PhoneNumberValidationData>() {
 			@Override
 			public PhoneNumberValidationData answer(InvocationOnMock invocation) throws Throwable {
 				String phone = (String) invocation.getArguments()[0];
 				assertEquals(user.getMobile(), phone);
-				return new PhoneNumberValidationData().withPhoneNumber(phoneNumber);
+				return new PhoneNumberValidationData().withPhoneNumber(phoneNumber).withPin(pin);
 			}
 		});
-
-		final O2SubscriberData o2SubscriberData = new O2SubscriberData();
-		o2SubscriberData.setProviderO2(true);
-		o2SubscriberData.setContractPostPayOrPrePay(true);
-		o2SubscriberData.setTariff4G(false);
-
-		Mockito.doNothing().when(o2ClientServiceMock).getSubscriberData(eq(phoneNumber), any(Processor.class));
-
-		boolean populateO2SubscriberData = true;
-		User userResult = userServiceSpy.activatePhoneNumber(user, phoneNumber, populateO2SubscriberData);
+		User userResult = userServiceSpy.activatePhoneNumber(user, phoneNumber);
 
 		assertNotNull(user);
 		assertEquals(ActivationStatus.ENTERED_NUMBER, userResult.getActivationStatus());
 		assertEquals("+447870111111", userResult.getMobile());
+		assertEquals("111111", userResult.getPin());
 
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
-		verify(o2ClientServiceMock, times(1)).getSubscriberData(eq(phoneNumber), any(Processor.class));
-		assertEquals(user.getSegment(), SegmentType.CONSUMER);
-		assertEquals(user.getProvider(), ProviderType.O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
-
 	}
 
 }
