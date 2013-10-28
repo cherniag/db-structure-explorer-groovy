@@ -1805,14 +1805,6 @@ public class UserService {
         return dto.withFullyRegistered(true).withHasPotentialPromoCodePromotion(hasPromo);
     }
 
-    private boolean checkO2UserAndApplyPromo(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
-        boolean isO2User = user.isO2User();
-        if (updateContractAndProvider) {
-            isO2User = o2ClientService.isO2User(providerUserDetails);
-        }
-        return promotionService.applyO2PotentialPromoOf4ApiVersion(user, isO2User);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
 	public void saveWeeklyPayment(User user) throws Exception {
 		if (user == null)
