@@ -33,6 +33,7 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
@@ -403,7 +404,7 @@ public class User implements Serializable {
 	}
 
     public boolean isVFNZUser() {
-        return VF.toString().equals(this.provider) && isVFNZCommunityUser();
+        return VF.equals(this.provider) && isVFNZCommunityUser();
     }
 
     public boolean isVFNZCommunityUser() {
