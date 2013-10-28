@@ -786,7 +786,7 @@ public class UserTest {
     @Test
     public void shouldBeVFNZUser(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(VF.toString());
+        User user = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL))).withProvider(VF);
 
         //when
         boolean isVFNZUser = user.isVFNZUser();
