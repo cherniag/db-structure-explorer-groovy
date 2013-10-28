@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
@@ -23,9 +22,8 @@ import java.util.Set;
  */
 public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaymentDetails> implements SMSMessageProcessor<VFResponse>{
 
-    private VFNZSMSGatewayServiceImpl gatewayService;
+    protected VFNZSMSGatewayServiceImpl gatewayService;
     private Set<String> paymentCodes;
-    private UserService userService;
     private PendingPaymentService pendingPaymentService;
     private VFResponse futureResponse = VFResponse.futureResponse();
     private BasicSMSMessageProcessor<VFResponse> smsMessageProcessor = (BasicSMSMessageProcessor<VFResponse>)new BasicSMSMessageProcessor<VFResponse>() {
@@ -50,10 +48,6 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
     public void setGatewayService(VFNZSMSGatewayServiceImpl gatewayService) {
         this.gatewayService = gatewayService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     public void setPendingPaymentService(PendingPaymentService pendingPaymentService) {

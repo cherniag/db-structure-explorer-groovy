@@ -37,7 +37,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     @Transactional(propagation = Propagation.REQUIRED)
     public void startPayment(final PendingPayment pendingPayment) throws Exception {
         final User user = pendingPayment.getUser();
-        final O2PSMSPaymentDetails paymentDetails = (O2PSMSPaymentDetails)pendingPayment.getPaymentDetails();
+        final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails)pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
         Community community = user.getUserGroup().getCommunity();
 
@@ -97,9 +97,9 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         details.setPaymentPolicy(paymentPolicy);
         details.setPhoneNumber(user.getMobile());
         details.setCreationTimestampMillis(Utils.getEpochMillis());
+        details.setOwner(user);
 
         paymentDetailsService.update(details);
-        userService.updateUser(user);
 
         LOGGER.info("Done creation of psms payment details [{}] for user [{}]", new Object[]{details, user.getUserName()});
 

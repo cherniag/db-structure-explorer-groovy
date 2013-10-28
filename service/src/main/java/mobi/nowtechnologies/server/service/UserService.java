@@ -978,9 +978,9 @@ public class UserService {
 			user.setNextSubPayment(payment.getNextSubPayment());
 			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
 			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-		}else if (user.isO2CommunityUser() && user.isnonO2User()) {
+		}else if (user.isMonthlyPaidUser()) {
 			user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
-		}else if (user.isO2CommunityUser() && !user.isnonO2User()){
+		}else if (user.isSMSActivatedUser()){
 			if (Utils.getEpochSeconds() > oldNextSubPayment){
 				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
 			}else{
@@ -996,7 +996,7 @@ public class UserService {
 		// The main idea is that we do pre-payed service, this means that
 		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
 		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if (!user.isO2CommunityUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+			if (!user.isSMSActivatedUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 				user.setSubBalance(user.getSubBalance() - 1);
 				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), SUBSCRIPTION_CHARGE));
 			}
@@ -1769,7 +1769,6 @@ public class UserService {
         }
     }
 
-    //@Transactional(propagation = Propagation.REQUIRED)
     public void populateSubscriberData(User user, SubscriberData subscriberData) {
         LOGGER.debug("Started data population for user[{}] with data [{}]", new Object[]{user, subscriberData});
         userDetailsUpdater.setUserFieldsFromSubscriberData(user, subscriberData);

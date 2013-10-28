@@ -44,7 +44,7 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
 		super(response, false);
 
         try {
-            phoneNumber = deliverSm.getSourceAddr();
+            phoneNumber = "+"+deliverSm.getSourceAddr();
             DeliveryReceipt deliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
             isSuccessful = deliveryReceipt.getFinalStatus() == DeliveryReceiptState.ACCEPTD || deliveryReceipt.getFinalStatus() == DeliveryReceiptState.DELIVRD;
 

@@ -89,9 +89,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="vf_nz.service.VFNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">
         <property name="supportedNumbers">
             <set>
-                <value>"${vf.nz.smpp.service.source.address.unsubscribe}"</value>
-                <value>"${vf.nz.smpp.service.source.address.billing.6gbp}"</value>
-                <value>"${vf.nz.smpp.service.source.address.billing.1_5gbp}"</value>
+                <value>${vf.nz.smpp.service.source.address.unsubscribe}</value>
+                <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
+                <value>${vf.nz.smpp.service.source.address.billing.1_5gbp}</value>
             </set>
         </property>
         <property name="userService" ref="vf_nz.service.UserService" />

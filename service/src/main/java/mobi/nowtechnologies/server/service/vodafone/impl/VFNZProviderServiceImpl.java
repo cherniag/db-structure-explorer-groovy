@@ -62,6 +62,8 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
     public void getSubscriberData(String phoneNumber,final Processor<VFNZSubscriberData> processor) {
         LOGGER.info("NZ GET_SUBSCRIBER_DATA for[{}]", phoneNumber);
 
+        processor.process(new VFNZSubscriberData().withPhoneNumber(phoneNumber));
+
         gatewayService.send(phoneNumber, "GET_PROVIDER", providerNumber);
 
         LOGGER.info("NZ GET_SUBSCRIBER_DATA finished for[{}]", new Object[]{phoneNumber});

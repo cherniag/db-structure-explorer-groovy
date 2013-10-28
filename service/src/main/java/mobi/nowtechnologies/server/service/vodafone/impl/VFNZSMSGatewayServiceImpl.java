@@ -26,7 +26,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
     @Override
     public SMSResponse send(String numbers, String message, String originator) {
-        return send(originator, numbers, message, SMSCDeliveryReceipt.SUCCESS_FAILURE, -1L);
+        return send(numbers, message, originator, SMSCDeliveryReceipt.SUCCESS_FAILURE, -1L);
     }
 
     public SMSResponse send(String numbers, String message, String originator, SMSCDeliveryReceipt smscDeliveryReceipt, long expireTimeMillis) {

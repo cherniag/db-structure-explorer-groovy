@@ -100,14 +100,14 @@
     <bean id="service.vfPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl" parent="service.AbstractPaymentSystemService">
         <property name="retriesOnError" value="${vf.retriesOnError}" />
         <property name="expireMillis" value="${vf.pendingExpireMillis}" />
+        <property name="messageSource" ref="serviceMessageSource" />
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="userService" ref="vf_nz.service.UserService" />
         <property name="pendingPaymentService" ref="service.PendingPaymentService" />
         <property name="paymentCodes">
             <set>
-                <value>"${vf.nz.smpp.service.source.address.unsubscribe}"</value>
-                <value>"${vf.nz.smpp.service.source.address.billing.6gbp}"</value>
-                <value>"${vf.nz.smpp.service.source.address.billing.1_5gbp}"</value>
+                <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
+                <value>${vf.nz.smpp.service.source.address.billing.1_5gbp}</value>
             </set>
         </property>
     </bean>
@@ -117,6 +117,7 @@
 		<entry key="payPal" value-ref="service.payPalPaymentService" />
 		<entry key="migSms" value-ref="service.migPaymentService" />
 		<entry key="o2Psms" value-ref="service.o2PaymentService" />	
+		<entry key="vfPsms" value-ref="service.vfPaymentService" />
 	</util:map>
 	
 	<!-- Listeners -->
