@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import junit.framework.Assert;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/7/13
  * Time: 2:13 PM
- * To change this template use File | Settings | File Templates.
  */
 public class VFNZSmsMessageParserTest {
 
@@ -27,7 +28,7 @@ public class VFNZSmsMessageParserTest {
 
         VFNZSubscriberData result = fixture.parse(data);
 
-        Assert.assertEquals(ProviderType.VF, result.getProvider());
+        Assert.assertEquals(VF, result.getProvider());
     }
 
     @Test
@@ -36,7 +37,7 @@ public class VFNZSmsMessageParserTest {
 
         VFNZSubscriberData result = fixture.parse(data);
 
-        Assert.assertEquals(ProviderType.VF, result.getProvider());
+        Assert.assertEquals(VF, result.getProvider());
     }
 
     @Test
@@ -45,7 +46,7 @@ public class VFNZSmsMessageParserTest {
 
         VFNZSubscriberData result = fixture.parse(data);
 
-        Assert.assertEquals(ProviderType.NON_VF, result.getProvider());
+        Assert.assertEquals(NON_VF, result.getProvider());
     }
 
     @Test
@@ -54,6 +55,6 @@ public class VFNZSmsMessageParserTest {
 
         VFNZSubscriberData result = fixture.parse(data);
 
-        Assert.assertEquals(ProviderType.NON_VF, result.getProvider());
+        Assert.assertEquals(NON_VF, result.getProvider());
     }
 }
