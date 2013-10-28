@@ -2,10 +2,10 @@ package mobi.nowtechnologies.server.service.sms;
 
 import com.sentaca.spring.smpp.mo.MOMessage;
 import com.sentaca.spring.smpp.mt.MTMessage;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberDataParser;
 import mobi.nowtechnologies.server.shared.Processor;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.smslib.Message;
