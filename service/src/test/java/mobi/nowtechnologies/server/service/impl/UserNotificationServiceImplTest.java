@@ -2020,7 +2020,7 @@ public class UserNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
