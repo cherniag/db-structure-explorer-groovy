@@ -29,16 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
- * EntityController
- *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
- * 
  */
 public abstract class CommonController extends ProfileController implements ApplicationContextAware{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
@@ -242,7 +240,7 @@ public abstract class CommonController extends ProfileController implements Appl
 
         String apiVersion = apiVersionThreadLocal.get();
 
-        if (isEmpty(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+        if (isBlank(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
             return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
         }
 

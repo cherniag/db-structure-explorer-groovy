@@ -3519,7 +3519,7 @@ public class UserServiceTest {
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
-        doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
 
         //when
@@ -3532,7 +3532,7 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser, expectedUser.isO2User());
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
-        verify(o2ClientServiceMock, times(1)).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        verify(otacValidationServiceMock, times(1)).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         verify(o2ClientServiceMock, times(0)).isO2User(providerUserDetails);
     }
 
