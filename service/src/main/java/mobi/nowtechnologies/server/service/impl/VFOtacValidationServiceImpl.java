@@ -2,17 +2,14 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.VFOtacValidationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
 
 /**
  * User: Titov Mykhaylo (titov)
