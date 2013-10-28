@@ -2557,7 +2557,7 @@ public class UserServiceTest {
 		User mobileUser = null;
 		String otac = "otac";
 
-        ProviderUserDetails o2UserDetails = new ProviderUserDetails().withOperator("").withContract(PAYG.name());
+        ProviderUserDetails o2UserDetails = new ProviderUserDetails().withOperator(VF.getKey()).withContract(PAYG.name());
 		
 		doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
 		Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(o2UserDetails);
@@ -2623,7 +2623,13 @@ public class UserServiceTest {
         PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
 
         doReturn(user).when(entityServiceMock).updateEntity(user);
-        doReturn(promotion).when(entityServiceMock).updateEntity(promotion);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                promotion.setNumUsers(promotion.getNumUsers()+1);
+                return true;
+            }
+        }).when(promotionServiceMock).updatePromotionNumUsers(promotion);
         Answer answer = new Answer() {
             int count = -1;
 
@@ -2668,7 +2674,7 @@ public class UserServiceTest {
 
         verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
         verify(entityServiceMock, times(1)).updateEntity(user);
-        verify(entityServiceMock, times(1)).updateEntity(promotion);
+        verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
         verify(entityServiceMock, times(promotion.getFreeWeeks()+1)).saveEntity(any(AccountLog.class));
     }
 	
