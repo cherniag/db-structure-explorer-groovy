@@ -128,9 +128,9 @@ public class O2PaymentServiceImplTest {
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
 		
 		final Boolean smsNotify = Boolean.TRUE;
-		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2_psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
+		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
-		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
+		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
 		
 		final int internalTxId = Integer.MAX_VALUE;
 
