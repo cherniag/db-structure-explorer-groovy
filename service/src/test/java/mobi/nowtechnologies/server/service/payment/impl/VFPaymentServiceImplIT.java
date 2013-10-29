@@ -8,10 +8,12 @@ import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
+import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,21 +34,21 @@ import static org.mockito.Mockito.times;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class VFPaymentServiceImplIT {
 
     //private PowerMockRule powerMockRule = new PowerMockRule();
-	
+
     @Autowired
-	private VFPaymentServiceImpl paymentService;
+    private VFPaymentServiceImpl paymentService;
 
     @Autowired
     private SMSMessageProcessorContainer processorContainer;
-	
-	@Resource(name = "service.PendingPaymentService")
-	private PendingPaymentServiceImpl pendingPaymentService;
+
+    @Resource(name = "service.PendingPaymentService")
+    private PendingPaymentServiceImpl pendingPaymentService;
 
     @Resource(name = "vf_nz.service.UserService")
     private UserService userService;
@@ -58,15 +60,22 @@ public class VFPaymentServiceImplIT {
     private Map<String, PaymentSystemService> paymentSystems;
 
     private VFPaymentServiceImpl paymentServiceTarget;
+    private VFNZSMSGatewayServiceImpl gatewayServiceTarget;
 
     @Before
     public void setUp() throws Exception {
-        paymentServiceTarget = (VFPaymentServiceImpl)((Advised) paymentService).getTargetSource().getTarget();
-        paymentServiceTarget.setGatewayService(spy(paymentServiceTarget.gatewayService));
+        paymentServiceTarget = (VFPaymentServiceImpl) ((Advised) paymentService).getTargetSource().getTarget();
+        gatewayServiceTarget = paymentServiceTarget.gatewayService;
+        paymentServiceTarget.setGatewayService(spy(gatewayServiceTarget));
     }
 
-	@Test
-	public void testStartVFPayment_SuccessfulResponse_Successful() throws Exception {
+    @After
+    public void tireDown(){
+        paymentServiceTarget.setGatewayService(gatewayServiceTarget);
+    }
+
+    @Test
+    public void testStartVFPayment_SuccessfulResponse_Successful() throws Exception {
         String userName = "+642102247311";
         String community = "vf_nz";
         Integer paymentPolicyId = 231;
@@ -76,9 +85,9 @@ public class VFPaymentServiceImplIT {
         paymentService.commitPaymentDetails(user, paymentPolicy);
 
         List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
-        for(PendingPayment pendingPayment : createPendingPayments){
+        for (PendingPayment pendingPayment : createPendingPayments) {
             PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
-            if(paymentSystemService == paymentService){
+            if (paymentSystemService == paymentService) {
                 paymentSystemService.startPayment(pendingPayment);
             }
         }
@@ -98,7 +107,7 @@ public class VFPaymentServiceImplIT {
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
         Assert.assertEquals(0, pendingPayments.size());
-	}
+    }
 
     @Test
     public void testStartVFPayment_ErrorResponse_Successful() throws Exception {
@@ -112,9 +121,9 @@ public class VFPaymentServiceImplIT {
         paymentService.commitPaymentDetails(user, paymentPolicy);
 
         List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
-        for(PendingPayment pendingPayment : createPendingPayments){
+        for (PendingPayment pendingPayment : createPendingPayments) {
             PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
-            if(paymentSystemService == paymentService){
+            if (paymentSystemService == paymentService) {
                 paymentSystemService.startPayment(pendingPayment);
             }
         }
@@ -129,7 +138,7 @@ public class VFPaymentServiceImplIT {
         Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SMSCDeliveryReceipt.SUCCESS_FAILURE, 600000);
         user = userService.findByNameAndCommunity(userName, community);
         Assert.assertEquals(oldNextSubPayment.intValue(), user.getNextSubPayment());
-        Assert.assertEquals("001",user.getCurrentPaymentDetails().getErrorCode());
+        Assert.assertEquals("001", user.getCurrentPaymentDetails().getErrorCode());
         Assert.assertEquals("UNDELIV", user.getCurrentPaymentDetails().getDescriptionError());
         Assert.assertEquals(PaymentDetailsStatus.ERROR, user.getCurrentPaymentDetails().getLastPaymentStatus());
 
@@ -137,7 +146,7 @@ public class VFPaymentServiceImplIT {
         Assert.assertEquals(0, pendingPayments.size());
     }
 
-    protected String buildMessage(String msgId, String sub, String dlvrd,String submitDate, String doneDate, String stat, String err, String text){
-        return "id:"+msgId+" sub:"+sub+" dlvrd:"+dlvrd+" submit date:"+submitDate+" done date:"+doneDate+" stat:"+stat+" err:"+err+" Text:"+text;
+    protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {
+        return "id:" + msgId + " sub:" + sub + " dlvrd:" + dlvrd + " submit date:" + submitDate + " done date:" + doneDate + " stat:" + stat + " err:" + err + " Text:" + text;
     }
 }

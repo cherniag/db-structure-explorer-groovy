@@ -177,8 +177,11 @@ public class PhoneNumberControllerTestIT {
         User user = vfUserService.findByNameAndCommunity(userName, communityName);
         assertEquals(null, user.getProvider());
 
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSourceAddr("5804");
+        deliverSm.setDestAddress("642102247311");
         MOMessage message = new MOMessage("5804", "64279000456", "OffNet", Message.MessageEncodings.ENC8BIT);
-        processorContainer.processInboundMessage(null, message);
+        processorContainer.processInboundMessage(deliverSm, message);
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
