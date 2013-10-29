@@ -8,10 +8,8 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "user")

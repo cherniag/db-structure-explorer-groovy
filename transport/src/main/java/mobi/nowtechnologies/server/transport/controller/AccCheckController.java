@@ -26,8 +26,6 @@ import java.util.List;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
- * AccCheckConroller
- *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
