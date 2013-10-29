@@ -128,6 +128,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.info("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removePaymentMDC();
         }
@@ -169,6 +172,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -208,6 +214,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -255,6 +264,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -295,6 +307,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -342,6 +357,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -388,6 +406,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
@@ -432,6 +453,9 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
+        } catch (RuntimeException e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
