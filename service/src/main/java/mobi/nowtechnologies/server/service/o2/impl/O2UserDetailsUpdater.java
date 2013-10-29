@@ -19,8 +19,9 @@ import java.util.List;
 public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberData> {
     
 	/** Updates given user */
-	public User setUserFieldsFromSubscriberData(User user, SubscriberData subsriberData) {
-        O2SubscriberData data = (O2SubscriberData)subsriberData;
+    @Override
+	public User setUserFieldsFromSubscriberData(User user, O2SubscriberData o2SubscriberData) {
+        O2SubscriberData data = (O2SubscriberData)o2SubscriberData;
 
         if(data == null){
             user.setProvider(ProviderType.O2);
@@ -35,7 +36,6 @@ public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberDa
             user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
             user.setContractChannel(data.isDirect4GChannel() ? ContractChannel.DIRECT : ContractChannel.INDIRECT);
         }
-
         return user;
     }
 
@@ -82,5 +82,4 @@ public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberDa
 		data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
 		return data;
 	}
-
 }
