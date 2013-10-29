@@ -5,9 +5,12 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.jsmpp.bean.DeliverSm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscriberData> implements UserDetailsUpdater<VFNZSubscriberData>{
     Logger LOGGER = LoggerFactory.getLogger(VFNZUserDetailsUpdater.class);
