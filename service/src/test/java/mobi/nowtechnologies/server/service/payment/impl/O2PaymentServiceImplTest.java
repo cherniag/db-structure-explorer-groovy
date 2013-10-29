@@ -112,7 +112,7 @@ public class O2PaymentServiceImplTest {
 		o2psmsPaymentDetails.setActivated(true);
 		o2psmsPaymentDetails.setOwner(user);
 		
-		community.setRewriteUrlParameter("o2");
+		community.setRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL);
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
 		user.setProvider(O2);

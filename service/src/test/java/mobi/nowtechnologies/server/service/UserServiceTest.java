@@ -1415,7 +1415,7 @@ public class UserServiceTest {
         final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
         final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 
-        community.setRewriteUrlParameter("vf_nz");
+        community.setRewriteUrlParameter(Community.VF_NZ_COMMUNITY_REWRITE_URL);
         userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
         user.setProvider(VF);
