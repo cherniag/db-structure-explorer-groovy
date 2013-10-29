@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 @XmlRootElement(name = "user")
 public class AccountCheckDTO {
@@ -157,54 +156,6 @@ public class AccountCheckDTO {
     public AccountCheckDTO withUserToken(String userToken){
         this.userToken = userToken;
         return this;
-    }
-
-    public Boolean getCanGetVideo() {
-        return canGetVideo;
-    }
-
-    public void setCanGetVideo(Boolean canGetVideo) {
-        this.canGetVideo = canGetVideo;
-    }
-
-    public Boolean getCanPlayVideo() {
-        return canPlayVideo;
-    }
-
-    public void setCanPlayVideo(Boolean canPlayVideo) {
-        this.canPlayVideo = canPlayVideo;
-    }
-
-    public Boolean getHasAllDetails() {
-        return hasAllDetails;
-    }
-
-    public void setHasAllDetails(Boolean hasAllDetails) {
-        this.hasAllDetails = hasAllDetails;
-    }
-
-    public Boolean getShowFreeTrial() {
-        return showFreeTrial;
-    }
-
-    public void setShowFreeTrial(Boolean showFreeTrial) {
-        this.showFreeTrial = showFreeTrial;
-    }
-
-    public Boolean getCanActivateVideoTrial() {
-        return canActivateVideoTrial;
-    }
-
-    public void setCanActivateVideoTrial(Boolean canActivateVideoTrial) {
-        this.canActivateVideoTrial = canActivateVideoTrial;
-    }
-
-    public void setSubscriptionChanged(SubscriptionDirection subscriptionChanged) {
-        this.subscriptionChanged = subscriptionChanged;
-    }
-
-    public SubscriptionDirection getSubscriptionChanged() {
-        return subscriptionChanged;
     }
 
     public AccountCheckDTO withUser(Object user) {
