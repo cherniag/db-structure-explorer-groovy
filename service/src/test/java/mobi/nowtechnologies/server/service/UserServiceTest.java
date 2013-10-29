@@ -1320,94 +1320,6 @@ public class UserServiceTest {
 		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(o2ClientServiceMock, times(1)).validatePhoneNumber(anyString());
     }
-	
-	@Test
-	public void testIsnonO2User_O2User_Success() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider("o2");
-		
-		boolean isnonO2User = userServiceSpy.isnonO2User(user);
-		assertFalse(isnonO2User);
-	}
-	
-	@Test
-	public void testIsnonO2User_UserFromNotO2Community_Success() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("r");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		boolean isnonO2User = userServiceSpy.isnonO2User(user);
-		assertFalse(isnonO2User);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_UserIsNull_Failure() throws Exception{
-		final User user = null;
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_UserGroupIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = null;
-		
-		user.setUserGroup(userGroup);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_CommunityIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = null;
-		
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-    @Ignore //TODO review
-	public void testIsnonO2User_RewriteUrlParameterIsO2AndProviderIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter("o2");
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		userServiceSpy.isnonO2User(user);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testIsnonO2User_RewriteUrlParameterIsNull_Failure() throws Exception{
-		final User user = UserFactory.createUser();
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		community.setRewriteUrlParameter(null);
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(null);
-		
-		userServiceSpy.isnonO2User(user);
-	}
 
     @Test
     public void testProcessPaymentSubBalanceCommand_nonVFUser_Success() throws Exception{
@@ -1428,7 +1340,7 @@ public class UserServiceTest {
         community.setRewriteUrlParameter("vf_nz");
         userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
-        user.setProvider("non-vf");
+        user.setProvider(NON_VF);
         user.setSubBalance(0);
         user.setStatus(limitedUserStatus);
         user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
@@ -1506,7 +1418,7 @@ public class UserServiceTest {
         community.setRewriteUrlParameter("vf_nz");
         userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
-        user.setProvider("vf");
+        user.setProvider(VF);
         user.setSubBalance(2);
         user.setStatus(limitedUserStatus);
         user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);

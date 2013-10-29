@@ -99,28 +99,6 @@ public class O2PaymentServiceImplTest {
 
     @Test
     public void testStartPayment_SuccessfulO2Response_Success() throws Exception {
-        final User user = UserFactory.createUser();
-        final UserGroup userGroup = UserGroupFactory.createUserGroup();
-        final Community community = CommunityFactory.createCommunity();
-
-        final O2PSMSPaymentDetails o2psmsPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-        o2psmsPaymentDetails.setActivated(true);
-
-        final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
-
-        o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-
-        community.setRewriteUrlParameter("o2");
-        userGroup.setCommunity(community);
-        user.setUserGroup(userGroup);
-        user.setProvider("o2");
-        user.setSegment(CONSUMER);
-        user.setContract(Contract.PAYG);
-        user.setNextSubPayment(Utils.getEpochSeconds() - 50 * 60 * 60);
-        user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-
-
 		final User user = UserFactory.createUser();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -137,10 +115,10 @@ public class O2PaymentServiceImplTest {
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
 		user.setUserGroup(userGroup);
-		user.setProvider("o2");
+		user.setProvider(O2);
 		user.setSegment(CONSUMER);
 		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(epochSeconds - 50*60*60);
+		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
 		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		
@@ -155,13 +133,6 @@ public class O2PaymentServiceImplTest {
 		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2_psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
 		
 		final int internalTxId = Integer.MAX_VALUE;
-
-        final Boolean smsNotify = Boolean.TRUE;
-        when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
-        final String message = "message";
-        when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull())).thenReturn(message);
-
-        final int internalTxId = Integer.MAX_VALUE;
 
         mockStatic(Utils.class);
         when(Utils.getBigRandomInt()).thenReturn(internalTxId);
@@ -271,7 +242,7 @@ public class O2PaymentServiceImplTest {
         community.setRewriteUrlParameter("o2");
         userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
-        user.setProvider("o2");
+        user.setProvider(O2);
         user.setSegment(CONSUMER);
         user.setContract(Contract.PAYG);
         user.setNextSubPayment(epochSeconds - 50 * 60 * 60);
@@ -399,7 +370,7 @@ public class O2PaymentServiceImplTest {
         community.setRewriteUrlParameter("o2");
         userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
-        user.setProvider("o2");
+        user.setProvider(O2);
         user.setSegment(CONSUMER);
         user.setContract(Contract.PAYG);
         user.setNextSubPayment(Utils.getEpochSeconds() - 50 * 60 * 60);
