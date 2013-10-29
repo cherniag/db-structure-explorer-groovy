@@ -244,6 +244,7 @@ INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, p
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore, provider, contract, segment, tariff, media_type, is_default) VALUES (229,7,'GBP',4,'5','creditCard',null,'',true, 'O2', 'PAYM', 'BUSINESS', '_3G', 'AUDIO', false);
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore, provider, contract, segment, tariff, media_type, is_default) VALUES (230,7,'GBP',4,'5','creditCard',null,'',true, 'NON_O2', null, null, '_3G', 'AUDIO', false);
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore, provider, contract, segment, tariff, media_type, is_default) VALUES (231,7,'GBP',4,'5','vfPsms',null,'3313',true, 'VF', null, null, '_3G', 'AUDIO', true);
+INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, subWeeks, subCost, paymentType, operator, shortCode, availableInStore, provider, contract, segment, tariff, media_type, is_default) VALUES (232,7,'GBP',4,'5','o2Psms',null,'',true, 'O2', 'PAYM', 'CONSUMER', '_3G', 'AUDIO', true);
 
 insert into tb_userStatus(i, name) values (4,'EULA'), (10,'SUBSCRIBED'), (11,'LIMITED');
 
