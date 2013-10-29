@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
 /**
@@ -214,7 +215,7 @@ public class UserAsm {
         accountCheckDTO.userToken = user.getToken();
         accountCheckDTO.rememberMeToken = rememberMeToken;
         accountCheckDTO.freeTrial = user.isOnFreeTrial();
-        accountCheckDTO.provider = user.getProvider();
+        accountCheckDTO.provider = isNotNull(user.getProvider()) ? user.getProvider().getKey() : null;
         accountCheckDTO.contract = user.getContract();
         accountCheckDTO.segment = user.getSegment();
         accountCheckDTO.tariff = user.getTariff();

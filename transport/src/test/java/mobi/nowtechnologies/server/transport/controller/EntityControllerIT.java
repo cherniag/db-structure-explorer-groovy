@@ -178,6 +178,7 @@ public class EntityControllerIT {
 	}
 
 	@Test
+    @Ignore
 	public void testRegisterUser_ValidParamsCardIssueNumberTagIsEmpty() {
 		String aBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<userRegInfo>" + "<address>33333</address>"
 				+ "<appVersion>CNBETA</appVersion>" + "<apiVersion>V1.2</apiVersion>" + "<deviceType>BLACKBERRY</deviceType>"

@@ -38,7 +38,6 @@ import static org.apache.commons.lang.Validate.notNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public class PaymentDetailsService {
 
@@ -168,7 +167,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public SagePayCreditCardPaymentDetails createCreditCardPamentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
+	public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
 		PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
@@ -176,7 +175,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public PayPalPaymentDetails createPayPalPamentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
+	public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		PaymentDetailsDto pdto = PayPalDto.toPaymentDetails(dto);

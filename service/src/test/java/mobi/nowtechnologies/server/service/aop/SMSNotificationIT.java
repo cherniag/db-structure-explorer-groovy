@@ -26,7 +26,6 @@ import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
@@ -239,11 +238,11 @@ public class SMSNotificationIT {
 		User user = UserFactory.createUser(new SagePayCreditCardPaymentDetails(), null);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		
-		Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPamentDetails(any(CreditCardDto.class), anyString(), anyInt());
+		Mockito.doReturn(null).when(paymentDetailsService).createCreditCardPaymentDetails(any(CreditCardDto.class), anyString(), anyInt());
 		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
-		paymentDetailsService.createCreditCardPamentDetails(creditCardDto, "O2", user.getId());
+		paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, "O2", user.getId());
 		
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
 	}

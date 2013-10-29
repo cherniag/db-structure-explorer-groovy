@@ -117,6 +117,7 @@ public class EntityController extends CommonController {
         return modelAndView;
     }
 
+    @Deprecated
     @RequestMapping(method = RequestMethod.POST, value = "/REGISTER_USER")
     public void registerUser(@RequestBody String body,
                              HttpServletResponse response,
@@ -393,6 +394,7 @@ public class EntityController extends CommonController {
         }
     }
 
+    @Deprecated
     @RequestMapping(method = RequestMethod.POST, value = {"/UPDATE_PAYMENT_DETAILS", "**/UPDATE_PAYMENT_DETAILS"})
     public void updatePaymentDetails(
             @RequestParam("BODY") String body,

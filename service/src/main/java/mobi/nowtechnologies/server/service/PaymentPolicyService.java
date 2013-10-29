@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class PaymentPolicyService {
 	private static final Logger LOGGER = 

@@ -65,7 +65,7 @@ public class OfferPaymentsPayPalController extends CommonController {
 		dto.setFailUrl(callbackUrl+FAIL_RESULT);
 		dto.setSuccessUrl(callbackUrl+SUCCESSFUL_RESULT);
 		
-		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPamentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
 		
 		return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
 	}

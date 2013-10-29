@@ -8,7 +8,6 @@ import java.util.Hashtable;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserRegInfo {
 	private String title;

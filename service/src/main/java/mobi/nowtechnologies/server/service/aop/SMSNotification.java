@@ -142,7 +142,7 @@ public class SMSNotification {
 		return object;
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPaymentDetails(..))")
 	protected void createdCreditCardPaymentDetails() {
 	}
 

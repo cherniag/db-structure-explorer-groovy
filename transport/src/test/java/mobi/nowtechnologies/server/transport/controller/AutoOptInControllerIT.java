@@ -129,7 +129,7 @@ public class AutoOptInControllerIT {
         assertEquals(false, accountCheckDTO.hasOffers);
         assertEquals(null, accountCheckDTO.activation);
         assertEquals("com.musicqubed.o2.autorenew.test", accountCheckDTO.appStoreProductId);
-        assertEquals(O2, accountCheckDTO.provider);
+        assertEquals(O2.getKey(), accountCheckDTO.provider);
         assertEquals(PAYM, accountCheckDTO.contract);
         assertEquals(CONSUMER, accountCheckDTO.segment);
         assertEquals(_3G, accountCheckDTO.tariff);
