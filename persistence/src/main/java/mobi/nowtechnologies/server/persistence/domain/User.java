@@ -390,8 +390,8 @@ public class User implements Serializable {
 		return !O2.equals(getProvider());
 	}
 
-    public boolean isnonVFUser() {
-        return !ProviderType.VF.toString().equals(this.provider);
+    public boolean isNonVFUser() {
+        return !ProviderType.VF.equals(this.provider);
     }
 
 	public boolean isO2CommunityUser() {
@@ -405,7 +405,7 @@ public class User implements Serializable {
     }
 
     public boolean isMonthlyPaidUser() {
-        return (isO2CommunityUser() && isNonO2User()) || (isVFNZCommunityUser() && isnonVFUser());
+        return (isO2CommunityUser() && isNonO2User()) || (isVFNZCommunityUser() && isNonVFUser());
     }
 
 	public boolean isO2PAYGConsumer() {
