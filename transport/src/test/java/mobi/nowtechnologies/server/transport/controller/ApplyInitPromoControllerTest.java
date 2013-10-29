@@ -48,9 +48,8 @@ public class ApplyInitPromoControllerTest {
         mobileUser = new User();
 
         doReturn(user).when(userServiceMock).findByNameAndCommunity(user.getUserName(), communityName);
-        doReturn(mobileUser).when(userServiceMock).findByNameAndCommunity(user.getMobile(), communityName);
         doNothing().when(updateO2UserTaskMock).handleUserUpdate(user);
-        AccountCheckDTO accountCheckDTO = new AccountCheckDTO().withUserName(userName).withUserToken(userToken);
+        AccountCheckDTO accountCheckDTO = new AccountCheckDTO().withUserName(userName).withUserToken(userToken).withUser(mobileUser);
         doReturn(accountCheckDTO).when(userServiceMock).applyInitPromoAndAccCheck(user, token, false);
         doReturn("rememberMeToken").when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 
@@ -77,7 +76,6 @@ public class ApplyInitPromoControllerTest {
         assertThat(actualAccountCheckDTO, is(accountCheckDTO));
 
         verify(userServiceMock, times(1)).findByNameAndCommunity(user.getUserName(), communityName);
-        verify(userServiceMock, times(1)).findByNameAndCommunity(user.getMobile(), communityName);
         verify(nowTechTokenBasedRememberMeServicesMock, times(1)).getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
         verify(updateO2UserTaskMock, times(0)).handleUserUpdate(user);
     }
