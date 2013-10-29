@@ -70,7 +70,7 @@ public class AutoOptInControllerIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String deviceUid = "b88106713409e92622461a876abcd74b";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        String otac = "otac";
+        String otac = null;
 
         String url = "/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN";
 
@@ -125,7 +125,7 @@ public class AutoOptInControllerIT {
         assertEquals(false, accountCheckDTO.fullyRegistred);
         assertEquals(2, accountCheckDTO.promotedWeeks);
         assertEquals(NONE, accountCheckDTO.oAuthProvider);
-        assertEquals(false, accountCheckDTO.hasPotentialPromoCodePromotion);
+        assertEquals(true, accountCheckDTO.hasPotentialPromoCodePromotion);
         assertEquals(false, accountCheckDTO.hasOffers);
         assertEquals(null, accountCheckDTO.activation);
         assertEquals("com.musicqubed.o2.autorenew.test", accountCheckDTO.appStoreProductId);
@@ -142,7 +142,7 @@ public class AutoOptInControllerIT {
         assertEquals(false, accountCheckDTO.eligibleForVideo);
         assertEquals(null, accountCheckDTO.lastSubscribedPaymentSystem);
         assertEquals(null, accountCheckDTO.subscriptionChanged);
-        assertEquals(true, accountCheckDTO.subjectToAutoOptIn);
+        assertEquals(false, accountCheckDTO.subjectToAutoOptIn);
 
     }
 
