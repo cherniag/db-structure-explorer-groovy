@@ -405,7 +405,7 @@ public class User implements Serializable {
     }
 
     public boolean isMonthlyPaidUser() {
-        return (isO2CommunityUser() && isnonO2User()) || (isVFNZCommunityUser() && isnonVFUser());
+        return (isO2CommunityUser() && isNonO2User()) || (isVFNZCommunityUser() && isnonVFUser());
     }
 
 	public boolean isO2PAYGConsumer() {
