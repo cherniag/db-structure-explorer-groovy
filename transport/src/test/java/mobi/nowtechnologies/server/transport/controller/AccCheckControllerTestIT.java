@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
@@ -211,7 +213,7 @@ public class AccCheckControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setProvider("non_vf");
+        user.setProvider(NON_VF);
         userService.updateUser(user);
 
         ResultActions resultActions = mockMvc.perform(
