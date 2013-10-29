@@ -102,7 +102,7 @@ public class AutoOptInControllerIT {
         assertEquals(null, accountCheckDTO.displayName);
         assertEquals("SUBSCRIBED", accountCheckDTO.status);
         assertEquals(userName, accountCheckDTO.userName);
-        assertEquals("IOS", accountCheckDTO.deviceUID);
+        assertEquals("b88106713409e92622461a876abcd74b", accountCheckDTO.deviceUID);
         assertEquals(storedToken, accountCheckDTO.userToken);
         assertEquals("IOS", accountCheckDTO.deviceType);
         assertNotNull(accountCheckDTO.rememberMeToken);
