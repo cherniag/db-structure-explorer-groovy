@@ -201,7 +201,7 @@ public class AccCheckControllerTestIT {
 
     @Test
     public void testAccountCheckForFVClient_HasAllDetails_Success() throws Exception {
-        String userName = "+642111111111";
+        String userName = "+642102247311";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
