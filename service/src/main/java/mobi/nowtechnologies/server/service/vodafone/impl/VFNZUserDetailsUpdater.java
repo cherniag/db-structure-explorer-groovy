@@ -5,10 +5,10 @@ import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
 import org.jsmpp.bean.DeliverSm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscriberData> implements UserDetailsUpdater<VFNZSubscriberData>{
     Logger LOGGER = LoggerFactory.getLogger(VFNZUserDetailsUpdater.class);
@@ -22,9 +22,6 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
         }
     };
 
-	public User setUserFieldsFromSubscriberData(User user, SubscriberData subsriberData) {
-        LOGGER.info("Attempt to set user fields from subscriber data [{}], [{}]", user, subsriberData);
-
     public void setUserService(UserService userService){
         userDetailsUpdater.setUserService(userService);
     }
@@ -34,6 +31,7 @@ public class VFNZUserDetailsUpdater extends BasicSMSMessageProcessor<VFNZSubscri
     }
 
     public User setUserFieldsFromSubscriberData(User user, VFNZSubscriberData subsriberData) {
+        LOGGER.info("Attempt to set user fields from subscriber data [{}], [{}]", user, subsriberData);
         VFNZSubscriberData data = (VFNZSubscriberData)subsriberData;
 
         if(data == null){
