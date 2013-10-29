@@ -8,7 +8,6 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class AccountCheckDTOFactory{
 
@@ -44,7 +43,7 @@ public class AccountCheckDTOFactory{
 		accountCheckDTO.promotedDevice = false;
 		accountCheckDTO.promotedWeeks = Integer.MIN_VALUE;
 		accountCheckDTO.promotionLabel = "promotionLabel";
-		accountCheckDTO.provider = O2;
+		accountCheckDTO.provider = O2.getKey();
 		accountCheckDTO.rememberMeToken = "rememberMeToken";
 		accountCheckDTO.segment = null;
 		accountCheckDTO.status = "status";
