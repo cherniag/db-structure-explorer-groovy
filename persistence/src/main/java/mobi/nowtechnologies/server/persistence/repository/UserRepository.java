@@ -178,7 +178,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             + "and u.mobile=?2 "
             + "and c=?3")
     long findByOtacMobileAndCommunity(String otac, String phoneNumber, Community community);
-    int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
 
     @Query(value = "select u from User u " +
             "join u.userGroup ug " +
