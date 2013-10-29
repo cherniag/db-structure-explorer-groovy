@@ -54,7 +54,17 @@ public class UserRepositoryIT {
 
 	@Resource(name = "paymentPolicyRepository")
 	private PaymentPolicyRepository paymentPolicyRepository;
-	
+
+    @Test
+    public void testFindByMobile(){
+        String phoneNumber = "+64279000456";
+
+        List<User> list = userRepository.findByMobile(phoneNumber);
+
+        assertEquals(1, list.size());
+        assertEquals(phoneNumber, list.get(0).getMobile());
+    }
+
 	@Test
 	@Rollback
 	public void testFindBefore48hExpireUsers() throws Exception {

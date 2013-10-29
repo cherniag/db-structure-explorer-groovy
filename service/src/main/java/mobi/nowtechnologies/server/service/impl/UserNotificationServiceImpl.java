@@ -411,20 +411,24 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
             LOGGER.info("Attempt to send activation pin sms async in memory");
 
-            if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
+            if(user.getProvider() != null){
+                if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
 
-                String smsPrefix = "sms.activation.pin.text";
+                    String smsPrefix = "sms.activation.pin.text";
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
+                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
 
-                if (wasSmsSentSuccessfully) {
-                    LOGGER.info("The activation pin sms was sent successfully");
-                    result = new AsyncResult<Boolean>(Boolean.TRUE);
+                    if (wasSmsSentSuccessfully) {
+                        LOGGER.info("The activation pin sms was sent successfully");
+                        result = new AsyncResult<Boolean>(Boolean.TRUE);
+                    } else {
+                        LOGGER.info("The activation pin sms wasn't sent");
+                    }
                 } else {
-                    LOGGER.info("The activation pin sms wasn't sent");
+                    LOGGER.info("The activation pin sms wasn't sent cause rejecting");
                 }
             } else {
-                LOGGER.info("The activation pin sms wasn't sent cause rejecting");
+                LOGGER.info("The activation pin sms wasn't sent cause user has not enough details(provider etc.)");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
@@ -519,7 +523,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         String msg = null;
 
-        String[] codes = new String[6];
+        String[] codes = new String[7];
 
         final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
@@ -538,7 +542,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         codes[3] = getCode(codes, 2, contract);
         codes[4] = getCode(codes, 3, deviceTypeName);
         codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
-        codes[5] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
+        codes[6] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
 
         for (int i = codes.length - 1; i >= 0; i--) {
             if (codes[i] != null) {

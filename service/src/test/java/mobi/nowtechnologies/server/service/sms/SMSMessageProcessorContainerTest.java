@@ -1,20 +1,17 @@
 package mobi.nowtechnologies.server.service.sms;
 
 import com.sentaca.spring.smpp.mo.MOMessage;
-import com.sentaca.spring.smpp.mt.MTMessage;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberData;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSubscriberDataParser;
-import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import org.jsmpp.bean.DeliverSm;
 import org.junit.Before;
 import org.junit.Test;
 import org.smslib.Message;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,198 +30,150 @@ public class SMSMessageProcessorContainerTest {
     }
 
     @Test
-    public void testProcessInboundMessage_Success() throws Exception {
+    public void testProcessInboundMessage_Supported_Success() throws Exception {
         final String source = "4003";
         final String dest = "+64212345678";
         final String msg = "onnet";
-        final String msgId = source + ":" + dest;
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor<VFNZSubscriberData> processor = spy(new Processor<VFNZSubscriberData>() {
-            {
-                messageParser = parserSpy;
-            }
+        final BasicSMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
             @Override
             public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
             }
-        });
-        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
-        queue.offer(processor);
-        fixture.processors.put(msgId, queue);
 
-        doReturn(data).when(parserSpy).parse(eq(msg));
-        doReturn(processor).when(fixture).getMessageProcessor(eq(moMessage));
+            @Override
+            public boolean supports(DeliverSm deliverSm) {
+                return true;
+            }
+        });
+        processor.withMessageParser(parserSpy);
+        fixture.setMessageProcessors(new ArrayList<SMSMessageProcessor>(Collections.singletonList(processor)));
+
+        doReturn(data).when(parserSpy).parse(eq(moMessage));
 
         fixture.processInboundMessage(null, moMessage);
 
-        verify(parserSpy, times(1)).parse(eq(msg));
+        verify(parserSpy, times(1)).parse(eq(moMessage));
         verify(processor, times(1)).process(eq(data));
-        verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
     }
 
     @Test
-    public void testProcessInboundMessage_NoParser_Success() throws Exception {
+    public void testProcessInboundMessage_Supported_NoParser_Success() throws Exception {
         final String source = "4003";
         final String dest = "+64212345678";
         final String msg = "onnet";
-        final String msgId = source + ":" + dest;
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor<MOMessage> processor = spy(new Processor<MOMessage>() {
+        final BasicSMSMessageProcessor<MOMessage> processor = spy(new BasicSMSMessageProcessor<MOMessage>() {
+            @Override
+            public boolean supports(DeliverSm deliverSm) {
+                return true;
+            }
+
             @Override
             public void process(MOMessage data) {
                 fixture.LOGGER.info("process msg");
             }
         });
-        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
-        queue.offer(processor);
-        fixture.processors.put(msgId, queue);
+        fixture.setMessageProcessors(new ArrayList<SMSMessageProcessor>(Collections.singletonList(processor)));
 
-        doReturn(data).when(parserSpy).parse(eq(msg));
-        doReturn(processor).when(fixture).getMessageProcessor(eq(moMessage));
+        doReturn(data).when(parserSpy).parse(eq(moMessage));
 
         fixture.processInboundMessage(null, moMessage);
 
-        verify(parserSpy, times(0)).parse(eq(msg));
+        verify(parserSpy, times(0)).parse(eq(moMessage));
         verify(processor, times(1)).process(eq(moMessage));
-        verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
     }
 
     @Test
-    public void testProcessInboundMessage_NotProcessor_Success() throws Exception {
+    public void testProcessInboundMessage_Supported_NoParser_NotProcessed_Success() throws Exception {
         final String source = "4003";
         final String dest = "+64212345678";
         final String msg = "onnet";
-        final String msgId = source + ":" + dest;
         final VFNZSubscriberData data = new VFNZSubscriberData();
         data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor<VFNZSubscriberData> processor = spy(new Processor<VFNZSubscriberData>() {
-            {
-                messageParser = parserSpy;
+        final SMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
+            @Override
+            public boolean supports(DeliverSm deliverSm) {
+                return true;
             }
+
             @Override
             public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
             }
         });
-        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
-        queue.offer(processor);
-        fixture.processors.put(msgId, queue);
+        fixture.setMessageProcessors(new ArrayList<SMSMessageProcessor>(Collections.singletonList(processor)));
 
-        doReturn(data).when(parserSpy).parse(eq(msg));
-        doReturn(null).when(fixture).getMessageProcessor(eq(moMessage));
+        doReturn(data).when(parserSpy).parse(eq(moMessage));
 
         fixture.processInboundMessage(null, moMessage);
 
-        verify(parserSpy, times(0)).parse(eq(msg));
-        verify(processor, times(0)).process(eq(data));
-        verify(fixture, times(1)).getMessageProcessor(eq(moMessage));
+        verify(parserSpy, times(0)).parse(eq(moMessage));
+        verify(processor, times(0)).process(any(VFNZSubscriberData.class));
     }
 
     @Test
-    public void testSetMessageProcessors_Success() throws Exception {
-        final String dest = "4003";
-        final String msgId = "*:4003";
-        final Processor processor = new Processor() {
-            @Override
-            public void process(Object data) {
-                fixture.LOGGER.info("process msg");
-            }
-        };
-        Map<String, Processor> processorMap = new HashMap<String, Processor>();
-        processorMap.put(dest, processor);
-
-        fixture.setMessageProcessors(processorMap);
-
-        assertEquals(1, fixture.processors.size());
-        assertEquals(1, ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).size());
-        Processor result = ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).poll();
-        assertEquals(result, processor);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetMessageProcessors_NullorEmptyMap_Failure() throws Exception {
-        Map<String, Processor> processorMap = null;
-
-        fixture.setMessageProcessors(processorMap);
-    }
-
-        @Test
-    public void testRegisterMessageProcessor_OneProcessor_Success() throws Exception {
+    public void testProcessInboundMessage_NotSupported_Success() throws Exception {
         final String source = "4003";
         final String dest = "+64212345678";
-        final String msg = "Test";
-        final String msgId = "4003:64212345678";
-        MTMessage mtMessage = new MTMessage(source, dest, msg);
-        final Processor processor = new Processor() {
-            @Override
-            public void process(Object data) {
-                fixture.LOGGER.info("process msg");
-            }
-        };
-
-        fixture.registerMessageProcessor(mtMessage, processor);
-
-        assertEquals(1, fixture.processors.size());
-        assertEquals(1, ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).size());
-        Processor result = ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).poll();
-        assertEquals(result, processor);
-    }
-
-    @Test
-    public void testRegisterMessageProcessor_TwoProcessors_Success() throws Exception {
-        final String source = "4003";
-        final String dest = "+64212345678";
-        final String msg = "Test";
-        final String msgId = "4003:64212345678";
-        MTMessage mtMessage = new MTMessage(source, dest, msg);
-        final Processor processor = new Processor() {
-            @Override
-            public void process(Object data) {
-                fixture.LOGGER.info("process msg");
-            }
-        };
-        final Processor processor1 = new Processor() {
-            @Override
-            public void process(Object data) {
-                fixture.LOGGER.info("process msg1");
-            }
-        };
-        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
-        queue.offer(processor1);
-        fixture.processors.put(msgId, queue);
-
-        fixture.registerMessageProcessor(mtMessage, processor);
-
-        assertEquals(1, fixture.processors.size());
-        assertEquals(2, ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).size());
-        Processor result = ((ArrayBlockingQueue<Processor>)fixture.processors.get(msgId)).poll();
-        assertEquals(result, processor1);
-    }
-
-    @Test
-    public void testGetMessageProcessor_Success() throws Exception {
-        final String source = "4003";
-        final String dest = "+64212345678";
-        final String msg = "Test";
-        final String msgId = "4003:64212345678";
+        final String msg = "onnet";
+        final VFNZSubscriberData data = new VFNZSubscriberData();
+        data.setProvider(ProviderType.VF);
         MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
-        final Processor processor = new Processor() {
+        final BasicSMSMessageProcessor<VFNZSubscriberData> processor = spy(new BasicSMSMessageProcessor<VFNZSubscriberData>() {
             @Override
-            public void process(Object data) {
+            public boolean supports(DeliverSm deliverSm) {
+                return false;
+            }
+
+            @Override
+            public void process(VFNZSubscriberData data) {
                 fixture.LOGGER.info("process msg");
             }
-        };
-        ArrayBlockingQueue<Processor> queue = new ArrayBlockingQueue<Processor>(5);
-        queue.offer(processor);
-        fixture.processors.put(msgId, queue);
+        });
+        fixture.setMessageProcessors(new ArrayList<SMSMessageProcessor>(Collections.singletonList(processor)));
 
-        Processor result = fixture.getMessageProcessor(moMessage);
+        doReturn(data).when(parserSpy).parse(eq(moMessage));
 
-        assertEquals(processor, result);
+        fixture.processInboundMessage(null, moMessage);
+
+        verify(parserSpy, times(0)).parse(eq(moMessage));
+        verify(processor, times(0)).process(any(VFNZSubscriberData.class));
     }
+
+    @Test
+    public void testProcessInboundMessage_NoParser_Supported_Success() throws Exception {
+        final String source = "4003";
+        final String dest = "+64212345678";
+        final String msg = "onnet";
+        final VFNZSubscriberData data = new VFNZSubscriberData();
+        data.setProvider(ProviderType.VF);
+        MOMessage moMessage = new MOMessage(source, dest, msg, Message.MessageEncodings.ENC7BIT);
+        DeliverSm deliverSm = new DeliverSm();
+        final BasicSMSMessageProcessor<DeliverSm> processor = spy(new BasicSMSMessageProcessor<DeliverSm>() {
+            @Override
+            public void process(DeliverSm data) {
+                fixture.LOGGER.info("process msg");
+            }
+
+            @Override
+            public boolean supports(DeliverSm deliverSm) {
+                return true;
+            }
+        });
+        fixture.setMessageProcessors(new ArrayList<SMSMessageProcessor>(Collections.singletonList(processor)));
+
+        doReturn(data).when(parserSpy).parse(eq(moMessage));
+
+        fixture.processStatusReportMessage(deliverSm);
+
+        verify(parserSpy, times(0)).parse(eq(moMessage));
+        verify(processor, times(1)).process(eq(deliverSm));
+    }
+
 }

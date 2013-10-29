@@ -233,4 +233,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "where " +
             "u.id = ?1 ")
     int deleteUser(int userId);
+
+    @Query(value="select u from User u "
+            + "where u.mobile = ?1")
+    List<User> findByMobile(String phoneNumber);
 }

@@ -44,10 +44,11 @@ public class SMPPSubmitRegisteredTestIT {
         try {
 
 //            String phoneNumber = "+6425321321";
-            String phoneNumber = "+64279000456";
+//            String phoneNumber = "+64279000456";
+            String phoneNumber = "+642102247311";
 
-            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
-                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
+            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "4003", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
+                    (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
 
             /*
              * you can save the submitted message to database.

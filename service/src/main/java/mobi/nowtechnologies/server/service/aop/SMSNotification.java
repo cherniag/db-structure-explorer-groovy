@@ -213,7 +213,7 @@ public class SMSNotification {
 		return object;
 	}
 
-    @Around("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    @Around("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(..))")
     public Object sendSmsPinForVFNZ(ProceedingJoinPoint joinPoint) throws Throwable {
         Object object = joinPoint.proceed();
         User user = (User) joinPoint.getArgs()[0];
