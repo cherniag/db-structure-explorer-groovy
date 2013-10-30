@@ -71,7 +71,8 @@
 	<bean class="mobi.nowtechnologies.server.web.controller.PaymentsPsmsController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
-        <property name="paymentService" ref="service.o2PaymentService"/>
+        <property name="o2PaymentService" ref="service.o2PaymentService"/>
+        <property name="vfPaymentService" ref="service.vfPaymentService"/>
         <property name="userRepository" ref="userRepository"/>
     </bean>
 
