@@ -3,10 +3,12 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
@@ -57,6 +59,7 @@ public class PaymentsController extends CommonController {
 
     private UserService userService;
     private CommunityService communityService;
+    private PromotionService promotionService;
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
         User user = userService.findById(getUserId());
@@ -102,6 +105,7 @@ public class PaymentsController extends CommonController {
 
         PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
+        mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user, community));
 
         return mav;
     }
@@ -240,6 +244,20 @@ public class PaymentsController extends CommonController {
     	
         return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale);
     }
+    
+    private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {
+    	if ( user.isLimited() ) {
+    		
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			long now = System.currentTimeMillis();
+			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
+			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
+				return true;
+			}
+    	}
+    	
+    	return false;
+    }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
         this.paymentDetailsService = paymentDetailsService;
@@ -252,4 +270,8 @@ public class PaymentsController extends CommonController {
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
     }
+
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
+	}
 }

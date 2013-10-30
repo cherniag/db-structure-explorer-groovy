@@ -53,6 +53,7 @@
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="communityService" ref="service.communityService"/>
     	<property name="userService" ref="service.UserService"/>
+    	<property name="promotionService" ref="service.PromotionService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
