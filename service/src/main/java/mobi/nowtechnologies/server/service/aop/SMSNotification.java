@@ -213,12 +213,22 @@ public class SMSNotification {
 		return object;
 	}
 
-    @Around("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(..))")
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(..))")
+    protected void populateSubscriberData() {
+    }
+
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    protected void activatePhoneNumber() {
+    }
+
+    @Around("activatePhoneNumber() || populateSubscriberData()")
     public Object sendSmsPinForVFNZ(ProceedingJoinPoint joinPoint) throws Throwable {
         Object object = joinPoint.proceed();
         User user = (User) joinPoint.getArgs()[0];
         try {
-            userNotificationService.sendActivationPinSMS(user);
+            if(user.getProvider() != null){
+                userNotificationService.sendActivationPinSMS(user);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
