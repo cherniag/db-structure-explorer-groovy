@@ -221,7 +221,7 @@ public class UserAsm {
         accountCheckDTO.tariff = user.getTariff();
         accountCheckDTO.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 
-        accountCheckDTO.canGetVideo = true;
+        accountCheckDTO.canGetVideo = user.isO2CommunityUser();
         accountCheckDTO.canPlayVideo = user.canPlayVideo();
         accountCheckDTO.canActivateVideoTrial = canActivateVideoTrial;
         accountCheckDTO.hasAllDetails = user.hasAllDetails();

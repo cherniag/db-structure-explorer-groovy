@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -228,5 +227,6 @@ public class AccCheckControllerTestIT {
         String resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+        assertTrue(resultXml.contains("<canGetVideo>false</canGetVideo>"));
     }
 }
