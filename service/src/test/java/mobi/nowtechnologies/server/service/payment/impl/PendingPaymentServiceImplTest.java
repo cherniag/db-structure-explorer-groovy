@@ -1,14 +1,14 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao;
-import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Assert;
@@ -24,14 +24,8 @@ import org.mockito.stubbing.Answer;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -112,7 +106,7 @@ public class PendingPaymentServiceImplTest {
 		Assert.assertNotNull(createPendingPayments);
 		Assert.assertEquals(users.size() - 1, createPendingPayments.size());
 		
-		verify(userService, times(1)).unsubscribeUser(any(User.class), anyString());
+		verify(userService, times(1)).unsubscribeUser(eq(users.get(7).getId()), any(UnsubscribeDto.class));
 	}
 
 	@Test

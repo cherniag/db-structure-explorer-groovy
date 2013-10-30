@@ -35,8 +35,8 @@ public class SMPPSubmitRegisteredTestIT {
 
 
         try {
-//            session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQPRD", "u8VrD9ka", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-            session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQ", "ZnFeSn77", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+            session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQPRD", "u8VrD9ka", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+//            session.connectAndBind("localhost", 5000, new BindParameter(BindType.BIND_TRX, "MQ", "ZnFeSn77", "SMPP", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
         } catch (IOException e) {
             System.err.println("Failed connect and bind to host");
             e.printStackTrace();
@@ -49,7 +49,7 @@ public class SMPPSubmitRegisteredTestIT {
 //            String phoneNumber = "+642108398674";
             String phoneNumber = "+642108398674";
 
-            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "5804", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
+            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "3313", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, phoneNumber, new ESMClass(),
                     (byte)0, (byte)0, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, ZERO, (byte)0, "It is another 123".getBytes());
 
             /*
