@@ -18,8 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -96,17 +95,21 @@ public class VFNZProviderServiceImplTest {
     @Test
     public void testGetSubscriberData_Success() throws Exception {
         final String phoneNumber = "+642111111111";
-        final Processor processor = new Processor() {
+        final Processor processor = spy(new Processor() {
             @Override
             public void process(Object data) {
+                VFNZSubscriberData subscriberData = (VFNZSubscriberData)data;
+                Assert.assertEquals(null, subscriberData.getProvider());
+                Assert.assertEquals(phoneNumber, subscriberData.getPhoneNumber());
                 fixture.LOGGER.info("process msg");
             }
-        };
+        });
 
-        Mockito.doReturn(null).when(gatewayService).send(eq(fixture.providerNumber), eq(phoneNumber), eq("GET_PROVIDER"), any(Processor.class));
+        Mockito.doReturn(null).when(gatewayService).send(eq(fixture.providerNumber), eq(phoneNumber), eq("GET_PROVIDER"));
 
         fixture.getSubscriberData(phoneNumber, processor);
 
-        Mockito.verify(gatewayService, Mockito.times(1)).send(eq(phoneNumber), eq("GET_PROVIDER"), eq(fixture.providerNumber), any(Processor.class));
+        Mockito.verify(gatewayService, Mockito.times(1)).send(eq(phoneNumber), eq("GET_PROVIDER"), eq(fixture.providerNumber));
+        Mockito.verify(processor, Mockito.times(1)).process(any(VFNZSubscriberData.class));
     }
 }

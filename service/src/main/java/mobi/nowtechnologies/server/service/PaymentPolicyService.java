@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class PaymentPolicyService {
 	private static final Logger LOGGER = 
@@ -52,7 +51,7 @@ public class PaymentPolicyService {
 	}
 	
 	public PaymentPolicy getPaymentPolicy(Integer id){
-		return paymentPolicyRepository.findOne(id.shortValue());
+		return paymentPolicyRepository.findOne(id);
 	}
 
 	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, byte communityId){
@@ -84,4 +83,9 @@ public class PaymentPolicyService {
 		LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
 		return offerPaymentPolicyDtos;
 	}
+
+    @Transactional(readOnly = true)
+    public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
+        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(user.getUserGroup().getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff());
+    }
 }

@@ -45,6 +45,10 @@ public class SMSNotification {
 	protected void startO2PSMSPayment() {
 	}
 
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPayment(..))")
+    protected void startVFPSMSPayment() {
+    }
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
 	protected void startMigPayment() {
 	}
@@ -55,7 +59,7 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment()")
+	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
@@ -142,7 +146,7 @@ public class SMSNotification {
 		return object;
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPaymentDetails(..))")
 	protected void createdCreditCardPaymentDetails() {
 	}
 
@@ -213,12 +217,22 @@ public class SMSNotification {
 		return object;
 	}
 
-    @Around("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(..))")
+    protected void populateSubscriberData() {
+    }
+
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    protected void activatePhoneNumber() {
+    }
+
+    @Around("activatePhoneNumber() || populateSubscriberData()")
     public Object sendSmsPinForVFNZ(ProceedingJoinPoint joinPoint) throws Throwable {
         Object object = joinPoint.proceed();
         User user = (User) joinPoint.getArgs()[0];
         try {
-            userNotificationService.sendActivationPinSMS(user);
+            if(user.getProvider() != null){
+                userNotificationService.sendActivationPinSMS(user);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

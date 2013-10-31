@@ -42,7 +42,9 @@ body {
 .rel { position: relative; }
 
 .bottom4 {margin-bottom: 4px;}
+.bottom5 {margin-bottom: 5px;}
 .bottom6 {margin-bottom: 6px;}
+.bottom7 {margin-bottom: 7px;}
 .bottom8 {margin-bottom: 8px;}
 .bottom15 {margin-bottom: 15px;}
 .bottom25 {margin-bottom: 25px;}
@@ -121,9 +123,9 @@ body {
     display: inline-block;
     font-size: 12px;
     font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
-    height: 25px;
-    line-height: 26px;
-    padding: 0 10px 0 10px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 6px;
     text-align: center;
     text-decoration: none;
 }
@@ -143,11 +145,11 @@ body {
 }
 
 .consumerUserHeader2 {
-	padding: 14px 5px 9px;
+	padding: 10px 5px 9px;
 }
 
 .consumerUserHeader2 > div.vfL {
-	margin-top: 8px;
+	margin-top: 4px;
 }
 
 .tapArea {
@@ -250,7 +252,7 @@ body {
     color: #ffffff;
     display: block;
     font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: lighter;
     height: 48px;
     line-height: 48px;
@@ -355,7 +357,7 @@ body {
 }
 
 .terms {
-    margin-top:12px;
+    margin-top:9px;
     color:#767676;
     font-family: vodafoneLight, Helvetica, Arial, sans-serif;
     font-size:12px;
@@ -369,7 +371,7 @@ body {
 
 .unsubscribeText {
 	color: #767676;
-	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	line-height: 130%;
 	margin-top: 10px;

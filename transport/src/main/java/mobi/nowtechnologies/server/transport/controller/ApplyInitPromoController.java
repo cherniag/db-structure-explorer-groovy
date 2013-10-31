@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
@@ -81,22 +83,20 @@ public class ApplyInitPromoController extends CommonController {
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
 
-            boolean updateContractAndProvider = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
+            boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
             user = userService.findByNameAndCommunity(userName, communityName);
 
             if (isNull(user)) throw new UserCredentialsException("Bad user credentials");
 
-            User mobileUser = userService.findByNameAndCommunity(user.getMobile(), communityName);
+            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, token, isMajorApiVersionNumberLessThan4);
 
-            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, mobileUser, token, updateContractAndProvider);
+            user = (User) accountCheckDTO.user;
 
             final Object[] objects = new Object[]{accountCheckDTO};
             precessRememberMeToken(objects);
 
-            user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
-
-            if (isMajorApiVersionNumberLessThan(VERSION_4, apiVersion)) {
+            if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
             }
 
@@ -127,6 +127,28 @@ public class ApplyInitPromoController extends CommonController {
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) {
         return (Response) applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion).getModelMap().get(MODEL_NAME);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO",
+            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO",
+            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO.json"
+    })
+    public ModelAndView applyO2PromotionAcceptHeaderSupport(
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {

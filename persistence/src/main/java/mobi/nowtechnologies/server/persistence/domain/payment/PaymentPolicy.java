@@ -8,8 +8,8 @@ import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
@@ -17,9 +17,11 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
 
 @Entity
@@ -36,13 +38,13 @@ public class PaymentPolicy {
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
     public static enum Fields {
-        communityId, operator, paymentType
+        communityId
     }
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-    @Column(name = "i", length = 5, nullable = false)
-    private short id;
+    @Column(name = "i")
+    private Integer id;
 
     @Column(name = "communityID", length = 10, nullable = false, insertable = false, updatable = false)
     private Integer communityId;
@@ -78,8 +80,9 @@ public class PaymentPolicy {
     @Column(name="app_store_product_id")
     private String appStoreProductId;
 
-    @Transient
-    private ProviderType providerType;
+    @Enumerated(EnumType.STRING)
+    @Column(name="provider", columnDefinition = "varchar(255)")
+    private ProviderType provider;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
@@ -109,11 +112,14 @@ public class PaymentPolicy {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
-    public void setId(short id) {
+    @Column(name = "is_default")
+    private boolean isDefault;
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -274,27 +280,6 @@ public class PaymentPolicy {
         this.contentDescription = contentDescription;
     }
 
-    public ProviderType getProviderAsEnum() {
-        return providerType;
-    }
-
-    public void setProviderAsEnum(ProviderType providerType) {
-        this.providerType = providerType;
-    }
-
-    @Access(AccessType.PROPERTY)
-    @Column(name="provider", columnDefinition = "char(255)")
-    public String getProvider() {
-        return  providerType != null ? providerType.toString() : null;
-    }
-
-    public void setProvider(String provider) {
-        for(ProviderType providerType : ProviderType.values()){
-            if(providerType.toString().equals(provider))
-                this.providerType = providerType;
-        }
-    }
-
     public Tariff getTariff() {
         return tariff;
     }
@@ -311,23 +296,12 @@ public class PaymentPolicy {
         this.mediaType = mediaType;
     }
 
-    public PaymentPolicy withTariff(Tariff tariff){
-        setTariff(tariff);
-        return this;
+    public ProviderType getProvider() {
+        return provider;
     }
 
-    public PaymentPolicy withMediaType(MediaType mediaType){
-        setMediaType(mediaType);
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "PaymentPolicy [id=" + id + ", communityId=" + communityId + ", subcost=" + subcost + ", subweeks=" + subweeks + ", operator=" + operator + ", operatorId=" + operatorId
-                + ", paymentType=" + paymentType + ", operatorName=" + operatorName + ", shortCode=" + shortCode + ", currencyISO=" + currencyISO + ", availableInStore=" + availableInStore
-                + ", appStoreProductId=" + appStoreProductId + ", providerType=" + providerType + ", segment=" + segment + ", contract=" + contract + ", tariff="+ tariff
-                + ", contentCategory=" + contentCategory+ ", contentType=" + contentType + ", subMerchantId=" + subMerchantId +
-                ", contentDescription=" + contentDescription + ", mediaType="+ mediaType + "]";
+    public void setProvider(ProviderType providerType) {
+        provider = providerType;
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
@@ -353,12 +327,87 @@ public class PaymentPolicy {
     public boolean is4GVideoAudioSubscription(){
         return Tariff._4G.equals(tariff) && VIDEO_AND_AUDIO.equals(mediaType);
     }
-    
+
     public boolean isVideoAndAudio4GSubscription() {// jstl can not call methods starting with numbers
     	return is4GVideoAudioSubscription();
     }
 
     public boolean isAudioSubscription() {
         return AUDIO.equals(mediaType);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public PaymentPolicy withId(Integer id){
+        setId(id);
+        return this;
+    }
+
+    public PaymentPolicy withTariff(Tariff tariff){
+        setTariff(tariff);
+        return this;
+    }
+
+    public PaymentPolicy withMediaType(MediaType mediaType){
+        setMediaType(mediaType);
+        return this;
+    }
+
+    public PaymentPolicy withDefault(boolean aDefault){
+        this.setDefault(aDefault);
+        return this;
+    }
+
+    public PaymentPolicy withPaymentType(String paymentType){
+        setPaymentType(paymentType);
+        return this;
+    }
+
+    public PaymentPolicy withSegment(SegmentType segment){
+        setSegment(segment);
+        return this;
+    }
+
+    public PaymentPolicy withContract(Contract contract){
+        setContract(contract);
+        return this;
+    }
+
+    public PaymentPolicy withProvider(ProviderType provider){
+        setProvider(provider);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("communityId", communityId)
+                .append("subcost", subcost)
+                .append("subweeks", subweeks)
+                .append("operatorId", operatorId)
+                .append("paymentType", paymentType)
+                .append("operatorName", operatorName)
+                .append("shortCode", shortCode)
+                .append("currencyISO", currencyISO)
+                .append("availableInStore", availableInStore)
+                .append("appStoreProductId", appStoreProductId)
+                .append("provider", provider)
+                .append("segment", segment)
+                .append("contract", contract)
+                .append("contentCategory", contentCategory)
+                .append("contentType", contentType)
+                .append("subMerchantId", subMerchantId)
+                .append("contentDescription", contentDescription)
+                .append("tariff", tariff)
+                .append("mediaType", mediaType)
+                .append("isDefault", isDefault)
+                .toString();
     }
 }

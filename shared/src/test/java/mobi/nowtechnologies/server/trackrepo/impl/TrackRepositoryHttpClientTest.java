@@ -411,11 +411,6 @@ public class TrackRepositoryHttpClientTest {
 		verify(spy, times(1)).getSecuredHeaders();
 	}
 
-	/**
-	 * @return
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 */
 	protected HttpClient getFailedHttpClient() throws IOException, ClientProtocolException {
 		HttpClient httpClient = mock(HttpClient.class);
 		HttpResponse failedResponse = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, 500, "OK"));
@@ -436,11 +431,6 @@ public class TrackRepositoryHttpClientTest {
 		verify(spy, times(1)).getSecuredHeaders();
 	}
 
-	/**
-	 * @return
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 */
 	protected HttpClient getMockedHttpClientWithOneTrack() throws IOException, ClientProtocolException {
 		HttpClient httpClient = mock(HttpClient.class);
 		HttpResponse successfulPullResponse = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK")) {

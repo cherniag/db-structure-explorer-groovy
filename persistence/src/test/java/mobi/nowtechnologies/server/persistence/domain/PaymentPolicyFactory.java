@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 
@@ -35,6 +36,7 @@ public class PaymentPolicyFactory
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
 		paymentPolicy.setShortCode("shortCode");
         paymentPolicy.setAvailableInStore(false);
+        paymentPolicy.setPaymentType(PaymentDetails.O2_PSMS_TYPE);
 		return paymentPolicy;
 	}
 

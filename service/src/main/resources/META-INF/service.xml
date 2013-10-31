@@ -71,6 +71,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="mobileProviderService" ref="service.O2ClientService" />
         <property name="userDetailsUpdater" ref="service.O2UserDetailsUpdater" />
         <property name="otacValidationService" ref="service.OtacValidationService" />
+        <property name="userGroupRepository" ref="userGroupRepository" />
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
@@ -83,11 +84,25 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="vf_nz.service.MobileProviderService" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZProviderServiceImpl">
         <property name="gatewayService" ref="vf_nz.service.VFNZSMSGatewayService" />
         <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
-        <property name="subscriberDataParser" ref="vf_nz.service.SubsriberDataParser" />
         <property name="deviceService" ref="service.DeviceService" />
     </bean>
 
-    <bean id="vf_nz.service.UserDetailsUpdater" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUserDetailsUpdater"/>
+    <bean id="vf_nz.service.VFNZUnsubscribeProccessor" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor">
+        <property name="supportedNumbers">
+            <set>
+                <value>${vf.nz.smpp.service.source.address.unsubscribe}</value>
+                <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
+                <value>${vf.nz.smpp.service.source.address.billing.1_5gbp}</value>
+            </set>
+        </property>
+        <property name="userService" ref="vf_nz.service.UserService" />
+    </bean>
+
+    <bean id="vf_nz.service.UserDetailsUpdater" class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUserDetailsUpdater">
+        <property name="providerNumber" value="${vf.nz.smpp.service.source.address.provider}" />
+        <property name="userService" ref="vf_nz.service.UserService" />
+        <property name="messageParser" ref="vf_nz.service.SubsriberDataParser" />
+    </bean>
 
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>

@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.web.controller;
 import java.util.Locale;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 
@@ -22,7 +21,6 @@ public class VideoTrialController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(VideoTrialController.class);
 	
 	private UserService userService;
-	private PromotionService promotionService;
 	
 	@RequestMapping(value = "videotrial.html", method = RequestMethod.GET)
     public ModelAndView getVideoFreeTrial(
@@ -54,7 +52,7 @@ public class VideoTrialController extends CommonController {
         mav.addObject("returnUrl", returnUrl);
         
         if ( userService.canActivateVideoTrial(user) ) {
-        	promotionService.activateVideoAudioFreeTrial(user);
+        	userService.activateVideoAudioFreeTrialAndAutoOptIn(user);
 		} else {
 			// free trial was already activated
         	LOGGER.warn("VideoFreeTrial was already activated for user ({}) but the page was called", userId);
@@ -69,10 +67,6 @@ public class VideoTrialController extends CommonController {
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	public void setPromotionService(PromotionService promotionService) {
-		this.promotionService = promotionService;
 	}
 	
 }

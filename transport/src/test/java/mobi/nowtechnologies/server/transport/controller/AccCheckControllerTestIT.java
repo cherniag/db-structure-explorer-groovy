@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
@@ -201,7 +202,7 @@ public class AccCheckControllerTestIT {
 
     @Test
     public void testAccountCheckForFVClient_HasAllDetails_Success() throws Exception {
-        String userName = "+642111111111";
+        String userName = "+642102247311";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
@@ -211,7 +212,7 @@ public class AccCheckControllerTestIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setProvider("non_vf");
+        user.setProvider(NON_VF);
         userService.updateUser(user);
 
         ResultActions resultActions = mockMvc.perform(
@@ -226,5 +227,6 @@ public class AccCheckControllerTestIT {
         String resultXml = aHttpServletResponse.getContentAsString();
 
         assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+        assertTrue(resultXml.contains("<canGetVideo>false</canGetVideo>"));
     }
 }

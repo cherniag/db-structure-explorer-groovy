@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.web.controller;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
@@ -13,7 +16,8 @@ import junit.framework.TestCase;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -173,9 +177,9 @@ public class PaymentsControllerIT extends TestCase {
 		User user = new User();
 		user.setId(userId);
 		if ( userId == 101 ) {
-			user.setProvider("o2");
-			user.setContract(Contract.PAYM);
-			user.setSegment(SegmentType.CONSUMER);
+			user.setProvider(O2);
+			user.setContract(PAYM);
+			user.setSegment(CONSUMER);
 		}
 		Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
 		SecurityContext securityContext = new SecurityContextImpl();

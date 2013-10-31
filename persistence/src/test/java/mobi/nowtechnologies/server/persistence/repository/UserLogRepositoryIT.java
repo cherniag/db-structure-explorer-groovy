@@ -1,20 +1,19 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.server.persistence.domain.UserLog;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -51,5 +50,5 @@ public class UserLogRepositoryIT {
 		long count = userLogRepository.countByPhoneNumberAndDay(phoneNumber, userLogType, dayOfDate);
 		
 		assertEquals(2, count);
-	}	
+	}
 }

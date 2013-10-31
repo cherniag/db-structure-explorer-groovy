@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 @DiscriminatorColumn(name = "paymentType", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "tb_paymentDetails")
 @NamedQuery(name = PaymentDetails.FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE, query = "select paymentDetails from PaymentDetails paymentDetails join paymentDetails.submittedPayments submittedPayments where paymentDetails.owner.id=?1 and submittedPayments.type=?2 order by paymentDetails.creationTimestampMillis desc")
-public abstract class PaymentDetails {
+public class PaymentDetails {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetails.class);
 
@@ -179,7 +180,9 @@ public abstract class PaymentDetails {
 		this.promotionPaymentPolicy = promotionPaymentPolicy;
 	}
 	
-	public abstract String getPaymentType();
+	public String getPaymentType(){
+        return UNKNOW_TYPE;
+    }
 
 	public User getOwner() {
 		return owner;
@@ -215,10 +218,24 @@ public abstract class PaymentDetails {
         setActivated(activated);
         return this;
     }
-	
-	@Override
-	public String toString() {
-		return "i=" + i + ", activated=" + activated + ", creationTimestampMillis=" + creationTimestampMillis + ", descriptionError=" + descriptionError + ", disableTimestampMillis="
-		+ disableTimestampMillis + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries + ", retriesOnError=" + retriesOnError;
-	}
+
+    public PaymentDetails withOwner(User user) {
+        setOwner(user);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("activated", activated)
+                .append("madeRetries", madeRetries)
+                .append("retriesOnError", retriesOnError)
+                .append("lastPaymentStatus", lastPaymentStatus)
+                .append("descriptionError", descriptionError)
+                .append("errorCode", errorCode)
+                .append("creationTimestampMillis", creationTimestampMillis)
+                .append("disableTimestampMillis", disableTimestampMillis)
+                .toString();
+    }
 }

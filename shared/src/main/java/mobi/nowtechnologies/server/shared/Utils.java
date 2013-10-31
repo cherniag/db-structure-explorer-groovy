@@ -200,7 +200,7 @@ public class Utils {
         if(matcher.matches()){
             majorVersionNumber = Integer.valueOf(matcher.group(1));
         }else{
-            throw new RuntimeException("Couldn't get major version number");
+            throw new RuntimeException("Couldn't get major version number for [" + version +"] version");
         }
 
         return majorVersionNumber;

@@ -1,10 +1,26 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -21,12 +37,11 @@ import java.util.List;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
+import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 
 /**
- * 
  * Testing to see if we have messages for all users - the idea is to have all user types from app
  * and to see messages sent to migservice
- *
  */
 @RunWith(PowerMockRunner.class)
 public class UserNotificationServiceImplTest2 {
@@ -218,7 +233,7 @@ public class UserNotificationServiceImplTest2 {
 		return pp;
 	}
 	
-	private User createUser(String community, String provider, SegmentType st,Contract c, String device, Tariff tariff,final String paymentType) {
+	private User createUser(String community, ProviderType provider, SegmentType st,Contract c, String device, Tariff tariff,final String paymentType) {
 		User user = new User();
 
 		user.setProvider( provider );
@@ -254,98 +269,98 @@ public class UserNotificationServiceImplTest2 {
 		return user;
 	}
 
-    private User createUser(String provider, SegmentType st,Contract c, String device, Tariff tariff) {
+    private User createUser(ProviderType provider, SegmentType st,Contract c, String device, Tariff tariff) {
 
-        return createUser("o2", provider, st, c, device, tariff, "o2Psms");
+        return createUser(O2_COMMUNITY_REWRITE_URL, provider, st, c, device, tariff, "o2Psms");
     }
 	
 	private void addVideoUsers(List<User> ret) {
 		//o2 business
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.NONE, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.ANDROID, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.BLACKBERRY, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.IOS, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.J2ME, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.SYMBIAN, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYG, DeviceType.WINDOWS_PHONE, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYG, DeviceType.NONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, NONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, ANDROID, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, BLACKBERRY, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, IOS, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, J2ME, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, SYMBIAN, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYG, WINDOWS_PHONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYG, NONE, Tariff._4G) );
 				
 		//o2 PAYM
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.NONE, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.ANDROID, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.BLACKBERRY, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.IOS, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.J2ME, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.SYMBIAN, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.WINDOWS_PHONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, NONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, ANDROID, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, BLACKBERRY, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, IOS, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, J2ME, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, SYMBIAN, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, WINDOWS_PHONE, Tariff._4G) );
 		
 		//o2 PAYG
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.NONE, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.BLACKBERRY, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.IOS, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.J2ME, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.SYMBIAN, Tariff._4G) );
-		ret.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.WINDOWS_PHONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, NONE, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, ANDROID, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, BLACKBERRY, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, IOS, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, J2ME, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, SYMBIAN, Tariff._4G) );
+		ret.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, WINDOWS_PHONE, Tariff._4G) );
 				
 		// non-o2
-		ret.add( createUser("non-o2", SegmentType.CONSUMER, null, DeviceType.NONE, Tariff._4G) );
-		ret.add( createUser("non-o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, Tariff._4G) );
-		ret.add( createUser("non-o2", null, null, DeviceType.WINDOWS_PHONE, Tariff._4G) );
-		ret.add( createUser("non-o2", null, null, DeviceType.ANDROID, Tariff._4G) );
+		ret.add( createUser(NON_O2, SegmentType.CONSUMER, null, NONE, Tariff._4G) );
+		ret.add( createUser(NON_O2, SegmentType.CONSUMER, Contract.PAYG, ANDROID, Tariff._4G) );
+		ret.add( createUser(NON_O2, null, null, WINDOWS_PHONE, Tariff._4G) );
+		ret.add( createUser(NON_O2, null, null, ANDROID, Tariff._4G) );
 	}
 	
 	private void addAudioUsers(List<User> list) {
 		//o2 business
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.NONE, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.ANDROID, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.BLACKBERRY, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.IOS, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.J2ME, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.SYMBIAN, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYM, DeviceType.WINDOWS_PHONE, null) );
-		list.add( createUser("o2", SegmentType.BUSINESS, Contract.PAYG, DeviceType.NONE, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, NONE, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, ANDROID, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, BLACKBERRY, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, IOS, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, J2ME, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, SYMBIAN, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYM, WINDOWS_PHONE, null) );
+		list.add( createUser(O2, SegmentType.BUSINESS, Contract.PAYG, NONE, null) );
 		
 		//o2 PAYM
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.NONE, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.ANDROID, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.BLACKBERRY, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.IOS, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.J2ME, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.SYMBIAN, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYM, DeviceType.WINDOWS_PHONE, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, NONE, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, ANDROID, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, BLACKBERRY, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, IOS, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, J2ME, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, SYMBIAN, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYM, WINDOWS_PHONE, null) );
 		
 		//o2 PAYG
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.NONE, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.BLACKBERRY, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.IOS, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.J2ME, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.SYMBIAN, null) );
-		list.add( createUser("o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.WINDOWS_PHONE, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, NONE, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, ANDROID, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, BLACKBERRY, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, IOS, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, J2ME, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, SYMBIAN, null) );
+		list.add( createUser(O2, SegmentType.CONSUMER, Contract.PAYG, WINDOWS_PHONE, null) );
 		
 		// non-o2
-		list.add( createUser("non-o2", SegmentType.CONSUMER, null, DeviceType.NONE, null) );
-		list.add( createUser("non-o2", SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, null) );
-		list.add( createUser("non-o2", null, null, DeviceType.WINDOWS_PHONE, null) );
-		list.add( createUser("non-o2", null, null, DeviceType.ANDROID, null) );
+		list.add( createUser(NON_O2, SegmentType.CONSUMER, null, DeviceType.NONE, null) );
+		list.add( createUser(NON_O2, SegmentType.CONSUMER, Contract.PAYG, DeviceType.ANDROID, null) );
+		list.add( createUser(NON_O2, null, null, DeviceType.WINDOWS_PHONE, null) );
+		list.add( createUser(NON_O2, null, null, DeviceType.ANDROID, null) );
 
 		// vf_nz on-net
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.NONE, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.ANDROID, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.IOS, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.J2ME, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.SYMBIAN, null, "vfPSms") );
-        list.add( createUser("vf_nz", "on-net", null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
 
         // vf_nz off-net
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.NONE, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.ANDROID, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.IOS, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.J2ME, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.SYMBIAN, null, "vfPSms") );
-        list.add( createUser("vf_nz", "off-net", null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
 	}
 }

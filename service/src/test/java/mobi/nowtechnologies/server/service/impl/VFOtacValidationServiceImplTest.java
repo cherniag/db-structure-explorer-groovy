@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.VFOtacValidationService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +13,10 @@ import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertNull;
-import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.NON_VF;
-import static mobi.nowtechnologies.server.persistence.domain.enums.ProviderType.VF;
 import static mobi.nowtechnologies.server.service.VFOtacValidationService.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isNotNull;
@@ -56,7 +57,7 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.operator, is(NON_VF.toString()));
+        assertThat(providerUserDetails.operator, is(NON_VF.getKey()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
@@ -76,7 +77,7 @@ public class VFOtacValidationServiceImplTest {
         ProviderUserDetails providerUserDetails = vfOtacValidationServiceImplFixture.validate(otac, phoneNumber, community);
 
         //then
-        assertThat(providerUserDetails.operator, is(VF.toString()));
+        assertThat(providerUserDetails.operator, is(VF.getKey()));
 
         verify(userServiceMock, times(0)).isVFNZOtacValid(otac, phoneNumber, community);
         verify(userServiceMock, times(1)).isPromotedDevice(phoneNumber, community);
