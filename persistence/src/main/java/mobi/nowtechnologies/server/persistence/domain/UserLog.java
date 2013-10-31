@@ -128,38 +128,6 @@ public class UserLog {
         return this;
     }
 
-    public UserLog withOldUserLog(UserLog oldUserLog){
-        if (isNotNull(oldUserLog)){
-            id = oldUserLog.getId();
-        }
-        return this;
-    }
-
-    public UserLog withUser(User user){
-        this.user = user;
-        return this;
-    }
-
-    public UserLog withUserLogStatus(UserLogStatus userLogStatus){
-        this.status = userLogStatus;
-        return this;
-    }
-
-    public UserLog withUserLogType(UserLogType userLogType){
-        this.type = userLogType;
-        return this;
-    }
-
-    public UserLog withDescription(String description){
-        this.description = description;
-        return this;
-    }
-
-    public UserLog withLogTimeMillis(long logTimeMillis){
-        this.last_update = logTimeMillis;
-        return this;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
