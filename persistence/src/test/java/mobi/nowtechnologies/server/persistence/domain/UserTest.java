@@ -430,59 +430,6 @@ public class UserTest {
     }
 
     @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnVideoAudioFreeTrial(){
-        //given
-        UserGroup o2 = new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"));
-        PromoCode videoPromo = new PromoCode().withMediaType(VIDEO_AND_AUDIO);
-
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2")
-                .withUserGroup(o2)
-                .withLastPromo(videoPromo).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(false, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymConsumerOnAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaygConsumerOnVideoAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(CONSUMER).withContract(PAYG).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
-    public void shouldNotShowFreeTrialFor4GO2PaymBusinessOnVideoAudioFreeTrial(){
-        //given
-        user = new User().withTariff(_4G).withSegment(BUSINESS).withContract(PAYM).withProvider("o2").withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl("o2"))).withLastPromo(new PromoCode().withMediaType(AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
-
-        //when
-        boolean isShowPromotion = user.isShowFreeTrial();
-
-        //then
-        assertEquals(true, isShowPromotion);
-    }
-
-    @Test
     public void shouldReturnCanPlayVideoTrueForUserOn4GVideoAudioFreeTrial(){
         //given
         user = new User().withTariff(_4G).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO)).withFreeTrialExpiredMillis(Long.MAX_VALUE);
@@ -863,7 +810,7 @@ public class UserTest {
     @Test
     public void shouldBeNotVFNZUserOnO2Community(){
         //given
-        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withProvider(VF));
+        User user = new User().withUserGroup(new UserGroup().withId(1).withCommunity(new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL))).withProvider(VF);
 
         //when
         boolean isVFNZUser = user.isVFNZUser();
