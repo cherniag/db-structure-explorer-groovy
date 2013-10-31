@@ -35,7 +35,7 @@ public class UserDao extends JpaDaoSupport {
 						"select user from "
 								+ User.class.getSimpleName()
 								+ " user where user.userName = ?1 and"
-								+ " user.userGroupId=(select userGroup.i from "
+								+ " user.userGroupId=(select userGroup.id from "
 								+ UserGroup.class.getSimpleName()
 								+ " userGroup where userGroup.communityId=(select community.id from "
 								+ Community.class.getSimpleName()
@@ -58,7 +58,7 @@ public class UserDao extends JpaDaoSupport {
 						"select user from "
 								+ User.class.getSimpleName()
 								+ " user where user.facebookId = ?1 and"
-								+ " user.userGroupId=(select userGroup.i from "
+								+ " user.userGroupId=(select userGroup.id from "
 								+ UserGroup.class.getSimpleName()
 								+ " userGroup where userGroup.communityId=(select community.id from "
 								+ Community.class.getSimpleName()
@@ -81,7 +81,7 @@ public class UserDao extends JpaDaoSupport {
 				.find(
 						"select count(*) from "
 								+ User.class.getSimpleName()
-								+ " user where user.userName = ?1 and user.userGroupId=(select userGroup.i from "
+								+ " user where user.userName = ?1 and user.userGroupId=(select userGroup.id from "
 								+ UserGroup.class.getSimpleName()
 								+ " userGroup where userGroup.communityId=(select community.id from "
 								+ Community.class.getSimpleName()
