@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import mobi.nowtechnologies.server.trackrepo.factory.AssetFileFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The class <code>FileControllerTest</code> contains tests for the class <code>{@link FileController}</code>.
- *
- * @generatedBy CodePro at 11/13/12 5:09 PM, using the Spring generator
  * @author Alexander Kolpakov (akolpakov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -28,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"file:src/main/webapp/WEB-INF/trackrepo-servlet.xml"})
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class FileControllerTestIT extends TestCase {
 	@Autowired
 	private FileController fixture;
@@ -38,13 +36,6 @@ public class FileControllerTestIT extends TestCase {
 	@Value("${trackRepo.encode.destination}")
 	private Resource publishDir;
 
-	/**
-	 * Run the void file(HttpServletResponse,Long) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 11/13/12 5:09 PM
-	 */
 	@Test
 	public void testFile()
 		throws Exception {
@@ -57,17 +48,7 @@ public class FileControllerTestIT extends TestCase {
 		assertEquals(200, resp.getStatus());
 		assertEquals("image/jpeg", resp.getContentType());
 	}
-	
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @see TestCase#setUp()
-	 *
-	 * @generatedBy CodePro at 11/13/12 5:09 PM
-	 */
+
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();

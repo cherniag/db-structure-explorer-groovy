@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ChartDetailDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailDao.class);
-	
+
 	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc){
 		if (isrc == null)
 			throw new PersistenceException("The parameter isrc is null");

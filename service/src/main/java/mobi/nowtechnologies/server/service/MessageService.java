@@ -6,7 +6,6 @@ import java.util.*;
 
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
-import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -65,8 +64,7 @@ public class MessageService {
 
 		LOGGER.debug("input parameters user, communityName, lastUpdateNewsTimeMillis, withAds: [{}], [{}], [{}], [{}]", new Object[] { user, communityName, lastUpdateNewsTimeMillis, withAds });
 
-		int userId = user.getId();
-		user = userService.findUserTree(userId);
+        user = userService.findUserTree(user.getId());
 
 		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
 		Community community = user.getUserGroup().getCommunity();

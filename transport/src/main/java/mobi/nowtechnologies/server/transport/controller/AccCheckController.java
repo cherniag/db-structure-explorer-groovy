@@ -11,6 +11,10 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +26,13 @@ import java.util.List;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
- * AccCheckConroller
- *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
 @Controller
 public class AccCheckController extends CommonController {
+
+    private final Logger SUCCESS_ACC_CHECK_LOGGER = LoggerFactory.getLogger("SUCCESS_ACC_CHECK_LOGGER");
 
     private UserService userService;
     private ChartService chartService;
@@ -89,8 +93,8 @@ public class AccCheckController extends CommonController {
             List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
 
             AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
-            accountCheck.setLockedTracks(LockedTrackDto.fromChartDetailList(chartDetails));
-            accountCheck.setPlaylists(SelectedPlaylistDto.fromChartList(user.getSelectedCharts()));
+            accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
+            accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
 
             final Object[] objects = new Object[] { accountCheck };
             precessRememberMeToken(objects);
@@ -109,6 +113,35 @@ public class AccCheckController extends CommonController {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK",
+            "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK",
+            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json"
+    })
+    public ModelAndView accountCheckForO2ClientAcceptHeaderSupport(
+            HttpServletRequest httpServletRequest,
+            @RequestParam("COMMUNITY_NAME") String communityName,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
+            @PathVariable("community") String community) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+        modelAndView.setViewName(defaultViewName);
+
+        return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -132,11 +165,10 @@ public class AccCheckController extends CommonController {
             @PathVariable("community") String community) throws Exception {
 
         // hack for IOS7 users that needs to remove it soon
-       User user = userService.findByNameAndCommunity(userName, community);
+        User user = userService.findByNameAndCommunity(userName, community);
         if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
             user.setDeviceUID(deviceUID);
             userService.updateUser(user);
-            deviceUID = null;
        }
        ///
 
@@ -257,12 +289,7 @@ public class AccCheckController extends CommonController {
     }
 
     private void logAboutSuccessfullAccountCheck() {
-        MDC.put("ACC_CHECK", "");
-        try {
-            LOGGER.info("The login was successful");
-        } finally {
-            MDC.remove("ACC_CHECK");
-        }
+        SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
     }
 
 }

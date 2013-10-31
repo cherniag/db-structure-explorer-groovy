@@ -3,58 +3,54 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-public class AccountCheckDTOFactory
- {
-	private AccountCheckDTOFactory() {
-	}
-
+public class AccountCheckDTOFactory{
 
 	public static AccountCheckDTO createAccountCheckDTO() {
 		final AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
 		
-		accountCheckDTO.setActivation(ActivationStatus.ACTIVATED);
-		accountCheckDTO.setAppStoreProductId("appStoreProductId");
-		accountCheckDTO.setChartItems(Byte.MIN_VALUE);
-		accountCheckDTO.setChartTimestamp(Integer.MIN_VALUE);
-		accountCheckDTO.setContract("contract");
-		accountCheckDTO.setDeviceType("deviceType");
-		accountCheckDTO.setDeviceUID("deviceUID");
-		accountCheckDTO.setDisplayName("displayName");
-		accountCheckDTO.setDrmType("drmType");
-		accountCheckDTO.setDrmValue(Byte.MIN_VALUE);
-		accountCheckDTO.setFreeTrial(true);
-		accountCheckDTO.setFullyRegistred(false);
-		accountCheckDTO.setGraceCreditSeconds(Integer.MIN_VALUE);
-		accountCheckDTO.setHasOffers(false);
-		accountCheckDTO.setHasPotentialPromoCodePromotion(true);
-		accountCheckDTO.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
-		accountCheckDTO.setLastSubscribedPaymentSystem("lastSubscribedPaymentSystem");
-		accountCheckDTO.setNewsItems(Byte.MIN_VALUE);
-		accountCheckDTO.setNewsTimestamp(Integer.MIN_VALUE);
-		accountCheckDTO.setNextSubPaymentSeconds(Integer.MIN_VALUE);
-		accountCheckDTO.setoAuthProvider(OAuthProvider.FACEBOOK);
-		accountCheckDTO.setOperator(Integer.MIN_VALUE);
-		accountCheckDTO.setPaymentEnabled(false);
-		accountCheckDTO.setPaymentStatus("paymentStatus");
-		accountCheckDTO.setPaymentType("paymentType");
-		accountCheckDTO.setPhoneNumber("phoneNumber");
-		accountCheckDTO.setPromotedDevice(false);
-		accountCheckDTO.setPromotedWeeks(Integer.MIN_VALUE);
-		accountCheckDTO.setPromotionLabel("promotionLabel");
-		accountCheckDTO.setProvider("provider");
-		accountCheckDTO.setRememberMeToken("rememberMeToken");
-		accountCheckDTO.setSegment("segment");
-		accountCheckDTO.setStatus("status");
-		accountCheckDTO.setSubBalance(Byte.MIN_VALUE);
-		accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Integer.MAX_VALUE);
-		accountCheckDTO.setUserName("userName");
-		accountCheckDTO.setUserToken("userToken");
+		accountCheckDTO.activation = ActivationStatus.ACTIVATED;
+		accountCheckDTO.appStoreProductId = "appStoreProductId";
+		accountCheckDTO.chartItems = Byte.MIN_VALUE;
+		accountCheckDTO.chartTimestamp = Integer.MIN_VALUE;
+		accountCheckDTO.contract = null;
+		accountCheckDTO.deviceType = "deviceType";
+		accountCheckDTO.deviceUID = "deviceUID";
+		accountCheckDTO.displayName = "displayName";
+		accountCheckDTO.drmType = "drmType";
+		accountCheckDTO.drmValue = Byte.MIN_VALUE;
+		accountCheckDTO.freeTrial = true;
+		accountCheckDTO.fullyRegistred = false;
+		accountCheckDTO.graceCreditSeconds = Integer.MIN_VALUE;
+		accountCheckDTO.hasOffers = false;
+		accountCheckDTO.hasPotentialPromoCodePromotion = true;
+		accountCheckDTO.lastPaymentStatus = PaymentDetailsStatus.ERROR;
+		accountCheckDTO.lastSubscribedPaymentSystem = "lastSubscribedPaymentSystem";
+		accountCheckDTO.newsItems = Byte.MIN_VALUE;
+		accountCheckDTO.newsTimestamp = Integer.MIN_VALUE;
+		accountCheckDTO.nextSubPaymentSeconds = Integer.MIN_VALUE;
+		accountCheckDTO.oAuthProvider = OAuthProvider.FACEBOOK;
+		accountCheckDTO.operator = Integer.MIN_VALUE;
+		accountCheckDTO.paymentEnabled = false;
+		accountCheckDTO.paymentStatus = "paymentStatus";
+		accountCheckDTO.paymentType = "paymentType";
+		accountCheckDTO.phoneNumber = "phoneNumber";
+		accountCheckDTO.promotedDevice = false;
+		accountCheckDTO.promotedWeeks = Integer.MIN_VALUE;
+		accountCheckDTO.promotionLabel = "promotionLabel";
+		accountCheckDTO.provider = O2.getKey();
+		accountCheckDTO.rememberMeToken = "rememberMeToken";
+		accountCheckDTO.segment = null;
+		accountCheckDTO.status = "status";
+		accountCheckDTO.subBalance = Byte.MIN_VALUE;
+		accountCheckDTO.timeOfMovingToLimitedStatusSeconds = Integer.MAX_VALUE;
+		accountCheckDTO.userName = "userName";
+		accountCheckDTO.userToken = "userToken";
 		
 		return accountCheckDTO;
 	}

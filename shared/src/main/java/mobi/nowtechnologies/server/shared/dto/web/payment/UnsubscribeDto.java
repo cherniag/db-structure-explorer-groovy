@@ -19,5 +19,10 @@ public class UnsubscribeDto {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
+    public UnsubscribeDto withReason(String reason) {
+        this.reason = reason;
+
+        return this;
+    }
 }

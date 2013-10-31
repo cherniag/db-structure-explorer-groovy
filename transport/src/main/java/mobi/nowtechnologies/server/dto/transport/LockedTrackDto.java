@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 @XmlRootElement(name = "lockedTrack")
 public class LockedTrackDto {
@@ -18,10 +19,12 @@ public class LockedTrackDto {
 		this.media = media;
 	}
 
-	@Override
-	public String toString() {
-		return "LockedTrackDto [media=" + media + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("media", media)
+                .toString();
+    }
 
 	public static LockedTrackDto[] fromChartDetailList(List<ChartDetail> chartDetails) {
 		LockedTrackDto[] dtos = new LockedTrackDto[chartDetails.size()];

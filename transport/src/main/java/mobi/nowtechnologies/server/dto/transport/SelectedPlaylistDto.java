@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 @XmlRootElement(name = "playlist")
 public class SelectedPlaylistDto {
@@ -48,9 +49,12 @@ public class SelectedPlaylistDto {
 		return dto;
 	}
 
-	@Override
-	public String toString() {
-		return "SelectedPlaylistDto [chartType=" + type + ", id=" + id + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("type", type)
+                .append("id", id)
+                .toString();
+    }
 
 }

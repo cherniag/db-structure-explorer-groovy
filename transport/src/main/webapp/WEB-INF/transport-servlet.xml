@@ -338,10 +338,11 @@
         <property name="o2Service" ref="service.O2Service"/>
     </bean>
      
-    <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="job.updateO2User" />
-        <property name="cronExpression" value="${jobs.default.cron.expression}"/>
-    </bean>
+	<bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    	<property name="jobDetail" ref="job.updateO2User" />
+    	<property name="startDelay" value="${updateO2User.job.startDelayMillis}" />
+    	<property name="repeatInterval" value="${updateO2User.job.repeatIntervalMillis}" />
+	</bean>    
     
     <!-- Fork users job -->
     <bean id="job.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.JobDetailBean">

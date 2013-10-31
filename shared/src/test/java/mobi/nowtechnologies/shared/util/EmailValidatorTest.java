@@ -12,13 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
- * The class <code>EmailValidatorTest</code> contains tests for the class
- * <code>{@link EmailValidator}</code>.
- * 
  * @generatedBy CodePro at 06.07.11 12:25
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(value = Parameterized.class)
 public class EmailValidatorTest {
@@ -27,9 +25,6 @@ public class EmailValidatorTest {
 	private String email;
 	private boolean expectedValue;
 
-	/**
-	 * @param aEmail
-	 */
 	public EmailValidatorTest(String aEmail, boolean aExpectedValue) {
 		super();
 		this.email = aEmail;
@@ -61,6 +56,6 @@ public class EmailValidatorTest {
 		if (expectedValue!=isValid)
 			LOGGER.error("Expected value: " + expectedValue
 					+ " but test returned " + isValid +" for "+email);
-		Assert.assertEquals(expectedValue, isValid);
+		assertEquals(expectedValue, isValid);
 	}
 }

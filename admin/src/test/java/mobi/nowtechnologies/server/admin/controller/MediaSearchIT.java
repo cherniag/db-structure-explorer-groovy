@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import org.h2.jdbc.JdbcConnection;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @PrepareForTest(JdbcConnection.class)
+@Ignore
 public class MediaSearchIT {
 	
 	TestContextManager testContextManager;

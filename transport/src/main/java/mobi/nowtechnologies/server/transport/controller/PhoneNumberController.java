@@ -39,7 +39,10 @@ public class PhoneNumberController extends CommonController {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
 			
 			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
-			user = userService.activatePhoneNumber(user, phone, populateO2SubscriberData);
+			user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null && populateO2SubscriberData)
+                userService.populateSubscriberData(user);
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
@@ -74,7 +77,10 @@ public class PhoneNumberController extends CommonController {
 
             user = userService.checkCredentials(userName, userToken, timestamp, community);
 
-            user = userService.activatePhoneNumber(user, phone, true);
+            user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null)
+                userService.populateSubscriberData(user);
 
             return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
         }catch(Exception e){
@@ -88,17 +94,19 @@ public class PhoneNumberController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER.json"
     })
-
-    public ModelAndView activatePhoneNumberJson(
+    public ModelAndView activatePhoneNumberAcceptHeaderSupport(
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) throws Exception {
-
         apiVersionThreadLocal.set(apiVersion);
 
         ModelAndView modelAndView = activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion);

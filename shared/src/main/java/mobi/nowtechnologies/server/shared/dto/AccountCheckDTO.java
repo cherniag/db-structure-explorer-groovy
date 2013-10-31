@@ -1,81 +1,82 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * AccountCheck
- * 
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 @XmlRootElement(name = "user")
 public class AccountCheckDTO {
-	private String displayName;
-	private byte subBalance;
-	private String status;
-	private String deviceType;
-	private String deviceUID;
-	private int chartTimestamp;
+	public String displayName;
+	public byte subBalance;
+	public String status;
+	public String deviceType;
+	public String deviceUID;
+	public int chartTimestamp;
 	@Deprecated
-	private byte chartItems;
-	private int newsTimestamp;
+	public byte chartItems;
+	public int newsTimestamp;
 	@Deprecated
-	private byte newsItems;
-	private String drmType;
-	private byte drmValue;
+	public byte newsItems;
+	public String drmType;
+	public byte drmValue;
 
-	private String phoneNumber;
-	private Integer operator;
-	private String paymentStatus;
-	private String paymentType;
-	private boolean paymentEnabled;
+	public String phoneNumber;
+	public Integer operator;
+	public String paymentStatus;
+	public String paymentType;
+	public boolean paymentEnabled;
 
-	private String rememberMeToken;
+	public String rememberMeToken;
 
-	private String userName;
-	private String userToken;
+	public String userName;
+	public String userToken;
 
-	private int timeOfMovingToLimitedStatusSeconds;
+	public int timeOfMovingToLimitedStatusSeconds;
 
-	private String promotionLabel;
+	public String promotionLabel;
 
-	private boolean fullyRegistred;
-	private OAuthProvider oAuthProvider;
-	private boolean isPromotedDevice;
-	private int promotedWeeks;
-	private boolean hasPotentialPromoCodePromotion;
+	public boolean fullyRegistred;
+	public OAuthProvider oAuthProvider;
+	public boolean promotedDevice;
+	public int promotedWeeks;
+	public boolean hasPotentialPromoCodePromotion;
 	
-	private boolean hasOffers;
-	private boolean isFreeTrial;
-	private PaymentDetailsStatus lastPaymentStatus;
+	public boolean hasOffers;
+	public boolean freeTrial;
+	public PaymentDetailsStatus lastPaymentStatus;
 	
-	private int nextSubPaymentSeconds;
-    private ActivationStatus activation;
+	public int nextSubPaymentSeconds;
+    public ActivationStatus activation;
     
-    private String appStoreProductId;
+    public String appStoreProductId;
     
-    private String provider;
-    private String contract;
-    private String segment;
-    private int graceCreditSeconds;
+    public String provider;
+    public Contract contract;
+    public SegmentType segment;
+    public Tariff tariff;
 
-    private Boolean canGetVideo;
-    private Boolean canPlayVideo;
-    private Boolean hasAllDetails;
-    private Boolean showFreeTrial;
-    private Boolean canActivateVideoTrial;
+    public int graceCreditSeconds;
 
-    private boolean eligibleForVideo;
+    public Boolean canGetVideo;
+    public Boolean canPlayVideo;
+    public Boolean hasAllDetails;
+    public Boolean showFreeTrial;
+    public Boolean canActivateVideoTrial;
 
-    private String lastSubscribedPaymentSystem;
-    private SubscriptionDirection subscriptionChanged;
+    public boolean eligibleForVideo;
+
+    public String lastSubscribedPaymentSystem;
+    public SubscriptionDirection subscriptionChanged;
+    public boolean subjectToAutoOptIn;
+
+    public transient Object user;
 
     public AccountCheckDTO(){
 		
@@ -106,11 +107,11 @@ public class AccountCheckDTO {
 	    this.promotionLabel = accountCheckDTO.promotionLabel;
 	    this.fullyRegistred = accountCheckDTO.fullyRegistred;
 	    this.oAuthProvider = accountCheckDTO.oAuthProvider;
-	    this.isPromotedDevice = accountCheckDTO.isPromotedDevice;
+	    this.promotedDevice = accountCheckDTO.promotedDevice;
 	    this.promotedWeeks = accountCheckDTO.promotedWeeks;
 	    this.hasPotentialPromoCodePromotion = accountCheckDTO.hasPotentialPromoCodePromotion;
 	    this.hasOffers = accountCheckDTO.hasOffers;
-	    this.isFreeTrial = accountCheckDTO.isFreeTrial;
+	    this.freeTrial = accountCheckDTO.freeTrial;
 	    this.lastPaymentStatus = accountCheckDTO.lastPaymentStatus;
 	    this.nextSubPaymentSeconds = accountCheckDTO.nextSubPaymentSeconds;
 	    this.activation = accountCheckDTO.activation;
@@ -121,399 +122,96 @@ public class AccountCheckDTO {
 	    this.graceCreditSeconds = accountCheckDTO.graceCreditSeconds;
 	    this.lastSubscribedPaymentSystem = accountCheckDTO.lastSubscribedPaymentSystem;
 
-        this.canGetVideo = accountCheckDTO.getCanGetVideo();
-        this.canPlayVideo = accountCheckDTO.getCanPlayVideo();
-        this.canActivateVideoTrial = accountCheckDTO.getCanActivateVideoTrial();
-        this.hasAllDetails = accountCheckDTO.getHasAllDetails();
-        this.showFreeTrial = accountCheckDTO.getShowFreeTrial();
-        this.subscriptionChanged = accountCheckDTO.getSubscriptionChanged();
-
-        this.activation = accountCheckDTO.getActivation();
-        this.fullyRegistred = accountCheckDTO.isFullyRegistred();
-        this.eligibleForVideo = accountCheckDTO.isEligibleForVideo();
-
-        accountCheckDTO.setFullyRegistred(EmailValidator.isEmail(userName));
-	}
-
-	public int getGraceCreditSeconds() {
-		return graceCreditSeconds;
-	}
-
-	public void setGraceCreditSeconds(int graceCreditSeconds) {
-		this.graceCreditSeconds = graceCreditSeconds;
-	}
-
-	public String getContract() {
-		return contract;
-	}
-
-	public void setContract(String contract) {
-		this.contract = contract;
-	}
-
-	public String getSegment() {
-		return segment;
-	}
-
-	public void setSegment(String segment) {
-		this.segment = segment;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public byte getSubBalance() {
-		return subBalance;
-	}
-
-	public void setSubBalance(byte subBalance) {
-		this.subBalance = subBalance;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getDeviceType() {
-		return deviceType;
-	}
-
-	public void setDeviceType(String deviceType) {
-		this.deviceType = deviceType;
-	}
-
-	public String getDeviceUID() {
-		return deviceUID;
-	}
-
-	public void setDeviceUID(String deviceUID) {
-		this.deviceUID = deviceUID;
-	}
-
-	public int getChartTimestamp() {
-		return chartTimestamp;
-	}
-
-	public void setChartTimestamp(int chartTimestamp) {
-		this.chartTimestamp = chartTimestamp;
-	}
-
-	@Deprecated
-	public byte getChartItems() {
-		return chartItems;
-	}
-
-	@Deprecated
-	public void setChartItems(byte chartItems) {
-		this.chartItems = chartItems;
-	}
-
-	public int getNewsTimestamp() {
-		return newsTimestamp;
-	}
-
-	public void setNewsTimestamp(int newsTimestamp) {
-		this.newsTimestamp = newsTimestamp;
-	}
-
-	@Deprecated
-	public byte getNewsItems() {
-		return newsItems;
-	}
-
-	@Deprecated
-	public void setNewsItems(byte newsItems) {
-		this.newsItems = newsItems;
-	}
-
-	public String getDrmType() {
-		return drmType;
-	}
-
-	public void setDrmType(String drmType) {
-		this.drmType = drmType;
-	}
-
-	public byte getDrmValue() {
-		return drmValue;
-	}
-
-	public void setDrmValue(byte drmValue) {
-		this.drmValue = drmValue;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public Integer getOperator() {
-		return operator;
-	}
-
-	public void setOperator(Integer operator) {
-		this.operator = operator;
-	}
-
-	public String getPaymentStatus() {
-		return paymentStatus;
-	}
-
-	public void setPaymentStatus(String paymentStatus) {
-		this.paymentStatus = paymentStatus;
-	}
-
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-
-	}
-
-	public String getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentEnabled(boolean paymentEnabled) {
-		this.paymentEnabled = paymentEnabled;
-	}
-
-	public boolean getPaymentEnabled() {
-		return paymentEnabled;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getUserToken() {
-		return userToken;
-	}
-
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
-	}
-
-	public int getTimeOfMovingToLimitedStatusSeconds() {
-		return timeOfMovingToLimitedStatusSeconds;
-	}
-
-	public void setTimeOfMovingToLimitedStatusSeconds(int timeOfMovingToLimitedStatusSeconds) {
-		this.timeOfMovingToLimitedStatusSeconds = timeOfMovingToLimitedStatusSeconds;
-	}
-
-	public void setRememberMeToken(String rememberMeToken) {
-		this.rememberMeToken = rememberMeToken;
-	}
-
-	public String getRememberMeToken() {
-		return rememberMeToken;
-	}
-
-	public String getPromotionLabel() {
-		return promotionLabel;
-	}
-
-	public void setPromotionLabel(String promotionLabel) {
-		this.promotionLabel = promotionLabel;
-	}
-
-	public boolean isFullyRegistred() {
-		return fullyRegistred;
-	}
-
-	public void setFullyRegistred(boolean fullyRegistred) {
-		this.fullyRegistred = fullyRegistred;
-	}
-
-	public boolean isPromotedDevice() {
-		return isPromotedDevice;
-	}
-
-	public void setPromotedDevice(boolean isPromotedDevice) {
-		this.isPromotedDevice = isPromotedDevice;
-	}
-
-	public int getPromotedWeeks() {
-		return promotedWeeks;
-	}
-
-	public void setPromotedWeeks(int promotedWeeks) {
-		this.promotedWeeks = promotedWeeks;
-	}
-
-	public OAuthProvider getoAuthProvider() {
-		return oAuthProvider;
-	}
-
-	public void setoAuthProvider(OAuthProvider oAuthProvider) {
-		this.oAuthProvider = oAuthProvider;
-	}
-	
-	public boolean isHasPotentialPromoCodePromotion() {
-		return hasPotentialPromoCodePromotion;
-	}
-
-	public void setHasPotentialPromoCodePromotion(
-			boolean hasPotentialPromoCodePromotion) {
-		this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
-	}
-
-	public boolean isHasOffers() {
-		return hasOffers;
-	}
-
-	public void setHasOffers(boolean hasOffers) {
-		this.hasOffers = hasOffers;
-	}
-	
-	public boolean isFreeTrial() {
-		return isFreeTrial;
-	}
-
-	public void setFreeTrial(boolean isFreeTrial) {
-		this.isFreeTrial = isFreeTrial;
-	}
-	
-	public PaymentDetailsStatus getLastPaymentStatus() {
-		return lastPaymentStatus;
-	}
-
-	public void setLastPaymentStatus(PaymentDetailsStatus lastPaymentStatus) {
-		this.lastPaymentStatus = lastPaymentStatus;
-	}
-
-	public int getNextSubPaymentSeconds() {
-		return nextSubPaymentSeconds;
-	}
-
-	public void setNextSubPaymentSeconds(int nextSubPaymentSeconds) {
-		this.nextSubPaymentSeconds = nextSubPaymentSeconds;
-	}
-
-    public ActivationStatus getActivation() {
-        return activation;
+        this.canGetVideo = accountCheckDTO.canGetVideo;
+        this.canPlayVideo = accountCheckDTO.canPlayVideo;
+        this.canActivateVideoTrial = accountCheckDTO.canActivateVideoTrial;
+        this.hasAllDetails = accountCheckDTO.hasAllDetails;
+        this.showFreeTrial = accountCheckDTO.showFreeTrial;
+        this.subscriptionChanged = accountCheckDTO.subscriptionChanged;
+
+        this.activation = accountCheckDTO.activation;
+        this.fullyRegistred = accountCheckDTO.fullyRegistred;
+        this.eligibleForVideo = accountCheckDTO.eligibleForVideo;
+        this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
+        this.tariff = accountCheckDTO.tariff;
+
+        accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
+	}
+
+    public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
+        this.fullyRegistred = isFullyRegistered;
+        return this;
     }
 
-    public void setActivation(ActivationStatus activation) {
-        this.activation = activation;
-    }
-
-    public String getAppStoreProductId() {
-		return appStoreProductId;
-	}
-
-	public void setAppStoreProductId(String appStoreProductId) {
-		this.appStoreProductId = appStoreProductId;
-	}
-
-	public String getProvider() {
-		return provider;
-	}
-
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
-	
-	public String getLastSubscribedPaymentSystem() {
-		return lastSubscribedPaymentSystem;
-	}
-
-	public void setLastSubscribedPaymentSystem(String lastSubscribedPaymentSystem) {
-		this.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
-	}
-
-    public boolean isEligibleForVideo() {
-        return eligibleForVideo;
-    }
-
-    public void setEligibleForVideo(boolean eligibleForVideo) {
-        this.eligibleForVideo = eligibleForVideo;
-    }
-
-	@Override
-	public String toString() {
-		return "AccountCheckDTO [displayName=" + displayName + ", subBalance=" + subBalance + ", status=" + status + ", deviceType=" + deviceType + ", deviceUID=" + deviceUID + ", chartTimestamp="
-				+ chartTimestamp + ", chartItems=" + chartItems + ", newsTimestamp=" + newsTimestamp + ", newsItems=" + newsItems + ", drmType=" + drmType + ", drmValue=" + drmValue
-				+ ", phoneNumber=" + phoneNumber + ", operator=" + operator + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType + ", paymentEnabled=" + paymentEnabled
-				+ ", rememberMeToken=" + rememberMeToken + ", userName=" + userName + ", userToken=" + userToken + ", timeOfMovingToLimitedStatusSeconds=" + timeOfMovingToLimitedStatusSeconds
-				+ ", promotionLabel=" + promotionLabel + ", fullyRegistred=" + fullyRegistred + ", oAuthProvider=" + oAuthProvider + ", isPromotedDevice=" + isPromotedDevice + ", promotedWeeks="
-				+ promotedWeeks + ", hasPotentialPromoCodePromotion=" + hasPotentialPromoCodePromotion + ", hasOffers=" + hasOffers + ", isFreeTrial=" + isFreeTrial + ", lastPaymentStatus="
-				+ lastPaymentStatus + ", nextSubPaymentSeconds=" + nextSubPaymentSeconds + ", activation=" + activation + ", appStoreProductId=" + appStoreProductId + ", provider=" + provider
-				+ ", contract=" + contract + ", segment=" + segment + ", graceCreditSeconds=" + graceCreditSeconds + ", lastSubscribedPaymentSystem=" + lastSubscribedPaymentSystem
-                + ", eligibleForVideo=" + eligibleForVideo + ", canPlayVideo=" + canPlayVideo +", canGetVideo=" + canGetVideo +", canActivateVideoTrial =" + canActivateVideoTrial
-                + ", hasAllDetails=" + hasAllDetails + ", showFreeTrial" + showFreeTrial + ", subscriptionChanged" + subscriptionChanged + "]";
-	}
-
-    public Boolean getCanGetVideo() {
-        return canGetVideo;
-    }
-
-    public void setCanGetVideo(Boolean canGetVideo) {
-        this.canGetVideo = canGetVideo;
-    }
-
-    public Boolean getCanPlayVideo() {
-        return canPlayVideo;
-    }
-
-    public void setCanPlayVideo(Boolean canPlayVideo) {
-        this.canPlayVideo = canPlayVideo;
-    }
-
-    public Boolean getHasAllDetails() {
-        return hasAllDetails;
-    }
-
-    public void setHasAllDetails(Boolean hasAllDetails) {
-        this.hasAllDetails = hasAllDetails;
-    }
-
-    public Boolean getShowFreeTrial() {
-        return showFreeTrial;
-    }
-
-    public void setShowFreeTrial(Boolean showFreeTrial) {
-        this.showFreeTrial = showFreeTrial;
-    }
-
-    public Boolean getCanActivateVideoTrial() {
-        return canActivateVideoTrial;
-    }
-
-    public void setCanActivateVideoTrial(Boolean canActivateVideoTrial) {
-        this.canActivateVideoTrial = canActivateVideoTrial;
-    }
-
-    public void setSubscriptionChanged(SubscriptionDirection subscriptionChanged) {
-        this.subscriptionChanged = subscriptionChanged;
-    }
-
-    public SubscriptionDirection getSubscriptionChanged() {
-        return subscriptionChanged;
+    public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
+        this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
+        return this;
     }
 
     public AccountCheckDTO withUserName(String userName){
-        setUserName(userName);
+        this.userName = userName;
         return this;
     }
 
     public AccountCheckDTO withUserToken(String userToken){
-        setUserToken(userToken);
+        this.userToken = userToken;
         return this;
+    }
+
+    public AccountCheckDTO withUser(Object user) {
+        this.user = user;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("displayName", displayName)
+                .append("subBalance", subBalance)
+                .append("status", status)
+                .append("deviceType", deviceType)
+                .append("deviceUID", deviceUID)
+                .append("chartTimestamp", chartTimestamp)
+                .append("chartItems", chartItems)
+                .append("newsTimestamp", newsTimestamp)
+                .append("newsItems", newsItems)
+                .append("drmType", drmType)
+                .append("drmValue", drmValue)
+                .append("phoneNumber", phoneNumber)
+                .append("operator", operator)
+                .append("paymentStatus", paymentStatus)
+                .append("paymentType", paymentType)
+                .append("paymentEnabled", paymentEnabled)
+                .append("rememberMeToken", rememberMeToken)
+                .append("userName", userName)
+                .append("userToken", userToken)
+                .append("timeOfMovingToLimitedStatusSeconds", timeOfMovingToLimitedStatusSeconds)
+                .append("promotionLabel", promotionLabel)
+                .append("fullyRegistred", fullyRegistred)
+                .append("oAuthProvider", oAuthProvider)
+                .append("promotedDevice", promotedDevice)
+                .append("promotedWeeks", promotedWeeks)
+                .append("hasPotentialPromoCodePromotion", hasPotentialPromoCodePromotion)
+                .append("hasOffers", hasOffers)
+                .append("isFreeTrial", freeTrial)
+                .append("lastPaymentStatus", lastPaymentStatus)
+                .append("nextSubPaymentSeconds", nextSubPaymentSeconds)
+                .append("activation", activation)
+                .append("appStoreProductId", appStoreProductId)
+                .append("provider", provider)
+                .append("contract", contract)
+                .append("segment", segment)
+                .append("tariff", tariff)
+                .append("graceCreditSeconds", graceCreditSeconds)
+                .append("canGetVideo", canGetVideo)
+                .append("canPlayVideo", canPlayVideo)
+                .append("hasAllDetails", hasAllDetails)
+                .append("showFreeTrial", showFreeTrial)
+                .append("canActivateVideoTrial", canActivateVideoTrial)
+                .append("eligibleForVideo", eligibleForVideo)
+                .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                .append("subscriptionChanged", subscriptionChanged)
+                .append("subjectToAutoOptIn", subjectToAutoOptIn)
+                .toString();
     }
 }

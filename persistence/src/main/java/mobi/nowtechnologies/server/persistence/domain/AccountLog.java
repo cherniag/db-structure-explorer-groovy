@@ -88,6 +88,9 @@ public class AccountLog implements Serializable {
 	@Column(insertable=false, updatable=false)
 	private Integer offerId;
 
+    @Column(length = 10000)
+    private String description;
+
     public AccountLog() {
     }
     
@@ -236,6 +239,39 @@ public class AccountLog implements Serializable {
 		return offerId;
 	}
 
+    public AccountLog withDescription(String description){
+        this.description=description;
+        return this;
+    }
+
+    public AccountLog withUser(User user){
+        this.userId=user.getId();
+        return this;
+    }
+
+    public AccountLog withBalanceAfter(int balanceAfter){
+        this.balanceAfter = balanceAfter;
+        return this;
+    }
+
+    public AccountLog withLogTimestamp(int logTimestamp){
+        this.logTimestamp = logTimestamp;
+        return this;
+    }
+
+    public AccountLog withTransactionType(TransactionType transactionType){
+        this.transactionType = transactionType;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -248,6 +284,7 @@ public class AccountLog implements Serializable {
                 .append("userId", userId)
                 .append("promoCode", promoCode)
                 .append("offerId", offerId)
+                .append("description", description)
                 .toString();
     }
 }

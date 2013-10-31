@@ -41,11 +41,11 @@
 
     <bean id="vf_nz.service.SMPPProcessorContainer" class="mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer">
         <property name="messageProcessors">
-            <map>
-                <entry key="${vf.nz.smpp.service.source.address.unsubscribe}">
-                    <bean class="mobi.nowtechnologies.server.service.vodafone.impl.VFNZUnsubscribeProccessor" />
-                </entry>
-            </map>
+            <list>
+                <ref bean="vf_nz.service.VFNZUnsubscribeProccessor"/>
+                <ref bean="vf_nz.service.UserDetailsUpdater"/>
+                <ref bean="service.vfPaymentService"/>
+            </list>
         </property>
     </bean>
 

@@ -131,9 +131,6 @@ public class FileController extends CommonController {
             public void render(Map<String, ?> arg0,
                                HttpServletRequest arg1, HttpServletResponse response)
                     throws Exception {
-                // uitsService.process(userName, mediaId, "distributor", new
-                // FileInputStream(file), response
-                // .getOutputStream());
                 FileInputStream fileInputStream = new FileInputStream(file);
                 String rangeAttribute = (String)request.getAttribute(HttpHeaders.RANGE);
                 if (StringUtils.hasText(rangeAttribute)) {

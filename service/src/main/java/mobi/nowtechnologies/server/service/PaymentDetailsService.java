@@ -4,8 +4,9 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -39,7 +40,6 @@ import static org.apache.commons.lang.Validate.notNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public class PaymentDetailsService {
 
@@ -169,7 +169,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public SagePayCreditCardPaymentDetails createCreditCardPamentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
+	public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
 		PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
@@ -177,7 +177,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public PayPalPaymentDetails createPayPalPamentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
+	public PayPalPaymentDetails createPayPalPaymentDetails(PayPalDto dto, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
 		PaymentDetailsDto pdto = PayPalDto.toPaymentDetails(dto);
@@ -202,6 +202,21 @@ public class PaymentDetailsService {
 		return (MigPaymentDetails) createPaymentDetails(pdto, user, community);
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public O2PSMSPaymentDetails createDefaultO2PsmsPaymentDetails(User user) throws ServiceException {
+
+        PaymentPolicy defaultPaymentPolicy = paymentPolicyService.findDefaultO2PsmsPaymentPolicy(user);
+
+        if (isNull(defaultPaymentPolicy)) throw new ServiceException("could.not.create.default.paymentDetails", "Couldn't create default payment details");
+
+        Community community = user.getUserGroup().getCommunity();
+        PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
+        paymentDetailsDto.setPaymentType(O2_PSMS);
+        paymentDetailsDto.setPaymentPolicyId(defaultPaymentPolicy.getId());
+
+        return (O2PSMSPaymentDetails) createPaymentDetails(paymentDetailsDto, user, community);
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public MigPaymentDetails commitMigPaymentDetails(String pin, int userId) {
 		User user = userService.findById(userId);
@@ -211,6 +226,12 @@ public class PaymentDetailsService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<PaymentPolicyDto> getPaymentPolicyWithOutSegment(Community community, User user) {
 		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community);
+		return mergePaymentPolicies(user, paymentPolicies);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<PaymentPolicyDto> getPaymentPolicyWithNullSegment(Community community, User user) {
+		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithNullSegment(community, user.getProvider());
 		return mergePaymentPolicies(user, paymentPolicies);
 	}
 

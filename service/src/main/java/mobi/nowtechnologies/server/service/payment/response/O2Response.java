@@ -77,7 +77,7 @@ public class O2Response extends PaymentSystemResponse {
 	}
 
 	public O2Response(Object objectResponse, BasicResponse response) {
-		super(response);
+		super(response, false);
 
 		if (objectResponse == null) {
 			isSuccessful = false;

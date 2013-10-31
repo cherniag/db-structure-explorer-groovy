@@ -6,29 +6,40 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:META-INF/service-test.xml",
         "classpath:META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:transport-servlet-test.xml"})
-//@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-//@Transactional	
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
+@Ignore
 public class ApplyInitPromoControllerIT {
 
-    @Autowired
+    @Resource(name = "transport.ApplyInitPromoController")
     ApplyInitPromoController controller;
 
-    @Autowired
+    @Resource(name = "service.UserService")
     UserService userService;
-    
-    @Autowired
+
+    @Resource(name = "userRepository")
     UserRepository userRepository;
 
     @Test
@@ -46,8 +57,8 @@ public class ApplyInitPromoControllerIT {
         user = userService.findByName(user.getMobile());
         Assert.assertEquals(13, days(user.getNextSubPayment()));
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
-        Assert.assertEquals("o2", user.getProvider());
-        Assert.assertEquals("PAYG", user.getContract());
+        Assert.assertEquals(O2, user.getProvider());
+        Assert.assertEquals(PAYG, user.getContract());
     }
     
     @Test

@@ -86,6 +86,26 @@ public class UserDeviceRegDetailsDto {
 		this.deviceModel = deviceModel;
 	}
 
+    public UserDeviceRegDetailsDto withDeviceUID(String deviceUID) {
+        this.deviceUID = deviceUID;
+        return this;
+    }
+
+    public UserDeviceRegDetailsDto withCommunityName(String communityName) {
+        this.communityName = communityName;
+        return this;
+    }
+
+    public UserDeviceRegDetailsDto withDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+        return this;
+    }
+
+    public UserDeviceRegDetailsDto withDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel;
+        return this;
+    }
+
 	@Override
 	public String toString() {
         return Objects.toStringHelper(this)
@@ -96,5 +116,4 @@ public class UserDeviceRegDetailsDto {
                 .add("IP", ipAddress)
                 .toString();
 	}
-
 }

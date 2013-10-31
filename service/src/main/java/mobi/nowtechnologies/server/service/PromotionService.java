@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
@@ -144,7 +145,7 @@ public class PromotionService {
     public boolean applyPotentialPromo(User user, boolean isO2User){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else {
             isPromotionApplied = userService.applyPotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
@@ -159,14 +160,9 @@ public class PromotionService {
     
     @Transactional(propagation = Propagation.REQUIRED)
     public User activateVideoAudioFreeTrial(User user){
-        boolean isPromotionApplied = false;
+        boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-
-            if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-            else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-            else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
-
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else{
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
                     .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
@@ -177,10 +173,18 @@ public class PromotionService {
         return user;
     }
 
+    private boolean skipPrevDataAndApplyPromotionForO24GConsumer(User user){
+        if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
+        return applyPromotionForO24GConsumer(user);
+    }
+
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
         Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
-        if (promotion != null){
+        if (isNotNull(promotion)){
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
@@ -191,7 +195,7 @@ public class PromotionService {
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
             String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
-            promotion = userService.setPotentialPromo(user, promoCode);
+            promotion = userService.setPotentialPromoByPromoCode(user, promoCode);
         }else{
             promotion = null;
             LOGGER.error("Couldn't find promotion code [{}]", messageCodeForPromoCode);

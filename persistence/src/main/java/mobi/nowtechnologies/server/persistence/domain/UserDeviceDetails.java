@@ -101,11 +101,26 @@ public abstract class UserDeviceDetails {
 		this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
 	}
 
+	public UserDeviceDetails withUser(User user){
+        setUser(user);
+        return this;
+    }
+
+    public UserDeviceDetails withToken(String token){
+        setToken(token);
+        return this;
+    }
+
+    public UserDeviceDetails withUserGroup(UserGroup userGroup){
+        setUserGroup(userGroup);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
                 .append("userId", userId)
+                .append("id", id)
                 .append("token", token)
                 .append("userGroupId", userGroupId)
                 .append("nbUpdates", nbUpdates)
@@ -113,6 +128,4 @@ public abstract class UserDeviceDetails {
                 .append("lastPushOfContentUpdateMillis", lastPushOfContentUpdateMillis)
                 .toString();
     }
-
-
 }

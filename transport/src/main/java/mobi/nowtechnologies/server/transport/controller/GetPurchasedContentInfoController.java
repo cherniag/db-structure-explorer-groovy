@@ -80,6 +80,10 @@ public class GetPurchasedContentInfoController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:4\\.1}/GET_PURCHASED_CONTENT_INFO.json",
+            "*/{apiVersion:4\\.2}/GET_PURCHASED_CONTENT_INFO",
+            "*/{apiVersion:4\\.2}/GET_PURCHASED_CONTENT_INFO.json",
             "*/{apiVersion:5\\.0}/GET_PURCHASED_CONTENT_INFO",
             "*/{apiVersion:5\\.0}/GET_PURCHASED_CONTENT_INFO.json"
     })
@@ -96,5 +100,4 @@ public class GetPurchasedContentInfoController extends CommonController {
         modelAndView.setViewName(defaultViewName);
         return modelAndView;
 	}
-
 }

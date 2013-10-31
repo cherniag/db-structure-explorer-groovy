@@ -14,10 +14,10 @@
 	<div style="float: left;">
 		<s:message code='pays.page.header.txt.itunes' /> <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_itunes.png" align="bottom" class="itunesSubImage" />
 	</div>
-	<div style="float: right;">
+	<div style="float: right;padding-top:6px;">
 		$<fmt:formatNumber pattern="0.00" value="${optionPrice}" /><s:message code='pays.page.header.txt.itunes.month' />
 	</div>
-	<div style="clear: both; height: 18px;">&nbsp;</div>
+	<div style="clear: both; height: 13px;">&nbsp;</div>
 
 	<div class="itunesheaderText">
 		<s:message code='pays.page.header.txt.itunes.middleText' />

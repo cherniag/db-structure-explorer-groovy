@@ -59,7 +59,9 @@
 </div>
 
  <div class="content no-bg">
-     <div class="rel" style="text-align: center; margin-top: 15px;">
+ 	<c:set var="marginTop" value="15px" />
+ 	<c:if test="${paymentsPage.consumerUser}"><c:set var="marginTop" value="8px" /></c:if>
+     <div class="rel" style="text-align: center; margin-top: ${marginTop};">
          <img width="79" height="12" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/label_secure_payment.png"/>
      </div>
 

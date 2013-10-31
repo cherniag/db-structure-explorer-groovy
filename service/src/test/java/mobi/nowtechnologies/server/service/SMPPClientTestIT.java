@@ -16,19 +16,9 @@ import java.io.IOException;
  */
 public class SMPPClientTestIT {
 
-    @Test
-    public void testSMPPClient(){
-
-    }
-
-    @Test
-    public void testSMPPServer() throws IOException {
-        Simulator.main(new String[0]);
-    }
-
-    public static void main(String[] args) throws IOException {
-        File is = new File("./smpptest.cfg");
-        System.out.println(is.getAbsolutePath());
-        SMPPTest.main(new String[0]);
-    }
+//    public static void main(String[] args) throws IOException {
+//        File is = new File("./smpptest.cfg");
+//        System.out.println(is.getAbsolutePath());
+//        SMPPTest.main(new String[0]);
+//    }
 }

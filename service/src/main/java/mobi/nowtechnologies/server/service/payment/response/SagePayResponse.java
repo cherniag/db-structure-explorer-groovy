@@ -38,7 +38,7 @@ public class SagePayResponse extends PaymentSystemResponse {
 	}
 
 	public SagePayResponse(BasicResponse response) {
-		super(response);
+		super(response, false);
 
 		String message = response.getMessage();
 

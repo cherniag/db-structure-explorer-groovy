@@ -81,10 +81,6 @@
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>jboss</groupId> -->
-		<!-- <artifactId>jboss-common</artifactId> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -189,5 +185,5 @@
             <artifactId>jackson-mapper-asl</artifactId>
         </dependency>
 
-	</dependencies>
+    </dependencies>
 </project>

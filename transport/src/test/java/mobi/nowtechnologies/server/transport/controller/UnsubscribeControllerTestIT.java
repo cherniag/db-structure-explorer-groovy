@@ -42,7 +42,6 @@ import org.xml.sax.InputSource;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @RunWith(Theories.class)
 @ContextConfiguration(locations = {

@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
@@ -14,7 +12,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,6 +36,12 @@ import java.util.concurrent.Future;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -1109,8 +1113,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYG);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYG);
+		user.setSegment(CONSUMER);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -1140,8 +1144,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYM);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYM);
+		user.setSegment(CONSUMER);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -1171,8 +1175,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYG);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYG);
+		user.setSegment(CONSUMER);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -1202,8 +1206,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYG);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYG);
+		user.setSegment(CONSUMER);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -1233,8 +1237,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYG);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYG);
+		user.setSegment(CONSUMER);
 		user.setCurrentPaymentDetails(null);
 
 		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.lowBalance.not.for.device.type");
@@ -1280,8 +1284,8 @@ public class UserNotificationServiceImplTest {
 
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setContract(Contract.PAYG);
-		user.setSegment(SegmentType.CONSUMER);
+		user.setContract(PAYG);
+		user.setSegment(CONSUMER);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -1809,6 +1813,23 @@ public class UserNotificationServiceImplTest {
                 eq("sms.activation.pin.text"), any(String[].class));
     }
 
+    @Test
+    public void testSendActivationPinSMS_NotHasAllDetails_Success() throws Exception {
+        User user = UserFactory.createUser();
+        user.setProvider(null);
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+
+        Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
+
+        assertNotNull(result);
+        assertEquals(false, result.get());
+
+        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+        verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
+                eq("sms.activation.pin.text"), any(String[].class));
+    }
+
     @Test(expected = NullPointerException.class)
     public void testSendActivationPinSMS_NullUser_Failure() throws Exception {
         User user = null;
@@ -1828,7 +1849,7 @@ public class UserNotificationServiceImplTest {
 		
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setProvider("provider");
+		user.setProvider(O2);
 		user.setSegment(null);
 		user.setContract(null);
 		user.setDeviceType(null);
@@ -1836,7 +1857,7 @@ public class UserNotificationServiceImplTest {
 		String msgCodeBase = "msgCodeBase";
 		
 		String expectedMsg = "expectedMsg";
-		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider();
+		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey();
 		
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -1864,7 +1885,7 @@ public class UserNotificationServiceImplTest {
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(null);
-		user.setContract(Contract.PAYG);
+		user.setContract(PAYG);
 		user.setDeviceType(null);
 		
 		String msgCodeBase = "msgCodeBase";
@@ -1897,7 +1918,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(null);
 		
@@ -1955,7 +1976,7 @@ public class UserNotificationServiceImplTest {
 	}
 	
 	@Test
-	public void testGetMessageCode_DeviceTypeSegmentContractProvicerAreNotNull_Success()
+	public void testGetMessageCode_DeviceTypeSegmentContractProviderAreNotNull_Success()
 			throws Exception {
 		final String rewriteUrlParameter = "o2";
 		
@@ -1968,15 +1989,15 @@ public class UserNotificationServiceImplTest {
 		
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
-		user.setProvider("not-o2");
-		user.setSegment(SegmentType.BUSINESS);
-		user.setContract(Contract.PAYG);
+		user.setProvider(NON_O2);
+		user.setSegment(BUSINESS);
+		user.setContract(PAYG);
 		user.setDeviceType(deviceType);
 		
 		String msgCodeBase = "msgCodeBase";
 		
 		String expectedMsg = "expectedMsg";
-		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
+		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 		
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -1991,7 +2012,7 @@ public class UserNotificationServiceImplTest {
 	}
 	
 	@Test
-	public void testGetMessageCode_ProvicerIsNullDeviceTypeSegmentContractAreNotNull_Success()
+	public void testGetMessageCode_ProviderIsNullDeviceTypeSegmentContractAreNotNull_Success()
 			throws Exception {
 		final String rewriteUrlParameter = "o2";
 		
@@ -2005,8 +2026,8 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
-		user.setContract(Contract.PAYG);
+		user.setSegment(BUSINESS);
+		user.setContract(PAYG);
 		user.setDeviceType(deviceType);
 		
 		String msgCodeBase = "msgCodeBase";
@@ -2041,7 +2062,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2076,7 +2097,7 @@ public class UserNotificationServiceImplTest {
 
         User user = UserFactory.createUser();
         user.setUserGroup(o2UserGroup);
-        user.setProvider(ProviderType.VF.toString());
+        user.setProvider(ProviderType.VF);
         user.setDeviceType(deviceType);
         user.setSegment(null);
         user.setContract(null);
@@ -2090,7 +2111,7 @@ public class UserNotificationServiceImplTest {
         String msgCodeBase = "msgCodeBase";
 
         String expectedMsg = "expectedMsg";
-        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
@@ -2128,7 +2149,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2210,7 +2231,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2292,7 +2313,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2374,7 +2395,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2454,7 +2475,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2534,7 +2555,7 @@ public class UserNotificationServiceImplTest {
         User user = UserFactory.createUser();
         user.setUserGroup(o2UserGroup);
         user.setProvider(null);
-        user.setSegment(SegmentType.BUSINESS);
+        user.setSegment(BUSINESS);
         user.setContract(null);
         user.setDeviceType(deviceType);
 
@@ -2616,7 +2637,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2696,7 +2717,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2776,7 +2797,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2856,7 +2877,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -2938,7 +2959,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -3020,7 +3041,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		
@@ -3169,7 +3190,7 @@ public class UserNotificationServiceImplTest {
 		User user = UserFactory.createUser();
 		user.setUserGroup(null);
 		user.setProvider(null);
-		user.setSegment(SegmentType.BUSINESS);
+		user.setSegment(BUSINESS);
 		user.setContract(null);
 		user.setDeviceType(deviceType);
 		

@@ -8,6 +8,7 @@ import java.io.File;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/service-test-ws.xml" })
+@Ignore
 public class O2ServiceIT {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(O2ServiceIT.class);

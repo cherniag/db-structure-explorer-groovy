@@ -17,7 +17,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 @DiscriminatorColumn(name = "paymentType", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "tb_paymentDetails")
 @NamedQuery(name = PaymentDetails.FIND_BY_USER_ID_AND_PAYMENT_DETAILS_TYPE, query = "select paymentDetails from PaymentDetails paymentDetails join paymentDetails.submittedPayments submittedPayments where paymentDetails.owner.id=?1 and submittedPayments.type=?2 order by paymentDetails.creationTimestampMillis desc")
-public abstract class PaymentDetails {
+public class PaymentDetails {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetails.class);
 
@@ -167,7 +167,9 @@ public abstract class PaymentDetails {
 		this.promotionPaymentPolicy = promotionPaymentPolicy;
 	}
 	
-	public abstract String getPaymentType();
+	public String getPaymentType(){
+        return UNKNOW_TYPE;
+    }
 
 	public User getOwner() {
 		return owner;

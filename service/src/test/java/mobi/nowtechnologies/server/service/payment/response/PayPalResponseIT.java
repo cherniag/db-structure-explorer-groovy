@@ -42,9 +42,5 @@ public class PayPalResponseIT {
 		assertNotNull(makeTokenResponse.getToken());
 		assertEquals(true, makeTokenResponse.isSuccessful());
 	}
-	
-	public void makingPayPalPayment() {
-		
-		
-	}
+
 }
