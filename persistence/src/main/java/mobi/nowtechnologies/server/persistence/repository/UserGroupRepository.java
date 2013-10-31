@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
  * User: Titov Mykhaylo (titov)
  * 09.10.13 15:13
  */
-public interface UserGroupRepository extends JpaRepository<UserGroup, Byte> {
+public interface UserGroupRepository extends JpaRepository<UserGroup, Integer> {
 
     UserGroup findByCommunity(Community community);
 

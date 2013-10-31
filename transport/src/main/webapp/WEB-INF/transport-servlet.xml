@@ -355,7 +355,7 @@
     </bean>
 
     <bean id="transport.sendSmsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" ref="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean" />
+        <property name="jobClass" value="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean" />
         <property name="jobDataAsMap">
             <map merge="true">
                 <entry key="communityURL" value="vf_nz" />
