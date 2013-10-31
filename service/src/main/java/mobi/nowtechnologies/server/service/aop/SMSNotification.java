@@ -45,8 +45,8 @@ public class SMSNotification {
 	protected void startO2PSMSPayment() {
 	}
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.VFPaymentServiceImpl.startPayment(..))")
-    protected void startVFsPSMSPayment() {
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPayment(..))")
+    protected void startVFPSMSPayment() {
     }
 
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
@@ -59,7 +59,7 @@ public class SMSNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFsPSMSPayment()")
+	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
