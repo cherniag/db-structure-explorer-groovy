@@ -9,11 +9,12 @@
            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <bean id="vf_nz.service.SMPPService" class="mobi.nowtechnologies.server.service.sms.SMPPServiceImpl">
+        <property name="useQueueMangager" value="${vf.nz.smpp.service.useQueue}" />
         <property name="gatewaysConfiguration">
             <set>
                 <bean class="com.sentaca.spring.smpp.SMSCGatewayConfiguration">
                     <constructor-arg>
-                        <bean class="com.sentaca.spring.smpp.BindConfiguration">
+                        <bean class="mobi.nowtechnologies.server.service.sms.SMPPBindConfiguration">
                             <property name="systemId" value="${vf.nz.smpp.service.systemId}" />
                             <property name="password" value="${vf.nz.smpp.service.password}" />
                             <property name="host" value="${vf.nz.smpp.service.host}" />
@@ -24,6 +25,7 @@
                             <property name="destinationNPI" value="${vf.nz.smpp.service.destinationNPI}" />
                             <property name="systemType" value="${vf.nz.smpp.service.systemType}" />
                             <property name="serviceType" value="${vf.nz.smpp.service.serviceType}" />
+                            <property name="connectionPoolSize" value="${vf.nz.smpp.service.pool.size}" />
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
