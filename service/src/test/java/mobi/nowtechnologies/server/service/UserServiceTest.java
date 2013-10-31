@@ -1140,7 +1140,7 @@ public class UserServiceTest {
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
         PowerMockito.mockStatic(UserGroupDao.class);
-        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Byte, UserGroup>());
+        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Integer, UserGroup>());
         PowerMockito.mockStatic(OperatorDao.class);
         PowerMockito.when(OperatorDao.getMapAsIds()).thenReturn(singletonMap(0, new Operator()));
         PowerMockito.mockStatic(UserStatusDao.class);
