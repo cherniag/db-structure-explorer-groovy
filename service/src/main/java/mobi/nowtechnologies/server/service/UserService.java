@@ -723,10 +723,6 @@ public class UserService {
         return oldUser;
     }
 
-	public String getCommunityNameByUserGroup(int userGroup) {
-		return userDao.getCommunityNameByUserGroup(userGroup);
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	public synchronized void applyPromotion(User user) {
 		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());

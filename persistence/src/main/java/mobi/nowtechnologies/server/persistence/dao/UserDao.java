@@ -25,26 +25,6 @@ import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 public class UserDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
 
-	public byte getUserGroupByCommunity(String communityName) {
-		if (communityName == null)
-			throw new PersistenceException(
-					"The parameter communityName is null");
-		return (Byte) getJpaTemplate().find(
-				"select o.i from UserGroup o where o.communityId = "
-						+ "(select oo.id from "+ Community.class.getSimpleName()
-						+ " oo where name = ?1)",
-				communityName).get(0);
-	}
-
-	public String getCommunityNameByUserGroup(int userGroup) {
-		return ((Community) getJpaTemplate().find(
-						"select o from "
-								+ Community.class.getSimpleName()
-								+ " o where o.id = "
-								+ "(select oo.community from UserGroup oo where oo.i = ?1)",
-						userGroup).get(0)).getName();
-	}
-
 	public User findByNameAndCommunity(String userName, String communityName) {
 		if (userName == null)
 			throw new PersistenceException("The parameter userName is null");
