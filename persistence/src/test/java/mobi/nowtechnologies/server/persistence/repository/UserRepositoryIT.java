@@ -41,7 +41,7 @@ public class UserRepositoryIT {
 	private static final int HOUR_SECONDS = 60 * 60;
 	private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
 	private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
-	private static final byte o2CommunityId = 7;
+	private static final int o2CommunityId = 7;
 
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
