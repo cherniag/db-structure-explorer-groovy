@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +15,18 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Collections;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -35,6 +44,9 @@ public class PaymentDetailsServiceTest {
     @Mock
     public PaymentPolicyService paymentPolicyServiceMock;
 
+    @Mock
+    public PaymentDetailsRepository paymentDetailsRepositoryMock;
+
     private PaymentDetailsService paymentDetailsServiceSpy;
     private PaymentPolicy defaultPaymentPolicy;
     private O2PSMSPaymentDetails expectedO2PSMSPaymentDetails;
@@ -45,6 +57,7 @@ public class PaymentDetailsServiceTest {
     public void setUp() {
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
         paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
+        paymentDetailsServiceSpy.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
 
         o2PsmsPaymentDetailsDtoMatcher = new ArgumentMatcher<PaymentDetailsDto>() {
             @Override
@@ -92,5 +105,22 @@ public class PaymentDetailsServiceTest {
 
         //when
         paymentDetailsServiceSpy.createDefaultO2PsmsPaymentDetails(user);
+    }
+
+    @Test
+    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification(){
+        //given
+        String communityUrl ="";
+        Pageable pageable = new PageRequest(0,1);
+
+        List<PaymentDetails> expectedPaymentDetailsList = Collections.<PaymentDetails>singletonList(new O2PSMSPaymentDetails());
+
+        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);;
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsServiceSpy.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
+
+        //then
+        assertThat(paymentDetailsList, is(expectedPaymentDetailsList));
     }
 }

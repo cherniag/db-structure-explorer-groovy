@@ -12,11 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 10/7/13
  * Time: 10:03 AM
- * To change this template use File | Settings | File Templates.
  */
 public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse> {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());

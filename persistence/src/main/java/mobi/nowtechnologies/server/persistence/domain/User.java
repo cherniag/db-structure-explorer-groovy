@@ -48,7 +48,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
-		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
+		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.id from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
 public class User implements Serializable {
@@ -167,7 +167,7 @@ public class User implements Serializable {
 	private String token;
 
 	@Column(name = "userGroup", insertable = false, updatable = false)
-	private byte userGroupId;
+	private Integer userGroupId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userGroup", nullable = false)
@@ -296,6 +296,9 @@ public class User implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
     private List<UserAndroidDetails> userAndroidDetailsList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserLog> userLogs;
 
     @Transient
     private User oldUser;
@@ -697,10 +700,10 @@ public class User implements Serializable {
 	public void setUserGroup(UserGroup userGroup) {
 		this.userGroup = userGroup;
 		if (userGroup != null)
-			userGroupId = userGroup.getI();
+			userGroupId = userGroup.getId();
 	}
 
-	public byte getUserGroupId() {
+	public Integer getUserGroupId() {
 		return userGroupId;
 	}
 
@@ -1074,6 +1077,14 @@ public class User implements Serializable {
 	public void setLastBefore48SmsMillis(long lastBefore48SmsMillis) {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
 	}
+
+    public List<UserLog> getUserLogs() {
+        return userLogs;
+    }
+
+    public void setUserLogs(List<UserLog> userLogs) {
+        this.userLogs = userLogs;
+    }
 
     private Integer getLastPromoId() {
         if (isNotNull(lastPromo)) return lastPromo.getId();

@@ -3,6 +3,9 @@ package mobi.nowtechnologies.server.persistence.repository;
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -10,12 +13,17 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static junit.framework.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
@@ -28,6 +36,12 @@ public class PaymentDetailsRepositoryIT {
 	
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
+
+    @Resource(name = "userGroupRepository")
+    private UserGroupRepository userGroupRepository;
+
+    @Resource(name = "userRepository")
+    private UserRepository userRepository;
 		
 	private PayPalPaymentDetails getPaymentDetails(String billingAgreement) {
 		PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
@@ -95,4 +109,80 @@ public class PaymentDetailsRepositoryIT {
 			}
 		}
 	}
+
+    @Test
+    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(1));
+        assertThat(paymentDetailsList.get(0).getI(), is(paymentDetails.getI()));
+    }
+
+    @Test
+    public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotification(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(2).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecauseTheyDoesNotExist(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(Long.MAX_VALUE));
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecauseWrongCommunity(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(null, new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecausePaymentDetailsIsActive(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(true).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(0));
+    }
 }

@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_drmTypes database table.
- * 
- */
 @Entity
 @Table(name="tb_drmTypes")
 public class DrmType implements Serializable {
@@ -31,4 +28,11 @@ public class DrmType implements Serializable {
 		return this.name;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .toString();
+    }
 }

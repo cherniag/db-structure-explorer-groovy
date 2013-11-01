@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -419,11 +420,25 @@ public class ChartDetail {
 		return newChartDetail;
 	}
 
-	@Override
-	public String toString() {
-		return "ChartDetail [i=" + i + ", chartId=" + chartId + ", chart=" + chart + ", mediaId=" + mediaId + ", media=" + media + ", info=" + info + ", position=" + position + ", prevPosition="
-				+ prevPosition + ", chgPositionId=" + chgPositionId + ", chgPosition=" + chgPosition + ", channel=" + channel + ", imageFileName=" + imageFileName + ", imageTitle=" + imageTitle
-				+ ", title=" + title + ", subtitle=" + subtitle + ", publishTimeMillis=" + publishTimeMillis + ", locked=" + locked + ", defaultChart=" + defaultChart + ", version=" + version + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("chartId", chartId)
+                .append("mediaId", mediaId)
+                .append("info", info)
+                .append("position", position)
+                .append("prevPosition", prevPosition)
+                .append("chgPositionId", chgPositionId)
+                .append("channel", channel)
+                .append("imageFileName", imageFileName)
+                .append("imageTitle", imageTitle)
+                .append("title", title)
+                .append("subtitle", subtitle)
+                .append("publishTimeMillis", publishTimeMillis)
+                .append("locked", locked)
+                .append("defaultChart", defaultChart)
+                .append("version", version)
+                .toString();
+    }
 }

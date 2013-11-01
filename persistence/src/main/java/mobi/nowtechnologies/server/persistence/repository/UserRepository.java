@@ -153,7 +153,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "      and log.user_id is not null " +
             "      and log.type = 'UPDATE_O2_USER' " +
             "      and log.last_update >  ?1)")
-    List<Integer> getUsersForUpdate(long timeMillis, byte userGroupId);
+    List<Integer> getUsersForUpdate(long timeMillis, int userGroupId);
 
     @Query(value = "select u from User u " +
             " join u.userGroup ug " +

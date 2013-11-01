@@ -41,7 +41,7 @@ public class UserRepositoryIT {
 	private static final int HOUR_SECONDS = 60 * 60;
 	private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
 	private static final int TWO_DAY_SECONDS = 2 * DAY_SECONDS;
-	private static final byte o2CommunityId = 7;
+	private static final int o2CommunityId = 7;
 
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
@@ -374,20 +374,20 @@ public class UserRepositoryIT {
 	@Test
 	public void testFindUsersForUpdate_WithTwoMoreDayAndLessDay_Success() throws Exception {
 		long epochMillis = getEpochMillis() - DAY_MILLISECONDS;
-
+		
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
 		User testUser = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
-		
+        
         User testUser1 = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis+DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(VALIDATE_PHONE_NUMBER).withDescription("dfdf"));
-        
+		
         User testUser2 = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(0L).withUser(testUser2).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
-		
-		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getI());
+        
+		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getId());
 		
 		assertNotNull(actualUsers);
 		assertEquals(2, actualUsers.size());		

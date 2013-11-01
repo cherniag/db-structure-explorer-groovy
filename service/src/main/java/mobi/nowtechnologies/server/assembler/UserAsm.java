@@ -136,7 +136,7 @@ public class UserAsm {
 		final UserGroup userGroup = user.getUserGroup();
 
 		userDto.setUserGroup(userGroup.getName());
-		userDto.setUserGroupId(userGroup.getI());
+		userDto.setUserGroupId(userGroup.getId());
 		userDto.setUserName(user.getUserName());
 
 		final UserStatus userStatus = user.getStatus();

@@ -54,7 +54,7 @@ public class PaymentPolicyService {
 		return paymentPolicyRepository.findOne(id);
 	}
 
-	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, byte communityId){
+	public PaymentPolicy getPaymentPolicy(final int operatorId, String paymentType, int communityId){
 		Validate.notNull(paymentType, "The parameter paymentType is null");
         return paymentPolicyDao.getPaymentPolicy(operatorId, paymentType, communityId);
 	}

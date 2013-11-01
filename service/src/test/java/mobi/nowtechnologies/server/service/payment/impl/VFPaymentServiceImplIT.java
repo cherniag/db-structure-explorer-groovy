@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import junit.framework.Assert;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
@@ -29,6 +30,12 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
+import static org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
@@ -99,20 +106,20 @@ public class VFPaymentServiceImplIT {
         deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD", "000", "It is test").getBytes());
         processorContainer.processStatusReportMessage(deliverSm);
 
-        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SMSCDeliveryReceipt.SUCCESS_FAILURE, 600000);
+        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
 
         int nextSubPayment = Utils.getEpochSeconds() + 4 * Utils.WEEK_SECONDS;
         user = userService.findByNameAndCommunity(userName, community);
-        Assert.assertEquals(nextSubPayment, user.getNextSubPayment());
+        assertTrue(Math.abs(nextSubPayment - user.getNextSubPayment()) < 4);
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
-        Assert.assertEquals(0, pendingPayments.size());
+        assertEquals(0, pendingPayments.size());
     }
 
     @Test
     public void testStartVFPayment_ErrorResponse_Successful() throws Exception {
         String userName = "+642102247311";
-        String community = "vf_nz";
+        String community = VF_NZ_COMMUNITY_REWRITE_URL;
         Integer paymentPolicyId = 231;
 
         User user = userService.findByNameAndCommunity(userName, community);
@@ -135,15 +142,15 @@ public class VFPaymentServiceImplIT {
         deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "UNDELIV", "001", "It is test").getBytes());
         processorContainer.processStatusReportMessage(deliverSm);
 
-        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SMSCDeliveryReceipt.SUCCESS_FAILURE, 600000);
+        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
         user = userService.findByNameAndCommunity(userName, community);
-        Assert.assertEquals(oldNextSubPayment.intValue(), user.getNextSubPayment());
-        Assert.assertEquals("001", user.getCurrentPaymentDetails().getErrorCode());
-        Assert.assertEquals("UNDELIV", user.getCurrentPaymentDetails().getDescriptionError());
-        Assert.assertEquals(PaymentDetailsStatus.ERROR, user.getCurrentPaymentDetails().getLastPaymentStatus());
+        assertEquals(oldNextSubPayment.intValue(), user.getNextSubPayment());
+        assertEquals("001", user.getCurrentPaymentDetails().getErrorCode());
+        assertEquals("UNDELIV", user.getCurrentPaymentDetails().getDescriptionError());
+        assertEquals(ERROR, user.getCurrentPaymentDetails().getLastPaymentStatus());
 
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(user.getId());
-        Assert.assertEquals(0, pendingPayments.size());
+        assertEquals(0, pendingPayments.size());
     }
 
     protected String buildMessage(String msgId, String sub, String dlvrd, String submitDate, String doneDate, String stat, String err, String text) {

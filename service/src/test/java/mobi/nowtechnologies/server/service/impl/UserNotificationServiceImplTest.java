@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -15,6 +16,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalMatchers;
@@ -33,6 +35,8 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.Future;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
@@ -46,11 +50,13 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Utils.class, UserNotificationServiceImpl.class })
 public class UserNotificationServiceImplTest {
@@ -61,6 +67,7 @@ public class UserNotificationServiceImplTest {
 	private MigHttpService migHttpServiceMock;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
     private DeviceService deviceServiceMock;
+    private PaymentDetailsService paymentDetailsServiceMock;
 
 	@Test
 	public void testUserNotificationImpl_Constructor_Success()
@@ -1320,13 +1327,14 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
 
-		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
-		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        user.setNextSubPayment(Integer.MIN_VALUE);
 
-		User user = UserFactory.createUser();
-		user.setCurrentPaymentDetails(o2PDPaymentDetails);
-		user.setNextSubPayment(Integer.MIN_VALUE);
+        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+
+        user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
@@ -1354,15 +1362,20 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(true, result.get());
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(Long.MIN_VALUE));
 
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(1)).update(o2PDPaymentDetails);
 	}
 
 	@Test
@@ -1370,13 +1383,14 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
 
-		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
-		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        user.setNextSubPayment(Integer.MAX_VALUE);
 
-		User user = UserFactory.createUser();
-		user.setCurrentPaymentDetails(o2PDPaymentDetails);
-		user.setNextSubPayment(Integer.MAX_VALUE);
+        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+
+        user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
@@ -1404,29 +1418,35 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.24h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
-		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
+        Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
-		assertNotNull(result);
-		assertEquals(true, result.get());
+        assertNotNull(result);
+        assertEquals(true, result.get());
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(Long.MIN_VALUE));
 
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.paymentFail.at.24h.not.for.device.type");
 		verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.24h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(1)).update(o2PDPaymentDetails);
 	}
 	
 	@Test
 	public void testSendPaymentFailSMS_rejectedDevice_Success() throws Exception {
-		int madeRetries = Integer.MAX_VALUE;
-		int retriesOnError = madeRetries;
+        int madeRetries = Integer.MAX_VALUE;
+        int retriesOnError = madeRetries;
 
-		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
-		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        user.setNextSubPayment(Integer.MIN_VALUE);
 
-		User user = UserFactory.createUser();
-		user.setCurrentPaymentDetails(o2PDPaymentDetails);
-		user.setNextSubPayment(Integer.MIN_VALUE);
+        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+
+        user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
@@ -1454,15 +1474,20 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
 	@Test
@@ -1470,13 +1495,14 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries + 1;
 
-		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
-		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        user.setNextSubPayment(Integer.MIN_VALUE);
 
-		User user = UserFactory.createUser();
-		user.setCurrentPaymentDetails(o2PDPaymentDetails);
-		user.setNextSubPayment(Integer.MIN_VALUE);
+        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+
+        user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
@@ -1504,15 +1530,20 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
 		verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
 	@Test(expected=Exception.class)
@@ -1554,6 +1585,10 @@ public class UserNotificationServiceImplTest {
 
 		doThrow(new Exception()).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
@@ -1563,6 +1598,7 @@ public class UserNotificationServiceImplTest {
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1598,6 +1634,9 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
@@ -1607,9 +1646,10 @@ public class UserNotificationServiceImplTest {
 		verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testSendPaymentFailSMS_UserIsNull_Failure() throws Exception {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
@@ -1645,25 +1685,59 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        doReturn(o2PDPaymentDetails).when(paymentDetailsServiceMock).update(o2PDPaymentDetails);
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
+        assertThat(o2PDPaymentDetails.getLastFailedPaymentNotificationMillis(), is(nullValue()));
 
 		verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.paymentFail.at.0h.not.for.device.type");
 		verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
 				eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(o2PDPaymentDetails);
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testSendPaymentFailSMS_PendingPaymentIsNull_Failure() throws Exception {
 		PendingPayment pendingPayment = null;
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(any(User.class), eq("sms.notification.paymentFail.at.0h.not.for.device.type"));
+
+        final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                assertNotNull(argument);
+                Object[] args = (Object[]) argument;
+
+                assertEquals(1, args.length);
+
+                String pUrl = (String) args[0];
+
+                assertEquals(userNotificationImplSpy.getPaymentsUrl(), pUrl);
+
+                return true;
+            }
+        };
+
+        doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(any(User.class),
+                eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        mockStatic(Utils.class);
+        when(Utils.getEpochMillis()).thenReturn(Long.MIN_VALUE);
 
 		Future<Boolean> result = userNotificationImplSpy.sendPaymentFailSMS(pendingPayment);
 
 		assertNotNull(result);
 		assertEquals(false, result.get());
+
+        verify(userNotificationImplSpy, times(0)).rejectDevice(any(User.class), eq("sms.notification.paymentFail.at.0h.not.for.device.type"));
+        verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(any(User.class),
+                eq("sms.paymentFail.at.0h.text"), argThat(matcher));
+        verify(paymentDetailsServiceMock, times(0)).update(any(PaymentDetails.class));
 	}
 	
 	@Test
@@ -3069,8 +3143,8 @@ public class UserNotificationServiceImplTest {
 		doReturn(true).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.not.for.device.type");
 		doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(any(String.class), any(String.class));
 		
-		ResponseEntity responseEntiytMock = mock(ResponseEntity.class);
-		doReturn(url).when(responseEntiytMock).getBody();
+		ResponseEntity responseEntityMock = mock(ResponseEntity.class);
+		doReturn(url).when(responseEntityMock).getBody();
 		
 		final ArgumentMatcher<MultiValueMap<String, Object>> matcher = new ArgumentMatcher<MultiValueMap<String, Object>>() {
 
@@ -3089,7 +3163,7 @@ public class UserNotificationServiceImplTest {
 			}
 		};
 		
-		doReturn(responseEntiytMock).when(restTemplateMock).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
+		doReturn(responseEntityMock).when(restTemplateMock).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
@@ -3103,7 +3177,7 @@ public class UserNotificationServiceImplTest {
 		
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
 		verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(any(String.class), any(String.class));
-		verify(responseEntiytMock, times(0)).getBody();
+		verify(responseEntityMock, times(0)).getBody();
 		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
 		verify(userNotificationImplSpy, times(0)).getMessage(user, o2Community, msgCode, msgArgs);
 		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(rewriteUrlParameter, "sms.title", null, null);
@@ -3199,6 +3273,7 @@ public class UserNotificationServiceImplTest {
 		restTemplateMock = mock(RestTemplate.class);
 		migHttpServiceMock = mock(MigHttpService.class);
 		deviceServiceMock = mock(DeviceService.class);
+        paymentDetailsServiceMock = mock(PaymentDetailsService.class);
 
 		userNotificationImplSpy.setUserService(userServiceMock);
 		userNotificationImplSpy.setPaymentsUrl("paymentsUrl");
@@ -3207,5 +3282,6 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setRestTemplate(restTemplateMock);
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
 		userNotificationImplSpy.setDeviceService(deviceServiceMock);
+        userNotificationImplSpy.setPaymentDetailsService(paymentDetailsServiceMock);
 	}
 }

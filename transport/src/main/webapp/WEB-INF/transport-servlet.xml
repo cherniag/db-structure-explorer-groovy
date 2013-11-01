@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:hz="http://www.hazelcast.com/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.hazelcast.com/schema/spring
+                http://www.hazelcast.com/schema/spring/hazelcast-spring-3.0.xsd">
 
 	<mvc:interceptors>
 		<bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
@@ -350,7 +353,27 @@
         <property name="jobDetail" ref="job.ForkO2UsersForUpdateJob"/>
         <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
-     
+
+    <bean id="transport.sendSmsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean" />
+        <property name="jobDataAsMap">
+            <map merge="true">
+                <entry key="communityURL" value="vf_nz" />
+                <entry key="paymentDetailsFetchSize" value="1000" />
+                <entry key="paymentDetailsService" value-ref="service.PaymentDetailsService"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="sendSmsForVFNZUsersTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="transport.sendSmsJob"/>
+        <property name="cronExpression" value="${send.sms.for.vf_nz.users.job.cron.expression}"/>
+        <property name="jobDataAsMap">
+            <map merge="true">
+                <entry key="communityURL" value="vf_nz" />
+            </map>
+        </property>
+    </bean>
 
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
         <property name="applicationContextSchedulerContextKey" value="applicationContext" />
@@ -399,6 +422,7 @@
 				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
 				<ref bean="transport.smsNotificationQuartzTrigger" />
 				<ref bean="before48hPSMSPaymentTrigger"/>
+                <ref bean="sendSmsForVFNZUsersTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -415,6 +439,6 @@
 				</constructor-arg>
 			</bean>
 		</property>
-	</bean> 
+	</bean>
 	<import resource="classpath:controllers.xml" />
 </beans>

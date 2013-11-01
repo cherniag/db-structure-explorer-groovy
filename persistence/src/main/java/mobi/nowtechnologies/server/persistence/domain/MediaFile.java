@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -87,14 +89,15 @@ public class MediaFile implements Serializable {
 
     @Override
     public String toString() {
-        return "MediaFile{" +
-                "i=" + i +
-                ", filename='" + filename + '\'' +
-                ", fileTypeId=" + fileTypeId +
-                ", size=" + size +
-                ", duration=" + duration +
-                ", version=" + version +
-                "} " + super.toString();
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("filename", filename)
+                .append("fileTypeId", fileTypeId)
+                .append("size", size)
+                .append("duration", duration)
+                .append("version", version)
+                .toString();
     }
+
 
 }

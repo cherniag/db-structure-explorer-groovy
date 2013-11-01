@@ -12,7 +12,6 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
-
 // @deprecated The 'code', 'mediaType' columns should be moved into Promotion class
 @Deprecated
 @Entity

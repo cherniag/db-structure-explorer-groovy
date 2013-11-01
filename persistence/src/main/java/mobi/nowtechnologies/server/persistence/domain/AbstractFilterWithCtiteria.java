@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 
 
@@ -34,13 +36,18 @@ public abstract class AbstractFilterWithCtiteria implements java.io.Serializable
 		return this.name;
 	}
 
-	public String toString() {
-		return " id=" + id + " name=" + name;
-	}
+    public abstract boolean doFilter(User user);
+
+    public AbstractFilterWithCtiteria() {
+    }
 
 	
-	public abstract boolean doFilter(User user);
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .toString();
+    }
 
-	public AbstractFilterWithCtiteria() {
-	} 
 }

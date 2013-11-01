@@ -26,26 +26,27 @@ public class UserLog {
     @Column(columnDefinition = "char(25)")
     private String phoneNumber;
 
-    private long last_update;
+    @Column(name = "last_update")
+    private long logTimeMillis;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(255)")
-    private UserLogStatus status;
+    @Column(columnDefinition = "char(255)", name = "status")
+    private UserLogStatus userLogStatus;
     
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(25)")
-    private UserLogType type;
+    @Column(columnDefinition = "char(25)", name = "type")
+    private UserLogType userLogType;
 
     private String description;
 
     public UserLog(){/* 4hibernate*/}
 
-    protected UserLog(UserLog oldLog, UserLogStatus status, UserLogType userLogType, String description) {
+    protected UserLog(UserLog oldLog, UserLogStatus userLogStatus, UserLogType userLogType, String description) {
         if(oldLog != null)
             id = oldLog.getId();
-        this.type = userLogType;
-        this.last_update = System.currentTimeMillis();
-        this.status = status;
+        this.userLogType = userLogType;
+        this.logTimeMillis = System.currentTimeMillis();
+        this.userLogStatus = userLogStatus;
         this.description = Utils.substring(description, 255);
     }
     
@@ -68,15 +69,15 @@ public class UserLog {
     }
 
     public DateTime getLastUpdate() {
-        return new DateTime(last_update);
+        return new DateTime(logTimeMillis);
     }
     
     public void setLastUpdateMillis(long last_update) {
-		this.last_update = last_update;
+		this.logTimeMillis = last_update;
 	}
 
 	public long getLastUpdateMillis() {
-		return last_update;
+		return logTimeMillis;
 	}
 
 	public String getPhoneNumber() {
@@ -87,12 +88,12 @@ public class UserLog {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public UserLogType getType() {
-		return type;
+	public UserLogType getUserLogType() {
+		return userLogType;
 	}
 
-	public UserLogStatus getStatus() {
-        return status;
+	public UserLogStatus getUserLogStatus() {
+        return userLogStatus;
     }
 
     public UserLog withOldUserLog(UserLog oldUserLog){
@@ -108,12 +109,12 @@ public class UserLog {
     }
 
     public UserLog withUserLogStatus(UserLogStatus userLogStatus){
-        this.status = userLogStatus;
+        this.userLogStatus = userLogStatus;
         return this;
     }
 
     public UserLog withUserLogType(UserLogType userLogType){
-        this.type = userLogType;
+        this.userLogType = userLogType;
         return this;
     }
 
@@ -123,16 +124,20 @@ public class UserLog {
     }
 
     public UserLog withLogTimeMillis(long logTimeMillis){
-        this.last_update = logTimeMillis;
+        this.logTimeMillis = logTimeMillis;
         return this;
     }
 
     @Override
-    public String toString(){
-        return Objects.toStringHelper(this)
-                .add("userId", getUserId())
-                .add("last_update", last_update)
-                .add("status", status)
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("userId", getUserId())
+                .append("phoneNumber", phoneNumber)
+                .append("logTimeMillis", logTimeMillis)
+                .append("userLogStatus", userLogStatus)
+                .append("userLogType", userLogType)
+                .append("description", description)
                 .toString();
     }
 }

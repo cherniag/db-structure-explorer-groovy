@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_deviceTypes database table.
- * 
- */
 @Entity
 @Table(name="tb_deviceTypes")
 public class DeviceType implements Serializable {
@@ -76,9 +73,13 @@ public class DeviceType implements Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "DeviceType [i=" + i + ", name=" + name + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .toString();
+    }
+
 
 }

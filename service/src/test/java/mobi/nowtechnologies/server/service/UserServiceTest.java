@@ -1062,9 +1062,9 @@ public class UserServiceTest {
 		user.setStatus(userStatus);
 		final Community community = CommunityFactory.createCommunity();
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Map<String, DeviceType> deviceTypeMap = singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
-		final Map<Byte, UserGroup> userGroupMap = singletonMap(community.getId(), userGroup);
-		final Map<Integer, Operator> operatorMap = singletonMap(operatorId, new Operator());
+		final Map<String, DeviceType> deviceTypeMap = Collections.singletonMap(deviceTypeName, notDeviceType ? null : deviceType);
+		final Map<Integer, UserGroup> userGroupMap = Collections.singletonMap(community.getId(), userGroup);
+		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
 		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
@@ -1140,7 +1140,7 @@ public class UserServiceTest {
         PowerMockito.mockStatic(DeviceTypeDao.class);
         PowerMockito.when(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue()).thenReturn(new HashMap<String, DeviceType>());
         PowerMockito.mockStatic(UserGroupDao.class);
-        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Byte, UserGroup>());
+        PowerMockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(new HashMap<Integer, UserGroup>());
         PowerMockito.mockStatic(OperatorDao.class);
         PowerMockito.when(OperatorDao.getMapAsIds()).thenReturn(singletonMap(0, new Operator()));
         PowerMockito.mockStatic(UserStatusDao.class);

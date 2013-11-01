@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
@@ -30,6 +31,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -49,6 +51,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
     private UserService userService;
+    private PaymentDetailsService paymentDetailsService;
     private CommunityResourceBundleMessageSource messageSource;
     private List<String> availableCommunities = Collections.emptyList();
     private NowTechTokenBasedRememberMeServices rememberMeServices;
@@ -62,6 +65,10 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
+        this.paymentDetailsService = paymentDetailsService;
     }
 
     public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
@@ -325,35 +332,40 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Async
     @Override
-    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException {
+    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
+        try{
+            int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
+            return new AsyncResult<Boolean>(sendPaymentFailSMS(pendingPayment.getPaymentDetails(), hoursBefore));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new AsyncResult<Boolean>(Boolean.FALSE);
+     }
+
+    @Override
+    @Transactional
+    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) {
         try {
-            LOGGER.debug("input parameters pendingPayment: [{}]", pendingPayment);
+            LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 
-            if (pendingPayment == null)
-                throw new NullPointerException("The parameter pendingPayment is null");
-
-            User user = pendingPayment.getUser();
+            User user = paymentDetails.getOwner();
 
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
 
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-            Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
-
-            PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+            boolean wasSmsSentSuccessfully = false;
 
             final int madeRetries = paymentDetails.getMadeRetries();
             final int retriesOnError = paymentDetails.getRetriesOnError();
 
             if (madeRetries == retriesOnError) {
-
-                int hoursBefore = user.isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
                 if (!rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type")) {
-                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[]{paymentsUrl});
+                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[]{paymentsUrl});
 
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The payment fail sms was sent successfully");
-                        result = new AsyncResult<Boolean>(Boolean.TRUE);
+                        paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
                     } else {
                         LOGGER.info("The payment fail sms wasn't sent");
                     }
@@ -363,15 +375,16 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             } else {
                 LOGGER.info("The payment fail sms wasn't sent cause madeRetries [{}] and retriesOnError [{}] aren't matched", madeRetries, retriesOnError);
             }
-            LOGGER.debug("Output parameter result=[{}]", result);
-            return result;
-        } catch (RuntimeException e){
+            LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
+            return wasSmsSentSuccessfully;
+        }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw e;
         } finally {
             LogUtils.removeGlobalMDC();
         }
+        return false;
     }
+
 
     @Async
     @Override

@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -393,7 +395,7 @@ public class PaymentDetailsService {
 	public PaymentDetails update(PaymentDetails paymentDetails){
 		LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 		
-		paymentDetails = paymentDetailsDao.update(paymentDetails);
+		paymentDetails = paymentDetailsRepository.save(paymentDetails);
 		
 		LOGGER.info("Output parameter paymentDetails=[{}]", paymentDetails);
 		return paymentDetails;
@@ -408,18 +410,22 @@ public class PaymentDetailsService {
 
 		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 		
-		if(currentPaymentDetails!=null){
-			currentPaymentDetails.setActivated(false);
-			currentPaymentDetails.setDisableTimestampMillis(Utils.getEpochMillis());
-			currentPaymentDetails.setDescriptionError(reason);
-
-			currentPaymentDetails = update(currentPaymentDetails);
-
-			userService.updateUser(user);
+		if(isNotNull(currentPaymentDetails)){
+            disablePaymentDetails(currentPaymentDetails, reason);
+			user = userService.updateUser(user);
 		}
 		
 		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
+        return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
+	}
+
+    @Transactional(readOnly = true)
+    public List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable) {
+        return paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
+    }
 }

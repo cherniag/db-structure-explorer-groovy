@@ -78,7 +78,7 @@ public class PromotionService {
 	
 	public List<PromoCode> getPromoCodes(final String communityName) {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
-		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
+		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId());
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
@@ -86,7 +86,7 @@ public class PromotionService {
 		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
 		
 		Community community = CommunityDao.getMapAsNames().get(communityName);
-		byte userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI();
+		int userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId();
 		
 		List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(userGroupId);
 		List<Promotion> promotions = new LinkedList<Promotion>();

@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
 /**
- * Utils
- * 
  * @author Maksym Chernolevskyi (maksym)
  * 
  */
@@ -178,7 +176,7 @@ public class Utils {
 	}
 	public static boolean datesNotEquals(Date oldTime, Date newTime) {
         return newTime.getTime() != oldTime.getTime();
-    }
+	}
 
     public static String substring(String s, int i) {
         if(s == null || s.length() < i)

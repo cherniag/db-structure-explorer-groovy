@@ -79,4 +79,6 @@ public class DeviceUserData {
                 .append("deviceUid", deviceUid)
                 .toString();
     }
+
+
 }

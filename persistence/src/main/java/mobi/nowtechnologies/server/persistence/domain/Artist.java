@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_artist database table.
- * 
- */
 @Entity
 @Table(name="tb_artist")
 public class Artist implements Serializable {
@@ -62,9 +59,16 @@ public class Artist implements Serializable {
 		this.realName = realName;
 	}
 
-	@Override
-	public String toString() {
-		return "Artist [i=" + i + ", info=" + info + ", name=" + name +", realName=" + realName + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("info", info)
+                .append("name", name)
+                .append("realName", realName)
+                .toString();
+    }
+
+
 
 }

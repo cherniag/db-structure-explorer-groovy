@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -12,14 +14,14 @@ import java.io.Serializable;
 @Table(name="tb_userGroups")
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	public static enum Fields {
+
+    public static enum Fields {
 		i,chartId,communityId,drmPolicyId,name,newsId
 	}
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private byte i;
+	private Integer id;
 
 	@Column(name="chart", insertable=false,updatable=false, columnDefinition = "tinyint(4)")
 	private Integer chartId;
@@ -29,7 +31,7 @@ public class UserGroup implements Serializable {
 	private Chart chart;
 
 	@Column(name="community", insertable=false,updatable=false)
-	private byte communityId;
+	private Integer communityId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="community")
@@ -55,12 +57,12 @@ public class UserGroup implements Serializable {
     public UserGroup() {
     }
 
-	public byte getI() {
-		return this.i;
+	public Integer getId() {
+		return this.id;
 	}
 
-	public void setI(byte i) {
-		this.i = i;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Integer getChartId() {
@@ -76,7 +78,7 @@ public class UserGroup implements Serializable {
 		chartId=chart.getI();
 	}
 
-	public byte getCommunityId() {
+	public Integer getCommunityId() {
 		return communityId;
 	}
 
@@ -128,10 +130,20 @@ public class UserGroup implements Serializable {
         return this;
     }
 
-	@Override
-	public String toString() {
-		return "UserGroup [chartId=" + chartId + ", communityId=" + communityId + ", drmPolicyId=" + drmPolicyId + ", i=" + i + ", name=" + name
-				+ ", newsId=" + newsId + "]";
-	}
-	
+    public UserGroup withId(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("chartId", chartId)
+                .append("communityId", communityId)
+                .append("drmPolicyId", drmPolicyId)
+                .append("name", name)
+                .append("newsId", newsId)
+                .toString();
+    }
 }

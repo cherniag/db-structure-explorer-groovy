@@ -5,7 +5,6 @@ import javax.persistence.Table;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @Entity
 @Table(name = "promoted_devices")

@@ -59,11 +59,11 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
 			LOG.info("queue is not empty, skipping");
 			return;
 		}
-		
-        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl(O2_COMMUNITY_REWRITE_URL);
-		
-		List<Integer> users = selectUsersForUpdate(o2UserGroup.getI());
 
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl(O2_COMMUNITY_REWRITE_URL);
+
+		List<Integer> users = selectUsersForUpdate(o2UserGroup.getId());
+		
 		LOG.info("found [{}] users, batch size [{}]", users.size(), BATCH_SIZE);
 		List<List<Integer>> partitions = Lists.partition(users, BATCH_SIZE);
 		for (List<Integer> p : partitions){ 
@@ -72,7 +72,7 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
 		LOG.info("fork O2 user completed, offered [{}] partitions", partitions.size());
     }
 
-    public List<Integer> selectUsersForUpdate(byte userGroupId) {
+    public List<Integer> selectUsersForUpdate(int userGroupId) {
         return userRepository.getUsersForUpdate(getTimeBeforeWhichUsersWasNotUpdated(), userGroupId);
     }
 

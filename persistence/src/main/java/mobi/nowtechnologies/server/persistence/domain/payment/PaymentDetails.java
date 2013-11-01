@@ -2,23 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import java.util.List;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -81,6 +65,9 @@ public class PaymentDetails {
 	
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="paymentDetails")
 	private List<SubmittedPayment> submittedPayments;
+
+    @Column(name = "last_failed_payment_notification_millis", nullable = true)
+    private Long lastFailedPaymentNotificationMillis;
 
 	public void incrementRetries() {
 		this.madeRetries++;
@@ -195,8 +182,11 @@ public class PaymentDetails {
 		}
 	}
 
+    public Long getLastFailedPaymentNotificationMillis() {
+        return lastFailedPaymentNotificationMillis;
+    }
 
-	public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
+    public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
 		
 		paymentDetailsByPaymentDto.setPaymentType(getPaymentType());
@@ -219,16 +209,40 @@ public class PaymentDetails {
         return this;
     }
 
-    public PaymentDetails withOwner(User user) {
-        setOwner(user);
+    public PaymentDetails withDisableTimestampMillis(long disableTimestampMillis){
+        this.disableTimestampMillis = disableTimestampMillis;
         return this;
     }
 
-    @Override
-    public String toString() {
+    public PaymentDetails withDescriptionError(String descriptionError){
+        this.descriptionError = descriptionError;
+        return this;
+    }
+
+    public PaymentDetails withLastFailedPaymentNotificationMillis(Long lastFailedPaymentNotificationMillis){
+        this.lastFailedPaymentNotificationMillis = lastFailedPaymentNotificationMillis;
+        return this;
+    }
+
+    public PaymentDetails withMadeRetries(int madeRetries){
+        this.madeRetries = madeRetries;
+        return this;
+    }
+
+    public PaymentDetails withRetriesOnError(int retriesOnError){
+        this.retriesOnError = retriesOnError;
+        return this;
+    }
+
+    public PaymentDetails withOwner(User user) {
+        this.owner = user;
+        return this;
+    }
+
+	@Override
+	public String toString() {
         return new ToStringBuilder(this)
                 .append("i", i)
-                .append("activated", activated)
                 .append("madeRetries", madeRetries)
                 .append("retriesOnError", retriesOnError)
                 .append("lastPaymentStatus", lastPaymentStatus)
@@ -236,6 +250,8 @@ public class PaymentDetails {
                 .append("errorCode", errorCode)
                 .append("creationTimestampMillis", creationTimestampMillis)
                 .append("disableTimestampMillis", disableTimestampMillis)
+                .append("lastFailedPaymentNotificationMillis", lastFailedPaymentNotificationMillis)
+                .append("activated", activated)
                 .toString();
-    }
+	}
 }

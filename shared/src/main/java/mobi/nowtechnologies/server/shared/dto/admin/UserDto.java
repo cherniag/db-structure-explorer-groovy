@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.shared.dto.admin;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -81,7 +82,7 @@ public class UserDto {
 
 	private String token;
 
-	private byte userGroupId;
+	private int userGroupId;
 
 	private String userGroup;
 
@@ -450,11 +451,11 @@ public class UserDto {
 		this.token = token;
 	}
 
-	public byte getUserGroupId() {
+	public int getUserGroupId() {
 		return userGroupId;
 	}
 
-	public void setUserGroupId(byte userGroupId) {
+	public void setUserGroupId(int userGroupId) {
 		this.userGroupId = userGroupId;
 	}
 
@@ -666,23 +667,6 @@ public class UserDto {
 		this.lastSuccesfullPaymentSmsSendingTimestamp = lastSuccesfullPaymentSmsSendingTimestamp;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", userName=" + userName + ", facebookId=" + facebookId + ", deviceUID=" + deviceUID + ", subBalance=" + subBalance
-				+ ", freeBalance=" + freeBalance + ", userGroupId=" + userGroupId + ", userStatusId=" + userStatusId + ", nextSubPayment=" + nextSubPayment
-				+ ", isFreeTrial=" + isFreeTrial + ", currentPaymentDetailsId=" + currentPaymentDetailsId + ", lastPaymentTx=" + lastPaymentTx + ", token="
-				+ token + ", paymentStatus=" + paymentStatus + ", paymentType=" + paymentType + ", paymentEnabled=" + paymentEnabled + ", numPsmsRetries="
-				+ numPsmsRetries + ", lastSuccessfulPaymentTime=" + lastSuccessfulPaymentTime + ", amountOfMoneyToUserNotification="
-				+ amountOfMoneyToUserNotification + ", lastSuccesfullPaymentSmsSendingTimestamp=" + lastSuccesfullPaymentSmsSendingTimestamp
-				+ ", potentialPromoCodePromotionId=" + potentialPromoCodePromotionId + ", potentialPromotionId=" + potentialPromotionId + ", pin=" + pin
-				+ ", code=" + code + ", operator=" + operator + ", mobile=" + mobile + ", conformStoredToken=" + conformStoredToken + ", lastDeviceLogin="
-				+ lastDeviceLogin + ", lastWebLogin=" + lastWebLogin + ", firstUserLoginMillis=" + firstUserLogin + ", firstDeviceLoginMillis="
-				+ firstDeviceLogin + ", device=" + device + ", deviceModel=" + deviceModel + ", deviceTypeId=" + deviceTypeId + ", newStoredToken="
-				+ newStoredToken + ", tempToken=" + tempToken + ", postcode=" + postcode + ", address1=" + address1 + ", address2=" + address2 + ", country="
-				+ country + ", city=" + city + ", title=" + title + ", displayName=" + displayName + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", ipAddress=" + ipAddress + ", canContact=" + canContact + ", sessionID=" + sessionID + ", deviceString=" + deviceString + "]";
-	}
-
     public UserDto withNextSubPayment(Date nextSubPayment) {
         setNextSubPayment(nextSubPayment);
         return this;
@@ -701,4 +685,67 @@ public class UserDto {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("address1", address1)
+                .append("address2", address2)
+                .append("canContact", canContact)
+                .append("city", city)
+                .append("code", code)
+                .append("country", country)
+                .append("device", device)
+                .append("deviceString", deviceString)
+                .append("deviceTypeId", deviceTypeId)
+                .append("deviceModel", deviceModel)
+                .append("deviceType", deviceType)
+                .append("displayName", displayName)
+                .append("firstName", firstName)
+                .append("freeBalance", freeBalance)
+                .append("ipAddress", ipAddress)
+                .append("lastDeviceLogin", lastDeviceLogin)
+                .append("lastName", lastName)
+                .append("lastPaymentTx", lastPaymentTx)
+                .append("lastWebLogin", lastWebLogin)
+                .append("mobile", mobile)
+                .append("nextSubPayment", nextSubPayment)
+                .append("postcode", postcode)
+                .append("sessionID", sessionID)
+                .append("userStatusId", userStatusId)
+                .append("userStatus", userStatus)
+                .append("subBalance", subBalance)
+                .append("tempToken", tempToken)
+                .append("title", title)
+                .append("token", token)
+                .append("userGroupId", userGroupId)
+                .append("userGroup", userGroup)
+                .append("userName", userName)
+                .append("userType", userType)
+                .append("operator", operator)
+                .append("pin", pin)
+                .append("paymentType", paymentType)
+                .append("paymentEnabled", paymentEnabled)
+                .append("numPsmsRetries", numPsmsRetries)
+                .append("paymentDetailsDtos", paymentDetailsDtos)
+                .append("currentPaymentDetailsDto", currentPaymentDetailsDto)
+                .append("potentialPromotionDto", potentialPromotionDto)
+                .append("potentialPromoCodePromotionDto", potentialPromoCodePromotionDto)
+                .append("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
+                .append("isFreeTrial", isFreeTrial)
+                .append("newStoredToken", newStoredToken)
+                .append("conformStoredToken", conformStoredToken)
+                .append("paymentStatus", paymentStatus)
+                .append("lastSuccessfulPaymentTime", lastSuccessfulPaymentTime)
+                .append("facebookId", facebookId)
+                .append("deviceUID", deviceUID)
+                .append("firstDeviceLogin", firstDeviceLogin)
+                .append("firstUserLogin", firstUserLogin)
+                .append("currentPaymentDetailsId", currentPaymentDetailsId)
+                .append("amountOfMoneyToUserNotification", amountOfMoneyToUserNotification)
+                .append("potentialPromotionId", potentialPromotionId)
+                .append("lastSuccesfullPaymentSmsSendingTimestamp", lastSuccesfullPaymentSmsSendingTimestamp)
+                .append("freeTrialExpiredMillis", freeTrialExpiredMillis)
+                .toString();
+    }
 }

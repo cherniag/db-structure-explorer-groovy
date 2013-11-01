@@ -62,12 +62,7 @@ public class SMSNotification {
 	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
-		PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
-		try {
-			userNotificationService.sendPaymentFailSMS(pendingPayment);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
+        userNotificationService.sendPaymentFailSMS((PendingPayment) joinPoint.getArgs()[0]);
 		return object;
 	}
 

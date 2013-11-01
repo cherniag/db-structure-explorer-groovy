@@ -12,14 +12,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
-
-/**
- * The persistent class for the tb_charts database table.
- * 
- */
 
 @Entity
 @Table(name="tb_charts")
@@ -61,7 +56,7 @@ public class Chart implements Serializable {
     joinColumns=
         @JoinColumn(name="chart_id", referencedColumnName="i"),
     inverseJoinColumns=
-        @JoinColumn(name="community_id", referencedColumnName="i")
+        @JoinColumn(name="community_id", referencedColumnName="id")
     )
 	private List<Community> communities = new ArrayList<Community>();
 	
@@ -149,10 +144,16 @@ public class Chart implements Serializable {
 		return genre.getName();
 	}
 
-	@Override
-	public String toString() {
-		return "Chart [genreId=" + genreId + ", i=" + i + ", name=" + name + ", numTracks=" + numTracks
-		+ ", numBonusTracks="+numBonusTracks+ ", timestamp=" + timestamp + "type=" + type + "]";
-	}	
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("genreId", genreId)
+                .append("name", name)
+                .append("type", type)
+                .append("numTracks", numTracks)
+                .append("numBonusTracks", numBonusTracks)
+                .append("timestamp", timestamp)
+                .toString();
+    }
 }

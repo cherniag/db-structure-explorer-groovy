@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,7 +10,6 @@ import java.util.*;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 @Entity
 @Table(name = "offers")
@@ -138,9 +138,18 @@ public class Offer {
 		this.description = description;
 	}
 
-	@Override
-	public String toString() {
-		return "Offer [communityId=" + communityId + ", currency=" + currency + ", filterWithCtiteria=" + filterWithCtiteria + ", id=" + id + ", items=" + items + ", price=" + price + ", title="
-				+ title + ", coverFileName=" + coverFileName + ", description=" + description + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("communityId", communityId)
+                .append("title", title)
+                .append("price", price)
+                .append("currency", currency)
+                .append("coverFileName", coverFileName)
+                .append("description", description)
+                .toString();
+    }
+
+
 }

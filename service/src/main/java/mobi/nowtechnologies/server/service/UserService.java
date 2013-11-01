@@ -723,10 +723,6 @@ public class UserService {
         return oldUser;
     }
 
-	public String getCommunityNameByUserGroup(byte userGroup) {
-		return userDao.getCommunityNameByUserGroup(userGroup);
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	public synchronized void applyPromotion(User user) {
 		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
@@ -751,13 +747,11 @@ public class UserService {
 		final String reason = "STOP sms";
 		for (PaymentDetails paymentDetail : paymentDetails) {
 			final User owner = paymentDetail.getOwner();
-			if(owner!=null && paymentDetail.equals(owner.getCurrentPaymentDetails())){
+			if(isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())){
 				unsubscribeUser(owner, reason);
-			}
-			paymentDetail.setActivated(false);
-			paymentDetail.setDescriptionError(reason);
-			paymentDetail.setDisableTimestampMillis(System.currentTimeMillis());
-			entityService.updateEntity(paymentDetail);
+            }else {
+                paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
+            }
 			LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
 		}
 
@@ -770,7 +764,7 @@ public class UserService {
 		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
 		User user = entityService.findById(User.class, userId);
 		String reason = dto.getReason();
-		if (reason == null || reason.isEmpty()) {
+		if (!StringUtils.hasText(reason)) {
 			reason = "Unsubscribed by user manually via web portal";
 		}
 		user = unsubscribeUser(user, reason);
@@ -795,7 +789,7 @@ public class UserService {
 			String communityName) {
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
-		Byte communityId = getMapAsNames().get(communityName).getId();
+        Integer communityId = Community.getMapAsNames().get(communityName).getId();
 		List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
                 PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
                 communityId);
@@ -862,7 +856,7 @@ public class UserService {
 		user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
 		user.setDeviceString(userRegInfo.getDeviceString());
 		user.setDevice("");
-		byte communityId = CommunityDao.getCommunityId(communityName);
+		int communityId = CommunityDao.getCommunityId(communityName);
 		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
 		user.setAddress1(userRegInfo.getAddress());
 		user.setAddress2(userRegInfo.getAddress());
@@ -1598,7 +1592,7 @@ public class UserService {
 
 		user = updateUser(user);
 
-		if (!userDto.getPaymentEnabled() && currentPaymentDetails != null) {
+		if (!userDto.getPaymentEnabled() && isNotNull(currentPaymentDetails)) {
 			unsubscribeUser(user, "Unsubscribed by admin");
 		}
 
