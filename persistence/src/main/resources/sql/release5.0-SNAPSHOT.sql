@@ -39,6 +39,11 @@ update tb_paymentPolicy
 set segment=null
 where communityid=11 and paymentType='vfPsms' and provider='vf'
 
+-- http://jira.musicqubed.com/browse/IMP-2606
+-- IMP-2606 - [Backend] Schedule the automatic unsubscription notifications to users for the time between 8am and 8 pm
+ ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F766159605;
+ ALTER TABLE tb_users DROP INDEX FKFAEDF4F766159605;
+
  ALTER TABLE tb_promotions DROP FOREIGN KEY FK81812EA166159605;
  ALTER TABLE tb_promotions DROP INDEX FK81812EA166159605;
 
