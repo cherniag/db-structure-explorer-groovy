@@ -20,8 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.aop.framework.AopContext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +36,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
  * User: Alexsandr_Kolpakov
@@ -40,6 +44,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
  * Time: 1:27 PM
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({AopContext.class})
 public class VFPaymentServiceImplTest {
     private VFPaymentServiceImpl fixture;
 
@@ -136,11 +141,17 @@ public class VFPaymentServiceImplTest {
         PowerMockito.doReturn(Collections.singletonList(pendingPayment)).when(pendingPaymentServiceMock).getPendingPayments(user.getId());
         PowerMockito.doReturn(null).when(fixture).commitPayment(pendingPayment, vfResponse);
 
+        PowerMockito.mockStatic(AopContext.class);
+        PowerMockito.when(AopContext.currentProxy()).thenReturn(fixture);
+
         fixture.process(vfResponse);
 
         verify(userServiceMock, times(1)).findByMobile("+"+deliverSm.getSourceAddr());
         verify(pendingPaymentServiceMock, times(1)).getPendingPayments(user.getId());
         verify(fixture, times(1)).commitPayment(pendingPayment, vfResponse);
+
+        verifyStatic(Mockito.times(1));
+        AopContext.currentProxy();
     }
 
     @Test
