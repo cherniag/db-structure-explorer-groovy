@@ -384,6 +384,11 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withSubCost(BigDecimal subCost) {
+        setSubcost(subCost);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

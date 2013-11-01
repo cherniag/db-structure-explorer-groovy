@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -42,6 +43,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 /**
@@ -334,10 +337,24 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
     @Override
     public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
         try{
-            int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-            return new AsyncResult<Boolean>(sendPaymentFailSMS(pendingPayment.getPaymentDetails(), hoursBefore));
+            PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+            User user = pendingPayment.getUser();
+
+            final UserGroup userGroup = user.getUserGroup();
+            final Community community = userGroup.getCommunity();
+
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+
+            if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
+                int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
+                return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails, hoursBefore));
+            }else{
+                LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            LogUtils.removeGlobalMDC();
         }
         return new AsyncResult<Boolean>(Boolean.FALSE);
      }
