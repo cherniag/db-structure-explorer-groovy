@@ -14,14 +14,11 @@ import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The persistent class for the tb_chartDetail database table.
- * 
- */
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 @NamedQueries({
@@ -254,7 +251,7 @@ public class ChartDetail {
 		return media != null;
 	}
 
-	public static List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, String defaultAmazonUrl) {
+    public static List<ChartDetailDto> toChartDetailDtoList(Community community, List<ChartDetail> chartDetails, String defaultAmazonUrl) {
 		if (chartDetails == null)
 			throw new PersistenceException("The parameter chartDetails is null");
 		if (defaultAmazonUrl == null)
@@ -263,13 +260,13 @@ public class ChartDetail {
 		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
 		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
+			chartDetailDtos.add(chartDetail.toChartDetailDto(community, new ChartDetailDto(), defaultAmazonUrl));
 		}
 		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
 		return chartDetailDtos;
 	}
 
-	private ChartDetailDto toChartDetailDto(ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
+	private ChartDetailDto toChartDetailDto(Community community, ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
 		List<Drm> drms = media.getDrms();
 		Drm drm;
 		int drmSize = drms.size();
@@ -311,24 +308,10 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
-		String enocodediTunesUrl = null;
-		String enocodedAmazonUrl = null;
-		try {
-			String iTunesUrl = media.getiTunesUrl();
-			if (iTunesUrl != null)
-				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
-			String amazonUrl = media.getAmazonUrl();
-			if (amazonUrl == null || amazonUrl.isEmpty()) {
-				amazonUrl = defaultAmazonUrl;
-			}
-			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
-
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new PersistenceException(e.getMessage(), e);
-		}
-		chartDetailDto.setAmazonUrl(enocodedAmazonUrl);
-		chartDetailDto.setiTunesUrl(enocodediTunesUrl);
+        String encodedITunesUrl = getITunesUrl();
+		String encodedAmazonUrl = getAmazonUrl();
+		chartDetailDto.setAmazonUrl(encodedAmazonUrl);
+		chartDetailDto.setiTunesUrl(encodedITunesUrl);
 		chartDetailDto.setIsArtistUrl(media.getAreArtistUrls());
 		chartDetailDto.setPreviousPosition(prevPosition);
 		chartDetailDto.setChangePosition(chgPosition.getLabel());
@@ -337,6 +320,26 @@ public class ChartDetail {
 		LOGGER.debug("Output parameter chartDetailDto=[{}]", chartDetailDto);
 		return chartDetailDto;
 	}
+
+    private String getAmazonUrl() {
+        return getEncodedUTF8Text(media.getAmazonUrl());
+    }
+
+    private String getITunesUrl() {
+        return getEncodedUTF8Text(media.getiTunesUrl());
+    }
+
+    private String getEncodedUTF8Text(String text) {
+        try {
+            String encodedText = null;
+            if (StringUtils.isNotBlank(text))
+                encodedText = URLEncoder.encode(text, AppConstants.UTF_8);
+            return encodedText;
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new PersistenceException(e.getMessage(), e);
+        }
+    }
 
 	public static List<PurchasedChartDetailDto> toPurchasedChartDetailDtoList(List<ChartDetail> chartDetails) {
 		LOGGER.debug("input parameters chartDetails: [{}]", chartDetails);
