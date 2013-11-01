@@ -34,6 +34,8 @@ public class PaymentPolicyFactory
 	public static PaymentPolicy createPaymentPolicy() {
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
+		paymentPolicy.setSubweeks((byte)5);
+		paymentPolicy.setCurrencyISO("GBP");
 		paymentPolicy.setShortCode("shortCode");
         paymentPolicy.setAvailableInStore(false);
         paymentPolicy.setPaymentType(PaymentDetails.O2_PSMS_TYPE);

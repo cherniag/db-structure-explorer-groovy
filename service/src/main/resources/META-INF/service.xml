@@ -281,7 +281,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<!-- AOP Services -->
-	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
 
 	<bean id="mailNotificationAspect" class="mobi.nowtechnologies.server.service.aop.MailNotification">
 		<property name="mailService" ref="service.MailService" />

@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
@@ -13,6 +10,7 @@ import mobi.nowtechnologies.server.service.sms.SMSMessageProcessor;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.springframework.aop.framework.AopContext;
 
 import java.util.List;
 import java.util.Set;
@@ -89,7 +87,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
             PendingPayment pendingPayment = getPendingPayment(user.getId(), PaymentDetails.VF_PSMS_TYPE);
             if(pendingPayment != null){
-                commitPayment(pendingPayment, data);
+                getThis().commitPayment(pendingPayment, data);
             }
         }
     }
@@ -102,5 +100,9 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
         }
 
         return null;
+    }
+
+    private VFPaymentServiceImpl getThis(){
+        return ((VFPaymentServiceImpl) AopContext.currentProxy());
     }
 }

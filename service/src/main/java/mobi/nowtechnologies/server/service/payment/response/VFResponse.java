@@ -43,18 +43,20 @@ public class VFResponse extends PaymentSystemResponse implements Parser<DeliverS
 	protected VFResponse(DeliverSm deliverSm, BasicResponse response) {
 		super(response, false);
 
-        try {
-            phoneNumber = "+"+deliverSm.getSourceAddr();
-            DeliveryReceipt deliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
-            isSuccessful = deliveryReceipt.getFinalStatus() == DeliveryReceiptState.ACCEPTD || deliveryReceipt.getFinalStatus() == DeliveryReceiptState.DELIVRD;
+        if(deliverSm != null){
+            try {
+                phoneNumber = "+"+deliverSm.getSourceAddr();
+                DeliveryReceipt deliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
+                isSuccessful = deliveryReceipt.getFinalStatus() == DeliveryReceiptState.ACCEPTD || deliveryReceipt.getFinalStatus() == DeliveryReceiptState.DELIVRD;
 
-            if(!isSuccessful){
-                descriptionError = deliveryReceipt.getFinalStatus().toString();
-                errorCode = deliveryReceipt.getError();
+                if(!isSuccessful){
+                    descriptionError = deliveryReceipt.getFinalStatus().toString();
+                    errorCode = deliveryReceipt.getError();
+                }
+            } catch (InvalidDeliveryReceiptException e) {
+                LOGGER.error(e.getMessage(), e);
+                descriptionError = e.getMessage();
             }
-        } catch (InvalidDeliveryReceiptException e) {
-            LOGGER.error(e.getMessage(), e);
-            descriptionError = e.getMessage();
         }
 
 	}

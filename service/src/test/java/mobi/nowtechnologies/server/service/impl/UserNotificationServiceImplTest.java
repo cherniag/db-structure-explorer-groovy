@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
@@ -39,6 +40,7 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -510,7 +512,8 @@ public class UserNotificationServiceImplTest {
 		user.setDeviceType(androidDeviceType);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-
+        final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentDetails.setPaymentPolicy(paymentPolicy);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
@@ -522,11 +525,17 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(1, args.length);
+				assertEquals(4, args.length);
 
-				String unsUrl = (String) args[0];
+                String unsUrl = (String) args[0];
+                String currencyISO = (String) args[1];
+                String subcost = (String) args[2];
+                String subweeks = (String) args[3];
 
-				assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
+                assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
+                assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
+                assertEquals(paymentPolicy.getSubcost().toString(), subcost);
+                assertEquals(String.valueOf(paymentPolicy.getSubweeks()), subweeks);
 
 				return true;
 			}
@@ -557,7 +566,8 @@ public class UserNotificationServiceImplTest {
 		user.setDeviceType(androidDeviceType);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-
+        final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentDetails.setPaymentPolicy(paymentPolicy);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
@@ -569,11 +579,17 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(1, args.length);
+				assertEquals(4, args.length);
 
 				String unsUrl = (String) args[0];
+				String currencyISO = (String) args[1];
+				String subcost = (String) args[2];
+				String subweeks = (String) args[3];
 
 				assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
+				assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
+				assertEquals(paymentPolicy.getSubcost().toString(), subcost);
+				assertEquals(String.valueOf(paymentPolicy.getSubweeks()), subweeks);
 
 				return true;
 			}
