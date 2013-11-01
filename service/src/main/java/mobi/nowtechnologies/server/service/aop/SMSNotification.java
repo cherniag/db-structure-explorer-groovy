@@ -153,8 +153,8 @@ public class SMSNotification {
 	protected void createdMigPaymentDetails() {
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymentDetails(..))")
-	protected void createdO2PsmsPaymentDetails() {
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPaymentDetails(..))")
+	protected void createdPsmsPaymentDetails() {
 	}
 
 	/**
@@ -176,8 +176,8 @@ public class SMSNotification {
 		return object;
 	}
 
-	@Around("createdO2PsmsPaymentDetails()")
-	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
+	@Around("createdPsmsPaymentDetails()")
+	public Object createdPsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
 		try {
