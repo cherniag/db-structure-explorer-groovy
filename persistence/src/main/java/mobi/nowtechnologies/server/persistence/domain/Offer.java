@@ -23,7 +23,7 @@ public class Offer {
 	private Community community;
 
 	@Column(name = "community_id", insertable = false, updatable = false)
-	private byte communityId;
+	private int communityId;
 
 	@Column(nullable = false)
 	private String title;
@@ -61,7 +61,7 @@ public class Offer {
 		this.community = community;
 	}
 
-	public byte getCommunityId() {
+	public int getCommunityId() {
 		return communityId;
 	}
 
