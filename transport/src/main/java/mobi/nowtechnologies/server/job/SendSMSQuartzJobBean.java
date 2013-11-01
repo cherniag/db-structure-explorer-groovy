@@ -46,6 +46,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
         process();
     }
 
