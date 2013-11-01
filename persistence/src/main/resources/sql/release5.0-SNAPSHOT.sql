@@ -41,7 +41,7 @@ where communityid=11 and paymentType='vfPsms' and provider='vf'
 
 -- http://jira.musicqubed.com/browse/IMP-2606
 -- IMP-2606 - [Backend] Schedule the automatic unsubscription notifications to users for the time between 8am and 8 pm
- ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F766159605;
+  ALTER TABLE tb_users DROP FOREIGN KEY FKFAEDF4F766159605;
  ALTER TABLE tb_users DROP INDEX FKFAEDF4F766159605;
 
  ALTER TABLE tb_promotions DROP FOREIGN KEY FK81812EA166159605;
@@ -56,10 +56,10 @@ where communityid=11 and paymentType='vfPsms' and provider='vf'
 
  alter table messages drop FOREIGN KEY FKE475014C82282017;
  alter table messages drop INDEX FKE475014C82282017;
- alter table tb_usergroups drop FOREIGN KEY FK908D03F08E0982CF;
- alter table tb_usergroups drop INDEX FK908D03F08E0982CF;
- alter table tb_drmpolicy drop FOREIGN KEY FK65277B208E0982CF;
- alter table tb_drmpolicy drop INDEX FK65277B208E0982CF;
+ alter table tb_userGroups drop FOREIGN KEY FK908D03F08E0982CF;
+ alter table tb_userGroups drop INDEX FK908D03F08E0982CF;
+ alter table tb_drmPolicy drop FOREIGN KEY FK65277B208E0982CF;
+ alter table tb_drmPolicy drop INDEX FK65277B208E0982CF;
  alter table tb_news drop FOREIGN KEY FKA4FC0A048E0982CF;
  alter table tb_news drop INDEX FKA4FC0A048E0982CF;
  alter table community_charts drop FOREIGN KEY FK3410E96B82282017;
