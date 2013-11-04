@@ -28,26 +28,18 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     private PaymentDetailsService paymentDetailsService;
     private UserNotificationService userNotificationService;
 
-    public void setCommunityUrl(String communityUrl) {
-        this.communityUrl = communityUrl;
-    }
-
-    public void setPaymentDetailsFetchSize(int paymentDetailsFetchSize) {
-        this.paymentDetailsFetchSize = paymentDetailsFetchSize;
-    }
-
-    public PaymentDetailsService getPaymentDetailsService() {
-        return paymentDetailsService;
-    }
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
-    }
-
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
+        init(context);
+
         process();
+    }
+
+    private void init(JobExecutionContext context) {
+        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
+        communityUrl = (String) context.get("communityURL");
+        paymentDetailsFetchSize = (Integer) context.get("paymentDetailsFetchSize");
+        userNotificationService = (UserNotificationService) context.get("userNotificationService");
     }
 
     private void process() {
@@ -64,6 +56,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     }
 
     private void execute() {
+        LOGGER.info("Attempt to fetch [{}] failed payment with no notification payment details", paymentDetailsFetchSize);
         List<PaymentDetails> paymentDetails = paymentDetailsService.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
         LOGGER.info("Fetched [{}] failed payment with no notification payment details", paymentDetails.size());
 

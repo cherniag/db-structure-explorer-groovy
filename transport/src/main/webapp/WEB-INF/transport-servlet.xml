@@ -361,6 +361,7 @@
                 <entry key="communityURL" value="vf_nz" />
                 <entry key="paymentDetailsFetchSize" value="1000" />
                 <entry key="paymentDetailsService" value-ref="service.PaymentDetailsService"/>
+                <entry key="userNotificationService" value-ref="service.UserNotificationService"/>
             </map>
         </property>
     </bean>
