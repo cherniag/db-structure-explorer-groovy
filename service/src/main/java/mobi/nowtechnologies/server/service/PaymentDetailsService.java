@@ -180,11 +180,9 @@ public class PaymentDetailsService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public SagePayCreditCardPaymentDetails createCreditCardPaymentDetails(CreditCardDto dto, String communityUrl, int userId) throws ServiceException {
-		PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 		User user = userService.findById(userId);
 		Community community = communityService.getCommunityByUrl(communityUrl);
-		User user = userService.findById(userId);
-		
+
 		applyPromoToLimitedUsers(user, community);
 		PaymentDetailsDto pdto = CreditCardDto.toPaymentDetails(dto);
 		

@@ -18,9 +18,9 @@ public interface PaymentDetailsRepository extends PagingAndSortingRepository<Pay
 	List<PaymentDetails> findActivatedPaymentDetails(String operatorName, String phoneNumber);
 
     @Query(value =  "select pd from PaymentDetails pd " +
-            "join pd.owner o " +
-            "join o.userGroup uG "+
-            "join ug.community c " +
+            "join FETCH pd.owner o " +
+            "join FETCH o.userGroup uG "+
+            "join FETCH ug.community c " +
             "where " +
             "pd.activated=false " +
             "and pd.madeRetries=pd.retriesOnError " +
