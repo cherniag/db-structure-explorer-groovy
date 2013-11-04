@@ -30,21 +30,13 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        init(context);
-
-        process();
+        process(context);
     }
 
-    private void init(JobExecutionContext context) {
-        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
-        communityUrl = (String) context.get("communityURL");
-        paymentDetailsFetchSize = (Integer) context.get("paymentDetailsFetchSize");
-        userNotificationService = (UserNotificationService) context.get("userNotificationService");
-    }
-
-    private void process() {
+    private void process(JobExecutionContext context) {
         try{
             LogUtils.putClassNameMDC(this.getClass());
+            init(context);
             LOGGER.info("[START] Send SMS job started for [{}] community users", communityUrl);
             execute();
         }catch (Exception e){
@@ -53,6 +45,13 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
             LOGGER.info("[START] Send SMS job finished for [{}] community users", communityUrl);
             LogUtils.removeGlobalMDC();
         }
+    }
+
+    private void init(JobExecutionContext context) {
+        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
+        communityUrl = (String) context.get("communityURL");
+        paymentDetailsFetchSize = (Integer) context.get("paymentDetailsFetchSize");
+        userNotificationService = (UserNotificationService) context.get("userNotificationService");
     }
 
     private void execute() {
