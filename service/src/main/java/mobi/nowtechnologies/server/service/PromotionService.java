@@ -36,6 +36,7 @@ public class PromotionService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
+    public static final String PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE = "TwoWeeksOnSubscription";
 	
 	private PromotionDao promotionDao;
 	private EntityService entityService;
@@ -202,7 +203,7 @@ public class PromotionService {
         }
         return promotion;
     }
-
+    
     public String getVideoCodeForO24GConsumer(User user) {
         final String messageCodeForPromoCode;
         ContractChannel contractChannel = user.getContractChannel();

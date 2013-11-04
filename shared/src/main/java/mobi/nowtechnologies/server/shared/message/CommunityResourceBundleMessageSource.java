@@ -14,4 +14,6 @@ public interface CommunityResourceBundleMessageSource {
     int readInt(String code, int defaults);
 
     Date readDate(String community, String code, Date defaults);
+
+    boolean readBoolean(String community, String code, boolean defaults);
 }

@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.shared.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.text.SimpleDateFormat;
@@ -9,6 +11,8 @@ import java.util.Locale;
 import static org.apache.commons.lang.StringUtils.trim;
 
 public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
+    private static Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
+
     public static final String DEFAULT_COMMUNITY_DELIM = "_";
 
     private String communityDelim = DEFAULT_COMMUNITY_DELIM;
@@ -21,6 +25,18 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
             Date date = format.parse(dateString);
             return date;
         } catch (Exception e) {
+            return defaults;
+        }
+    }
+
+    @Override
+    public boolean readBoolean(String community, String code, boolean defaults) {
+        try {
+            String booleanString = trim(getMessage(community, code, null, String.valueOf(defaults), null));
+            boolean booleanValue = Boolean.parseBoolean(booleanString);
+            return booleanValue;
+        } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage(), e);
             return defaults;
         }
     }

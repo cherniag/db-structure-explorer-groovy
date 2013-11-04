@@ -55,7 +55,7 @@ public class PaymentsPayPalController extends CommonController {
 
 		if (StringUtils.hasText(result)) {
 			if (StringUtils.hasText(token)) {
-				paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
+				paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId(), communityUrl.getValue());
 			}
 			modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
 		}else{

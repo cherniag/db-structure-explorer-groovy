@@ -1,11 +1,15 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
@@ -53,6 +57,7 @@ public class PaymentsController extends CommonController {
     private PaymentDetailsService paymentDetailsService;
     private UserService userService;
     private CommunityService communityService;
+    private PromotionService promotionService;
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
         User user = userService.findById(getUserId());
@@ -76,8 +81,9 @@ public class PaymentsController extends CommonController {
 
         ModelAndView mav = new ModelAndView(viewName);
 
-        mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto(user)); /////////////
-        
+        PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsByPaymentDto(user);
+        mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
+        mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user, community));
         mav.addObject("paymentsPage", paymentsPage);
 
         return mav;
@@ -245,4 +251,76 @@ public class PaymentsController extends CommonController {
     private String message(Locale locale, String messageCode) {
         return messageSource.getMessage(messageCode, null, "",  locale);
     }
+
+    @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)
+    public ModelAndView activatePaymentDetailsByPayment(@PathVariable("scopePrefix") String scopePrefix, @PathVariable("paymentDetailsId") Long paymentDetailsId) {
+        LOGGER.debug("input parameters paymentDetailsId: [{}]", paymentDetailsId);
+
+        paymentDetailsService.activatePaymentDetailsByPayment(paymentDetailsId);
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/" + scopePrefix + "/one_click_subscription_successful.html");
+        LOGGER.debug("Output parameter [{}]", modelAndView);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = {SUCCESS_ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.GET)
+    public ModelAndView getOneClickSubscriptionSuccessfulPage(@PathVariable("scopePrefix") String scopePrefix) {
+
+        final int userId = getSecurityContextDetails().getUserId();
+        PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = paymentDetailsService.getPaymentDetailsTypeByPayment(userId);
+
+        final ModelAndView modelAndView;
+        if (paymentDetailsByPaymentDto == null || !paymentDetailsByPaymentDto.isActivated()) {
+            modelAndView = new ModelAndView("redirect:account.html");
+        } else {
+            modelAndView = new ModelAndView(scopePrefix + "/one_click_subscription_successful");
+            modelAndView.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
+        }
+
+        LOGGER.debug("Output parameter [{}]", modelAndView);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = {PAGE_MANAGE_PAYMENTS}, method = RequestMethod.GET)
+    public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+        LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
+
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
+    }
+
+    @RequestMapping(value = {PAGE_MANAGE_PAYMENTS_INAPP}, method = RequestMethod.GET)
+    public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
+    	
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale);
+    }
+    
+    private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {
+    	if ( user.isLimited() ) {
+    		
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			long now = System.currentTimeMillis();
+			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
+			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
+				return true;
+			}
+    	}
+    	
+    	return false;
+    }
+
+    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
+        this.paymentDetailsService = paymentDetailsService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
+	}
 }
