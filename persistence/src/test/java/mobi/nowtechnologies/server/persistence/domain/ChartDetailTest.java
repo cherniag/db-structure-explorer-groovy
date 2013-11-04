@@ -28,7 +28,7 @@ public class ChartDetailTest {
         Community community = new Community().withRewriteUrl("Kyiv");
 
         //when
-        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://amazon/o2/file");
+        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://amazon//file");
 
         //then
         shouldConvertToChartDetailDtoSuccessfully();

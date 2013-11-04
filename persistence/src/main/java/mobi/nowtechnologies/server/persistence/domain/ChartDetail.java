@@ -349,7 +349,7 @@ public class ChartDetail {
 
         Matcher matcher = URL_PATTERN.matcher(url);
         if (matcher.find()){
-            String community = matcher.group(1);
+            String community = matcher.group(2);
             if(isNotNull(community)){
                 matcher.appendReplacement(newUrl, quoteReplacement(matcher.group(1) + "/" + communityRewriteUrlParam + "/"));
             }
