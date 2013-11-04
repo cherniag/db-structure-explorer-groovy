@@ -37,8 +37,9 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             throw new ServiceException(e.getMessage());
         }
 
-        LOGGER.debug("Sms was sent successfully from [{}] to [{}] with message [{}]", new Object[]{messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
-        return generateResponse(result, messageObject);
+        SMSResponse response = generateResponse(result, messageObject);
+        LOGGER.info(response.getMessage());
+        return response;
     }
 
     private SMSResponse generateResponse(final boolean result, final MTMessage message){
