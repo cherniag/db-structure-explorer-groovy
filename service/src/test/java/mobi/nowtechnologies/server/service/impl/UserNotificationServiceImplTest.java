@@ -2110,6 +2110,8 @@ public class UserNotificationServiceImplTest {
         UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
         DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentPolicy.setProvider(ProviderType.VF);
 
         User user = UserFactory.createUser();
         user.setUserGroup(o2UserGroup);
@@ -2123,6 +2125,7 @@ public class UserNotificationServiceImplTest {
                 return PaymentDetails.VF_PSMS_TYPE;
             }
         });
+        user.getCurrentPaymentDetails().setPaymentPolicy(paymentPolicy);
 
         String msgCodeBase = "msgCodeBase";
 
