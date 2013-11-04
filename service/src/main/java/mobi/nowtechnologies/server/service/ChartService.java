@@ -93,11 +93,9 @@ public class ChartService {
 			throw new ServiceException("The parameter communityName is null");
 
 		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
-		int userId = user.getId();
 
-		user = userService.findUserTree(userId);
-
-		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
+        AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
+        user = (User) accountCheck.user;
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 		

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -28,31 +29,15 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     private PaymentDetailsService paymentDetailsService;
     private UserNotificationService userNotificationService;
 
-    public void setCommunityUrl(String communityUrl) {
-        this.communityUrl = communityUrl;
-    }
-
-    public void setPaymentDetailsFetchSize(int paymentDetailsFetchSize) {
-        this.paymentDetailsFetchSize = paymentDetailsFetchSize;
-    }
-
-    public PaymentDetailsService getPaymentDetailsService() {
-        return paymentDetailsService;
-    }
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
-    }
-
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
-        process();
+        process(context);
     }
 
-    private void process() {
+    private void process(JobExecutionContext context) {
         try{
             LogUtils.putClassNameMDC(this.getClass());
+            init(context.getMergedJobDataMap());
             LOGGER.info("[START] Send SMS job started for [{}] community users", communityUrl);
             execute();
         }catch (Exception e){
@@ -63,7 +48,15 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
         }
     }
 
+    private void init(JobDataMap jobDataMap) {
+        paymentDetailsService = (PaymentDetailsService) jobDataMap.get("paymentDetailsService");
+        communityUrl = (String) jobDataMap.get("communityURL");
+        paymentDetailsFetchSize = Integer.parseInt((String)jobDataMap.get("paymentDetailsFetchSize"));
+        userNotificationService = (UserNotificationService) jobDataMap.get("userNotificationService");
+    }
+
     private void execute() {
+        LOGGER.info("Attempt to fetch [{}] failed payment with no notification payment details", paymentDetailsFetchSize);
         List<PaymentDetails> paymentDetails = paymentDetailsService.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
         LOGGER.info("Fetched [{}] failed payment with no notification payment details", paymentDetails.size());
 
