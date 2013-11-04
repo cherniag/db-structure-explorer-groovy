@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public interface CommunityRepository extends JpaRepository<Community, Integer> {
 	

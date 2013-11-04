@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.service.aop;
 
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -33,7 +35,7 @@ public class SMSNotification {
 		this.userService = userService;
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
 	protected void startCreditCardPayment() {
 	}
 
@@ -54,23 +56,18 @@ public class SMSNotification {
 	}
 
 	/**
-	 * Sending sms after any payment system has spent all retries with failures
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
+	 * Sending sms after any payment system has spent all retries with failure
 	 */
 	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
-        userNotificationService.sendPaymentFailSMS((PendingPayment) joinPoint.getArgs()[0]);
+        PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
+        userNotificationService.sendPaymentFailSMS(pendingPayment);
 		return object;
 	}
 
 	/**
 	 * Sending sms after user was set to limited status
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.saveWeeklyPayment(*))")
 	public Object saveWeeklyPayment(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -86,9 +83,6 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms after user unsubscribe
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -124,9 +118,6 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms before 48 h expire subscription
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.updateLastBefore48SmsMillis(..))")
 	public Object updateLastBefore48SmsMillis(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -159,9 +150,6 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms after user was subscribed with some payment details
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {

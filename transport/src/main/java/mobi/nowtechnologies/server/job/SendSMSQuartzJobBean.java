@@ -46,6 +46,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
         process();
     }
 
@@ -64,7 +65,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
     private void execute() {
         List<PaymentDetails> paymentDetails = paymentDetailsService.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, new PageRequest(0, paymentDetailsFetchSize));
-        LOGGER.info("Fetched [{}] failed payment with no notification payment details");
+        LOGGER.info("Fetched [{}] failed payment with no notification payment details", paymentDetails.size());
 
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {

@@ -3,11 +3,13 @@ package mobi.nowtechnologies.server.service.impl;
 import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +19,10 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -29,15 +33,11 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 
 /**
  * Testing to see if we have messages for all users - the idea is to have all user types from app
@@ -52,6 +52,9 @@ public class UserNotificationServiceImplTest2 {
 	private List<User> audioOnlyUsers;
 	private List<User> videoUsers;
 	private MigHttpService migHttpService;
+
+    @Mock
+    private PaymentDetailsService paymentDetailsServiceMock;
 	
 	@Before
 	public void setUp() {
@@ -67,7 +70,8 @@ public class UserNotificationServiceImplTest2 {
 		userNotificationService = spy(new UserNotificationServiceImpl());
 		userNotificationService.setMessageSource(messageSource);
         userNotificationService.setDeviceService(deviceService);
-		userNotificationService.setAvailableCommunities(new String[]{"o2","vf_nz"});
+		userNotificationService.setAvailableCommunities(new String[]{O2_COMMUNITY_REWRITE_URL,VF_NZ_COMMUNITY_REWRITE_URL});
+        userNotificationService.setPaymentDetailsService(paymentDetailsServiceMock);
 		migHttpService = mock(MigHttpService.class);
 		MigResponse migResponse = mock(MigResponse.class);
 		
@@ -89,7 +93,7 @@ public class UserNotificationServiceImplTest2 {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendSmsOnFreeTrialExpired(u);
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
+			if (O2_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -98,7 +102,7 @@ public class UserNotificationServiceImplTest2 {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendUnsubscribeAfterSMS(u);
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
+			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -107,7 +111,7 @@ public class UserNotificationServiceImplTest2 {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendUnsubscribePotentialSMS(u);
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
+			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
 	
@@ -128,7 +132,9 @@ public class UserNotificationServiceImplTest2 {
 		int times = 1;
 		for ( User u : audioOnlyUsers ) {
 			userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
+			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) {
+                verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
+            }
 		}
 	}
 
@@ -138,8 +144,9 @@ public class UserNotificationServiceImplTest2 {
         for ( User u : audioOnlyUsers ) {
             userNotificationService.sendActivationPinSMS(u);
 
-            if("vf_nz".equals(u.getUserGroup().getCommunity().getRewriteUrlParameter()))
+            if(VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())){
                 times++;
+            }
 
             verify(migHttpService, times(times)).send(anyString(), anyString(), anyString());
         }
@@ -228,7 +235,7 @@ public class UserNotificationServiceImplTest2 {
 				return 0;
 			}
 		};
-		pp.setPaymentDetails(paymentDetails);
+		pp.setPaymentDetails(paymentDetails.withOwner(u));
 		
 		return pp;
 	}
@@ -262,7 +269,7 @@ public class UserNotificationServiceImplTest2 {
 			public String getPaymentType() {
 				return paymentType;
 			}
-		});
+		}.withPaymentPolicy(new PaymentPolicy().withSubCost(BigDecimal.TEN)));
 		
 		user.setTariff(tariff);
 		
