@@ -29,7 +29,7 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <bean class="com.sentaca.spring.smpp.mo.MessageReceiver">
+                        <bean class="mobi.nowtechnologies.server.service.sms.SMPPMessageReceiver">
                             <constructor-arg>
                                 <!-- inject your handler here -->
                                 <ref bean="vf_nz.service.SMPPProcessorContainer"/>

@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +39,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
+//@Transactional
 public class PhoneNumberControllerTestIT {
 	
 	private MockMvc mockMvc;
