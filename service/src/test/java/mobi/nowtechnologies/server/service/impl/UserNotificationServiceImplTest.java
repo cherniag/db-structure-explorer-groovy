@@ -13,10 +13,11 @@ import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalMatchers;
@@ -35,16 +36,15 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.Future;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -2128,6 +2128,147 @@ public class UserNotificationServiceImplTest {
 
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
+
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void testGetMessageCode_ChangedProvider_Success()
+            throws Exception {
+        final String rewriteUrlParameter = "o2";
+
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentPolicy.setProvider(ProviderType.NON_VF);
+
+        User user = UserFactory.createUser();
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(ProviderType.VF);
+        user.setDeviceType(deviceType);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setCurrentPaymentDetails(new PaymentDetails() {
+            @Override
+            public String getPaymentType() {
+                return PaymentDetails.VF_PSMS_TYPE;
+            }
+        });
+        user.getCurrentPaymentDetails().setPaymentPolicy(paymentPolicy);
+
+        String msgCodeBase = "msgCodeBase";
+
+        String expectedMsg = "expectedMsg";
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey();
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
+
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void testGetMessageCode_ChangedSegment_Success()
+            throws Exception {
+        final String rewriteUrlParameter = "o2";
+
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentPolicy.setProvider(ProviderType.VF);
+        paymentPolicy.setSegment(SegmentType.CONSUMER);
+
+        User user = UserFactory.createUser();
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(ProviderType.VF);
+        user.setDeviceType(deviceType);
+        user.setSegment(SegmentType.BUSINESS);
+        user.setContract(null);
+        user.setCurrentPaymentDetails(new PaymentDetails() {
+            @Override
+            public String getPaymentType() {
+                return PaymentDetails.VF_PSMS_TYPE;
+            }
+        });
+        user.getCurrentPaymentDetails().setPaymentPolicy(paymentPolicy);
+
+        String msgCodeBase = "msgCodeBase";
+
+        String expectedMsg = "expectedMsg";
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment();
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
+
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void testGetMessageCode_ChangedContract_Success()
+            throws Exception {
+        final String rewriteUrlParameter = "o2";
+
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        paymentPolicy.setProvider(ProviderType.VF);
+        paymentPolicy.setSegment(SegmentType.CONSUMER);
+        paymentPolicy.setContract(Contract.PAYM);
+
+        User user = UserFactory.createUser();
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(ProviderType.VF);
+        user.setDeviceType(deviceType);
+        user.setSegment(SegmentType.CONSUMER);
+        user.setContract(Contract.PAYG);
+        user.setCurrentPaymentDetails(new PaymentDetails() {
+            @Override
+            public String getPaymentType() {
+                return PaymentDetails.VF_PSMS_TYPE;
+            }
+        });
+        user.getCurrentPaymentDetails().setPaymentPolicy(paymentPolicy);
+
+        String msgCodeBase = "msgCodeBase";
+
+        String expectedMsg = "expectedMsg";
+        final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment()+"."+ paymentPolicy.getContract();
 
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
