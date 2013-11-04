@@ -82,6 +82,4 @@ public abstract class Item implements Serializable{
                 .append("typeId", typeId)
                 .toString();
     }
-
-
 }

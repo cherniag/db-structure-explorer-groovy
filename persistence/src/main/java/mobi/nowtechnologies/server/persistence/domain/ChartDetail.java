@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.regex.Matcher.quoteReplacement;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
@@ -273,7 +274,7 @@ public class ChartDetail {
 		return chartDetailDtos;
 	}
 
-	private ChartDetailDto toChartDetailDto(Community community, ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
+	public ChartDetailDto toChartDetailDto(Community community, ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
 		List<Drm> drms = media.getDrms();
 		Drm drm;
 		int drmSize = drms.size();
@@ -315,7 +316,7 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
-        chartDetailDto.setAmazonUrl(getAmazonUrl(community));
+        chartDetailDto.setAmazonUrl(getAmazonUrl(community, defaultAmazonUrl));
 		chartDetailDto.setiTunesUrl(getITunesUrl(community));
 		chartDetailDto.setIsArtistUrl(media.getAreArtistUrls());
 		chartDetailDto.setPreviousPosition(prevPosition);
@@ -326,11 +327,19 @@ public class ChartDetail {
 		return chartDetailDto;
 	}
 
-    private String getAmazonUrl(Community community) {
-        return getEncodedUrlToSpecificCommunity(media.getAmazonUrl(), community.getRewriteUrlParameter());
+    private String getAmazonUrl(Community community, String defaultAmazonUrl) {
+        String amazonUrl = media.getAmazonUrl();
+        if(isBlank(amazonUrl)) amazonUrl = defaultAmazonUrl;
+        return getEncodedUrlToSpecificCommunity(amazonUrl, community.getRewriteUrlParameter());
+    }
+
+    private String getITunesUrl(Community community) {
+        return getEncodedUrlToSpecificCommunity(media.getiTunesUrl(), community.getRewriteUrlParameter());
     }
 
     private String getEncodedUrlToSpecificCommunity(String url, String communityRewriteUrlParam) {
+        if(isBlank(url)) return url;
+
         url = findAndReplaceCommunityInUrl(url, communityRewriteUrlParam);
         return getEncodedUTF8Text(url);
     }
@@ -348,10 +357,6 @@ public class ChartDetail {
         matcher.appendTail(newUrl);
 
         return newUrl.toString();
-    }
-
-    private String getITunesUrl(Community community) {
-        return getEncodedUTF8Text(media.getiTunesUrl());
     }
 
     private String getEncodedUTF8Text(String text) {
@@ -438,6 +443,26 @@ public class ChartDetail {
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;
 	}
+
+    public ChartDetail withMedia(Media media) {
+        setMedia(media);
+        return this;
+    }
+
+    public ChartDetail withChart(Chart chart) {
+        setChart(chart);
+        return this;
+    }
+
+    public ChartDetail withPrevPosition(Byte prevPosition) {
+        setPrevPosition(prevPosition);
+        return this;
+    }
+
+    public ChartDetail withChgPosition(ChgPosition chgPosition) {
+        setChgPosition(chgPosition);
+        return this;
+    }
 
     @Override
     public String toString() {

@@ -144,6 +144,16 @@ public class Chart implements Serializable {
 		return genre.getName();
 	}
 
+    public Chart withI(Integer i) {
+        setI(i);
+        return this;
+    }
+
+    public Chart withGenre(Genre genre) {
+        setGenre(genre);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

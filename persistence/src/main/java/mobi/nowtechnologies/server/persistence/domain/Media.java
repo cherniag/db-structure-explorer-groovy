@@ -17,7 +17,7 @@ import java.util.List;
 public class Media extends Item implements Serializable {
 	private static final long serialVersionUID = 416356472074800767L;
 
-	public static enum Fields {
+    public static enum Fields {
 		isrc, i;
 	}
 
@@ -369,6 +369,41 @@ public class Media extends Item implements Serializable {
 	public void setTrackId(Long trackId) {
 		this.trackId = trackId;
 	}
+
+    public Media withDrms(List<Drm> drms) {
+        setDrms(drms);
+        return this;
+    }
+
+    public Media withArtist(Artist artist){
+        setArtist(artist);
+        return this;
+    }
+
+    public Media withImageFileLarge(MediaFile mediaFile) {
+        setImageFIleLarge(mediaFile);
+        return this;
+    }
+
+    public Media withImageFileSmall(MediaFile mediaFile) {
+        setImageFileSmall(mediaFile);
+        return this;
+    }
+
+    public Media withAudioFile(MediaFile mediaFile) {
+        setAudioFile(mediaFile);
+        return this;
+    }
+
+    public Media withGenre(Genre genre) {
+        setGenre(genre);
+        return this;
+    }
+
+    public Media withITunesUrl(String iTunesUrl){
+        setiTunesUrl(iTunesUrl);
+        return this;
+    }
 
     @Override
     public String toString() {

@@ -46,8 +46,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Drm implements Serializable {
 	public static final String NQ_FIND_BY_USER_AND_DRM_TYPE = "Drm.findByUserAndDrmType";
 	private static final long serialVersionUID = 1L;
-	
-	public static enum Fields{
+
+    public static enum Fields{
 		mediaId,i;
 	}
 
@@ -166,6 +166,11 @@ public class Drm implements Serializable {
 		}
 		return drmDtoList;
 	}
+
+    public Drm withDrmType(DrmType drmType) {
+        setDrmType(drmType);
+        return this;
+    }
 
     @Override
     public String toString() {
