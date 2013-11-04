@@ -16,7 +16,7 @@ public class SMSMessageProcessorContainer extends DeliverSmMessageProcessor {
 
     protected List<SMSMessageProcessor> processors;
 
-    protected List<AbstractSMPPGateway> gateways;
+    protected List<AbstractSMPPGateway> gateways = new ArrayList<AbstractSMPPGateway>();
 
     private boolean alreadyCalled;
 
@@ -55,7 +55,6 @@ public class SMSMessageProcessorContainer extends DeliverSmMessageProcessor {
 
     public void setJsmppGateway(AbstractSMPPGateway jsmppGateway) {
         if (!alreadyCalled) {
-            gateways = new ArrayList<AbstractSMPPGateway>();
             super.setJsmppGateway((JSMPPGateway)jsmppGateway);
         }
         gateways.add(jsmppGateway);
