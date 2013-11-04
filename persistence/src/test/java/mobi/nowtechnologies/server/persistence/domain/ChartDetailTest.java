@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 import static java.util.Collections.*;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -24,11 +25,11 @@ public class ChartDetailTest {
     @Test
     public void shouldConvertToChartDetailDto() throws Exception {
         //given
-        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl("https://itunes/o2/file").withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
-        Community community = new Community().withRewriteUrl("Kyiv");
+        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl("https://itunes/ua/file").withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
+        Community community = new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL);
 
         //when
-        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://amazon//file");
+        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://amazon/ua/file");
 
         //then
         shouldConvertToChartDetailDtoSuccessfully();
@@ -63,8 +64,8 @@ public class ChartDetailTest {
         assertThat(chartDetailDto.getImageLargeVersion(), is(media.getImageFIleLarge().getVersion()));
         assertThat(chartDetailDto.getImageSmallVersion(), is(media.getImageFileSmall().getVersion()));
         assertThat(chartDetailDto.getDuration(), is(media.getAudioFile().getDuration()));
-        assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Famazon%2FKyiv%2Ffile"));
-        assertThat(chartDetailDto.getiTunesUrl(), is("https%3A%2F%2Fitunes%2FKyiv%2Ffile"));
+        assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Famazon%2FGB%2Ffile"));
+        assertThat(chartDetailDto.getiTunesUrl(), is("https%3A%2F%2Fitunes%2FGB%2Ffile"));
         assertThat(chartDetailDto.isArtistUrl(), is(media.getAreArtistUrls()));
         assertThat(chartDetailDto.getPreviousPosition(), is(chartDetail.getPrevPosition()));
         assertThat(chartDetailDto.getChangePosition(), is(chartDetail.getChgPosition().getLabel()));

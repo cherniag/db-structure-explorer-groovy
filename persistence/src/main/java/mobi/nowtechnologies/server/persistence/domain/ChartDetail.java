@@ -2,8 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +34,17 @@ public class ChartDetail {
     public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
 	public static final String NQ_FIND_CONTENT_INFO_BY_DRM_TYPE = "ChartDetail.findContentInfoByDrmType";
 	public static final String NQ_FIND_CONTENT_INFO_BY_ISRC = "ChartDetail.findContentInfoByIsrc";
+
+    private static final Map<String, String> countryCodeForCommunityMap;
+
+    static {
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
+        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
+
+        countryCodeForCommunityMap = Collections.unmodifiableMap(map);
+    }
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetail.class);
 
@@ -337,21 +347,22 @@ public class ChartDetail {
         return getEncodedUrlToSpecificCommunity(media.getiTunesUrl(), community.getRewriteUrlParameter());
     }
 
-    private String getEncodedUrlToSpecificCommunity(String url, String communityRewriteUrlParam) {
-        if(isBlank(url)) return url;
+    private String getEncodedUrlToSpecificCommunity(String url, String communityRewriteUrl) {
+        String newCountryCode = countryCodeForCommunityMap.get(communityRewriteUrl);
+        if(isBlank(url)|| isBlank(newCountryCode)) return url;
 
-        url = findAndReplaceCommunityInUrl(url, communityRewriteUrlParam);
+        url = findAndReplaceCountryCodeInUrl(url, newCountryCode);
         return getEncodedUTF8Text(url);
     }
 
-    private String findAndReplaceCommunityInUrl(String url, String communityRewriteUrlParam){
+    private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode){
         StringBuffer newUrl = new StringBuffer();
 
         Matcher matcher = URL_PATTERN.matcher(url);
         if (matcher.find()){
-            String community = matcher.group(2);
-            if(isNotNull(community)){
-                matcher.appendReplacement(newUrl, quoteReplacement(matcher.group(1) + "/" + communityRewriteUrlParam + "/"));
+            String urlCountryCode = matcher.group(2);
+            if(isNotNull(urlCountryCode)){
+                matcher.appendReplacement(newUrl, quoteReplacement(matcher.group(1) + "/" + newCountryCode + "/"));
             }
         }
         matcher.appendTail(newUrl);
