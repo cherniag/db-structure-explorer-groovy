@@ -51,7 +51,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     private void init(JobDataMap jobDataMap) {
         paymentDetailsService = (PaymentDetailsService) jobDataMap.get("paymentDetailsService");
         communityUrl = (String) jobDataMap.get("communityURL");
-        paymentDetailsFetchSize = (Integer) jobDataMap.get("paymentDetailsFetchSize");
+        paymentDetailsFetchSize = Integer.parseInt((String)jobDataMap.get("paymentDetailsFetchSize"));
         userNotificationService = (UserNotificationService) jobDataMap.get("userNotificationService");
     }
 
