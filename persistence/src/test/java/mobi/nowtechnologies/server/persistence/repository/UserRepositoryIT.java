@@ -377,14 +377,14 @@ public class UserRepositoryIT {
 		
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
-		User testUser = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
+		User testUser = userRepository.save(UserFactory.createUser().withUserName("1").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         
-        User testUser1 = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
+        User testUser1 = userRepository.save(UserFactory.createUser().withUserName("2").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis+DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(VALIDATE_PHONE_NUMBER).withDescription("dfdf"));
 		
-        User testUser2 = userRepository.save(UserFactory.createUser().withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
+        User testUser2 = userRepository.save(UserFactory.createUser().withUserName("3").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup));
         userLogRepository.save(new UserLog().withLogTimeMillis(0L).withUser(testUser2).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         
 		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getId());
