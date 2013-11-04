@@ -16,10 +16,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.apache.commons.lang.StringUtils;
@@ -585,7 +582,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         String msg = null;
 
-        String[] codes = new String[7];
+        String[] codes = new String[25];
 
         final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
@@ -599,12 +596,31 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
 
         codes[0] = msgCodeBase;
-        codes[1] = getCode(codes, 0, providerKey);
-        codes[2] = getCode(codes, 1, segment);
-        codes[3] = getCode(codes, 2, contract);
-        codes[4] = getCode(codes, 3, deviceTypeName);
-        codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null);
-        codes[6] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null);
+        codes[1] = getCode(codes, 0, providerKey, true);
+        codes[2] = getCode(codes, 1, segment, true);
+        codes[3] = getCode(codes, 2, contract, true);
+        codes[4] = getCode(codes, 3, deviceTypeName, true);
+        codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null, true);
+        codes[6] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null, true);
+
+        if(paymentDetails != null){
+            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
+            String prefix = "before";
+            final String preProviderKey = isNull(paymentPolicy.getProvider()) ? null : paymentPolicy.getProvider().getKey();
+            final SegmentType preSegment = paymentPolicy.getSegment();
+            final Contract preContract = paymentPolicy.getContract();
+            final String providerSuffix = prefix+"."+preProviderKey;
+            final String segmentSuffix = providerSuffix+"."+preSegment;
+            final String contractSuffix = segmentSuffix+"."+preContract;
+            for(int i = 1; i <= 6; i++){
+                if(!StringUtils.equals(preProviderKey, providerKey))
+                    codes[1*6+i] = getCode(codes, i, providerSuffix, false);
+                if(segment != preSegment)
+                    codes[2*6+i] = getCode(codes, i, segmentSuffix, false);
+                if(contract != preContract)
+                    codes[3*6+i] = getCode(codes, i, contractSuffix, false);
+            }
+        }
 
         for (int i = codes.length - 1; i >= 0; i--) {
             if (codes[i] != null) {
@@ -622,7 +638,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         return msg;
     }
 
-    private String getCode(String[] codes, int i, Object value) {
+    private String getCode(String[] codes, int i, Object value, boolean recursive) {
         LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
 
         if (codes == null)
@@ -647,8 +663,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                 } else {
                     code = prefix + "." + value;
                 }
-            } else {
-                code = getCode(codes, i - 1, value);
+            } else if(recursive){
+                code = getCode(codes, i - 1, value, recursive);
             }
         }
         LOGGER.debug("Output parameter code=[{}]", code);
