@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.*;
 
@@ -19,13 +21,17 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.regex.Matcher.quoteReplacement;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 @NamedQueries({
 		@NamedQuery(name = ChartDetail.NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE, query = "select count(media) from Media media where media.isrc=?1 and media.publishDate<=?2")
 })
 public class ChartDetail {
-	public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
+
+    public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
 	public static final String NQ_FIND_CONTENT_INFO_BY_DRM_TYPE = "ChartDetail.findContentInfoByDrmType";
 	public static final String NQ_FIND_CONTENT_INFO_BY_ISRC = "ChartDetail.findContentInfoByIsrc";
 
@@ -85,8 +91,9 @@ public class ChartDetail {
 
 	@Version
 	private int version;
+    public static final Pattern URL_PATTERN = Pattern.compile("(https?://.*)(/.*/)");
 
-	public ChartDetail() {
+    public ChartDetail() {
 	}
 
     public Integer getI() {
@@ -308,10 +315,8 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
-        String encodedITunesUrl = getITunesUrl();
-		String encodedAmazonUrl = getAmazonUrl();
-		chartDetailDto.setAmazonUrl(encodedAmazonUrl);
-		chartDetailDto.setiTunesUrl(encodedITunesUrl);
+        chartDetailDto.setAmazonUrl(getAmazonUrl(community));
+		chartDetailDto.setiTunesUrl(getITunesUrl(community));
 		chartDetailDto.setIsArtistUrl(media.getAreArtistUrls());
 		chartDetailDto.setPreviousPosition(prevPosition);
 		chartDetailDto.setChangePosition(chgPosition.getLabel());
@@ -321,11 +326,31 @@ public class ChartDetail {
 		return chartDetailDto;
 	}
 
-    private String getAmazonUrl() {
-        return getEncodedUTF8Text(media.getAmazonUrl());
+    private String getAmazonUrl(Community community) {
+        return getEncodedUrlToSpecificCommunity(media.getAmazonUrl(), community.getRewriteUrlParameter());
     }
 
-    private String getITunesUrl() {
+    private String getEncodedUrlToSpecificCommunity(String url, String communityRewriteUrlParam) {
+        url = findAndReplaceCommunityInUrl(url, communityRewriteUrlParam);
+        return getEncodedUTF8Text(url);
+    }
+
+    private String findAndReplaceCommunityInUrl(String url, String communityRewriteUrlParam){
+        StringBuffer newUrl = new StringBuffer();
+
+        Matcher matcher = URL_PATTERN.matcher(url);
+        if (matcher.find()){
+            String community = matcher.group(1);
+            if(isNotNull(community)){
+                matcher.appendReplacement(newUrl, quoteReplacement(matcher.group(1) + "/" + communityRewriteUrlParam + "/"));
+            }
+        }
+        matcher.appendTail(newUrl);
+
+        return newUrl.toString();
+    }
+
+    private String getITunesUrl(Community community) {
         return getEncodedUTF8Text(media.getiTunesUrl());
     }
 
@@ -382,16 +407,7 @@ public class ChartDetail {
 		purchasedChartDetailDto.setTitle(media.getTitle());
 		purchasedChartDetailDto.setTrackSize(headerSize + audioSize - 2);
 
-		String enocodediTunesUrl = null;
-		try {
-			String iTunesUrl = media.getiTunesUrl();
-			if (iTunesUrl != null)
-				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new PersistenceException(e.getMessage(), e);
-		}
-		purchasedChartDetailDto.setiTunesUrl(enocodediTunesUrl);
+        purchasedChartDetailDto.setiTunesUrl(getITunesUrl());
 		purchasedChartDetailDto.setPreviousPosition(prevPosition);
 		purchasedChartDetailDto.setChangePosition(chgPosition.getLabel());
 		purchasedChartDetailDto.setChannel(channel);
