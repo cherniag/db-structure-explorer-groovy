@@ -366,19 +366,19 @@ public class ChartDetail {
         }
     }
 
-	public static List<PurchasedChartDetailDto> toPurchasedChartDetailDtoList(List<ChartDetail> chartDetails) {
-		LOGGER.debug("input parameters chartDetails: [{}]", chartDetails);
+	public static List<PurchasedChartDetailDto> toPurchasedChartDetailDtoList(Community community, List<ChartDetail> chartDetails) {
+		LOGGER.debug("input parameters community, chartDetails: [{}], [{}]", community, chartDetails);
 
 		List<PurchasedChartDetailDto> purchasedChartDetailDtos = new LinkedList<PurchasedChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			purchasedChartDetailDtos.add(chartDetail.toPurchasedChartDetailDto(new PurchasedChartDetailDto()));
+			purchasedChartDetailDtos.add(chartDetail.toPurchasedChartDetailDto(community, new PurchasedChartDetailDto()));
 		}
 		LOGGER.debug("Output parameter purchasedChartDetailDtos=[{}]", purchasedChartDetailDtos);
 		return purchasedChartDetailDtos;
 	}
 
-	public PurchasedChartDetailDto toPurchasedChartDetailDto(PurchasedChartDetailDto purchasedChartDetailDto) {
-		LOGGER.debug("input parameters purchasedChartDetailDto: [{}]", purchasedChartDetailDto);
+	public PurchasedChartDetailDto toPurchasedChartDetailDto(Community community,  PurchasedChartDetailDto purchasedChartDetailDto) {
+		LOGGER.debug("input parameters community, purchasedChartDetailDto: [{}], [{}]", community, purchasedChartDetailDto);
 
 		List<Drm> drms = media.getDrms();
 		Drm drm;
@@ -407,7 +407,7 @@ public class ChartDetail {
 		purchasedChartDetailDto.setTitle(media.getTitle());
 		purchasedChartDetailDto.setTrackSize(headerSize + audioSize - 2);
 
-        purchasedChartDetailDto.setiTunesUrl(getITunesUrl());
+        purchasedChartDetailDto.setiTunesUrl(getITunesUrl(community));
 		purchasedChartDetailDto.setPreviousPosition(prevPosition);
 		purchasedChartDetailDto.setChangePosition(chgPosition.getLabel());
 		purchasedChartDetailDto.setChannel(channel);
