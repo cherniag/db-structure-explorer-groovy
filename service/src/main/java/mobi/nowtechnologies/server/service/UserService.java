@@ -1997,6 +1997,10 @@ public class UserService {
 		return isPromoted;
 	}
 
+    public boolean isVFNZOtacValid(String otac, String phoneNumber, Community community) {
+        return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community)==0L ? false: true;
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public AccountCheckDTO autoOptInAndAccountCheck(String userName, String userToken, String timestamp, String deviceUID, String otac, String communityUri) {
         User user = autoOptIn(userName, userToken, timestamp, communityUri, deviceUID, otac);
