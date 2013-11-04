@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -36,7 +37,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
     private void process(JobExecutionContext context) {
         try{
             LogUtils.putClassNameMDC(this.getClass());
-            init(context);
+            init(context.getMergedJobDataMap());
             LOGGER.info("[START] Send SMS job started for [{}] community users", communityUrl);
             execute();
         }catch (Exception e){
@@ -47,11 +48,11 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
         }
     }
 
-    private void init(JobExecutionContext context) {
-        paymentDetailsService = (PaymentDetailsService) context.get("paymentDetailsService");
-        communityUrl = (String) context.get("communityURL");
-        paymentDetailsFetchSize = (Integer) context.get("paymentDetailsFetchSize");
-        userNotificationService = (UserNotificationService) context.get("userNotificationService");
+    private void init(JobDataMap jobDataMap) {
+        paymentDetailsService = (PaymentDetailsService) jobDataMap.get("paymentDetailsService");
+        communityUrl = (String) jobDataMap.get("communityURL");
+        paymentDetailsFetchSize = (Integer) jobDataMap.get("paymentDetailsFetchSize");
+        userNotificationService = (UserNotificationService) jobDataMap.get("userNotificationService");
     }
 
     private void execute() {
