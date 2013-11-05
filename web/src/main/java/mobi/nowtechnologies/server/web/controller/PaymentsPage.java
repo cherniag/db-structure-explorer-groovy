@@ -26,6 +26,7 @@ public class PaymentsPage {
 	private boolean userIsOptedInToVideo;
 	private boolean appleIOSAndNotBusiness;
 	private PaymentPageData paymentPageData;
+	private boolean disablePageIfUserHasPendingPayment;
 
 	public String getMobilePhoneNumber() {
 		return mobilePhoneNumber;
@@ -109,6 +110,15 @@ public class PaymentsPage {
 
 	public void setPaymentPageData(PaymentPageData paymentPageData) {
 		this.paymentPageData = paymentPageData;
+	}
+
+	public boolean isDisablePageIfUserHasPendingPayment() {
+		return disablePageIfUserHasPendingPayment;
+	}
+
+	public void setDisablePageIfUserHasPendingPayment(
+			boolean disablePageIfUserHasPendingPayment) {
+		this.disablePageIfUserHasPendingPayment = disablePageIfUserHasPendingPayment;
 	}
 
 	public String getPaymentDetailsType() {

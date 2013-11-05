@@ -86,6 +86,8 @@ public class PaymentsController extends CommonController {
         paymentsPage.setUserCanGetVideo( user.is4G() );
         paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
         paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
+        paymentsPage.setDisablePageIfUserHasPendingPayment( true );
+        user.hasPendingPayment();
 
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
@@ -150,7 +152,7 @@ public class PaymentsController extends CommonController {
     }
     
     private boolean isNotFromNetwork(User user) {
-    	return ProviderType.NON_O2.toString().equals(user.getProvider()) || ProviderType.NON_VF.toString().equals(user.getProvider());
+    	return ProviderType.NON_O2 == user.getProvider() || ProviderType.NON_VF == user.getProvider();
     }
     
     private boolean isBusinessUser(User u) {

@@ -1133,6 +1133,11 @@ public class User implements Serializable {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && currentPaymentDetails.isActivated();
 	}
+	
+	public boolean hasPendingPayment() {
+		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+		return currentPaymentDetails != null && PaymentDetailsStatus.AWAITING == currentPaymentDetails.getLastPaymentStatus();
+	}
 
 	public boolean isBeforeExpiration(long timestamp, int hours) {
 		return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
