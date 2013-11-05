@@ -6,7 +6,7 @@
 
 <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
     <c:if test="${paymentPolicy.paymentType == 'vfPsms'}">
-        <c:set var="method_name" value="vfpsms" />
+        <c:set var="method_name" value="oppsms" />
     </c:if>
     
 	<c:choose>

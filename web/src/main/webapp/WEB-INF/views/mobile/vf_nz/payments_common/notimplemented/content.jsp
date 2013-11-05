@@ -10,29 +10,14 @@ body {
 	background-color: #fff;
 	padding-bottom: 0px;
 }
-.notimplementedTitle {
-	color: #e60000;
-	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
-	font-size: 25px;
-	line-height: 120%;
-	text-align: center;
-}
-
-.notimplementedText {
-	color: #333;
-	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
-	font-size: 15px;
-	line-height: 140%;
-	text-align: center;
-}
 </style>
-
+<div style="margin: 0 13px;">
 <div class="notimplementedTitle">
 	You are on a trial<br />
 	and have full access to<br />
 	Vodafone Music.
 </div>
-<div style="text-align: center;">
+<div style="text-align: center; margin: 17px 0 22px;">
 	<img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_holding_page.png" width="47px" height="44px" align="bottom" />
 </div>
 
@@ -42,4 +27,4 @@ Don't worry, we'll let you know when it's time.</div>
 <div>
 	<input class="button-turquoise pie" title="/account.html" type="button" onClick="location.href=this.title" value="Close" />
 </div>
-
+</div>

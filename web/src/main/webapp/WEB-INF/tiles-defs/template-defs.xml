@@ -125,9 +125,6 @@
         <definition name="payments/oppsms" extends="payments" preparer="web.CommunityViewPreparer">
             <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp"/>
         </definition>
-        <definition name="payments/vfpsms" extends="payments" preparer="web.CommunityViewPreparer">
-            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/vfpsms/content.jsp"/>
-        </definition>
 		<definition name="payments/psms_verify" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/psms_verify/content.jsp"/>
 		</definition>

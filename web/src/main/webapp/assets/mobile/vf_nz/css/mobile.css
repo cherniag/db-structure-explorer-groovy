@@ -456,3 +456,21 @@ body {
 	line-height: 130%;
 	margin-bottom: 27px;
 }
+
+.notimplementedTitle {
+	color: #e60000;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+	font-size: 25px;
+	line-height: 120%;
+	margin-top: 27px;
+	text-align: center;
+}
+
+.notimplementedText {
+	color: #333;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	line-height: 140%;
+	margin-bottom: 30px;
+	text-align: center;
+}

@@ -23,7 +23,7 @@ import static mobi.nowtechnologies.server.web.controller.PaymentsController.*;
 @Controller
 public class PaymentsPsmsController extends CommonController {
 	public static final String VIEW_PAYMENTS_PSMS = "/{type:vfpsms|oppsms}";
-	public static final String VIEW_PAYMENTS_PSMS_CONFIRM = VIEW_PAYMENTS_PSMS +"/confirm";
+	public static final String VIEW_PAYMENTS_PSMS_CONFIRM = "/oppsms_confirm";
 	
 	public static final String PAGE_PAYMENTS_PSMS = SCOPE_PREFIX + VIEW_PAYMENTS_PSMS + PAGE_EXT;
 	public static final String PAGE_PAYMENTS_PSMS_CONFIRM = SCOPE_PREFIX + VIEW_PAYMENTS_PSMS_CONFIRM + PAGE_EXT;
@@ -50,21 +50,22 @@ public class PaymentsPsmsController extends CommonController {
     }
 
     @RequestMapping(value = {PAGE_PAYMENTS_PSMS_CONFIRM}, method = RequestMethod.GET)
-    public ModelAndView getPsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix, @PathVariable("type") String type,
+    public ModelAndView getPsmsConfirmationPage(@PathVariable("scopePrefix") String scopePrefix,
                                                 @RequestParam(POLICY_REQ_PARAM) Integer policyId) {
-        LOG.info("Create [{}] payment details by paymentPolicy.id=[{}]" , new Object[]{type, policyId});
+        LOG.info("Create [{}] payment details by paymentPolicy.id=[{}]" , new Object[]{policyId});
 
         User user = userRepository.findOne(getSecurityContextDetails().getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
 
-        BasicPSMSPaymentServiceImpl paymentService = getPaymentService(type);
+        BasicPSMSPaymentServiceImpl paymentService = getPaymentService(user);
         paymentService.commitPaymentDetails(user, policy);
 
         return new ModelAndView("redirect:/"+scopePrefix+".html");
     }
 
-    public BasicPSMSPaymentServiceImpl getPaymentService(String type){
-        return PaymentDetails.VF_PSMS_TYPE.equalsIgnoreCase(type) ? vfPaymentService : o2PaymentService;
+    public BasicPSMSPaymentServiceImpl getPaymentService(User user){
+    	return user.isVFNZCommunityUser() ? vfPaymentService : o2PaymentService;
+//        return PaymentDetails.VF_PSMS_TYPE.equalsIgnoreCase(type) ? vfPaymentService : o2PaymentService;
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
