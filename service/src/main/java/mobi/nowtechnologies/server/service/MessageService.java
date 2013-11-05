@@ -64,9 +64,8 @@ public class MessageService {
 
 		LOGGER.debug("input parameters user, communityName, lastUpdateNewsTimeMillis, withAds: [{}], [{}], [{}], [{}]", new Object[] { user, communityName, lastUpdateNewsTimeMillis, withAds });
 
-        user = userService.findUserTree(user.getId());
-
-		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
+		AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
+        user = (User) accountCheck.user;
 		Community community = user.getUserGroup().getCommunity();
 
 		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withAds);

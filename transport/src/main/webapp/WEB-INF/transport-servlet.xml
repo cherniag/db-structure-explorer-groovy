@@ -411,7 +411,18 @@
 		<property name="autoStartup" value="${jobs.autoStartup}" />
 		<property name="triggers">
 			<list>
-
+				<ref bean="paymentTrigger"/>
+				<ref bean="retryPaymentTrigger" />
+				<ref bean="expiredPaymentTrigger" />
+				<ref bean="transport.notificationQuartzTrigger" />
+				<ref bean="transport.notificationO2QuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
+				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
+				<ref bean="transport.smsNotificationQuartzTrigger" />
+				<ref bean="before48hPSMSPaymentTrigger"/>
                 <ref bean="sendSmsForVFNZUsersTrigger"/>
 			</list>
 		</property>
