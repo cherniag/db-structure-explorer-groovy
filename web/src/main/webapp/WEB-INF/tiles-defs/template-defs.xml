@@ -134,6 +134,9 @@
 		<definition name="payments/unsubscribe" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/unsubscribe/content.jsp"/>
 		</definition>
+		<definition name="payments/notimplemented" extends="payments" preparer="web.CommunityViewPreparer">
+			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/notimplemented/content.jsp"/>
+		</definition>
 				
   <definition name="payments_inapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
 	  <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/headSection.jsp"/>
@@ -171,6 +174,9 @@
 		</definition>
 		<definition name="payments_inapp/unsubscribe" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/unsubscribe/content.jsp"/>
+		</definition>
+		<definition name="payments_inapp/notimplemented" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/notimplemented/content.jsp"/>
 		</definition>
 		
  <definition name="contact_us" extends="mainTemplate" preparer="web.CommunityViewPreparer">
