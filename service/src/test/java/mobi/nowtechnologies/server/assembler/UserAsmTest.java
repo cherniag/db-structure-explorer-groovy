@@ -1,18 +1,31 @@
 package mobi.nowtechnologies.server.assembler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
+import mobi.nowtechnologies.server.shared.enums.UserType;
+import org.junit.Test;
 
 import java.util.Date;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.enums.UserType;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class UserAsmTest {
+
+    @Test
+    public void testGetPaymentType_UnknowPayment_Success() {
+        UserStatus userStatus = null;
+        String lastSubscribedPaymentSystem = null;
+        PaymentDetails paymentDetails = new VFPSMSPaymentDetails();
+
+        String paymentType = UserAsm.getPaymentType(paymentDetails, lastSubscribedPaymentSystem, userStatus);
+
+        assertEquals(PaymentDetails.VF_PSMS_TYPE, paymentType);
+    }
 	
 	@Test
 	public void testFromUserDto_IsOnTrial_Success()

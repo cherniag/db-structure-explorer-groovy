@@ -187,7 +187,7 @@ public class UserAsm {
                 .getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
                 && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-        String oldPaymentType = getOldPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
+        String oldPaymentType = getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
@@ -257,8 +257,7 @@ public class UserAsm {
         return accountCheckDTO;
     }
 
-    // TODO Review this code after client refactoring
-    private static String getOldPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem, UserStatus status) {
+    static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem, UserStatus status) {
         if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
             return "ITUNES_SUBSCRIPTION";
@@ -273,7 +272,7 @@ public class UserAsm {
         } else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "O2_PSMS";
         }
-        return "UNKNOWN";
+        return paymentDetails.getPaymentType();
     }
 
     private static String getOldPaymentStatus(PaymentDetails paymentDetails) {
