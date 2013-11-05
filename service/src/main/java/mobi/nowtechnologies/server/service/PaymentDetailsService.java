@@ -198,7 +198,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, int userId, String communityUrl) throws ServiceException {
+	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);
 
 		Community community = communityService.getCommunityByUrl(communityUrl);
