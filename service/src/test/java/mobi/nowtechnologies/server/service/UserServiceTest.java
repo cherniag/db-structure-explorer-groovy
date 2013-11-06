@@ -2745,6 +2745,19 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(1)).proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, user.getDeviceTypeIdString(), null);
 	}
 
+    @Test(expected = ServiceException.class)
+    public void shouldDoNotApplyPromotionByPromoCode() {
+        //given
+        User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
+
+        Promotion promotion = new Promotion().withPromoCode(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
+
+        doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
+
+        //when
+        userServiceSpy.applyPromotionByPromoCode(user, promotion, 0);
+    }
+
     @Test
     public void shouldApplyPromotionByPromoCode() {
         //given
