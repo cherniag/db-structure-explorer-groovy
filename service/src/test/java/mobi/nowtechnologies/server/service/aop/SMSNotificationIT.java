@@ -254,11 +254,11 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		int paymentPolicyId = 1;
 		
-		Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyInt(), anyString());
+		Mockito.doReturn(null).when(paymentDetailsService).commitPayPalPaymentDetails(anyString(), anyInt(), anyString(), anyInt());
 		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
 		
-		paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, user.getId(), "O2");
+		paymentDetailsService.commitPayPalPaymentDetails("xxxxxxxxxxxxxxxxx", paymentPolicyId, "O2", user.getId());
 		
 		verify(mockMigService, times(1)).makeFreeSMSRequest(anyString(), anyString(), anyString());
 	}
