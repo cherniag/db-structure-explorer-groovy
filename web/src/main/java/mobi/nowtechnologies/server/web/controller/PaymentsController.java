@@ -78,7 +78,11 @@ public class PaymentsController extends CommonController {
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentsPage paymentsPage = new PaymentsPage();
 
-        if ( user.isVFNZUser() ) {
+        // the following check was added to show a static page instead of the
+        // vf payment options. Once the options are enabled, the following
+        // lines can be removed
+        String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage", null, locale);
+        if (user.isVFNZUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
         	// for vf users we display a not implemented page until the vf billing pages are done
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
