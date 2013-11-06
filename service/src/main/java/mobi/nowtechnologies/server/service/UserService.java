@@ -601,8 +601,6 @@ public class UserService {
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
             final PromoCode promoCode = promotion.getPromoCode();
 
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
-
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
 
