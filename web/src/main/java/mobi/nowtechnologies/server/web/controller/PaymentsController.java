@@ -167,15 +167,16 @@ public class PaymentsController extends CommonController {
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
         List<PaymentPolicyDto> paymentPolicy;
         
-        if( isNotFromNetwork(user) ) {
-            paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+        // the way we retrieve the payment policies should be refactored
+        if ( user.isVFNZCommunityUser() ) {
+        	paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
         } else {
-        	if ( user.isVFNZCommunityUser() ) {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
-        	} else {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-        		paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
-        	}
+        	if( isNotFromNetwork(user) ) {
+                paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+            } else {
+            	paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
+            	paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
+            }
         }
         
         if(isEmpty(paymentPolicy)) {
