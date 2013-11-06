@@ -437,6 +437,15 @@ public class PaymentDetailsService {
 	}
 	
 	private void applyPromoToLimitedUsers(User user, Community community) {
+    	if ( user.isLimited() ) {
+
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			long now = System.currentTimeMillis();
+			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
+			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
+				userService.applyPromotionByPromoCode(user, twoWeeksTrial);
+			}
+		}
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
