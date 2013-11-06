@@ -78,7 +78,11 @@ public class PaymentsController extends CommonController {
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentsPage paymentsPage = new PaymentsPage();
 
-        if ( user.isVFNZUser() ) {
+        // the following check was added to show a static page instead of the
+        // vf payment options. Once the options are enabled, the following
+        // lines can be removed
+        String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage", null, locale);
+        if (/*user.isVFNZUser()*/user.isVFNZCommunityUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
         	// for vf users we display a not implemented page until the vf billing pages are done
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
@@ -167,15 +171,16 @@ public class PaymentsController extends CommonController {
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
         List<PaymentPolicyDto> paymentPolicy;
         
-        if( isNotFromNetwork(user) ) {
-            paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+        // the way we retrieve the payment policies should be refactored
+        if ( user.isVFNZCommunityUser() ) {
+        	paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
         } else {
-        	if ( user.isVFNZCommunityUser() ) {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
-        	} else {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-        		paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
-        	}
+        	if( isNotFromNetwork(user) ) {
+                paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+            } else {
+            	paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
+            	paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
+            }
         }
         
         if(isEmpty(paymentPolicy)) {
