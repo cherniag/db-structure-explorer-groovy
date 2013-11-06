@@ -82,7 +82,7 @@ public class PaymentsController extends CommonController {
         // vf payment options. Once the options are enabled, the following
         // lines can be removed
         String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage", null, locale);
-        if (user.isVFNZUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
+        if (/*user.isVFNZUser()*/user.isVFNZCommunityUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
         	// for vf users we display a not implemented page until the vf billing pages are done
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
