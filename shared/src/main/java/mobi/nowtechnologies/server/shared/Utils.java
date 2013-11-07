@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.shared;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -220,6 +222,9 @@ public class Utils {
     }
 
     public static List<String> getParametersInUrl(String url, String parameterName) {
-        return UriComponentsBuilder.fromUriString(url).build().getQueryParams().get(parameterName);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(url);
+        UriComponents uriComponents = uriComponentsBuilder.build();
+        MultiValueMap<String,String> queryParams = uriComponents.getQueryParams();
+        return queryParams.get(parameterName);
     }
 }
