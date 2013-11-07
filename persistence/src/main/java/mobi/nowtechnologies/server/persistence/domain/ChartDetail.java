@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static java.util.regex.Matcher.quoteReplacement;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -102,7 +104,6 @@ public class ChartDetail {
 
 	@Version
 	private int version;
-    public static final Pattern URL_PATTERN = Pattern.compile("(https?://.*)(/.*/)");
 
     public ChartDetail() {
 	}
@@ -356,18 +357,16 @@ public class ChartDetail {
     }
 
     private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode){
-        StringBuffer newUrl = new StringBuffer();
+        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
-        Matcher matcher = URL_PATTERN.matcher(url);
-        if (matcher.find()){
-            String urlCountryCode = matcher.group(2);
-            if(isNotNull(urlCountryCode)){
-                matcher.appendReplacement(newUrl, quoteReplacement(matcher.group(1) + "/" + newCountryCode + "/"));
-            }
-        }
-        matcher.appendTail(newUrl);
+        ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
+        pathSegments.set(0, newCountryCode);
 
-        return newUrl.toString();
+        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+
+        UriComponents newOne = original.build();
+
+        return newOne.toString();
     }
 
     private String getEncodedUTF8Text(String text) {

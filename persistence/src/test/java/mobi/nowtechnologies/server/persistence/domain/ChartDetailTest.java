@@ -25,11 +25,11 @@ public class ChartDetailTest {
     @Test
     public void shouldConvertToChartDetailDto() throws Exception {
         //given
-        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl("https://itunes/ua/file").withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
+        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl("http://itunes.apple.com/NZ/album/id432505481").withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
         Community community = new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL);
 
         //when
-        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://amazon/ua/file");
+        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://m.7digital.com/NZ/releases/374488#t4165263?partner=3734");
 
         //then
         shouldConvertToChartDetailDtoSuccessfully();
@@ -64,8 +64,8 @@ public class ChartDetailTest {
         assertThat(chartDetailDto.getImageLargeVersion(), is(media.getImageFIleLarge().getVersion()));
         assertThat(chartDetailDto.getImageSmallVersion(), is(media.getImageFileSmall().getVersion()));
         assertThat(chartDetailDto.getDuration(), is(media.getAudioFile().getDuration()));
-        assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Famazon%2FGB%2Ffile"));
-        assertThat(chartDetailDto.getiTunesUrl(), is("https%3A%2F%2Fitunes%2FGB%2Ffile"));
+        assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F374488%23t4165263%3Fpartner%3D3734"));
+        assertThat(chartDetailDto.getiTunesUrl(), is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fid432505481"));
         assertThat(chartDetailDto.isArtistUrl(), is(media.getAreArtistUrls()));
         assertThat(chartDetailDto.getPreviousPosition(), is(chartDetail.getPrevPosition()));
         assertThat(chartDetailDto.getChangePosition(), is(chartDetail.getChgPosition().getLabel()));
