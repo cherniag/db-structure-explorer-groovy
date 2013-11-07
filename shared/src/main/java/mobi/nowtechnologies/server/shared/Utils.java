@@ -222,6 +222,7 @@ public class Utils {
     }
 
     public static List<String> getParametersInUrl(String url, String parameterName) {
+        LOGGER.debug("url=[{}], parameterName=[{}]", url, parameterName);
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(url);
         UriComponents uriComponents = uriComponentsBuilder.build();
         MultiValueMap<String,String> queryParams = uriComponents.getQueryParams();
