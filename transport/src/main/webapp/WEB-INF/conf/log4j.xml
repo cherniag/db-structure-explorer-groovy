@@ -251,7 +251,7 @@
 		</filter>
 	</appender>
 	
-	<appender name="throttlingService" class="org.apache.log4j.rolling.RollingFileAppender">
+	<appender name="throttlingAppender" class="org.apache.log4j.rolling.RollingFileAppender">
                 <param name="File" value="${catalina.base}/logs/throttlingService.log" />
                 <param name="encoding" value="UTF-8" />
                 <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
@@ -265,7 +265,7 @@
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
 			<param name="classNames"
-				value="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl" />
+				value="mobi.nowtechnologies.server.transport.controller.GetChartController" />
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>
@@ -374,6 +374,10 @@
         <appender-ref ref="updateO2UserTaskAppender" />
         <appender-ref ref="sendSmsAppender"/>
 	</logger>
+    
+    <logger name="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl">
+        <appender-ref ref="throttlingAppender" />
+    </logger>
 
 	<logger name="PROFILE_LOGGER">
 		<level value="INFO" />

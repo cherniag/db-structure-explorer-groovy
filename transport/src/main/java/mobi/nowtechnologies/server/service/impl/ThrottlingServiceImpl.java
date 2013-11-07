@@ -11,6 +11,7 @@ import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.IntegerTranscoder;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,21 @@ public class ThrottlingServiceImpl implements ThrottlingService {
 	public static final int CACHE_EXPIRE_SEC = 60;
 
 	private MemcachedClient memcachedClient;
+
+    @Override
+    public void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {
+        try {
+            MDC.put("device", deviceUID);
+            if (handle(request, userName, community)) {
+                LOGGER.info("accepting");
+            } else {
+                LOGGER.info("throttling");
+                throw new ThrottlingException(userName, community);
+            }
+        } finally {
+            MDC.remove("device");
+        }
+    }
 
 	@Override
 	public boolean handle(HttpServletRequest request, String username, String communityUrl) throws ThrottlingException {
