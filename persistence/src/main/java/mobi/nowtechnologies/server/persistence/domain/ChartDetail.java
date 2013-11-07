@@ -335,30 +335,40 @@ public class ChartDetail {
 	}
 
     private String getAmazonUrl(Community community, String defaultAmazonUrl) {
-        String amazonUrl = media.getAmazonUrl();
+        try {
+            String amazonUrl = media.getAmazonUrl();
 
-        if(isBlank(amazonUrl)) {
-            amazonUrl = defaultAmazonUrl;
+            if(isBlank(amazonUrl)) {
+                amazonUrl = defaultAmazonUrl;
+            }
+
+            String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
+
+            if(isBlank(newCountryCode)) {
+                return amazonUrl;
+            }
+
+            return getEncodedUTF8Text(Utils.replacePathSegmentInUrl(amazonUrl, 0, newCountryCode));
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return "";
         }
-
-        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
-
-        if(isBlank(newCountryCode)) {
-            return amazonUrl;
-        }
-
-        return getEncodedUTF8Text(Utils.replacePathSegmentInUrl(amazonUrl, 0, newCountryCode));
     }
 
     private String getITunesUrl(Community community) {
-        String url = media.getiTunesUrl();
-        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
+        try {
+            String url = media.getiTunesUrl();
+            String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
 
-        if(isBlank(url)|| isBlank(newCountryCode)) {
-            return url;
+            if(isBlank(url)|| isBlank(newCountryCode)) {
+                return url;
+            }
+
+            return getEncodedUTF8Text(findAndReplaceCountryCodeInUrl(url, newCountryCode));
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return "";
         }
-
-        return getEncodedUTF8Text(findAndReplaceCountryCodeInUrl(url, newCountryCode));
     }
 
     private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode) {
