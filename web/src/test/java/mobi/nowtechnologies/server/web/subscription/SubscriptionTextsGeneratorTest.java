@@ -28,7 +28,7 @@ public class SubscriptionTextsGeneratorTest {
 	@BeforeClass
 	public static void beforeClass() {
         File file = new File(".");
-        if (file.getAbsolutePath().endsWith("/web/.")){
+        if (file.getAbsolutePath().endsWith("/web/.") || file.getAbsolutePath().endsWith("\\web\\.")){
             messageSource.setBasename("file:src/main/webapp/i18n/messages");
         }else{
             messageSource.setBasename("file:web/src/main/webapp/i18n/messages");

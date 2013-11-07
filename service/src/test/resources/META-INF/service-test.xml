@@ -65,6 +65,12 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 			</bean>
      	</property>
   	</bean>
+
+    <bean id="vf_nz.service.SmsProviderSpy" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+        <property name="realObject" ref="vf_nz.service.VFNZSMSGatewayService"/>
+    </bean>
+
+    <alias name="vf_nz.service.SmsProviderSpy" alias="vf_nz.service.SmsProvider"/>
   	
 	<bean id="service.SpyPaymentDetailsService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.PaymentDetailsService"/>

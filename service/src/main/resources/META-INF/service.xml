@@ -410,8 +410,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
-		<property name="iTunesUrl" value="${apple.inApp.iTunesUrl}" />
-		<property name="password" value="${apple.inApp.password}" />
+		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
 	</bean>
 	
 	<!-- O2 SOA beans -->

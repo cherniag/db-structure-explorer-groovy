@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.SubmitedPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import org.apache.http.NameValuePair;
@@ -34,8 +35,10 @@ import static org.junit.Assert.*;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SubmittedPayment.class, Utils.class, PaymentEvent.class, UserStatusDao.class})
 public class ITunesServiceImplTest {
-	
-	private final class PaymentEventAnswer implements Answer<Void> {
+
+    private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
+
+    private final class PaymentEventAnswer implements Answer<Void> {
 		private final long expiresDate;
 		private final long paymentTimestamp;
 		private final User user;
@@ -428,14 +431,16 @@ public class ITunesServiceImplTest {
 		mockPaymentPolicyService = Mockito.mock(PaymentPolicyService.class);
 		mockPostService = Mockito.mock(PostService.class);
 		mockSubmitedPaymentService = Mockito.mock(SubmitedPaymentService.class);
+        communityResourceBundleMessageSourceMock = Mockito.mock(CommunityResourceBundleMessageSource.class);
 		
 		fixtureITunesServiceImpl.setUserService(mockUserService);
 		fixtureITunesServiceImpl.setApplicationEventPublisher(mockApplicationEventPublisher);
 		fixtureITunesServiceImpl.setPaymentPolicyService(mockPaymentPolicyService);
 		fixtureITunesServiceImpl.setPostService(mockPostService);
 		fixtureITunesServiceImpl.setSubmitedPaymentService(mockSubmitedPaymentService);
+        fixtureITunesServiceImpl.setCommunityResourceBundleMessageSource(communityResourceBundleMessageSourceMock);
 
-		fixtureITunesServiceImpl.setiTunesUrl(iTunesUrl);
-		fixtureITunesServiceImpl.setPassword(password);
+		Mockito.doReturn(iTunesUrl).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.iTunesUrl", null, null);
+        Mockito.doReturn(password).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.password", null, null);
 	}
 }

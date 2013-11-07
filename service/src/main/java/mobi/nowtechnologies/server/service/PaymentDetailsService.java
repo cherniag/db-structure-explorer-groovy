@@ -198,7 +198,7 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, int userId, String communityUrl) throws ServiceException {
+	public PayPalPaymentDetails commitPayPalPaymentDetails(String token, Integer paymentPoliceId, String communityUrl, int userId) throws ServiceException {
 		User user = userService.findById(userId);
 
 		Community community = communityService.getCommunityByUrl(communityUrl);
@@ -438,7 +438,7 @@ public class PaymentDetailsService {
 	
 	private void applyPromoToLimitedUsers(User user, Community community) {
     	if ( user.isLimited() ) {
-    		
+
 			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
 			long now = System.currentTimeMillis();
 			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds

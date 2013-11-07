@@ -73,11 +73,20 @@ public class PaymentsController extends CommonController {
         this.promotionService = promotionService;
     }
 
-    protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale) {
+    protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale, String scopePrefix) {
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentsPage paymentsPage = new PaymentsPage();
 
+        // the following check was added to show a static page instead of the
+        // vf payment options. Once the options are enabled, the following
+        // lines can be removed
+        String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage", null, locale);
+        if (/*user.isVFNZUser()*/user.isVFNZCommunityUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
+        	// for vf users we display a not implemented page until the vf billing pages are done
+        	return new ModelAndView(scopePrefix+"/notimplemented");
+        }
+        
         paymentsPage.setMobilePhoneNumber( user.getMobile() );
         paymentsPage.setPaymentPolicies( getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator()) );
         paymentsPage.setConsumerUser( isConsumerUser(user) );
@@ -138,13 +147,13 @@ public class PaymentsController extends CommonController {
     public ModelAndView getManagePaymentsPage(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
         LOGGER.info("Request for [{}] with communityUrl [{}], locale [{}]", PAGE_MANAGE_PAYMENTS, communityUrl, locale);
 
-        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale);
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS, communityUrl, locale, VIEW_MANAGE_PAYMENTS);
     }
 
     @RequestMapping(value = {PAGE_MANAGE_PAYMENTS_INAPP}, method = RequestMethod.GET)
     public ModelAndView getManagePaymentsPageInApp(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityUrl, Locale locale) {
     	
-        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale);
+        return getManagePaymentsPage(VIEW_MANAGE_PAYMENTS_INAPP, communityUrl, locale, VIEW_MANAGE_PAYMENTS_INAPP);
     }
     
     private boolean isConsumerUser(User user) {
@@ -162,15 +171,16 @@ public class PaymentsController extends CommonController {
     private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
         List<PaymentPolicyDto> paymentPolicy;
         
-        if( isNotFromNetwork(user) ) {
-            paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+        // the way we retrieve the payment policies should be refactored
+        if ( user.isVFNZCommunityUser() ) {
+        	paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
         } else {
-        	if ( user.isVFNZCommunityUser() ) {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
-        	} else {
-        		paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-        		paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
-        	}
+        	if( isNotFromNetwork(user) ) {
+                paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
+            } else {
+            	paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
+            	paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
+            }
         }
         
         if(isEmpty(paymentPolicy)) {
