@@ -25,7 +25,8 @@ public class ChartDetailTest {
     @Test
     public void shouldConvertToChartDetailDto() throws Exception {
         //given
-        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/NZ/album/someone-like-you/id405293187?i=405293352%26uo=4%26partnerId=2003").withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
+        String iTunesUrl = "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=https://itunes.apple.com/gb/album/inhaler/id573269843?i=573269988%26uo=4%26partnerId=2003";
+        chartDetail = new ChartDetail().withChgPosition(UNCHANGED).withPrevPosition(Byte.MAX_VALUE).withChart(new Chart().withI(Integer.MAX_VALUE).withGenre(new Genre())).withMedia(new Media().withITunesUrl(iTunesUrl).withGenre(new Genre()).withImageFileLarge(new MediaFile()).withImageFileSmall(new MediaFile()).withAudioFile(new MediaFile()).withArtist(new Artist()).withDrms(singletonList(new Drm().withDrmType(new DrmType()))));
         Community community = new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL);
 
         //when
@@ -65,7 +66,7 @@ public class ChartDetailTest {
         assertThat(chartDetailDto.getImageSmallVersion(), is(media.getImageFileSmall().getVersion()));
         assertThat(chartDetailDto.getDuration(), is(media.getAudioFile().getDuration()));
         assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
-        assertThat(chartDetailDto.getiTunesUrl(), is("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/NZ/album/someone-like-you/id405293187?i=405293352%26uo=4%26partnerId=2003"));
+        assertThat(chartDetailDto.getiTunesUrl(), is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Finhaler%2Fid573269843%3Fi%3D573269988%26uo%3D4%26partnerId%3D2003"));
         assertThat(chartDetailDto.isArtistUrl(), is(media.getAreArtistUrls()));
         assertThat(chartDetailDto.getPreviousPosition(), is(chartDetail.getPrevPosition()));
         assertThat(chartDetailDto.getChangePosition(), is(chartDetail.getChgPosition().getLabel()));

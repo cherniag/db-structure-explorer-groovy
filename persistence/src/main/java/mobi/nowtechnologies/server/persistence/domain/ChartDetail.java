@@ -372,7 +372,7 @@ public class ChartDetail {
             String urlParameterValue = decodedUrl.substring(startIndex + urlToken.length());
             String newUrlValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, newCountryCode);
 
-            return url.replace(urlParameterValue, newUrlValue);
+            return getEncodedUTF8Text(decodedUrl.substring(0, startIndex) + urlToken + newUrlValue);
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return url;
