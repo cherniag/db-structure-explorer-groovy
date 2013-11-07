@@ -3,13 +3,12 @@ package mobi.nowtechnologies.server.persistence.domain;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
@@ -19,11 +18,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static java.util.regex.Matcher.quoteReplacement;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Entity
@@ -356,17 +352,13 @@ public class ChartDetail {
         return getEncodedUTF8Text(url);
     }
 
-    private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode){
-        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
+    private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode) {
+        final String parameterName = "url";
 
-        ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
-        pathSegments.set(0, newCountryCode);
+        String urlValue = Utils.getParametersInUrl(url, parameterName).get(0);
+        String newUrlValue = Utils.replacePathSegmentInUrl(urlValue, 0, newCountryCode);
 
-        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
-
-        UriComponents newOne = original.build();
-
-        return newOne.toString();
+        return UriComponentsBuilder.fromUriString(url).replaceQueryParam(parameterName, newUrlValue).build().toString();
     }
 
     private String getEncodedUTF8Text(String text) {

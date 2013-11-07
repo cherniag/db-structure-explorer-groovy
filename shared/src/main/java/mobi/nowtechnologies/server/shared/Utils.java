@@ -2,14 +2,13 @@ package mobi.nowtechnologies.server.shared;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -207,5 +206,20 @@ public class Utils {
     public static boolean isMajorVersionNumberLessThan(int majorVersionNumber, String version){
         int parsedMajorVersionNumber = Utils.getMajorVersionNumber(version);
         return parsedMajorVersionNumber < majorVersionNumber;
+    }
+
+    public static String replacePathSegmentInUrl(String url, int index, String newValue) {
+        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
+
+        ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
+        pathSegments.set(index, newValue);
+
+        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+
+        return original.build().toString();
+    }
+
+    public static List<String> getParametersInUrl(String url, String parameterName) {
+        return UriComponentsBuilder.fromUriString(url).build().getQueryParams().get(parameterName);
     }
 }
