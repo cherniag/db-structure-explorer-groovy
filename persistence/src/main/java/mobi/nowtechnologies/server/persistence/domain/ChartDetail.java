@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -364,20 +365,18 @@ public class ChartDetail {
         }
 
         try {
-            return getEncodedUTF8Text(findAndReplaceCountryCodeInUrl(url, newCountryCode));
+            String decodedUrl = URLDecoder.decode(url, "UTF-8");
+            String urlToken = "&url=";
+            int startIndex = decodedUrl.indexOf(urlToken);
+
+            String urlParameterValue = decodedUrl.substring(startIndex + urlToken.length());
+            String newUrlValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, newCountryCode);
+
+            return url.replace(urlParameterValue, newUrlValue);
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
-            return getEncodedUTF8Text(url);
+            return url;
         }
-    }
-
-    private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode) {
-        final String parameterName = "url";
-
-        String urlValue = Utils.getParametersInUrl(url, parameterName).get(0);
-        String newUrlValue = Utils.replacePathSegmentInUrl(urlValue, 0, newCountryCode);
-
-        return UriComponentsBuilder.fromUriString(url).replaceQueryParam(parameterName, newUrlValue).build().toString();
     }
 
     private String getEncodedUTF8Text(String text) {
