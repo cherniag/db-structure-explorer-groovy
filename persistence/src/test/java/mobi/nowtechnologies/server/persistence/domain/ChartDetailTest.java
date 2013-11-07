@@ -29,7 +29,7 @@ public class ChartDetailTest {
         Community community = new Community().withRewriteUrl(O2_COMMUNITY_REWRITE_URL);
 
         //when
-        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "http://clkuk.tradedoubler.com/click?p=23708&a&1997010&url=http://itunes.apple.com/NZ/album/sugar/id212144821?i&212144846&uo=4&partnerId&2003");
+        chartDetailDto = chartDetail.toChartDetailDto(community, new ChartDetailDto(), "https://m.7digital.com/NZ/releases/1425249#t15720039?partner=3734");
 
         //then
         shouldConvertToChartDetailDtoSuccessfully();
@@ -64,7 +64,7 @@ public class ChartDetailTest {
         assertThat(chartDetailDto.getImageLargeVersion(), is(media.getImageFIleLarge().getVersion()));
         assertThat(chartDetailDto.getImageSmallVersion(), is(media.getImageFileSmall().getVersion()));
         assertThat(chartDetailDto.getDuration(), is(media.getAudioFile().getDuration()));
-        assertThat(chartDetailDto.getAmazonUrl(), is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%261997010%26212144846%26uo%3D4%26partnerId%262003%26url%3Dhttp%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fsugar%2Fid212144821%3Fi"));
+        assertThat(chartDetailDto.getAmazonUrl(), is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
         assertThat(chartDetailDto.getiTunesUrl(), is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%261997010%26212144846%26uo%3D4%26partnerId%262003%26url%3Dhttp%3A%2F%2F7digital.com%2FGB%2Falbum%2Fsugar%2Fid212144821%3Fi"));
         assertThat(chartDetailDto.isArtistUrl(), is(media.getAreArtistUrls()));
         assertThat(chartDetailDto.getPreviousPosition(), is(chartDetail.getPrevPosition()));

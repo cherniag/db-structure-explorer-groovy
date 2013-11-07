@@ -336,20 +336,29 @@ public class ChartDetail {
 
     private String getAmazonUrl(Community community, String defaultAmazonUrl) {
         String amazonUrl = media.getAmazonUrl();
-        if(isBlank(amazonUrl)) amazonUrl = defaultAmazonUrl;
-        return getEncodedUrlToSpecificCommunity(amazonUrl, community.getRewriteUrlParameter());
+
+        if(isBlank(amazonUrl)) {
+            amazonUrl = defaultAmazonUrl;
+        }
+
+        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
+
+        if(isBlank(newCountryCode)) {
+            return amazonUrl;
+        }
+
+        return getEncodedUTF8Text(Utils.replacePathSegmentInUrl(amazonUrl, 0, newCountryCode));
     }
 
     private String getITunesUrl(Community community) {
-        return getEncodedUrlToSpecificCommunity(media.getiTunesUrl(), community.getRewriteUrlParameter());
-    }
+        String url = media.getiTunesUrl();
+        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
 
-    private String getEncodedUrlToSpecificCommunity(String url, String communityRewriteUrl) {
-        String newCountryCode = countryCodeForCommunityMap.get(communityRewriteUrl);
-        if(isBlank(url)|| isBlank(newCountryCode)) return url;
+        if(isBlank(url)|| isBlank(newCountryCode)) {
+            return url;
+        }
 
-        url = findAndReplaceCountryCodeInUrl(url, newCountryCode);
-        return getEncodedUTF8Text(url);
+        return getEncodedUTF8Text(findAndReplaceCountryCodeInUrl(url, newCountryCode));
     }
 
     private String findAndReplaceCountryCodeInUrl(String url, String newCountryCode) {
