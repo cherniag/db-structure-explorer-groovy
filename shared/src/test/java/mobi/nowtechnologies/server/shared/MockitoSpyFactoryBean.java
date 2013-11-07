@@ -10,10 +10,12 @@ import static org.mockito.Mockito.spy;
 @SuppressWarnings("rawtypes")
 public class MockitoSpyFactoryBean implements FactoryBean, InitializingBean {
 	private Object realObject;
+	private Object realObjectSpy;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		realObject = getTargetObject(realObject);
+        realObjectSpy = spy(realObject);
 	}
 
 	protected Object getTargetObject(Object proxy) throws Exception {
@@ -30,7 +32,7 @@ public class MockitoSpyFactoryBean implements FactoryBean, InitializingBean {
 
 	@Override
 	public Object getObject() throws Exception {
-		return spy(realObject);
+		return realObjectSpy;
 	}
 
 	@Override

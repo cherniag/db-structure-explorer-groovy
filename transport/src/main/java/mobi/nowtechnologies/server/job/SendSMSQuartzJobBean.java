@@ -43,7 +43,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }finally {
-            LOGGER.info("[START] Send SMS job finished for [{}] community users", communityUrl);
+            LOGGER.info("[FINISH] Send SMS job finished for [{}] community users", communityUrl);
             LogUtils.removeGlobalMDC();
         }
     }
@@ -62,9 +62,12 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {
-                 userNotificationService.sendPaymentFailSMS(paymentDetail, 0);
+                userNotificationService.sendPaymentFailSMS(paymentDetail, 0);
             } catch (UnsupportedEncodingException e) {
+                LogUtils.putClassNameMDC(this.getClass());
                 LOGGER.error(e.getMessage(), e);
+            }finally {
+                LogUtils.putClassNameMDC(this.getClass());
             }
         }
     }

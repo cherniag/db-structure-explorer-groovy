@@ -16,10 +16,7 @@ import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationE
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Processor;
-import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
-
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -37,11 +34,10 @@ import javax.xml.transform.dom.DOMSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.persistence.domain.Community.*;
-import static mobi.nowtechnologies.server.shared.AppConstants.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 
 
 public class O2ProviderServiceImpl implements O2ProviderService {

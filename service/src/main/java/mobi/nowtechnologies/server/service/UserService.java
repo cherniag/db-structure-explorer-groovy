@@ -572,7 +572,18 @@ public class UserService {
     }
 
     private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
-        return isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType()) && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
+        // the role of this method was to avoid having multiple video promotions,btu it seems that's
+        // blocking other types of promotions - for example, a twoWeeks promotion can not be applied
+        // if the previous promotion was AUDIO. The right way to do this is using an extra table (userId, promotionId)
+        // and to do the check using records from there. For now I'll just return true for the twoWeeksPromotion
+
+        if ( currentPromoCode != null && PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE.equals(currentPromoCode.getCode()) ) {
+            // ignoring the check for twoWeeksPromo
+            return false;
+        }
+
+        return isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType())
+                && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

@@ -35,7 +35,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	
 	<bean id="service.UserServiceNotification" class="mobi.nowtechnologies.server.service.UserServiceNotification"/>
 
-    <bean id="service.O2UserDetailsUpdater" class="mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater"/>
+    <bean id="service.O2UserDetailsUpdater" class="mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater">
+        <property name="userService" ref="service.UserService" />
+    </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
@@ -408,8 +410,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
-		<property name="iTunesUrl" value="${apple.inApp.iTunesUrl}" />
-		<property name="password" value="${apple.inApp.password}" />
+		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
 	</bean>
 	
 	<!-- O2 SOA beans -->
