@@ -211,6 +211,7 @@ public class Utils {
     }
 
     public static String replacePathSegmentInUrl(String url, int index, String newValue) {
+        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
         final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
         ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
