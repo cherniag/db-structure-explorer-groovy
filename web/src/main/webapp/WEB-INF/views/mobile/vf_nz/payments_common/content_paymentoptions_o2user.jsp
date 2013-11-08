@@ -33,8 +33,13 @@
 	   		<c:set var="buttonStyle" value="button-on" />
 	   		<c:set var="hrefValue" value="" />
 	   	</c:if>
+        <c:if test="${paymentsPage.awaitingPaymentStatus}">
+            <c:set var="disabledAttrib">disabled="true"</c:set>
+            <c:set var="disabledStyle">disabled</c:set>
+            <c:set var="hrefValue" value="" />
+        </c:if>
 	   	
-	    <a class="subscription-selector option-${paymentPolicyOptionNo}" type="button" ${disabledAttrib} ${hrefValue} style="height: 46px;">
+	    <a class="subscription-selector option-${paymentPolicyOptionNo} ${disabledStyle}" type="button" ${disabledAttrib} ${hrefValue} style="height: 46px;">
 			<img width="52px" height="52px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_${imageWeeks}.png" />
 	        <div class="rel networkUserPaymentOption">
 	            <div class="title"><s:message code='pays.select.payby.networkuserpsms.option${paymentPolicyOptionNo}.title' /></div>

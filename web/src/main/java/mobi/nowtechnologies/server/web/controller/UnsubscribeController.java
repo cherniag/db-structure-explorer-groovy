@@ -1,23 +1,20 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.validator.UnsubscribeValidator;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 public class UnsubscribeController extends CommonController {
@@ -44,7 +41,14 @@ public class UnsubscribeController extends CommonController {
 			@Valid @ModelAttribute(UnsubscribeDto.NAME) UnsubscribeDto dto,
 			BindingResult result,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
-		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_UNSUBSCRIBE);
+
+        User currentUser = userService.findById(getUserId());
+        PaymentDetails currentPaymentDetails = currentUser.getCurrentPaymentDetails();
+        if(currentPaymentDetails != null && currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.AWAITING) {
+            return new ModelAndView("errors/can_not_change_payment_options");
+        }
+
+        ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_UNSUBSCRIBE);
 			
 		if (result.hasErrors()) {
 			modelAndView.addObject("result", "fail");
