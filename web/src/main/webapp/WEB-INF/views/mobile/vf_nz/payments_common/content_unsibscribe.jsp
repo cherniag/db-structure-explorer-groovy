@@ -1,7 +1,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
-<c:set var="hrefValue" value='href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/unsubscribe.html"' />
+<c:set var="hrefValue" value='href="${pageContext.request.contextPath}/${param.callingPage}/unsubscribe.html"' />
 <c:if test="${paymentsPage.awaitingPaymentStatus}">
     <c:set var="disabledAttrib">disabled="true"</c:set>
     <c:set var="disabledStyle">disabled</c:set>
