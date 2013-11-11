@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.web.view;
 
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
+import org.apache.tiles.Expression;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.springframework.mobile.device.Device;
@@ -11,7 +13,6 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,8 +71,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 					deviceFolderName = MOBILE_FOLDER_NAME;
 				else
 					deviceFolderName = WWW_FOLDER_NAME;
-				
-				String path = getViewPath(isMobile, communityName);
+
+				String path = getViewPath(isMobile, communityName, attributeContext);
 				
 				Map<String, Object> requestScopeMap = tilesContext.getRequestScope();
 				requestScopeMap.put(MOBILE_PATH_PARAM, path);
@@ -120,13 +121,23 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 		return webAppContext;
 	}
 	
-	protected String getViewPath(boolean isMobile, String communityName){
+	protected String getViewPath(boolean isMobile, String communityName, AttributeContext attributeContext){
 		String path = deviceMap.get(isMobile);
 		
 		String viewPath = path + File.separator + communityName;
 		File viewDir = new File(servletContext.getRealPath(viewPath));
 		if(!viewDir.exists())
 			viewPath = path + File.separator + DEFAULT_COMMUNITY;
+
+        for(String attrName : attributeContext.getLocalAttributeNames()){
+            Attribute attribute = attributeContext.getAttribute(attrName);
+            Expression expression = attribute.getExpressionObject();
+            if(expression != null){
+                String expressionValue = expression.getExpression();
+                final String value = "DEFAULT:${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp";
+                final String pattern = "DEFAULT:$\\{requestScope.viewPathAccordingToDevice\\}/(.+)";
+            }
+        }
 		
 		return viewPath;
 	}
