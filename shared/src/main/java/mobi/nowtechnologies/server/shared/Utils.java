@@ -2,14 +2,17 @@ package mobi.nowtechnologies.server.shared;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,4 +211,26 @@ public class Utils {
         int parsedMajorVersionNumber = Utils.getMajorVersionNumber(version);
         return parsedMajorVersionNumber < majorVersionNumber;
     }
+
+    public static String replacePathSegmentInUrl(String url, int index, String newValue) {
+        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
+        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
+
+        ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
+        pathSegments.set(index, newValue);
+
+        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+
+        return original.build().toString();
+    }
+
+    public static List<String> getParametersInUrl(String url, String parameterName) {
+        LOGGER.debug("url=[{}], parameterName=[{}]", url, parameterName);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(url);
+        UriComponents uriComponents = uriComponentsBuilder.build();
+        MultiValueMap<String,String> queryParams = uriComponents.getQueryParams();
+        return queryParams.get(parameterName);
+    }
+
+
 }

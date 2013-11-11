@@ -785,7 +785,7 @@ public class ChartServiceTest {
 	public void setUp()
 		throws Exception {
 		
-		testUser = new User();
+		testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
 		testUser.setId(1);
 
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);

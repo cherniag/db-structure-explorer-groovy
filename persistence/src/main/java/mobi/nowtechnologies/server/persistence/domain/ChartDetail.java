@@ -1,36 +1,49 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * The persistent class for the tb_chartDetail database table.
- * 
- */
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 @NamedQueries({
 		@NamedQuery(name = ChartDetail.NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE, query = "select count(media) from Media media where media.isrc=?1 and media.publishDate<=?2")
 })
 public class ChartDetail {
-	public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
+
+    public static final String NQ_IS_TRACK_CAN_BE_BOUGHT_ACCORDING_TO_LICENSE = "isTrackCanBeBoughtAccordingToLicense";
 	public static final String NQ_FIND_CONTENT_INFO_BY_DRM_TYPE = "ChartDetail.findContentInfoByDrmType";
 	public static final String NQ_FIND_CONTENT_INFO_BY_ISRC = "ChartDetail.findContentInfoByIsrc";
+
+    private static final Map<String, String> countryCodeForCommunityMap;
+
+    static {
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
+        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
+
+        countryCodeForCommunityMap = Collections.unmodifiableMap(map);
+    }
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetail.class);
 
@@ -89,7 +102,7 @@ public class ChartDetail {
 	@Version
 	private int version;
 
-	public ChartDetail() {
+    public ChartDetail() {
 	}
 
     public Integer getI() {
@@ -254,7 +267,7 @@ public class ChartDetail {
 		return media != null;
 	}
 
-	public static List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, String defaultAmazonUrl) {
+    public static List<ChartDetailDto> toChartDetailDtoList(Community community, List<ChartDetail> chartDetails, String defaultAmazonUrl) {
 		if (chartDetails == null)
 			throw new PersistenceException("The parameter chartDetails is null");
 		if (defaultAmazonUrl == null)
@@ -263,13 +276,13 @@ public class ChartDetail {
 		LOGGER.debug("input parameters chartDetails: [{}]", new Object[] { chartDetails });
 		List<ChartDetailDto> chartDetailDtos = new LinkedList<ChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			chartDetailDtos.add(chartDetail.toChartDetailDto(new ChartDetailDto(), defaultAmazonUrl));
+			chartDetailDtos.add(chartDetail.toChartDetailDto(community, new ChartDetailDto(), defaultAmazonUrl));
 		}
 		LOGGER.debug("Output parameter chartDetailDtos=[{}]", chartDetailDtos);
 		return chartDetailDtos;
 	}
 
-	private ChartDetailDto toChartDetailDto(ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
+	public ChartDetailDto toChartDetailDto(Community community, ChartDetailDto chartDetailDto, String defaultAmazonUrl) {
 		List<Drm> drms = media.getDrms();
 		Drm drm;
 		int drmSize = drms.size();
@@ -311,24 +324,8 @@ public class ChartDetail {
 		chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
-		String enocodediTunesUrl = null;
-		String enocodedAmazonUrl = null;
-		try {
-			String iTunesUrl = media.getiTunesUrl();
-			if (iTunesUrl != null)
-				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
-			String amazonUrl = media.getAmazonUrl();
-			if (amazonUrl == null || amazonUrl.isEmpty()) {
-				amazonUrl = defaultAmazonUrl;
-			}
-			enocodedAmazonUrl = URLEncoder.encode(amazonUrl, AppConstants.UTF_8);
-
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new PersistenceException(e.getMessage(), e);
-		}
-		chartDetailDto.setAmazonUrl(enocodedAmazonUrl);
-		chartDetailDto.setiTunesUrl(enocodediTunesUrl);
+        chartDetailDto.setAmazonUrl(getAmazonUrl(community, defaultAmazonUrl));
+		chartDetailDto.setiTunesUrl(getITunesUrl(community));
 		chartDetailDto.setIsArtistUrl(media.getAreArtistUrls());
 		chartDetailDto.setPreviousPosition(prevPosition);
 		chartDetailDto.setChangePosition(chgPosition.getLabel());
@@ -338,19 +335,75 @@ public class ChartDetail {
 		return chartDetailDto;
 	}
 
-	public static List<PurchasedChartDetailDto> toPurchasedChartDetailDtoList(List<ChartDetail> chartDetails) {
-		LOGGER.debug("input parameters chartDetails: [{}]", chartDetails);
+    private String getAmazonUrl(Community community, String defaultAmazonUrl) {
+        String amazonUrl = media.getAmazonUrl();
+
+        if(isBlank(amazonUrl)) {
+            amazonUrl = defaultAmazonUrl;
+        }
+
+        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
+
+        if(isBlank(amazonUrl) || isBlank(newCountryCode)) {
+            return amazonUrl;
+        }
+
+        try {
+            return getEncodedUTF8Text(Utils.replacePathSegmentInUrl(amazonUrl, 0, newCountryCode));
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return getEncodedUTF8Text(amazonUrl);
+        }
+    }
+
+    private String getITunesUrl(Community community) {
+        String url = media.getiTunesUrl();
+        String newCountryCode = countryCodeForCommunityMap.get(community.getRewriteUrlParameter());
+
+        if(isBlank(url)|| isBlank(newCountryCode)) {
+            return url;
+        }
+
+        try {
+            String decodedUrl = URLDecoder.decode(url, "UTF-8");
+            String urlToken = "&url=";
+            int startIndex = decodedUrl.indexOf(urlToken);
+
+            String urlParameterValue = decodedUrl.substring(startIndex + urlToken.length());
+            String newUrlValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, newCountryCode);
+
+            return getEncodedUTF8Text(decodedUrl.substring(0, startIndex) + urlToken + newUrlValue);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return url;
+        }
+    }
+
+    private String getEncodedUTF8Text(String text) {
+        try {
+            String encodedText = null;
+            if (StringUtils.isNotBlank(text))
+                encodedText = URLEncoder.encode(text, AppConstants.UTF_8);
+            return encodedText;
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new PersistenceException(e.getMessage(), e);
+        }
+    }
+
+	public static List<PurchasedChartDetailDto> toPurchasedChartDetailDtoList(Community community, List<ChartDetail> chartDetails) {
+		LOGGER.debug("input parameters community, chartDetails: [{}], [{}]", community, chartDetails);
 
 		List<PurchasedChartDetailDto> purchasedChartDetailDtos = new LinkedList<PurchasedChartDetailDto>();
 		for (ChartDetail chartDetail : chartDetails) {
-			purchasedChartDetailDtos.add(chartDetail.toPurchasedChartDetailDto(new PurchasedChartDetailDto()));
+			purchasedChartDetailDtos.add(chartDetail.toPurchasedChartDetailDto(community, new PurchasedChartDetailDto()));
 		}
 		LOGGER.debug("Output parameter purchasedChartDetailDtos=[{}]", purchasedChartDetailDtos);
 		return purchasedChartDetailDtos;
 	}
 
-	public PurchasedChartDetailDto toPurchasedChartDetailDto(PurchasedChartDetailDto purchasedChartDetailDto) {
-		LOGGER.debug("input parameters purchasedChartDetailDto: [{}]", purchasedChartDetailDto);
+	public PurchasedChartDetailDto toPurchasedChartDetailDto(Community community,  PurchasedChartDetailDto purchasedChartDetailDto) {
+		LOGGER.debug("input parameters community, purchasedChartDetailDto: [{}], [{}]", community, purchasedChartDetailDto);
 
 		List<Drm> drms = media.getDrms();
 		Drm drm;
@@ -379,16 +432,7 @@ public class ChartDetail {
 		purchasedChartDetailDto.setTitle(media.getTitle());
 		purchasedChartDetailDto.setTrackSize(headerSize + audioSize - 2);
 
-		String enocodediTunesUrl = null;
-		try {
-			String iTunesUrl = media.getiTunesUrl();
-			if (iTunesUrl != null)
-				enocodediTunesUrl = URLEncoder.encode(iTunesUrl, AppConstants.UTF_8);
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new PersistenceException(e.getMessage(), e);
-		}
-		purchasedChartDetailDto.setiTunesUrl(enocodediTunesUrl);
+        purchasedChartDetailDto.setiTunesUrl(getITunesUrl(community));
 		purchasedChartDetailDto.setPreviousPosition(prevPosition);
 		purchasedChartDetailDto.setChangePosition(chgPosition.getLabel());
 		purchasedChartDetailDto.setChannel(channel);
@@ -419,6 +463,26 @@ public class ChartDetail {
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;
 	}
+
+    public ChartDetail withMedia(Media media) {
+        setMedia(media);
+        return this;
+    }
+
+    public ChartDetail withChart(Chart chart) {
+        setChart(chart);
+        return this;
+    }
+
+    public ChartDetail withPrevPosition(Byte prevPosition) {
+        setPrevPosition(prevPosition);
+        return this;
+    }
+
+    public ChartDetail withChgPosition(ChgPosition chgPosition) {
+        setChgPosition(chgPosition);
+        return this;
+    }
 
     @Override
     public String toString() {

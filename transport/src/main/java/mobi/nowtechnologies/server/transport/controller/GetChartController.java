@@ -185,7 +185,7 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+			throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
@@ -218,7 +218,7 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
@@ -251,7 +251,7 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
@@ -283,7 +283,7 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
@@ -396,20 +396,4 @@ public class GetChartController extends CommonController{
 
 		return chartDto;
 	}
-
-    private void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {
-        try {
-            LogUtils.putClassNameMDC(ThrottlingServiceImpl.class);
-            MDC.put("device", deviceUID);
-            if (throttlingService.handle(request, userName, community)) {
-                LOGGER.info("accepting");
-            } else {
-                LOGGER.info("throttling");
-                throw new ThrottlingException(userName, community);
-            }
-        } finally {
-            LogUtils.removeClassNameMDC();
-            MDC.remove("device");
-        }
-    }
 }

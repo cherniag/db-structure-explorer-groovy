@@ -118,7 +118,7 @@ public class ChartService {
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails, defaultAmazonUrl);
+		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
