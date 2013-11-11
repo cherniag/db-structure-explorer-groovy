@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -41,6 +43,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 
 	private static final Map<Boolean, String> deviceMap;
 	private static final String IS_MOBILE_REQUEST = "isMobileRequest";
+
+    private final Pattern VIEW_PATH_ACCORDING_TO_DEVICE_PATTERN = Pattern.compile("DEFAULT:$\\{"+VIEW_PATH_ACCORDING_TO_DEVICE+"\\}/(.+)");
 	
 	private ServletContext servletContext;
 	private Properties cdnProperties;
@@ -134,8 +138,13 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
             Expression expression = attribute.getExpressionObject();
             if(expression != null){
                 String expressionValue = expression.getExpression();
-                final String value = "DEFAULT:${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp";
+                String value = "DEFAULT:${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp";
                 final String pattern = "DEFAULT:$\\{requestScope.viewPathAccordingToDevice\\}/(.+)";
+                Matcher matcher = VIEW_PATH_ACCORDING_TO_DEVICE_PATTERN.matcher(expressionValue);
+
+                if(matcher.matches()){
+                    value = viewPath + matcher.group(1);
+                }
             }
         }
 		
