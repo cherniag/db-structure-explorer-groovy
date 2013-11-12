@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
@@ -61,10 +61,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setErrorCode(response.getErrorCode());
-
-			if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
-				userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
-			}
 		} else if (response.isSuccessful()) {
 			status = PaymentDetailsStatus.SUCCESSFUL;
 			paymentDetails.setDescriptionError(null);
@@ -92,6 +88,9 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		// Send sync-event about committed payment
 		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
+        else if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
+            userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+        }
 		
 		// Deleting pending payment
 		entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
