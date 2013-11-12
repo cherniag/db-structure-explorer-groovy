@@ -8,4 +8,8 @@
 	<p><s:message code="pays.errors.cant_change_option.description" /></p>
 	<div class="clr"></div>
 	</div>
+	
+	<div>
+		<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments.html" type="button" onClick="location.href=this.title" value="<s:message code="pay.paypal.dialog.button.payments" />" />
+	</div>
 </div>
