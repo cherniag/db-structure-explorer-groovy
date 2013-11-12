@@ -144,7 +144,23 @@
 					<div class="helper"></div>
 				</div>
 				<div class="clr"></div>
-				
+<c:choose>
+<%-- if the ignoreAddressFields is set to true, we will not display the address fields and we'll only add
+hidden fields with predefined values  --%>
+	<c:when test="${ignoreAddressFields eq true}">
+		<s:message code="pay.cc.form.default.address1" var="defaultAddress1" />
+		<s:message code="pay.cc.form.default.address2" var="defaultAddress2" />
+		<s:message code="pay.cc.form.default.city" var="defaultCity" />
+		<s:message code="pay.cc.form.default.postcode" var="defaultPostCode" />
+		<s:message code="pay.cc.form.default.country" var="defaultCountry" />
+		
+		<input type="hidden" name="holderAddress" id="holderAddress" value="${defaultAddress1}" />
+		<input type="hidden" name="holderAddress2" id="holderAddress2" value="${defaultAddress2}" />
+		<input type="hidden" name="holderCity" id="v" value="${defaultCity}" />
+		<input type="hidden" name="holderPostcode" id="holderPostcode" value="${defaultPostCode}" />
+		<input type="hidden" name="holderCountry" id="holderCountry" value="${defaultCountry}" />
+	</c:when>
+	<c:otherwise>
 				<div class="oneInputLine">
 					<div class="nameCell"><form:label path="holderAddress"><s:message code="pay.cc.form.holder.address" /></form:label></div>
 					<div class="valueCell">
@@ -166,7 +182,6 @@
 					<div class="helper"></div>
 				</div>
 				<div class="clr"></div>
-				
 				<div class="oneInputLine">
 					<div class="nameCell"><form:label path="holderCity"><s:message code="pay.cc.form.holder.city" /></form:label></div>
 					<div class="valueCell">
@@ -194,7 +209,6 @@
 					<div class="helper"></div>
 				</div>
 				<div class="clr"></div>
-				
 				<div class="oneInputLine">
 					<div class="nameCell"><form:label path="holderCountry"><s:message code="pay.cc.form.holder.country" /></form:label></div>
 					<div class="valueCell">
@@ -210,6 +224,8 @@
 					</div>
 					<div class="helper"></div>
 				</div>
+	</c:otherwise>
+</c:choose>
 				<form:hidden path="action" />
 				<div class="clr"></div>
 				<!--end one record in profile-->										

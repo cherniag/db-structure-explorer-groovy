@@ -66,7 +66,21 @@
 						<form:hidden path="securityNumber"/>
 					</div>
 					<div class="clr"></div>
-					
+
+<c:choose>
+<%-- if the ignoreAddressFields is set to true, we will not display the address fields and we'll only add
+hidden fields with predefined values  --%>
+	<c:when test="${ignoreAddressFields eq true}">
+		<form:hidden path="holderTitle" />
+		<form:hidden path="holderFirstname" />
+		<form:hidden path="holderLastname" />
+		<form:hidden path="holderAddress" />
+		<form:hidden path="holderAddress2" />
+		<form:hidden path="holderCity" />
+		<form:hidden path="holderPostcode" />
+		<form:hidden path="holderCountry" />
+	</c:when>
+	<c:otherwise>
 					<!-- Billing Address block -->
 					<h3><s:message code="pay.cc.preview.form.section.billing.address" /></h3>
 					<div class="oneLine">
@@ -110,6 +124,8 @@
 					<div class="clr"></div>
 				</div>
 				<div class="addSmallSpace"></div>
+	</c:otherwise>
+</c:choose>
 				
 				<div class="contentButton formButton rad5 rel" id="actionButtons" >
 					<input type="button" class="button-turquoise pie" id="creditCardSubscribe" value="<s:message code='pay.cc.form.subscribe' />">
