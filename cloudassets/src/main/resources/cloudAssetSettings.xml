@@ -1,5 +1,5 @@
 <com.musicqubed.cloudassets.CloudAssetsSettings>
-  <dir>../web/src/main/webapp/assets</dir>
+  <dir>classpath:../../../web/src/main/webapp/assets</dir>
   <prefix>20131112/assets</prefix>
   <settings>
     <userName>chartsnow</userName>

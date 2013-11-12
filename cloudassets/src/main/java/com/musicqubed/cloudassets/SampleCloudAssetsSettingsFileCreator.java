@@ -1,8 +1,8 @@
 package com.musicqubed.cloudassets;
 
-import java.io.FileOutputStream;
-
 import com.thoughtworks.xstream.XStream;
+
+import java.io.FileOutputStream;
 
 public class SampleCloudAssetsSettingsFileCreator {
 	
