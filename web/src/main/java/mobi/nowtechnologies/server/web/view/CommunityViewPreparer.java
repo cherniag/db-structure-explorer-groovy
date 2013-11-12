@@ -124,7 +124,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 		// if no assets CDN is specified, we use the assets from the web application - this is done for backward compatibility if no CND property is specified
 		return webAppContext;
 	}
-	
+
+    //TODO Finish this
 	protected String getViewPath(boolean isMobile, String communityName, AttributeContext attributeContext){
 		String path = deviceMap.get(isMobile);
 		
