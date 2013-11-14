@@ -24,15 +24,17 @@
 	</c:choose>
 	
 	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" id="paymentOption${paymentPolicy.id}">
-		
+
 	   	<c:set var="disabledAttrib" />
-	   	<c:set var="buttonStyle" value="button-off" />
+	   	<%--<c:set var="buttonStyle" value="button-off" /> --%>
+	   	<c:set var="displayButtonOff" value="true" />
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/${param.callingPage}/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
 	   	<c:set var="onClickEvent" value="onclick='markSelected(this)'" />
 	   	
 	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.subweeks == paymentPolicy.subweeks}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
-	   		<c:set var="buttonStyle" value="button-on" />
+	   		<%--<c:set var="buttonStyle" value="button-on" /> --%>
+	   		<c:set var="displayButtonOff" value="false" />
 	   		<c:set var="hrefValue" value="" />
 	   		<c:set var="onClickEvent" value="" />
 	   	</c:if>
@@ -49,7 +51,10 @@
 	            <div class="title"><s:message code='pays.select.payby.networkuserpsms.option${paymentPolicyOptionNo}.title' /></div>
 	            <span class="price">$<fmt:formatNumber pattern="0.00" value="${paymentPolicy.subcost}" /></span> <s:message code='pays.select.payby.networkuserpsms.option${paymentPolicyOptionNo}.weeks' />
 	        </div>
-	        <span class="${buttonStyle}"></span>
+	        <%--<span class="${buttonStyle}"></span> --%>
+	        
+	        <span class="button-off" <c:if test="${displayButtonOff eq false}">style="display: none"</c:if>></span>
+	        <span class="button-on" <c:if test="${displayButtonOff eq true}">style="display: none"</c:if>></span>
 		</a>
 	</div>
 	    
@@ -73,10 +78,14 @@ function _mrkSlctd(elem) {
 		if (typeof attr !== 'undefined' && attr !== false) {
 			return;
 		}
-		var spanElem = aElem.find("span.button-off");
-		if ( spanElem.length == 1 ) {
-			spanElem.removeClass("button-off");
-			spanElem.addClass("button-on");
+		var spanElemOff = aElem.find("span.button-off");
+		var spanElemOn = aElem.find("span.button-on");
+		if ( !spanElemOff.is(":visible") ) {
+			return;
+		}
+		if ( spanElemOff.length == 1 && spanElemOn.length == 1 ) {
+			spanElemOff.toggle();
+			spanElemOn.toggle();
 		}
 	}
 }
