@@ -13,10 +13,10 @@
 			<c:if test="${not empty paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}">
                 ${paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}
                 <c:if test="${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis>0}">
-                    <s:message var="trialEndingDateFormat" code='account.page.leftPart.trialEndingDateFormat' />
+                    <s:message var="nextSubPaymentMillisFormat" code='paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillisFormat' />
                     <script>
-                        var timeOfMovingToLimitedStatusDate = new Date(${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis});
-                        document.write(timeOfMovingToLimitedStatusDate.format('${trialEndingDateFormat}'));
+                        var nextSubPaymentDate = new Date(${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis});
+                        document.write(nextSubPaymentDate.format('${nextSubPaymentMillisFormat}'));
                     </script>
                 </c:if>
 			</c:if>
