@@ -7,15 +7,18 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Locale.*;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
 /**
@@ -232,5 +235,25 @@ public class Utils {
         return queryParams.get(parameterName);
     }
 
+    public static String preFormatCurrency(BigDecimal amount) {
+        String moneyString = formatCurrencyWithoutCurrencySymbol(amount);
+        return removeZerosFromRoundedAmount(moneyString);
+    }
+
+    private static String formatCurrencyWithoutCurrencySymbol(BigDecimal amount) {
+        DecimalFormat fmt = (DecimalFormat) NumberFormat.getCurrencyInstance(ENGLISH);
+        DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+        symbols.setCurrencySymbol("");
+        fmt.setDecimalFormatSymbols(symbols);
+        return fmt.format(amount);
+    }
+
+    private static String removeZerosFromRoundedAmount(String moneyString) {
+        int centsIndex = moneyString.lastIndexOf(".00");
+        if (centsIndex != -1) {
+            moneyString = moneyString.substring(0, centsIndex);
+        }
+        return moneyString;
+    }
 
 }
