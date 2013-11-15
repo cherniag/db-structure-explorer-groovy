@@ -11,7 +11,14 @@
 			</c:if> --%>
 			
 			<c:if test="${not empty paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}">
-				<br /><c:out value="${paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}" />
+                ${paymentsPage.paymentPageData.subscriptionTexts.nextBillingText}
+                <c:if test="${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis>0}">
+                    <s:message var="trialEndingDateFormat" code='account.page.leftPart.trialEndingDateFormat' />
+                    <script>
+                        var timeOfMovingToLimitedStatusDate = new Date(${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis});
+                        document.write(timeOfMovingToLimitedStatusDate.format('${trialEndingDateFormat}'));
+                    </script>
+                </c:if>
 			</c:if>
 		</c:if>
 	</div>
