@@ -19,6 +19,7 @@ public class SubscriptionStateFactory {
 		SubscriptionState state = new SubscriptionState();
 
 		state.setEligibleForVideo(user.getTariff() == Tariff._4G);
+		state.setPendingPayment(user.hasPendingPayment());
 
 		boolean userInLimitedStatus = !user.isSubscribedStatus();
 		if ((!user.isOnFreeTrial()) && (userInLimitedStatus || !user.isNextSubPaymentInTheFuture())) {
@@ -70,8 +71,6 @@ public class SubscriptionStateFactory {
 			state.setNextBillingDate(Utils.getDateFromInt(user.getNextSubPayment()));
 		}
 		state.setDaysToNextBillingDate(calculateDaysTillNextBilling(state.getNextBillingDate()));
-		
-		state.setPendingPayment(user.hasPendingPayment());
 		
 		return state;
 	}

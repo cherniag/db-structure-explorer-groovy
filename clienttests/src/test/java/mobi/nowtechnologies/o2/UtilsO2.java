@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2WebServiceMessageHandler;
@@ -61,7 +61,7 @@ public class UtilsO2 {
 
 	}
 
-	public static O2ClientServiceImpl createO2ClientService(String o2ProxyUrl, String o2ServerUrl) throws Exception {
+	public static O2ProviderServiceImpl createO2ClientService(String o2ProxyUrl, String o2ServerUrl) throws Exception {
 
 		LOGGER.info("o2ProxyUrl: " + o2ProxyUrl + " ServerUrl=" + o2ServerUrl);
 		//ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "db2mine-application.xml" });
@@ -75,7 +75,7 @@ public class UtilsO2 {
 		WebServiceGateway webServiceGateway = createWSGateway("uk.co.o2.soa.chargecustomerdata",
 				"uk.co.o2.soa.subscriberdata");
 
-		O2ClientServiceImpl impl = new O2ClientServiceImpl();
+		O2ProviderServiceImpl impl = new O2ProviderServiceImpl();
 		impl.setWebServiceGateway(webServiceGateway);
 
 		impl.setServerO2Url(o2ProxyUrl);
