@@ -68,8 +68,9 @@ public class UserNotificationServiceImplTest {
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServicesMock;
     private DeviceService deviceServiceMock;
     private PaymentDetailsService paymentDetailsServiceMock;
+    private String forNWeeks;
 
-	@Test
+    @Test
 	public void testUserNotificationImpl_Constructor_Success()
 			throws Exception {
 		UserNotificationServiceImpl result = new UserNotificationServiceImpl();
@@ -525,6 +526,9 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
+        forNWeeks = "for.n.weeks";
+        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[])any(), any(Locale.class));
+
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 
 			@Override
@@ -532,17 +536,19 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(4, args.length);
+				assertEquals(5, args.length);
 
                 String unsUrl = (String) args[0];
                 String currencyISO = (String) args[1];
                 String subcost = (String) args[2];
-                String subweeks = (String) args[3];
+                String subWeeksPart = (String) args[3];
+                String shortCode = (String) args[4];
 
                 assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
                 assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
                 assertEquals(paymentPolicy.getSubcost().toString(), subcost);
-                assertEquals(String.valueOf(paymentPolicy.getSubweeks()), subweeks);
+                assertEquals(forNWeeks, subWeeksPart);
+                assertEquals(paymentPolicy.getShortCode(), shortCode);
 
 				return true;
 			}
@@ -579,6 +585,9 @@ public class UserNotificationServiceImplTest {
 
 		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.subscribed.not.for.device.type");
 
+        forNWeeks = "for.n.weeks";
+        Mockito.doReturn(forNWeeks).when(communityResourceBundleMessageSourceMock).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("for.n.weeks"), (String[])any(), any(Locale.class));
+
 		final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 
 			@Override
@@ -586,17 +595,19 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(4, args.length);
+				assertEquals(5, args.length);
 
 				String unsUrl = (String) args[0];
 				String currencyISO = (String) args[1];
 				String subcost = (String) args[2];
-				String subweeks = (String) args[3];
+				String subWeeksPart = (String) args[3];
+                String shortCode = (String) args[4];
 
 				assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
 				assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
 				assertEquals(paymentPolicy.getSubcost().toString(), subcost);
-				assertEquals(String.valueOf(paymentPolicy.getSubweeks()), subweeks);
+				assertEquals(forNWeeks, subWeeksPart);
+                assertEquals(paymentPolicy.getShortCode(), shortCode);
 
 				return true;
 			}

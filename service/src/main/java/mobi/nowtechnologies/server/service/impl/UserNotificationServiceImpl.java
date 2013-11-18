@@ -44,6 +44,7 @@ import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -213,11 +214,13 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
             if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
                 PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
-                String subcost = paymentPolicy.getSubcost().toString();
-                String subweeks = String.valueOf(paymentPolicy.getSubweeks());
+                String subcost = preFormatCurrency(paymentPolicy.getSubcost());
+                final byte subWeeks = paymentPolicy.getSubweeks();
+                String subWeeksPart = getSubWeeksPart(community, subWeeks);
                 String currencyISO = paymentPolicy.getCurrencyISO();
+                String shortCode = paymentPolicy.getShortCode();
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subcost, subweeks});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subcost, subWeeksPart, shortCode});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The subscription confirmation sms was sent successfully");
@@ -236,6 +239,16 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         } finally {
             LogUtils.removeGlobalMDC();
         }
+    }
+
+    private String getSubWeeksPart(Community community, byte subWeeks) {
+        String subWeeksPart;
+        if (subWeeks==1) {
+            subWeeksPart = messageSource.getMessage(community.getRewriteUrlParameter(), "per.week", null, null);
+        }else{
+            subWeeksPart = messageSource.getMessage(community.getRewriteUrlParameter(), "for.n.weeks", new String[]{String.valueOf(subWeeks)}, null);
+        }
+        return subWeeksPart;
     }
 
     @Async
