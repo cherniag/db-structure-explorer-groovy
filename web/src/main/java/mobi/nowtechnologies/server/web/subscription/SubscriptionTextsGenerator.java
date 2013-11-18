@@ -21,6 +21,13 @@ public class SubscriptionTextsGenerator {
 	public SubscriptionTexts generate(SubscriptionState state) {
 		SubscriptionTexts data = new SubscriptionTexts();
 
+		if ( state.hasPendingPayment() ) {
+			data.setStatusText(getMessage("subscription.text.pending"));
+			data.setNextBillingText(getMessage("subscription.text.nextBilling_pending"));
+			data.setFutureText(null);
+			return data;
+		}
+		
 		if (state.isPreviewMode()) {
 			data.setStatusText(getMessage("subscription.text.previewMode"));
 			data.setNextBillingText(getMessage("subscription.text.nextBilling_previewMode"));

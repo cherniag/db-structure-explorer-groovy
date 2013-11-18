@@ -70,6 +70,9 @@ public class SubscriptionStateFactory {
 			state.setNextBillingDate(Utils.getDateFromInt(user.getNextSubPayment()));
 		}
 		state.setDaysToNextBillingDate(calculateDaysTillNextBilling(state.getNextBillingDate()));
+		
+		state.setPendingPayment(user.hasPendingPayment());
+		
 		return state;
 	}
 

@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
 
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -42,6 +41,16 @@ public class SubscriptionTextsGeneratorTest {
 		Assert.assertEquals(msg, "Subscribed");
 	}
 
+	@Test
+	public void testPendingPayment() {
+		SubscriptionState s = new SubscriptionState();
+		s.setPendingPayment(true);
+		SubscriptionTexts r = generator.generate(s);
+		Assert.assertEquals("Pending", r.getStatusText());
+		Assert.assertEquals("", r.getNextBillingText());
+		Assert.assertNull(r.getFutureText());
+	}
+	
 	@Test
 	public void testFreeTrialNonEligibleVideo() {
 
