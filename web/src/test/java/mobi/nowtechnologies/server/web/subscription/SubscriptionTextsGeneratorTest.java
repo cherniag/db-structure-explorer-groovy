@@ -136,7 +136,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Next billing cycle:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -151,7 +151,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Next billing cycle:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -166,7 +166,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Next billing cycle: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Next billing cycle:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -182,7 +182,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Due get access to Video on 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Due get access to Video on", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -198,7 +198,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Video access will expire on 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Video access will expire on", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -213,7 +213,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Ending on:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -229,7 +229,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Ending on:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
@@ -245,7 +245,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		Assert.assertEquals("Ending on: 21 August 2013", r.getNextBillingText());
+		Assert.assertEquals("Ending on:", r.getNextBillingText());
 		Assert.assertEquals("", r.getFutureText());
 	}
 
