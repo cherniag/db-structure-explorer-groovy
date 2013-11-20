@@ -19,7 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class PayPalResponseIT {
 	
@@ -31,15 +33,19 @@ public class PayPalResponseIT {
 	@Before
 	public void before() {
         initMocks();
+        initService();
+	}
+
+    private void initService() {
         httpService = new PostService();
         request = new PayPalRequest();
         request.setCommunityResourceBundleMessageSource(messageSource);
         request.setAmountFormat("###,###.00");
-		service = new PayPalHttpService();
-			service.setPostService(httpService);
-			service.setApiUrl("https://api-3t.sandbox.paypal.com/nvp");
-			service.setRequest(request);
-	}
+        service = new PayPalHttpService();
+        service.setPostService(httpService);
+        service.setApiUrl("https://api-3t.sandbox.paypal.com/nvp");
+        service.setRequest(request);
+    }
 
     @Test
 	public void creatingToken() {
@@ -49,14 +55,18 @@ public class PayPalResponseIT {
 	}
 
     private void initMocks() {
-        when(messageSource.getMessage(anyString(),eq("paypal.user"), any(Object[].class),any(Locale.class))).thenReturn("cn_1313656118_biz_api1.chartsnow.mobi");
-        when(messageSource.getMessage(anyString(),eq("paypal.password"), any(Object[].class),any(Locale.class))).thenReturn("1313656158");
-        when(messageSource.getMessage(anyString(),eq("paypal.signature"), any(Object[].class),any(Locale.class))).thenReturn("AoTXEljMZhDQEXJFn1kQJo2C6CbIAPP7uCi4Y-85yG98nlcq-IJBt9jQ");
-        when(messageSource.getMessage(anyString(),eq("paypal.apiVersion"), any(Object[].class),any(Locale.class))).thenReturn("80.0");
-        when(messageSource.getMessage(anyString(),eq("paypal.btnSource"), any(Object[].class),any(Locale.class))).thenReturn("PP-ECWizard");
-        when(messageSource.getMessage(anyString(),eq("paypal.returnURL"), any(Object[].class),any(Locale.class))).thenReturn("http://localhost:8080/portal/payPalRequest.htm");
-        when(messageSource.getMessage(anyString(),eq("paypal.cancelURL"), any(Object[].class),any(Locale.class))).thenReturn("http://localhost:8080/portal/payPalCancel.htm");
-        when(messageSource.getMessage(anyString(),eq("paypal.lBillingType0"), any(Object[].class),any(Locale.class))).thenReturn("MerchantInitiatedBillingSingleAgreement");
+        Map<String, String> credentialMap = new HashMap<String, String>();
+        credentialMap.put("paypal.user","cn_1313656118_biz_api1.chartsnow.mobi");
+        credentialMap.put("paypal.password","1313656158");
+        credentialMap.put("paypal.signature","AoTXEljMZhDQEXJFn1kQJo2C6CbIAPP7uCi4Y-85yG98nlcq-IJBt9jQ");
+        credentialMap.put("paypal.apiVersion","80.0");
+        credentialMap.put("paypal.btnSource","PP-ECWizard");
+        credentialMap.put("paypal.returnURL","http://localhost:8080/portal/payPalRequest.htm");
+        credentialMap.put("paypal.cancelURL","http://localhost:8080/portal/payPalCancel.htm");
+        credentialMap.put("paypal.lBillingType0","MerchantInitiatedBillingSingleAgreement");
+        for(Map.Entry<String, String> entry : credentialMap.entrySet()){
+            when(messageSource.getMessage(anyString(),eq(entry.getKey()), any(Object[].class),any(Locale.class))).thenReturn(entry.getValue());
+        }
     }
 
 }
