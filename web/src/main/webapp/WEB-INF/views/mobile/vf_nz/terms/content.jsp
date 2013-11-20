@@ -4,6 +4,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
+<style type="text/css">
+ol > li {
+	margin-top: 10px;
+}
+ol {
+	padding-left: 20px;
+}
+</style>
+
  <div class="header pie">
     <span class="logo" style="padding-left: 49px; visibility: hidden;"><s:message code='m.page.main.header' /></span>
     <c:if test="${showBackButton eq true}">
@@ -14,9 +23,13 @@
 
 <form:form method="post" cssClass="contact" modelAttribute="contactUsDto">
 	<div class="container">
-		<div class="content terms">
+		<%--<div class="content terms">
 			<h1><s:message code="dialog.terms.h1" /></h1>
 			<s:message code="dialog.terms.content" />
-		</div>
+		</div>--%>
+	<div class="content terms" style="text-align: left;">
+		<s:message code="dialog.terms.content" />
 	</div>
+	
+</div>
 </form:form>

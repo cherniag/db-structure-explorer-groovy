@@ -42,18 +42,19 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
         	for (int i = 0; i < POOL_SIZE; i++) {
         		submitTaskForExecution();
             }
-            
+
         } catch (Throwable t) {
             LOG.error("Job ended with error.", t);
         } finally {
-        	LOG.info("finished, cleaning up executor!");  
-			try {
-				executor.shutdown();
-				executor.awaitTermination(2, TimeUnit.HOURS);
-			} catch (Exception ex) {
-				LOG.error("Error while awiting termination:" + ex, ex);
-			}
-			LOG.info("job completed!");  
+            
+        	LOG.info("finished, cleaning up executor!");
+            try{
+            	executor.shutdown();
+            	executor.awaitTermination(2, TimeUnit.HOURS);
+            }catch(Exception ex){
+            	LOG.error("Error while awiting termination:"+ex, ex);
+            }
+            LOG.info("job completed!");
         }
     }
 
@@ -62,6 +63,7 @@ public class UpdateO2UserJob extends QuartzJobBean implements StatefulJob {
 		if (isNotEmpty(usersId)){
 		    executor.submit(new UpdateO2UserBatchTask(usersId));
 		}
+
 	}
 
     private void readProperties() {
