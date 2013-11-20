@@ -8,6 +8,8 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="service.VersionService" class="java.lang.Object" />
 
+    <bean id="shared.PostService" class="mobi.nowtechnologies.server.shared.service.PostService"/>
+
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>

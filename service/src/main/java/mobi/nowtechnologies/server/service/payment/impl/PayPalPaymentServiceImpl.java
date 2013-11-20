@@ -61,7 +61,9 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Override
 	public void startPayment(PendingPayment pendingPayment) throws ServiceException {
 		PayPalPaymentDetails currentPaymentDetails = (PayPalPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
-		PayPalResponse response = httpService.makeReferenceTransactionRequest(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount());
+        PaymentPolicy currentPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
+        String communityName = currentPaymentPolicy.getCommunity() != null ? currentPaymentPolicy.getCommunity().getRewriteUrlParameter() : null;
+		PayPalResponse response = httpService.makeReferenceTransactionRequest(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(), communityName);
 		pendingPayment.setExternalTxId(response.getTransactionId());
 		entityService.updateEntity(pendingPayment);
 		LOGGER.info("PayPal responsed {} for pending payment id: {}", response, pendingPayment.getI());
@@ -71,8 +73,8 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Override
 	public PayPalPaymentDetails createPaymentDetails(String billingDescription, String successUrl, String failUrl, User user, PaymentPolicy paymentPolicy) throws ServiceException {
 		LOGGER.info("Starting creation PayPal payment details");
-
-		PayPalResponse response = httpService.makeTokenRequest(billingDescription, successUrl, failUrl, paymentPolicy.getCurrencyISO());
+        String communityName = paymentPolicy.getCommunity() != null ? paymentPolicy.getCommunity().getRewriteUrlParameter() : null;
+		PayPalResponse response = httpService.makeTokenRequest(billingDescription, successUrl, failUrl, paymentPolicy.getCurrencyISO(), communityName);
 		if (!response.isSuccessful())
 			throw new ServiceException("Can't connect to PayPal. Please try again later.");
 
@@ -94,10 +96,10 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Override
 	public PayPalPaymentDetails commitPaymentDetails(String token, User user, PaymentPolicy paymentPolicy, boolean activated) throws ServiceException {
 		LOGGER.info("Committing PayPal payment details for user {} ...", user.getUserName());
-
-		PayPalResponse response = httpService.makeBillingAgreementRequest(token);
+        String communityName = paymentPolicy.getCommunity() != null ? paymentPolicy.getCommunity().getRewriteUrlParameter() : null;
+		PayPalResponse response = httpService.makeBillingAgreementRequest(token, communityName);
 		if (response.isSuccessful()) {
-			LOGGER.debug("Got billing agreement from PayPal {}", response.getBillingAgreement(), user.getUserName());
+			LOGGER.debug("Got billing agreement {} from PayPal for user {}", response.getBillingAgreement(), user.getUserName());
 
 			PayPalPaymentDetails newPaymentDetails = new PayPalPaymentDetails();
 			newPaymentDetails.setBillingAgreementTxId(response.getBillingAgreement());

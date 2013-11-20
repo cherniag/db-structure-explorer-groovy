@@ -30,19 +30,19 @@ public class PayPalHttpService extends PaymentHttpService {
 		return new PayPalResponse(response);
 	}
 	
-	public PayPalResponse makeTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode) {
+	public PayPalResponse makeTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityName) {
 		LOGGER.info("Getting token for billing agreement...");
-		return makeRequest(request.createTokenRequest(billingAgreementDescription, successUrl, failUrl, currencyCode));
+		return makeRequest(request.createTokenRequest(billingAgreementDescription, successUrl, failUrl, currencyCode, communityName));
 	}
 	
-	public PayPalResponse makeBillingAgreementRequest(String token) {
+	public PayPalResponse makeBillingAgreementRequest(String token, String communityName) {
 		LOGGER.info("Getting billing agreement...");
-		return makeRequest(request.createBillingAgreementRequest(token));
+		return makeRequest(request.createBillingAgreementRequest(token, communityName));
 	}
 	
-	public PayPalResponse makeReferenceTransactionRequest(String billingAgeementTxId, String currencyCode, BigDecimal amount) {
+	public PayPalResponse makeReferenceTransactionRequest(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityName) {
 		LOGGER.info("Making reference tx with billing agreement...");
-		return makeRequest(request.createReferenceTransactionRequest(billingAgeementTxId, currencyCode, amount));
+		return makeRequest(request.createReferenceTransactionRequest(billingAgreementTxId, currencyCode, amount, communityName));
 	}
 
 	public void setApiUrl(String apiUrl) {

@@ -1,62 +1,50 @@
 package mobi.nowtechnologies.server.service.payment.request;
 
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Required;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
 
-	public static enum PayPalRequestParam implements PaymentRequestParam {
-		L_BILLINGAGREEMENTDESCRIPTION0,
-		L_BILLINGTYPE0,
-		PAYMENTACTION,
-		CURRENCYCODE,
-		RETURNURL,
-		CANCELURL,
-		TOKEN,
-		METHOD,
-		VERSION,
-		USER,
-		PWD,
-		BUTTONSOURCE,
-		SIGNATURE,
-		REFERENCEID,
-		AMT
-	}
-	
-	private String user;
-	private String password;
-	private String signature;
-	private String apiVersion;
-	private String btnSource;
-	private String returnURL;
-	private String cancelURL;
-	private DecimalFormat decimalFormat;
-	
+    private final static String USER_NAME = "paypal.user";
+    private final static String PASSWORD = "paypal.password";
+    private final static String SIGNATURE = "paypal.signature";
+    private final static String API_VERSION = "paypal.apiVersion";
+    private final static String BTN_SOURCE = "paypal.btnSource";
+    private final static String RETURN_URL = "paypal.returnURL";
+    private final static String CANCEL_URL = "paypal.cancelURL";
+    private final static String BILLING_TYPE = "paypal.lBillingType0";
+
+    private DecimalFormat decimalFormat;
+    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+
 	public PayPalRequest() {
 	}
-	
-	protected PayPalRequest createDefaultRequest() {
+
+	protected PayPalRequest createDefaultRequest(String communityName) {
 		return new PayPalRequest()
-		.addParam(PayPalRequestParam.USER, user)
-		.addParam(PayPalRequestParam.PWD, password)
-		.addParam(PayPalRequestParam.VERSION, apiVersion)
-		.addParam(PayPalRequestParam.BUTTONSOURCE, btnSource)
-		.addParam(PayPalRequestParam.SIGNATURE, signature);
+            .addParam(PayPalRequestParam.USER, communityResourceBundleMessageSource.getMessage(communityName, USER_NAME, null, null))
+            .addParam(PayPalRequestParam.PWD, communityResourceBundleMessageSource.getMessage(communityName, PASSWORD, null, null))
+            .addParam(PayPalRequestParam.VERSION, communityResourceBundleMessageSource.getMessage(communityName, API_VERSION, null, null))
+            .addParam(PayPalRequestParam.BUTTONSOURCE, communityResourceBundleMessageSource.getMessage(communityName, BTN_SOURCE, null, null))
+            .addParam(PayPalRequestParam.SIGNATURE, communityResourceBundleMessageSource.getMessage(communityName, SIGNATURE, null, null));
 	}
 	
 	public PayPalRequest createTokenRequest(String billingAgreementDescription, String currencyCode) {
-		return createTokenRequest(billingAgreementDescription, null, null, currencyCode);
+		return createTokenRequest(billingAgreementDescription, null, null, currencyCode, null);
 	}
 	
-	public PayPalRequest createBillingAgreementRequest(String token) {
-		return createDefaultRequest()
+	public PayPalRequest createBillingAgreementRequest(String token, String communityName) {
+		return createDefaultRequest(communityName)
 			.addParam(PayPalRequestParam.TOKEN, token)
 			.addParam(PayPalRequestParam.METHOD, "CreateBillingAgreement");
 	}
 	
-	public PayPalRequest createReferenceTransactionRequest(String billingAgeementTxId, String currencyCode, BigDecimal amount) {
-		return createDefaultRequest()
+	public PayPalRequest createReferenceTransactionRequest(String billingAgeementTxId, String currencyCode, BigDecimal amount, String communityName) {
+		return createDefaultRequest(communityName)
 			.addParam(PayPalRequestParam.AMT, decimalFormat.format(amount))
 			.addParam(PayPalRequestParam.REFERENCEID, billingAgeementTxId)
 			.addParam(PayPalRequestParam.CURRENCYCODE, currencyCode)
@@ -64,37 +52,19 @@ public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
 			.addParam(PayPalRequestParam.PAYMENTACTION, "Sale");
 			
 	}
-	
-	
-	public void setUser(String user) {
-		this.user = user;
-	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public PayPalRequest createTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityName) {
+        return createDefaultRequest(communityName)
+            .addParam(PayPalRequestParam.RETURNURL, successUrl != null ? successUrl : communityResourceBundleMessageSource.getMessage(communityName, RETURN_URL, null, null))
+            .addParam(PayPalRequestParam.CANCELURL, failUrl != null ? failUrl : communityResourceBundleMessageSource.getMessage(communityName, CANCEL_URL, null, null))
+            .addParam(PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0, billingAgreementDescription)
+            .addParam(PayPalRequestParam.CURRENCYCODE, currencyCode)
+            .addParam(PayPalRequestParam.METHOD, "SetExpressCheckout")
+            .addParam(PayPalRequestParam.L_BILLINGTYPE0, communityResourceBundleMessageSource.getMessage(communityName, BILLING_TYPE, null, null))
+            .addParam(PayPalRequestParam.PAYMENTACTION, "Authorization");
+    }
 
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
-
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
-
-	public void setBtnSource(String btnSource) {
-		this.btnSource = btnSource;
-	}
-
-	public void setReturnURL(String returnURL) {
-		this.returnURL = returnURL;
-	}
-
-	public void setCancelURL(String cancelURL) {
-		this.cancelURL = cancelURL;
-	}
-
-	public void setAmountFormat(String amountFormat) {
+    public void setAmountFormat(String amountFormat) {
 		decimalFormat = new DecimalFormat(amountFormat);
 		DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
 			decimalFormatSymbols.setDecimalSeparator('.');
@@ -102,14 +72,8 @@ public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
 		decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
 	}
 
-	public PayPalRequest createTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode) {
-		return createDefaultRequest()
-				.addParam(PayPalRequestParam.RETURNURL, successUrl != null ? successUrl : returnURL)
-				.addParam(PayPalRequestParam.CANCELURL, failUrl != null ? failUrl : cancelURL)
-				.addParam(PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0, billingAgreementDescription)
-				.addParam(PayPalRequestParam.CURRENCYCODE, currencyCode)
-				.addParam(PayPalRequestParam.METHOD, "SetExpressCheckout")
-				.addParam(PayPalRequestParam.L_BILLINGTYPE0, "MerchantInitiatedBillingSingleAgreement")
-				.addParam(PayPalRequestParam.PAYMENTACTION, "Authorization");
-	}
+    @Required
+    public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {
+        this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
+    }
 }

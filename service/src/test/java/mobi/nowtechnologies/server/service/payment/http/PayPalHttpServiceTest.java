@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.http;
 
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
-import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;

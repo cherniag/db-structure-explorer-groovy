@@ -1,23 +1,25 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl;
-import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.shared.service.PostService;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -25,74 +27,145 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
+import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.when;
+import static junit.framework.Assert.*;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class PayPalPaymentServiceIT {
-	
+
+    private PayPalPaymentServiceImpl payPalPaymentServiceImpl;
+    private BasicResponse successfulResponse;
+    private ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
+    private PostService postService = mock(PostService.class);
+
+    @Resource(name = "paymentDetailsRepository")
+    private PaymentDetailsRepository paymentDetailsRepository;
+
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
-	
-	private PayPalPaymentService paypalPaymentService;
-	
+
 	@Resource(name = "service.PaymentDetailsService")
 	private PaymentDetailsService paymentDetailsService;
-	
-	PayPalHttpService httpService = Mockito.mock(PayPalHttpService.class);
 
-    BasicResponse successfulResponse = new BasicResponse() {
-		@Override
-		public int getStatusCode() {
-			return HttpServletResponse.SC_OK;
-		}
-		@Override public String getMessage() {
-			return "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164";
-		}
-	};
-	
-	@Before
+    @Resource(name = "request.payPalRequest")
+    private PayPalRequest payPalRequest;
+
+    @Before
 	public void before() {
-		
-		PayPalPaymentServiceImpl service = new PayPalPaymentServiceImpl();
-			service.setExpireMillis(3L);
-			service.setRedirectURL("redirectUrl");
-			service.setRetriesOnError(3);
-			service.setHttpService(httpService);
-			EntityService entityService = new EntityService();
-				entityService.setEntityDao(entityDao);
-			service.setEntityService(entityService);
-			service.setPaymentDetailsService(paymentDetailsService);
-		paypalPaymentService = service;
-	}
-	
-	@Test
-	public void commitPayment_Successful() {
-		when(httpService.makeBillingAgreementRequest(anyString())).thenReturn(new PayPalResponse(successfulResponse));
-		User user = new User();
-			user.setUserName("good@user.com");
-			entityDao.saveEntity(user);
+        initPayPalPaymentService();
+        initMocks();
+    }
+
+    private void initMocks() {
+        successfulResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
+        when(postService.sendHttpPost(anyString(),anyListOf(NameValuePair.class),anyString()))
+                .thenReturn(successfulResponse);
+    }
+
+    private void initPayPalPaymentService() {
+        EntityService entityService = new EntityService();
+        entityService.setEntityDao(entityDao);
+        PayPalHttpService httpService = new PayPalHttpService();
+        httpService.setApiUrl("https://api-3t.sandbox.paypal.com/nvp");
+        httpService.setRequest(payPalRequest);
+        httpService.setPostService(postService);
+        payPalPaymentServiceImpl = new PayPalPaymentServiceImpl();
+        payPalPaymentServiceImpl.setExpireMillis(3L);
+        payPalPaymentServiceImpl.setRedirectURL("redirectUrl");
+        payPalPaymentServiceImpl.setRetriesOnError(3);
+        payPalPaymentServiceImpl.setHttpService(httpService);
+        payPalPaymentServiceImpl.setEntityService(entityService);
+        payPalPaymentServiceImpl.setPaymentDetailsService(paymentDetailsService);
+        payPalPaymentServiceImpl.setPaymentDetailsRepository(paymentDetailsRepository);
+    }
+
+    @Test
+	public void testThatPaymentDetailsForVFNZAreCommitted() {
+        User user = createAndSaveUser();
 			
-		Community community = CommunityDao.getCommunity("CN Commercial Beta");
-			PaymentPolicy paymentPolicy = new PaymentPolicy();
-				paymentPolicy.setAvailableInStore(true);
-				paymentPolicy.setCommunity(community);
-				paymentPolicy.setCurrencyISO("GBP");
-				paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
-				paymentPolicy.setSubcost(BigDecimal.TEN);
-				paymentPolicy.setSubweeks((byte)0);
-			entityDao.saveEntity(paymentPolicy);
+		Community community = CommunityDao.getCommunity("vf_nz");
+		PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
+		paymentPolicy.setCommunity(community);
+		entityDao.saveEntity(paymentPolicy);
 			
-		PayPalPaymentDetails paymentDetails = paypalPaymentService.commitPaymentDetails("token", user, paymentPolicy, true);
-		
-		assertEquals(user.getId(), paymentDetails.getOwner().getId());
+		Long id = payPalPaymentServiceImpl.commitPaymentDetails("token", user, paymentPolicy, true).getI();
+        assertNotNull(id);
+        PayPalPaymentDetails paymentDetails = (PayPalPaymentDetails)paymentDetailsRepository.findOne(id);
+        assertNotNull(paymentDetails);
+        assertTrue(paymentDetails.isActivated());
+        assertEquals(user.getId(), paymentDetails.getOwner().getId());
+        assertEquals(user.getCurrentPaymentDetails().getI(), paymentDetails.getI());
 		assertEquals(1, user.getPaymentDetailsList().size());
 	}
+
+    @Test
+    public void testThatBillingRequestForVFNZAreSentWhenCommittingPaymentDetails() {
+        User user = createAndSaveUser();
+        Community community = CommunityDao.getCommunity("vf_nz");
+        PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
+        paymentPolicy.setCommunity(community);
+        entityDao.saveEntity(paymentPolicy);
+        payPalPaymentServiceImpl.commitPaymentDetails("token", user, paymentPolicy, true);
+        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(postService).sendHttpPost(anyString(), listArgumentCaptor.capture(), anyString());
+        List actualPayPalRequestParameters = listArgumentCaptor.getValue();
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("USER", "vfnz_user_name")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("PWD", "vfnz_password")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("VERSION", "80.0")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("BUTTONSOURCE", "vfnzSource")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("SIGNATURE", "vfnz_signature")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("TOKEN","token")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("METHOD","CreateBillingAgreement")));
+    }
+
+    private User createAndSaveUser() {
+        User user = new User();
+        user.setUserName("good@user.com");
+        entityDao.saveEntity(user);
+        return user;
+    }
+
+    @Test
+    public void testThatBillingRequestForO2AreSentWhenCommittingPaymentDetails() {
+        User user = createAndSaveUser();
+        Community community = CommunityDao.getCommunity("o2");
+        PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
+        paymentPolicy.setCommunity(community);
+        entityDao.saveEntity(paymentPolicy);
+        payPalPaymentServiceImpl.commitPaymentDetails("token", user, paymentPolicy, true);
+        verify(postService).sendHttpPost(anyString(), listArgumentCaptor.capture(), anyString());
+        List actualPayPalRequestParameters = listArgumentCaptor.getValue();
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("USER", "o2_user_name")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("PWD","o2_password")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("VERSION","90.0")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("BUTTONSOURCE","o2Source")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("SIGNATURE","o2_signature")));
+    }
+
+    @Test
+    public void testThatBillingRequestForOtherCommunityAreSentWhenCommittingPaymentDetails() {
+        User user = createAndSaveUser();
+        Community community = CommunityDao.getCommunity("Metal Hammer");
+        PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
+        paymentPolicy.setCommunity(community);
+        entityDao.saveEntity(paymentPolicy);
+        payPalPaymentServiceImpl.commitPaymentDetails("token", user, paymentPolicy, true);
+        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(postService).sendHttpPost(anyString(), listArgumentCaptor.capture(), anyString());
+        List actualPayPalRequestParameters = listArgumentCaptor.getValue();
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("USER", "cn_1313656118_biz_api1.chartsnow.mobi")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("PWD","1313656158")));
+        assertTrue(actualPayPalRequestParameters.contains(new BasicNameValuePair("SIGNATURE","AoTXEljMZhDQEXJFn1kQJo2C6CbIAPP7uCi4Y-85yG98nlcq-IJBt9jQ")));
+    }
+
+
+
 }
