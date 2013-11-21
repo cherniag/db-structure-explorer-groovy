@@ -125,7 +125,7 @@ public class O2WebServiceResultsProcessor {
 	public boolean isPostpayDirectPartner(GetOrderList2Response orderList,
 			String phone) {
 		boolean direct = false;
-		if ((orderList.getOrder() != null) || (orderList.getOrder().size() > 0)) {
+		if ((orderList.getOrder() != null) && (orderList.getOrder().size() > 0)) {
 
 			Order2SummaryType order = orderList.getOrder().get(0);
 
