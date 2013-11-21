@@ -15,7 +15,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import mobi.nowtechnologies.server.service.payment.request.MigRequest.MigRequestParam;
-import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;

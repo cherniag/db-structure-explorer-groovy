@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.service.payment.http;
 
+import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
-import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
+import mobi.nowtechnologies.server.service.payment.request.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
@@ -103,46 +104,22 @@ public class PayPalHttpServiceTest {
 	}
 	
 	private BasicResponse getSuccessfulPayPalResponse() {
-		return new BasicResponse() {
-			@Override public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-			@Override public String getMessage() {
-				return "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164";
-			}
-		};
+		return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 	}
 	
 	private BasicResponse getSuccessfulBillingAgreementResponse() {
-		return new BasicResponse() {
-			@Override public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-			@Override public String getMessage() {
-				return "BILLINGAGREEMENTID="+billiningAgreement+"&TIMESTAMP=2011%2d12%2d23T19%3a58%3a42Z&CORRELATIONID=d5f539505d03a&ACK=Success&VERSION=80%2e0&BUILD=2271164";
-			}
-		};
+        return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "BILLINGAGREEMENTID="+billiningAgreement+"&TIMESTAMP=2011%2d12%2d23T19%3a58%3a42Z&CORRELATIONID=d5f539505d03a&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 	}
 	
 	private BasicResponse getSuccessfulReferenceTransactionResponse() {
-		return new BasicResponse() {
-			@Override public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-			@Override public String getMessage() {
-				return "BILLINGAGREEMENTID="+billiningAgreement+"&TIMESTAMP=2011%2d12%2d23T19%3a58%3a42Z&CORRELATIONID=d5f539505d03a&ACK=Success&VERSION=80%2e0&BUILD=2271164";
-			}
-		};
+        return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "BILLINGAGREEMENTID="+billiningAgreement+"&TIMESTAMP=2011%2d12%2d23T19%3a58%3a42Z&CORRELATIONID=d5f539505d03a&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 	}
 	
 	private BasicResponse getFailResponse() {
-		return new BasicResponse() {
-			@Override public int getStatusCode() {
-				return HttpServletResponse.SC_OK;
-			}
-			@Override public String getMessage() {
-				return "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API%20call&L_SEVERITYCODE0=Error";
-			}
-		};
+        return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API%20call&L_SEVERITYCODE0=Error");
 	}
 }
