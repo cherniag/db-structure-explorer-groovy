@@ -17,6 +17,11 @@ public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
     private final static String RETURN_URL = "paypal.returnURL";
     private final static String CANCEL_URL = "paypal.cancelURL";
     private final static String BILLING_TYPE = "paypal.lBillingType0";
+    private static final String METHOD_CREATE_BILLING_AGREEMENT = "CreateBillingAgreement";
+    private static final String METHOD_DO_REFERENCE_TRANSACTION = "DoReferenceTransaction";
+    private static final String METHOD_SET_EXPRESS_CHECKOUT = "SetExpressCheckout";
+    private static final String ACTION_SALE = "Sale";
+    private static final String ACTION_AUTHORIZATION = "Authorization";
 
     private DecimalFormat decimalFormat;
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
@@ -24,44 +29,44 @@ public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
 	public PayPalRequest() {
 	}
 
-	protected PayPalRequest createDefaultRequest(String communityName) {
+	protected PayPalRequest createDefaultRequest(String communityRewriteUrlParameter) {
 		return new PayPalRequest()
-            .addParam(PayPalRequestParam.USER, communityResourceBundleMessageSource.getMessage(communityName, USER_NAME, null, null))
-            .addParam(PayPalRequestParam.PWD, communityResourceBundleMessageSource.getMessage(communityName, PASSWORD, null, null))
-            .addParam(PayPalRequestParam.VERSION, communityResourceBundleMessageSource.getMessage(communityName, API_VERSION, null, null))
-            .addParam(PayPalRequestParam.BUTTONSOURCE, communityResourceBundleMessageSource.getMessage(communityName, BTN_SOURCE, null, null))
-            .addParam(PayPalRequestParam.SIGNATURE, communityResourceBundleMessageSource.getMessage(communityName, SIGNATURE, null, null));
+            .addParam(PayPalRequestParam.USER, getValueOf(communityRewriteUrlParameter, USER_NAME))
+            .addParam(PayPalRequestParam.PWD, getValueOf(communityRewriteUrlParameter, PASSWORD))
+            .addParam(PayPalRequestParam.VERSION, getValueOf(communityRewriteUrlParameter, API_VERSION))
+            .addParam(PayPalRequestParam.BUTTONSOURCE, getValueOf(communityRewriteUrlParameter, BTN_SOURCE))
+            .addParam(PayPalRequestParam.SIGNATURE, getValueOf(communityRewriteUrlParameter, SIGNATURE));
 	}
-	
-	public PayPalRequest createTokenRequest(String billingAgreementDescription, String currencyCode) {
-		return createTokenRequest(billingAgreementDescription, null, null, currencyCode, null);
-	}
-	
-	public PayPalRequest createBillingAgreementRequest(String token, String communityName) {
-		return createDefaultRequest(communityName)
+
+    private String getValueOf(String communityRewriteUrlParameter, String code) {
+        return communityResourceBundleMessageSource.getMessage(communityRewriteUrlParameter, code, null, null);
+    }
+
+    public PayPalRequest createBillingAgreementRequest(String token, String communityRewriteUrlParameter) {
+		return createDefaultRequest(communityRewriteUrlParameter)
 			.addParam(PayPalRequestParam.TOKEN, token)
-			.addParam(PayPalRequestParam.METHOD, "CreateBillingAgreement");
+			.addParam(PayPalRequestParam.METHOD, METHOD_CREATE_BILLING_AGREEMENT);
 	}
 	
-	public PayPalRequest createReferenceTransactionRequest(String billingAgeementTxId, String currencyCode, BigDecimal amount, String communityName) {
-		return createDefaultRequest(communityName)
+	public PayPalRequest createReferenceTransactionRequest(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityRewriteUrlParameter) {
+		return createDefaultRequest(communityRewriteUrlParameter)
 			.addParam(PayPalRequestParam.AMT, decimalFormat.format(amount))
-			.addParam(PayPalRequestParam.REFERENCEID, billingAgeementTxId)
+			.addParam(PayPalRequestParam.REFERENCEID, billingAgreementTxId)
 			.addParam(PayPalRequestParam.CURRENCYCODE, currencyCode)
-			.addParam(PayPalRequestParam.METHOD, "DoReferenceTransaction")
-			.addParam(PayPalRequestParam.PAYMENTACTION, "Sale");
+			.addParam(PayPalRequestParam.METHOD, METHOD_DO_REFERENCE_TRANSACTION)
+			.addParam(PayPalRequestParam.PAYMENTACTION, ACTION_SALE);
 			
 	}
 
-    public PayPalRequest createTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityName) {
-        return createDefaultRequest(communityName)
-            .addParam(PayPalRequestParam.RETURNURL, successUrl != null ? successUrl : communityResourceBundleMessageSource.getMessage(communityName, RETURN_URL, null, null))
-            .addParam(PayPalRequestParam.CANCELURL, failUrl != null ? failUrl : communityResourceBundleMessageSource.getMessage(communityName, CANCEL_URL, null, null))
+    public PayPalRequest createTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityRewriteUrlParameter) {
+        return createDefaultRequest(communityRewriteUrlParameter)
+            .addParam(PayPalRequestParam.RETURNURL, successUrl != null ? successUrl : getValueOf(communityRewriteUrlParameter, RETURN_URL))
+            .addParam(PayPalRequestParam.CANCELURL, failUrl != null ? failUrl : getValueOf(communityRewriteUrlParameter, CANCEL_URL))
             .addParam(PayPalRequestParam.L_BILLINGAGREEMENTDESCRIPTION0, billingAgreementDescription)
             .addParam(PayPalRequestParam.CURRENCYCODE, currencyCode)
-            .addParam(PayPalRequestParam.METHOD, "SetExpressCheckout")
-            .addParam(PayPalRequestParam.L_BILLINGTYPE0, communityResourceBundleMessageSource.getMessage(communityName, BILLING_TYPE, null, null))
-            .addParam(PayPalRequestParam.PAYMENTACTION, "Authorization");
+            .addParam(PayPalRequestParam.METHOD, METHOD_SET_EXPRESS_CHECKOUT)
+            .addParam(PayPalRequestParam.L_BILLINGTYPE0, getValueOf(communityRewriteUrlParameter, BILLING_TYPE))
+            .addParam(PayPalRequestParam.PAYMENTACTION, ACTION_AUTHORIZATION);
     }
 
     public void setAmountFormat(String amountFormat) {

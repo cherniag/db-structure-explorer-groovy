@@ -30,19 +30,19 @@ public class PayPalHttpService extends PaymentHttpService {
 		return new PayPalResponse(response);
 	}
 	
-	public PayPalResponse makeTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityName) {
+	public PayPalResponse makeTokenRequest(String billingAgreementDescription, String successUrl, String failUrl, String currencyCode, String communityRewriteUrlParameter) {
 		LOGGER.info("Getting token for billing agreement...");
-		return makeRequest(request.createTokenRequest(billingAgreementDescription, successUrl, failUrl, currencyCode, communityName));
+		return makeRequest(request.createTokenRequest(billingAgreementDescription, successUrl, failUrl, currencyCode, communityRewriteUrlParameter));
 	}
 	
-	public PayPalResponse makeBillingAgreementRequest(String token, String communityName) {
+	public PayPalResponse makeBillingAgreementRequest(String token, String communityRewriteUrlParameter) {
 		LOGGER.info("Getting billing agreement...");
-		return makeRequest(request.createBillingAgreementRequest(token, communityName));
+		return makeRequest(request.createBillingAgreementRequest(token, communityRewriteUrlParameter));
 	}
 	
-	public PayPalResponse makeReferenceTransactionRequest(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityName) {
+	public PayPalResponse makeReferenceTransactionRequest(String billingAgreementTxId, String currencyCode, BigDecimal amount, String communityRewriteUrlParameter) {
 		LOGGER.info("Making reference tx with billing agreement...");
-		return makeRequest(request.createReferenceTransactionRequest(billingAgreementTxId, currencyCode, amount, communityName));
+		return makeRequest(request.createReferenceTransactionRequest(billingAgreementTxId, currencyCode, amount, communityRewriteUrlParameter));
 	}
 
 	public void setApiUrl(String apiUrl) {
