@@ -46,7 +46,8 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 		"classpath:META-INF/soap.xml",
 		"classpath:META-INF/dao-test.xml",
 		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
+		"classpath:META-INF/shared.xml",
+        "classpath:META-INF/smpp.xml"}, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 //@Transactional
