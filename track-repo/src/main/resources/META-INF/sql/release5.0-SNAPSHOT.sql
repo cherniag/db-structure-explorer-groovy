@@ -6,10 +6,14 @@ TABLE
   duplicated_track LIKE cn_cms.track
 ;
 
+alter
+TABLE
+duplicated_track add column last_id bigint(20) NOT NULL;
+
 INSERT
 INTO
   cn_cms.duplicated_track SELECT
-                            t1.*
+                             t1.*, a.maxId
                           FROM
                               cn_cms.Track t1 ,
                               (
@@ -34,7 +38,36 @@ INTO
                             AND a.maxId <> t1.id
 ;
 
-delete from cn_cms.assetfile where assetfile.type=3 and assetfile.id in (select duplicated_track.coverFile from cn_cms.duplicated_track);
-delete from cn_cms.assetfile where assetfile.id in (select duplicated_track.mediaFile from cn_cms.duplicated_track);
+delete from cn_cms.assetfile where assetfile.trackId in (select duplicated_track.id from cn_cms.duplicated_track);
+-- delete from cn_cms.assetfile where assetfile.type=3 and assetfile.id in (select duplicated_track.coverFile from cn_cms.duplicated_track);
+-- delete from cn_cms.assetfile where assetfile.id in (select duplicated_track.mediaFile from cn_cms.duplicated_track);
 
 delete from cn_cms.track where track.id in (select id from cn_cms.duplicated_track);
+
+-- SQLs for correct removing
+SELECT
+  *
+FROM cn_cms.track t1
+  left join
+  (
+    SELECT
+      max(t2.id) maxId
+    FROM
+      cn_cms.track_prod t2
+    GROUP BY
+      t2.ISRC ,
+      t2.ProductCode ,
+      t2.Ingestor
+    HAVING
+      COUNT(*) > 1
+  ) a
+    on a.maxId = t1.id
+where t1.id is null;
+
+SELECT
+  *
+FROM cn_cms.track t1
+  right join
+  duplicated_track d
+    on d.last_id = t1.id
+where t1.id is null;
