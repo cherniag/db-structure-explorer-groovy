@@ -41,8 +41,6 @@ INTO
 delete from cn_cms.assetfile where assetfile.trackId in (select duplicated_track.id from cn_cms.duplicated_track);
 delete from cn_cms.territory where territory.trackId in (select duplicated_track.id from cn_cms.duplicated_track);
 delete from cn_cms.resourceFile where resourceFile.trackId in (select duplicated_track.id from cn_cms.duplicated_track);
--- delete from cn_cms.assetfile where assetfile.type=3 and assetfile.id in (select duplicated_track.coverFile from cn_cms.duplicated_track);
--- delete from cn_cms.assetfile where assetfile.id in (select duplicated_track.mediaFile from cn_cms.duplicated_track);
 
 delete from cn_cms.track where track.id in (select id from cn_cms.duplicated_track);
 
