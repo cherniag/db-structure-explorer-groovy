@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import java.util.List;
 
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

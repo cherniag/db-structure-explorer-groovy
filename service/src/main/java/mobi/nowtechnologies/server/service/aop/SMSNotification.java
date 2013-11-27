@@ -1,21 +1,20 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Aspect
 public class SMSNotification {
@@ -34,7 +33,7 @@ public class SMSNotification {
 		this.userService = userService;
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
 	protected void startCreditCardPayment() {
 	}
 
@@ -46,33 +45,27 @@ public class SMSNotification {
 	protected void startO2PSMSPayment() {
 	}
 
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPayment(..))")
+    protected void startVFPSMSPayment() {
+    }
+
 	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
 	protected void startMigPayment() {
 	}
 
 	/**
-	 * Sending sms after any payment system has spent all retries with failures
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
+	 * Sending sms after any payment system has spent all retries with failure
 	 */
-	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment()")
+	@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
 	public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
-		PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
-		try {
-			userNotificationService.sendPaymentFailSMS(pendingPayment);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
+        PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
+        userNotificationService.sendPaymentFailSMS(pendingPayment);
 		return object;
 	}
 
 	/**
 	 * Sending sms after user was set to limited status
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.saveWeeklyPayment(*))")
 	public Object saveWeeklyPayment(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -88,9 +81,6 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms after user unsubscribe
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.unsubscribeUser(int, mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto))")
 	public Object unsubscribeUser(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -126,9 +116,6 @@ public class SMSNotification {
 
 	/**
 	 * Sending sms before 48 h expire subscription
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.updateLastBefore48SmsMillis(..))")
 	public Object updateLastBefore48SmsMillis(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -143,7 +130,7 @@ public class SMSNotification {
 		return object;
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPamentDetails(..))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.PaymentDetailsService.createCreditCardPaymentDetails(..))")
 	protected void createdCreditCardPaymentDetails() {
 	}
 
@@ -155,15 +142,12 @@ public class SMSNotification {
 	protected void createdMigPaymentDetails() {
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.commitPaymentDetails(..))")
-	protected void createdO2PsmsPaymentDetails() {
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPaymentDetails(..))")
+	protected void createdPsmsPaymentDetails() {
 	}
 
 	/**
 	 * Sending sms after user was subscribed with some payment details
-	 * 
-	 * @param joinPoint
-	 * @throws Throwable
 	 */
 	@Around("createdCreditCardPaymentDetails()  || createdPayPalPaymentDetails() || createdMigPaymentDetails()")
 	public Object createdPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -178,8 +162,8 @@ public class SMSNotification {
 		return object;
 	}
 
-	@Around("createdO2PsmsPaymentDetails()")
-	public Object createdO2PsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
+	@Around("createdPsmsPaymentDetails()")
+	public Object createdPsmsPaymentDetails(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		User user = (User) joinPoint.getArgs()[0];
 		try {
@@ -213,4 +197,35 @@ public class SMSNotification {
 		}
 		return object;
 	}
+
+    @Around("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(mobi.nowtechnologies.server.persistence.domain.User, mobi.nowtechnologies.server.service.data.SubscriberData))")
+    public Object sendSmsPinForVFNZ_EnterPhoneNumber(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object object = joinPoint.proceed();
+        User user = (User) joinPoint.getArgs()[0];
+
+        try {
+            if(user.getProvider() != null){
+                userNotificationService.sendActivationPinSMS(user);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return object;
+    }
+
+    @Around("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
+    public Object sendSmsPinForVFNZ_ReSign(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object object = joinPoint.proceed();
+        User user = (User) joinPoint.getArgs()[0];
+        String phoneNumber = (String)joinPoint.getArgs()[1];
+
+        try {
+            if(user.getProvider() != null && phoneNumber == null){
+                userNotificationService.sendActivationPinSMS(user);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return object;
+    }
 }

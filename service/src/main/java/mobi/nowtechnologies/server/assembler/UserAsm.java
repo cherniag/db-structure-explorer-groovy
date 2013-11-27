@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -9,16 +11,15 @@ import mobi.nowtechnologies.server.shared.dto.admin.PromotionDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.*;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.toStringIfNull;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -135,7 +136,7 @@ public class UserAsm {
 		final UserGroup userGroup = user.getUserGroup();
 
 		userDto.setUserGroup(userGroup.getName());
-		userDto.setUserGroupId(userGroup.getI());
+		userDto.setUserGroupId(userGroup.getId());
 		userDto.setUserName(user.getUserName());
 
 		final UserStatus userStatus = user.getStatus();
@@ -168,6 +169,7 @@ public class UserAsm {
 	}
 
     public static AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial){
+        LOGGER.debug("user=[{}]", user);
         UserGroup userGroup = user.getUserGroup();
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -185,59 +187,60 @@ public class UserAsm {
                 .getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
                 && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-        String oldPaymentType = getOldPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
+        String oldPaymentType = getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
-        accountCheckDTO.setChartTimestamp(chart.getTimestamp());
-        accountCheckDTO.setChartItems(chart.getNumTracks());
+        accountCheckDTO.chartTimestamp = chart.getTimestamp();
+        accountCheckDTO.chartItems = chart.getNumTracks();
         setNewsItemsAndTimestamp(news, accountCheckDTO);
 
-        accountCheckDTO.setTimeOfMovingToLimitedStatusSeconds(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance));
+        accountCheckDTO.timeOfMovingToLimitedStatusSeconds = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
         if (null != currentPaymentDetails)
-            accountCheckDTO.setLastPaymentStatus(currentPaymentDetails.getLastPaymentStatus());
+            accountCheckDTO.lastPaymentStatus = currentPaymentDetails.getLastPaymentStatus();
 
-        accountCheckDTO.setDrmType(drmPolicy.getDrmType().getName());
-        accountCheckDTO.setDrmValue(drmPolicy.getDrmValue());
-        accountCheckDTO.setStatus(status.getName());
-        accountCheckDTO.setDisplayName(user.getDisplayName());
-        accountCheckDTO.setSubBalance((byte) subBalance);
-        accountCheckDTO.setDeviceType(user.getDeviceType().getName());
-        accountCheckDTO.setDeviceUID(user.getDeviceString());
-        accountCheckDTO.setPaymentType(oldPaymentType);
-        accountCheckDTO.setPaymentEnabled(paymentEnabled);
-        accountCheckDTO.setPhoneNumber(user.getMobile());
-        accountCheckDTO.setOperator(user.getOperator());
-        accountCheckDTO.setPaymentStatus(oldPaymentStatus);
-        accountCheckDTO.setUserName(userName);
-        accountCheckDTO.setUserToken(user.getToken());
-        accountCheckDTO.setRememberMeToken(rememberMeToken);
-        accountCheckDTO.setFreeTrial(user.isOnFreeTrial());
-        accountCheckDTO.setProvider(user.getProvider());
-        accountCheckDTO.setContract(toStringIfNull(user.getContract()));
-        accountCheckDTO.setSegment(toStringIfNull(user.getSegment()));
-        accountCheckDTO.setLastSubscribedPaymentSystem(lastSubscribedPaymentSystem);
+        accountCheckDTO.drmType = drmPolicy.getDrmType().getName();
+        accountCheckDTO.drmValue = drmPolicy.getDrmValue();
+        accountCheckDTO.status = status.getName();
+        accountCheckDTO.displayName = user.getDisplayName();
+        accountCheckDTO.subBalance = (byte) subBalance;
+        accountCheckDTO.deviceType = user.getDeviceType().getName();
+        accountCheckDTO.deviceUID = user.getDeviceUID();
+        accountCheckDTO.paymentType = oldPaymentType;
+        accountCheckDTO.paymentEnabled = paymentEnabled;
+        accountCheckDTO.phoneNumber = user.getMobile();
+        accountCheckDTO.operator = user.getOperator();
+        accountCheckDTO.paymentStatus = oldPaymentStatus;
+        accountCheckDTO.userName = userName;
+        accountCheckDTO.userToken = user.getToken();
+        accountCheckDTO.rememberMeToken = rememberMeToken;
+        accountCheckDTO.freeTrial = user.isOnFreeTrial();
+        accountCheckDTO.provider = isNotNull(user.getProvider()) ? user.getProvider().getKey() : null;
+        accountCheckDTO.contract = user.getContract();
+        accountCheckDTO.segment = user.getSegment();
+        accountCheckDTO.tariff = user.getTariff();
+        accountCheckDTO.lastSubscribedPaymentSystem = lastSubscribedPaymentSystem;
 
-        accountCheckDTO.setCanGetVideo(true);
-        accountCheckDTO.setCanPlayVideo(user.canPlayVideo());
-        accountCheckDTO.setCanActivateVideoTrial(canActivateVideoTrial);
-        accountCheckDTO.setHasAllDetails(user.hasAllDetails());
-        accountCheckDTO.setShowFreeTrial(user.isShowFreeTrial());
-        accountCheckDTO.setSubscriptionChanged(user.getSubscriptionDirection());
-        accountCheckDTO.setEligibleForVideo(user.isEligibleForVideo());
+        accountCheckDTO.canGetVideo = user.isO2CommunityUser();
+        accountCheckDTO.canPlayVideo = user.canPlayVideo();
+        accountCheckDTO.canActivateVideoTrial = canActivateVideoTrial;
+        accountCheckDTO.hasAllDetails = user.hasAllDetails();
+        accountCheckDTO.showFreeTrial = true;
+        accountCheckDTO.subscriptionChanged = user.getSubscriptionDirection();
+        accountCheckDTO.eligibleForVideo = user.isEligibleForVideo();
 
-        accountCheckDTO.setFullyRegistred(EmailValidator.validate(userName));
-
-        accountCheckDTO.setoAuthProvider((StringUtils.hasText(user.getFacebookId())) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
-        accountCheckDTO.setNextSubPaymentSeconds(nextSubPayment);
+        accountCheckDTO.oAuthProvider = (StringUtils.hasText(user.getFacebookId()) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
+        accountCheckDTO.nextSubPaymentSeconds = nextSubPayment;
 
         if (potentialPromotion != null)
-            accountCheckDTO.setPromotionLabel(potentialPromotion.getLabel());
-        accountCheckDTO.setHasPotentialPromoCodePromotion(user.getPotentialPromoCodePromotion() != null);
+            accountCheckDTO.promotionLabel = potentialPromotion.getLabel();
+        accountCheckDTO.hasPotentialPromoCodePromotion = (user.getPotentialPromoCodePromotion() != null);
 
         ActivationStatus activationStatus = user.getActivationStatus();
-        accountCheckDTO.setActivation(activationStatus);
-        accountCheckDTO.setFullyRegistred(ActivationStatus.ACTIVATED.equals(activationStatus));
+        accountCheckDTO.activation = activationStatus;
+        accountCheckDTO.fullyRegistred = ACTIVATED.equals(activationStatus);
+        accountCheckDTO.subjectToAutoOptIn = user.isSubjectToAutoOptIn();
+        accountCheckDTO.user = user;
 
         if (appStoreProductIds != null) {
             StringBuilder temp = new StringBuilder();
@@ -247,15 +250,14 @@ public class UserAsm {
                 }
             }
             if (temp.length() != 0)
-                accountCheckDTO.setAppStoreProductId(temp.substring(1));
+                accountCheckDTO.appStoreProductId = temp.substring(1);
         }
 
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 
-    // TODO Review this code after client refactoring
-    private static String getOldPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem, UserStatus status) {
+    static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem, UserStatus status) {
         if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
             return "ITUNES_SUBSCRIPTION";
@@ -270,7 +272,7 @@ public class UserAsm {
         } else if (O2_PSMS_TYPE.equals(paymentDetails.getPaymentType())) {
             return "O2_PSMS";
         }
-        return "UNKNOWN";
+        return paymentDetails.getPaymentType();
     }
 
     private static String getOldPaymentStatus(PaymentDetails paymentDetails) {
@@ -322,8 +324,8 @@ public class UserAsm {
     private static void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
         if (news == null)
             return;
-        accountCheckDTO.setNewsTimestamp(news.getTimestamp());
-        accountCheckDTO.setNewsItems(news.getNumEntries());
+        accountCheckDTO.newsTimestamp = news.getTimestamp();
+        accountCheckDTO.newsItems = news.getNumEntries();
     }
 
 }

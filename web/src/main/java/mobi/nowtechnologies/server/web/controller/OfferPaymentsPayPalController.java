@@ -5,7 +5,7 @@ import java.util.Locale;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.service.OfferService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -65,7 +65,7 @@ public class OfferPaymentsPayPalController extends CommonController {
 		dto.setFailUrl(callbackUrl+FAIL_RESULT);
 		dto.setSuccessUrl(callbackUrl+SUCCESSFUL_RESULT);
 		
-		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPamentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
 		
 		return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
 	}

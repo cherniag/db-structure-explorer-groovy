@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class AdItemDtoTest {
 	@Test
@@ -43,7 +42,6 @@ public class AdItemDtoTest {
 		Message result = AdItemDto.fromDto(adItemDto);
 
 		assertNotNull(result);
-		assertEquals("Message [activated=true, actionType=null, action=null, actionButtonText=null, body=message, communityId=0, filterWithCtiteria=[], frequence=null, id=1, messageType=AD, position=0, publishTimeMillis=0, title=https://i.ua, imageFileName=imageFileName]", result.toString());
 		assertEquals(adItemDto.getId(), result.getId());
 		assertEquals(0, result.getPosition());
 		assertEquals(adItemDto.isActivated(), result.isActivated());
@@ -51,7 +49,7 @@ public class AdItemDtoTest {
 		assertEquals(adItemDto.getAction(), result.getTitle());
 		assertEquals(adItemDto.getImageFileName(), result.getImageFileName());
 		assertEquals(null, result.getCommunity());
-		assertEquals((byte) 0, result.getCommunityId());
+		assertEquals(null, result.getCommunityId());
 		assertEquals(null, result.getFrequence());
 		assertEquals(0L, result.getPublishTimeMillis());
 	}

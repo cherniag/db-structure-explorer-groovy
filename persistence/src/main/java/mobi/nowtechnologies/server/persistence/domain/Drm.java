@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import mobi.nowtechnologies.server.shared.dto.DrmItemDto;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 
 /**
@@ -45,8 +46,8 @@ import mobi.nowtechnologies.server.shared.dto.DrmItemDto;
 public class Drm implements Serializable {
 	public static final String NQ_FIND_BY_USER_AND_DRM_TYPE = "Drm.findByUserAndDrmType";
 	private static final long serialVersionUID = 1L;
-	
-	public static enum Fields{
+
+    public static enum Fields{
 		mediaId,i;
 	}
 
@@ -164,13 +165,23 @@ public class Drm implements Serializable {
 			drmDtoList.add(drm.toDrmItemDto());
 		}
 		return drmDtoList;
-		
 	}
 
-	@Override
-	public String toString() {
-		return "Drm [drmTypeId=" + drmTypeId + ", drmValue=" + drmValue + ", i=" + i + ", mediaId=" + mediaId + ", timestamp=" + timestamp
-				+ ", userId=" + userId + "]";
-	}
+    public Drm withDrmType(DrmType drmType) {
+        setDrmType(drmType);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("drmTypeId", drmTypeId)
+                .append("drmValue", drmValue)
+                .append("mediaId", mediaId)
+                .append("timestamp", timestamp)
+                .append("userId", userId)
+                .toString();
+    }
 
 }

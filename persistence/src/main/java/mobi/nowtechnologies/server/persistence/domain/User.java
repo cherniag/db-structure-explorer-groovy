@@ -3,17 +3,16 @@ package mobi.nowtechnologies.server.persistence.domain;
 import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.PaymentType;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.query.Param;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -24,15 +23,20 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.ITUNES_SUBSCRIPTION;
-import static mobi.nowtechnologies.server.persistence.domain.PaymentDetails.O2_PSMS_TYPE;
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
-import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOWNGRADE;
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -41,61 +45,23 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
-@Table(name = "tb_users", uniqueConstraints = @UniqueConstraint(columnNames = { "deviceUID", "userGroup" }))
+@Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = { "deviceUID", "userGroup" }), @UniqueConstraint(columnNames = { "userName", "userGroup" })} )
 @NamedQueries({
 		@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
-		@NamedQuery(name = User.NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL, query = "select user from User user join user.userGroup userGroup join userGroup.community community where user.deviceUID=? and community.rewriteUrlParameter=?"),
-		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.i from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
+		@NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.id from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
 		@NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
 })
 public class User implements Serializable {
-	private static final long serialVersionUID = 4414398062970887453L;
+    private static final long serialVersionUID = 4414398062970887453L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
 	public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
 	public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
 	public static final String NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN = "getUserCountByDeviceUID_UserGroup_StoredToken";
-	public static final String NQ_GET_USER_BY_DEVICE_UID_COMMUNITY_REDIRECT_URL = "getUserByDeviceUIDAndCommunityRedirectUrl";
 	public static final String NQ_FIND_USER_BY_ID = "findUserById";
 
 	public static final String NONE = "NONE";
-
-    public boolean isO2Direct() {
-        return DIRECT.equals(contractChannel);
-    }
-
-    public boolean isO24GConsumer() {
-        return isO2Consumer() && is4G();
-    }
-
-    public boolean isO23GConsumer() {
-        return isO2Consumer() && is3G();
-    }
-
-    public boolean isO2Indirect() {
-        return INDIRECT.equals(contractChannel);
-    }
-
-    public ContractChannel getContractChannel() {
-        return contractChannel;
-    }
-
-    public void setContractChannel(ContractChannel contractChannel) {
-        this.contractChannel = contractChannel;
-    }
-
-    public PromoCode getLastPromo() {
-        return lastPromo;
-    }
-
-    public void setLastPromo(PromoCode lastPromo) {
-        this.lastPromo = lastPromo;
-    }
-
-    private boolean isLastPromoForVideo() {
-        return isNotNull(lastPromo) && lastPromo.forVideoAndMusic();
-    }
 
     public static enum Fields {
 		userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
@@ -201,7 +167,7 @@ public class User implements Serializable {
 	private String token;
 
 	@Column(name = "userGroup", insertable = false, updatable = false)
-	private byte userGroupId;
+	private Integer userGroupId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userGroup", nullable = false)
@@ -223,7 +189,9 @@ public class User implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private ActivationStatus activationStatus;
 
-	private String provider;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(255)")
+    private ProviderType provider;
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "char(255)")
@@ -323,6 +291,21 @@ public class User implements Serializable {
     @Column(name = "idfa", nullable = true)
     private String idfa;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserIPhoneDetails> userIPhoneDetailsList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
+    private List<UserAndroidDetails> userAndroidDetailsList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserLog> userLogs;
+
+    @Transient
+    private User oldUser;
+
+    @Transient
+    private boolean isAutoOptInEnabled = true;
+
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -343,7 +326,35 @@ public class User implements Serializable {
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
-	}
+    }
+
+    public boolean isO24GConsumer() {
+        return isO2Consumer() && is4G();
+    }
+
+    public boolean isO23GConsumer() {
+        return isO2Consumer() && is3G();
+    }
+
+    public ContractChannel getContractChannel() {
+        return contractChannel;
+    }
+
+    public void setContractChannel(ContractChannel contractChannel) {
+        this.contractChannel = contractChannel;
+    }
+
+    public PromoCode getLastPromo() {
+        return lastPromo;
+    }
+
+    public void setLastPromo(PromoCode lastPromo) {
+        this.lastPromo = lastPromo;
+    }
+
+    private boolean isLastPromoForVideoAndAudio() {
+        return isNotNull(lastPromo) && lastPromo.forVideoAndAudio();
+    }
 
     public String getIdfa() {
         return idfa;
@@ -353,12 +364,8 @@ public class User implements Serializable {
         this.idfa = idfa;
     }
 
-    public boolean isShowFreeTrial() {
-        return !(is4G() && isO2PAYMConsumer() && isOnVideoAudioFreeTrial());
-    }
-
-    public boolean isIOsnonO2ItunesSubscribedUser() {
-		return isIOSDevice() && isnonO2User() && isSubscribedByITunes() && isSubscribedStatus();
+    public boolean isIOsNonO2ITunesSubscribedUser() {
+		return isIOSDevice() && isNonO2User() && isSubscribedByITunes() && isSubscribedStatus();
 	}
 
 	public boolean isSubscribedByITunes() {
@@ -369,35 +376,61 @@ public class User implements Serializable {
 		return DeviceTypeDao.getIOSDeviceType().equals(deviceType);
 	}
 
-	public boolean isInvalidPaymentPolicy() {
-		if (getCurrentPaymentDetails() == null)
-			return false;
+    public boolean isInvalidPaymentPolicy() {
+        return isNull(currentPaymentDetails) || isPaymentPolicyInvalidByProvider()
+                || isPaymentPolicyInvalidBySegment();
+    }
 
-		PaymentPolicy paymentPolicy = getCurrentPaymentDetails().getPaymentPolicy();
+    private boolean isPaymentPolicyInvalidBySegment() {
+        return O2.equals(getProvider()) && segment != currentPaymentDetails.getPaymentPolicy().getSegment();
+    }
 
-		return !org.apache.commons.lang.StringUtils.equals(getProvider(), paymentPolicy.getProvider())
-				|| (ProviderType.O2.toString().equals(getProvider()) && getSegment() != paymentPolicy.getSegment());
+    private boolean isPaymentPolicyInvalidByProvider() {
+        ProviderType paymentPolicyProvider = currentPaymentDetails.getPaymentPolicy().getProvider();
+        ProviderType userProvider = getProvider();
+
+        return isNotNull(paymentPolicyProvider) && !paymentPolicyProvider.equals(userProvider);
+    }
+
+    public boolean isNonO2User() {
+		return !O2.equals(getProvider());
 	}
 
-	public boolean isnonO2User() {
-		return !"o2".equals(this.provider);
-	}
+    public boolean isNonVFUser() {
+        return !ProviderType.VF.equals(this.provider);
+    }
 
 	public boolean isO2CommunityUser() {
 		Community community = userGroup.getCommunity();
 		String rewriteUrlParameter = community.getRewriteUrlParameter();
-		boolean isO2CommunityUser = rewriteUrlParameter.equalsIgnoreCase("o2");
-		return isO2CommunityUser;
+        return O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(rewriteUrlParameter);
 	}
 
+    public boolean isSMSActivatedUser() {
+        return getActivationStatus() == ActivationStatus.ACTIVATED || StringUtils.equals(getMobile(), getUserName()) || isVFNZCommunityUser() || isO2CommunityUser();
+    }
+
+    public boolean isMonthlyPaidUser() {
+        return (isO2CommunityUser() && isNonO2User()) || (isVFNZCommunityUser() && isNonVFUser());
+    }
+
 	public boolean isO2PAYGConsumer() {
-		return isO2Consumer() && Contract.PAYG.equals(contract);
+		return isO2Consumer() && PAYG.equals(contract);
 	}
 
 	public boolean isO2User() {
 		Community community = this.getUserGroup().getCommunity();
-		return "o2".equals(this.provider) && "o2".equals(community.getRewriteUrlParameter());
+		return O2.equals(this.provider) && O2_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
 	}
+
+    public boolean isVFNZUser() {
+        return VF.equals(this.provider) && isVFNZCommunityUser();
+    }
+
+    public boolean isVFNZCommunityUser() {
+        Community community = this.getUserGroup().getCommunity();
+        return VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
+    }
 
 	public boolean isO2Consumer() {
 		return isO2User() && CONSUMER.equals(segment);
@@ -670,10 +703,10 @@ public class User implements Serializable {
 	public void setUserGroup(UserGroup userGroup) {
 		this.userGroup = userGroup;
 		if (userGroup != null)
-			userGroupId = userGroup.getI();
+			userGroupId = userGroup.getId();
 	}
 
-	public byte getUserGroupId() {
+	public Integer getUserGroupId() {
 		return userGroupId;
 	}
 
@@ -715,32 +748,8 @@ public class User implements Serializable {
 		return currentPaymentDetailsId;
 	}
 
-	public String getCountryIdString() {
-		if (country == -1)
-			return NONE;
-		return String.valueOf(country);
-	}
-
-	public void setCountryIdString(String aCountryId) {
-		if (aCountryId == null)
-			throw new NullPointerException("The parameter aCountryId is null");
-		if (NONE.equals(aCountryId))
-			country = -1;
-		else
-			country = Integer.parseInt(aCountryId);
-	}
-
 	public String getDeviceTypeIdString() {
 		return deviceType.getName();
-	}
-
-	public void setDeviceTypeIdString(String deviceTypeName) {
-		if (deviceTypeName == null)
-			throw new NullPointerException("The parameter deviceTypeName is null");
-		if (DeviceTypeDao.NONE.equals(deviceTypeName))
-			deviceType = DeviceTypeDao.getNoneDeviceType();
-		else
-			setDeviceType(DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(deviceTypeName));
 	}
 
 	public String getConformStoredToken() {
@@ -815,7 +824,7 @@ public class User implements Serializable {
         return this;
     }
 
-    public User withProvider(String provider){
+    public User withProvider(ProviderType provider){
         setProvider(provider);
         return this;
     }
@@ -837,6 +846,21 @@ public class User implements Serializable {
 
     public User withDeviceUID(String deviceUID){
         setDeviceUID(deviceUID);
+        return this;
+    }
+
+    public User withMobile(String mobile){
+        setMobile(mobile);
+        return this;
+    }
+
+    public User withPin(String pin){
+        setPin(pin);
+        return this;
+    }
+
+    public User withActivationStatus(ActivationStatus activationStatus){
+        setActivationStatus(activationStatus);
         return this;
     }
 
@@ -940,7 +964,7 @@ public class User implements Serializable {
 
 		accountDto.setSubscription(subscription);
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(new Date(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
@@ -1057,69 +1081,13 @@ public class User implements Serializable {
 		this.lastBefore48SmsMillis = lastBefore48SmsMillis;
 	}
 
-	@Override
-	public String toString() {
-		return Objects.toStringHelper(this)
-				.add("id", id)
-				.add("userName", userName)
-				.add("facebookId", facebookId)
-				.add("deviceUID", deviceUID)
-				.add("subBalance", subBalance)
-				.add("userGroupId", userGroupId)
-				.add("userStatusId", userStatusId)
-				.add("nextSubPayment", nextSubPayment)
-				.add("isFreeTrial", isOnFreeTrial())
-				.add("currentPaymentDetailsId", currentPaymentDetailsId)
-				.add("lastPaymentTx", lastPaymentTx)
-				.add("token", token)
-				.add("paymentStatus", paymentStatus)
-				.add("paymentType", paymentType)
-				.add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
-				.add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
-				.add("numPsmsRetries", numPsmsRetries)
-				.add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
-				.add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
-				.add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
-				.add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
-				.add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
-				.add("potentialPromotionId", potentialPromotionId)
-				.add("pin", pin)
-				.add("code", code)
-				.add("operator", operator)
-				.add("mobile", mobile)
-				.add("conformStoredToken", conformStoredToken)
-				.add("lastDeviceLogin", lastDeviceLogin)
-				.add("lastWebLogin", lastWebLogin)
-				.add("lastWebLogin", lastWebLogin)
-				.add("firstUserLoginMillis", firstUserLoginMillis)
-				.add("firstDeviceLoginMillis", firstDeviceLoginMillis)
-				.add("lastBefore48SmsMillis", lastBefore48SmsMillis)
-				.add("device", device)
-				.add("deviceModel", deviceModel)
-				.add("deviceTypeId", deviceTypeId)
-				.add("newStoredToken", newStoredToken)
-				.add("tempToken", tempToken)
-				.add("postcode", postcode)
-				.add("address1", address1)
-				.add("address2", country)
-				.add("city", city)
-				.add("title", title)
-				.add("displayName ", displayName)
-				.add("firstName", firstName)
-				.add("lastName", lastName)
-				.add("ipAddress", ipAddress)
-				.add("canContact", canContact)
-				.add("deviceString", deviceString)
-				.add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
-                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
-				.add("activationStatus", activationStatus)
-				.add("segment", segment)
-				.add("provider", provider)
-                .add("tariff", tariff)
-                .add("contractChannel", contractChannel)
-                .add("lastPromoId", getLastPromoId())
-				.add("contract", contract).toString();
-	}
+    public List<UserLog> getUserLogs() {
+        return userLogs;
+    }
+
+    public void setUserLogs(List<UserLog> userLogs) {
+        this.userLogs = userLogs;
+    }
 
     private Integer getLastPromoId() {
         if (isNotNull(lastPromo)) return lastPromo.getId();
@@ -1127,7 +1095,7 @@ public class User implements Serializable {
     }
 
     public boolean isOnFreeTrial() {
-		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > Utils.getEpochMillis();
+		return freeTrialExpiredMillis!=null && freeTrialExpiredMillis > getEpochMillis();
 	}
 
 	public boolean wasSubscribed() {
@@ -1150,7 +1118,7 @@ public class User implements Serializable {
 		Community community = this.userGroup.getCommunity();
 		String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-		if (!"o2".equalsIgnoreCase(communityUrl))
+		if (!O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(communityUrl))
 			return true;
 
 		return false;
@@ -1165,35 +1133,25 @@ public class User implements Serializable {
 		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 		return currentPaymentDetails != null && currentPaymentDetails.isActivated();
 	}
-
-	public boolean isUnsubscribedWithFullAccess() {
-		return isNotActivePaymentDetails() && new DateTime(getNextSubPaymentAsDate()).isAfterNow();
-	}
-
-	public boolean isSubscribedViaInApp() {
-		return ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) &&
-				new DateTime(getNextSubPaymentAsDate()).isAfterNow();
-	}
-
-	public boolean isTrialExpired() {
-		return new DateTime(freeTrialExpiredMillis).isBeforeNow()
-				&& new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
-				&& org.apache.commons.lang.StringUtils.isEmpty(lastSubscribedPaymentSystem);
+	
+	public boolean hasPendingPayment() {
+		PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
+		return currentPaymentDetails != null && PaymentDetailsStatus.AWAITING == currentPaymentDetails.getLastPaymentStatus();
 	}
 
 	public boolean isBeforeExpiration(long timestamp, int hours) {
 		return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
 	}
 
-	public String getProvider() {
-		return provider;
-	}
+    public ProviderType getProvider() {
+        return provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    public void setProvider(ProviderType providerType) {
+        provider = providerType;
+    }
 
-	public Contract getContract() {
+    public Contract getContract() {
 		return contract;
 	}
 
@@ -1210,7 +1168,7 @@ public class User implements Serializable {
 	}
 
 	public User withNextSubPayment(Date time) {
-		this.nextSubPayment = Utils.truncatedToSeconds(time);
+		this.nextSubPayment = truncatedToSeconds(time);
 		return this;
 	}
 
@@ -1226,21 +1184,21 @@ public class User implements Serializable {
 
 	public Boolean isSelectedChart(ChartDetail chartDetail) {
 		Chart sameTypeChart = null;
-		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){	
+		if(getSelectedCharts() != null && getSelectedCharts().size() > 0){
 			for(Chart chart : getSelectedCharts()){
 				if(chart.getI().equals(chartDetail.getChart().getI()))
 					return true;
 				else if(chart.getType() == chartDetail.getChart().getType())
 					sameTypeChart = chart;
-					
+
 			}
 		}
-		
+
 		return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
 	}
 
 	public boolean isExpiring() {
-		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow() 
+		return isSubscribedStatus()	&& new DateTime(getNextSubPaymentAsDate()).isAfterNow()
 				&& !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
 	}
 
@@ -1261,7 +1219,7 @@ public class User implements Serializable {
     }
 
 	public boolean isNextSubPaymentInTheFuture() {
-		return nextSubPayment > Utils.getEpochSeconds();
+		return nextSubPayment > getEpochSeconds();
 	}
 
     private boolean is4GVideoAudioPaymentDetails(PaymentDetails paymentDetails){
@@ -1301,11 +1259,14 @@ public class User implements Serializable {
     }
 
     public boolean isO2PAYMConsumer() {
-        return isO2Consumer() && Contract.PAYM.equals(contract);
+        return isO2Consumer() && PAYM.equals(contract);
     }
 
     public boolean hasAllDetails() {
-        return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
+        if(ProviderType.O2.equals(provider) || ProviderType.NON_O2.equals(provider))
+            return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
+        else
+            return this.provider != null;
     }
 
     public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
@@ -1319,6 +1280,15 @@ public class User implements Serializable {
     public void setLastSuccessfulPaymentDetails(PaymentDetails lastSuccessfulPaymentDetails) {
         this.lastSuccessfulPaymentDetails = lastSuccessfulPaymentDetails;
     }
+
+    public boolean isSubjectToAutoOptIn(){
+        return isAutoOptInEnabled && isNull(oldUser) && ((isO24GConsumer() && !isLastPromoForVideoAndAudio()) || (isO23GConsumer() && !isLastPromoForAudio()));
+    }
+
+    private boolean isLastPromoForAudio(){
+        return isNotNull(lastPromo) && lastPromo.forAudio();
+    }
+
     public SubscriptionDirection getSubscriptionDirection() {
 
         PaymentDetails currentDetails = getCurrentPaymentDetails();
@@ -1352,7 +1322,7 @@ public class User implements Serializable {
     }
 
     public boolean isOnVideoAudioFreeTrial() {
-        return isLastPromoForVideo() && isOnFreeTrial();
+        return isLastPromoForVideoAndAudio() && isOnFreeTrial();
     }
 
     public boolean canPlayVideo(){
@@ -1369,5 +1339,117 @@ public class User implements Serializable {
 
     private boolean isWhiteListedLastPromo() {
         return isNotNull(lastPromo) && lastPromo.isWhiteListed();
+    }
+
+    public PaymentDetails getPaymentDetails(Class<?> clazz){
+        if(paymentDetailsList != null && clazz != null){
+            for(PaymentDetails paymentDetails : paymentDetailsList){
+                if(paymentDetails.getPaymentType().getClass() == clazz){
+                    return paymentDetails;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public User withOldUser(User oldUser) {
+        this.oldUser = oldUser;
+        return this;
+    }
+
+    public User getOldUser() {
+        return oldUser;
+    }
+
+    private Integer getOldUserId(){
+        if (isNull(oldUser)) return null;
+        return oldUser.getId();
+    }
+
+    public User withAutoOptInEnabled(boolean isAutoOptInEnabled){
+        this.isAutoOptInEnabled = isAutoOptInEnabled;
+        return this;
+    }
+
+    public User withDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+        return this;
+    }
+
+    public User withDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel;
+        return this;
+    }
+
+    public User withIpAddress(String ipAddress){
+        this.ipAddress = ipAddress;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("old_user_id", getOldUserId())
+                .add("userName", userName)
+                .add("facebookId", facebookId)
+                .add("deviceUID", deviceUID)
+                .add("subBalance", subBalance)
+                .add("userGroupId", userGroupId)
+                .add("userStatusId", userStatusId)
+                .add("nextSubPayment", nextSubPayment)
+                .add("isFreeTrial", isOnFreeTrial())
+                .add("currentPaymentDetailsId", currentPaymentDetailsId)
+                .add("lastPaymentTx", lastPaymentTx)
+                .add("token", token)
+                .add("paymentStatus", paymentStatus)
+                .add("paymentType", paymentType)
+                .add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
+                .add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
+                .add("numPsmsRetries", numPsmsRetries)
+                .add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                .add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
+                .add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
+                .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
+                .add("potentialPromotionId", potentialPromotionId)
+                .add("pin", pin)
+                .add("code", code)
+                .add("operator", operator)
+                .add("mobile", mobile)
+                .add("conformStoredToken", conformStoredToken)
+                .add("lastDeviceLogin", lastDeviceLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("lastWebLogin", lastWebLogin)
+                .add("firstUserLoginMillis", firstUserLoginMillis)
+                .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
+                .add("lastBefore48SmsMillis", lastBefore48SmsMillis)
+                .add("device", device)
+                .add("deviceModel", deviceModel)
+                .add("deviceTypeId", deviceTypeId)
+                .add("newStoredToken", newStoredToken)
+                .add("tempToken", tempToken)
+                .add("postcode", postcode)
+                .add("address1", address1)
+                .add("address2", country)
+                .add("city", city)
+                .add("title", title)
+                .add("displayName ", displayName)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("ipAddress", ipAddress)
+                .add("canContact", canContact)
+                .add("deviceString", deviceString)
+                .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
+                .add("activationStatus", activationStatus)
+                .add("segment", segment)
+                .add("provider", provider)
+                .add("tariff", tariff)
+                .add("contractChannel", contractChannel)
+                .add("lastPromoId", getLastPromoId())
+                .add("contract", contract)
+                .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 }

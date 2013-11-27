@@ -25,40 +25,12 @@ import java.util.Map;
  */
 public class PostService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
-	
-	public static class Response{
-		private String message;
-		private int statusCode;
-		
-		public void setMessage(String message) {
-			this.message = message;
-		}
-		public void setStatusCode(int statusCode) {
-			this.statusCode = statusCode;
-		}
-		public String getMessage() {
-			return message;
-		}
-		public int getStatusCode() {
-			return statusCode;
-		}
-		
-		@Override
-		public String toString() {
-			return new StringBuilder()
-			.append("Response [message=")
-			.append(message != null ? message.replaceAll("\r\n", ", ") : null)
-			.append(", statusCode=")
-			.append(statusCode)
-			.append("]").toString();
-		}
-	}
 
-	public Response sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
+	public BasicResponse sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
 		if (url == null)
 			throw new NullPointerException("The parameter url is null");
 		
-		Response response = new Response(); 
+		BasicResponse response = new BasicResponse();
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		
 		HttpPost post = new HttpPost(url);
@@ -77,13 +49,12 @@ public class PostService {
 				post.addHeader("Content-Type", "application/x-www-form-urlencoded");
 			}
 			HttpResponse httpResponse = httpclient.execute(post);
-			response.statusCode = httpResponse.getStatusLine().getStatusCode();
+			response.setStatusCode(httpResponse.getStatusLine().getStatusCode());
 			HttpEntity httpEntity = httpResponse.getEntity();
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			try {
 				httpEntity.writeTo(byteArrayOutputStream);
-				response.message = new String(byteArrayOutputStream
-						.toByteArray());
+				response.setMessage(new String(byteArrayOutputStream.toByteArray()));
 			} finally {
 				EntityUtils.consume(httpEntity);
 				byteArrayOutputStream.close();
@@ -98,12 +69,12 @@ public class PostService {
 	}
 	
 	
-	public Response sendHttpGet(String url, Map<String, String> params) {
+	public BasicResponse sendHttpGet(String url, Map<String, String> params) {
 		if (url == null)
 			throw new NullPointerException("The parameter url is null");
 		
 		HttpGet getMethod = new HttpGet(url);
-		Response response = new Response(); 
+		BasicResponse response = new BasicResponse();
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		
 		try {
@@ -117,13 +88,12 @@ public class PostService {
 			}
 
 			HttpResponse httpResponse = httpclient.execute(getMethod);
-			response.statusCode = httpResponse.getStatusLine().getStatusCode();
+			response.setStatusCode(httpResponse.getStatusLine().getStatusCode());
 			HttpEntity httpEntity = httpResponse.getEntity();
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			try {
 				httpEntity.writeTo(byteArrayOutputStream);
-				response.message = new String(byteArrayOutputStream
-						.toByteArray());
+				response.setMessage(new String(byteArrayOutputStream.toByteArray()));
 			} finally {
 				EntityUtils.consume(httpEntity);
 				byteArrayOutputStream.close();

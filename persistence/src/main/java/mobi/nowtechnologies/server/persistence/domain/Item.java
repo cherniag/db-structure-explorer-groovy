@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,7 +10,6 @@ import java.math.BigDecimal;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
@@ -73,8 +73,13 @@ public abstract class Item implements Serializable{
 		this.typeId = typeId;
 	}
 
-	@Override
-	public String toString() {
-		return "i=" + i + ", price=" + price + ", title=" + title + ", typeId=" + typeId;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("title", title)
+                .append("price", price)
+                .append("typeId", typeId)
+                .toString();
+    }
 }

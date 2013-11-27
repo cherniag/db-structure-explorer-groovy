@@ -52,8 +52,20 @@
     <bean id="web.tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
     </bean>
+    
+    <bean id="cdnProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:cdn.properties</value>
+				<value>file:#{systemProperties['catalina.base']}/conf/cdn.properties</value>
+			</list>
+		</property>
+        <property name="ignoreResourceNotFound" value="true" />
+	</bean>
 
-    <bean id="web.CommunityViewPreparer" class="mobi.nowtechnologies.server.web.view.CommunityViewPreparer" />
+    <bean id="web.CommunityViewPreparer" class="mobi.nowtechnologies.server.web.view.CommunityViewPreparer">
+    	<property name="cdnProperties" ref="cdnProperties" />
+    </bean>
 
     <!-- Application Message Bundle -->
     <bean id="messageSource"

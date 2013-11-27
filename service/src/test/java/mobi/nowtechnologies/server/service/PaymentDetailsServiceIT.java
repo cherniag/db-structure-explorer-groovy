@@ -1,28 +1,25 @@
 package mobi.nowtechnologies.server.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
-import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import org.junit.Test;
-import org.junit.experimental.theories.Theories;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
@@ -64,6 +61,16 @@ public class PaymentDetailsServiceIT {
 
 		entityService.saveEntity(o2PSMSPaymentDetails);
 
+        VFPSMSPaymentDetails vfpsmsPaymentDetails = new VFPSMSPaymentDetails();
+        vfpsmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
+        vfpsmsPaymentDetails.setActivated(true);
+        vfpsmsPaymentDetails.setCreationTimestampMillis(0L);
+        vfpsmsPaymentDetails.setDisableTimestampMillis(0L);
+        vfpsmsPaymentDetails.setMadeRetries(0);
+        vfpsmsPaymentDetails.setRetriesOnError(0);
+
+        entityService.saveEntity(vfpsmsPaymentDetails);
+
 		List<PaymentDetails> paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails(migOperator, phoneNumber);
 
 		assertNotNull(paymentDetailsList);
@@ -79,6 +86,14 @@ public class PaymentDetailsServiceIT {
 		assertEquals(1, paymentDetailsList.size());
 			
 		assertEquals(o2PSMSPaymentDetails.getI(), paymentDetailsList.get(0).getI());
-	}
+
+        paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails("vf", phoneNumber);
+
+        assertNotNull(paymentDetailsList);
+
+        assertEquals(1, paymentDetailsList.size());
+
+        assertEquals(vfpsmsPaymentDetails.getI(), paymentDetailsList.get(0).getI());
+    }
 
 }

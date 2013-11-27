@@ -5,7 +5,7 @@
 
 <c:set var="optionPrice" />
 <c:set var="iTunesUrl" />
-<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 	<c:if test="${paymentPolicy.paymentType == 'iTunesSubscription'}">
 		<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
 		<c:set var="paymentPage"><%=request.getParameter("callingPage")%></c:set>

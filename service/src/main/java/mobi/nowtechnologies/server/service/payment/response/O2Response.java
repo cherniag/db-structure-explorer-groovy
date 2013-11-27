@@ -1,17 +1,15 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
 import uk.co.o2.soa.chargecustomerdata.ServiceResult;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
 import uk.co.o2.soa.coredata.SOAFaultType;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -32,7 +30,7 @@ public class O2Response extends PaymentSystemResponse {
 	private String externalTxId;
 
 	public static O2Response successfulO2Response() {
-		return new O2Response(BILL_SUBSCRIBER_RESPONSE, new Response() {
+		return new O2Response(BILL_SUBSCRIBER_RESPONSE, new BasicResponse() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
@@ -46,7 +44,7 @@ public class O2Response extends PaymentSystemResponse {
 	}
 
 	public static O2Response failO2Response(final String message) {
-		final O2Response failO2Response = new O2Response(null, new Response() {
+		final O2Response failO2Response = new O2Response(null, new BasicResponse() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
@@ -61,7 +59,7 @@ public class O2Response extends PaymentSystemResponse {
 	}
 	
 	public static O2Response valueOf(Object objectResponse) {
-		final Response response = new Response();
+		final BasicResponse response = new BasicResponse();
 		final int statusCode = HttpServletResponse.SC_OK;
 		final String message;
 		
@@ -78,8 +76,8 @@ public class O2Response extends PaymentSystemResponse {
 		return o2Response;
 	}
 
-	public O2Response(Object objectResponse, Response response) {
-		super(response);
+	public O2Response(Object objectResponse, BasicResponse response) {
+		super(response, false);
 
 		if (objectResponse == null) {
 			isSuccessful = false;

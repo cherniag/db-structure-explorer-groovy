@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.filter;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserState;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;

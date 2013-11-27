@@ -122,14 +122,17 @@
 		<definition name="payments/psms" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/psms/content.jsp"/>
 		</definition>
-        <definition name="payments/o2psms" extends="payments" preparer="web.CommunityViewPreparer">
-            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/o2psms/content.jsp"/>
+        <definition name="payments/oppsms" extends="payments" preparer="web.CommunityViewPreparer">
+            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp"/>
         </definition>
 		<definition name="payments/psms_verify" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/psms_verify/content.jsp"/>
 		</definition>
 		<definition name="payments/unsubscribe" extends="payments" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/unsubscribe/content.jsp"/>
+		</definition>
+		<definition name="payments/notimplemented" extends="payments" preparer="web.CommunityViewPreparer">
+			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments/notimplemented/content.jsp"/>
 		</definition>
 				
   <definition name="payments_inapp" extends="mainTemplate" preparer="web.CommunityViewPreparer">
@@ -160,14 +163,17 @@
 		<definition name="payments_inapp/psms" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/psms/content.jsp"/>
 		</definition>
-		<definition name="payments_inapp/o2psms" extends="payments_inapp" preparer="web.CommunityViewPreparer">
-            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/o2psms/content.jsp"/>
+		<definition name="payments_inapp/oppsms" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+            <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/oppsms/content.jsp"/>
         </definition>
 		<definition name="payments_inapp/psms_verify" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/psms_verify/content.jsp"/>
 		</definition>
 		<definition name="payments_inapp/unsubscribe" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/unsubscribe/content.jsp"/>
+		</definition>
+		<definition name="payments_inapp/notimplemented" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/notimplemented/content.jsp"/>
 		</definition>
 		
  <definition name="contact_us" extends="mainTemplate" preparer="web.CommunityViewPreparer">

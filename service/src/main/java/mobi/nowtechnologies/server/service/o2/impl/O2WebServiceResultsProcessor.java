@@ -33,6 +33,9 @@ public class O2WebServiceResultsProcessor {
 			.asList(new String[] { "CPW", "esme", "Mass_Distribution",
 					"PHONES4U", "TESCO" });
 
+	private static final Collection<String> SUBSCRIBER_O2_CHANNELS = Arrays
+			.asList(new String[] { "ISP", "OFFLINE", "ONLINE" });
+	
 	/**
 	 * @return true if PostPayTarif.getContract returns 4G related
 	 *         Tariff/ProductClassification
@@ -55,18 +58,26 @@ public class O2WebServiceResultsProcessor {
 	 * @return new subscriber data object with populated
 	 *         contract/segment/provider
 	 */
-	public O2SubscriberData getSubscriberData(
-			GetSubscriberProfileResponse subscriberProfile) {
+	public O2SubscriberData getSubscriberData(GetSubscriberProfileResponse subscriberProfile) {
 		O2SubscriberData res = new O2SubscriberData();
 		
 		boolean consumerUser = subscriberProfile.getSubscriberProfile().getSegment() == SegmentType.CONSUMER;
 		boolean businessUser = !consumerUser;
 
-		res.setBusinessOrConsumerSegment( businessUser );
-		res.setContractPostPayOrPrePay( subscriberProfile.getSubscriberProfile().getPaymentCategory() == PaymentCategoryType.POSTPAY );
-		res.setProviderO2("O2".equalsIgnoreCase( subscriberProfile.getSubscriberProfile().getOperator()) );
+		res.setBusinessOrConsumerSegment(businessUser);
+		res.setContractPostPayOrPrePay(subscriberProfile.getSubscriberProfile().getPaymentCategory() == PaymentCategoryType.POSTPAY );
 		
+		boolean o2ProviderFlag = "O2".equalsIgnoreCase(subscriberProfile.getSubscriberProfile().getOperator());
+		res.setProviderO2(o2ProviderFlag && isChannelO2(subscriberProfile.getSubscriberProfile().getChannel()));
+
 		return res;
+	}
+
+	private boolean isChannelO2(String channel) {
+		if (channel == null) {
+			return false;
+		}
+		return SUBSCRIBER_O2_CHANNELS.contains(channel.toUpperCase());
 	}
 
 	/**
@@ -98,12 +109,10 @@ public class O2WebServiceResultsProcessor {
 		if (is4GTariffId(prepayTariff.getCurrentTariff().getTariffDetail()
 				.getTariffId().intValue())) {
 
-			data.setTariff4G(true);
-
-			if ("0".equals(prepayTariff.getCurrentTariff()
-					.getAllowanceStatusExternal())) {
-				data.setDirectOrIndirect4GChannel(true);
+			if ("ACTIVE".equals(prepayTariff.getCurrentTariff().getAllowanceStatusExternal())) {
+				data.setTariff4G(true);	
 			}
+			data.setDirectOrIndirect4GChannel(true);
 		}
 
 	}
@@ -116,10 +125,9 @@ public class O2WebServiceResultsProcessor {
 	public boolean isPostpayDirectPartner(GetOrderList2Response orderList,
 			String phone) {
 		boolean direct = false;
-		if ((orderList.getOrder() != null) || (orderList.getOrder().size() > 0)) {
+		if ((orderList.getOrder() != null) && (orderList.getOrder().size() > 0)) {
 
-			Order2SummaryType order = orderList.getOrder().get(
-					orderList.getOrder().size() - 1);
+			Order2SummaryType order = orderList.getOrder().get(0);
 
 			String partner = order.getPartner();
 			if (partner == null) {

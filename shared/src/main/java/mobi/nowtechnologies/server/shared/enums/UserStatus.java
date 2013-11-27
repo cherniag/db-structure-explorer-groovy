@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.shared.enums;
 
 //TODO remove UserStatus domain and UserStatusDao class

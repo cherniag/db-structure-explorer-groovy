@@ -29,10 +29,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * The class <code>ChartDetailServiceTest</code> contains tests for the class
- * <code>{@link ChartDetailService}</code>.
- * 
- * @generatedBy CodePro at 07.08.12 17:19
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
@@ -55,26 +51,12 @@ public class ChartDetailServiceTest {
 		}
 	}
 
-	/**
-	 * Run the ChartDetailService() constructor test.
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testChartDetailService_1() throws Exception {
 		ChartDetailService result = new ChartDetailService();
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ThoseOfSelectedPublishDateDoesNotExistAndPreviousOnesExists_Success()
 			throws Exception {
@@ -125,16 +107,7 @@ public class ChartDetailServiceTest {
 		}
 
 	}
-	
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
+
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ThoseOfSelectedPublishDateDoesNotExistAndPreviousOnesExists_MinorUpdate_Success()
 			throws Exception {
@@ -271,15 +244,6 @@ public class ChartDetailServiceTest {
 		return drms;
 	}
 
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_OnesForSelectedPublishDateAlreadyExists_Success() throws Exception {
 		Date choosedPublishDate = new Date();
@@ -295,15 +259,6 @@ public class ChartDetailServiceTest {
 		assertEquals(0, clonedChartDetails.size());
 	}
 
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_OnesForPrevoiusPublishDateDoesNotExist_Success() throws Exception {
 		Date choosedPublishDate = new Date();
@@ -321,15 +276,6 @@ public class ChartDetailServiceTest {
 		assertEquals(0, clonedChartDetails.size());
 	}
 
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = ServiceException.class)
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ChoosedPublishDateIsNull_Failure() throws Exception {
 		Date choosedPublishDate = null;
@@ -339,15 +285,6 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, minorUpdate);
 	}
 
-	/**
-	 * Run the List<ChartDetail>
-	 * cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date,Byte) method
-	 * test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = ServiceException.class)
 	public void testCloneChartItemsForSelectedPublishDateIfOnesDoesNotExist_ChartIdIsNull_Failure() throws Exception {
 		Date choosedPublishDate = new Date();
@@ -357,13 +294,6 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, minorUpdate);
 	}
 
-	/**
-	 * Run the boolean delete(Integer) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testDelete_Success() throws Exception {
 		Integer chartItemId = new Integer(1);
@@ -373,13 +303,6 @@ public class ChartDetailServiceTest {
 		assertEquals(true, result);
 	}
 
-	/**
-	 * Run the boolean delete(Integer) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = ServiceException.class)
 	public void testDelete_ChartItemIdIsNull_Failure() throws Exception {
 		Integer chartItemId = null;
@@ -387,69 +310,37 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.delete(chartItemId);
 	}
 
-	/**
-	 * Run the List<ChartDetail> findChartDetailTreeAndUpdateDrm(User,byte)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	public void testFindChartDetailTreeAndUpdateDrm_UserIsNull_Failure() throws Exception {
 		User user = null;
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 	}
 
-	/**
-	 * Run the List<ChartDetail> findChartDetailTreeAndUpdateDrm(User,byte)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	public void testFindChartDetailTreeAndUpdateDrm_DrmPolicyIsNull_Failure() throws Exception {
 
 		User user = new User();
-		user.setUserGroup(new UserGroup());
+		user.setUserGroup(new UserGroup().withId(1));
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(),  true, true);
 	}
 
-	/**
-	 * Run the List<ChartDetail> findChartDetailTreeAndUpdateDrm(User,byte)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
 	public void testFindChartDetailTreeAndUpdateDrm_DrmTypeIsNull_Failure() throws Exception {
 
 		User user = new User();
 		DrmPolicy drmPolicy = new DrmPolicy();
-		final UserGroup userGroup = new UserGroup();
+		final UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
 		Integer chartId = 1;
 
-		fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 	}
 
-	/**
-	 * Run the List<ChartDetail> findChartDetailTreeAndUpdateDrm(User,byte)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_Success() throws Exception {
 
@@ -462,7 +353,7 @@ public class ChartDetailServiceTest {
 		DrmType drmType = new DrmType();
 		DrmPolicy drmPolicy = new DrmPolicy();
 		drmPolicy.setDrmType(drmType);
-		final UserGroup userGroup = new UserGroup();
+		final UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
 
@@ -474,7 +365,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -513,7 +404,7 @@ public class ChartDetailServiceTest {
 		DrmType drmType = new DrmType();
 		DrmPolicy drmPolicy = new DrmPolicy();
 		drmPolicy.setDrmType(drmType);
-		final UserGroup userGroup = new UserGroup();
+		final UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
 		
@@ -525,7 +416,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 		
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, false);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, false);
 		
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -567,7 +458,7 @@ public class ChartDetailServiceTest {
 		DrmType drmType = new DrmType();
 		DrmPolicy drmPolicy = new DrmPolicy();
 		drmPolicy.setDrmType(drmType);
-		final UserGroup userGroup = new UserGroup();
+		final UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
 
@@ -579,7 +470,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -618,7 +509,7 @@ public class ChartDetailServiceTest {
 		DrmType drmType = new DrmType();
 		DrmPolicy drmPolicy = new DrmPolicy();
 		drmPolicy.setDrmType(drmType);
-		final UserGroup userGroup = new UserGroup();
+		final UserGroup userGroup = new UserGroup().withId(1);
 		userGroup.setDrmPolicy(drmPolicy);
 		user.setUserGroup(userGroup);
 
@@ -630,7 +521,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
 
 		assertNotNull(actualChartDetails);
 		assertTrue(actualChartDetails.isEmpty());

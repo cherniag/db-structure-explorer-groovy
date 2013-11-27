@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 
 import java.util.Collections;
 import java.util.HashMap;

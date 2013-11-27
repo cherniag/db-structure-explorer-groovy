@@ -46,6 +46,18 @@ public class GetChartController extends CommonController{
 	private ChartService chartService;
 	private ThrottlingService throttlingService;
 
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setChartService(ChartService chartService) {
+        this.chartService = chartService;
+    }
+
+    public void setThrottlingService(ThrottlingService throttlingService) {
+        this.throttlingService = throttlingService;
+    }
+
 	@RequestMapping(method = RequestMethod.POST, value = { "/GET_CHART", "/{apiVersion:3\\.4}/GET_CHART", "/{apiVersion:3\\.4\\.0}/GET_CHART", "*/GET_CHART", "*/{apiVersion:3\\.4}/GET_CHART",
 			"*/{apiVersion:3\\.4\\.0}/GET_CHART" })
 	public ModelAndView getChart(
@@ -78,7 +90,7 @@ public class GetChartController extends CommonController{
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true, false);
-			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+			objects[1] = convertToOldVersion((ChartDto) objects[1], apiVersion);
 
 			for (Object object : objects) {
 				if (object instanceof ChartDto) {
@@ -143,7 +155,7 @@ public class GetChartController extends CommonController{
 					timestamp, communityName);
 
 			Object[] objects = chartService.processGetChartCommand(user, communityName, true, false);
-			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+			objects[1] = convertToOldVersion((ChartDto) objects[1], apiVersion);
 
 			precessRememberMeToken(objects);
 
@@ -173,12 +185,12 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+			throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
 			Object[] objects = chartService.processGetChartCommand(user, community, true, false);
-			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+			objects[1] = convertToOldVersion((ChartDto) objects[1], apiVersion);
 
 			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
@@ -206,12 +218,12 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
 			Object[] objects = chartService.processGetChartCommand(user, community, false, false);
-			objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+			objects[1] = convertToOldVersion((ChartDto) objects[1], apiVersion);
 
 			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
@@ -239,12 +251,12 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
             Object[] objects = chartService.processGetChartCommand(user, community, false, true);
-            objects[1] = converToOldVersion((ChartDto) objects[1], apiVersion);
+            objects[1] = convertToOldVersion((ChartDto) objects[1], apiVersion);
 
 			precessRememberMeToken(objects);
 			return new ModelAndView(view, Response.class.toString(), new Response(objects));
@@ -256,8 +268,6 @@ public class GetChartController extends CommonController{
 			LOGGER.info("command processing finished");
 		}
 	}
-
-
 
     @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_CHART" })
 	public ModelAndView getChart_O2_v4d0(
@@ -273,7 +283,7 @@ public class GetChartController extends CommonController{
 		Exception ex = null;
 		try {
 			LOGGER.info("command proccessing started");
-			throttling(request, userName, deviceUID, community);
+            throttlingService.throttling(request, userName, deviceUID, community);
 
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
@@ -302,27 +312,52 @@ public class GetChartController extends CommonController{
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-
         return (Response) getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID).getModelMap().get(MODEL_NAME);
     }
 
-	protected void throttling(HttpServletRequest request, String userName, String deviceUID, String community) {
-		try {
-			LogUtils.putClassNameMDC(ThrottlingServiceImpl.class);
-			MDC.put("device", deviceUID);
-			if (throttlingService.handle(request, userName, community)) {
-				LOGGER.info("accepting");
-			} else {
-				LOGGER.info("throttling");
-				throw new ThrottlingException(userName, community);
-			}
-		} finally {
-			LogUtils.removeClassNameMDC();
-			MDC.remove("device");
-		}
-	}
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_CHART",
+            "*/{community:.*}/{apiVersion:5\\.0}/GET_CHART.json"
+    })
+    public ModelAndView getChartWithAcceptHeaderSupporting(
+            HttpServletRequest request,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
 
-	public ChartDto converToOldVersion(ChartDto chartDto, String version) {
+        ModelAndView modelAndView = getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_CHART",
+            "*/{community:o2}/{apiVersion:4\\.1}/GET_CHART.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_CHART",
+            "*/{community:o2}/{apiVersion:4\\.2}/GET_CHART.json"
+    })
+    public ModelAndView getChart_O2_AcceptHeaderSupport(
+            HttpServletRequest request,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        apiVersionThreadLocal.set(apiVersion);
+
+        ModelAndView modelAndView = getChart_O2_v4d0(request, userName, userToken, timestamp, community, apiVersion, deviceUID);
+        modelAndView.setViewName(defaultViewName);
+        return modelAndView;
+    }
+
+	public ChartDto convertToOldVersion(ChartDto chartDto, String version) {
         version = CharMatcher.DIGIT.retainFrom(version).substring(0,2);
         int intVersion = new Integer(version);
 
@@ -339,7 +374,7 @@ public class GetChartController extends CommonController{
 				playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
 			}
 		}
-		
+
 		ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
 		Map<ChartType, Integer> positionMap = new HashMap<ChartType, Integer>();
 		for (int i = 0; i < tracks.length; i++) {
@@ -347,30 +382,18 @@ public class GetChartController extends CommonController{
 				tracks[i] = null;
 			else if(tracks[i].getChannel() != null && intVersion < 37)
 				tracks[i] = new BonusChartDetailDto(tracks[i]);
-			
+
 			if(intVersion < 38 && tracks[i] != null){
 				PlaylistDto playlistDto = playlistMap.get(tracks[i].getPlaylistId());
 				Integer position = positionMap.get(playlistDto.getType());
 				position = position != null ? position : 1;
-				
+
 				tracks[i].setPosition(position.byteValue());
-				
+
 				positionMap.put(playlistDto.getType(), position+1);
 			}
 		}
-		
-		return chartDto;
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
 
-	public void setChartService(ChartService chartService) {
-		this.chartService = chartService;
-	}
-	
-	public void setThrottlingService(ThrottlingService throttlingService) {
-		this.throttlingService = throttlingService;
+		return chartDto;
 	}
 }

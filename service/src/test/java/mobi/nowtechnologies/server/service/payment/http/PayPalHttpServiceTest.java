@@ -1,21 +1,19 @@
 package mobi.nowtechnologies.server.service.payment.http;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
 import org.apache.http.NameValuePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 // TODO write fail/fail_with_warning and successful_with_warning requests
 // TODO validation of the request params
@@ -104,8 +102,8 @@ public class PayPalHttpServiceTest {
 		Assert.assertNotNull(response.getDescriptionError());
 	}
 	
-	private Response getSuccessfulPayPalResponse() {
-		return new Response() {
+	private BasicResponse getSuccessfulPayPalResponse() {
+		return new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}
@@ -115,8 +113,8 @@ public class PayPalHttpServiceTest {
 		};
 	}
 	
-	private Response getSuccessfulBillingAgreementResponse() {
-		return new Response() {
+	private BasicResponse getSuccessfulBillingAgreementResponse() {
+		return new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}
@@ -126,8 +124,8 @@ public class PayPalHttpServiceTest {
 		};
 	}
 	
-	private Response getSuccessfulReferenceTransactionResponse() {
-		return new Response() {
+	private BasicResponse getSuccessfulReferenceTransactionResponse() {
+		return new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}
@@ -137,8 +135,8 @@ public class PayPalHttpServiceTest {
 		};
 	}
 	
-	private Response getFailResponse() {
-		return new Response() {
+	private BasicResponse getFailResponse() {
+		return new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}

@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-
 @MappedSuperclass
 public abstract class UserDeviceDetails {
 	
@@ -61,7 +61,7 @@ public abstract class UserDeviceDetails {
 	}
 
 	public void setUserGroup(UserGroup userGroup) {
-		this.userGroupId = userGroup.getI();
+		this.userGroupId = userGroup.getId();
 		this.userGroup = userGroup;
 	}
 
@@ -101,9 +101,31 @@ public abstract class UserDeviceDetails {
 		this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
 	}
 
-	@Override
-	public String toString() {
-		return "id=" + id + ", lastPushOfContentUpdateMillis="+lastPushOfContentUpdateMillis + ", nbUpdates=" + nbUpdates + ", status=" + status + ", token=" + token + ", userGroupId=" + userGroupId
-				+ ", userId=" + userId;
-	}
+	public UserDeviceDetails withUser(User user){
+        setUser(user);
+        return this;
+    }
+
+    public UserDeviceDetails withToken(String token){
+        setToken(token);
+        return this;
+    }
+
+    public UserDeviceDetails withUserGroup(UserGroup userGroup){
+        setUserGroup(userGroup);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("userId", userId)
+                .append("id", id)
+                .append("token", token)
+                .append("userGroupId", userGroupId)
+                .append("nbUpdates", nbUpdates)
+                .append("status", status)
+                .append("lastPushOfContentUpdateMillis", lastPushOfContentUpdateMillis)
+                .toString();
+    }
 }

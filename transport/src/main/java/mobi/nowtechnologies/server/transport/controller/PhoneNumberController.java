@@ -4,13 +4,11 @@ import mobi.nowtechnologies.server.dto.transport.PhoneActivationDto;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -21,14 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PhoneNumberController extends CommonController {
-		
-	private UserService userService;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-	
-	@RequestMapping(method = RequestMethod.POST, value = {
+    @RequestMapping(method = RequestMethod.POST, value = {
             "/{community:o2}/{apiVersion:3\\.[0-9]{1,3}}/PHONE_NUMBER",
             "*/{community:o2}/{apiVersion:3\\.[0-9]{1,3}}/PHONE_NUMBER"
     })
@@ -47,7 +39,10 @@ public class PhoneNumberController extends CommonController {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
 			
 			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
-			user = userService.activatePhoneNumber(user, phone, populateO2SubscriberData);
+			user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null && populateO2SubscriberData)
+                userService.populateSubscriberData(user);
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
@@ -62,17 +57,56 @@ public class PhoneNumberController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
-            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json"
+            "/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER",
+            "*/{community}/{apiVersion:5\\.[0-9]{1,3}}/PHONE_NUMBER.json"
     })
-    public ModelAndView activatePhoneNumberJson(
+    public ModelAndView activatePhoneNumber_VF_NZ(
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @PathVariable("community") String community,
             @PathVariable("apiVersion") String apiVersion) throws Exception {
+        LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 
+        Exception ex = null;
+        User user = null;
+        try {
+            UserService userService = getUserService(community);
+
+            user = userService.checkCredentials(userName, userToken, timestamp, community);
+
+            user = userService.activatePhoneNumber(user, phone);
+
+            if(phone != null)
+                userService.populateSubscriberData(user);
+
+            return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
+        }catch(Exception e){
+            ex = e;
+            throw e;
+        } finally {
+            logProfileData(null, community, null, phone, user, ex);
+            LOGGER.info("PHONE_NUMBER Finished for user[{}] community[{}]", userName, community);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.0}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.1}/PHONE_NUMBER.json",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER",
+            "*/{community:o2}/{apiVersion:4\\.2}/PHONE_NUMBER.json"
+    })
+    public ModelAndView activatePhoneNumberAcceptHeaderSupport(
+            @RequestParam(value = "PHONE", required = false) String phone,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @PathVariable("community") String community,
+            @PathVariable("apiVersion") String apiVersion) throws Exception {
         apiVersionThreadLocal.set(apiVersion);
 
         ModelAndView modelAndView = activatePhoneNumber(phone, userName, userToken, timestamp, community, apiVersion);

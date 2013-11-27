@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -55,4 +57,12 @@ public class Country implements Serializable {
 		this.fullName = fullName;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .append("fullName", fullName)
+                .toString();
+    }
 }

@@ -1,15 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * The persistent class for the tb_media database table.
- * 
- */
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -20,7 +17,7 @@ import java.util.List;
 public class Media extends Item implements Serializable {
 	private static final long serialVersionUID = 416356472074800767L;
 
-	public static enum Fields {
+    public static enum Fields {
 		isrc, i;
 	}
 
@@ -201,37 +198,22 @@ public class Media extends Item implements Serializable {
 		this.label = label;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getArtistName() {
 		return artist.getName();
 	}
 
-	/**
-	 * @return
-	 */
 	public String getGenreName() {
 		return genre.getName();
 	}
 
-	/**
-	 * @return
-	 */
 	public Integer getAudioSize() {
 		return audioFile.getSize();
 	}
 
-	/**
-	 * @return
-	 */
 	public Integer getImageLargeSize() {
 		return imageFIleLarge.getSize();
 	}
 
-	/**
-	 * @return
-	 */
 	public int getImageSmallSize() {
 		return imageFileSmall.getSize();
 	}
@@ -388,13 +370,64 @@ public class Media extends Item implements Serializable {
 		this.trackId = trackId;
 	}
 
-	@Override
-	public String toString() {
-		return "Media [" + super.toString() + ", isrc=" + isrc + ", info=" + info + ", publishDate=" + publishDate + ", price_currency=" + price_currency + ", artistId=" + artistId + ", iTunesUrl="
-				+ iTunesUrl + ", amazonUrl=" + amazonUrl +", areArtistUrls=" + areArtistUrls + ", label="
-				+ label + ", audioFileId=" + audioFileId + ", audioPreviewFileId=" + audioPreviewFileId + ", headerFileId=" + headerFileId + ", headerPreviewFileId=" + headerPreviewFileId
-				+ ", imageFIleLargeId=" + imageFIleLargeId + ", imageFileSmallId=" + imageFileSmallId + ", imgFileResolutionId=" + imgFileResolutionId + ", purchasedFileId=" + purchasedFileId
-				+ ", genreId=" + genreId + "]";
-	}
+    public Media withDrms(List<Drm> drms) {
+        setDrms(drms);
+        return this;
+    }
 
+    public Media withArtist(Artist artist){
+        setArtist(artist);
+        return this;
+    }
+
+    public Media withImageFileLarge(MediaFile mediaFile) {
+        setImageFIleLarge(mediaFile);
+        return this;
+    }
+
+    public Media withImageFileSmall(MediaFile mediaFile) {
+        setImageFileSmall(mediaFile);
+        return this;
+    }
+
+    public Media withAudioFile(MediaFile mediaFile) {
+        setAudioFile(mediaFile);
+        return this;
+    }
+
+    public Media withGenre(Genre genre) {
+        setGenre(genre);
+        return this;
+    }
+
+    public Media withITunesUrl(String iTunesUrl){
+        setiTunesUrl(iTunesUrl);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("artistId", artistId)
+                .append("audioFileId", audioFileId)
+                .append("genreId", genreId)
+                .append("headerFileId", headerFileId)
+                .append("imageFIleLargeId", imageFIleLargeId)
+                .append("imageFileSmallId", imageFileSmallId)
+                .append("isrc", isrc)
+                .append("label", label)
+                .append("price_currency", price_currency)
+                .append("imgFileResolutionId", imgFileResolutionId)
+                .append("purchasedFileId", purchasedFileId)
+                .append("audioPreviewFileId", audioPreviewFileId)
+                .append("headerPreviewFileId", headerPreviewFileId)
+                .append("info", info)
+                .append("iTunesUrl", iTunesUrl)
+                .append("amazonUrl", amazonUrl)
+                .append("publishDate", publishDate)
+                .append("trackId", trackId)
+                .append("areArtistUrls", areArtistUrls)
+                .toString();
+    }
 }

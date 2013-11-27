@@ -62,7 +62,7 @@ public class FileController extends CommonController {
 		User user = null;
 		Exception ex = null;
 		try {
-			LOGGER.info("command proccessing started");
+			LOGGER.info("command processing started");
 			user = checkCredentials(userName, userToken, timestamp, communityName);
 
             FileType fileType = FileType.valueOf(fileTypeName);
@@ -76,7 +76,10 @@ public class FileController extends CommonController {
 		}
 	}
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE", "*/{community:o2}/{apiVersion:[4-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:o2}/{apiVersion:4\\.[0-9]{1,3}}/GET_FILE",
+            "*/{community}/{apiVersion:[4-5]\\.[0-9]{1,3}}/GET_FILE"
+    })
     public ModelAndView getFile(
             @PathVariable("community") String communityName,
             @RequestParam("ID") final String mediaId,
@@ -90,7 +93,7 @@ public class FileController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("command proccessing started");
+            LOGGER.info("command processing started");
 
             user = checkCredentials(userName, userToken, timestamp, communityName);
 
@@ -128,9 +131,6 @@ public class FileController extends CommonController {
             public void render(Map<String, ?> arg0,
                                HttpServletRequest arg1, HttpServletResponse response)
                     throws Exception {
-                // uitsService.process(userName, mediaId, "distributor", new
-                // FileInputStream(file), response
-                // .getOutputStream());
                 FileInputStream fileInputStream = new FileInputStream(file);
                 String rangeAttribute = (String)request.getAttribute(HttpHeaders.RANGE);
                 if (StringUtils.hasText(rangeAttribute)) {

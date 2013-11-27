@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.xmlConfi
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:application-test.xml"})
+@Ignore
 public class TrackRepoControllerIT {
 
     MockMvc mockMvc;

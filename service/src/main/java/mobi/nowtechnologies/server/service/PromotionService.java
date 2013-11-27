@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
@@ -34,6 +36,7 @@ public class PromotionService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
+    public static final String PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE = "TwoWeeksOnSubscription";
 	
 	private PromotionDao promotionDao;
 	private EntityService entityService;
@@ -76,7 +79,7 @@ public class PromotionService {
 	
 	public List<PromoCode> getPromoCodes(final String communityName) {
 		Community community = CommunityDao.getMapAsNames().get(communityName);
-		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI());
+		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId());
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
@@ -84,7 +87,7 @@ public class PromotionService {
 		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
 		
 		Community community = CommunityDao.getMapAsNames().get(communityName);
-		byte userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getI();
+		int userGroupId = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId();
 		
 		List<Promotion> promotionWithFilters = promotionDao.getPromotionWithFilters(userGroupId);
 		List<Promotion> promotions = new LinkedList<Promotion>();
@@ -140,12 +143,12 @@ public class PromotionService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyO2PotentialPromoOf4ApiVersion(User user, boolean isO2User){
+    public boolean applyPotentialPromo(User user, boolean isO2User){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else {
-            isPromotionApplied = userService.applyO2PotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
+            isPromotionApplied = userService.applyPotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;
     }
@@ -158,14 +161,9 @@ public class PromotionService {
     
     @Transactional(propagation = Propagation.REQUIRED)
     public User activateVideoAudioFreeTrial(User user){
-        boolean isPromotionApplied = false;
+        boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-
-            if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-            else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-            else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
-
-            isPromotionApplied = applyPromotionForO24GConsumer(user);
+            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else{
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
                     .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
@@ -176,10 +174,18 @@ public class PromotionService {
         return user;
     }
 
+    private boolean skipPrevDataAndApplyPromotionForO24GConsumer(User user){
+        if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+
+        return applyPromotionForO24GConsumer(user);
+    }
+
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
         Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
-        if (promotion != null){
+        if (isNotNull(promotion)){
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
         return isPromotionApplied;
@@ -190,14 +196,14 @@ public class PromotionService {
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
             String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
-            promotion = userService.setPotentialPromo(user, promoCode);
+            promotion = userService.setPotentialPromoByPromoCode(user, promoCode);
         }else{
             promotion = null;
             LOGGER.error("Couldn't find promotion code [{}]", messageCodeForPromoCode);
         }
         return promotion;
     }
-
+    
     public String getVideoCodeForO24GConsumer(User user) {
         final String messageCodeForPromoCode;
         ContractChannel contractChannel = user.getContractChannel();
@@ -209,5 +215,12 @@ public class PromotionService {
             messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
         return messageCodeForPromoCode;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean updatePromotionNumUsers(Promotion promotion) {
+        int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
+        if (updatedRowsCount!=1) throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        return true;
     }
 }

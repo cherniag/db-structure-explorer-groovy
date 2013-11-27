@@ -5,18 +5,21 @@ import java.util.List;
 
 import javax.persistence.QueryHint;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
 
@@ -100,7 +103,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1) "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
-    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
 	List<User> getUsersForRetryPayment(int epochSeconds);
 	
 	@Query(value="select u from User u " +
@@ -140,16 +143,17 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 			"user.id=:id")
 	int updateLastBefore48SmsMillis(@Param("lastBefore48SmsMillis") long lastBefore48SmsMillis, @Param("id") int id);
 
+    // TODO rewrite uses jpql to avoid log tables and native queries using
     @Query(nativeQuery = true, value = "select u.i " +
             " from tb_users u " +
             " where u.activation_status = 'ACTIVATED' " +
-            "      and u.userGroup = 10 " +
+            "      and u.userGroup = ?2 " +
             "      and not exists (select log.user_id from user_logs log " +
             " where log.user_id = u.i " +
             "      and log.user_id is not null " +
             "      and log.type = 'UPDATE_O2_USER' " +
             "      and log.last_update >  ?1)")
-    List<Integer> getUsersForUpdate(long after);
+    List<Integer> getUsersForUpdate(long timeMillis, int userGroupId);
 
     @Query(value = "select u from User u " +
             " join u.userGroup ug " +
@@ -164,5 +168,73 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
             "user.idfa=:idfa " +
             "where " +
             "user.id=:id")
-    int updateTockenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+    int updateTokenDetails(@Param("id") int userId, @Param("idfa") String idfa);
+
+    @Query(value="select count(u) from User u "
+            + "join u.userGroup ug "
+            + "join ug.community c "
+            + "where "
+            + "u.pin=?1 "
+            + "and u.mobile=?2 "
+            + "and c=?3")
+    long findByOtacMobileAndCommunity(String otac, String phoneNumber, Community community);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.userName = ?1 " +
+            "and u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community);
+
+    @Query(value = "select u from User u " +
+            "join u.userGroup ug " +
+            "join ug.community c " +
+            "where " +
+            "u.deviceUID = ?1 " +
+            "and c = ?2")
+    User findByDeviceUIDAndCommunity(String deviceUID, Community community);
+
+    @Modifying
+    @Query(value = "update User u " +
+            "set u.deviceUID=CONCAT(u.deviceUID,'_disabled_at_', CURRENT_TIMESTAMP()) " +
+            "where " +
+            "u.deviceUID = ?1 "+
+            "and u.userGroup=?2 "
+    )
+    int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, UserGroup userGroup);
+
+    @Query(value = "select user from User user "
+            +"join FETCH user.deviceType deviceType "
+            +"join FETCH user.userGroup userGroup "
+            +"join FETCH userGroup.chart chart "
+            +"join FETCH userGroup.news news "
+            +"join FETCH userGroup.drmPolicy drmPolicy "
+            +"join FETCH drmPolicy.drmType drmType "
+            +"join FETCH userGroup.community community "
+            +"join FETCH community.appVersion appVersion "
+            +"join FETCH user.status status "
+            +"where "
+            +"user.id=?1")
+    User findUserTree(int userId);
+
+    @Query(value = "select user from User user "
+            +"join user.userGroup userGroup "
+            +"join userGroup.community community "
+            +"where "
+            +"user.userName=?1 "
+            +"and community=?2 "
+            +"and user.id<>?3")
+    User findByUserNameAndCommunityAndOtherThanPassedId(String userName, Community community, int userId);
+
+    @Modifying
+    @Query(value = "delete User u " +
+            "where " +
+            "u.id = ?1 ")
+    int deleteUser(int userId);
+
+    @Query(value="select u from User u "
+            + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%'")
+    List<User> findByMobile(String phoneNumber);
 }

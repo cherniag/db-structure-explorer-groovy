@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import mobi.nowtechnologies.server.service.sms.SMSResponse;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-public class MigResponse extends PaymentSystemResponse {
+public class MigResponse extends PaymentSystemResponse implements SMSResponse{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MigResponse.class);
 	
@@ -18,8 +17,8 @@ public class MigResponse extends PaymentSystemResponse {
 		
 	MigSuccessfulResponse jsonResonpse;
 	
-	public MigResponse(Response response) {
-		super(response);
+	public MigResponse(BasicResponse response) {
+		super(response, false);
 		if (response.getMessage().startsWith(SUCCESSFUL_RESPONSE_START)) {
 			isSuccessful = true;
 			parseResponse(response.getMessage());
@@ -40,7 +39,7 @@ public class MigResponse extends PaymentSystemResponse {
 	}
 
 	public static MigResponse successfulMigResponse() {
-		return new MigResponse(new Response() {
+		return new MigResponse(new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}
@@ -51,7 +50,7 @@ public class MigResponse extends PaymentSystemResponse {
 	}
 	
 	public static MigResponse failMigResponse(final String message) {
-		return new MigResponse(new Response() {
+		return new MigResponse(new BasicResponse() {
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}
@@ -64,8 +63,8 @@ public class MigResponse extends PaymentSystemResponse {
 	public String getExternalTxId() {
 		return jsonResonpse.getI();
 	}
-	
-	private static class MigSuccessfulResponse {
+
+    private static class MigSuccessfulResponse {
 		private String Q;
 		private String B;
 		private String I;

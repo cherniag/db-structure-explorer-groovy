@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 7/22/13
  * Time: 9:18 AM
- * To change this template use File | Settings | File Templates.
  */
 public class WriteApiTestIT {
     public static void main(String[] args) {

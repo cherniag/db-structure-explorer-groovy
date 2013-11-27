@@ -7,9 +7,10 @@ import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
-import mobi.nowtechnologies.server.service.O2ClientService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,10 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class O2ClientServiceIT {
 
 	@Resource(name = "service.O2ClientService")
-	private O2ClientService o2ClientService;
+	private O2ProviderService o2ClientService;
 	
 	@Test
 	public void testMakePremiumSMSRequest_Failure() throws Exception {

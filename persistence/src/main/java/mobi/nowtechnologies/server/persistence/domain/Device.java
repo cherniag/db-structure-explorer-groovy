@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,5 +34,12 @@ abstract public class Device {
 	public void setCommunity(Community community) {
 		this.community = community;
 	}
-	
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("deviceUID", deviceUID)
+                .append("community", community)
+                .toString();
+    }
 }

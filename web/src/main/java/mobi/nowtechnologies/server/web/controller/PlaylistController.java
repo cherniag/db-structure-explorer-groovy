@@ -42,7 +42,9 @@ public class PlaylistController extends CommonController {
     	if(user.isLimited())
     		return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
     	else	
-    		return new ModelAndView(VIEW_PLAYLIST).addObject("playlistType", playlistType);
+    		return new ModelAndView(VIEW_PLAYLIST).
+    				addObject("playlistType", playlistType).
+    				addObject("userID", getUserId());
     }
 
     @RequestMapping(value = JSON_PLAYLIST, produces = "application/json", method = RequestMethod.GET)

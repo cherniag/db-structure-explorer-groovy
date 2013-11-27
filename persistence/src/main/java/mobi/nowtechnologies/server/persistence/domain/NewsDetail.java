@@ -29,14 +29,10 @@ import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserHandset;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserState;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * The persistent class for the tb_newsDetail database table.
- * 
- */
 @Entity
 @Table(name="tb_newsDetail")
 public class NewsDetail implements Serializable {
@@ -234,15 +230,19 @@ public class NewsDetail implements Serializable {
 		return newsDetailDtos;
 	}
 
-	@Override
-	public String toString() {
-		return "NewsDetail [i=" + i + ", item="
-				+ item + ", messageFrequence=" + messageFrequence
-				+ ", messageType=" + messageType + ", newsId=" + newsId
-				+ ", online=" + online + ", position=" + position
-				+ ", getTimestamp()=" + getTimestamp() + ", timestampMilis="
-				+ timestampMilis + ", userHandset=" + userHandset
-				+ ", userState=" + userState + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("item", item)
+                .append("newsId", newsId)
+                .append("position", position)
+                .append("timestampMilis", timestampMilis)
+                .append("messageType", messageType)
+                .append("messageFrequence", messageFrequence)
+                .append("userHandset", userHandset)
+                .append("userState", userState)
+                .append("online", online)
+                .toString();
+    }
 }

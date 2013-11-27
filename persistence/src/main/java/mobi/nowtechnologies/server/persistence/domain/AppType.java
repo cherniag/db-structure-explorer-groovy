@@ -3,11 +3,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_appTypes database table.
- * 
- */
 @Entity
 @Table(name="tb_appTypes")
 public class AppType implements Serializable {
@@ -19,9 +14,6 @@ public class AppType implements Serializable {
 
 	@Column(name="name",columnDefinition="char(20)")
 	private String name;
-
-    public AppType() {
-    }
 
 	public byte getI() {
 		return this.i;

@@ -1,0 +1,476 @@
+@font-face {
+    font-family: 'vodafoneLight';
+    src: url('../fonts/VodafoneLt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'vodafoneRegular';
+    src: url('../fonts/VodafoneRg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'vodafoneBold';
+    src: url('../fonts/VodafoneRgBd.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+	background-color: #ebebeb;
+	font-family: 'vodafoneRegular', Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	-webkit-text-size-adjust: none;
+}
+
+.left {
+	width:10%;
+	float:left;
+}
+
+.right {
+	width:10%;
+	float:right;
+}
+
+.rel { position: relative; }
+
+.bottom4 {margin-bottom: 4px;}
+.bottom5 {margin-bottom: 5px;}
+.bottom6 {margin-bottom: 6px;}
+.bottom7 {margin-bottom: 7px;}
+.bottom8 {margin-bottom: 8px;}
+.bottom15 {margin-bottom: 15px;}
+.bottom25 {margin-bottom: 25px;}
+.top10 {margin-top: 10px;}
+.top15 {margin-top: 15px;}
+
+.redColor {color: #e60000;}
+.grayBlackColor {color: #333;}
+.blackColor {color: #000;}
+.lightGray {color: #767676;}
+
+.S9 { font-size: 9px; }
+.S10{ font-size: 10px; }
+.S11{ font-size: 11px; }
+.S12{ font-size: 12px; }
+.S13{ font-size: 13px; }
+.S14{ font-size: 14px; }
+.S15{ font-size: 15px; }
+.S16{ font-size: 16px; }
+.S17{ font-size: 17px; }
+.S20{ font-size: 20px; }
+
+.vfR { font-family: vodafoneRegular, Helvetica, Arial, sans-serif;}
+.vfL { font-family: vodafoneLight, Helvetica, Arial, sans-serif;}
+.vfB { font-family: vodafoneBold, Helvetica, Arial, sans-serif;}
+
+
+
+
+
+
+/*Cookie Conteiner*/
+
+.cookie_conteiner {
+	position: absolute;
+	margin: 0;
+	width: 100%;
+	z-index: 1000;
+	display: none;
+}
+	
+.header {
+    text-align: center;
+    height: 44px;
+/*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e60000', endColorstr='#e60000'); for IE */
+    background-image: linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+    background-image: -o-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+    background-image: -ms-linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+    -pie-background: linear-gradient(bottom, rgb(230,0,0) 24%, rgb(230,0,0) 62%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.24, rgb(230,0,0)),
+        color-stop(0.62, rgb(230,0,0))
+    );
+}
+
+.logo {
+	color: #fff;
+	display: inline-block;
+	font-size: 18px;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    padding-top: 10px;
+    position: relative;
+}
+
+.button-small {
+	background-color: #e60000;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 12px;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 6px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.button-right  {
+    float: right;
+    margin: 9px 10px 13px 0;
+    position: relative;
+}
+
+.paymentscontainer {
+	padding: 0 5px;
+}
+
+.tracksHeader {
+	padding: 10px 5px 0;
+}
+
+.consumerUserHeader2 {
+	padding: 10px 5px 9px;
+}
+
+.consumerUserHeader2 > div.vfL {
+	margin-top: 4px;
+}
+
+.tapArea {
+	border: 1px solid rgba(0, 0, 0, .2);
+	border-radius: 5px;
+	margin-bottom: 8px;
+}
+
+.maincontainer {
+	background-color: #fff;
+	border-right: 1px solid rgba(0, 0, 0, .2);
+	border-left: 1px solid rgba(0, 0, 0, .2);
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.subscription-selector {
+	color: #003399;
+	background: #ffffff;
+    border-width: 0;
+    border-radius: 5px;
+    display: block;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size:11px;
+    font-weight: lighter;
+    margin-bottom: 5px;
+    padding: 6px;
+    padding-left: 5px;
+    text-align: left;
+    text-decoration: none;
+}
+
+.subscription-selector .button-off, 
+.subscription-selector .button-on {
+    display: block;
+    position: absolute;
+    top: 14px;
+    right: 9px;
+    width: 37px;
+    height: 37px;
+    background-size: 39px 39px;
+}
+
+.subscription-selector .button-on {
+    /* background: transparent url(../imgs/icon_plan_selected.png) no-repeat; */
+    background: transparent url(../imgs/ic_tick_selected.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
+}
+
+.subscription-selector .button-off{
+    /*background: transparent url(../imgs/icon_plan_normal.png) no-repeat;*/
+    background: transparent url(../imgs/ic_tick_normal.png) no-repeat;
+    background-size:contain;
+	-webkit-background-size:contain;
+	-moz-background-size:contain;
+	-o-background-size:contain;
+	-ms-background-size:contain;
+}
+
+.subscription-selector img,
+.subscription-selected img {
+    display:block;
+    float:left;
+    margin-right: 10px;
+}
+.subscription-selector .title {
+	color:#e60000;
+    font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.subscription-selector.option-1 .title {
+	/*color:#e60000;*/
+}
+.subscription-selector.option-2 .title {
+	/*color:#e60000;*/
+}
+.subscription-selector .price {
+	color: #767676;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+.subscription-container {
+	padding: 0;
+	background-color: #ffffff;
+    border-radius: 5px;
+}
+.container {
+	background-color: #ebebeb;
+	padding: 10px;
+}
+
+.button1, .button-turquoise, .button-white, .button-disabled{
+    border-radius: 3px;
+    border-width: 0;
+    color: #ffffff;
+    display: block;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: lighter;
+    height: 48px;
+    line-height: 48px;
+    margin-bottom: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+}
+
+.button1.no-margin, .button-turquoise.no-margin, .button-white.no-margin, .button-disabled.no-margin {
+    margin-bottom:0;
+}
+
+.button1.no-margin.left, .button-turquoise.no-margin.left, .button-white.no-margin.left, .button-disabled.no-margin.left {
+    width:48.5%;
+    float:left;
+}
+
+.button1.no-margin.right, .button-turquoise.no-margin.right, .button-white.no-margin.right, .button-disabled.no-margin.right {
+    width:48.5%;
+    float:right;
+}
+
+.button-turquoise:active{
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#094467', endColorstr='#1399E7'); for IE */
+    background-image: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    -pie-background: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(156,42,160)),
+        color-stop(0.8, rgb(156,42,160))
+    );
+}
+
+.button-turquoise {
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1399E7', endColorstr='#094467'); for IE */
+    background-image: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+    -pie-background: linear-gradient(bottom, rgb(156,42,160) 0%, rgb(156,42,160) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(156,42,160)),
+        color-stop(0.8, rgb(156,42,160))
+    );
+}
+
+.button-white{
+    color: #4d4d4d;
+/*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E8E9E9', endColorstr='#C8C8C9'); for IE */
+    background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    -pie-background: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(255,255,255)),
+        color-stop(0.8, rgb(255,255,255))
+    );
+    -webkit-box-sizing: border-box;
+    border: 1px solid #bfbfc0;
+}
+
+.button-white:active{
+/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#C8C8C9', endColorstr='#E8E9E9'); for IE */
+    background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+    -pie-background: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(255,255,255) 80%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(255,255,255)),
+        color-stop(0.8, rgb(255,255,255))
+    );
+}
+
+.networkUserPaymentOption {
+	color: #767676;
+	padding-top: 8px;
+}
+
+.terms {
+    margin-top:9px;
+    color:#767676;
+    font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+    font-size:12px;
+    text-align:center;
+}
+.terms a {
+    color:#767676;
+    font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+    font-size:12px;
+}
+
+.unsubscribeText {
+	color: #767676;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 130%;
+	margin-top: 10px;
+}
+
+.itunesHeader {
+	padding: 13px 10px 0;
+}
+
+.itunespaymentheader {
+	padding-bottom: 20px;
+}
+
+.itunesSubImage {
+	height: 19px;
+	width: 67px;
+	margin-left: 3px;
+	vertical-align: bottom;
+}
+
+.pypalImage {
+	height: 25px;
+	width: 58px;
+	margin-left: 4px;
+	vertical-align: bottom;
+}
+
+.pypalImageCongrat {
+	height: 30px;
+	width: 70px;
+	margin-left: 4px;
+	vertical-align: bottom;
+}
+
+.itunesheaderText {
+	color: #767676;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	margin-bottom: 15px;
+}
+
+.paypalHeader {
+	padding: 10px 10px 0;
+}
+
+.paypalHeaderLeft {
+	float: left;
+	line-height: 160%;
+}
+
+.paypalHeaderRight {
+	float: right;
+	line-height: 160%;
+	padding-top: 2px;
+}
+
+.paypalpaymentsButton {
+	padding-bottom: 20px;
+	padding-top: 15px;
+}
+
+.paypalImageContainer {
+	margin-top: 6px;
+	margin: 6px 0 15px;
+}
+
+.paypalImageContainerCongrats {
+	margin: 2px 0 13px;
+}
+
+.paypalMessgeHeader {
+	color: #e60000;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.paypalMessageText {
+	color: #333;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 130%;
+	margin-bottom: 27px;
+}
+
+.notimplementedTitle {
+	color: #e60000;
+	font-family: vodafoneRegular, Helvetica, Arial, sans-serif;
+	font-size: 25px;
+	line-height: 120%;
+	margin-top: 27px;
+	text-align: center;
+}
+
+.notimplementedText {
+	color: #333;
+	font-family: vodafoneLight, Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	line-height: 140%;
+	margin-bottom: 30px;
+	text-align: center;
+}

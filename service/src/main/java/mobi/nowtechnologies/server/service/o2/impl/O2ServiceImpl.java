@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import mobi.nowtechnologies.server.service.O2Service;
-import mobi.nowtechnologies.server.service.O2TariffService;
+import mobi.nowtechnologies.server.service.o2.O2Service;
+import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect;
 
 import org.slf4j.Logger;
@@ -22,10 +22,6 @@ public class O2ServiceImpl implements O2Service {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(O2ServiceImpl.class);
 
-	// O2 is not ready yet to process those calls
-	private static final boolean CALL_GET_ORDER_LIST = false;
-	private static final boolean CALL_PREPAY_4G = false;
-
 	@Autowired
 	private O2TariffService o2TariffService;
 
@@ -37,9 +33,7 @@ public class O2ServiceImpl implements O2Service {
 		Throwable error = null;
 		O2SubscriberData data = null;
 		try {
-
 			return getSubscriberDataInternal(originalPhoneNumber);
-
 		} catch (Exception ex) {
 			LOGGER.error("Can't get subscriber data " + originalPhoneNumber, ex);
 			throw new RuntimeException(ex);
@@ -50,34 +44,24 @@ public class O2ServiceImpl implements O2Service {
 	}
 
 	private O2SubscriberData getSubscriberDataInternal(String originalPhoneNumber) {
-		LOGGER.info("getSubscriberData " + originalPhoneNumber + " CALL_PREPAY_4G=" + CALL_PREPAY_4G
-				+ " CALL_GET_ORDER_LIST=" + CALL_GET_ORDER_LIST);
-
+		LOGGER.info("getSubscriberData " + originalPhoneNumber);
 		String digitOnlyPhoneNumber = getDigits(originalPhoneNumber);
 
 		O2SubscriberData data = createSubscriberData(digitOnlyPhoneNumber);
-		LOGGER.info("business:{}, contract:{}, provider O2:{}", data.isBusinessOrConsumerSegment(),
-				data.isContractPostPay(), data.isProviderO2());
+		LOGGER.info("phone:{}, business:{}, contract:{}, provider O2:{}", digitOnlyPhoneNumber,
+				data.isBusinessOrConsumerSegment(), data.isContractPostPay(), data.isProviderO2());
 
 		if (data.isProviderO2() && data.isConsumerSegment()) {
 			if (data.isContractPostPay()) {
-
 				data.setTariff4G(isPostPay4G(digitOnlyPhoneNumber));
 				if (data.isTariff4G()) {
-					if (CALL_GET_ORDER_LIST) {
-						data.setDirectOrIndirect4GChannel(isPostPayDirectChannel(digitOnlyPhoneNumber));
-					}else{
-						//assume direct channel before O2 is ready 
-						data.setDirectOrIndirect4GChannel(true);
-					}
+					data.setDirectOrIndirect4GChannel(isPostPayDirectChannel(digitOnlyPhoneNumber));
 				}
 			} else {
-				if (CALL_PREPAY_4G) {
-					prePayPopulate4G(digitOnlyPhoneNumber, data);
-				}
+				prePayPopulate4G(digitOnlyPhoneNumber, data);
 			}
 		}
-		LOGGER.info("getSubscriberData completed {} result-{}", originalPhoneNumber, data);
+		LOGGER.info("getSubscriberData completed for {} result-{}", originalPhoneNumber, data);
 		return data;
 	}
 

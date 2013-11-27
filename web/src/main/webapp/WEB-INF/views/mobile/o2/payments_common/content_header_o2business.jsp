@@ -6,7 +6,7 @@
 <c:set var="optionPrice" />
 <c:set var="numWeeks" />
 <c:set var="monthlyOrWeekly" />
-<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 	<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
 	<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
 	<c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
@@ -32,6 +32,13 @@
 
 <div class="paymentscontainer">
 	<div class="frL11 o2BusinessHeader">
-		<s:message code='pays.page.header.txt' />
+		<c:choose>
+			<c:when test="${showTwoWeeksPromotion eq true}">
+				<s:message code='pays.page.header.TwoWeeksPromotionText' />
+			</c:when>
+			<c:otherwise>
+				<s:message code='pays.page.header.txt' />
+			</c:otherwise>
+		</c:choose>
 	</div>
 </div>

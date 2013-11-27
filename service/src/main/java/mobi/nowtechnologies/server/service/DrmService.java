@@ -7,7 +7,6 @@ import java.util.Map;
 
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DrmDao;
 import mobi.nowtechnologies.server.persistence.dao.DrmTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;

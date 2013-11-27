@@ -8,10 +8,14 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
+
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static uk.co.o2.soa.coredata.PaymentCategoryType.*;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -114,19 +118,19 @@ public class SubscriberProfileType {
                 .toString();
     }
 
-    public mobi.nowtechnologies.server.persistence.domain.enums.SegmentType getSegmentType() {
+    public mobi.nowtechnologies.server.shared.enums.SegmentType getSegmentType() {
         return SegmentType.CONSUMER.equals(getSegment()) ?
-                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER :
-                mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.BUSINESS;
+                mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER :
+                mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
     }
 
     public Contract getCotract() {
-        return PaymentCategoryType.POSTPAY.equals(getPaymentCategory()) ?
-                Contract.PAYM : Contract.PAYG;
+        return POSTPAY.equals(getPaymentCategory()) ?
+                PAYM : PAYG;
     }
     
     public ProviderType getProvider(){
     	return "O2".equals(getOperator()) ?
-                ProviderType.O2 : ProviderType.NON_O2;
+                O2 : NON_O2;
     }
 }

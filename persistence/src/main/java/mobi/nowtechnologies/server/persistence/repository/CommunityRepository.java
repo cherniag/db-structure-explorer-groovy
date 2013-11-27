@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-public interface CommunityRepository extends JpaRepository<Community, Byte> {
+public interface CommunityRepository extends JpaRepository<Community, Integer> {
 	
 	@Query(value="select community from Community community where LOWER(community.rewriteUrlParameter)=LOWER(?1)")
 	Community findByRewriteUrlParameter(String rewriteUrlParameter);

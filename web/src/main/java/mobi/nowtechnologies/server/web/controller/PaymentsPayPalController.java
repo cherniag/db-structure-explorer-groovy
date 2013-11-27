@@ -5,7 +5,7 @@ import java.util.Locale;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import mobi.nowtechnologies.server.persistence.domain.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -55,7 +55,7 @@ public class PaymentsPayPalController extends CommonController {
 
 		if (StringUtils.hasText(result)) {
 			if (StringUtils.hasText(token)) {
-				paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, getSecurityContextDetails().getUserId());
+				paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, communityUrl.getValue(), getSecurityContextDetails().getUserId());
 			}
 			modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
 		}else{
@@ -78,7 +78,7 @@ public class PaymentsPayPalController extends CommonController {
 				.append(REQUEST_PARAM_PAYPAL).append("=");
 		dto.setFailUrl(callbackUrl+FAIL_RESULT);
 		dto.setSuccessUrl(callbackUrl+SUCCESSFUL_RESULT);
-		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPamentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+		PayPalPaymentDetails payPalPamentDetails = paymentDetailsService.createPayPalPaymentDetails(dto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
 		return new ModelAndView(REDIRECT + payPalPamentDetails.getBillingAgreementTxId());
 	}
 

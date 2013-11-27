@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 
+import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 
 /**
- * The class <code>MigPaymentDetailsFactory</code> implements static methods that return instances of the class <code>{@link MigPaymentDetails}</code>.
+ * The class <code>MigPaymentDetailsFactory</code> implements static methods that return instances of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails}</code>.
  *
  * @generatedBy CodePro at 29.08.12 11:04
  * @author Titov Mykhaylo (titov)

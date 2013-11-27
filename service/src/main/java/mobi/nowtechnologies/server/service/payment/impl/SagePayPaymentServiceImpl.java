@@ -5,12 +5,12 @@ import java.math.BigDecimal;
 import javax.servlet.http.HttpServletResponse;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetailsType;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
@@ -20,7 +20,7 @@ import mobi.nowtechnologies.server.service.payment.response.PaymentSystemRespons
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,7 +168,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 
 	@Override
 	public PaymentSystemResponse getExpiredResponse() {
-		SagePayResponse response = new SagePayResponse(new Response() {
+		SagePayResponse response = new SagePayResponse(new BasicResponse() {
 			@Override
 			public int getStatusCode() {
 				return HttpServletResponse.SC_OK;

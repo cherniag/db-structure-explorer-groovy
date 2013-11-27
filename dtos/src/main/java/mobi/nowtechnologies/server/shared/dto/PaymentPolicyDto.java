@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -18,7 +18,7 @@ public class PaymentPolicyDto {
 
     public static final String PAYMENT_POLICY_DTO = "paymentPolicy";
 
-    private short id;
+    private Integer id;
     private BigDecimal subcost;
     private Integer subweeks;
     private Integer operator;
@@ -67,10 +67,10 @@ public class PaymentPolicyDto {
 		return subweeks == null || subweeks.intValue() == 0;
 	}
     
-    public short getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     public BigDecimal getSubcost() {

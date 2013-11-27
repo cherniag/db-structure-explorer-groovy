@@ -1,27 +1,39 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.springframework.util.StringUtils;
-
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
 
 public abstract class PaymentSystemResponse {
 	
 	protected boolean isSuccessful;
+    protected boolean isFuture;
 	protected String descriptionError;
 	protected int httpStatus;
 	protected String message;
 	protected String errorCode;
 	
-	public PaymentSystemResponse(Response response) {
-		httpStatus = response.getStatusCode();
-		if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
-			message = response.getMessage().substring(0, 254);
-		else
-			message = response.getMessage();
-		descriptionError="";
+	public PaymentSystemResponse(BasicResponse response, boolean isFuture) {
+        this(isFuture);
+
+        if(!isFuture){
+            httpStatus = response.getStatusCode();
+            if (StringUtils.hasLength(response.getMessage()) && response.getMessage().length()>255)
+                message = response.getMessage().substring(0, 254);
+            else
+                message = response.getMessage();
+            descriptionError="";
+        }
 	}
 
-	public boolean isSuccessful() {
+    public PaymentSystemResponse(boolean isFuture) {
+        this.isFuture = isFuture;
+    }
+
+    public boolean isFuture() {
+        return isFuture;
+    }
+
+    public boolean isSuccessful() {
 		return isSuccessful;
 	}
 	
@@ -41,8 +53,15 @@ public abstract class PaymentSystemResponse {
 		return errorCode;
 	}
 
-	@Override
-	public String toString() {
-		return "httpStatus=" + httpStatus + ", errorCode=" + errorCode + ", descriptionError=" + descriptionError + ", isSuccessful=" + isSuccessful + ", message=" + message;
-	}
+    @Override
+    public String toString() {
+        return "PaymentSystemResponse{" +
+                "isSuccessful=" + isSuccessful +
+                ", isFuture=" + isFuture +
+                ", descriptionError='" + descriptionError + '\'' +
+                ", httpStatus=" + httpStatus +
+                ", message='" + message + '\'' +
+                ", errorCode='" + errorCode + '\'' +
+                "} ";
+    }
 }

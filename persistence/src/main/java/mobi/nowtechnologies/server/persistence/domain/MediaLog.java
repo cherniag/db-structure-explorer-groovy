@@ -20,15 +20,12 @@ import javax.persistence.Transient;
 
 import mobi.nowtechnologies.server.shared.dto.web.PurchasedTrackDto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The persistent class for the tb_mediaLog database table.
- * 
- */
 /**
  * @author Alexander Kolpakov (akolpakov)
  * 
@@ -120,12 +117,6 @@ public class MediaLog implements Serializable {
 		this.alreadyDownloadedOriginal = alreadyDownloadedOriginal;
 	}
 
-	@Override
-	public String toString() {
-		return "MediaLog [alreadyDownloadedOriginal=" + alreadyDownloadedOriginal + ", i=" + i + ", logTimestamp=" + logTimestamp + ", logType=" + logType + ", mediaUID=" + mediaUID + ", userUID="
-				+ userUID + "]";
-	}
-
 	public static List<PurchasedTrackDto> toPurchasedTrackDtoList(List<MediaLog> mediaLogs) {
 		LOGGER.debug("input parameters mediaLogShallows: [{}]", mediaLogs);
 		List<PurchasedTrackDto> purchasedTrackDtos = new ArrayList<PurchasedTrackDto>(mediaLogs.size());
@@ -157,4 +148,18 @@ public class MediaLog implements Serializable {
 		this.media = media;
 		this.mediaUID = media.getI();
 	}
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("logTimestamp", logTimestamp)
+                .append("logType", logType)
+                .append("mediaUID", mediaUID)
+                .append("userUID", userUID)
+                .append("alreadyDownloadedOriginal", alreadyDownloadedOriginal)
+                .toString();
+    }
+
+
 }

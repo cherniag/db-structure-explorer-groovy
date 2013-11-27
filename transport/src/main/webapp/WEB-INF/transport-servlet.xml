@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:hz="http://www.hazelcast.com/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.hazelcast.com/schema/spring
+                http://www.hazelcast.com/schema/spring/hazelcast-spring-3.0.xsd">
 
 	<mvc:interceptors>
 		<bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
@@ -50,7 +53,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.BuyTrackDto</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.ErrorMessage</value>
 				<value>mobi.nowtechnologies.server.persistence.domain.UserRegInfoServer</value>
-				<value>mobi.nowtechnologies.server.persistence.domain.PaymentPolicy</value>
+				<value>mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PromoCodeDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PurchasedChartDetailDto</value>
@@ -335,10 +338,11 @@
         <property name="o2Service" ref="service.O2Service"/>
     </bean>
      
-    <bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="job.updateO2User" />
-        <property name="cronExpression" value="${jobs.default.cron.expression}"/>
-    </bean>
+	<bean id="jobTrigger.updateO2User" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    	<property name="jobDetail" ref="job.updateO2User" />
+    	<property name="startDelay" value="${updateO2User.job.startDelayMillis}" />
+    	<property name="repeatInterval" value="${updateO2User.job.repeatIntervalMillis}" />
+	</bean>    
     
     <!-- Fork users job -->
     <bean id="job.ForkO2UsersForUpdateJob" class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -349,7 +353,28 @@
         <property name="jobDetail" ref="job.ForkO2UsersForUpdateJob"/>
         <property name="cronExpression" value="${jobs.default.cron.expression}"/>
     </bean>
-     
+
+    <bean id="transport.sendSmsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean" />
+        <property name="jobDataAsMap">
+            <map merge="true">
+                <entry key="communityURL" value="vf_nz" />
+                <entry key="paymentDetailsFetchSize" value="1000" />
+                <entry key="paymentDetailsService" value-ref="service.PaymentDetailsService"/>
+                <entry key="userNotificationService" value-ref="service.UserNotificationService"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="sendSmsForVFNZUsersTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="transport.sendSmsJob"/>
+        <property name="cronExpression" value="${send.sms.for.vf_nz.users.job.cron.expression}"/>
+        <property name="jobDataAsMap">
+            <map merge="true">
+                <entry key="communityURL" value="vf_nz" />
+            </map>
+        </property>
+    </bean>
 
     <bean id="schedulerTX" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
         <property name="applicationContextSchedulerContextKey" value="applicationContext" />
@@ -398,6 +423,7 @@
 				<ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
 				<ref bean="transport.smsNotificationQuartzTrigger" />
 				<ref bean="before48hPSMSPaymentTrigger"/>
+                <ref bean="sendSmsForVFNZUsersTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -414,6 +440,6 @@
 				</constructor-arg>
 			</bean>
 		</property>
-	</bean> 
+	</bean>
 	<import resource="classpath:controllers.xml" />
 </beans>

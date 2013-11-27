@@ -187,7 +187,7 @@ public class GetChartControllerTestIT {
     }
     
     private void generateChartAllTypesForO2(){
-        Community o2Community = communityRepository.findOne((byte)7);
+        Community o2Community = communityRepository.findOne(7);
         Chart chart = chartRepository.findOne(5);
 
         Chart hotChart = new Chart();

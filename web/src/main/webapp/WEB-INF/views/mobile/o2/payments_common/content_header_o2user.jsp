@@ -8,16 +8,25 @@
 	</div>
 </div>
 	
-<c:if test="${userCanGetVideo eq true}">
+<c:if test="${paymentsPage.userCanGetVideo eq true}">
 	<%-- the two lines are only for video enabled users - remove the check if we need them to all o2 users --%>
 	<hr class="o2Userhr" />
 	<div class="paymentscontainer frL11">
-		<div class="paymentscontainer"><s:message code='pays.page.header.txt' /></div>
+		<div class="paymentscontainer">
+			<c:choose>
+				<c:when test="${showTwoWeeksPromotion eq true}">
+					<s:message code='pays.page.header.TwoWeeksPromotionText' />
+				</c:when>
+				<c:otherwise>
+					<s:message code='pays.page.header.txt' />
+				</c:otherwise>
+			</c:choose>
+		</div>
 	</div>
 </c:if>
 	
 <div class="paymentscontainer">
-	<c:if test="${userCanGetVideo eq true}">
+	<c:if test="${paymentsPage.userCanGetVideo eq true}">
 		<jsp:include page="../payments_common/content_videooption.jsp" />
 	</c:if>
 </div>

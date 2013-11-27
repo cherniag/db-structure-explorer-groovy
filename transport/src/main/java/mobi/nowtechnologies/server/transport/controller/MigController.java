@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
@@ -21,10 +21,7 @@ import java.net.URLDecoder;
 import java.util.List;
 
 /**
- * MigController
- * 
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 @Controller
 public class MigController extends ProfileController {
@@ -49,7 +46,6 @@ public class MigController extends ProfileController {
 			@RequestParam(value = "GUID") String guid,
 			@RequestParam(value = "STATUS") String status,
 			@RequestParam(value = "DESCRIPTION", required = false) String description,
-			HttpServletResponse response,
 			HttpServletRequest request) {
 		LOGGER.info("[START] MIG query string is [{}]", request.getQueryString());
 		LOGGER.info("DRListener command processing started. MESSAGEID=[{}], STATUSTYPE=[{}], GUID=[{}], STATUS=[{}]", new String[] { messageId, statusType, guid, status });
@@ -79,10 +75,7 @@ public class MigController extends ProfileController {
 	@RequestMapping(method = RequestMethod.GET, value = "/MOListener")
 	public void stopService(@RequestParam(value = "BODY") String action,
 			@RequestParam(value = "OADC") String mobile,
-			@RequestParam(value = "CONNECTION") String operatorMigName,
-			HttpServletResponse response,
-			HttpServletRequest request) {
-		// Only 1 case when we get this request from MIG - stop service
+			@RequestParam(value = "CONNECTION") String operatorMigName) {
 		LOGGER.info("[START] MOLISTENER command processing started");
 		User user = null;
 		Exception ex = null;

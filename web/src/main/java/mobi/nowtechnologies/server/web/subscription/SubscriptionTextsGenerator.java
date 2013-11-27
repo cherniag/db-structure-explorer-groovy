@@ -38,14 +38,13 @@ public class SubscriptionTextsGenerator {
 					return data;
 				}
 				data.setStatusText(getMessage("subscription.text.freeTrial"));
-				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.leftDays",
-						state.getDaysToNextBillingDate()));
+				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.leftDays", state.getDaysToNextBillingDate()));
 				data.setFutureText(null);
 			} else {
 
 				if (state.isFreeTrialOptedIn()) {
 					data.setStatusText(getMessage("subscription.text.subscribed"));
-					data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.youWillBeNotified"));
+					data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.youWillBeSubscribed", state.getDaysToNextBillingDate()));
 					data.setFutureText(getMessage("subscription.text.subscription_future.subscribed"));
 					return data;
 				}
@@ -55,7 +54,9 @@ public class SubscriptionTextsGenerator {
 				} else {
 					data.setStatusText(getMessage("subscription.text.freeTrial_Video"));
 				}
-				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.youWillBeNotified"));
+				
+				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.leftDays", state.getDaysToNextBillingDate()));
+				
 				data.setFutureText(null);
 			}
 			return data;
@@ -100,7 +101,7 @@ public class SubscriptionTextsGenerator {
 	}
 
 	private String getLongDate(Date date) {
-		DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
+		DateFormat df = new SimpleDateFormat("dd MMMMM yyyy", Locale.ENGLISH);
 		return df.format(date);
 	}
 

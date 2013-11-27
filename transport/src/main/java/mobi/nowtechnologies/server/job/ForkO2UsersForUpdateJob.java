@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.job;
 
 import com.google.common.collect.Lists;
 import com.hazelcast.core.HazelcastInstance;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.HazelcastService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.service.HazelcastService.QUEUE_O2_USERS_FOR_UPDATE;
 
 public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJob {
@@ -25,14 +28,15 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
     private static int BATCH_SIZE;
     private static int PERIOD;
 
-
     private transient UserRepository userRepository;
+    private transient UserGroupRepository userGroupRepository;
     private transient CommunityResourceBundleMessageSource messageSource;
     private transient BlockingQueue<List<Integer>> userIdsQueue;
 
     public ForkO2UsersForUpdateJob() {
         messageSource = (CommunityResourceBundleMessageSource) SpringContext.getBean("serviceMessageSource");
         userRepository = (UserRepository) SpringContext.getBean("userRepository");
+        userGroupRepository = (UserGroupRepository) SpringContext.getBean("userGroupRepository");
         readProperties();
         HazelcastInstance hz = new HazelcastService().getHazelcastInstance();
         userIdsQueue = hz.getQueue(QUEUE_O2_USERS_FOR_UPDATE);
@@ -55,8 +59,10 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
 			LOG.info("queue is not empty, skipping");
 			return;
 		}
-		
-		List<Integer> users = selectUsersForUpdate();
+
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl(O2_COMMUNITY_REWRITE_URL);
+
+		List<Integer> users = selectUsersForUpdate(o2UserGroup.getId());
 		
 		LOG.info("found [{}] users, batch size [{}]", users.size(), BATCH_SIZE);
 		List<List<Integer>> partitions = Lists.partition(users, BATCH_SIZE);
@@ -66,8 +72,8 @@ public class ForkO2UsersForUpdateJob extends QuartzJobBean implements StatefulJo
 		LOG.info("fork O2 user completed, offered [{}] partitions", partitions.size());
     }
 
-    public List<Integer> selectUsersForUpdate() {
-        return userRepository.getUsersForUpdate(getTimeBeforeWhichUsersWasNotUpdated());
+    public List<Integer> selectUsersForUpdate(int userGroupId) {
+        return userRepository.getUsersForUpdate(getTimeBeforeWhichUsersWasNotUpdated(), userGroupId);
     }
 
     private long getTimeBeforeWhichUsersWasNotUpdated() {

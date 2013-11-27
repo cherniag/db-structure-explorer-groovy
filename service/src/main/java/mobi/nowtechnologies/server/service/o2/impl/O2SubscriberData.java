@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
+import mobi.nowtechnologies.server.service.data.SubscriberData;
+
 /** Represents O2 mobile network subscriber information */
-public class O2SubscriberData {
+public class O2SubscriberData extends SubscriberData {
 
 	private boolean providerO2;
 
@@ -107,5 +109,4 @@ public class O2SubscriberData {
         setTariff4G(tariff4g);
         return this;
     }
-
 }

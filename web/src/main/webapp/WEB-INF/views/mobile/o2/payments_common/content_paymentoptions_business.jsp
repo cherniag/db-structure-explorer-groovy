@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 <c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
 
 	<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
@@ -28,7 +28,7 @@
 		         </div>
 		
 		         <c:set var="cssClass" value="button-off" />
-		         <c:if test="${paymentDetailsType != null && paymentDetailsType == method_name && paymentDetails.activated eq 'true'}">
+		         <c:if test="${paymentsPage.paymentDetailsType != null && paymentsPage.paymentDetailsType == method_name && paymentsPage.paymentDetails.activated eq 'true'}">
 		         	<c:set var="cssClass" value="button-on" />
 		         </c:if>
 		         

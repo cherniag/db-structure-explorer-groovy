@@ -6,6 +6,9 @@ import java.util.Map;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.service.MailService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
@@ -98,42 +101,6 @@ public class MailNotification {
 		
 		mailService.sendMail(from, new String[]{user.getUserName()}, subject , body , model);
 		LOGGER.info("User {} reset a password", user.getUserName());
-	}
-	
-	
-	/**
-	 * Sending email each time we made a payment for user by credit card
-	 * @param joinPoint
-	 * @throws Throwable
-	 */
-	//@Around("execution(* mobi.nowtechnologies.server.service.listener.PromotionAfterPaymentListener.onApplicationEvent(*))")
-	public void sendSubscribedCreditCard3(ProceedingJoinPoint joinPoint) throws Throwable {
-		joinPoint.proceed();
-		PaymentEvent event = (PaymentEvent)joinPoint.getArgs()[0];
-		SubmittedPayment payment = (SubmittedPayment) event.getPayment();
-		if (payment.getPaymentSystem().equals(PaymentDetails.SAGEPAY_CREDITCARD_TYPE)) {
-			User user = payment.getUser();
-			String communityName = userService.getCommunityNameByUserGroup(user.getUserGroupId());
-			Community community = CommunityDao.getMapAsNames().get(communityName);
-			String communityUri = community.getRewriteUrlParameter().toLowerCase();
-			if (payment.getType() == PaymentDetailsType.FIRST) {
-				sendPaymentEmail(
-						user,
-						community,
-						messageSource.getMessage(communityUri, "mail.subscribed.cc.subject",null, null),
-						messageSource.getMessage(communityUri, "mail.subscribed.cc.body",null, null),
-						Integer.toString(payment.getSubweeks()),
-						payment.getAmount().toString());
-			} else {
-				sendPaymentEmail(
-						user,
-						community,
-						messageSource.getMessage(communityUri, "mail.subscribed.cc.renewed.subject",null, null),
-						messageSource.getMessage(communityUri, "mail.subscribed.cc.renewed.body",null, null),
-						Integer.toString(payment.getSubweeks()),
-						payment.getAmount().toString());
-			}
-		}
 	}
 	
 	protected void sendPaymentEmail(User user, Community community, String subject, String body, String numberOfWeeks, String amountDeducted) {

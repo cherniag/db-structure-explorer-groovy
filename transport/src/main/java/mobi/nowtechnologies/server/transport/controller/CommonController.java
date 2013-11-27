@@ -16,6 +16,8 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,18 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
- * EntityController
- *
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
- * 
  */
-public abstract class CommonController extends ProfileController{
+public abstract class CommonController extends ProfileController implements ApplicationContextAware{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 	public static final String MODEL_NAME = Response.class.toString();
@@ -55,6 +55,12 @@ public abstract class CommonController extends ProfileController{
     private UserRepository userRepository;
     protected String defaultViewName = "default";
     protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    protected ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     public void setView(View view) {
 		this.view = view;
@@ -84,8 +90,14 @@ public abstract class CommonController extends ProfileController{
         this.userRepository = userRepository;
     }
 
+    protected UserService getUserService(String communityUrl){
+        String userServiceBeanName = messageSource.getMessage(communityUrl, "service.bean.userService", null, null);
+
+        return (UserService)applicationContext.getBean(userServiceBeanName);
+    }
+
     @ExceptionHandler(Exception.class)
-	public ModelAndView handleException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(Exception exception, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
@@ -96,7 +108,7 @@ public abstract class CommonController extends ProfileController{
 	}
 	
 	@ExceptionHandler(InvalidPhoneNumberException.class)
-	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
@@ -135,7 +147,7 @@ public abstract class CommonController extends ProfileController{
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)
-	public ModelAndView handleException(UserCredentialsException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {		
+	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();
 		
 		final String localizedDisplayMessage;
@@ -160,7 +172,7 @@ public abstract class CommonController extends ProfileController{
 	}
 	
 	@ExceptionHandler(ThrottlingException.class)
-	public ModelAndView handleException(ThrottlingException exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+	public ModelAndView handleException(ThrottlingException exception, HttpServletResponse response) {
 		LOGGER.info(exception.toString());
 		response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         response.addHeader("reason", "throttling");
@@ -228,7 +240,7 @@ public abstract class CommonController extends ProfileController{
 
         String apiVersion = apiVersionThreadLocal.get();
 
-        if (isEmpty(apiVersion) || isNotEmpty(apiVersion) && isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
+        if (isBlank(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
             return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
         }
 
@@ -240,13 +252,12 @@ public abstract class CommonController extends ProfileController{
 	 * @return rememberMe auth token
 	 */
 	public Object[] precessRememberMeToken(Object[] objects) {
-		LOGGER.debug("input parameters objects: [{}], [{}]", objects);
+		LOGGER.debug("input parameters objects: [{}]", objects);
 		for (Object object : objects) {
 			if (!(object instanceof AccountCheckDTO)) continue;
 			AccountCheckDTO accountCheckDTO = (AccountCheckDTO) object;
-			
-			String rememberMeToken = getRememberMeToken(accountCheckDTO.getUserName(), accountCheckDTO.getUserToken());
-			accountCheckDTO.setRememberMeToken(rememberMeToken);
+
+            accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 		}
 		LOGGER.debug("Output parameter objects=[{}]", objects);
 		return objects;

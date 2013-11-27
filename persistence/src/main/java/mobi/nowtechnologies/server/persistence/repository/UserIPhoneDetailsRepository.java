@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
  * @author Titov Mykhaylo (titov)
  *
  */
-public interface UserIPhoneDetailsRepository extends PagingAndSortingRepository<UserIPhoneDetails, Integer> {
+public interface UserIPhoneDetailsRepository extends UserDeviceDetailsRepository<UserIPhoneDetails> {
 
 	@Query(value="SELECT userIPhoneDetails "
 			+ "FROM UserIPhoneDetails userIPhoneDetails "

@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-/**
- * The persistent class for the tb_fileTypes database table.
- * 
- */
 @Entity
 @Table(name="tb_fileTypes")
 public class FileType implements Serializable {
@@ -39,4 +36,11 @@ public class FileType implements Serializable {
 		this.name = name;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .toString();
+    }
 }

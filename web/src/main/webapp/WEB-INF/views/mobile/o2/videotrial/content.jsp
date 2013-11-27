@@ -13,34 +13,39 @@ function submitUserConfirmation() {
 
 <div class="header pie">
 	<div class="gradient_border">&#160;</div>
-    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
-    <a href="${returnUrl}" class="button-small button-right-abs"><s:message code='m.page.main.menu.close' /></a>
+    <%-- <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span> --%>
+    <span class="logo videoOptInLogo"><s:message code="videfreetrial.page.logo" /></span>
+    <%-- <a href="${returnUrl}" class="button-small button-right-abs"><s:message code='m.page.main.menu.close' /></a> --%>
 </div>
 
 <div class="container">
-<div class="content">
-	<h1>
-		<p class="centered"><s:message code="videfreetrial.page.header" /></p>
-	</h1>
+<div class="content centered" style="background-color: inherit; color: #fff; padding: 4px;">
+	<div class="videoOptInTitle">
+		<s:message code="videfreetrial.page.header" />
+	</div>
 	
-	<p class="centered"><img style="width: 34px; height: 32px;"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video.png" /></p>
+	<div><img width="107px" height="108px"	src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_video_opt.png" /></div>
 	
-	<p class="centered" style="margin-bottom: 20px">
+	<div class="frRoman S15" style="margin-top: 7px;">
 		<s:message code="videfreetrial.page.subheader" />
-	</p>
+	</div>
 	
-	<p class="centered" style="margin-bottom: 20px">
+	<hr class="videoOptHR" />
+	
+	<div class="frLight S13" style="margin-bottom: 16px">
 		<s:message code="videfreetrial.page.text1" />
-	</p>
+	</div>
 	
-	<p class="centered" style="margin-bottom: 20px">
-		<s:message code="videfreetrial.page.text2" /><br />
-		<a href="terms.html"><s:message code="videfreetrial.page.text_tc" /></a>
-	</p>
+	<div class="frLight S13">
+		<s:message code="videfreetrial.page.text1_2" />
+	</div>
 	
-	<p class="centered" style="margin-bottom: 20px">
-		<a href="contact_us.html"><s:message code="page.header.link.contactus" /></a>
-	</p>
+	<hr class="videoOptHR" />
+	
+	<div class="frLight S11">
+		<s:message code="videfreetrial.page.text2" />
+		<div class="videoOptInTAndC"><a href="terms.html"><s:message code="videfreetrial.page.text_tc" /></div>
+	</div>
 	
 	<div class="rel" >
 		<a class="button-turquoise pie" href="javascript: submitUserConfirmation()" ><s:message code='videfreetrial.page.button.upgrade' /></a>
@@ -51,7 +56,7 @@ function submitUserConfirmation() {
 	</div>
 	
 	<div class="rel" >
-		<a class="button-grey pie" href="${returnUrl}" ><s:message code='videfreetrial.page.button.notnow' /></a>
+		<a class="button-blue pie" href="${returnUrl}" ><s:message code='videfreetrial.page.button.notnow' /></a>
 	</div>
 </div>
 </div>

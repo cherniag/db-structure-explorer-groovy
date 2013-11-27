@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartAsm;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
@@ -73,6 +70,21 @@ public class ChartService {
 		this.messageSource = messageSource;
 	}
 
+    protected Date getCurrentTime(Community community){
+       String[] timezones = TimeZone.getAvailableIDs();
+       String[] timezonesbyOffset = TimeZone.getAvailableIDs(13*3600000);
+
+        Date date = new Date(System.currentTimeMillis()+24*3600000);
+        for (int i = 0; i < timezones.length; i++) {
+            String s = timezones[i];
+            TimeZone tz = TimeZone.getTimeZone(s);
+            if(tz.useDaylightTime())
+                System.out.println(tz);
+        }
+
+       return null;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
@@ -81,11 +93,9 @@ public class ChartService {
 			throw new ServiceException("The parameter communityName is null");
 
 		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
-		int userId = user.getId();
 
-		user = userService.findUserTree(userId);
-
-		AccountCheckDTO accountCheck = toAccountCheckDTO(user, null, null, userService.canActivateVideoTrial(user));
+        AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
+        user = (User) accountCheck.user;
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 		
@@ -101,14 +111,14 @@ public class ChartService {
 		for (ChartDetail chart : charts) {	
 			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
 			if(!switchable || user.isSelectedChart(chart)){
-				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), createDrmIfNotExists, fetchLocked));
+				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), new Date(), createDrmIfNotExists, fetchLocked));
 				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
 			}
 		}
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(chartDetails, defaultAmazonUrl);
+		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));

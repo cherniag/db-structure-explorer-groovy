@@ -20,6 +20,7 @@ import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.AdActionType;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -54,6 +55,7 @@ import com.rackspacecloud.client.cloudfiles.FilesClient;
 @MockWebApplication(name = "admin.ChartItemController")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class AdIT {
 
 	@Autowired

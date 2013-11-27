@@ -49,7 +49,8 @@ public class PaymentsCreditCardController extends CommonController {
 	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.GET)
 	public ModelAndView getCreditCardPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, 
 			@RequestParam(PaymentsController.POLICY_REQ_PARAM) Integer policyId,
-			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl,
+			Locale locale) {
 		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(policyId);
 
 		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_CREDITCARD);
@@ -58,6 +59,8 @@ public class PaymentsCreditCardController extends CommonController {
 		List<Country> countries = countryService.getAllCountries();
 		modelAndView.addObject("countries", countries);
 		modelAndView.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
+		
+		modelAndView.addObject("ignoreAddressFields", ignoreAddressFields(locale));
 
 		return modelAndView;
 	}
@@ -65,7 +68,8 @@ public class PaymentsCreditCardController extends CommonController {
 	@RequestMapping(value = PAGE_PAYMENTS_CREDITCARD, method = RequestMethod.POST)
 	public ModelAndView postCreditCardPaymentsPreview(@PathVariable("scopePrefix") String scopePrefix,
 			@Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
-			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl,
+			Locale locale) {
 		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(creditCardDto.getPaymentPolicyId());
 		
 		ModelAndView modelAndView = new ModelAndView();
@@ -81,6 +85,8 @@ public class PaymentsCreditCardController extends CommonController {
 			creditCardDto.setAction(Action.EDIT);
 			modelAndView.setViewName(scopePrefix + VIEW_PAYMENTS_CREDITCARD_PREVIEW);
 		}
+		
+		modelAndView.addObject("ignoreAddressFields", ignoreAddressFields(locale));
 
 		return modelAndView;
 	}
@@ -88,16 +94,19 @@ public class PaymentsCreditCardController extends CommonController {
 	@RequestMapping(value = PAGE_CREATE_PAYMENT_DETAILS, method = RequestMethod.POST)
 	public ModelAndView createCreditCardPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletResponse response,
 			@Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto,
-			BindingResult result, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+			BindingResult result, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl,
+			Locale locale) {
 		ModelAndView modelAndView = new ModelAndView();
 
 		if (result.hasErrors()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_FAIL);
 		} else {
-			paymentDetailsService.createCreditCardPamentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
+			paymentDetailsService.createCreditCardPaymentDetails(creditCardDto, communityUrl.getValue(), getSecurityContextDetails().getUserId());
 			modelAndView.setViewName(scopePrefix + VIEW_CREATE_PAYMENT_DETAIL_SUCCESSFUL);
 		}
+		
+		modelAndView.addObject("ignoreAddressFields", ignoreAddressFields(locale));
 
 		return modelAndView;
 	}
@@ -116,8 +125,15 @@ public class PaymentsCreditCardController extends CommonController {
 			modelAndView.addObject("external_error", message);
 		else
 			modelAndView.addObject("internal_error", message);
+		
+		modelAndView.addObject("ignoreAddressFields", ignoreAddressFields(locale));
 
 		return modelAndView;
+	}
+	
+	private boolean ignoreAddressFields(Locale locale) {
+		String val = messageSource.getMessage("pay.cc.form.ignoreAddressFields", null, locale);
+		return val != null && val.trim().toLowerCase().equals("true");
 	}
 
 	public void setCountryService(CountryService countryService) {

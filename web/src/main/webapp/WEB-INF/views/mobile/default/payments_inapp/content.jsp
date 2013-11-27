@@ -34,10 +34,10 @@
 		</c:if>
 		
 		<h1><s:message code="pays.page.h1.options" /></h1>
-		<p>${paymentPoliciesNote}</p>
+		<p>${paymentsPage.paymentPoliciesNote}</p>
 		
 		<div class="setOfButtons">
-			<c:forEach var="paymentPolicy" items="${paymentPolicies}">
+			<c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 				<c:if test="${paymentPolicy.paymentType == 'creditCard'}">
 					<c:set var="method_name" value="creditcard" />
 					<s:message code='pays.select.creditcard' var="method_readable" />
@@ -69,7 +69,7 @@
 				
 			</c:forEach>
 		</div>
-		<c:if test="${(paymentDetails!=null) && (true==paymentDetails.activated)}">
+		<c:if test="${paymentsPage.paymentDetailsActivated}">
 			<hr />
 			<h1><s:message code="pays.deactivate.header" /></h1>
 			<div class="contentButton contentButtonGrey formButton rad5 rel formButtonGrey" >

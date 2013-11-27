@@ -25,17 +25,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * The persistent class for the tb_accountLog database table.
- * 
- */
 @Entity
 @Table(name="tb_accountLog")
 @NamedQueries({
@@ -90,6 +87,9 @@ public class AccountLog implements Serializable {
 	
 	@Column(insertable=false, updatable=false)
 	private Integer offerId;
+
+    @Column(length = 10000)
+    private String description;
 
     public AccountLog() {
     }
@@ -239,11 +239,52 @@ public class AccountLog implements Serializable {
 		return offerId;
 	}
 
-	@Override
-	public String toString() {
-		return "AccountLog [id=" + id + ", userId=" + userId + ", relatedPaymentUID=" + relatedPaymentUID + ", transactionType=" + transactionType
-				+ ", balanceAfter=" + balanceAfter + ", logTimestamp=" + logTimestamp + ", promoCode=" + promoCode + ", relatedMediaUID=" + relatedMediaUID
-				+ ", offerId=" + offerId + "]";
-	}
+    public AccountLog withDescription(String description){
+        this.description=description;
+        return this;
+    }
 
+    public AccountLog withUser(User user){
+        this.userId=user.getId();
+        return this;
+    }
+
+    public AccountLog withBalanceAfter(int balanceAfter){
+        this.balanceAfter = balanceAfter;
+        return this;
+    }
+
+    public AccountLog withLogTimestamp(int logTimestamp){
+        this.logTimestamp = logTimestamp;
+        return this;
+    }
+
+    public AccountLog withTransactionType(TransactionType transactionType){
+        this.transactionType = transactionType;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("balanceAfter", balanceAfter)
+                .append("logTimestamp", logTimestamp)
+                .append("relatedMediaUID", relatedMediaUID)
+                .append("relatedPaymentUID", relatedPaymentUID)
+                .append("transactionType", transactionType)
+                .append("userId", userId)
+                .append("promoCode", promoCode)
+                .append("offerId", offerId)
+                .append("description", description)
+                .toString();
+    }
 }

@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -34,8 +36,12 @@ public abstract class AbstractFilter {
 	
 	public abstract boolean doFilter(User user, Object param);
 
-	@Override
-	public String toString() {
-		return "filterType=" + filterType + ", id=" + id;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("filterType", filterType)
+                .toString();
+    }
+
 }

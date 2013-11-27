@@ -17,6 +17,18 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
+
+    <bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+        <property name="basenames">
+            <list>
+                <value>classpath:services_test</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="utf-8" />
+        <property name="fileEncodings" value="utf-8" />
+        <property name="cacheSeconds" value="180" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+    </bean>
 	
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
 		<property name="mailSession" ref="service.MailSession" />
@@ -53,6 +65,12 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 			</bean>
      	</property>
   	</bean>
+
+    <bean id="vf_nz.service.SmsProviderSpy" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
+        <property name="realObject" ref="vf_nz.service.VFNZSMSGatewayService"/>
+    </bean>
+
+    <alias name="vf_nz.service.SmsProviderSpy" alias="vf_nz.service.SmsProvider"/>
   	
 	<bean id="service.SpyPaymentDetailsService" class="mobi.nowtechnologies.server.shared.MockitoSpyFactoryBean">
      	<property name="realObject" ref="service.PaymentDetailsService"/>

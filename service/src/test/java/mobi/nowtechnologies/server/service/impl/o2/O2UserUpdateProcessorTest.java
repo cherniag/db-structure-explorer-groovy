@@ -1,14 +1,19 @@
 package mobi.nowtechnologies.server.service.impl.o2;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.*;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.enums.ProviderType;
-import mobi.nowtechnologies.server.persistence.domain.enums.SegmentType;
-import mobi.nowtechnologies.server.service.O2UserDetailsUpdater;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
@@ -26,52 +31,52 @@ public class O2UserUpdateProcessorTest {
 		User user = new User();
 
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.CONSUMER);
-		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
-		assertEquals(user.getContract(), Contract.PAYG);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getSegment(), CONSUMER);
+		assertEquals(user.getProvider(), NON_O2);
+		assertEquals(user.getTariff(), _3G);
+		assertEquals(user.getContract(), PAYG);
+		assertEquals(user.getContractChannel(), DIRECT);
 		
 
 		data.setBusinessOrConsumerSegment(true);
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.BUSINESS);
-		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
-		assertEquals(user.getContract(), Contract.PAYG);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getSegment(), BUSINESS);
+		assertEquals(user.getProvider(), NON_O2);
+		assertEquals(user.getTariff(), _3G);
+		assertEquals(user.getContract(), PAYG);
+		assertEquals(user.getContractChannel(), DIRECT);
 
 		data.setContractPostPayOrPrePay(true);
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.BUSINESS);
-		assertEquals(user.getProvider(), ProviderType.NON_O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
-		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getSegment(), BUSINESS);
+		assertEquals(user.getProvider(), NON_O2);
+		assertEquals(user.getTariff(), _3G);
+		assertEquals(user.getContract(), PAYM);
+		assertEquals(user.getContractChannel(), DIRECT);
 
 		data.setProviderO2(true);
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.BUSINESS);
-		assertEquals(user.getProvider(), ProviderType.O2.toString());
-		assertEquals(user.getTariff(), Tariff._3G);
-		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getSegment(), BUSINESS);
+		assertEquals(user.getProvider(), O2);
+		assertEquals(user.getTariff(), _3G);
+		assertEquals(user.getContract(), PAYM);
+		assertEquals(user.getContractChannel(), DIRECT);
 
 		data.setTariff4G(true);
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.BUSINESS);
-		assertEquals(user.getProvider(), ProviderType.O2.toString());
-		assertEquals(user.getTariff(), Tariff._4G);
-		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.DIRECT);
+		assertEquals(user.getSegment(), BUSINESS);
+		assertEquals(user.getProvider(), O2);
+		assertEquals(user.getTariff(), _4G);
+		assertEquals(user.getContract(), PAYM);
+		assertEquals(user.getContractChannel(), DIRECT);
 
 		data.setDirectOrIndirect4GChannel(false);
 		p.setUserFieldsFromSubscriberData(user, data);
-		assertEquals(user.getSegment(), SegmentType.BUSINESS);
-		assertEquals(user.getProvider(), ProviderType.O2.toString());
-		assertEquals(user.getTariff(), Tariff._4G);
-		assertEquals(user.getContract(), Contract.PAYM);
-		assertEquals(user.getContractChannel(), ContractChannel.INDIRECT);
+		assertEquals(user.getSegment(), BUSINESS);
+		assertEquals(user.getProvider(), O2);
+		assertEquals(user.getTariff(), _4G);
+		assertEquals(user.getContract(), PAYM);
+		assertEquals(user.getContractChannel(), INDIRECT);
 		
 	}
 

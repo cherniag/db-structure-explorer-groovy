@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.server.job.executor;
 
-import java.util.Map;
-
-import mobi.nowtechnologies.server.persistence.domain.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
+
+import java.util.Map;
 
 public class PendingPaymentExecutor {
 	

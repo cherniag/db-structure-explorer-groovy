@@ -589,4 +589,9 @@ public class UtilsTest {
     public void shouldReturnMajorVersionNumberIsMore(){
         assertFalse(isMajorVersionNumberLessThan(2, "3.9"));
     }
+
+    @Test
+    public void shouldReturnMajorVersionNumberIsLess2(){
+        assertFalse(isMajorVersionNumberLessThan(4, "4.0"));
+    }
 }

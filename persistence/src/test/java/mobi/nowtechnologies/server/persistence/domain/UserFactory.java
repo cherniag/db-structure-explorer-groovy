@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import static mobi.nowtechnologies.server.persistence.domain.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 
 import java.math.BigDecimal;
@@ -8,8 +9,13 @@ import java.util.*;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
+
+import java.math.BigDecimal;
 
 
 public class UserFactory
@@ -54,7 +60,7 @@ public class UserFactory
 		
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = new UserGroup();
-		userGroup.setI((byte)7);
+		userGroup.setId(7);
 		userGroup.setCommunity(community);
 		
 		User testUser= new User();
@@ -89,7 +95,7 @@ public class UserFactory
 		testUser.setPaymentType(UserRegInfo.PaymentType.UNKNOWN);
 		testUser.setPin("pin");
 		testUser.setPaymentStatus(paymentStatus.getId());
-		testUser.setProvider("o2");
+		testUser.setProvider(O2);
 		testUser.setContract(PAYG);
 		testUser.setSegment(CONSUMER);
 		return testUser;

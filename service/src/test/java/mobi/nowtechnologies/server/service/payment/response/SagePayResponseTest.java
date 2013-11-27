@@ -1,18 +1,19 @@
 package mobi.nowtechnologies.server.service.payment.response;
 
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import org.junit.Test;
+
 import javax.servlet.http.HttpServletResponse;
 
-import mobi.nowtechnologies.server.shared.service.PostService.Response;
-
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SagePayResponseTest {
 	
 	@Test
 	public void createExpiredResponse_Successful() {
-		SagePayResponse response = new SagePayResponse(new Response(){
+		SagePayResponse response = new SagePayResponse(new BasicResponse(){
 			@Override public int getStatusCode() {
 				return HttpServletResponse.SC_OK;
 			}

@@ -18,7 +18,7 @@ public class DrmPolicy implements Serializable {
 	private byte i;
 
 	@Column(name="community", insertable=false,updatable=false)
-	private byte communityId;
+	private Integer communityId;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="community")
@@ -56,7 +56,7 @@ public class DrmPolicy implements Serializable {
 		communityId = community.getId();
 	}
 
-	public byte getCommunityId() {
+	public Integer getCommunityId() {
 		return communityId;
 	}
 
