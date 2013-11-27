@@ -1,8 +1,6 @@
 -- IMP-2388 - Some of the drops fail to ingest
 -- http://jira.musicqubed.com/browse/IMP-2388
 
-ALTER TABLE cn_cms.track ADD CONSTRAINT track_U_isrc_productCode_ingestor UNIQUE KEY (ISRC,ProductCode,Ingestor);
-
 CREATE
 TABLE
   duplicated_track LIKE cn_cms.track
@@ -45,6 +43,8 @@ delete from cn_cms.territory where territory.trackId in (select duplicated_track
 delete from cn_cms.resourceFile where resourceFile.trackId in (select duplicated_track.id from cn_cms.duplicated_track);
 
 delete from cn_cms.track where track.id in (select id from cn_cms.duplicated_track);
+
+ALTER TABLE cn_cms.track ADD CONSTRAINT track_U_isrc_productCode_ingestor UNIQUE KEY (ISRC,ProductCode,Ingestor);
 
 -- SQLs for correct removing
 SELECT
