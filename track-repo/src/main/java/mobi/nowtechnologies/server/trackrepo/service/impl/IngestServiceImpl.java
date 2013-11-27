@@ -268,13 +268,13 @@ public class IngestServiceImpl implements IngestService{
 						dataTrack.ISRC = track.getIsrc();
 						dataTrack.productCode = track.getProductCode();
 						data.getData().add(dataTrack);
-						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
+						command.setSize(command.getSize() + 1);
 					} else {
-						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
-                        LOGGER.info("Checking ISRC in cn " + value.isrc);
-						Track track = trackRepository.findByKey((String) value.isrc, (String) value.productCode, parserFactory.getName(drop.getIngestor()));
+						command.setSize(command.getSize() + 1);
+                        LOGGER.info("Checking ISRC in cn [{}]", value.isrc);
+						Track track = trackRepository.findByKey(value.isrc, value.productCode, parserFactory.getName(drop.getIngestor()));
 						if (track == null) { // Try to find old keys for Fuga
-							track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(drop.getIngestor()));
+							track = trackRepository.findByKey(value.isrc, value.isrc, parserFactory.getName(drop.getIngestor()));
 						}
 						if (track == null) {
 							if (!value.hasAnyMediaResources()){
@@ -286,10 +286,10 @@ public class IngestServiceImpl implements IngestService{
 							dataTrack.exists = true;
 						}
 
-						dataTrack.artist = (String) value.artist;
-						dataTrack.title = (String) value.title;
-						dataTrack.ISRC = (String) value.isrc;
-						dataTrack.productCode = (String) value.productCode;
+						dataTrack.artist = value.artist;
+						dataTrack.title = value.title;
+						dataTrack.ISRC = value.isrc;
+						dataTrack.productCode = value.productCode;
 						data.getData().add(dataTrack);
 					}
 				}
@@ -410,7 +410,7 @@ public class IngestServiceImpl implements IngestService{
 			}
 		}
 		if (!found) {
-            LOGGER.info("Adding file " + dropFile.type + " " + dropFile.file);
+            LOGGER.info("Adding file [{}] [{}]", dropFile.type, dropFile.file);
 			AssetFile file = new AssetFile();
 			file.setType(dropFile.type);
 			file.setPath(dropFile.file);
