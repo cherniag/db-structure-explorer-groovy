@@ -18,6 +18,10 @@ public class UrlsProducer {
         for (String line : lines) {
             String trim = line.trim();
 
+            if(trim.isEmpty()) {
+                continue;
+            }
+
             urls.put(line, strategy.createUrl(trim));
         }
 
