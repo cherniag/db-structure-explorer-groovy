@@ -48,6 +48,7 @@ public class ApplyInitPromoControllerTest {
         mobileUser = new User();
 
         doReturn(user).when(userServiceMock).findByNameAndCommunity(user.getUserName(), communityName);
+        doReturn(user).when(userServiceMock).checkCredentials(user.getUserName(), userToken, timestamp, communityName);
         doNothing().when(updateO2UserTaskMock).handleUserUpdate(user);
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO().withUserName(userName).withUserToken(userToken).withUser(mobileUser);
         doReturn(accountCheckDTO).when(userServiceMock).applyInitPromoAndAccCheck(user, token, false);
@@ -57,7 +58,7 @@ public class ApplyInitPromoControllerTest {
         return accountCheckDTO;
     }
 
-    private void verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(String communityName, AccountCheckDTO accountCheckDTO) {
+    private void verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(String communityName, String token, String timestamp, AccountCheckDTO accountCheckDTO) {
         assertNotNull(modelAndView);
 
         Object model = modelAndView.getModelMap().get(MODEL_NAME);
@@ -75,7 +76,8 @@ public class ApplyInitPromoControllerTest {
         AccountCheckDTO actualAccountCheckDTO = (AccountCheckDTO) responseContent[0];
         assertThat(actualAccountCheckDTO, is(accountCheckDTO));
 
-        verify(userServiceMock, times(1)).findByNameAndCommunity(user.getUserName(), communityName);
+        verify(userServiceMock, times(0)).findByNameAndCommunity(user.getUserName(), communityName);
+        verify(userServiceMock, times(1)).checkCredentials(user.getUserName(), token, timestamp, communityName);
         verify(nowTechTokenBasedRememberMeServicesMock, times(1)).getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
         verify(updateO2UserTaskMock, times(0)).handleUserUpdate(user);
     }
@@ -104,6 +106,6 @@ public class ApplyInitPromoControllerTest {
         AccountCheckDTO accountCheckDTO = applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
 
         //then
-        verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(communityName, accountCheckDTO);
+        verifyThatApplyInitPromoWithOutCallingProviderAPIForUserUpdating(communityName, userToken, timestamp, accountCheckDTO);
     }
 }

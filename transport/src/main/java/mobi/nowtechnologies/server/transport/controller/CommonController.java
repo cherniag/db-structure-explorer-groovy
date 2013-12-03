@@ -13,7 +13,6 @@ import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,12 +25,9 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -107,8 +103,8 @@ public abstract class CommonController extends ProfileController implements Appl
 		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
 	}
 	
-	@ExceptionHandler(InvalidPhoneNumberException.class)
-	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+	@ExceptionHandler({InvalidPhoneNumberException.class, ActivationStatusException.class})
+	public ModelAndView handleException(ServiceException exception, HttpServletResponse response) {
 
 		final String localizedDisplayMessage = exception.getLocalizedMessage();
 		final String message = exception.getMessage();
@@ -119,7 +115,7 @@ public abstract class CommonController extends ProfileController implements Appl
 
 		return sendResponse(errorMessage, HttpStatus.OK, response);
 	}
-	
+
 	@ExceptionHandler(ValidationException.class)
 	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
 			

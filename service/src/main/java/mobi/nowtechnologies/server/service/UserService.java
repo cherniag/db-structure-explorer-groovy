@@ -19,10 +19,7 @@ import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -339,6 +336,8 @@ public class UserService {
         User user = findByNameAndCommunity(userName, communityName);
 
         if (user != null) {
+            checkActivationStatus(user);
+
             final String mobile = user.getMobile();
             final int id = user.getId();
             LogUtils.putSpecificMDC(userName, mobile, id);
@@ -365,6 +364,24 @@ public class UserService {
 
         ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredToken(userName, communityName);
         throw new UserCredentialsException(serverMessage);
+    }
+
+    public void checkActivationStatus(User user){
+        ActivationStatus activationStatus = user.getActivationStatus();
+        if(!user.hasAllDetails()){
+            if(activationStatus != REGISTERED){
+                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+REGISTERED+"]");
+                throw new ActivationStatusException(activationStatus, REGISTERED);
+            }
+        } else if(!user.getUserName().equals(user.getMobile())) {
+            if(activationStatus != ENTERED_NUMBER){
+                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+ENTERED_NUMBER+"]");
+                throw new ActivationStatusException(activationStatus, ENTERED_NUMBER);
+            }
+        } else if(activationStatus != ACTIVATED){
+            LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+ACTIVATED+"]");
+            throw new ActivationStatusException(activationStatus, ACTIVATED);
+        }
     }
 
     @Deprecated

@@ -10,8 +10,10 @@ import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.FacebookService.UserCredentions;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -55,7 +57,9 @@ import static java.util.Collections.singletonMap;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
@@ -78,7 +82,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
@@ -1086,33 +1089,33 @@ public class UserServiceTest {
 		Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
 		Mockito.when(communityServiceMock.getCommunityByName(anyString())).thenReturn(community);
 		Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
-		doAnswer(new Answer<AccountCheckDTO>() {
-			@Override
-			public AccountCheckDTO answer(InvocationOnMock invocation) throws Throwable {
-				AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
-				
-				if(notExistUser){
-					assertNull(user.getPotentialPromoCodePromotion());
-					assertNotNull(user.getUserGroup());
-					assertEquals(user.getUserGroup().getName(), userGroup.getName());
-					assertEquals(user.getCountry(), countryId.intValue());
-					assertEquals(user.getIpAddress(), userDeviceRegDetailsDto.getIpAddress());
+		Mockito.doAnswer(new Answer<AccountCheckDTO>() {
+            @Override
+            public AccountCheckDTO answer(InvocationOnMock invocation) throws Throwable {
+                AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
 
-					long curTime = System.currentTimeMillis();
-					assertEquals(user.getFirstDeviceLoginMillis() - user.getFirstDeviceLoginMillis() % 100000, curTime - curTime % 100000);
-				}
+                if (notExistUser) {
+                    assertNull(user.getPotentialPromoCodePromotion());
+                    assertNotNull(user.getUserGroup());
+                    assertEquals(user.getUserGroup().getName(), userGroup.getName());
+                    assertEquals(user.getCountry(), countryId.intValue());
+                    assertEquals(user.getIpAddress(), userDeviceRegDetailsDto.getIpAddress());
 
-				accountCheckDTO.userName = user.getUserName();
-				accountCheckDTO.userToken = user.getToken();
-				accountCheckDTO.deviceType = user.getDeviceType().getName();
-				accountCheckDTO.operator = user.getOperator();
-				accountCheckDTO.status = user.getStatus().getName();
-				accountCheckDTO.deviceUID = user.getDeviceUID();
-				accountCheckDTO.activation = ActivationStatus.REGISTERED;
+                    long curTime = System.currentTimeMillis();
+                    assertEquals(user.getFirstDeviceLoginMillis() - user.getFirstDeviceLoginMillis() % 100000, curTime - curTime % 100000);
+                }
 
-				return accountCheckDTO;
-			}
-		}).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
+                accountCheckDTO.userName = user.getUserName();
+                accountCheckDTO.userToken = user.getToken();
+                accountCheckDTO.deviceType = user.getDeviceType().getName();
+                accountCheckDTO.operator = user.getOperator();
+                accountCheckDTO.status = user.getStatus().getName();
+                accountCheckDTO.deviceUID = user.getDeviceUID();
+                accountCheckDTO.activation = ActivationStatus.REGISTERED;
+
+                return accountCheckDTO;
+            }
+        }).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(anyInt(), anyString(), anyString(), anyString());
 		PowerMockito.doReturn(notExistUser ? null : user).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
 		whenNew(User.class).withNoArguments().thenReturn(user);
         PowerMockito.doAnswer(new Answer<Object>() {
@@ -3598,7 +3601,7 @@ public class UserServiceTest {
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                userServiceSpy.populateSubscriberData(user, (O2SubscriberData)invocationOnMock.getArguments()[0]);
+                userServiceSpy.populateSubscriberData(user, (O2SubscriberData) invocationOnMock.getArguments()[0]);
                 return user;
             }
         }).when(o2UserDetailsUpdaterMock).process(any(O2SubscriberData.class));
@@ -3897,6 +3900,116 @@ public class UserServiceTest {
         assertThat(actualUser, is((User) null));
 
         verify(userRepositoryMock, times(1)).findUserTree(userId);
+    }
+
+    @Test(expected = ActivationStatusException.class)
+    public void shouldThrowCredentialExeption_OnCheckActivationStatus_BecauseUserIsNotRegistered(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(ACTIVATED);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(false);
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+    }
+
+    @Test(expected = ActivationStatusException.class)
+    public void shouldThrowCredentialExeption_OnCheckActivationStatus_BecauseUserIsNotPhoneNumber(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(ACTIVATED);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.getUserName()).thenReturn("dfsdfasffasfafsdfsdf");
+        PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+        verify(user, times(1)).getUserName();
+        verify(user, times(1)).getMobile();
+    }
+
+    @Test(expected = ActivationStatusException.class)
+    public void shouldThrowCredentialExeption_OnCheckActivationStatus_BecauseUserIsNotActivated(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(ENTERED_NUMBER);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.getUserName()).thenReturn("+4400000000000");
+        PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+        verify(user, times(1)).getUserName();
+        verify(user, times(1)).getMobile();
+    }
+
+    @Test
+    public void shouldReturn_OnCheckActivationStatus_BecauseUserIsActivated(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(ACTIVATED);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.getUserName()).thenReturn("+4400000000000");
+        PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+        verify(user, times(1)).getUserName();
+        verify(user, times(1)).getMobile();
+    }
+
+    @Test
+    public void shouldReturn_OnCheckActivationStatus_BecauseUserIsEnteredPhoneNumber(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(ENTERED_NUMBER);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.getUserName()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
+        PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+        verify(user, times(1)).getUserName();
+        verify(user, times(1)).getMobile();
+    }
+
+    @Test
+    public void shouldReturn_OnCheckActivationStatus_BecauseUserIsRegistered(){
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(REGISTERED);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(false);
+
+        userServiceSpy.checkActivationStatus(user);
+
+        verify(user, times(1)).getActivationStatus();
+        verify(user, times(1)).hasAllDetails();
+        verify(user, times(0)).getUserName();
+        verify(user, times(0)).getMobile();
+    }
+
+    @Test(expected = UserCredentialsException.class)
+    public void shouldThrow_OnCheckCredentials_BecauseUserInvalid(){
+        String userName = "";
+        String token = "";
+        String timestamp = "";
+        String communityName = "";
+
+        User user = Mockito.mock(User.class);
+        PowerMockito.when(user.getActivationStatus()).thenReturn(REGISTERED);
+        PowerMockito.when(user.hasAllDetails()).thenReturn(false);
+
+        PowerMockito.doReturn(user).when(userServiceSpy).findByNameAndCommunity(anyString(), anyString());
+        PowerMockito.doNothing().when(userServiceSpy).checkActivationStatus(eq(user));
+
+        userServiceSpy.checkCredentials(userName, token, timestamp, communityName);
+
+        verify(userServiceSpy, times(1)).findByNameAndCommunity(anyString(), anyString());
+        verify(userServiceSpy, times(1)).checkActivationStatus(eq(user));
     }
 
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {

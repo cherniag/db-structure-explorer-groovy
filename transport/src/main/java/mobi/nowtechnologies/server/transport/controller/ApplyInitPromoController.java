@@ -3,20 +3,13 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -85,9 +78,7 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            user = userService.findByNameAndCommunity(userName, communityName);
-
-            if (isNull(user)) throw new UserCredentialsException("Bad user credentials");
+            user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
             AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, token, isMajorApiVersionNumberLessThan4);
 
