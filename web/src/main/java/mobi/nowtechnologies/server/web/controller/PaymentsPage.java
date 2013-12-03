@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import java.util.List;
-
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
+
+import java.util.List;
 
 /**
  * Bean exposed on the payments page
@@ -26,7 +27,6 @@ public class PaymentsPage {
 	private boolean userIsOptedInToVideo;
 	private boolean appleIOSAndNotBusiness;
 	private PaymentPageData paymentPageData;
-	private boolean disablePageIfUserHasPendingPayment;
 
 	public String getMobilePhoneNumber() {
 		return mobilePhoneNumber;
@@ -43,6 +43,10 @@ public class PaymentsPage {
 	public void setPaymentPolicies(List<PaymentPolicyDto> paymentPolicies) {
 		this.paymentPolicies = paymentPolicies;
 	}
+
+    public boolean isAwaitingPaymentStatus() {
+        return paymentDetails != null && paymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.AWAITING;
+    }
 
 	public boolean isConsumerUser() {
 		return consumerUser;
@@ -110,15 +114,6 @@ public class PaymentsPage {
 
 	public void setPaymentPageData(PaymentPageData paymentPageData) {
 		this.paymentPageData = paymentPageData;
-	}
-
-	public boolean isDisablePageIfUserHasPendingPayment() {
-		return disablePageIfUserHasPendingPayment;
-	}
-
-	public void setDisablePageIfUserHasPendingPayment(
-			boolean disablePageIfUserHasPendingPayment) {
-		this.disablePageIfUserHasPendingPayment = disablePageIfUserHasPendingPayment;
 	}
 
 	public String getPaymentDetailsType() {

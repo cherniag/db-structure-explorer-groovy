@@ -47,7 +47,8 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 		"classpath:META-INF/soap.xml",
 		"classpath:META-INF/dao-test.xml",
 		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
+		"classpath:META-INF/shared.xml",
+        "classpath:META-INF/smpp.xml"}, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
@@ -244,7 +245,7 @@ public class PhoneNumberControllerTestIT {
 		
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
-		
+
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
 
         User user = vfUserService.findByNameAndCommunity(userName, communityName);
@@ -256,7 +257,7 @@ public class PhoneNumberControllerTestIT {
         MOMessage message = new MOMessage("5804", "642102247311", "OnNet", Message.MessageEncodings.ENC8BIT);
         processorContainer.processInboundMessage(deliverSm, message);
 
-        verify(vfGatewayServiceSpy, times(1)).send(eq("+642102247311"), anyString(), eq("4003"));
+        Thread.sleep(1000);
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
@@ -271,6 +272,8 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<provider>vf</provider>"));
         assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+
+        verify(vfGatewayServiceSpy, times(1)).send(eq("+642102247311"), anyString(), eq("4003"));
     }
 
     @Test

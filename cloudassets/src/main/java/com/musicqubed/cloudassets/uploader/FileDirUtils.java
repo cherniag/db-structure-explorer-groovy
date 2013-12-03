@@ -1,16 +1,11 @@
 package com.musicqubed.cloudassets.uploader;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.*;
 
 public class FileDirUtils {
 	private static  final Logger LOGGER = LoggerFactory.getLogger(FileDirUtils.class);

@@ -81,9 +81,10 @@ public class PaymentsController extends CommonController {
         // the following check was added to show a static page instead of the
         // vf payment options. Once the options are enabled, the following
         // lines can be removed
-        String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage", null, locale);
-        if (/*user.isVFNZUser()*/user.isVFNZCommunityUser() && "true".equalsIgnoreCase(disableVFPaymentOptions)) {
+        String disableVFPaymentOptions = messageSource.getMessage("pays.notimplemented.dispalypage.for.providers", null, locale);
+        if (user.isVFNZCommunityUser() && displayHoldingPageForProvider(user.getProvider(), disableVFPaymentOptions)) {
         	// for vf users we display a not implemented page until the vf billing pages are done
+        	LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
         
@@ -95,8 +96,6 @@ public class PaymentsController extends CommonController {
         paymentsPage.setUserCanGetVideo( user.is4G() );
         paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
         paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
-        paymentsPage.setDisablePageIfUserHasPendingPayment( true );
-        user.hasPendingPayment();
 
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
@@ -112,6 +111,20 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentsPage", paymentsPage);
 
         return mav;
+    }
+    
+    private boolean displayHoldingPageForProvider(ProviderType provider, String message) {
+    	if ( provider == null || message == null || message.trim().isEmpty() ) {
+    		return false;
+    	}
+    	String[] allProvidersFromMessage = message.split(",");
+    	for ( String providerToSkip : allProvidersFromMessage ) {
+    		if ( providerToSkip != null && providerToSkip.trim().equalsIgnoreCase(provider.getKey()) ) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     @RequestMapping(value = {ACTIVATE_PAYMENT_DETAILS_BY_PAYMENT}, method = RequestMethod.POST)

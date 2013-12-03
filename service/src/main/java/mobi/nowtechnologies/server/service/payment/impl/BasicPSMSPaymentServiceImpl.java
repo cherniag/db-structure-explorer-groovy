@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
+
 /**
  * User: Alexsandr_Kolpakov
  * Date: 10/15/13
@@ -48,7 +50,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
                 null, null));
 
         String message = smsNotify ? messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms."+paymentPolicy.getPaymentType(),
-                new Object[]{community.getDisplayName(), pendingPayment.getAmount(), pendingPayment.getSubweeks(), paymentPolicy.getShortCode()}, null) : null;
+                new Object[]{community.getDisplayName(), preFormatCurrency(pendingPayment.getAmount()), pendingPayment.getSubweeks(), paymentPolicy.getShortCode()}, null) : null;
 
         PaymentSystemResponse response = makePayment(pendingPayment, message);
 

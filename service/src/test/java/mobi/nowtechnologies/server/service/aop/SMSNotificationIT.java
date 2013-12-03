@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
+import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
@@ -96,15 +97,8 @@ public class SMSNotificationIT {
 	
 	private CommunityResourceBundleMessageSource mockMessageSource;
 	
-	private BasicResponse successfulResponse = new BasicResponse() {
-		@Override
-		public int getStatusCode() {
-			return HttpServletResponse.SC_OK;
-		}
-		@Override public String getMessage() {
-			return "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164";
-		}
-	};
+	private BasicResponse successfulResponse = PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+            "TOKEN=EC%2d5YJ748178G052312W&TIMESTAMP=2011%2d12%2d23T19%3a40%3a07Z&CORRELATIONID=80d5883fa4b48&ACK=Success&VERSION=80%2e0&BUILD=2271164");
 
 	private O2ProviderService mockO2ClientService;
 	
@@ -162,7 +156,7 @@ public class SMSNotificationIT {
 		Mockito.doReturn(pendingPayment).when(entityService).updateEntity(any(PendingPayment.class));
 		Mockito.doReturn(null).when(mockMigService).makeFreeSMSRequest(anyString(), anyString(), anyString());
 		Mockito.doReturn(user).when(mockUserService).findById(anyInt());
-		Mockito.doReturn(response).when(mockPaypalHttpService).makeReferenceTransactionRequest(anyString(), anyString(), any(BigDecimal.class));
+		Mockito.doReturn(response).when(mockPaypalHttpService).makeReferenceTransactionRequest(anyString(), anyString(), any(BigDecimal.class), anyString());
 		
 		payPalPaymentService.startPayment(pendingPayment);
 		
