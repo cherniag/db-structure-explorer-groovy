@@ -17,14 +17,6 @@
 		<property name="fileService" ref="service.FileService" />
 	</bean>
 
-	<bean id="transport.EntityController" class="mobi.nowtechnologies.server.transport.controller.EntityController" parent="transport.CommonController">
-		<property name="deviceService" ref="service.DeviceService" />
-		<property name="drmService" ref="service.DrmService" />
-		<property name="mediaService" ref="service.MediaService" />
-		<property name="promoService" ref="service.PromotionService" />
-		<property name="facebookService" ref="service.FacebookService" />
-	</bean>
-	
 	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" parent="transport.CommonController">
 		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 		<property name="chartService" ref="service.ChartService" />
@@ -42,10 +34,6 @@
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" parent="transport.CommonController">
 		<property name="chartService" ref="service.ChartService" />
 		<property name="throttlingService" ref="throttlingService" />
-	</bean>
-	
-	<bean class="mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController" parent="transport.CommonController">
-		<property name="drmService" ref="service.DrmService" />
 	</bean>
 	
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" parent="transport.CommonController">

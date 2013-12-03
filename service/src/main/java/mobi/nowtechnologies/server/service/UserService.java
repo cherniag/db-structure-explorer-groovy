@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -43,9 +42,7 @@ import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.ActionReason;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -62,7 +59,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -70,9 +66,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
-import static mobi.nowtechnologies.server.persistence.domain.Community.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
@@ -84,7 +78,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
-import static mobi.nowtechnologies.server.shared.util.EmailValidator.*;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -1825,7 +1819,7 @@ public class UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void saveWeeklyPayment(User user) throws Exception {
         if (user == null)
-            throw new ServiceException("The parameter user is null");
+            throw new ServiceException("T parameter user is null");
 
         final int subBalance = user.getSubBalance();
         if (subBalance <= 0) {
