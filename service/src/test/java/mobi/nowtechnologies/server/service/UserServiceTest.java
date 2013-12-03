@@ -3907,6 +3907,8 @@ public class UserServiceTest {
         User user = Mockito.mock(User.class);
         PowerMockito.when(user.getActivationStatus()).thenReturn(ACTIVATED);
         PowerMockito.when(user.hasAllDetails()).thenReturn(false);
+        PowerMockito.when(user.getUserName()).thenReturn("dfsdfasffasfafsdfsdf");
+        PowerMockito.when(user.getDeviceUID()).thenReturn("dfsdfasffasfafsdfsdf");
 
         userServiceSpy.checkActivationStatus(user);
 
@@ -3982,13 +3984,15 @@ public class UserServiceTest {
     public void shouldReturn_OnCheckActivationStatus_BecauseUserIsRegistered(){
         User user = Mockito.mock(User.class);
         PowerMockito.when(user.getActivationStatus()).thenReturn(REGISTERED);
+        PowerMockito.when(user.getUserName()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
+        PowerMockito.when(user.getDeviceUID()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
         PowerMockito.when(user.hasAllDetails()).thenReturn(false);
 
         userServiceSpy.checkActivationStatus(user);
 
         verify(user, times(1)).getActivationStatus();
         verify(user, times(1)).hasAllDetails();
-        verify(user, times(0)).getUserName();
+        verify(user, times(1)).getUserName();
         verify(user, times(0)).getMobile();
     }
 

@@ -107,7 +107,7 @@ public class AutoOptInControllerIT {
         assertEquals("IOS", accountCheckDTO.deviceType);
         assertNotNull(accountCheckDTO.rememberMeToken);
         assertEquals("O2_PSMS", accountCheckDTO.paymentType);
-        assertEquals("+447111111111", accountCheckDTO.phoneNumber);
+        assertEquals("+447111111114", accountCheckDTO.phoneNumber);
         assertEquals(0, accountCheckDTO.subBalance);
         assertEquals(null, accountCheckDTO.paymentStatus);
         assertEquals(new Integer(1), accountCheckDTO.operator);
@@ -122,12 +122,12 @@ public class AutoOptInControllerIT {
         assertEquals(1317300123, accountCheckDTO.newsTimestamp);
         assertEquals(10, accountCheckDTO.newsItems);
         assertEquals(null, accountCheckDTO.promotionLabel);
-        assertEquals(false, accountCheckDTO.fullyRegistred);
+        assertEquals(true, accountCheckDTO.fullyRegistred);
         assertEquals(2, accountCheckDTO.promotedWeeks);
         assertEquals(NONE, accountCheckDTO.oAuthProvider);
         assertEquals(true, accountCheckDTO.hasPotentialPromoCodePromotion);
         assertEquals(false, accountCheckDTO.hasOffers);
-        assertEquals(null, accountCheckDTO.activation);
+        assertEquals(ActivationStatus.ACTIVATED, accountCheckDTO.activation);
         assertEquals("com.musicqubed.o2.autorenew.test", accountCheckDTO.appStoreProductId);
         assertEquals(O2.getKey(), accountCheckDTO.provider);
         assertEquals(PAYM, accountCheckDTO.contract);

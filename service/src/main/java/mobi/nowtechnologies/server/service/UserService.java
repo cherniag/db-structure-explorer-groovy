@@ -368,7 +368,7 @@ public class UserService {
 
     public void checkActivationStatus(User user){
         ActivationStatus activationStatus = user.getActivationStatus();
-        if(!user.hasAllDetails()){
+        if(!user.hasAllDetails() && user.getUserName().equals(user.getDeviceUID())){
             if(activationStatus != REGISTERED){
                 LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+REGISTERED+"]");
                 throw new ActivationStatusException(activationStatus, REGISTERED);

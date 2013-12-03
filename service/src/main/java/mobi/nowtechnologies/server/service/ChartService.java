@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
@@ -144,7 +143,7 @@ public class ChartService {
 	public List<ChartDetail> getLockedChartItems(String communityName, User user) {
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		
-		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod()|| user.isOnWhiteListedVideoAudioFreeTrial())
+		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
 			return Collections.EMPTY_LIST;
 		
 		List<Chart> charts = chartRepository.getByCommunityName(communityName);

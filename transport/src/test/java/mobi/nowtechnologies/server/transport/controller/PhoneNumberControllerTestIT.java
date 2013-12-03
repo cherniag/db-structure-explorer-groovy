@@ -104,7 +104,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_O2_Success() throws Exception {
-        String userName = "+447111111113";
+        String userName = "b88106713409e92622461a876abcd74a444";
         String phone = "+447111111113";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -156,7 +156,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_Promoted_O2_Success() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String phone = "+447111111114";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -208,7 +208,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
-    	String userName = "+642102247311";
+    	String userName = "b88106713409e92622461a876abcd74b";
     	String phone = "+642102247311";
 		String apiVersion = "5.0";
 		String communityName = "vf_nz";
@@ -278,7 +278,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_NON_VF_Success() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+64279000456";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
