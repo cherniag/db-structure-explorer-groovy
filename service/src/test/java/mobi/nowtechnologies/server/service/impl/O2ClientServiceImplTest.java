@@ -154,6 +154,40 @@ public class O2ClientServiceImplTest {
         verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testValidatePhoneNumber_PromotedWithParenthesis_Success()
+            throws Exception {
+
+        String phoneNumber = "(078)70111111";
+        String expectedPhoneNumber = "+447870111111";
+
+        DOMSource response = new DOMSource();
+        DocumentImpl root = new DocumentImpl();
+        ElementImpl user = new ElementImpl(root, "user");
+        ElementImpl msisdn = new ElementImpl(root, "msisdn");
+        TextImpl number = new TextImpl(root, expectedPhoneNumber);
+        msisdn.appendChild(number);
+        user.appendChild(msisdn);
+        root.appendChild(user);
+        response.setNode(root);
+
+        when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
+        when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
+        when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
+        when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
+
+        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
+
+        //verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
+
+        assertNotNull(result);
+        assertEquals(expectedPhoneNumber, result.getPhoneNumber());
+
+        verify(mockUserLogRepository).save(any(UserLog.class));
+        verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+    }
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testValidatePhoneNumber_InvalidPhoneNumber_Failure()
