@@ -390,7 +390,7 @@ public class UserRepositoryIT {
 		List<Integer> actualUsers = userRepository.getUsersForUpdate(epochMillis, o2UserGroup.getId());
 		
 		assertNotNull(actualUsers);
-		assertEquals(2, actualUsers.size());		
+		assertEquals(3, actualUsers.size());
 	}
 	
 	@Test
