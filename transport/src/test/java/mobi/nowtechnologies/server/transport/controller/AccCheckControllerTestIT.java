@@ -2,14 +2,19 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +28,8 @@ import org.springframework.test.web.server.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -55,9 +60,11 @@ public class AccCheckControllerTestIT {
     @Qualifier("service.UserService")
     private UserService userService;
 
+    @Resource
+    private UserRepository userRepository;
+
     @Autowired
     private ChartRepository chartRepository;
-
     @Autowired
     private ChartDetailRepository chartDetailRepository;
 
@@ -207,8 +214,33 @@ public class AccCheckControllerTestIT {
 
 
     @Test
-    public void testAccountCheckForITunesClientWhithDontHAVELockedTracks() throws Exception {
-        String userName = "+447111111118";
+    public void testAccountCheckForITunesClientWhichDoesntHaveLockedTracks() throws Exception {
+        final String userName = "+447111111118";
+
+        //given
+        User entity = UserFactory.createUser()
+                .withSegment(SegmentType.CONSUMER)
+                .withContract(Contract.PAYM)
+                .withProvider(ProviderType.O2)
+                .withNextSubPayment(new Date(1000L * 1988143200))
+                .withUserName(userName)
+                .withDeviceUID("b88106713409e92822461a876abcd74c")
+                .withDeviceUID("d")
+                .withMobile("+447111111112")
+                .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId()));
+        entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
+        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte)10));
+        entity.setDevice("");
+        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte)5));
+        entity.setDeviceString("IOS");
+        entity.setLastDeviceLogin(1893448800);
+        entity.setLastWebLogin(1893448800);
+        entity.setTempToken("f701af8d07e5c95d3f5cf3bd9a62344d");
+        entity.setOperator(1);
+        entity.setLastSubscribedPaymentSystem("iTunesSubscription");
+
+        userRepository.save(entity);
+
         String apiVersion = "3.8";
         String communityName = "o2";
         String communityUrl = "o2";
@@ -226,6 +258,8 @@ public class AccCheckControllerTestIT {
         ).andExpect(status().isOk()).andDo(print()).
                 andExpect(xpath("/response/user/lockedTrack/media").nodeCount(0));
     }
+
+
 
 
 
