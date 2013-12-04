@@ -50,7 +50,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
             return result;
         } catch (Exception e) {
             LOGGER.error("NZ VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
-            throw new InvalidPhoneNumberException();
+            throw new InvalidPhoneNumberException(phoneNumber);
         } finally {
             LOGGER.info("NZ VALIDATE_PHONE_NUMBER finished for[{}] with [{}]", new Object[]{phoneNumber, result});
         }

@@ -120,74 +120,6 @@ public class O2ClientServiceImplTest {
 		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testValidatePhoneNumber_PromotedWithHyphen_Success()
-            throws Exception {
-
-        String phoneNumber = "078-701-11111";
-        String expectedPhoneNumber = "+447870111111";
-
-        DOMSource response = new DOMSource();
-        DocumentImpl root = new DocumentImpl();
-        ElementImpl user = new ElementImpl(root, "user");
-        ElementImpl msisdn = new ElementImpl(root, "msisdn");
-        TextImpl number = new TextImpl(root, expectedPhoneNumber);
-        msisdn.appendChild(number);
-        user.appendChild(msisdn);
-        root.appendChild(user);
-        response.setNode(root);
-
-        when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
-        when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
-        when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
-
-        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
-
-        //verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
-
-        assertNotNull(result);
-        assertEquals(expectedPhoneNumber, result.getPhoneNumber());
-
-        verify(mockUserLogRepository).save(any(UserLog.class));
-        verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testValidatePhoneNumber_PromotedWithParenthesis_Success()
-            throws Exception {
-
-        String phoneNumber = "(078)70111111";
-        String expectedPhoneNumber = "+447870111111";
-
-        DOMSource response = new DOMSource();
-        DocumentImpl root = new DocumentImpl();
-        ElementImpl user = new ElementImpl(root, "user");
-        ElementImpl msisdn = new ElementImpl(root, "msisdn");
-        TextImpl number = new TextImpl(root, expectedPhoneNumber);
-        msisdn.appendChild(number);
-        user.appendChild(msisdn);
-        root.appendChild(user);
-        response.setNode(root);
-
-        when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-        when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenReturn(response);
-        when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
-        when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
-
-        PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
-
-        //verify(mockRestTemplate, times(1)).postForObject(anyString(), any(Object.class), any(Class.class));
-
-        assertNotNull(result);
-        assertEquals(expectedPhoneNumber, result.getPhoneNumber());
-
-        verify(mockUserLogRepository).save(any(UserLog.class));
-        verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
-    }
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testValidatePhoneNumber_InvalidPhoneNumber_Failure()
@@ -196,7 +128,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "0787011fff1111";
 
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException(phoneNumber));
 		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
@@ -208,8 +140,8 @@ public class O2ClientServiceImplTest {
 				fail();
 		}
 		
-		verify(mockUserLogRepository, times(1)).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+		verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
+		verify(mockUserLogRepository, times(0)).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -220,7 +152,7 @@ public class O2ClientServiceImplTest {
 		String phoneNumber = "0787011";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException(phoneNumber));
 		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(1L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
@@ -232,8 +164,8 @@ public class O2ClientServiceImplTest {
 				fail();
 		}
 		
-		verify(mockUserLogRepository, times(1)).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+		verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
+		verify(mockUserLogRepository, times(0)).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -241,10 +173,10 @@ public class O2ClientServiceImplTest {
 	public void testValidatePhoneNumber_LimitPhoneNumber_Failure()
 			throws Exception {
 		
-		String phoneNumber = "0787011fff1111";
+		String phoneNumber = "07870111111";
 		
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
-		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException());
+		when(mockRestTemplate.postForObject(anyString(), any(Object.class), any(Class.class))).thenThrow(new InvalidPhoneNumberException(phoneNumber));
 		when(mockUserLogRepository.countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong())).thenReturn(10L);
 		when(mockUserLogRepository.save(any(UserLog.class))).thenReturn(null);
 		
@@ -257,7 +189,7 @@ public class O2ClientServiceImplTest {
 		}
 		
 		verify(mockUserLogRepository, times(0)).save(any(UserLog.class));
-		verify(mockUserLogRepository).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
+		verify(mockUserLogRepository, times(1)).countByPhoneNumberAndDay(anyString(), any(UserLogType.class), anyLong());
 	}
 	
 	@Test

@@ -1,37 +1,26 @@
 package mobi.nowtechnologies.server.service.validator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * @author Alexsandr_Kolpakov
  * 
  */
-public class NZCellNumberValidator {
-    private static final String PHONE_PATTERN = "(00642|\\+642|02|2)([0-9]{7,9})";
-    private static final String PHONE_DELIMS = "[\\-\\_\\(\\)\\s]";
-    private static final String NZ_NATIONAL_MOBILE_CODE = "+642";
+public class NZCellNumberValidator extends AbstractCellNumberValidator{
+    private static final String NZ_CELL_PHONE_PATTERN = "2[0-9]{7,9}";
+    private static final String NZ_LOCAL_CODE_PATTERN = "0";
+    private static final String NZ_NATIONAL_CODE = "64";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NZCellNumberValidator.class);
+    @Override
+    protected String getLocalPhonePattern() {
+        return NZ_CELL_PHONE_PATTERN;
+    }
 
-    private Pattern pattern = Pattern.compile(PHONE_PATTERN);
+    @Override
+    protected String getLocalCodePattern() {
+        return NZ_LOCAL_CODE_PATTERN;
+    }
 
-	public String validate(String target) {
-		LOGGER.debug("input parameters target, errors: [{}], [{}]", target);
-        String phoneNUmber = target.replaceAll(PHONE_DELIMS,"");
-        Matcher matcher = pattern.matcher(phoneNUmber);
-
-        if(!matcher.matches()){
-            phoneNUmber = null;
-        } else {
-            phoneNUmber = NZ_NATIONAL_MOBILE_CODE + matcher.group(2);
-        }
-
-        LOGGER.debug("Output parameter hasErrors=[{}], phoneNumber=[{}]", new Object[]{phoneNUmber});
-		
-		return phoneNUmber;
-	}
+    @Override
+    protected String getNationalCode() {
+        return NZ_NATIONAL_CODE;
+    }
 }
