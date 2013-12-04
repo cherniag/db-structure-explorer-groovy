@@ -204,4 +204,29 @@ public class AccCheckControllerTestIT {
                 andExpect(xpath("/response/user/canGetVideo").booleanValue(false));
 
     }
+
+
+    @Test
+    public void testAccountCheckForITunesClientWhithDontHAVELockedTracks() throws Exception {
+        String userName = "+447111111118";
+        String apiVersion = "3.8";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk()).andDo(print()).
+                andExpect(xpath("/response/user/lockedTrack/media").nodeCount(0));
+    }
+
+
+
 }
