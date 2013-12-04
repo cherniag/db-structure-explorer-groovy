@@ -188,7 +188,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 		
 		Long curDay = new Long(Utils.getEpochDays());
-		String phoneNumberCode = phoneNumber.replaceAll("\\s", "");
+		String phoneNumberCode = phoneNumber.replaceAll("[\\s-]", "");
 		phoneNumberCode = phoneNumberCode.length() >= 10 ? phoneNumberCode.substring(phoneNumberCode.length()-10) : phoneNumberCode;
 		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
 		UserLog userLog = null;
