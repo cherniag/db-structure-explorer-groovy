@@ -95,10 +95,6 @@ public class Utils {
 		return 10000000 + new Random().nextInt(9999999);
 	}
 
-	public static Integer generateRandomPIN() {
-		return 7000 + new Random().nextInt(999);
-	}
-
     public static String generateRandom4DigitsPIN() {
         return RandomStringUtils.randomNumeric(PIN_LENGTH);
     }

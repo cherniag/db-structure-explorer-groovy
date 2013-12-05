@@ -59,22 +59,6 @@ public class UtilsTest {
 
 	@Test
 	@Ignore
-	public void testGenerateRandomPIN_1() throws Exception {
-
-		Integer result = generateRandomPIN();
-
-		assertNotNull(result);
-		assertEquals("7113", result.toString());
-		assertEquals((byte) -55, result.byteValue());
-		assertEquals(7113.0, result.doubleValue(), 1.0);
-		assertEquals(7113.0f, result.floatValue(), 1.0f);
-		assertEquals(7113, result.intValue());
-		assertEquals(7113L, result.longValue());
-		assertEquals((short) 7113, result.shortValue());
-	}
-
-	@Test
-	@Ignore
 	public void testGetBigRandomInt_1() throws Exception {
 
 		Integer result = getBigRandomInt();
