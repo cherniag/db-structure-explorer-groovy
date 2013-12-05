@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -614,5 +616,15 @@ public class UtilsTest {
 
         //then
         assertThat(amountString, is("6"));
+    }
+
+    @Test
+    public void testGenerateRandom4DigitsPIN() {
+        Set<String> codes = new HashSet<String>(7);
+        for (int i = 0; i < 7; i++) {
+            codes.add(Utils.generateRandom4DigitsPIN());
+        }
+        // if strings are all the same then hashset will contain only 1 string
+        assertTrue("There are the same codes", codes.size() > 1);
     }
 }

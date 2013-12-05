@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
@@ -32,6 +33,7 @@ public class Utils {
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
     public static final int DAY_MILLISECONDS = 86400000;
+    public static final int PIN_LENGTH = 4;
 
     private static Pattern MAJOR_VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\..*");
 
@@ -96,6 +98,10 @@ public class Utils {
 	public static Integer generateRandomPIN() {
 		return 7000 + new Random().nextInt(999);
 	}
+
+    public static String generateRandom4DigitsPIN() {
+        return RandomStringUtils.randomNumeric(PIN_LENGTH);
+    }
 
 	public static Date getDateFromInt(int intDate) {
 		return new Date(((long) intDate) * 1000L);
