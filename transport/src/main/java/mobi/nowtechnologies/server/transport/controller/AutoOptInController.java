@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
@@ -16,6 +15,11 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class AutoOptInController extends CommonController {
+    private AccCheckController accCheckController;
+
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN",
@@ -38,14 +42,15 @@ public class AutoOptInController extends CommonController {
 
             LOGGER.info("command processing started");
 
-            final AccountCheckDTO accountCheckDTO = userService.autoOptInAndAccountCheck(userName, userToken, timestamp, deviceUID, otac, communityUri);
+            user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
-            user = (User) accountCheckDTO.user;
+            user = userService.autoOptIn(user, otac);
 
-            final Object[] objects = new Object[] { accountCheckDTO };
-            precessRememberMeToken(objects);
+            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
 
-            return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objects));
+            accountCheckDTO.withHasPotentialPromoCodePromotion(true);
+
+            return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {
             ex = e;
             throw e;

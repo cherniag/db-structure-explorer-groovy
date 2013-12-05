@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardP
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -191,7 +190,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
-		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+		List<ChartDetail> result = fixture.getLockedChartItems(user);
 		
 		assertNotNull(result);
 		assertEquals(1, result.size());
@@ -217,7 +216,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
-		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+		List<ChartDetail> result = fixture.getLockedChartItems(user);
 		
 		assertNotNull(result);
 		assertEquals(0, result.size());
@@ -242,7 +241,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
-		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+		List<ChartDetail> result = fixture.getLockedChartItems(user);
 		
 		assertNotNull(result);
 		assertEquals(0, result.size());
@@ -268,7 +267,7 @@ public class ChartServiceTest {
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
-		List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+		List<ChartDetail> result = fixture.getLockedChartItems(user);
 		
 		assertNotNull(result);
 		assertEquals(0, result.size());
@@ -281,14 +280,15 @@ public class ChartServiceTest {
     public void shouldReturnEmptyListForUserOnWhiteListedVideoAudioFreeTrial()
             throws Exception {
         //given
-        User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
         String communityName = "chartsnow";
+        User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
+        user.setUserGroup(new UserGroup().withCommunity(new Community().withName(communityName)));
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart> singletonList(new Chart()));
         when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<String>emptyList());
 
         //when
-        List<ChartDetail> result = fixture.getLockedChartItems(communityName, user);
+        List<ChartDetail> result = fixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(Collections.<ChartDetail>emptyList(), result);
@@ -460,11 +460,11 @@ public class ChartServiceTest {
 		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(6), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
-		Object[] result = fixture.processGetChartCommand(testUser, communityName, true, true);
+		ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true);
 
 		assertNotNull(result);
 		
-		PlaylistDto[] playlists = ((ChartDto)result[1]).getPlaylistDtos();
+		PlaylistDto[] playlists = ((ChartDto)result).getPlaylistDtos();
 		assertNotNull(playlists);
 		assertEquals(4, playlists.length);
 		assertEquals(basicChart1.getTitle(), playlists[0].getPlaylistTitle());
@@ -480,7 +480,7 @@ public class ChartServiceTest {
 		assertEquals(topChart.getChart().getI().byteValue(), playlists[1].getId().byteValue());
 		assertEquals(otherChart2.getChart().getI().byteValue(), playlists[2].getId().byteValue());
 
-		ChartDetailDto[] list = ((ChartDto)result[1]).getChartDetailDtos();
+		ChartDetailDto[] list = ((ChartDto)result).getChartDetailDtos();
 		assertNotNull(list);
 		assertEquals(4, list.length);
 		assertEquals(ChartDetailDto.class, list[0].getClass());
@@ -791,7 +791,6 @@ public class ChartServiceTest {
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 
         PowerMockito.mockStatic(UserAsm.class);
-        when(mockUserService.getAccountCheckDTO(eq(testUser), any(List.class))).thenReturn(new AccountCheckDTO().withUser(testUser));
 
 		fixture = spy(new ChartService());
 		fixture.setChartRepository(mockChartRepository);	

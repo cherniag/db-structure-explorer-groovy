@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.PhoneActivationDto;
-import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -46,7 +45,7 @@ public class PhoneNumberController extends CommonController {
 			
 			String redeemServerO2Url = userService.getRedeemServerO2Url(user);
 			
-			return new ModelAndView(view, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url)}));
+			return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), redeemServerO2Url));
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -82,7 +81,7 @@ public class PhoneNumberController extends CommonController {
             if(phone != null)
                 userService.populateSubscriberData(user);
 
-            return new ModelAndView(defaultViewName, Response.class.toString(), new Response(new Object[]{new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null)}));
+            return buildModelAndView(new PhoneActivationDto(user.getActivationStatus(), user.getMobile(), null));
         }catch(Exception e){
             ex = e;
             throw e;

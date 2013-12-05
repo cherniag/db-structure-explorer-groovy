@@ -1,27 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.*;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -30,16 +10,13 @@ import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetai
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.repository.UserDeviceDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserIPhoneDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import mobi.nowtechnologies.server.shared.enums.*;
-
-import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -54,6 +31,22 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.getAndroidDeviceType;
+import static mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao.getBlackberryDeviceType;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -357,10 +350,10 @@ public class UserServiceIT {
         userDeviceRegDetailsDto.setCOMMUNITY_NAME("o2");
 
         //when
-        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceRegDetailsDto, false);
+        User result = userService.registerUser(userDeviceRegDetailsDto, false);
 
         //then
-        assertNotNull(accountCheckDTO);
+        assertNotNull(result);
     }
 
     @Test

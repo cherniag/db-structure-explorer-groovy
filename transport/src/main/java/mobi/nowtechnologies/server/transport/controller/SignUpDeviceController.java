@@ -1,11 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CommunityService;
@@ -15,13 +9,16 @@ import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoVali
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -32,6 +29,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class SignUpDeviceController extends CommonController {
 		
 	private UserService userService;
+
+    private AccCheckController accCheckController;
+
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
 
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
@@ -63,14 +66,13 @@ public class SignUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 		
-			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
-						
-			accountCheckDTO = userService.applyInitialPromotion(user);
-			final Object[] objects = new Object[]{accountCheckDTO};
-			precessRememberMeToken(objects);
-			
-			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+			user = userService.registerUser(userDeviceDetailsDto, true);
+
+			user = userService.applyInitialPromotion(user);
+
+            AccountCheckDTO accountCheck = accCheckController.processAccCheckBeforeO2Releases(user);
+
+			return buildModelAndView(accountCheck);
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -104,13 +106,11 @@ public class SignUpDeviceController extends CommonController {
 			String remoteAddr = Utils.getIpFromRequest(request);
 			userDeviceDetailsDto.setIpAddress(remoteAddr);
 
-			AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, true);
-			user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
+			user = userService.registerUser(userDeviceDetailsDto, true);
 
-			final Object[] objects = new Object[] { accountCheckDTO };
-			precessRememberMeToken(objects);
-			
-			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+            AccountCheckDTO accountCheck = accCheckController.processAccCheckBeforeO2Releases(user);
+
+			return buildModelAndView(accountCheck);
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -148,13 +148,11 @@ public class SignUpDeviceController extends CommonController {
 		        userDeviceDetailsDto.setIpAddress(remoteAddr);
 		        userDeviceDetailsDto.setCOMMUNITY_NAME(community);
 
-		        AccountCheckDTO accountCheckDTO = userService.registerUserAndAccCheck(userDeviceDetailsDto, false);
-		        user = userService.findByNameAndCommunity(accountCheckDTO.userName, userDeviceDetailsDto.getCommunityName());
+		        user = userService.registerUser(userDeviceDetailsDto, false);
 
-		        final Object[] objects = new Object[] { accountCheckDTO };
-		        precessRememberMeToken(objects);
+                AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
 
-		        return new ModelAndView(view, Response.class.toString(), new Response(objects));
+		        return buildModelAndView(accountCheck);
         }catch (ValidationException ve){
         	ex = ve;
             LOGGER.error("SIGN_UP_DEVICE Validation error [{}] for [{}] community[{}]",ve.getMessage(), userDeviceDetailsDto, community);

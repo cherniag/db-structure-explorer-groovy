@@ -2,12 +2,14 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.MigPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -81,53 +84,6 @@ public class UserServiceTestIT {
 		userService.checkCredentials(
 				userName, userToken, timestamp, "CN Commercial Beta");
 	}
-
-	@Ignore
-	@Test
-	public void testSetPassword_Success()
-		throws Exception {
-		int aUserId = 1;
-		String token = "";
-		String aCommunityName="";
-
-		Object[] result = userService.processSetPasswordCommand(aUserId, token,aCommunityName);
-
-		assertNotNull(result);
-		assertTrue(2==result.length);
-		Class firstElementClass=result[0].getClass();
-		assertTrue (firstElementClass.equals(AccountCheckDTO.class)||firstElementClass.equals(SetPassword.class));
-		Class secondElementClass=result[1].getClass();
-		assertTrue (secondElementClass.equals(AccountCheckDTO.class)||secondElementClass.equals(SetPassword.class));
-		
-		assertFalse(firstElementClass.equals(secondElementClass));
-		
-	}
-
-	@Ignore
-	@Test(expected = java.lang.NullPointerException.class)
-	public void testSetPassword_2()
-		throws Exception {
-		int aUserId = 1;
-		String token = null;
-		String aCommunityName="";
-
-		Object[] result = userService.processSetPasswordCommand(aUserId, token,aCommunityName);
-
-		assertNotNull(result);
-	}
-
-	@Ignore
-	@Test(expected = java.lang.NullPointerException.class)
-	public void testSetPassword_3()
-		throws Exception {
-		int aUserId = 1;
-		String token = "";
-		String aCommunityName=null;
-
-		Object[] result = userService.processSetPasswordCommand(aUserId, token,aCommunityName);
-
-		assertNotNull(result);
-	}
 	
 	@Test
 	public void testFindByIsrc_Success(){
@@ -143,8 +99,8 @@ public class UserServiceTestIT {
 	@Test
 	public void testProceessAccountCheckCommand() {
 		int userId=1;
-		AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(userId, null, null, null);
-		assertNotNull(accountCheckDTO);
+		User user = userService.proceessAccountCheckCommandForAuthorizedUser(userId);
+		assertNotNull(user);
 	}
 	
 	@Test

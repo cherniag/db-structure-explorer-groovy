@@ -4,13 +4,10 @@ import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MessageService;
 import mobi.nowtechnologies.server.service.UserService;
-
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.NewsDto;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,8 +19,13 @@ public class GetNewsController extends CommonController {
 
 	private UserService userService;
 	private MessageService messageService;
+    private AccCheckController accCheckController;
 
-	public void setUserService(UserService userService) {
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
+
+    public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
 
@@ -62,10 +64,11 @@ public class GetNewsController extends CommonController {
 			user = userService.checkCredentials(userName, userToken,
 					timestamp, communityName);
 
-			Object[] objects = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis, false);
-			precessRememberMeToken(objects);
-			return new ModelAndView(view, Response.class.toString(), new Response(
-					objects));
+			NewsDto newsDto = messageService.processGetNewsCommand(user, communityName, lastUpdateNewsTimeMillis, false);
+
+            AccountCheckDTO accountCheck = accCheckController.processAccCheckBeforeO2Releases(user);
+
+			return buildModelAndView(accountCheck, newsDto);
 		} catch (Exception e) {
 			ex = e;
 			throw e;
@@ -114,9 +117,11 @@ public class GetNewsController extends CommonController {
 			LOGGER.info("command processing started");
 			user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
 
-			Object[] objects = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
-			precessRememberMeToken(objects);
-			return new ModelAndView(view, Response.class.toString(), new Response(objects));
+			NewsDto newsDto= messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
+
+            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+
+			return buildModelAndView(accountCheck, newsDto);
 		} catch (Exception e) {
 			ex = e;
 			throw e;

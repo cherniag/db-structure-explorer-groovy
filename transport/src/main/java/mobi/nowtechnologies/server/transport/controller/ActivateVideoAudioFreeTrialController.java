@@ -1,10 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -23,6 +18,12 @@ import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
 public class ActivateVideoAudioFreeTrialController extends CommonController {
 
     private PromotionService promotionService;
+
+    private AccCheckController accCheckController;
+
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
 
     public void setPromotionService(PromotionService promotionService) {
         this.promotionService = promotionService;
@@ -43,13 +44,9 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
 
             user = promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
 
-            final AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
-                    null, null, null);
+            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
 
-            final Object[] objects = new Object[] { accountCheckDTO };
-            precessRememberMeToken(objects);
-
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+            return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {
             ex = e;
             throw e;

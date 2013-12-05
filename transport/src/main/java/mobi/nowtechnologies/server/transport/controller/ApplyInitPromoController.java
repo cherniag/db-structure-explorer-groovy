@@ -21,6 +21,11 @@ public class ApplyInitPromoController extends CommonController {
     private UserService userService;
     private O2ProviderService o2ClientService;
     private UpdateO2UserTask updateO2UserTask;
+    private AccCheckController accCheckController;
+
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
 
     public void setO2ClientService(O2ProviderService o2ClientService) {
         this.o2ClientService = o2ClientService;
@@ -47,11 +52,11 @@ public class ApplyInitPromoController extends CommonController {
 		try {
             user = userService.findByNameAndCommunity(userName, communityName);
 
-            AccountCheckDTO accountCheckDTO = userService.applyInitialPromotion(user);
-            final Object[] objects = new Object[]{accountCheckDTO};
-            precessRememberMeToken(objects);
+            user = userService.applyInitialPromotion(user);
 
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheckBeforeO2Releases(user);
+
+            return buildModelAndView(accountCheckDTO);
 		}catch(Exception e){
 			ex = e;
 			throw e;
@@ -80,18 +85,19 @@ public class ApplyInitPromoController extends CommonController {
 
             user = userService.checkCredentials(userName, userToken, timestamp, communityName);
 
-            AccountCheckDTO accountCheckDTO = userService.applyInitPromoAndAccCheck(user, token, isMajorApiVersionNumberLessThan4);
+            user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4);
+
+            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
+
+            accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
 
             user = (User) accountCheckDTO.user;
-
-            final Object[] objects = new Object[]{accountCheckDTO};
-            precessRememberMeToken(objects);
 
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
             }
 
-            return new ModelAndView(view, MODEL_NAME, new Response(objects));
+            return buildModelAndView(accountCheckDTO);
         }catch (UserCredentialsException ce){
         	ex = ce;
             LOGGER.error("APPLY_INIT_PROMO can not find user[{}] in community[{}] otac_token[{}]", userName, community, token);

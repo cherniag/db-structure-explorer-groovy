@@ -4,18 +4,12 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.service.DeviceUserDataService;
-import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
+import static mobi.nowtechnologies.server.shared.enums.TransactionType.OFFER_PURCHASE;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
@@ -37,6 +33,37 @@ public class AccCheckController extends CommonController {
     private UserService userService;
     private ChartService chartService;
     private DeviceUserDataService deviceUserDataService;
+
+    private UserDeviceDetailsService userDeviceDetailsService;
+    private AccountLogService accountLogService;
+    private OfferService offerService;
+    private ITunesService iTunesService;
+    private DeviceService deviceService;
+    private PaymentPolicyService paymentPolicyService;
+
+    public void setAccountLogService(AccountLogService accountLogService) {
+        this.accountLogService = accountLogService;
+    }
+
+    public void setOfferService(OfferService offerService) {
+        this.offerService = offerService;
+    }
+
+    public void setiTunesService(ITunesService iTunesService) {
+        this.iTunesService = iTunesService;
+    }
+
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
+
+    public void setUserDeviceDetailsService(UserDeviceDetailsService userDeviceDetailsService) {
+        this.userDeviceDetailsService = userDeviceDetailsService;
+    }
 
     public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
         this.deviceUserDataService = deviceUserDataService;
@@ -72,40 +99,40 @@ public class AccCheckController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            if (iphoneToken != null)
+            if (iphoneToken != null) {
                 pushNotificationToken = iphoneToken;
+            }
 
-            if (isValidDeviceUID(deviceUID))
+            if (isValidDeviceUID(deviceUID)) {
                 user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
-            else
+            }
+            else {
                 user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+            }
+            LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(user.getId()), pushNotificationToken, deviceType, transactionReceipt});
 
             logAboutSuccessfullAccountCheck();
-
-            final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
-                    pushNotificationToken, deviceType, transactionReceipt);
 
             if(idfa != null){
                 user = userService.updateTokenDetails(user, idfa);
             }
 
-            user = userService.getUserWithSelectedCharts(user.getId());
-            List<ChartDetail> chartDetails = chartService.getLockedChartItems(communityName, user);
-
-            AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
-            accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
-            accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
-
-            final Object[] objects = new Object[] { accountCheck };
-            precessRememberMeToken(objects);
-
-            ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
-
             if (isNotBlank(xtifyToken)) {
                 user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
             }
 
-            return mav;
+            if (deviceType != null && pushNotificationToken != null)
+                userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
+
+            try {
+                iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+
+            AccountCheckDto accountCheck = processAccCheck(user);
+
+            return buildModelAndView(accountCheck);
         } catch (Exception e) {
             ex = e;
             throw e;
@@ -113,6 +140,51 @@ public class AccCheckController extends CommonController {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
+    }
+
+    public AccountCheckDto processAccCheck(User user){
+        user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
+
+        Community community = user.getUserGroup().getCommunity();
+
+        List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
+
+        accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
+        accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
+
+
+        user = userService.getUserWithSelectedCharts(user.getId());
+        List<ChartDetail> chartDetails = chartService.getLockedChartItems(user);
+
+        AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
+        accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
+        accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
+
+        return precessRememberMeToken(accountCheck);
+    }
+
+    public AccountCheckDto processAccCheckBeforeO2Releases(User user){
+        user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
+
+        Community community = user.getUserGroup().getCommunity();
+
+        List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
+
+        accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
+        accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
+
+        List<Integer> relatedMediaUIDsByLogTypeList = accountLogService.getRelatedMediaUIDsByLogType(user.getId(), OFFER_PURCHASE);
+
+        accountCheckDTO.hasOffers = false;
+        if (relatedMediaUIDsByLogTypeList.isEmpty()) {
+            List<ContentOfferDto> contentOfferDtos = offerService.getContentOfferDtos(user.getId());
+            if (contentOfferDtos != null && contentOfferDtos.size() > 0)
+                accountCheckDTO.hasOffers = true;
+        }
+
+        return precessRememberMeToken(new AccountCheckDto(accountCheckDTO));
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -266,11 +338,20 @@ public class AccCheckController extends CommonController {
 
             logAboutSuccessfullAccountCheck();
 
-            final mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId(),
-                    pushNotificationToken, deviceType, transactionReceipt);
+            user = userService.assignPotentialPromotion(user);
+
+            if (deviceType != null && pushNotificationToken != null)
+                userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
+
+            try {
+                iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+
+            AccountCheckDTO accountCheckDTO = processAccCheckBeforeO2Releases(user);
 
             final Object[] objects = new Object[] { accountCheckDTO };
-            precessRememberMeToken(objects);
 
             ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
 

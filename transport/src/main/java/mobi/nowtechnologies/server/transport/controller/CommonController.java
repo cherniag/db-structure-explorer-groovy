@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +55,10 @@ public abstract class CommonController extends ProfileController implements Appl
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    protected ModelAndView buildModelAndView(Object ... objs){
+        return new ModelAndView(defaultViewName, Response.class.toString(), new Response(objs));
     }
 
     public void setView(View view) {
@@ -247,16 +250,13 @@ public abstract class CommonController extends ProfileController implements Appl
 	 * Returns an auth token that is generated for web portal SSO
 	 * @return rememberMe auth token
 	 */
-	public Object[] precessRememberMeToken(Object[] objects) {
-		LOGGER.debug("input parameters objects: [{}]", objects);
-		for (Object object : objects) {
-			if (!(object instanceof AccountCheckDTO)) continue;
-			AccountCheckDTO accountCheckDTO = (AccountCheckDTO) object;
+	public mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
+		LOGGER.debug("input parameters mobi.nowtechnologies.server.dto.transport.AccountCheckDTO: [{}]", new Object[]{accountCheckDTO});
 
-            accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
-		}
-		LOGGER.debug("Output parameter objects=[{}]", objects);
-		return objects;
+       accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
+
+		LOGGER.debug("Output parameter mobi.nowtechnologies.server.dto.transport.AccountCheckDTO=[{}]", accountCheckDTO);
+		return accountCheckDTO;
 	}
 	
 	public String getRememberMeToken(String userName, String storedToken) {

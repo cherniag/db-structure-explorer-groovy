@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -85,16 +84,13 @@ public class ChartService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
+	public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
 
 		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
-
-        AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
-        user = (User) accountCheck.user;
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 		
@@ -122,10 +118,9 @@ public class ChartService {
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
 		chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
-		Object[] objects = new Object[] { accountCheck, chartDto };
 
-		LOGGER.debug("Output parameter objects=[{}]", objects);
-		return objects;
+		LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
+		return chartDto;
 	}
 
 	@Transactional(readOnly = true)
@@ -140,7 +135,8 @@ public class ChartService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getLockedChartItems(String communityName, User user) {
+	public List<ChartDetail> getLockedChartItems(User user) {
+        String communityName = user.getUserGroup().getCommunity().getName();
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		
 		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
