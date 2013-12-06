@@ -17,6 +17,7 @@ import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -188,6 +189,11 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 		
 		Long curDay = new Long(Utils.getEpochDays());
+
+        if (StringUtils.isEmpty(phoneNumber)) {
+            throw new InvalidPhoneNumberException();
+        }
+
 		String phoneNumberCode = phoneNumber.replaceAll("\\s", "");
 		phoneNumberCode = phoneNumberCode.length() >= 10 ? phoneNumberCode.substring(phoneNumberCode.length()-10) : phoneNumberCode;
 		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER, curDay);

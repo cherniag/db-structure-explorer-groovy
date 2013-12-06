@@ -13,6 +13,8 @@ import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;
@@ -37,6 +40,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
 import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -322,5 +326,190 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<provider>non-vf</provider>"));
         assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberNZ_VF_NotPresentUserWithoutMobile() throws Exception {
+        String userName = "+64279000456";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        resetMobile(userName);
+
+        mockMvc.perform(
+                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberNZ_VF_EmptyUserWithoutMobile() throws Exception {
+        String userName = "+64279000456";
+        String phone = "";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        resetMobile(userName);
+
+        mockMvc.perform(
+                post("/somekey/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberNZ_VF_NotPresentUserWithMobile() throws Exception {
+        String userName = "+64279000456";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").doesNotExist())
+        .andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberNZ_VF_EmptyUserWithMobile() throws Exception {
+        String userName = "+64279000456";
+        String phone = "";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        mockMvc.perform(
+                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberO2_NotPresentUserWithoutMobile() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        resetMobile(userName);
+
+        mockMvc.perform(
+                post("/somekey/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberO2_EmptyUserWithoutMobile() throws Exception {
+        String userName = "+447111111114";
+        String phone = "";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        resetMobile(userName);
+
+        mockMvc.perform(
+                post("/somekey/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberO2_NotPresentUserWithMobile() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+                post("/somekey/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").doesNotExist())
+                .andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
+    }
+
+    @Test
+    @Transactional
+    public void testActivatePhoneNumberO2_EmptyUserWithMobile() throws Exception {
+        String userName = "+447111111114";
+        String phone = "";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        mockMvc.perform(
+                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    private void resetMobile(String userName) {
+        User user = userService.findByName(userName);
+        user.setMobile(null);
+
+        userService.updateUser(user);
+        user = userService.findByName(userName);
+        assertTrue(StringUtils.isEmpty(user.getMobile()));
     }
 }
