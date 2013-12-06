@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
@@ -43,10 +44,10 @@ public class PaymentSystemServiceIT {
 	@Test
 	public void commitSagePayPayment_Successful() throws Exception {
 		// Preparations for test
-		PaymentSystemResponse response = new SagePayResponse(new BasicResponse(){
-			@Override public String getMessage() { return "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=12123123\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=123123123\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=123234234\nVPSProtocol=2.23"; };
-			@Override public int getStatusCode() { return HttpServletResponse.SC_OK; }
-		});
+		PaymentSystemResponse response = new SagePayResponse(
+                PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                        "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=12123123\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=123123123\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=123234234\nVPSProtocol=2.23")
+               );
 		
 		User user = new User();
 		user.setUserName(UUID.randomUUID().toString());

@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
+import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.security.SecurityContextDetails;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -13,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public abstract class CommonController implements MessageSourceAware {
 
@@ -45,8 +47,14 @@ public abstract class CommonController implements MessageSourceAware {
 		this.messageSource = messageSource;
 	}
 
+    //TODO Not valid second arg in method for spring argument resolver
 	@ExceptionHandler(value = { ValidationException.class })
 	public ModelAndView handleValidationException(HttpServletRequest request, ModelAndView modelAndView, Errors errors) {
 		return modelAndView;
 	}
+
+    @ExceptionHandler(value = { CanNotDeactivatePaymentDetailsException.class })
+    public ModelAndView handleCanNotDeactivatePaymentDetailsException(HttpServletRequest request, ServiceException exception, Locale locale) {
+        return new ModelAndView("errors/can_not_change_payment_options");
+    }
 }

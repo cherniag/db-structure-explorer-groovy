@@ -50,11 +50,10 @@
 		</c:choose>
 
 	</div>
-	<c:if test="${paymentsPage.paymentDetailsActivated}">
-        <div class="rel" style="padding: 0px 5px 10px 5px;">
-            <a class="button-white no-margin pie S15 lightGray" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html"><s:message code='pays.deactivate.submit' /></a>
-        </div>
-    </c:if>
+
+    <jsp:include page="../payments_common/content_unsibscribe.jsp">
+        <jsp:param name="callingPage" value="payments_inapp" />
+    </jsp:include>
 </div>
 
 <div class="content no-bg">

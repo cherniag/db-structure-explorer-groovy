@@ -31,7 +31,7 @@ public class SMPPServiceImpl extends SMPPService {
     private Set<SMSCGatewayConfiguration> gatewaysConfigurations = new HashSet<SMSCGatewayConfiguration>();
     private SMPPMonitoringAgent smppMonitoringAgent = new LoggingSMPPMonitoringAgent();
     private OutboundMessageCreator outboundMessageCreator = new SMPPOutboundMessageCreator();
-    private boolean useQueueMangager;
+    private boolean useQueueManager;
 
     public SMPPServiceImpl(){
         super.setAutoStart(false);
@@ -62,10 +62,21 @@ public class SMPPServiceImpl extends SMPPService {
     }
 
     public boolean sendMessage(MTMessage message) throws GatewayException, IOException, InterruptedException, TimeoutException {
-        final OutboundMessage outboundMessasge = outboundMessageCreator.toOutboundMessage(message);
-        outboundMessasge.setGatewayId("*");
-        smppMonitoringAgent.onMessageSend(message, outboundMessasge);
-        return useQueueMangager ? Service.getInstance().queueMessage(outboundMessasge) : Service.getInstance().sendMessage(outboundMessasge);
+        final OutboundMessage outboundMessage = outboundMessageCreator.toOutboundMessage(message);
+        outboundMessage.setGatewayId("*");
+        smppMonitoringAgent.onMessageSend(message, outboundMessage);
+
+        boolean result = useQueueManager ? Service.getInstance().queueMessage(outboundMessage) : Service.getInstance().sendMessage(outboundMessage);
+
+        if(!result){
+            if(Service.getInstance().getServiceStatus() != Service.ServiceStatus.STARTED){
+                LOGGER.error("Can't send message cause SMPP Service is not STARTED");
+            }
+
+            LOGGER.error("SMS Message was sent with fails: " + outboundMessage.getFailureCause());
+        }
+
+        return result;
     }
 
     @Override
@@ -79,7 +90,7 @@ public class SMPPServiceImpl extends SMPPService {
         return new SMPPGateway(cfg, receiver, smppMonitoringAgent, isUseUdhiInSubmitSm);
     }
 
-    public void setUseQueueMangager(boolean useQueueMangager) {
-        this.useQueueMangager = useQueueMangager;
+    public void setUseQueueManager(boolean useQueueManager) {
+        this.useQueueManager = useQueueManager;
     }
 }

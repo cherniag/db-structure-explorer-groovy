@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,15 +13,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static mobi.nowtechnologies.server.shared.Utils.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
- * The class <code>UtilsTest</code> contains tests for the class
- * <code>{@link Utils}</code>.
- * 
- * @generatedBy CodePro at 02.03.12 11:51
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Utils.class)
@@ -593,5 +590,29 @@ public class UtilsTest {
     @Test
     public void shouldReturnMajorVersionNumberIsLess2(){
         assertFalse(isMajorVersionNumberLessThan(4, "4.0"));
+    }
+
+    @Test
+    public void shouldPrueFormatCurrencyWithCents(){
+       //given
+        BigDecimal amount = new BigDecimal("1.5");
+
+        //when
+        String amountString = Utils.preFormatCurrency(amount);
+
+        //then
+        assertThat(amountString, is("1.50"));
+    }
+
+    @Test
+    public void shouldPrueFormatCurrencyWithOutCents(){
+        //given
+        BigDecimal amount = new BigDecimal("6");
+
+        //when
+        String amountString = Utils.preFormatCurrency(amount);
+
+        //then
+        assertThat(amountString, is("6"));
     }
 }

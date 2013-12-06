@@ -1,17 +1,16 @@
 package com.musicqubed.cloudassets;
 
-import java.io.File;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.musicqubed.cloudassets.uploader.FileUploader;
+import com.musicqubed.cloudassets.uploader.FileWithName;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-import com.musicqubed.cloudassets.uploader.FileUploader;
-import com.musicqubed.cloudassets.uploader.FileWithName;
-import com.rackspacecloud.client.cloudfiles.FilesClient;
+import java.io.File;
+import java.util.Map;
 
 public class RackspaceNativeFileUploader implements FileUploader {
 

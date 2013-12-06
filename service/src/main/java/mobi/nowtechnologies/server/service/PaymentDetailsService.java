@@ -5,11 +5,10 @@ import mobi.nowtechnologies.server.persistence.dao.PaymentDetailsDao;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
@@ -22,6 +21,7 @@ import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PSmsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -418,16 +418,21 @@ public class PaymentDetailsService {
 		return paymentDetails;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
 	public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
 		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
 
-        notNull(user, "The parameter user is null");
-		user = userService.setToZeroSmsAccordingToLawAttributes(user);
 
-		PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-		
-		if(isNotNull(currentPaymentDetails)){
+        notNull(user, "The parameter user is null");
+        user = userService.setToZeroSmsAccordingToLawAttributes(user);
+
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+
+        if(isNotNull(currentPaymentDetails)) {
+            boolean inPending = currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.AWAITING;
+            if(inPending) {
+                throw new CanNotDeactivatePaymentDetailsException();
+            }
             disablePaymentDetails(currentPaymentDetails, reason);
 			user = userService.updateUser(user);
 		}
