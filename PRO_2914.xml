@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<review xmlns="http://plugins.intellij.net/revu" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://plugins.intellij.net/revu http://plugins.intellij.net/revu/ns/revu_1_0.xsd" name="PRO-2914" status="fixing" shared="true">
+  <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 09:57:08 +0200" lastUpdatedOn="2013-12-06 10:44:04 +0200"/>
+  <goal></goal>
+  <referential>
+    <priorities>
+      <priority order="0" name="minor"/>
+      <priority order="1" name="normal"/>
+      <priority order="2" name="major"/>
+      <priority order="3" name="critical"/>
+    </priorities>
+    <tags>
+      <tag name="correctness"/>
+      <tag name="cosmetic"/>
+      <tag name="documentation"/>
+      <tag name="duplication"/>
+      <tag name="maintenability"/>
+      <tag name="optimization"/>
+      <tag name="portability"/>
+      <tag name="question"/>
+      <tag name="standard"/>
+    </tags>
+    <users>
+      <user displayName="kolpakov" login="kolpakov" roles="admin,reviewer,author"/>
+      <user displayName="titov" login="titov" roles="admin,reviewer,author"/>
+    </users>
+  </referential>
+  <filescope pathPattern="file[*]:*//*"/>
+  <issues>
+    <issue filePath="persistence/src/main/java/mobi/nowtechnologies/server/persistence/domain/User.java" summary="Should be added into toString()" vcsRev="f3d407a3eea41f67c06520f3d465b3e3e497ffe7" lineStart="309" lineEnd="309" hash="-101670671" priority="normal" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 11:14:30 +0200" lastUpdatedOn="2013-12-06 12:49:10 +0200"/>
+    </issue>
+    <issue filePath="persistence/src/test/resources/META-INF/init-test.sql" summary="Could you populate DB in test? See mobi.nowtechnologies.server.persistence.repository.UserRepositoryIT#shouldFindUserTree as example" vcsRev="5c5d5a0c1bf5384aad1d423e7d4f4a4c0ccd25af" lineStart="-1" lineEnd="-1" hash="1614626263" priority="minor" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 11:17:53 +0200" lastUpdatedOn="2013-12-06 12:49:51 +0200"/>
+    </issue>
+    <issue filePath="service/src/main/java/mobi/nowtechnologies/server/service/DrmService.java" summary="Please, remove unused methods" vcsRev="f3d407a3eea41f67c06520f3d465b3e3e497ffe7" lineStart="-1" lineEnd="-1" hash="129613930" priority="minor" status="to_resolve">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 12:53:40 +0200" lastUpdatedOn="2013-12-06 12:53:40 +0200"/>
+    </issue>
+    <issue filePath="service/src/main/java/mobi/nowtechnologies/server/service/o2/impl/O2ProviderServiceImpl.java" summary="Could you move map creation from this method?" vcsRev="e8fef30d1478e724b125f2192cc3fb4df5861a16" lineStart="173" lineEnd="173" hash="1250319427" priority="minor" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 10:46:51 +0200" lastUpdatedOn="2013-12-06 12:50:01 +0200"/>
+    </issue>
+    <issue filePath="service/src/main/java/mobi/nowtechnologies/server/service/o2/impl/O2ProviderServiceImpl.java" summary="We should log response with ERROR level if http status code not OK(200)" vcsRev="e8fef30d1478e724b125f2192cc3fb4df5861a16" lineStart="209" lineEnd="209" hash="590433368" priority="major" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 11:10:33 +0200" lastUpdatedOn="2013-12-06 12:48:43 +0200"/>
+    </issue>
+    <issue filePath="service/src/main/java/mobi/nowtechnologies/server/service/validator/AbstractCellNumberValidator.java" summary="Single responsibility principle is violated" vcsRev="e8fef30d1478e724b125f2192cc3fb4df5861a16" lineStart="-1" lineEnd="-1" hash="0" priority="normal" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 10:54:00 +0200" lastUpdatedOn="2013-12-06 12:49:00 +0200"/>
+      <desc>I think it would be better if you divide this class on Validator and some Modificator (the names of classes is abstract) </desc>
+    </issue>
+    <issue summary="I propose to move all posible logic from controller into Service " vcsRev="f3d407a3eea41f67c06520f3d465b3e3e497ffe7" lineStart="-1" lineEnd="-1" hash="1882555865" priority="critical" status="to_resolve" assignees="kolpakov">
+      <history createdBy="titov" lastUpdatedBy="titov" createdOn="2013-12-06 11:52:49 +0200" lastUpdatedOn="2013-12-06 12:48:30 +0200"/>
+      <desc>The logic should be transactional and be on service layer if it possible. So I propouse to create method like processGetChartAndAccCheck on service layer that should returns Response object (or array with AccountCheckDTO and ChartDto) </desc>
+    </issue>
+  </issues>
+</review>
