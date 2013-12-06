@@ -1,6 +1,8 @@
-package mobi.nowtechnologies.o2;
+package mobi.nowtechnologies.o2.stub;
 
 import static org.junit.Assert.assertEquals;
+import mobi.nowtechnologies.o2.O2Config;
+import mobi.nowtechnologies.o2.UtilsO2;
 import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
@@ -13,15 +15,12 @@ public class O2StubUpdateTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(O2StubUpdateTest.class);
 
-	private static final String SERVER_URL = "http://localhost:8998";
-	private static final String O2_SERVER_FULL_URL = SERVER_URL + "/services/";
-
 	private static O2ServiceImpl o2Service;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 
-		o2Service = UtilsO2.createO2ServiceImpl(O2_SERVER_FULL_URL);
+		o2Service = UtilsO2.createO2ServiceImpl(O2Config.LOCAL_STUB);
 	}
 
 	@Test
