@@ -191,7 +191,9 @@ public class AccCheckController extends CommonController {
             "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK",
             "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK.json",
             "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json"
+            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json",
+            "/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK",
+            "/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json"
     })
     public ModelAndView accountCheckForO2ClientAcceptHeaderSupport(
             HttpServletRequest httpServletRequest,
@@ -271,8 +273,8 @@ public class AccCheckController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:.*}/{apiVersion:5\\.0}/ACC_CHECK",
-            "*/{community:.*}/{apiVersion:5\\.0}/ACC_CHECK.json"
+            "*/{community:.*}/{apiVersion:5\\.[0-9]{1,3}}/{command:ACC_CHECK(?:\\.json){0,1}}",
+            "/{community:.*}/{apiVersion:5\\.[0-9]{1,3}}/{command:ACC_CHECK(?:\\.json){0,1}}",
     })
     public ModelAndView accountCheckWithAcceptHeaderSupporting(
             HttpServletRequest httpServletRequest,

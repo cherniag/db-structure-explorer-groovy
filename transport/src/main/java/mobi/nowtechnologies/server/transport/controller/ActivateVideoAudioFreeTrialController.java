@@ -62,7 +62,9 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
             "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
             "{other:.*}/{communityUri:o2}/{apiVersion:4\\.1}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
             "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
-            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json"
+            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVAzTE_VIDEO_AUDIO_FREE_TRIAL.json",
+            "/{communityUri:o2}/{apiVersion:4\\.2}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
+            "/{communityUri}/{apiVersion:5\\.0}/ACTIVAzTE_VIDEO_AUDIO_FREE_TRIAL.json"
     })
     public ModelAndView activateVideoAcceptHeaderSupport(@RequestParam("APP_VERSION") String appVersion,
                                       @RequestParam("USER_NAME") String userName,
