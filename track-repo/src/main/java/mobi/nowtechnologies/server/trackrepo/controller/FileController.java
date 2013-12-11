@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.controller;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.dto.AssetFileDto;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.service.FileService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -39,7 +40,10 @@ public class FileController extends AbstractCommonController{
 					resp.setContentType(AssetFileDto.toFileType(file.getType()).getMime());
 					try{
 						respStream = resp.getOutputStream();
-						respStream.write(FileUtils.readFileToByteArray(new File(file.getPath())));
+                        File respFile = new File(file.getPath());
+                        resp.setHeader("Content-Length", String.valueOf(respFile.length()));
+                        resp.addHeader("Content-Range", "bytes 0-" + (respFile.length() - 1) + "/" + respFile.length());
+						respStream.write(FileUtils.readFileToByteArray(respFile));
 					}finally{
 						IOUtils.closeQuietly(respStream);
 					}
