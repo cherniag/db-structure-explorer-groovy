@@ -471,34 +471,23 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             if (user == null) {
                 throw new NullPointerException("The parameter user is null");
             }
-
             final UserGroup userGroup = user.getUserGroup();
             final Community community = userGroup.getCommunity();
-
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-
             Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
-
             LOGGER.info("Attempt to send activation pin sms async in memory");
 
-            if(user.getProvider() != null){
-                if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
-
-                    String smsPrefix = "sms.activation.pin.text";
-
-                    boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
-
-                    if (wasSmsSentSuccessfully) {
-                        LOGGER.info("The activation pin sms was sent successfully");
-                        result = new AsyncResult<Boolean>(Boolean.TRUE);
-                    } else {
-                        LOGGER.info("The activation pin sms wasn't sent");
-                    }
+            if (!rejectDevice(user, "sms.notification.activation.pin.not.for.device.type")) {
+                String smsPrefix = "sms.activation.pin.text.for." + community.getRewriteUrlParameter();
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, smsPrefix, new String[]{null, user.getPin()});
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The activation pin sms was sent successfully");
+                    result = new AsyncResult<Boolean>(Boolean.TRUE);
                 } else {
-                    LOGGER.info("The activation pin sms wasn't sent cause rejecting");
+                    LOGGER.info("The activation pin sms wasn't sent");
                 }
             } else {
-                LOGGER.info("The activation pin sms wasn't sent cause user has not enough details(provider etc.)");
+                LOGGER.info("The activation pin sms wasn't sent cause rejecting");
             }
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
@@ -579,10 +568,12 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         Community community = user.getUserGroup().getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
         String devices = messageSource.getMessage(communityUrl, code, null, null, null);
-        for (String device : devices.split(",")) {
-            if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
-                LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
-                return true;
+        if(devices != null){
+            for (String device : devices.split(",")) {
+                if (user.getDeviceTypeIdString().equalsIgnoreCase(device)) {
+                    LOGGER.warn("SMS will not send for User[{}]. See prop:[{}]", user.getUserName(), code);
+                    return true;
+                }
             }
         }
         return false;

@@ -197,35 +197,4 @@ public class SMSNotification {
 		}
 		return object;
 	}
-
-    @Around("execution(* mobi.nowtechnologies.server.service.UserService.populateSubscriberData(mobi.nowtechnologies.server.persistence.domain.User, mobi.nowtechnologies.server.service.data.SubscriberData))")
-    public Object sendSmsPinForVFNZ_EnterPhoneNumber(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object object = joinPoint.proceed();
-        User user = (User) joinPoint.getArgs()[0];
-
-        try {
-            if(user.getProvider() != null){
-                userNotificationService.sendActivationPinSMS(user);
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return object;
-    }
-
-    @Around("execution(* mobi.nowtechnologies.server.service.UserService.activatePhoneNumber(..))")
-    public Object sendSmsPinForVFNZ_ReSign(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object object = joinPoint.proceed();
-        User user = (User) joinPoint.getArgs()[0];
-        String phoneNumber = (String)joinPoint.getArgs()[1];
-
-        try {
-            if(user.getProvider() != null && phoneNumber == null){
-                userNotificationService.sendActivationPinSMS(user);
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return object;
-    }
 }
