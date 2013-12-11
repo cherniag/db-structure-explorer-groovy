@@ -4,14 +4,19 @@ import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.*;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +39,7 @@ public class AccCheckController extends CommonController {
     private ChartService chartService;
     private DeviceUserDataService deviceUserDataService;
 
-    private UserDeviceDetailsService userDeviceDetailsService;
-    private AccountLogService accountLogService;
+    private UserDeviceDetailsService userDeviceDetailsService;private AccountLogService accountLogService;
     private OfferService offerService;
     private ITunesService iTunesService;
     private DeviceService deviceService;
@@ -77,9 +81,10 @@ public class AccCheckController extends CommonController {
         this.chartService = chartService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = { "/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK", "*/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK" })
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK"
+    })
     public ModelAndView accountCheckForO2Client(
-            HttpServletRequest httpServletRequest,
             @RequestParam("COMMUNITY_NAME") String communityName,
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
@@ -188,39 +193,7 @@ public class AccCheckController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:4\\.1}/ACC_CHECK.json",
-            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json",
-            "/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK",
-            "/{community:o2}/{apiVersion:4\\.2}/ACC_CHECK.json"
-    })
-    public ModelAndView accountCheckForO2ClientAcceptHeaderSupport(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @PathVariable("apiVersion") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-        apiVersionThreadLocal.set(apiVersion);
-
-        ModelAndView modelAndView = accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
-        modelAndView.setViewName(defaultViewName);
-
-        return modelAndView;
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK",
-            "*/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK"
+            "**/{community:o2}/{apiVersion:3\\.9|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
     })
     public ModelAndView accountCheckForO2Client_4d0(
             HttpServletRequest httpServletRequest,
@@ -246,133 +219,10 @@ public class AccCheckController extends CommonController {
        }
        ///
 
-        return accountCheckForO2Client(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK.json",
-            "*/{community:o2}/{apiVersion:3\\.9|4\\.0}/ACC_CHECK.json"
-    }, produces = "application/json")
-    public @ResponseBody Response accountCheckForO2ClientJson(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @PathVariable("apiVersion") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-
-        return (Response)accountCheckForO2Client_4d0(httpServletRequest, communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community).getModelMap().get(MODEL_NAME);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:.*}/{apiVersion:5\\.[0-9]{1,3}}/{command:ACC_CHECK(?:\\.json){0,1}}",
-            "/{community:.*}/{apiVersion:5\\.[0-9]{1,3}}/{command:ACC_CHECK(?:\\.json){0,1}}",
-    })
-    public ModelAndView accountCheckWithAcceptHeaderSupporting(
-            HttpServletRequest httpServletRequest,
-            @PathVariable("apiVersion") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-        apiVersionThreadLocal.set(apiVersion);
-
-        ModelAndView modelAndView = accountCheckForO2Client_4d0(httpServletRequest, community, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
-        modelAndView.setViewName(defaultViewName);
-
-        return modelAndView;
-    }
-
-    protected boolean isValidDeviceUID(String deviceUID){
-        return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
-    }
-
-    public static AccountCheckDto getAccountCheckDtoFrom(ModelAndView mav) {
-        Response resp = (Response) mav.
-                getModelMap().
-                get(MODEL_NAME);
-        return (AccountCheckDto) resp.getObject()[0];
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = { "/ACC_CHECK", "*/ACC_CHECK" })
-    public ModelAndView accountCheckWithXtifyToken(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("APP_VERSION") String appVersion,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @RequestParam("API_VERSION") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt) throws Exception {
-
-        User user = null;
-        Exception ex = null;
-        try {
-            LOGGER.info("command proccessing started");
-
-            if (iphoneToken != null)
-                pushNotificationToken = iphoneToken;
-
-            if (org.springframework.util.StringUtils.hasText(deviceUID))
-                user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
-            else
-                user = userService.checkCredentials(userName, userToken, timestamp, communityName);
-
-            logAboutSuccessfullAccountCheck();
-
-            user = userService.assignPotentialPromotion(user);
-
-            if (deviceType != null && pushNotificationToken != null)
-                userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
-
-            try {
-                iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-
-            AccountCheckDTO accountCheckDTO = processAccCheckBeforeO2Releases(user);
-
-            final Object[] objects = new Object[] { accountCheckDTO };
-
-            ModelAndView mav =  new ModelAndView(view, MODEL_NAME, new Response(objects));
-
-            if (isNotBlank(xtifyToken)) {
-                user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
-            }
-
-            return mav;
-        } catch (Exception e) {
-            ex = e;
-            throw e;
-        } finally {
-            logProfileData(deviceUID, communityName, null, null, user, ex);
-            LOGGER.info("command processing finished");
-        }
+       return accountCheckForO2Client(communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
     }
 
     private void logAboutSuccessfullAccountCheck() {
         SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
     }
-
 }

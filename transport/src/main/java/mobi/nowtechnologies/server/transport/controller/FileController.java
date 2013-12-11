@@ -77,25 +77,29 @@ public class FileController extends CommonController {
 	}
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:4\\.[0-9]{1,3}}/GET_FILE",
-            "*/{community}/{apiVersion:[4-5]\\.[0-9]{1,3}}/GET_FILE"
+            "**/{community}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
     })
     public ModelAndView getFile(
-            @PathVariable("community") String communityName,
+            @PathVariable("community") String community,
             @RequestParam("ID") final String mediaId,
             @RequestParam("TYPE") String fileTypeName,
             @RequestParam("USER_NAME") final String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID,
             @RequestParam(value = "RESOLUTION", required = false) String resolution,
-            final HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            final HttpServletRequest request) throws Exception {
         User user = null;
         Exception ex = null;
         try {
             LOGGER.info("command processing started");
 
-            user = checkCredentials(userName, userToken, timestamp, communityName);
+            if (isValidDeviceUID(deviceUID)) {
+                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            }
+            else {
+                user = userService.checkCredentials(userName, userToken, timestamp, community);
+            }
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){
@@ -109,7 +113,7 @@ public class FileController extends CommonController {
             ex = e;
             throw e;
         } finally {
-            logProfileData(null, communityName, null, null, user, ex);
+            logProfileData(null, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }

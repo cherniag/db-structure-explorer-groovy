@@ -22,13 +22,9 @@ public class AutoOptInController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN",
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN.json",
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/AUTO_OPT_IN",
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/AUTO_OPT_IN.json"
+            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN"
     })
-    public ModelAndView autoOptIn(@RequestParam("APP_VERSION") String appVersion,
-                                  @RequestParam("USER_NAME") String userName,
+    public ModelAndView autoOptIn(@RequestParam("USER_NAME") String userName,
                                   @RequestParam("USER_TOKEN") String userToken,
                                   @RequestParam("TIMESTAMP") String timestamp,
                                   @RequestParam("DEVICE_UID") String deviceUID,

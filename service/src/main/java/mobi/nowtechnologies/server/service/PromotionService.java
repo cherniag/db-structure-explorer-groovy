@@ -152,12 +152,6 @@ public class PromotionService {
         }
         return isPromotionApplied;
     }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User activateVideoAudioFreeTrial(String userName, String userToken, String timestamp, String communityUri, String deviceUID){
-        User user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-        return activateVideoAudioFreeTrial(user);
-    }
     
     @Transactional(propagation = Propagation.REQUIRED)
     public User activateVideoAudioFreeTrial(User user){

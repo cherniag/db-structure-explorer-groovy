@@ -30,8 +30,8 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
-    public ModelAndView activateVideo(@RequestParam("APP_VERSION") String appVersion,
+            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
+    public ModelAndView activateVideo(
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
@@ -42,7 +42,9 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = promotionService.activateVideoAudioFreeTrial(userName, userToken, timestamp, communityUri, deviceUID);
+            user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+
+            user = promotionService.activateVideoAudioFreeTrial(user);
 
             AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
 
@@ -54,29 +56,5 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
             logProfileData(deviceUID, communityUri, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.1}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
-            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL",
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.1}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
-            "{other:.*}/{communityUri}/{apiVersion:5\\.0}/ACTIVAzTE_VIDEO_AUDIO_FREE_TRIAL.json",
-            "/{communityUri:o2}/{apiVersion:4\\.2}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json",
-            "/{communityUri}/{apiVersion:5\\.0}/ACTIVAzTE_VIDEO_AUDIO_FREE_TRIAL.json"
-    })
-    public ModelAndView activateVideoAcceptHeaderSupport(@RequestParam("APP_VERSION") String appVersion,
-                                      @RequestParam("USER_NAME") String userName,
-                                      @RequestParam("USER_TOKEN") String userToken,
-                                      @RequestParam("TIMESTAMP") String timestamp,
-                                      @RequestParam("DEVICE_UID") String deviceUID,
-                                      @PathVariable("communityUri") String communityUri,
-                                      @PathVariable("apiVersion") String apiVersion) throws Exception {
-        apiVersionThreadLocal.set(apiVersion);
-
-        ModelAndView modelAndView = activateVideo(appVersion, userName, userToken, timestamp, deviceUID, communityUri);
-        modelAndView.setViewName(defaultViewName);
-        return modelAndView;
     }
 }

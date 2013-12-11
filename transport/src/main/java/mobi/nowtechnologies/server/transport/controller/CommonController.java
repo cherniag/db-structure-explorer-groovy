@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -36,7 +35,7 @@ import static org.apache.commons.lang.Validate.notNull;
 public abstract class CommonController extends ProfileController implements ApplicationContextAware{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
-	public static final String MODEL_NAME = Response.class.toString();
+	public static final String MODEL_NAME = "response";
 	public static final int VERSION_4 = 4;
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -57,8 +56,12 @@ public abstract class CommonController extends ProfileController implements Appl
         this.applicationContext = applicationContext;
     }
 
+    protected boolean isValidDeviceUID(String deviceUID){
+        return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
+    }
+
     protected ModelAndView buildModelAndView(Object ... objs){
-        return new ModelAndView(defaultViewName, Response.class.toString(), new Response(objs));
+        return new ModelAndView(defaultViewName, "response", new Response(objs));
     }
 
     public void setView(View view) {
@@ -237,13 +240,7 @@ public abstract class CommonController extends ProfileController implements Appl
         notNull(errorMessage , "The parameter errorMessage is null");
 		response.setStatus(status.value());
 
-        String apiVersion = apiVersionThreadLocal.get();
-
-        if (isBlank(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
-            return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
-        }
-
-        return new ModelAndView(defaultViewName, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
+        return buildModelAndView(errorMessage);
 	}
 
 	/**

@@ -1,14 +1,16 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
-import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -39,7 +41,9 @@ public class ApplyInitPromoController extends CommonController {
         this.updateO2UserTask = updateO2UserTask;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"
+    })
     public ModelAndView applyInitialPromotion(
             @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
@@ -66,14 +70,16 @@ public class ApplyInitPromoController extends CommonController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {"/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO", "*/{community:o2}/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"})
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:[3-9]{1}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"
+    })
     public ModelAndView applyPromotion(
-            @RequestParam("COMMUNITY_NAME") String communityName,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
             @PathVariable("community") String community,
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID,
             @PathVariable("apiVersion") String apiVersion) {
     	
     	Exception ex = null;
@@ -83,7 +89,12 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+            if (isValidDeviceUID(deviceUID)) {
+                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            }
+            else {
+                user = userService.checkCredentials(userName, userToken, timestamp, community);
+            }
 
             user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4);
 
@@ -110,59 +121,5 @@ public class ApplyInitPromoController extends CommonController {
         	logProfileData(null, community, null, null, user, ex);
            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.0}/APPLY_INIT_PROMO.json"
-    }, produces = "application/json")
-    public @ResponseBody Response applyO2PromotionJson(
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("OTAC_TOKEN") String token,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) {
-        return (Response) applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion).getModelMap().get(MODEL_NAME);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO",
-            "*/{community:o2}/{apiVersion:4\\.1}/APPLY_INIT_PROMO.json",
-            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO",
-            "*/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO.json",
-            "/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO",
-            "/{community:o2}/{apiVersion:4\\.2}/APPLY_INIT_PROMO.json"
-    })
-    public ModelAndView applyO2PromotionAcceptHeaderSupport(
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("OTAC_TOKEN") String token,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) {
-        apiVersionThreadLocal.set(apiVersion);
-
-        ModelAndView modelAndView = applyPromotion(communityName, userName, userToken, timestamp, token, community, apiVersion);
-        modelAndView.setViewName(defaultViewName);
-
-        return modelAndView;
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO",
-            "*/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO.json",
-            "/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO",
-            "/{community:.*}/{apiVersion:5\\.0}/APPLY_INIT_PROMO.json"
-    })
-    public ModelAndView applyInitPromo(
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("OTAC_TOKEN") String token,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) {
-        return applyPromotion(community, userName, userToken, timestamp, token, community, apiVersion);
     }
 }
