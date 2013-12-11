@@ -1811,11 +1811,11 @@ public class UserNotificationServiceImplTest {
         };
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
-                eq("sms.activation.pin.text"), argThat(matcher));
+                eq("sms.activation.pin.text.for.nowtop40"), argThat(matcher));
         Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
 
         assertNotNull(result);
-        assertEquals(false, result.get());
+        assertEquals(true, result.get());
 
         verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
         verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),

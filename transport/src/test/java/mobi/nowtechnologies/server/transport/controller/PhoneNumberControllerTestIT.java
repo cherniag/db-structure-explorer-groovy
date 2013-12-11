@@ -344,7 +344,6 @@ public class PhoneNumberControllerTestIT {
         User user = vfUserService.findByNameAndCommunity(userName, communityName);
         user.setProvider(null);
         vfUserService.updateUser(user);
-
         ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
                         .param("COMMUNITY_NAME", communityName)
@@ -355,31 +354,9 @@ public class PhoneNumberControllerTestIT {
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultXml = aHttpServletResponse.getContentAsString();
-
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
-
         user = vfUserService.findByNameAndCommunity(userName, communityName);
         assertEquals(null, user.getProvider());
-
-        DeliverSm deliverSm = new DeliverSm();
-        deliverSm.setSourceAddr("5804");
-        deliverSm.setDestAddress("642102247311");
-        MOMessage message = new MOMessage("5804", "64279000456", "OffNet", Message.MessageEncodings.ENC8BIT);
-        processorContainer.processInboundMessage(deliverSm, message);
-
-        resultActions = mockMvc.perform(
-                post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        resultXml = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultXml.contains("<provider>non-vf</provider>"));
-        assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
         verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
     }
 }
